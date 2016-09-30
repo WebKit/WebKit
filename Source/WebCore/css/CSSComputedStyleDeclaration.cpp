@@ -36,6 +36,7 @@
 #include "CSSCustomPropertyValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
+#include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSParser.h"
@@ -62,6 +63,7 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "SVGElement.h"
+#include "Settings.h"
 #include "ShapeValue.h"
 #include "StyleInheritedData.h"
 #include "StyleProperties.h"
@@ -2878,6 +2880,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             for (auto& feature : featureSettings)
                 list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
             return list;
+        }
+        case CSSPropertyFontVariationSettings: {
+            if (styledNode->document().settings() && styledNode->document().settings()->variationFontsEnabled()) {
+                const FontVariationSettings& variationSettings = style->fontDescription().variationSettings();
+                if (variationSettings.isEmpty())
+                    return cssValuePool.createIdentifierValue(CSSValueNormal);
+                RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+                for (auto& feature : variationSettings)
+                    list->append(CSSFontVariationValue::create(feature.tag(), feature.value()));
+                return list;
+            }
+            break;
         }
 #if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyGridAutoFlow: {

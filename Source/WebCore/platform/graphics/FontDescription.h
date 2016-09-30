@@ -59,6 +59,7 @@ public:
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
     FontWidthVariant widthVariant() const { return static_cast<FontWidthVariant>(m_widthVariant); }
     const FontFeatureSettings& featureSettings() const { return m_featureSettings; }
+    const FontVariationSettings& variationSettings() const { return m_variationSettings; }
     FontSynthesis fontSynthesis() const { return static_cast<FontSynthesis>(m_fontSynthesis); }
     FontVariantLigatures variantCommonLigatures() const { return static_cast<FontVariantLigatures>(m_variantCommonLigatures); }
     FontVariantLigatures variantDiscretionaryLigatures() const { return static_cast<FontVariantLigatures>(m_variantDiscretionaryLigatures); }
@@ -105,6 +106,7 @@ public:
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setLocale(const AtomicString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
+    void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
     void setFontSynthesis(FontSynthesis fontSynthesis) { m_fontSynthesis = fontSynthesis; }
     void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = static_cast<unsigned>(variant); }
     void setVariantDiscretionaryLigatures(FontVariantLigatures variant) { m_variantDiscretionaryLigatures = static_cast<unsigned>(variant); }
@@ -125,7 +127,9 @@ public:
     FontTraitsMask traitsMask() const;
 
 private:
+    // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;
+    FontVariationSettings m_variationSettings;
     AtomicString m_locale;
 
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
@@ -167,6 +171,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_widthVariant == other.m_widthVariant
         && m_locale == other.m_locale
         && m_featureSettings == other.m_featureSettings
+        && m_variationSettings == other.m_variationSettings
         && m_fontSynthesis == other.m_fontSynthesis
         && m_variantCommonLigatures == other.m_variantCommonLigatures
         && m_variantDiscretionaryLigatures == other.m_variantDiscretionaryLigatures

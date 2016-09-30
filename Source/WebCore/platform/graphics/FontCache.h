@@ -76,6 +76,7 @@ struct FontDescriptionKey {
         , m_weight(description.weight())
         , m_flags(makeFlagsKey(description))
         , m_featureSettings(description.featureSettings())
+        , m_variationSettings(description.variationSettings())
     { }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -85,7 +86,7 @@ struct FontDescriptionKey {
     bool operator==(const FontDescriptionKey& other) const
     {
         return m_size == other.m_size && m_weight == other.m_weight && m_flags == other.m_flags
-            && m_featureSettings == other.m_featureSettings;
+            && m_featureSettings == other.m_featureSettings && m_variationSettings == other.m_variationSettings;
     }
 
     bool operator!=(const FontDescriptionKey& other) const
@@ -103,6 +104,7 @@ struct FontDescriptionKey {
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
         hasher.add(m_featureSettings.hash());
+        hasher.add(m_variationSettings.hash());
         return hasher.hash();
     }
 
@@ -143,6 +145,7 @@ private:
     unsigned m_weight { 0 };
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
     FontFeatureSettings m_featureSettings;
+    FontVariationSettings m_variationSettings;
 };
 
 struct FontDescriptionKeyHash {

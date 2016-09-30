@@ -1,3 +1,13 @@
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Parse font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162781
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/variations/getComputedStyle-expected.txt: Added.
+        * fast/text/variations/getComputedStyle.html: Added.
+
 2016-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/debugger/breakpoints tests as slow on release, skipped on debug.

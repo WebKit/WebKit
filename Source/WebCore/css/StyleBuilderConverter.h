@@ -31,6 +31,7 @@
 #include "CSSCalculationValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
+#include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
@@ -120,6 +121,7 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, CSSValue&);
+    static FontVariationSettings convertFontVariationSettings(StyleResolver&, CSSValue&);
     static SVGLength convertSVGLength(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertSVGLengthVector(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertStrokeDashArray(StyleResolver&, CSSValue&);
@@ -1140,6 +1142,21 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& feature = downcast<CSSFontFeatureValue>(item.get());
         settings.insert(FontFeature(feature.tag(), feature.value()));
+    }
+    return settings;
+}
+
+inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings(StyleResolver&, CSSValue& value)
+{
+    if (is<CSSPrimitiveValue>(value)) {
+        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+        return { };
+    }
+
+    FontVariationSettings settings;
+    for (auto& item : downcast<CSSValueList>(value)) {
+        auto& feature = downcast<CSSFontVariationValue>(item.get());
+        settings.insert({ feature.tag(), feature.value() });
     }
     return settings;
 }

@@ -136,5 +136,8 @@ void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 
 typedef FontTaggedSetting<int> FontFeature;
 typedef FontTaggedSettings<int> FontFeatureSettings;
+typedef FontTaggedSettings<float> FontVariationSettings;
+
+TextStream& operator<<(TextStream&, const FontVariationSettings&);
 
 }

@@ -48,6 +48,7 @@
 #include "CSSFontFeatureValue.cpp"
 #include "CSSFontSelector.cpp"
 #include "CSSFontValue.cpp"
+#include "CSSFontVariationValue.cpp"
 #include "CSSFunctionValue.cpp"
 #include "CSSGradientValue.cpp"
 #include "CSSGridLineNamesValue.cpp"

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,56 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
+
+#include "CSSValue.h"
 #include "FontTaggedSettings.h"
-
-#include "TextStream.h"
-
-#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
-template <>
-unsigned FontFeatureSettings::hash() const
-{
-    IntegerHasher hasher;
-    for (auto& feature : m_list) {
-        hasher.add(FourCharacterTagHash::hash(feature.tag()));
-        hasher.add(feature.value());
+class CSSFontVariationValue final : public CSSValue {
+public:
+    static Ref<CSSFontVariationValue> create(FontTag tag, float value)
+    {
+        return adoptRef(*new CSSFontVariationValue(tag, value));
     }
-    return hasher.hash();
-}
 
-template <>
-unsigned FontVariationSettings::hash() const
-{
-    static_assert(sizeof(float) == sizeof(int), "IntegerHasher needs to accept floats too");
-    union {
-        float f;
-        int i;
-    } floatToInt;
+    const FontTag& tag() const { return m_tag; }
+    float value() const { return m_value; }
+    String customCSSText() const;
 
-    IntegerHasher hasher;
-    for (auto& variation : m_list) {
-        hasher.add(FourCharacterTagHash::hash(variation.tag()));
-        floatToInt.f = variation.value();
-        hasher.add(floatToInt.i);
-    }
-    return hasher.hash();
-}
+    bool equals(const CSSFontVariationValue&) const;
 
-TextStream& operator<<(TextStream& ts, const FontVariationSettings& item)
-{
-    for (unsigned i = 0; i < item.size(); ++i) {
-        auto& variation = item.at(i);
-        StringBuilder s;
-        s.append(variation.tag()[0]);
-        s.append(variation.tag()[1]);
-        s.append(variation.tag()[2]);
-        s.append(variation.tag()[3]);
-        ts.dumpProperty(s.toString(), item.at(i).value());
-    }
-    return ts;
-}
+private:
+    CSSFontVariationValue(FontTag, float);
 
-}
+    FontTag m_tag;
+    const float m_value;
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontVariationValue, isFontVariationValue())

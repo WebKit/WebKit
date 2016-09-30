@@ -43,6 +43,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontValue.h"
+#include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
@@ -176,6 +177,8 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
         case FontFeatureClass:
             return compareCSSValues<CSSFontFeatureValue>(*this, other);
+        case FontVariationClass:
+            return compareCSSValues<CSSFontVariationValue>(*this, other);
         case FunctionClass:
             return compareCSSValues<CSSFunctionValue>(*this, other);
         case LinearGradientClass:
@@ -282,6 +285,8 @@ String CSSValue::cssText() const
         return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
     case FontFeatureClass:
         return downcast<CSSFontFeatureValue>(*this).customCSSText();
+    case FontVariationClass:
+        return downcast<CSSFontVariationValue>(*this).customCSSText();
     case FunctionClass:
         return downcast<CSSFunctionValue>(*this).customCSSText();
     case LinearGradientClass:
@@ -395,6 +400,9 @@ void CSSValue::destroy()
         return;
     case FontFeatureClass:
         delete downcast<CSSFontFeatureValue>(this);
+        return;
+    case FontVariationClass:
+        delete downcast<CSSFontVariationValue>(this);
         return;
     case FunctionClass:
         delete downcast<CSSFunctionValue>(this);

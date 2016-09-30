@@ -1,5 +1,77 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Parse font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162781
+
+        Reviewed by Simon Fraser.
+
+        CSS Fonts level 4 [1] details the font-variation-settings property which allows variations
+        to be applied to fonts which accept it. The property accepts a list of key/value
+        pairs where the keys are four-character Ascii codes and the values are floating
+        point values. The implementation uses font-feature-settings as a model, but with one
+        big difference: font-variation-settings can be animated. The set of variation points
+        are animated individually.
+
+        This font variations work is being done behind a run-time switch, which is settable from
+        the Safari Develop menu.
+
+        Now that FontDescription is growing, I'd like to do an investigation into the possibility of
+        moving some of the rare pieces of it into their own class to reduce memory. However, upon
+        advice, this investigation will be fairly involved and should be done in its own bug.
+
+        Test: fast/text/variations/getComputedStyle.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontVariationValue.cpp: Copied from Source/WebCore/platform/graphics/FontTaggedSettings.cpp.
+        (WebCore::CSSFontVariationValue::CSSFontVariationValue):
+        (WebCore::CSSFontVariationValue::customCSSText):
+        (WebCore::CSSFontVariationValue::equals):
+        * css/CSSFontVariationValue.h: Copied from Source/WebCore/platform/graphics/FontTaggedSettings.cpp.
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontVariationValue):
+        (WebCore::CSSValue::isFontFeatureValue): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontVariationSettings):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInitialFontVariationSettings):
+        (WebCore::StyleBuilderCustom::applyInheritFontVariationSettings):
+        (WebCore::StyleBuilderCustom::applyInheritFontFeatureSettings): Deleted.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontFeatureSettings):
+        (WebCore::CSSParser::parseFontVariationTag):
+        (WebCore::CSSParser::parseFontVariationSettings):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserMode.h:
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator==):
+        (WebCore::FontDescriptionKey::computeHash):
+        * platform/graphics/FontDescription.cpp:
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::variationSettings):
+        (WebCore::FontDescription::setVariationSettings):
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontDescription::featureSettings): Deleted.
+        (WebCore::FontDescription::setFeatureSettings): Deleted.
+        * platform/graphics/FontTaggedSettings.cpp:
+        (WebCore::FontVariationSettings::hash):
+        (WebCore::operator<<):
+        * platform/graphics/FontTaggedSettings.h:
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Followup patch to r206664
         https://bugs.webkit.org/show_bug.cgi?id=162774
 
