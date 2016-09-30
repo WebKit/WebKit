@@ -87,10 +87,10 @@ private:
     T frameMetadataAtIndex(size_t index, SubsamplingLevel = SubsamplingLevel::Undefinded, ImageFrame::Caching = ImageFrame::Caching::Empty, Optional<T>* = nullptr);
 
     bool isDecoderAvailable() const { return m_decoder; }
-    void decodedSizeChanged(int decodedSize);
+    void decodedSizeChanged(long long decodedSize);
     void didDecodeProperties(unsigned decodedPropertiesSize);
-    void decodedSizeIncremented(unsigned decodedSize);
-    void decodedSizeDecremented(unsigned decodedSize);
+    void decodedSizeIncreased(unsigned decodedSize);
+    void decodedSizeDecreased(unsigned decodedSize);
     void decodedSizeReset(unsigned decodedSize);
 
     void setNativeImage(NativeImagePtr&&);

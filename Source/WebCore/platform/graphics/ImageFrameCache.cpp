@@ -35,6 +35,9 @@
 #include "ImageDecoder.h"
 #endif
 
+#include <wtf/CheckedArithmetic.h>
+
+
 namespace WebCore {
 
 ImageFrameCache::ImageFrameCache(Image* image)
@@ -66,7 +69,7 @@ void ImageFrameCache::destroyDecodedData(bool destroyAll, size_t count)
     unsigned decodedSize = 0;
     for (size_t i = 0; i <  count; ++i)
         decodedSize += m_frames[i].clearImage();
-    
+
     decodedSizeReset(decodedSize);
 }
 
@@ -93,12 +96,11 @@ void ImageFrameCache::destroyIncompleteDecodedData()
         
         decodedSize += frame.clear();
     }
-    
-    decodedSizeDecremented(decodedSize);
+
+    decodedSizeDecreased(decodedSize);
 }
 
-
-void ImageFrameCache::decodedSizeChanged(int decodedSize)
+void ImageFrameCache::decodedSizeChanged(long long decodedSize)
 {
     if (!decodedSize || !m_image || !m_image->imageObserver())
         return;
@@ -106,7 +108,7 @@ void ImageFrameCache::decodedSizeChanged(int decodedSize)
     m_image->imageObserver()->decodedSizeChanged(m_image, decodedSize);
 }
 
-void ImageFrameCache::decodedSizeIncremented(unsigned decodedSize)
+void ImageFrameCache::decodedSizeIncreased(unsigned decodedSize)
 {
     if (!decodedSize)
         return;
@@ -115,39 +117,39 @@ void ImageFrameCache::decodedSizeIncremented(unsigned decodedSize)
     
     // The fully-decoded frame will subsume the partially decoded data used
     // to determine image properties.
-    int changeSize = decodedSize - m_decodedPropertiesSize;
+    long long changeSize = static_cast<long long>(decodedSize) - m_decodedPropertiesSize;
     m_decodedPropertiesSize = 0;
     decodedSizeChanged(changeSize);
 }
 
-void ImageFrameCache::decodedSizeDecremented(unsigned decodedSize)
+void ImageFrameCache::decodedSizeDecreased(unsigned decodedSize)
 {
     if (!decodedSize)
         return;
-    
+
     ASSERT(m_decodedSize >= decodedSize);
     m_decodedSize -= decodedSize;
-    decodedSizeChanged(-safeCast<int>(decodedSize));
+    decodedSizeChanged(-static_cast<long long>(decodedSize));
 }
 
 void ImageFrameCache::decodedSizeReset(unsigned decodedSize)
 {
     ASSERT(m_decodedSize >= decodedSize);
     m_decodedSize -= decodedSize;
-    
+
     // Clearing the ImageSource destroys the extra decoded data used for
     // determining image properties.
     decodedSize += m_decodedPropertiesSize;
     m_decodedPropertiesSize = 0;
-    decodedSizeChanged(-safeCast<int>(decodedSize));
+    decodedSizeChanged(-static_cast<long long>(decodedSize));
 }
 
 void ImageFrameCache::didDecodeProperties(unsigned decodedPropertiesSize)
 {
     if (m_decodedSize)
         return;
-    
-    int decodedSize = decodedPropertiesSize - m_decodedPropertiesSize;
+
+    long long decodedSize = static_cast<long long>(decodedPropertiesSize) - m_decodedPropertiesSize;
     m_decodedPropertiesSize = decodedPropertiesSize;
     decodedSizeChanged(decodedSize);
 }
@@ -215,15 +217,20 @@ const ImageFrame& ImageFrameCache::frameAtIndex(size_t index, SubsamplingLevel s
     
     if (frame.hasInvalidNativeImage(subsamplingLevel)) {
         unsigned decodedSize = frame.clear();
-        decodedSizeDecremented(decodedSize);
+        decodedSizeDecreased(decodedSize);
     }
     
     if (!frame.isComplete() && caching == ImageFrame::Caching::Metadata)
         setFrameMetadata(index, subsamplingLevel);
     
     if (!frame.hasNativeImage() && caching == ImageFrame::Caching::MetadataAndImage) {
-        setFrameNativeImage(m_decoder->createFrameImageAtIndex(index, subsamplingLevel), index, subsamplingLevel);
-        decodedSizeIncremented(frame.frameBytes());
+        size_t frameBytes = size().unclampedArea() * sizeof(RGBA32);
+
+        // Do not create the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
+        if (WTF::isInBounds<unsigned>(frameBytes + decodedSize())) {
+            setFrameNativeImage(m_decoder->createFrameImageAtIndex(index, subsamplingLevel), index, subsamplingLevel);
+            decodedSizeIncreased(frame.frameBytes());
+        }
     }
     
     return frame;

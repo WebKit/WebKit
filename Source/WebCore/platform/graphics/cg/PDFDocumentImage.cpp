@@ -182,7 +182,7 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
         return;
 
     if (imageObserver())
-        imageObserver()->decodedSizeChanged(this, -safeCast<int>(m_cachedBytes) + newCachedBytes);
+        imageObserver()->decodedSizeChanged(this, -static_cast<long long>(m_cachedBytes) + newCachedBytes);
 
     ASSERT(s_allDecodedDataSize >= m_cachedBytes);
     // Update with the difference in two steps to avoid unsigned underflow subtraction.

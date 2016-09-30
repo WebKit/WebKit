@@ -1,3 +1,63 @@
+2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Change the MemoryCache and CachedResource adjustSize functions to take a long argument
+        https://bugs.webkit.org/show_bug.cgi?id=162708
+        <rdar://problem/28555702>
+
+        Reviewed by Brent Fulgham.
+
+        Because the MemoryCache stores the size of the cached memory in unsigned,
+        two problems my happen when reporting a change in the size of the memory:
+        
+        1. Signed integer overflow -- which can happen because MemoryCache::adjustSize()
+           takes a signed integer argument. If the allocated or the freed memory size is
+           larger than the maximum of a signed integer, an overflow will happen.
+           For the image caching code, this can be seen where the unsigned decodedSize
+           is casted to an integer before passing it to ImageObserver::decodedSizeChanged().
+
+        2. Unsigned integer overflow -- which can happen if the new allocated memory
+           size plus the currentSize exceeds the maximum of unsigned.
+           This can be seen in MemoryCache::adjustSize() where we add delta to m_liveSize
+           or m_deadSize without checking whether this addition will overflow or not. We
+           do not assert for overflow although we assert for underflow.
+           
+        The fix for these two problems can be the following:
+        
+        1. Make all the adjustSize functions all the way till MemoryCache::adjustSize()
+           take a signed long integer argument.
+           
+        2. Do not create a NativeImagePtr for an ImageFrame if its frameBytes plus the
+           ImageFrameCache::decodedSize() will exceed the maximum of an unsigned integer.
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::decodedSizeChanged): Change the argument to be long. No overflow will happen when casting the argument from unsigned to long.
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp: 
+        (WebCore::CachedResource::setDecodedSize): Use long integer casting when calling MemoryCache::adjustSize().
+        (WebCore::CachedResource::setEncodedSize): Ditto.
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::MemoryCache): Add as static assert to ensure sizeof(long long) can hold any unsigned or its negation.
+        (WebCore::MemoryCache::revalidationSucceeded): Use long integer casting when calling MemoryCache::adjustSize().
+        (WebCore::MemoryCache::remove): Ditto.
+        (WebCore::MemoryCache::adjustSize): Change the function argument to long integer. No overflow will happen when casting the argument from unsigned to long.
+        * loader/cache/MemoryCache.h:
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::destroyIncompleteDecodedData): Call a function with its new name.
+        (WebCore::ImageFrameCache::decodedSizeChanged): Change the function argument to long integer. No overflow will happen when casting the argument from unsigned to long.
+        (WebCore::ImageFrameCache::decodedSizeIncreased): Use long integer casting when calling decodedSizeChanged().
+        (WebCore::ImageFrameCache::decodedSizeDecreased): Ditto.
+        (WebCore::ImageFrameCache::decodedSizeReset): Ditto.
+        (WebCore::ImageFrameCache::didDecodeProperties): Ditto.
+        (WebCore::ImageFrameCache::frameAtIndex): Do not create the NativeImage if adding its frameByes to the MemoryCache will cause numerical overflow.
+        (WebCore::ImageFrameCache::decodedSizeIncremented): Deleted. This function is renamed decodedSizeIncreased().
+        (WebCore::ImageFrameCache::decodedSizeDecremented): Deleted. This function is renamed decodedSizeDecreased().
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/ImageObserver.h:
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::unclampedArea): Returns the area of an IntSize in size_t.
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::decodedSizeChanged): Use long integer casting when calling ImageObserver::decodedSizeChanged().
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         Add support for ImageData.data attribute

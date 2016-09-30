@@ -985,18 +985,3 @@ webkit.org/b/162414 imported/w3c/web-platform-tests/resource-timing/idlharness.h
 
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
-
-webkit.org/b/162696 [ Release ] fast/images/paletted-png-with-color-profile.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/paint-subrect.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/paint-subrect-grid.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-crop-box.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/link-body-content-imageDimensionChanged-crash.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/object-data-url-case-insensitivity.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/move-image-to-new-document.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-background.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-landscape.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations-expected.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-too-big.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/object-image.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/pdf-as-image-with-annotations.html [ Crash ]
-webkit.org/b/162696 [ Release ] fast/images/load-img-with-empty-src.html [ Crash ]

@@ -136,6 +136,11 @@ public:
         return abs(m_width) * abs(m_height);
     }
 
+    size_t unclampedArea() const
+    {
+        return static_cast<size_t>(abs(m_width)) * abs(m_height);
+    }
+
     int diagonalLengthSquared() const
     {
         return m_width * m_width + m_height * m_height;
