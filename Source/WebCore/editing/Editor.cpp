@@ -3151,18 +3151,6 @@ bool Editor::findString(const String& target, FindOptions options)
     return true;
 }
 
-RefPtr<Range> Editor::findStringAndScrollToVisible(const String& target, Range* previousMatch, FindOptions options)
-{
-    RefPtr<Range> nextMatch = rangeOfString(target, previousMatch, options);
-    if (!nextMatch)
-        return nullptr;
-
-    nextMatch->firstNode()->renderer()->scrollRectToVisible(SelectionRevealMode::Reveal, nextMatch->absoluteBoundingBox(),
-        ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
-
-    return nextMatch;
-}
-
 RefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
 {
     if (target.isEmpty())

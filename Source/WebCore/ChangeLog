@@ -1,3 +1,16 @@
+2016-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Editor::findStringAndScrollToVisible is unused
+        https://bugs.webkit.org/show_bug.cgi?id=162762
+
+        Reviewed by Simon Fraser.
+
+        Deleted the unused function.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::findStringAndScrollToVisible): Deleted.
+        * editing/Editor.h:
+
 2016-09-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         Expose CryptoKey to web workers

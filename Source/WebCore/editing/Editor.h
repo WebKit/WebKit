@@ -372,7 +372,6 @@ public:
     WEBCORE_EXPORT bool findString(const String&, FindOptions);
 
     RefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
-    RefPtr<Range> findStringAndScrollToVisible(const String&, Range*, FindOptions);
 
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
