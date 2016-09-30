@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 22: Synthetic clicks on anchors that have a download attribute are ignored.
+CONSOLE MESSAGE: line 22: Non user-triggered activations of anchors that have a download attribute are ignored.
 Test that synthetic clicks on an anchor with a download attribute are ignored.
 
 This test passes if you do not see any 'Download started' message above.

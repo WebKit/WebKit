@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Test that user triggered synthetic clicks on an anchor with a download attribute are not ignored.</p>
+<p> This test passes if you see a 'Download started' message above.</p>
+<a style="display:none" id="blob-url" download>Blob URL</a>
+<input type="button" id="testButton" value="Download">
+<script>
+function userClick(element)
+{
+    if (!window.eventSender) {
+        alert('Click the button to run the test.');
+        return;
+    }
+    eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runTest()
+{
+    var string = "test";
+    var blob = new Blob([string], {type: "text/html"});
+    var link = document.getElementById("blob-url");
+    link.href = window.URL.createObjectURL(blob);
+    var button = document.getElementById("testButton");
+    button.onclick = function() {
+        link.click();
+    }
+    userClick(button);
+    setTimeout(function() {
+        testRunner.notifyDone();
+    }, 100);
+}
+runTest();
+</script>
+</body>
+</html>

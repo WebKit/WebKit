@@ -1,3 +1,24 @@
+2016-09-30  Chris Dumez  <cdumez@apple.com>
+
+        FileSaver.js does not work in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=162788
+
+        Reviewed by Sam Weinig.
+
+        FileSaver.js does not work in WebKit:
+        - https://eligrey.com/demos/FileSaver.js/
+
+        It works in Firefox and Chrome, but in WebKit, we were getting a
+        "Synthetic clicks on anchors that have a download attribute are
+        ignored." warning. We were too strict in restricting synthetic clicks.
+        We now allow synthetic clicks as long as they are triggered by a user
+        gesture.
+
+        Test: fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::handleClick):
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Breakpoints on blank lines or comments don't break

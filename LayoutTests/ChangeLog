@@ -1,3 +1,16 @@
+2016-09-30  Chris Dumez  <cdumez@apple.com>
+
+        FileSaver.js does not work in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=162788
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-synthetic-click-expected.txt:
+        * fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html: Added.
+
 2016-09-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/images/gif-loop-count.html as flaky on ios-simulator.
