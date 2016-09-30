@@ -695,8 +695,8 @@ private:
         bool clipToDirtyRect;
     };
 
-    // Compute and cache clip rects computed with the given layer as the root
-    void updateClipRects(const ClipRectsContext&);
+    // Compute, cache and return clip rects computed with the given layer as the root.
+    Ref<ClipRects> updateClipRects(const ClipRectsContext&);
     // Compute and return the clip rects. If useCached is true, will used previously computed clip rects on ancestors
     // (rather than computing them all from scratch up the parent chain).
     void calculateClipRects(const ClipRectsContext&, ClipRects&) const;
@@ -933,7 +933,7 @@ private:
     void dirtyAncestorChainHasBlendingDescendants();
 #endif
 
-    void parentClipRects(const ClipRectsContext&, ClipRects&) const;
+    Ref<ClipRects> parentClipRects(const ClipRectsContext&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
 
     RenderLayer* enclosingTransformedAncestor() const;

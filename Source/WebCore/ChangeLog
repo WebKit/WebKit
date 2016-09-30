@@ -1,3 +1,25 @@
+2016-09-30  Zalan Bujtas  <zalan@apple.com>
+
+        RenderLayer::clipRects may return nullptr.
+        https://bugs.webkit.org/show_bug.cgi?id=162729
+
+        Reviewed by Chris Dumez.
+
+        This patch refactors RenderLayer::updateClipRects(), parentClipRects() and backgroundClipRect()
+        so that we don't have to rely on this seemingly unsafe line: clipRects = *parent()->clipRects(clipRectsContext);
+        Now updateClipRects() returns the computed/cached clip rects as opposed to update and refetch them.
+        While this patch makes the code look more readable/safer, it also eliminates cached item tripple retrievals.  
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRectsCache::getClipRects):
+        (WebCore::ClipRectsCache::setClipRects):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::clipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayer.h:
+
 2016-09-30  Youenn Fablet  <youenn@apple.com>
 
         Add a way to go from a RefPtr<T> to Ref<const T>
