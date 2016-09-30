@@ -1,3 +1,32 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping out of a function finishes the line that called it.
+        https://bugs.webkit.org/show_bug.cgi?id=155325
+        <rdar://problem/25094578>
+
+        Reviewed by Mark Lam.
+
+        Tests: inspector/debugger/stepping/stepInto.html
+               inspector/debugger/stepping/stepOut.html
+               inspector/debugger/stepping/stepOver.html
+               inspector/debugger/stepping/stepping-arrow-functions.html
+               inspector/debugger/stepping/stepping-classes.html
+               inspector/debugger/stepping/stepping-control-flow.html
+               inspector/debugger/stepping/stepping-function-calls.html
+               inspector/debugger/stepping/stepping-function-default-parameters.html
+               inspector/debugger/stepping/stepping-literal-construction.html
+               inspector/debugger/stepping/stepping-loops.html
+               inspector/debugger/stepping/stepping-misc.html
+               inspector/debugger/stepping/stepping-switch.html
+               inspector/debugger/stepping/stepping-template-string.html
+               inspector/debugger/stepping/stepping-try-catch-finally.html
+
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::stepInto): Deleted.
+        Setting this state in step-into does not make sense since we do not
+        know when the debugger resumes and won't know when to clear it.
+
 2016-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Fix off-by-one error in URLParser::parseIPv4Host

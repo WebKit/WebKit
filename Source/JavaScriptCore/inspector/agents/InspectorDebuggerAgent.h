@@ -98,7 +98,6 @@ public:
         virtual ~Listener() { }
         virtual void debuggerWasEnabled() = 0;
         virtual void debuggerWasDisabled() = 0;
-        virtual void stepInto() = 0;
         virtual void didPause() = 0;
     };
     void setListener(Listener* listener) { m_listener = listener; }

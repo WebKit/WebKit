@@ -84,7 +84,6 @@ private:
     // Inspector::InspectorDebuggerAgent::Listener implementation.
     void debuggerWasEnabled() override;
     void debuggerWasDisabled() override;
-    void stepInto() override;
     void didPause() override;
     void disable();
 

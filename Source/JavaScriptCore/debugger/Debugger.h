@@ -91,9 +91,8 @@ public:
         NotPaused,
         PausedForException,
         PausedAtStatement,
-        PausedAfterCall,
+        PausedAtExpression,
         PausedBeforeReturn,
-        PausedAtStartOfProgram,
         PausedAtEndOfProgram,
         PausedForBreakpoint,
         PausedForDebuggerStatement,
@@ -118,8 +117,10 @@ public:
 
     void exception(CallFrame*, JSValue exceptionValue, bool hasCatchHandler);
     void atStatement(CallFrame*);
+    void atExpression(CallFrame*);
     void callEvent(CallFrame*);
     void returnEvent(CallFrame*);
+    void unwindEvent(CallFrame*);
     void willExecuteProgram(CallFrame*);
     void didExecuteProgram(CallFrame*);
     void didReachBreakpoint(CallFrame*);
@@ -184,9 +185,11 @@ private:
     // that we don't break on the same line more than once. Once we switch to a
     // bytecode PC key'ed breakpoint, we will not need these anymore and should
     // be able to remove them.
-    void updateCallFrame(JSC::CallFrame*);
-    void updateCallFrameAndPauseIfNeeded(JSC::CallFrame*);
+    enum CallFrameUpdateAction { AttemptPause, NoPause };
+    void updateCallFrame(JSC::CallFrame*, CallFrameUpdateAction);
+    void updateCallFrameInternal(JSC::CallFrame*);
     void pauseIfNeeded(JSC::CallFrame*);
+    void clearNextPauseState();
 
     enum SteppingMode {
         SteppingModeDisabled,
@@ -209,7 +212,9 @@ private:
     HashSet<JSGlobalObject*> m_globalObjects;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
-    bool m_pauseOnNextStatement : 1;
+    bool m_pauseAtNextOpportunity : 1;
+    bool m_pauseOnStepOut : 1;
+    bool m_pastFirstExpressionInStatement : 1;
     bool m_isPaused : 1;
     bool m_breakpointsActivated : 1;
     bool m_hasHandlerForExceptionCallback : 1;

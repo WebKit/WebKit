@@ -587,7 +587,7 @@ ALWAYS_INLINE static void notifyDebuggerOfUnwinding(CallFrame* callFrame)
     if (Debugger* debugger = callFrame->vmEntryGlobalObject()->debugger()) {
         SuspendExceptionScope scope(&vm);
         if (jsDynamicCast<JSFunction*>(callFrame->callee()))
-            debugger->returnEvent(callFrame);
+            debugger->unwindEvent(callFrame);
         else
             debugger->didExecuteProgram(callFrame);
         ASSERT_UNUSED(catchScope, !catchScope.exception());
@@ -1240,6 +1240,9 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
             break;
         case WillExecuteStatement:
             debugger->atStatement(callFrame);
+            break;
+        case WillExecuteExpression:
+            debugger->atExpression(callFrame);
             break;
         case WillExecuteProgram:
             debugger->willExecuteProgram(callFrame);

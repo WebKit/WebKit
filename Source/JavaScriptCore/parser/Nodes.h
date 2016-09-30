@@ -208,6 +208,7 @@ namespace JSC {
         void setNext(StatementNode* next) { m_next = next; }
 
         virtual bool isEmptyStatement() const { return false; }
+        virtual bool isFunctionNode() const { return false; }
         virtual bool isReturnNode() const { return false; }
         virtual bool isExprStatement() const { return false; }
         virtual bool isBreak() const { return false; }
@@ -215,6 +216,7 @@ namespace JSC {
         virtual bool isBlock() const { return false; }
         virtual bool isFuncDeclNode() const { return false; }
         virtual bool isModuleDeclarationNode() const { return false; }
+        virtual bool isForOfNode() const { return false; }
 
     protected:
         StatementNode* m_next;
@@ -1460,7 +1462,9 @@ namespace JSC {
         using ParserArenaDeletable::operator new;
 
         EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
-        
+
+        ExpressionNode* expr() const { return m_expr; }
+
     protected:
         ExpressionNode* m_lexpr;
         ExpressionNode* m_expr;
@@ -1481,7 +1485,8 @@ namespace JSC {
     class ForOfNode : public EnumerationNode {
     public:
         ForOfNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
-        
+        bool isForOfNode() const override { return true; }
+
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
@@ -1932,6 +1937,8 @@ namespace JSC {
         FunctionParameters* parameters() const { return m_parameters; }
 
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool isFunctionNode() const override { return true; }
 
         void finishParsing(const Identifier&, FunctionMode);
         

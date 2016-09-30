@@ -1,0 +1,232 @@
+Checking pause locations when stepping in, out, and over template strings.
+
+
+== Running test suite: Debugger.stepping.template-string
+-- Running test case: Debugger.stepping.TemplateStringStepOver
+EXPRESSION: setTimeout(entryTemplateString)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTemplateString:17:5
+     13    
+     14    function entryTemplateString() {
+     15        let x;
+ ->  16        |debugger;
+     17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     18    }
+     19    
+
+ACTION: step-over
+PAUSE AT entryTemplateString:18:5
+     14    function entryTemplateString() {
+     15        let x;
+     16        debugger;
+ ->  17        |let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     18    }
+     19    
+     20    function entryTaggedTemplateString() {
+
+ACTION: step-over
+PAUSE AT entryTemplateString:19:2
+     15        let x;
+     16        debugger;
+     17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+ ->  18    }|
+     19    
+     20    function entryTaggedTemplateString() {
+     21        let x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TemplateStringStepIn
+EXPRESSION: setTimeout(entryTemplateString)
+STEPS: over, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTemplateString:17:5
+     13    
+     14    function entryTemplateString() {
+     15        let x;
+ ->  16        |debugger;
+     17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     18    }
+     19    
+
+ACTION: step-over
+PAUSE AT entryTemplateString:18:5
+     14    function entryTemplateString() {
+     15        let x;
+     16        debugger;
+ ->  17        |let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     18    }
+     19    
+     20    function entryTaggedTemplateString() {
+
+ACTION: step-in
+PAUSE AT a:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() {
+ ->   7        |return 1;
+      8    }
+      9    
+     10    function tag(strings, ...values) {
+
+ACTION: step-out
+PAUSE AT entryTemplateString:18:67
+     14    function entryTemplateString() {
+     15        let x;
+     16        debugger;
+ ->  17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${|a()}`;
+     18    }
+     19    
+     20    function entryTaggedTemplateString() {
+
+ACTION: step-in
+PAUSE AT a:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() {
+ ->   7        |return 1;
+      8    }
+      9    
+     10    function tag(strings, ...values) {
+
+ACTION: step-out
+PAUSE AT entryTemplateString:19:2
+     15        let x;
+     16        debugger;
+     17        let str = `literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+ ->  18    }|
+     19    
+     20    function entryTaggedTemplateString() {
+     21        let x;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TaggedTemplateStringStepOver
+EXPRESSION: setTimeout(entryTaggedTemplateString)
+STEPS: over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTaggedTemplateString:23:5
+     19    
+     20    function entryTaggedTemplateString() {
+     21        let x;
+ ->  22        |debugger;
+     23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     24    }
+     25    
+
+ACTION: step-over
+PAUSE AT entryTaggedTemplateString:24:5
+     20    function entryTaggedTemplateString() {
+     21        let x;
+     22        debugger;
+ ->  23        |let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     24    }
+     25    
+     26    // ---------
+
+ACTION: step-over
+PAUSE AT entryTaggedTemplateString:25:2
+     21        let x;
+     22        debugger;
+     23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+ ->  24    }|
+     25    
+     26    // ---------
+     27    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.TaggedTemplateStringStepIn
+EXPRESSION: setTimeout(entryTaggedTemplateString)
+STEPS: over, in, out, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryTaggedTemplateString:23:5
+     19    
+     20    function entryTaggedTemplateString() {
+     21        let x;
+ ->  22        |debugger;
+     23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     24    }
+     25    
+
+ACTION: step-over
+PAUSE AT entryTaggedTemplateString:24:5
+     20    function entryTaggedTemplateString() {
+     21        let x;
+     22        debugger;
+ ->  23        |let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     24    }
+     25    
+     26    // ---------
+
+ACTION: step-in
+PAUSE AT a:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() {
+ ->   7        |return 1;
+      8    }
+      9    
+     10    function tag(strings, ...values) {
+
+ACTION: step-out
+PAUSE AT entryTaggedTemplateString:24:70
+     20    function entryTaggedTemplateString() {
+     21        let x;
+     22        debugger;
+ ->  23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${|a()}`;
+     24    }
+     25    
+     26    // ---------
+
+ACTION: step-in
+PAUSE AT a:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function a() {
+ ->   7        |return 1;
+      8    }
+      9    
+     10    function tag(strings, ...values) {
+
+ACTION: step-out
+PAUSE AT entryTaggedTemplateString:24:15
+     20    function entryTaggedTemplateString() {
+     21        let x;
+     22        debugger;
+ ->  23        let str = |tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+     24    }
+     25    
+     26    // ---------
+
+ACTION: step-in
+PAUSE AT tag:12:5
+      8    }
+      9    
+     10    function tag(strings, ...values) {
+ ->  11        |return "ignored";
+     12    }
+     13    
+     14    function entryTemplateString() {
+
+ACTION: step-out
+PAUSE AT entryTaggedTemplateString:25:2
+     21        let x;
+     22        debugger;
+     23        let str = tag`literal ${1} assignment ${x=1} call ${a()} call2 ${a()}`;
+ ->  24    }|
+     25    
+     26    // ---------
+     27    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

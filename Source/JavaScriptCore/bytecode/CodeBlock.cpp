@@ -308,6 +308,8 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
             return "willLeaveCallFrame";
         case WillExecuteStatement:
             return "willExecuteStatement";
+        case WillExecuteExpression:
+            return "willExecuteExpression";
         case WillExecuteProgram:
             return "willExecuteProgram";
         case DidExecuteProgram:

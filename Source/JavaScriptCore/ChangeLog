@@ -1,3 +1,210 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping out of a function finishes the line that called it.
+        https://bugs.webkit.org/show_bug.cgi?id=155325
+        <rdar://problem/25094578>
+
+        Reviewed by Mark Lam.
+
+        Also addresses:
+        <https://webkit.org/b/161721> Web Inspector: Stepping all the way through program should not cause a pause on the next program that executes
+        <https://webkit.org/b/161716> Web Inspector: Stepping into a function / program should not require stepping to the first statement
+
+        This change introduces a new op_debug hook: WillExecuteExpression.
+        Currently this new hook is only used for pausing at function calls.
+        We may decide to add it to other places later where pausing with
+        finer granularity then statements (or lines) if useful.
+
+        This updates the location and behavior of some of the existing debug
+        hooks, to be more consistent and useful if the exact location of the
+        pause is displayed. For example, in control flow statements like
+        `if` and `while`, the pause location is the expression itself that
+        will be evaluated, not the location of the `if` or `while` keyword.
+        For example:
+
+            if (|condition)
+            while (|condition)
+
+        Finally, this change gets rid of some unnecessary / useless pause
+        locations such as on entering a function and on entering a program.
+        These pauses are not needed because if there is a statement, we
+        would pause before the statement and it is equivalent. We continue
+        to pause when leaving a function via stepping by uniformly jumping
+        to the closing brace of the function. This gives users a chance
+        to observe state before leaving the function.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::debugHookName):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::dumpLineColumnEntry):
+        Logging strings for the new debug hook.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCallInTailPosition):
+        (JSC::BytecodeGenerator::emitCallEval):
+        (JSC::BytecodeGenerator::emitCallVarargsInTailPosition):
+        (JSC::BytecodeGenerator::emitConstructVarargs):
+        (JSC::BytecodeGenerator::emitCallForwardArgumentsInTailPosition):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::emitGetTemplateObject):
+        (JSC::BytecodeGenerator::emitIteratorNext):
+        (JSC::BytecodeGenerator::emitIteratorNextWithValue):
+        (JSC::BytecodeGenerator::emitIteratorClose):
+        (JSC::BytecodeGenerator::emitDelegateYield):
+        All emitCall variants now take an enum to decide whether or not to
+        emit the WillExecuteExpression debug hook.
+
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        In the two real implementations, actually decide to emit the debug
+        hook or not based on the parameter.
+
+        (JSC::BytecodeGenerator::emitEnumeration):
+        This is shared looping code used by for..of iteration of iterables.
+        When used by ForOfNode, we want to emit a pause location during
+        iteration.
+
+        (JSC::BytecodeGenerator::emitWillLeaveCallFrameDebugHook):
+        This is shared call frame leave code to emit a consistent pause
+        location when leaving a function.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EvalFunctionCallNode::emitBytecode):
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments):
+        (JSC::FunctionCallBracketNode::emitBytecode):
+        (JSC::FunctionCallDotNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        (JSC::TaggedTemplateNode::emitBytecode):
+        (JSC::ArrayPatternNode::bindValue):
+        All tail position calls are the function calls that we want to emit
+        debug hooks for. All non-tail call calls appear to be internal
+        implementation details, and these should not have the debug hook.
+
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        Make the pause location consistent at the expression.
+
+        (JSC::DoWhileNode::emitBytecode):
+        Make the pause location consistent at the expression.
+        Remove the errant pause at the do's '}' when entering the do block.
+
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        Make the pause location consistent at expressions.
+        Also allow stepping to the traditional for loop's
+        update expression, which was previously not possible.
+
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::FunctionNode::emitBytecode):
+        Make the pause location when leaving a function consistently be the
+        function's closing brace. The two cases are stepping through a return
+        statement, or the implicit return undefined at the end of a function.
+
+        (JSC::LabelNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        Remove unnecessary pauses that add no value, as they contain a
+        statement and we will then pause at that statement.
+
+        * parser/Nodes.h:
+        (JSC::StatementNode::isFunctionNode):
+        (JSC::StatementNode::isForOfNode):
+        (JSC::EnumerationNode::lexpr):
+        (JSC::ForOfNode::isForOfNode):
+        New virtual methods to distinguish different nodes.
+
+        * debugger/Debugger.h:
+        Rename m_pauseAtNextStatement to m_pauseAtNextOpportunity.
+        This is the finest granularity of stepping, and it can be
+        pausing at a location that is not a statement.
+        Introduce state to properly handle step out and stepping
+        when there are multiple expressions in a statement.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::setPauseOnNextStatement):
+        (JSC::Debugger::breakProgram):
+        (JSC::Debugger::continueProgram):
+        (JSC::Debugger::stepIntoStatement):
+        (JSC::Debugger::exception):
+        (JSC::Debugger::didReachBreakpoint):
+        
+        Use new variable names, and clarify if we should attempt
+        to pause or not.
+
+        (JSC::Debugger::stepOutOfFunction):
+        Set a new state to indicate a step out action.
+
+        (JSC::Debugger::updateCallFrame):
+        (JSC::Debugger::updateCallFrameAndPauseIfNeeded): Deleted.
+        (JSC::Debugger::updateCallFrameInternal):
+        (JSC::Debugger::pauseIfNeeded):
+        Allow updateCallFrame to either attempt a pause or not.
+        
+        (JSC::Debugger::atStatement):
+        Attempt pause and reset the at first expression flag.
+
+        (JSC::Debugger::atExpression):
+        Attempt a pause when not stepping over. Also skip
+        the first expression pause, since that would be
+        equivalent to when we paused for the expression.
+
+        (JSC::Debugger::callEvent):
+        Do not pause when entering a function.
+
+        (JSC::Debugger::returnEvent):
+        Attempt pause when leaving a function.
+        If the user did a step-over and is leaving the
+        function, then behave like step-out.
+        
+        (JSC::Debugger::unwindEvent):
+        Behave like return except don't change any
+        pausing states. If we needed to pause the
+        Debugger::exception will have handled it.
+
+        (JSC::Debugger::willExecuteProgram):
+        Do not pause when entering a program.
+
+        (JSC::Debugger::didExecuteProgram):
+        Attempt pause when leaving a program that has a caller.
+        This can be useful for exiting an eval(...) program.
+        Otherwise treat this like return, and step-over out
+        of the program should behave like step-out. We use
+        pause at next opportunity because there may be extra
+        callframes we do not know about.
+        When the program doesn't have a parent, clear all
+        our state so we don't errantly pause on the next
+        JavaScript microtask that gets executed.
+        
+        (JSC::Debugger::clearNextPauseState):
+        Helper to clear all of the pause states now that
+        it happens in a couple places.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        Treat unwinding slightly differently from returning.
+        We will not want to pause when unwinding callframes.
+
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        New debug hook.
+
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::stepInto):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        Remove unnecessary stepInto code notification for listeners.
+        The listeners are never notified if the debugger resumes,
+        so whatever state they were setting by this is going to
+        get out of date.
+
 2016-09-30  Saam Barati  <sbarati@apple.com>
 
         Arrow functions should not allow duplicate parameter names

@@ -161,6 +161,7 @@ static void dumpLineColumnEntry(size_t index, const UnlinkedInstructionStream& i
         case DidReachBreakpoint: event = " DidReachBreakpoint"; break;
         case WillLeaveCallFrame: event = " WillLeaveCallFrame"; break;
         case WillExecuteStatement: event = " WillExecuteStatement"; break;
+        case WillExecuteExpression: event = " WillExecuteExpression"; break;
         }
     }
     dataLogF("  [%zu] pc %u @ line %u col %u : %s%s\n", index, instructionOffset, line, column, opcodeNames[opcode], event);

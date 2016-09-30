@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function a() {
+    return 1;
+}
+
+function b() {
+    return 2;
+}
+
+function entryIfSingleStatement() {
+    debugger;
+    if (true)
+        a();
+    if (false)
+        a();
+}
+
+function entryIfMultiStatement() {
+    debugger;
+    if (true) {
+        a();
+        a();
+    }
+    if (false) {
+        a();
+        a();
+    }
+}
+
+function entryIfElse() {
+    debugger;
+    if (true)
+        a();
+    else
+        a();
+    if (false)
+        a();
+    else
+        a();
+}
+
+function entryIfElseChain() {
+    debugger;
+    if (false)
+        a();
+    else if (true)
+        a();
+    else
+        a();
+
+    if (false)
+        a();
+    else if (false)
+        a();
+    else
+        a();
+}
+
+function entryIfWithCall() {
+    debugger;
+    if (a() && a())
+        a();
+}
+
+function entryTernary() {
+    let t = () => true;
+    let f = () => false;
+    debugger;
+    let x = t() ? a() : b();
+    let y = f() ? a() : b();
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.control-flow");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfSingleStatement",
+        description: "Should be able to step through single statement body if statements.",
+        expression: "setTimeout(entryIfSingleStatement)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: a() inside if (true)
+                "over", // complete: if (false) - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfMultiStatement",
+        description: "Should be able to step through multiple statement body if statements.",
+        expression: "setTimeout(entryIfMultiStatement)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: 1st a()
+                "over", // complete: 2nd a()
+                "over", // complete: if (false) - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfElse1",
+        description: "Should be able to step through if/else.",
+        expression: "setTimeout(entryIfElse)",
+        steps: [
+            "over",
+                "over", // complete: if (true)
+                "over", // complete: a() inside if
+                "over", // complete: if (false)
+                "over", // complete: a() inside else - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfElse2",
+        description: "Should be able to step through if/else if/else chains.",
+        expression: "setTimeout(entryIfElseChain)",
+        steps: [
+            "over",
+                "over", // complete: if (false)
+                "over", // complete: else if (true)
+                "over", // complete: a() inside block
+                "over", // complete: if (false)
+                "over", // complete: else if (false)
+                "over", // complete: a() inside else - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithCall1",
+        description: "Should be able to step over if conditions with function calls.",
+        expression: "setTimeout(entryIfWithCall)",
+        steps: [
+            "over",
+                "over", // complete: if (a() && a())
+                "over", // complete: a() inside block - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithCall2",
+        description: "Should be able to step into calls in if conditions with function calls.",
+        expression: "setTimeout(entryIfWithCall)",
+        steps: [
+            "over",
+                "in",   // into 1st a
+                "out",  // out of a
+                "in",   // into 2nd a
+                "out",  // out of a
+                "over", // complete: a() inside block - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TernaryStepOver",
+        description: "Should be able to step over ternary expressions.",
+        expression: "setTimeout(entryTernary)",
+        steps: [
+            "over",
+                "over", // complete: t() ? ...
+                "over", // complete: f() ? ...
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.TernaryStepIn",
+        description: "Should be able to step into ternary expressions.",
+        expression: "setTimeout(entryTernary)",
+        steps: [
+            "over",
+                "in",  // into t
+                "out", // out of t - before a()
+                "in",  // into a
+                "out", // out of a - before next ternary
+                "in",  // into f
+                "out", // out of f - before b()
+                "in",  // into b
+                "out", // out of b - leaving entry
+            "resume",
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over if/else control flow.</p>
+</body>
+</html>

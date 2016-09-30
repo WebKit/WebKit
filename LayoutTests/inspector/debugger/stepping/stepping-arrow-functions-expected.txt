@@ -1,0 +1,208 @@
+Checking pause locations when stepping in, out, and over arrow functions.
+
+
+== Running test suite: Debugger.stepping.arrow-functions
+-- Running test case: Debugger.stepping.ArrowFunctionNoParenthesis
+EXPRESSION: setTimeout(entryArrowFunctionNoParenthesis)
+STEPS: over, in, out, in, out, in, in, in, resume
+PAUSED (debugger-statement)
+PAUSE AT entryArrowFunctionNoParenthesis:13:5
+      9        let square = x => {
+     10            return x * x;
+     11        };
+ ->  12        |debugger;
+     13        identity(2);
+     14        addOne(1);
+     15        square(2);
+
+ACTION: step-over
+PAUSE AT entryArrowFunctionNoParenthesis:14:5
+     10            return x * x;
+     11        };
+     12        debugger;
+ ->  13        |identity(2);
+     14        addOne(1);
+     15        square(2);
+     16    }
+
+ACTION: step-in
+PAUSE AT identity:8:25
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function entryArrowFunctionNoParenthesis() {
+ ->   7        let identity = x => |x;
+      8        let addOne = x => x + 1;
+      9        let square = x => {
+     10            return x * x;
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionNoParenthesis:15:5
+     11        };
+     12        debugger;
+     13        identity(2);
+ ->  14        |addOne(1);
+     15        square(2);
+     16    }
+     17    
+
+ACTION: step-in
+PAUSE AT addOne:9:23
+      5    <script>
+      6    function entryArrowFunctionNoParenthesis() {
+      7        let identity = x => x;
+ ->   8        let addOne = x => |x + 1;
+      9        let square = x => {
+     10            return x * x;
+     11        };
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionNoParenthesis:16:5
+     12        debugger;
+     13        identity(2);
+     14        addOne(1);
+ ->  15        |square(2);
+     16    }
+     17    
+     18    function entryArrowFunctionParenthesis() {
+
+ACTION: step-in
+PAUSE AT square:11:9
+      7        let identity = x => x;
+      8        let addOne = x => x + 1;
+      9        let square = x => {
+ ->  10            |return x * x;
+     11        };
+     12        debugger;
+     13        identity(2);
+
+ACTION: step-in
+PAUSE AT square:12:6
+      8        let addOne = x => x + 1;
+      9        let square = x => {
+     10            return x * x;
+ ->  11        }|;
+     12        debugger;
+     13        identity(2);
+     14        addOne(1);
+
+ACTION: step-in
+PAUSE AT entryArrowFunctionNoParenthesis:17:2
+     13        identity(2);
+     14        addOne(1);
+     15        square(2);
+ ->  16    }|
+     17    
+     18    function entryArrowFunctionParenthesis() {
+     19        let nothing = () => {};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ArrowFunctionParenthesis
+EXPRESSION: setTimeout(entryArrowFunctionParenthesis)
+STEPS: over, in, out, in, out, in, out, in, out, resume
+PAUSED (debugger-statement)
+PAUSE AT entryArrowFunctionParenthesis:26:5
+     22        let square = x => {
+     23            return x * x;
+     24        };
+ ->  25        |debugger;
+     26        nothing();
+     27        identity(2);
+     28        add(1);
+
+ACTION: step-over
+PAUSE AT entryArrowFunctionParenthesis:27:5
+     23            return x * x;
+     24        };
+     25        debugger;
+ ->  26        |nothing();
+     27        identity(2);
+     28        add(1);
+     29        square(2);
+
+ACTION: step-in
+PAUSE AT nothing:20:27
+     16    }
+     17    
+     18    function entryArrowFunctionParenthesis() {
+ ->  19        let nothing = () => {}|;
+     20        let identity = (x) => x;
+     21        let add = (a, b) => a + b;
+     22        let square = x => {
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionParenthesis:28:5
+     24        };
+     25        debugger;
+     26        nothing();
+ ->  27        |identity(2);
+     28        add(1);
+     29        square(2);
+     30    }
+
+ACTION: step-in
+PAUSE AT identity:21:27
+     17    
+     18    function entryArrowFunctionParenthesis() {
+     19        let nothing = () => {};
+ ->  20        let identity = (x) => |x;
+     21        let add = (a, b) => a + b;
+     22        let square = x => {
+     23            return x * x;
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionParenthesis:29:5
+     25        debugger;
+     26        nothing();
+     27        identity(2);
+ ->  28        |add(1);
+     29        square(2);
+     30    }
+     31    
+
+ACTION: step-in
+PAUSE AT add:22:25
+     18    function entryArrowFunctionParenthesis() {
+     19        let nothing = () => {};
+     20        let identity = (x) => x;
+ ->  21        let add = (a, b) => |a + b;
+     22        let square = x => {
+     23            return x * x;
+     24        };
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionParenthesis:30:5
+     26        nothing();
+     27        identity(2);
+     28        add(1);
+ ->  29        |square(2);
+     30    }
+     31    
+     32    // ---------
+
+ACTION: step-in
+PAUSE AT square:24:9
+     20        let identity = (x) => x;
+     21        let add = (a, b) => a + b;
+     22        let square = x => {
+ ->  23            |return x * x;
+     24        };
+     25        debugger;
+     26        nothing();
+
+ACTION: step-out
+PAUSE AT entryArrowFunctionParenthesis:31:2
+     27        identity(2);
+     28        add(1);
+     29        square(2);
+ ->  30    }|
+     31    
+     32    // ---------
+     33    
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+

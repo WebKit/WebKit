@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
@@ -5,11 +6,9 @@
 <script>
 function test()
 {
-    var expectPause = false;
-    var isStepping = false;
-
-    var testIndex = 0;
-    var statementsWithUncaughtExceptions = [
+    let expectPause = false;
+    let testIndex = 0;
+    let statementsWithUncaughtExceptions = [
         "({}).a.b.c.d;",
         "exceptionBasic();",
         "exceptionDOM();",
@@ -49,29 +48,21 @@ function test()
             return;
         }
 
-        if (!isStepping) {
-            console.log("[" + testIndex + "] Testing statement '" + statementsWithUncaughtExceptions[testIndex - 1] + "'");
-            console.log("[" + testIndex + "] Paused and about to step");
-            isStepping = true;
-            InspectorProtocol.sendCommand("Debugger.stepOver", {});
-        } else {
-            console.log("[" + testIndex + "] Paused after stepping");
-            isStepping = false;
-            InspectorProtocol.sendCommand("Debugger.resume", {});
-        }
+        ProtocolTest.log("[" + testIndex + "] Testing statement '" + statementsWithUncaughtExceptions[testIndex - 1] + "'");
+        ProtocolTest.log("[" + testIndex + "] Paused and about to step");
+        InspectorProtocol.sendCommand("Debugger.stepOver", {});
     }
 
     InspectorProtocol.eventHandler["Debugger.resumed"] = function(messageObject)
     {
-        console.log("[" + testIndex + "] Resumed");
-        if (!isStepping)
-            triggerNextUncaughtException();
+        ProtocolTest.log("[" + testIndex + "] Resumed");
+        triggerNextUncaughtException();
     }
 }
 </script>
 </head>
 <body onload="runTest()">
 <p>Regression test for https://bugs.webkit.org/show_bug.cgi?id=133182</p>
-<p>Stepping after breaking on uncaught exceptions should not crash</p>
+<p>Stepping after breaking on uncaught exceptions should not crash.</p>
 </body>
 </html>

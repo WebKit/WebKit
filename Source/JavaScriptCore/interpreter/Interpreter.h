@@ -73,7 +73,8 @@ namespace JSC {
         DidEnterCallFrame,
         DidReachBreakpoint,
         WillLeaveCallFrame,
-        WillExecuteStatement
+        WillExecuteStatement,
+        WillExecuteExpression,
     };
 
     enum StackFrameCodeType {

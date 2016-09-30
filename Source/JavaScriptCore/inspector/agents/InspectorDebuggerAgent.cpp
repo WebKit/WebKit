@@ -537,9 +537,6 @@ void InspectorDebuggerAgent::stepInto(ErrorString& errorString)
         return;
 
     m_scriptDebugServer.stepIntoStatement();
-
-    if (m_listener)
-        m_listener->stepInto();
 }
 
 void InspectorDebuggerAgent::stepOut(ErrorString& errorString)
@@ -706,9 +703,8 @@ void InspectorDebuggerAgent::didPause(JSC::ExecState& scriptState, JSC::JSValue 
             m_breakAuxData = buildExceptionPauseReason(exceptionOrCaughtValue, injectedScript);
             break;
         case JSC::Debugger::PausedAtStatement:
-        case JSC::Debugger::PausedAfterCall:
+        case JSC::Debugger::PausedAtExpression:
         case JSC::Debugger::PausedBeforeReturn:
-        case JSC::Debugger::PausedAtStartOfProgram:
         case JSC::Debugger::PausedAtEndOfProgram:
             // Pause was just stepping. Nothing to report.
             break;

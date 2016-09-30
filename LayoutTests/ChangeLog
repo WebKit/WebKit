@@ -1,3 +1,68 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping out of a function finishes the line that called it.
+        https://bugs.webkit.org/show_bug.cgi?id=155325
+        <rdar://problem/25094578>
+
+        Reviewed by Mark Lam.
+
+        * inspector/debugger/break-on-exception-throw-in-promise.html:
+        Drive-by remove debug only code that shouldn't have been checked in.
+
+        * inspector/debugger/resources/log-pause-location.js: Added.
+        (TestPage.registerInitializer.String.prototype.myPadStart):
+        (TestPage.registerInitializer.insertCaretIntoStringAtIndex):
+        (TestPage.registerInitializer.logLinesWithContext):
+        (TestPage.registerInitializer.window.logPauseLocation):
+        (TestPage.registerInitializer.window.step):
+        (TestPage.registerInitializer.window.initializeSteppingTestSuite):
+        (TestPage.registerInitializer.window.addSteppingTestCase):
+        (TestPage.registerInitializer.window.loadMainPageContent):
+        Shared code for stepping tests that runs in the inspected page.
+
+        (global):
+        When the test page is loaded outside of the test runner,
+        create buttons for each of the different entry test functions.
+        This makes it very easy to inspect the test page and run
+        through an individual test.
+
+        * inspector/debugger/stepping/stepInto-expected.txt: Added.
+        * inspector/debugger/stepping/stepInto.html: Added.
+        * inspector/debugger/stepping/stepOut-expected.txt: Added.
+        * inspector/debugger/stepping/stepOut.html: Added.
+        * inspector/debugger/stepping/stepOver-expected.txt: Added.
+        * inspector/debugger/stepping/stepOver.html: Added.
+        * inspector/debugger/stepping/stepping-arrow-functions-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-arrow-functions.html: Added.
+        * inspector/debugger/stepping/stepping-classes-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-classes.html: Added.
+        * inspector/debugger/stepping/stepping-control-flow-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-control-flow.html: Added.
+        * inspector/debugger/stepping/stepping-function-calls-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-function-calls.html: Added.
+        * inspector/debugger/stepping/stepping-function-default-parameters-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-function-default-parameters.html: Added.
+        * inspector/debugger/stepping/stepping-literal-construction-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-literal-construction.html: Added.
+        * inspector/debugger/stepping/stepping-loops-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-loops.html: Added.
+        * inspector/debugger/stepping/stepping-misc-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-misc.html: Added.
+        * inspector/debugger/stepping/stepping-switch-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-switch.html: Added.
+        * inspector/debugger/stepping/stepping-template-string-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-template-string.html: Added.
+        * inspector/debugger/stepping/stepping-try-catch-finally-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-try-catch-finally.html: Added.
+        Test stepping in different common scenarios.
+
+        * inspector/debugger/regress-133182.html:
+        * inspector/debugger/regress-133182-expected.txt:
+        * inspector/debugger/tail-deleted-frames-from-vm-entry-expected.txt:
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html:
+        Rebaseline. No need for a double step. And the second pause doesn't make any sense
+        in the tail deleted frames test.
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         [WK2][iOS] Add radiusX / radiusY / rotationAngle to WebPlatformTouchPoint

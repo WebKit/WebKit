@@ -75,8 +75,7 @@ function test()
     });
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
-        eventScriptObject = event.data.script;
-        
+        let eventScriptObject = event.data.script;
         if (/tail-deleted-frames-from-vm-entry\.js$/.test(eventScriptObject.url)) {
             scriptObject = eventScriptObject;
             startTest();

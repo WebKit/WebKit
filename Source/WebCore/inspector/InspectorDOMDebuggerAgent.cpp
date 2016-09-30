@@ -85,11 +85,6 @@ void InspectorDOMDebuggerAgent::debuggerWasDisabled()
     disable();
 }
 
-void InspectorDOMDebuggerAgent::stepInto()
-{
-    m_pauseInNextEventListener = true;
-}
-
 void InspectorDOMDebuggerAgent::didPause()
 {
     m_pauseInNextEventListener = false;

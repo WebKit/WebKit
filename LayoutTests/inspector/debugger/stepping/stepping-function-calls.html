@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../resources/log-pause-location.js"></script>
+<script>
+function add(a, b) {
+    return a + b;
+}
+
+function a() {
+    return 1;
+}
+
+function b() {
+    return 2;
+}
+
+function entryMultipleStatementsOnOneLine() {
+    debugger;
+    a(); b();
+}
+
+function entryMultipleCallsInOneStatement() {
+    debugger;
+    add(a(), b());
+}
+
+function entryMultilineStatement() {
+    debugger;
+    add(
+        a()
+        ,
+        b()
+    );
+}
+
+function entryComplexLine() {
+    var x;
+    debugger;
+    a(); x = 1; b();
+}
+
+function entryComplexStatement() {
+    var x;
+    debugger;
+    add(a(), x = 1, b());
+}
+
+function entryCommaExpression() {
+    debugger;
+    a(), b(), a();
+}
+
+function entryDotPropertyAccessCall() {
+    var o = {x:{x:{a}}};
+    debugger;
+    o.x.x.a();
+}
+
+function entryBracketPropertyAccessCall() {
+    var o = {x:{x:{a}}};
+    debugger;
+    o['x']['x']['a']();
+}
+
+function entryUseCall() {
+    debugger;
+    add.call(null, 1, 2);
+}
+
+function entryUseApply() {
+    debugger;
+    a.apply(null, [1, 2]);
+}
+
+function entryAnonymousFunctionInvocation() {
+    debugger;
+    (function() {
+        a();
+    })();
+}
+
+function entryFunctionWithConditionalReturn() {
+    function testCondition(condition) {
+        if (condition)
+            return true;
+        return false;
+    }
+    debugger;
+    testCondition(true);
+    testCondition(false);
+}
+
+function entryEmptyFunction() {
+    function emptyFunction() { }
+    debugger;
+    emptyFunction();
+}
+
+// ---------
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Debugger.stepping.functionCalls");
+
+    window.initializeSteppingTestSuite(suite);
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleStatementsOnOneLine1",
+        description: "Should be able to step in and out through each statement.",
+        expression: "setTimeout(entryMultipleStatementsOnOneLine)",
+        // a(); b();
+        steps: [
+            "over",
+                "in",  // into a
+                "out", // out of a
+                "in",  // into b
+                "out", // out of b
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleStatementsOnOneLine2",
+        description: "Should be able to step over through each statement.",
+        expression: "setTimeout(entryMultipleStatementsOnOneLine)",
+        // a(); b();
+        steps: [
+            "over",
+                "over", // a();
+                "over", // b();
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement1",
+        description: "Should be able to step in and out of each function call in the single statement.",
+        expression: "setTimeout(entryMultipleCallsInOneStatement)",
+        // add(a(), b())
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+                "in",   // into b
+                "out",  // out of b
+                "in",   // into add
+                "out",  // out of add
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement2",
+        description: "When stepping over in the middle of a statement complete the statement.",
+        expression: "setTimeout(entryMultipleCallsInOneStatement)",
+        // add(a(), b())
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+                "over", // complete: add(a(), b())
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement3",
+        description: "Should be able to step through each function call in a single statement with stepInto.",
+        expression: "setTimeout(entryMultipleCallsInOneStatement)",
+        // add(a(), b())
+        steps: [
+            "over",
+                "in", // into a - before return statement
+                "in", // leaving a
+                "in", // before b()
+                "in", // into b - before return statement
+                "in", // leaving b
+                "in", // before add()
+                "in", // into add - before return statement
+                "in", // leaving add
+                "in", // back at entryMultipleCallsInOneStatement
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement4",
+        description: "Step out of .",
+        expression: "setTimeout(entryMultipleCallsInOneStatement)",
+        // add(a(), b())
+        steps: [
+            "over",
+                "in",   // into a - before return statement
+                "over", // leaving a
+                "over", // before b()
+                "in",   // into b - before return statement
+                "over", // leaving b
+                "over", // before add()
+                "in",   // into add - before return statement
+                "over", // leaving add
+                "over", // back at entryMultipleCallsInOneStatement
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement5",
+        description: "Should be able to step over a multi-line statement.",
+        expression: "setTimeout(entryMultilineStatement)",
+        // add(
+        //     a()
+        //     ,
+        //     b()
+        // );
+        steps: [
+            "over",
+                "over", // complete: add(a(), b())
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.MultipleCallsInOneStatement6",
+        description: "When stepping over in the middle of a statement complete the statement even if multi-line.",
+        expression: "setTimeout(entryMultilineStatement)",
+        // add(
+        //     a()
+        //     ,
+        //     b()
+        // );
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+                "over", // complete: add(a(), b())
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexLine1",
+        description: "Should be able to step in and out through each statement.",
+        expression: "setTimeout(entryComplexLine)",
+        // a(); x = 1; b();
+        steps: [
+            "over",
+                "in",  // into a
+                "out", // out of a - before x = 1
+                "in",  // x = 1 - before b()
+                "in",  // into b
+                "out", // out of b
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexLine2",
+        description: "Should be able to step over through each statement.",
+        expression: "setTimeout(entryComplexLine)",
+        // a(); x = 1; b();
+        steps: [
+            "over",
+                "over", // a();
+                "over", // x = 1
+                "over", // b();
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexStatement1",
+        description: "Should be able to step in and out through each statement.",
+        expression: "setTimeout(entryComplexStatement)",
+        // add(a(), x = 1, b());
+        steps: [
+            "over",
+                "in",  // into a
+                "out", // out of a
+                       // FIXME: Opportunity to pause at assignment expressions.
+                "in",  // into b
+                "out", // out of b
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexStatement2",
+        description: "Should be able to step in and out through each statement.",
+        expression: "setTimeout(entryCommaExpression)",
+        // a(), b(), a();
+        steps: [
+            "over",
+                "in",  // into a
+                "out", // out of a
+                "in",  // into b
+                "out", // out of b
+                "in",  // into a
+                "out", // out of a
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexStatement3",
+        description: "Should be able to step in and out through each statement.",
+        expression: "setTimeout(entryCommaExpression)",
+        // a(), b(), a();
+        steps: [
+            "over",
+                "in",   // into a - before return
+                "in",   // leaving a
+                "in",   // before b()
+                "in",   // into b - before return
+                "over", // leaving b
+                "over", // before a()
+                "over", // complete: a()
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ComplexStatement4",
+        description: "Should be able to step over the statement.",
+        expression: "setTimeout(entryCommaExpression)",
+        // a(), b(), a();
+        steps: [
+            "over",
+                "over", // complete: a(), b(), a()
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.DotPropertyAccessCallStepIn",
+        description: "Should be able to step into the call.",
+        expression: "setTimeout(entryDotPropertyAccessCall)",
+        // o.x.x.a();
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.DotPropertyAccessCallStepOver",
+        description: "Should be able to step over the call.",
+        expression: "setTimeout(entryDotPropertyAccessCall)",
+        // o.x.x.a();
+        steps: [
+            "over",
+                "over", // complete: o.x.x.a()
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.BracketPropertyAccessCallStepIn",
+        description: "Should be able to step into the call.",
+        expression: "setTimeout(entryBracketPropertyAccessCall)",
+        // o['x']['x']['a']();
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.FunctionPrototypeCallStepIn",
+        description: "Should be able to step into a call using Function.prototype.call.",
+        expression: "setTimeout(entryUseCall)",
+        // add.call(null, 1, 2)
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.FunctionPrototypeApplyStepIn",
+        description: "Should be able to step into a call using Function.prototype.apply.",
+        expression: "setTimeout(entryUseApply)",
+        // add.apply(null, [1, 2])
+        steps: [
+            "over",
+                "in",   // into a
+                "out",  // out of a
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.AnonymousFunctionInvocationStepOver",
+        description: "Should be able to step into a anonymous function invocation.",
+        expression: "setTimeout(entryAnonymousFunctionInvocation)",
+        // (function() { a() })();
+        steps: [
+            "over",
+                "over", // complete: (function() { a() })(); - leaving entry
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.AnonymousFunctionInvocationStepOver",
+        description: "Should be able to step into a anonymous function invocation.",
+        expression: "setTimeout(entryAnonymousFunctionInvocation)",
+        // (function() { a() })();
+        steps: [
+            "over",
+                "in",   // into anonymous
+                "over", // complete: a() - leaving anonymous
+                "in",   // leaving entry
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.FunctionWithConditionalReturn",
+        description: "Step through function with return in the middle of the function.",
+        expression: "setTimeout(entryFunctionWithConditionalReturn)",
+        // testCondition(condition) { if (condition) return true; return false; }
+        steps: [
+            "over",
+                "in", // into testCondition(true)
+                "in", // if (condition) [true]
+                "in", // return true
+                "in", // leaving testCondition
+                "in", // into testCondition(false)
+                "in", // if (condition) [false]
+                "in", // return false
+                "in", // leaving testCondition
+            "resume"
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.EmptyFunction",
+        description: "Step through an empty function should pause at least once.",
+        expression: "setTimeout(entryEmptyFunction)",
+        // emptyFunction() { }
+        steps: [
+            "over",
+                "in", // into emptyFunction - before leaving emptyFunction
+                "in", // leaving emptyFunction
+            "resume"
+        ]
+    });
+
+    loadMainPageContent().then(() => {
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking pause locations when stepping in, out, and over statements with function calls.</p>
+</body>
+</html>
