@@ -708,6 +708,15 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         return offset;
     }
 
+    currentPositionToOriginalPosition(position)
+    {
+        if (!this._formatterSourceMap)
+            return position;
+
+        let location = this._formatterSourceMap.formattedToOriginal(position.line, position.ch);
+        return {line: location.lineNumber, ch: location.columnNumber};
+    }
+
     currentPositionToCurrentOffset(position)
     {
         return this._codeMirror.getDoc().indexFromPos(position);
@@ -1225,9 +1234,12 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         if (isNaN(this._executionLineNumber))
             return;
 
-        let offset = this.currentPositionToOriginalOffset({line: this._executionLineNumber, ch: this._executionColumnNumber});
+        let currentPosition = {line: this._executionLineNumber, ch: this._executionColumnNumber};
+        let originalOffset = this.currentPositionToOriginalOffset(currentPosition);
+        let originalCodeMirrorPosition = this.currentPositionToOriginalPosition(currentPosition);
+        let originalPosition = new WebInspector.SourceCodePosition(originalCodeMirrorPosition.line, originalCodeMirrorPosition.ch);
 
-        this._delegate.textEditorExecutionHighlightRange(offset, (range) => {
+        this._delegate.textEditorExecutionHighlightRange(originalOffset, originalPosition, (range) => {
             let start, end;
             if (!range) {
                 // Highlight the rest of the line.

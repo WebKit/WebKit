@@ -55,7 +55,6 @@ WebInspector.FormatterSourceMap = class FormatterSourceMap extends WebInspector.
         return this._positionToLocation(this._formattedLineEndings, formattedPosition);
     }
 
-
     formattedToOriginal(lineNumber, columnNumber)
     {
         var originalPosition = this.formattedToOriginalOffset(lineNumber, columnNumber);

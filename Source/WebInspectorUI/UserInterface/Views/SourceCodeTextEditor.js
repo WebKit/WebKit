@@ -1210,12 +1210,21 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._reinsertAllIssues();
     }
 
-    textEditorExecutionHighlightRange(offset, callback)
+    textEditorExecutionHighlightRange(offset, position, callback)
     {
-        let script = this._getAssociatedScript();
+        let script = this._getAssociatedScript(position);
         if (!script) {
             callback(null);
             return;
+        }
+
+        // If this is an inline script, then convert to offset within the inline script.
+        let adjustment = script.range.startOffset || 0;
+        offset = offset - adjustment;
+
+        // When returning offsets, convert to offsets within the SourceCode being viewed.
+        function convertRangeOffsetsToSourceCodeOffsets(range) {
+            return range.map((offset) => offset + adjustment);
         }
 
         script.requestScriptSyntaxTree((syntaxTree) => {
@@ -1229,7 +1238,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             for (let node of nodes) {
                 let startOffset = node.range[0];
                 if (startOffset === offset) {
-                    callback(node.range);
+                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
                     return;
                 }
                 if (startOffset > offset)
@@ -1245,7 +1254,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                 if (endOffset === offset) {
                     if (node.type === WebInspector.ScriptSyntaxTree.NodeType.BlockStatement) {
                         // Closing brace of a block, only highlight the closing brace character.
-                        callback([offset - 1, offset]);
+                        callback(convertRangeOffsetsToSourceCodeOffsets([offset - 1, offset]));
                         return;
                     }
                 }
@@ -1267,7 +1276,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                 // In a function call.
                 if (node.type === WebInspector.ScriptSyntaxTree.NodeType.CallExpression
                     || node.type === WebInspector.ScriptSyntaxTree.NodeType.NewExpression) {
-                    callback(node.range);
+                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
                     return;
                 }
 
@@ -1276,10 +1285,10 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                     || node.type === WebInspector.ScriptSyntaxTree.NodeType.IdentifierExpression) {
                     let nextNode = nodes[i + 1];
                     if (nextNode && nextNode.type === WebInspector.ScriptSyntaxTree.NodeType.MemberExpression) {
-                        callback(nextNode.range);
+                        callback(convertRangeOffsetsToSourceCodeOffsets(nextNode.range));
                         return;
                     }
-                    callback(node.range);
+                    callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
                     return;
                 }
             }
@@ -1852,14 +1861,27 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         WebInspector.enableControlFlowProfilerSetting.value = shouldActivate;
     }
 
-    _getAssociatedScript()
+    _getAssociatedScript(position)
     {
-        var script = null;
-        // FIXME: This needs to me modified to work with HTML files with inline script tags.
+        let script = null;
+
         if (this._sourceCode instanceof WebInspector.Script)
             script = this._sourceCode;
-        else if (this._sourceCode instanceof WebInspector.Resource && this._sourceCode.type === WebInspector.Resource.Type.Script && this._sourceCode.scripts.length)
-            script = this._sourceCode.scripts[0];
+        else if (this._sourceCode instanceof WebInspector.Resource && this._sourceCode.scripts.length) {
+            if (this._sourceCode.type === WebInspector.Resource.Type.Script)
+                script = this._sourceCode.scripts[0];
+            else if (this._sourceCode.type === WebInspector.Resource.Type.Document && position) {
+                for (let inlineScript of this._sourceCode.scripts) {
+                    if (inlineScript.range.contains(position.lineNumber, position.columnNumber)) {
+                        if (isNaN(inlineScript.range.startOffset))
+                            inlineScript.range.resolveOffsets(this._sourceCode.content);
+                        script = inlineScript;
+                        break;
+                    }
+                }
+            }
+        }
+
         return script;
     }
 

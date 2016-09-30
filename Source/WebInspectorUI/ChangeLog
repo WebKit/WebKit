@@ -1,5 +1,31 @@
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Make debugger stepping highlights work in inline <script>s
+        https://bugs.webkit.org/show_bug.cgi?id=162753
+        <rdar://problem/28551332>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/TextRange.js:
+        (WebInspector.TextRange.prototype.contains):
+        Check if a given line/column falls within this range.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype._getAssociatedScript):
+        If we are in a Document resource find the associated script at a given position.
+
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        When comparing offsets to SyntaxTree offsets, the SyntaxTree's offset of 0 is the
+        first character of the Script, which differs from the current SourceCode's offset.
+        Adjust the offset by the Script's startOffset.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.currentPositionToOriginalPosition):
+        (WebInspector.TextEditor.prototype._updateExecutionRangeHighlight):
+        Pass both the original offset and original position to the delegate.
+
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Stepping through `a(); b(); c();` it is unclear where we are and what is about to execute
         https://bugs.webkit.org/show_bug.cgi?id=161658
         <rdar://problem/28181254>

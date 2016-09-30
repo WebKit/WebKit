@@ -96,4 +96,18 @@ WebInspector.TextRange = class TextRange extends WebInspector.Object
 
         this._endOffset = lastNewLineOffset + this._endColumn;
     }
+
+    contains(line, column)
+    {
+        console.assert(!isNaN(this._startLine), "TextRange needs line/column data");
+
+        if (line < this._startLine || line > this._endLine)
+            return false;
+        if (line === this._startLine && column < this._startColumn)
+            return false;
+        if (line === this._endLine && column > this._endColumn)
+            return false;
+
+        return true;
+    }
 };
