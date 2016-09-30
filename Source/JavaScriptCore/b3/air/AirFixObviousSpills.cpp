@@ -121,7 +121,7 @@ private:
                 m_state.clobber(arg);
             });
 
-        switch (inst.opcode) {
+        switch (inst.kind.opcode) {
         case Move:
             if (inst.args[0].isSomeImm()) {
                 if (inst.args[1].isReg())

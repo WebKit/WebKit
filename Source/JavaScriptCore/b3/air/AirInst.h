@@ -28,7 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
-#include "AirOpcode.h"
+#include "AirKind.h"
 #include "CCallHelpers.h"
 
 namespace JSC {
@@ -50,39 +50,38 @@ public:
 
     Inst()
         : origin(nullptr)
-        , opcode(Nop)
     {
     }
     
-    Inst(Opcode opcode, Value* origin)
+    Inst(Kind kind, Value* origin)
         : origin(origin)
-        , opcode(opcode)
+        , kind(kind)
     {
     }
     
     template<typename... Arguments>
-    Inst(Opcode opcode, Value* origin, Arg arg, Arguments... arguments)
+    Inst(Kind kind, Value* origin, Arg arg, Arguments... arguments)
         : args{ arg, arguments... }
         , origin(origin)
-        , opcode(opcode)
+        , kind(kind)
     {
     }
 
-    Inst(Opcode opcode, Value* origin, const ArgList& arguments)
+    Inst(Kind kind, Value* origin, const ArgList& arguments)
         : args(arguments)
         , origin(origin)
-        , opcode(opcode)
+        , kind(kind)
     {
     }
 
-    Inst(Opcode opcode, Value* origin, ArgList&& arguments)
+    Inst(Kind kind, Value* origin, ArgList&& arguments)
         : args(WTFMove(arguments))
         , origin(origin)
-        , opcode(opcode)
+        , kind(kind)
     {
     }
 
-    explicit operator bool() const { return origin || opcode != Nop || args.size(); }
+    explicit operator bool() const { return origin || kind || args.size(); }
 
     void append() { }
     
@@ -200,7 +199,7 @@ public:
 
     ArgList args;
     Value* origin; // The B3::Value that this originated from.
-    Opcode opcode;
+    Kind kind;
 };
 
 } } } // namespace JSC::B3::Air

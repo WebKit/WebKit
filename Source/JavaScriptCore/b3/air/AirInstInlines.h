@@ -46,13 +46,13 @@ void Inst::forEach(const Functor& functor)
 
 inline const RegisterSet& Inst::extraClobberedRegs()
 {
-    ASSERT(opcode == Patch);
+    ASSERT(kind.opcode == Patch);
     return args[0].special()->extraClobberedRegs(*this);
 }
 
 inline const RegisterSet& Inst::extraEarlyClobberedRegs()
 {
-    ASSERT(opcode == Patch);
+    ASSERT(kind.opcode == Patch);
     return args[0].special()->extraEarlyClobberedRegs(*this);
 }
 
@@ -89,12 +89,12 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
         functor(Thing(reg), regDefRole, type, Arg::conservativeWidth(type));
     };
 
-    if (prevInst && prevInst->opcode == Patch) {
+    if (prevInst && prevInst->kind.opcode == Patch) {
         regDefRole = Arg::Def;
         prevInst->extraClobberedRegs().forEach(reportReg);
     }
 
-    if (nextInst && nextInst->opcode == Patch) {
+    if (nextInst && nextInst->kind.opcode == Patch) {
         regDefRole = Arg::EarlyDef;
         nextInst->extraEarlyClobberedRegs().forEach(reportReg);
     }
@@ -102,7 +102,7 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
 
 inline void Inst::reportUsedRegisters(const RegisterSet& usedRegisters)
 {
-    ASSERT(opcode == Patch);
+    ASSERT(kind.opcode == Patch);
     args[0].special()->reportUsedRegisters(*this, usedRegisters);
 }
 
@@ -116,7 +116,7 @@ inline Optional<unsigned> Inst::shouldTryAliasingDef()
     if (!isX86())
         return Nullopt;
 
-    switch (opcode) {
+    switch (kind.opcode) {
     case Add32:
     case Add64:
     case And32:

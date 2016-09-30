@@ -43,7 +43,7 @@ void lowerEntrySwitch(Code& code)
     // Figure out the set of blocks that should be duplicated.
     BlockWorklist worklist;
     for (BasicBlock* block : code) {
-        if (block->last().opcode == EntrySwitch)
+        if (block->last().kind.opcode == EntrySwitch)
             worklist.push(block);
     }
     
@@ -61,7 +61,7 @@ void lowerEntrySwitch(Code& code)
     
     Vector<FrequencyClass> entrypointFrequencies(code.proc().numEntrypoints(), FrequencyClass::Rare);
     for (BasicBlock* block : code) {
-        if (block->last().opcode != EntrySwitch)
+        if (block->last().kind.opcode != EntrySwitch)
             continue;
         for (unsigned entrypointIndex = code.proc().numEntrypoints(); entrypointIndex--;) {
             entrypointFrequencies[entrypointIndex] = maxFrequency(
@@ -71,10 +71,10 @@ void lowerEntrySwitch(Code& code)
     }
     
     auto fixEntrySwitch = [&] (BasicBlock* block, unsigned entrypointIndex) {
-        if (block->last().opcode != EntrySwitch)
+        if (block->last().kind.opcode != EntrySwitch)
             return;
         FrequentedBlock target = block->successor(entrypointIndex);
-        block->last().opcode = Jump;
+        block->last().kind.opcode = Jump;
         block->successors().resize(1);
         block->successor(0) = target;
     };

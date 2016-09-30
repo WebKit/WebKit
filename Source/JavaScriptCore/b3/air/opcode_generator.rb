@@ -545,7 +545,7 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
 end
 
 def matchInstOverload(outp, speed, inst)
-    outp.puts "switch (#{inst}->opcode) {"
+    outp.puts "switch (#{inst}->kind.opcode) {"
     $opcodes.values.each {
         | opcode |
         outp.puts "case #{opcode.name}:"
@@ -836,7 +836,7 @@ writeH("OpcodeGenerated") {
 
     outp.puts "bool Inst::admitsStack(unsigned argIndex)"
     outp.puts "{"
-    outp.puts "switch (opcode) {"
+    outp.puts "switch (kind.opcode) {"
     $opcodes.values.each {
         | opcode |
         outp.puts "case #{opcode.name}:"
@@ -978,7 +978,7 @@ writeH("OpcodeGenerated") {
 
     outp.puts "bool Inst::isTerminal()"
     outp.puts "{"
-    outp.puts "switch (opcode) {"
+    outp.puts "switch (kind.opcode) {"
     foundTrue = false
     $opcodes.values.each {
         | opcode |
@@ -1004,7 +1004,9 @@ writeH("OpcodeGenerated") {
     
     outp.puts "bool Inst::hasNonArgNonControlEffects()"
     outp.puts "{"
-    outp.puts "switch (opcode) {"
+    outp.puts "if (kind.traps)"
+    outp.puts "return true;"
+    outp.puts "switch (kind.opcode) {"
     foundTrue = false
     $opcodes.values.each {
         | opcode |
@@ -1030,7 +1032,9 @@ writeH("OpcodeGenerated") {
     
     outp.puts "bool Inst::hasNonArgEffects()"
     outp.puts "{"
-    outp.puts "switch (opcode) {"
+    outp.puts "if (kind.traps)"
+    outp.puts "return true;"
+    outp.puts "switch (kind.opcode) {"
     foundTrue = false
     $opcodes.values.each {
         | opcode |

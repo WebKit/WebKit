@@ -45,7 +45,7 @@ namespace {
 
 bool hasPartialXmmRegUpdate(const Inst& inst)
 {
-    switch (inst.opcode) {
+    switch (inst.kind.opcode) {
     case ConvertDoubleToFloat:
     case ConvertFloatToDouble:
     case ConvertInt32ToDouble:
@@ -68,7 +68,7 @@ bool hasPartialXmmRegUpdate(const Inst& inst)
 bool isDependencyBreaking(const Inst& inst)
 {
     // "xorps reg, reg" is used by the frontend to remove the dependency on its argument.
-    return inst.opcode == MoveZeroToDouble;
+    return inst.kind.opcode == MoveZeroToDouble;
 }
 
 // FIXME: find a good distance per architecture experimentally.

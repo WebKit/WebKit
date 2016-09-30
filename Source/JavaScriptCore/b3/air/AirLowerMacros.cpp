@@ -47,9 +47,10 @@ void lowerMacros(Code& code)
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
 
-            switch (inst.opcode) {
+            switch (inst.kind.opcode) {
             case CCall: {
                 CCallValue* value = inst.origin->as<CCallValue>();
+                Kind oldKind = inst.kind;
 
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
 
@@ -70,6 +71,8 @@ void lowerMacros(Code& code)
                 Arg resultDst = value->type() == Void ? Arg() : inst.args[1];
                 
                 inst = buildCCall(code, inst.origin, destinations);
+                if (oldKind.traps)
+                    inst.kind.traps = true;
 
                 Tmp result = cCallResult(value->type());
                 switch (value->type()) {

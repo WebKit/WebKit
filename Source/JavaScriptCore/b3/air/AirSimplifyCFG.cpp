@@ -78,7 +78,7 @@ bool simplifyCFG(Code& code)
             for (BasicBlock*& successor : block->successorBlocks()) {
                 if (successor != block
                     && successor->size() == 1
-                    && successor->last().opcode == Jump) {
+                    && successor->last().kind.opcode == Jump) {
                     BasicBlock* newSuccessor = successor->successorBlock(0);
                     if (newSuccessor != successor) {
                         if (verbose) {

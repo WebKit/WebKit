@@ -1,5 +1,96 @@
 2016-09-29  Filip Pizlo  <fpizlo@apple.com>
 
+        Air should have a way of expressing additional instruction flags
+        https://bugs.webkit.org/show_bug.cgi?id=162699
+
+        Reviewed by Mark Lam.
+        
+        This follows a similar change in B3 (r206595) and replaces Air::Opcode with Air::Kind,
+        which holds onto the opcode and some additional flags. Because Air is an orthogonal ISA
+        (the opcode tells you what the operation does but each operand is allowed to also contain
+        effectively instructions for what to do to read or write that operand), the flags are
+        meant to be orthogonal to opcode. This allows us to say things like Add32<Trap>, which
+        makes sense if any of the operands to the Add32 are addresses.
+        
+        To demonstrate the flags facility this partly adds a trap flag to Air. B3 doesn't use it
+        yet, but I made sure that Air respects it. Basically that means blocking DCE when the flag
+        is set, by making it imply hasNonArgNonControlEffects.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::Air::numB3Args):
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::dump):
+        (JSC::B3::CheckSpecial::CheckSpecial):
+        (JSC::B3::CheckSpecial::hiddenBranch):
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::generate):
+        (JSC::B3::CheckSpecial::dumpImpl):
+        (JSC::B3::CheckSpecial::deepDumpImpl):
+        * b3/B3CheckSpecial.h:
+        (JSC::B3::CheckSpecial::Key::Key):
+        (JSC::B3::CheckSpecial::Key::operator==):
+        (JSC::B3::CheckSpecial::Key::kind):
+        (JSC::B3::CheckSpecial::Key::hash):
+        (JSC::B3::CheckSpecial::Key::opcode): Deleted.
+        * b3/B3Kind.cpp:
+        (JSC::B3::Kind::dump):
+        * b3/air/AirDumpAsJS.cpp:
+        (JSC::B3::Air::dumpAsJS):
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirFixPartialRegisterStalls.cpp:
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirInst.cpp:
+        (JSC::B3::Air::Inst::jsHash):
+        (JSC::B3::Air::Inst::dump):
+        * b3/air/AirInst.h:
+        (JSC::B3::Air::Inst::Inst):
+        (JSC::B3::Air::Inst::kind):
+        (JSC::B3::Air::Inst::operator bool):
+        (JSC::B3::Air::Inst::opcode): Deleted.
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::Inst::extraEarlyClobberedRegs):
+        (JSC::B3::Air::Inst::forEachDefWithExtraClobberedRegs):
+        (JSC::B3::Air::Inst::reportUsedRegisters):
+        (JSC::B3::Air::Inst::shouldTryAliasingDef):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirKind.cpp: Added.
+        (JSC::B3::Air::Kind::dump):
+        * b3/air/AirKind.h: Added.
+        (JSC::B3::Air::Kind::Kind):
+        (JSC::B3::Air::Kind::operator==):
+        (JSC::B3::Air::Kind::operator!=):
+        (JSC::B3::Air::Kind::hash):
+        (JSC::B3::Air::Kind::operator bool):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirLowerEntrySwitch.cpp:
+        (JSC::B3::Air::lowerEntrySwitch):
+        * b3/air/AirLowerMacros.cpp:
+        (JSC::B3::Air::lowerMacros):
+        * b3/air/AirOptimizeBlockOrder.cpp:
+        (JSC::B3::Air::optimizeBlockOrder):
+        * b3/air/AirReportUsedRegisters.cpp:
+        (JSC::B3::Air::reportUsedRegisters):
+        * b3/air/AirSimplifyCFG.cpp:
+        (JSC::B3::Air::simplifyCFG):
+        * b3/air/AirTmpWidth.cpp:
+        (JSC::B3::Air::TmpWidth::recompute):
+        * b3/air/AirUseCounts.h:
+        (JSC::B3::Air::UseCounts::UseCounts):
+        * b3/air/AirValidate.cpp:
+        * b3/air/opcode_generator.rb:
+        * b3/testb3.cpp:
+        (JSC::B3::testTernarySubInstructionSelection):
+        (JSC::B3::testBranchBitAndImmFusion):
+
+2016-09-29  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r206555): It made Dromaeo/jslib-style-jquery.html crash
         https://bugs.webkit.org/show_bug.cgi?id=162721
 

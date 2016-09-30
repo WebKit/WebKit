@@ -2217,7 +2217,7 @@ void testTernarySubInstructionSelection(B3::Opcode valueModifier, Type valueType
     auto block = proc.code()[0];
     unsigned numberOfSubInstructions = 0;
     for (auto instruction : *block) {
-        if (instruction.opcode == expectedOpcode) {
+        if (instruction.kind.opcode == expectedOpcode) {
             CHECK_EQ(instruction.args.size(), 3ul);
             CHECK_EQ(instruction.args[0].kind(), Air::Arg::Tmp);
             CHECK_EQ(instruction.args[1].kind(), Air::Arg::Tmp);
@@ -12972,7 +12972,7 @@ void testBranchBitAndImmFusion(
 
     // The first basic block must end in a BranchTest64(resCond, tmp, bitImm).
     Air::Inst terminal = proc.code()[0]->last();
-    CHECK_EQ(terminal.opcode, expectedOpcode);
+    CHECK_EQ(terminal.kind.opcode, expectedOpcode);
     CHECK_EQ(terminal.args[0].kind(), Air::Arg::ResCond);
     CHECK_EQ(terminal.args[1].kind(), firstKind);
     CHECK(terminal.args[2].kind() == Air::Arg::BitImm || terminal.args[2].kind() == Air::Arg::BitImm64);

@@ -47,7 +47,9 @@ bool Inst::hasArgEffects()
 
 unsigned Inst::jsHash() const
 {
-    unsigned result = static_cast<unsigned>(opcode);
+    // FIXME: This should do something for flags.
+    // https://bugs.webkit.org/show_bug.cgi?id=162751
+    unsigned result = static_cast<unsigned>(kind.opcode);
     
     for (const Arg& arg : args)
         result += arg.jsHash();
@@ -57,7 +59,7 @@ unsigned Inst::jsHash() const
 
 void Inst::dump(PrintStream& out) const
 {
-    out.print(opcode, " ", listDump(args));
+    out.print(kind, " ", listDump(args));
     if (origin) {
         if (args.size())
             out.print(", ");

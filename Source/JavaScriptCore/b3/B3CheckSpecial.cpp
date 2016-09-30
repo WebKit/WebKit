@@ -40,9 +40,9 @@ using namespace Air;
 
 namespace {
 
-unsigned numB3Args(B3::Opcode opcode)
+unsigned numB3Args(B3::Kind kind)
 {
-    switch (opcode) {
+    switch (kind.opcode()) {
     case CheckAdd:
     case CheckSub:
     case CheckMul:
@@ -57,7 +57,7 @@ unsigned numB3Args(B3::Opcode opcode)
 
 unsigned numB3Args(Value* value)
 {
-    return numB3Args(value->opcode());
+    return numB3Args(value->kind());
 }
 
 unsigned numB3Args(Inst& inst)
@@ -69,26 +69,26 @@ unsigned numB3Args(Inst& inst)
 
 CheckSpecial::Key::Key(const Inst& inst)
 {
-    m_opcode = inst.opcode;
+    m_kind = inst.kind;
     m_numArgs = inst.args.size();
     m_stackmapRole = SameAsRep;
 }
 
 void CheckSpecial::Key::dump(PrintStream& out) const
 {
-    out.print(m_opcode, "(", m_numArgs, ",", m_stackmapRole, ")");
+    out.print(m_kind, "(", m_numArgs, ",", m_stackmapRole, ")");
 }
 
-CheckSpecial::CheckSpecial(Air::Opcode opcode, unsigned numArgs, RoleMode stackmapRole)
-    : m_checkOpcode(opcode)
+CheckSpecial::CheckSpecial(Air::Kind kind, unsigned numArgs, RoleMode stackmapRole)
+    : m_checkKind(kind)
     , m_stackmapRole(stackmapRole)
     , m_numCheckArgs(numArgs)
 {
-    ASSERT(isDefinitelyTerminal(opcode));
+    ASSERT(isDefinitelyTerminal(kind.opcode));
 }
 
 CheckSpecial::CheckSpecial(const CheckSpecial::Key& key)
-    : CheckSpecial(key.opcode(), key.numArgs(), key.stackmapRole())
+    : CheckSpecial(key.kind(), key.numArgs(), key.stackmapRole())
 {
 }
 
@@ -98,7 +98,7 @@ CheckSpecial::~CheckSpecial()
 
 Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 {
-    Inst hiddenBranch(m_checkOpcode, inst.origin);
+    Inst hiddenBranch(m_checkKind, inst.origin);
     hiddenBranch.args.reserveInitialCapacity(m_numCheckArgs);
     for (unsigned i = 0; i < m_numCheckArgs; ++i)
         hiddenBranch.args.append(inst.args[i + 1]);
@@ -116,7 +116,7 @@ void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
         });
 
     Optional<unsigned> firstRecoverableIndex;
-    if (m_checkOpcode == BranchAdd32 || m_checkOpcode == BranchAdd64)
+    if (m_checkKind.opcode == BranchAdd32 || m_checkKind.opcode == BranchAdd64)
         firstRecoverableIndex = 1;
     forEachArgImpl(numB3Args(inst), m_numCheckArgs + 1, inst, m_stackmapRole, firstRecoverableIndex, callback);
 }
@@ -164,7 +164,7 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
                 fail.link(&jit);
 
                 // If necessary, undo the operation.
-                switch (m_checkOpcode) {
+                switch (m_checkKind.opcode) {
                 case BranchAdd32:
                     if ((m_numCheckArgs == 4 && args[1] == args[2] && args[2] == args[3])
                         || (m_numCheckArgs == 3 && args[1] == args[2])) {
@@ -235,12 +235,12 @@ CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
 void CheckSpecial::dumpImpl(PrintStream& out) const
 {
-    out.print(m_checkOpcode, "(", m_numCheckArgs, ",", m_stackmapRole, ")");
+    out.print(m_checkKind, "(", m_numCheckArgs, ",", m_stackmapRole, ")");
 }
 
 void CheckSpecial::deepDumpImpl(PrintStream& out) const
 {
-    out.print("B3::CheckValue lowered to ", m_checkOpcode, " with ", m_numCheckArgs, " args.");
+    out.print("B3::CheckValue lowered to ", m_checkKind, " with ", m_numCheckArgs, " args.");
 }
 
 } } // namespace JSC::B3

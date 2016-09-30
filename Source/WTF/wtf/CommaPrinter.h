@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,25 +32,30 @@ namespace WTF {
 
 class CommaPrinter {
 public:
-    CommaPrinter(const char* comma = ", ")
+    CommaPrinter(const char* comma = ", ", const char* start = "")
         : m_comma(comma)
-        , m_isFirst(true)
+        , m_start(start)
+        , m_didPrint(false)
     {
     }
     
     void dump(PrintStream& out) const
     {
-        if (m_isFirst) {
-            m_isFirst = false;
+        if (!m_didPrint) {
+            out.print(m_start);
+            m_didPrint = true;
             return;
         }
         
         out.print(m_comma);
     }
     
+    bool didPrint() const { return m_didPrint; }
+    
 private:
     const char* m_comma;
-    mutable bool m_isFirst;
+    const char* m_start;
+    mutable bool m_didPrint;
 };
 
 } // namespace WTF

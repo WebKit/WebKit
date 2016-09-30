@@ -95,9 +95,14 @@ public:
                         VALIDATE(&arg <= &inst.args.last(), ("At ", arg, " in ", inst, " in ", *block));
                     });
                 
-                switch (inst.opcode) {
+                switch (inst.kind.opcode) {
                 case EntrySwitch:
                     VALIDATE(block->numSuccessors() == m_code.proc().numEntrypoints(), ("At ", inst, " in ", *block));
+                    break;
+                case Shuffle:
+                    // We can't handle trapping shuffles because of how we lower them. That could
+                    // be fixed though.
+                    VALIDATE(!inst.kind.traps, ("At ", inst, " in ", *block));
                     break;
                 default:
                     break;

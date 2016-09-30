@@ -728,6 +728,8 @@
 		0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */; };
 		0FDF67D21D9C6D27001B9825 /* B3Kind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D11D9C6086001B9825 /* B3Kind.h */; };
 		0FDF67D31D9C6D2A001B9825 /* B3Kind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D01D9C6086001B9825 /* B3Kind.cpp */; };
+		0FDF67D61D9DC440001B9825 /* AirKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF67D41D9DC43E001B9825 /* AirKind.cpp */; };
+		0FDF67D71D9DC442001B9825 /* AirKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF67D51D9DC43E001B9825 /* AirKind.h */; };
 		0FDF70851D3F2C2200927449 /* AirLowerEntrySwitch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */; };
 		0FDF70861D3F2C2500927449 /* AirLowerEntrySwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */; };
 		0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2987,6 +2989,8 @@
 		0FDDBFB31666EED500C55FEF /* DFGVariableAccessDataDump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessDataDump.h; path = dfg/DFGVariableAccessDataDump.h; sourceTree = "<group>"; };
 		0FDF67D01D9C6086001B9825 /* B3Kind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3Kind.cpp; path = b3/B3Kind.cpp; sourceTree = "<group>"; };
 		0FDF67D11D9C6086001B9825 /* B3Kind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3Kind.h; path = b3/B3Kind.h; sourceTree = "<group>"; };
+		0FDF67D41D9DC43E001B9825 /* AirKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirKind.cpp; path = b3/air/AirKind.cpp; sourceTree = "<group>"; };
+		0FDF67D51D9DC43E001B9825 /* AirKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirKind.h; path = b3/air/AirKind.h; sourceTree = "<group>"; };
 		0FDF70831D3F2C1F00927449 /* AirLowerEntrySwitch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirLowerEntrySwitch.cpp; path = b3/air/AirLowerEntrySwitch.cpp; sourceTree = "<group>"; };
 		0FDF70841D3F2C1F00927449 /* AirLowerEntrySwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLowerEntrySwitch.h; path = b3/air/AirLowerEntrySwitch.h; sourceTree = "<group>"; };
 		0FE0500C1AA9091100D33B33 /* ArgumentsMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentsMode.h; sourceTree = "<group>"; };
@@ -5013,6 +5017,8 @@
 				0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */,
 				26718BA21BE99F780052017B /* AirIteratedRegisterCoalescing.cpp */,
 				26718BA31BE99F780052017B /* AirIteratedRegisterCoalescing.h */,
+				0FDF67D41D9DC43E001B9825 /* AirKind.cpp */,
+				0FDF67D51D9DC43E001B9825 /* AirKind.h */,
 				2684D4371C00161C0081D663 /* AirLiveness.h */,
 				0FE34C171C4B39AE0003A512 /* AirLogRegisterPressure.cpp */,
 				0FE34C181C4B39AE0003A512 /* AirLogRegisterPressure.h */,
@@ -7559,6 +7565,7 @@
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0F40E4A71C497F7400A577FA /* AirOpcode.h in Headers */,
+				0FDF67D71D9DC442001B9825 /* AirKind.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
@@ -8928,6 +8935,7 @@
 				0F4570381BE44C910062A629 /* AirEliminateDeadCode.cpp in Sources */,
 				43AB26C71C1A535C00D82AE6 /* B3MathExtras.cpp in Sources */,
 				0FEC85781BDACDC70080FF74 /* AirGenerate.cpp in Sources */,
+				0FDF67D61D9DC440001B9825 /* AirKind.cpp in Sources */,
 				0FEC85931BDB1E100080FF74 /* AirGenerated.cpp in Sources */,
 				53486BBB1C18E84500F6F3AF /* JSTypedArray.cpp in Sources */,
 				0FEC857B1BDACDC70080FF74 /* AirHandleCalleeSaves.cpp in Sources */,

@@ -1,3 +1,15 @@
+2016-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should have a way of expressing additional instruction flags
+        https://bugs.webkit.org/show_bug.cgi?id=162699
+
+        Reviewed by Mark Lam.
+
+        * wtf/CommaPrinter.h:
+        (WTF::CommaPrinter::CommaPrinter):
+        (WTF::CommaPrinter::dump):
+        (WTF::CommaPrinter::didPrint):
+
 2016-09-30  Youenn Fablet  <youenn@apple.com>
 
         Add a way to go from a RefPtr<T> to Ref<const T>

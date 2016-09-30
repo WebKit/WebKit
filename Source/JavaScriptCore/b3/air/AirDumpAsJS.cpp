@@ -118,7 +118,9 @@ void dumpAsJS(Code& code, PrintStream& out)
             out.println(varName(block), ".predecessors.push(", varName(predecessor), ");");
         
         for (Inst& inst : *block) {
-            out.println("inst = new Inst(", inst.opcode, ");");
+            // FIXME: This should do something for flags.
+            // https://bugs.webkit.org/show_bug.cgi?id=162751
+            out.println("inst = new Inst(", inst.kind.opcode, ");");
             
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role, Arg::Type, Arg::Width) {
@@ -197,7 +199,7 @@ void dumpAsJS(Code& code, PrintStream& out)
                     out.println("inst.args.push(arg);");
                 });
             
-            if (inst.opcode == Patch) {
+            if (inst.kind.opcode == Patch) {
                 if (inst.hasNonArgEffects())
                     out.println("inst.patchHasNonArgEffects = true;");
                 
@@ -221,7 +223,7 @@ void dumpAsJS(Code& code, PrintStream& out)
                     });
             }
             
-            if (inst.opcode == CCall || inst.opcode == ColdCCall) {
+            if (inst.kind.opcode == CCall || inst.kind.opcode == ColdCCall) {
                 out.println("inst.cCallType = ", inst.origin->type());
                 out.println("inst.cCallArgTypes = [];");
                 for (unsigned i = 1; i < inst.origin->numChildren(); ++i)

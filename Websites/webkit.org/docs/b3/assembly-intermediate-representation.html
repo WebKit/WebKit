@@ -28,10 +28,11 @@
       <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirInst.h"><code>Inst</code></a>s.
       Air has an explicit control flow graph: each basic block has predecessor and successor blocks.
       Execution always begins at the first basic block (<code>code[0]</code>). The <code>Inst</code>s
-      in each block are executed in order. Each <code>Inst</code> has an opcode, an array of
-      arguments
+      in each block are executed in order. Each <code>Inst</code> has an opcode, some flags, an
+      array of arguments
       (<a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirArg.h"><code>Arg</code></a>s),
-      and an origin. The origin is simply a B3 IR
+      and an origin. The opcode and flags are wrapped in a <code>Kind</code>, to make it
+      convenient to carry them around together. The origin is simply a B3 IR
       <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Value.h"><code>Value</code></a>.
       Some opcodes use the origin for additional meta-data. This works because Air code always
       coexists with the B3 procedure from which it was generated.</p>
@@ -250,6 +251,32 @@
       <li><code>func(42(%rax), Use, GP, Width32)</code></li>
       <li><code>func(%rcx, UseZDef, GP, Width32)</code></li>
     </ol>
+    
+    <p>It's important to remember that Air's summaries of what instructions do to arguments are
+      not meant to be exhaustive. For example, if an instruction claims to use an address, this
+      tells you that the instruction will perform a load but it tells you nothing about how that
+      load will be performed. This means that unless you know exactly what it means to use/def an
+      argument, you cannot perform this transformation:</p>
+    
+    <ul>
+      <li>Before:
+        <pre><code>Foo32 (%rax)</code></pre></li>
+      <li>After:
+        <pre><code>Move32 (%rax), %tmp
+Foo32 %tmp</code></pre></li>
+    </ul>
+    
+    <p>Even if you know that Foo32 only uses its argument, you cannot do this because Move32 may
+      not load from the address using exactly the same kind of load that Foo32 would have done.
+      Memory accesses have many dimensions of options: alignment semantics (if you're lucky then
+      misaligned accesses run fast but sometimes they ignore low bits, trap if unaligned, or run
+      super slow when unaligned, and this behavior may depend on the opcode), temporality and
+      memory ordering, determinism of trapping, etc. Just seeing that an instruction uses an
+      address does not tell you what kind of load will happen, and currently Air does not have the
+      ability to answer such questions. Fortunately, Air does not have much need to move memory
+      accesses out of instructions. Uses and defs of temporaries, registers, immediates, and spill
+      slots don't have these caveats and so those arguments can be moved from one instruction to
+      another without worries.</p>
     
     <p>Air's introspection of <code>Inst</code>s tends to be quite fast thanks to the use of template
       specialization and C++ lambdas. The <code>forEachArg()</code> template method uses an efficient

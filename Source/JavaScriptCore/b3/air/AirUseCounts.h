@@ -88,7 +88,7 @@ public:
                             counts.numDefs += frequency;
                     });
 
-                if ((inst.opcode == Move || inst.opcode == Move32)
+                if ((inst.kind.opcode == Move || inst.kind.opcode == Move32)
                     && inst.args[0].isSomeImm()
                     && inst.args[1].is<Thing>())
                     m_counts.add(inst.args[1].as<Thing>(), Counts()).iterator->value.numConstDefs++;

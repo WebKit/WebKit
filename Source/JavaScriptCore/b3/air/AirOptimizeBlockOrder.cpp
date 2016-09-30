@@ -160,7 +160,7 @@ void optimizeBlockOrder(Code& code)
         // optimization.  You'll probably realize that as soon as you look at the disassembly, and it
         // certainly won't cause any correctness issues.
         
-        switch (branch.opcode) {
+        switch (branch.kind.opcode) {
         case Branch8:
         case Branch32:
         case Branch64:

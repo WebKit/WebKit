@@ -88,7 +88,7 @@ void TmpWidth::recompute(Code& code)
     Vector<Inst*> moves;
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
-            if (inst.opcode == Move && inst.args[1].isTmp()) {
+            if (inst.kind.opcode == Move && inst.args[1].isTmp()) {
                 if (inst.args[0].isTmp()) {
                     // Make sure that both sides of the Move have a width already initialized. The
                     // fixpoint below assumes that it never has to add things to the HashMap.
@@ -135,7 +135,7 @@ void TmpWidth::recompute(Code& code)
     while (changed) {
         changed = false;
         for (Inst* move : moves) {
-            ASSERT(move->opcode == Move);
+            ASSERT(move->kind.opcode == Move);
             ASSERT(move->args[0].isTmp());
             ASSERT(move->args[1].isTmp());
 

@@ -24,26 +24,26 @@
  */
 
 #include "config.h"
-#include "B3Kind.h"
+#include "AirKind.h"
 
 #if ENABLE(B3_JIT)
 
 #include <wtf/CommaPrinter.h>
 
-namespace JSC { namespace B3 {
+namespace JSC { namespace B3 { namespace Air {
 
 void Kind::dump(PrintStream& out) const
 {
-    out.print(m_opcode);
+    out.print(opcode);
     
     CommaPrinter comma(", ", "<");
-    if (isChill())
-        out.print(comma, "Chill");
+    if (traps)
+        out.print(comma, "Traps");
     if (comma.didPrint())
         out.print(">");
 }
 
-} } // namespace JSC::B3
+} } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)
 

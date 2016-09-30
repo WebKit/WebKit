@@ -68,7 +68,7 @@ void lowerAfterRegAlloc(Code& code)
             
             RegisterSet set;
 
-            bool isRelevant = inst.opcode == Shuffle || inst.opcode == ColdCCall;
+            bool isRelevant = inst.kind.opcode == Shuffle || inst.kind.opcode == ColdCCall;
             
             if (isRelevant) {
                 for (Reg reg : localCalc.live())
@@ -110,7 +110,7 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
 
-            switch (inst.opcode) {
+            switch (inst.kind.opcode) {
             case Shuffle: {
                 RegisterSet set = usedRegisters.get(&inst);
                 Vector<ShufflePair> pairs;
@@ -141,6 +141,7 @@ void lowerAfterRegAlloc(Code& code)
 
             case ColdCCall: {
                 CCallValue* value = inst.origin->as<CCallValue>();
+                Kind oldKind = inst.kind;
 
                 RegisterSet liveRegs = usedRegisters.get(&inst);
                 RegisterSet regsToSave = liveRegs;
@@ -195,6 +196,8 @@ void lowerAfterRegAlloc(Code& code)
                     instIndex, emitShuffle(pairs, gpScratch, fpScratch, inst.origin));
 
                 inst = buildCCall(code, inst.origin, destinations);
+                if (oldKind.traps)
+                    inst.kind.traps = true;
 
                 // Now we need to emit code to restore registers.
                 pairs.resize(0);

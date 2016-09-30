@@ -48,7 +48,7 @@ void handleCalleeSaves(Code& code)
                     usedCalleeSaves.set(tmp.reg());
                 });
 
-            if (inst.opcode == Patch)
+            if (inst.kind.opcode == Patch)
                 usedCalleeSaves.merge(inst.extraClobberedRegs());
         }
     }

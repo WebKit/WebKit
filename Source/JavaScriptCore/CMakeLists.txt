@@ -88,6 +88,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirInsertionSet.cpp
     b3/air/AirInst.cpp
     b3/air/AirIteratedRegisterCoalescing.cpp
+    b3/air/AirKind.cpp
     b3/air/AirLogRegisterPressure.cpp
     b3/air/AirLowerAfterRegAlloc.cpp
     b3/air/AirLowerEntrySwitch.cpp
