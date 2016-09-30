@@ -44,11 +44,13 @@ struct FourCharacterTagHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-const char ff = static_cast<char>(0xFF);
 struct FourCharacterTagHashTraits : WTF::GenericHashTraits<FontTag> {
     static const bool emptyValueIsZero = true;
     static void constructDeletedValue(FontTag& slot) { new (NotNull, std::addressof(slot)) FontTag({{ ff, ff, ff, ff }}); }
     static bool isDeletedValue(const FontTag& value) { return value == FontTag({{ ff, ff, ff, ff }}); }
+
+private:
+    const static char ff = static_cast<char>(0xFF);
 };
 
 template <typename T>

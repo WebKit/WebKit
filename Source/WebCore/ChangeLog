@@ -1,5 +1,17 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Followup patch to r206664
+        https://bugs.webkit.org/show_bug.cgi?id=162774
+
+        Unreviewed.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontTaggedSettings.h:
+        (WebCore::FourCharacterTagHashTraits::isDeletedValue): Deleted.
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Fix fast/text/trak-optimizeLegibility.html
         https://bugs.webkit.org/show_bug.cgi?id=162779
 
