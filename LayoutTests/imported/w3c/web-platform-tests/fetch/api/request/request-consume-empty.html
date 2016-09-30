@@ -98,6 +98,9 @@
     checkRequestWithEmptyBody("text", "", false);
     checkRequestWithEmptyBody("blob", new Blob([], { "type" : "text/plain" }), true);
     checkRequestWithEmptyBody("text", "", true);
+    checkRequestWithEmptyBody("URLSearchParams", new URLSearchParams(""), true);
+    checkRequestWithEmptyBody("FormData", new FormData(), true);
+    checkRequestWithEmptyBody("ArrayBuffer", new ArrayBuffer(), true);
     </script>
   </body>
 </html>

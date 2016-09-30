@@ -36,6 +36,7 @@
 #include "FetchLoader.h"
 #include "FormData.h"
 #include "JSDOMPromise.h"
+#include "URLSearchParams.h"
 #include <wtf/Variant.h>
 
 namespace JSC {
@@ -79,7 +80,7 @@ public:
 
     RefPtr<FormData> bodyForInternalRequest(ScriptExecutionContext&) const;
 
-    enum class Type { None, ArrayBuffer, ArrayBufferView, Blob, FormData, Text, Loading, Loaded, ReadableStream };
+    enum class Type { None, ArrayBuffer, ArrayBufferView, Blob, FormData, Text, URLSeachParams, Loading, Loaded, ReadableStream };
     Type type() const { return m_type; }
 
     FetchBodyConsumer& consumer() { return m_consumer; }
@@ -94,15 +95,15 @@ private:
     FetchBody(Ref<const ArrayBufferView>&&);
     FetchBody(DOMFormData&, Document&);
     FetchBody(String&&);
+    FetchBody(Ref<const URLSearchParams>&&);
     FetchBody(Type, const String&, const FetchBodyConsumer&);
     FetchBody(Type type) : m_type(type) { }
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
-    Vector<uint8_t> extractFromText() const;
     void consumeArrayBuffer(Ref<DeferredPromise>&&);
     void consumeArrayBufferView(Ref<DeferredPromise>&&);
-    void consumeText(Ref<DeferredPromise>&&);
+    void consumeText(Ref<DeferredPromise>&&, const String&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
     const Blob& blobBody() const { return std::experimental::get<Ref<const Blob>>(m_data).get(); }
@@ -112,11 +113,11 @@ private:
     const ArrayBufferView& arrayBufferViewBody() const { return std::experimental::get<Ref<const ArrayBufferView>>(m_data).get(); }
     String& textBody() { return std::experimental::get<String>(m_data); }
     const String& textBody() const { return std::experimental::get<String>(m_data); }
+    const URLSearchParams& urlSearchParamsBody() const { return std::experimental::get<Ref<const URLSearchParams>>(m_data).get(); }
 
     Type m_type { Type::None };
 
-    // FIXME: Add support for URLSearchParams.
-    std::experimental::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, String> m_data;
+    std::experimental::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String> m_data;
     String m_contentType;
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };

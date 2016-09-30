@@ -106,7 +106,7 @@ void URLSearchParams::remove(const String& name)
         updateURL();
 }
 
-String URLSearchParams::toString()
+String URLSearchParams::toString() const
 {
     return URLParser::serialize(m_pairs);
 }

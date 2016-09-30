@@ -1,3 +1,36 @@
+2016-09-30  Youenn Fablet  <youennf@gmail.com>
+
+        [Fetch API] Add support for URLSearchParams body
+        https://bugs.webkit.org/show_bug.cgi?id=162667
+
+        Reviewed by Alex Christensen.
+
+        Adding new tests to consume, stream and upload URLSearchParams bodies.
+
+        * web-platform-tests/fetch/api/basic/request-headers-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers-worker-expected.txt:
+        * web-platform-tests/fetch/api/basic/request-headers.js:
+        (checkContentType):
+        (requestHeaders):
+        * web-platform-tests/fetch/api/basic/request-upload-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-upload-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/request-upload-worker.html: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.html: Added.
+        * web-platform-tests/fetch/api/basic/request-upload.js: Added.
+        (testUpload):
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty.html:
+        * web-platform-tests/fetch/api/request/request-init-002-expected.txt:
+        * web-platform-tests/fetch/api/resources/echo-content.py: Added.
+        (main):
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty.html:
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-stream.html:
+        * web-platform-tests/fetch/api/response/response-consume.html:
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
         Add support for download attribute on area elements

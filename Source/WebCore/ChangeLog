@@ -1,3 +1,28 @@
+2016-09-30  Youenn Fablet  <youennf@gmail.com>
+
+        [Fetch API] Add support for URLSearchParams body
+        https://bugs.webkit.org/show_bug.cgi?id=162667
+
+        Reviewed by Alex Christensen.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html
+               imported/w3c/web-platform-tests/fetch/api/basic/request-upload.html
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::extractBytesFromText): Moving to a static function that should be moved to a String method.
+        (WebCore::FetchBody::FetchBody): Adding constructor for URLSearchParams.
+        (WebCore::FetchBody::extract): Adding URLSearchParams body initialization.
+        (WebCore::FetchBody::consume): Consuming URLSearchParams bodies.
+        (WebCore::FetchBody::consumeAsStream): Ditto.
+        (WebCore::FetchBody::consumeText): Updated to take a parameter to handle both text and URLSearchParams bodies.
+        (WebCore::FetchBody::bodyForInternalRequest): Add URLSearchParams body upload.
+        (WebCore::FetchBody::clone): Add URLSearchParams body cloning
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::urlSearchParamsBody):
+        * html/URLSearchParams.cpp:
+        (WebCore::URLSearchParams::toString):
+        * html/URLSearchParams.h:
+
 2016-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Re-order the arguments to drawPattern() functions

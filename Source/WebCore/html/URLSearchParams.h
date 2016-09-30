@@ -42,7 +42,7 @@ public:
     Vector<String> getAll(const String& name) const;
     bool has(const String& name) const;
     void set(const String& name, const String& value);
-    String toString();
+    String toString() const;
     operator const Vector<std::pair<String, String>>&() { return m_pairs; }
     void updateFromAssociatedURL();
 

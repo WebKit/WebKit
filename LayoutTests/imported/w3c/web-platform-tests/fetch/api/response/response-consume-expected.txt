@@ -1,9 +1,12 @@
 
-PASS Consume response's body as text 
-PASS Consume response's body as blob 
-PASS Consume response's body as arrayBuffer 
-PASS Consume response's body as json 
-FAIL Consume response's body as formData promise_test: Unhandled rejection with value: "Not implemented"
+PASS Consume text response's body as text 
+PASS Consume text response's body as blob 
+PASS Consume text response's body as arrayBuffer 
+PASS Consume text response's body as json 
+FAIL Consume formdata response's body as formData promise_test: Unhandled rejection with value: "Not implemented"
+PASS Consume URLSearchParams response's body as text 
+PASS Consume URLSearchParams response's body as blob 
+PASS Consume URLSearchParams response's body as arrayBuffer 
 PASS Consume blob response's body as blob 
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 

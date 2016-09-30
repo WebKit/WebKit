@@ -41,10 +41,20 @@
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
 #include "JSReadableStream.h"
+#include "JSURLSearchParams.h"
 #include "ReadableStreamSource.h"
 #include <runtime/ArrayBufferView.h>
 
 namespace WebCore {
+
+// FIXME: This implementation is not efficient and we should probably use UTF8Encoding().
+static Vector<uint8_t> extractBytesFromText(const String& text)
+{
+    CString data = text.utf8();
+    Vector<uint8_t> value(data.length());
+    memcpy(value.data(), data.data(), data.length());
+    return value;
+}
 
 FetchBody::FetchBody(Ref<const Blob>&& blob)
     : m_type(Type::Blob)
@@ -79,6 +89,13 @@ FetchBody::FetchBody(Ref<const ArrayBufferView>&& dataView)
 {
 }
 
+FetchBody::FetchBody(Ref<const URLSearchParams>&& url)
+    : m_type(Type::URLSeachParams)
+    , m_data(WTFMove(url))
+    , m_contentType(ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8"))
+{
+}
+
 FetchBody::FetchBody(Type type, const String& contentType, const FetchBodyConsumer& consumer)
     : m_type(type)
     , m_contentType(contentType)
@@ -96,6 +113,8 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& st
     }
     if (value.isString())
         return FetchBody(value.toWTFString(&state));
+    if (value.inherits(JSURLSearchParams::info()))
+        return FetchBody(*JSURLSearchParams::toWrapped(value));
     if (value.inherits(JSReadableStream::info()))
         return { Type::ReadableStream };
     if (value.inherits(JSC::JSArrayBuffer::info())) {
@@ -185,7 +204,10 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         consumeArrayBufferView(WTFMove(promise));
         return;
     case Type::Text:
-        consumeText(WTFMove(promise));
+        consumeText(WTFMove(promise), textBody());
+        return;
+    case Type::URLSeachParams:
+        consumeText(WTFMove(promise), urlSearchParamsBody().toString());
         return;
     case Type::Blob:
         consumeBlob(owner, WTFMove(promise));
@@ -225,7 +247,13 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
         break;
     }
     case Type::Text: {
-        Vector<uint8_t> data = extractFromText();
+        Vector<uint8_t> data = extractBytesFromText(textBody());
+        closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
+        m_data = nullptr;
+        break;
+    }
+    case Type::URLSeachParams: {
+        Vector<uint8_t> data = extractBytesFromText(urlSearchParamsBody().toString());
         closeStream = source.enqueue(ArrayBuffer::tryCreate(data.data(), data.size()));
         m_data = nullptr;
         break;
@@ -262,9 +290,9 @@ void FetchBody::consumeArrayBufferView(Ref<DeferredPromise>&& promise)
     m_data = nullptr;
 }
 
-void FetchBody::consumeText(Ref<DeferredPromise>&& promise)
+void FetchBody::consumeText(Ref<DeferredPromise>&& promise, const String& text)
 {
-    Vector<uint8_t> data = extractFromText();
+    Vector<uint8_t> data = extractBytesFromText(text);
     m_consumer.resolveWithData(WTFMove(promise), data.data(), data.size());
     m_data = nullptr;
 }
@@ -274,16 +302,6 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
     m_consumePromise = WTFMove(promise);
     owner.loadBlob(blobBody(), &m_consumer);
     m_data = nullptr;
-}
-
-Vector<uint8_t> FetchBody::extractFromText() const
-{
-    ASSERT(m_type == Type::Text);
-    // FIXME: This double allocation is not efficient. Might want to fix that at WTFString level.
-    CString data = textBody().utf8();
-    Vector<uint8_t> value(data.length());
-    memcpy(value.data(), data.data(), data.length());
-    return value;
 }
 
 void FetchBody::loadingFailed()
@@ -308,6 +326,8 @@ RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& conte
         return nullptr;
     case Type::Text:
         return FormData::create(UTF8Encoding().encode(textBody(), EntitiesForUnencodables));
+    case Type::URLSeachParams:
+        return FormData::create(UTF8Encoding().encode(urlSearchParamsBody().toString(), EntitiesForUnencodables));
     case Type::Blob: {
         RefPtr<FormData> body = FormData::create();
         body->appendBlob(blobBody().url());
@@ -349,6 +369,9 @@ FetchBody FetchBody::clone() const
         break;
     case Type::Text:
         clone.m_data = textBody();
+        break;
+    case Type::URLSeachParams:
+        clone.m_data = urlSearchParamsBody();
         break;
     case Type::Loaded:
     case Type::None:
