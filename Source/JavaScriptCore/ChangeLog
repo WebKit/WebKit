@@ -1,3 +1,18 @@
+2016-09-30  Mark Lam  <mark.lam@apple.com>
+
+        Remove the dumping of the stack back trace in VM::verifyExceptionCheckNeedIsSatisfied().
+        https://bugs.webkit.org/show_bug.cgi?id=162797
+
+        Reviewed by Geoffrey Garen.
+
+        This is because the RELEASE_ASSERT() that follows immediately after will also
+        dump the stack back trace.  Hence, the first dump will be redundant.
+
+        Also removed an extra space in the dataLog output.
+
+        * runtime/VM.cpp:
+        (JSC::VM::verifyExceptionCheckNeedIsSatisfied):
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stepping through `a(); b(); c();` it is unclear where we are and what is about to execute
