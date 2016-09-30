@@ -1,3 +1,11 @@
+2016-09-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/stack-trace.html after r206654.
+
+        Unreviewed test gardening.
+
+        * js/dom/stack-trace-expected.txt:
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         FileSaver.js does not work in WebKit

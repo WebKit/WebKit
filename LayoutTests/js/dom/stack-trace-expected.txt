@@ -260,7 +260,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 --> Stack Trace:
     0   throwError at stack-trace.js:139:20
     1   valueOf at stack-trace.js:146:27
-    2   getter1 at stack-trace.js:149:11
+    2   getter1 at stack-trace.js:149:9
     3   nonInlineable at stack-trace.js:175:17
     4   inlineable at stack-trace.js:183:27
     5   yetAnotherInlinedCall at stack-trace.js:188:17
@@ -271,7 +271,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 --> Stack Trace:
     0   throwError at stack-trace.js:139:20
-    1   getter2 at stack-trace.js:155:11
+    1   getter2 at stack-trace.js:155:9
     2   nonInlineable at stack-trace.js:177:17
     3   inlineable at stack-trace.js:183:27
     4   yetAnotherInlinedCall at stack-trace.js:188:17
@@ -282,7 +282,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 --> Stack Trace:
     0   throwError at stack-trace.js:139:20
-    1   getter3 at stack-trace.js:167:16
+    1   getter3 at stack-trace.js:167:13
     2   nonInlineable at stack-trace.js:179:17
     3   inlineable at stack-trace.js:183:27
     4   yetAnotherInlinedCall at stack-trace.js:188:17
@@ -294,7 +294,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 --> Stack Trace:
     0   throwError at stack-trace.js:139:20
     1   valueOf at stack-trace.js:163:27
-    2   getter3 at stack-trace.js:169:16
+    2   getter3 at stack-trace.js:169:13
     3   nonInlineable at stack-trace.js:179:17
     4   inlineable at stack-trace.js:183:27
     5   yetAnotherInlinedCall at stack-trace.js:188:17
