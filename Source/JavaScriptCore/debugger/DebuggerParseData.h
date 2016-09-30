@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SourceProvider.h"
+#pragma once
 
-#include "JSCInlines.h"
-#include <wtf/Lock.h>
+#include "ParserTokens.h"
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
-SourceProvider::SourceProvider(const String& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
-    : m_url(url)
-    , m_startPosition(startPosition)
-    , m_sourceType(sourceType)
-    , m_validated(false)
-    , m_id(0)
-{
-}
+class SourceProvider;
+class VM;
 
-SourceProvider::~SourceProvider()
-{
-}
+enum class DebuggerPausePositionType { Enter, Leave, Pause };
+struct DebuggerPausePosition {
+    DebuggerPausePositionType type;
+    JSTextPosition position;
+};
 
-static StaticLock providerIdLock;
+class DebuggerPausePositions {
+public:
+    DebuggerPausePositions() { }
+    ~DebuggerPausePositions() { }
 
-void SourceProvider::getID()
-{
-    LockHolder lock(&providerIdLock);
-    if (!m_id) {
-        static intptr_t nextProviderID = 0;
-        m_id = ++nextProviderID;
+    void appendPause(const JSTextPosition& position)
+    {
+        m_positions.append({ DebuggerPausePositionType::Pause, position });
     }
-}
+
+    void appendEntry(const JSTextPosition& position)
+    {
+        m_positions.append({ DebuggerPausePositionType::Enter, position });
+    }
+
+    void appendLeave(const JSTextPosition& position)
+    {
+        m_positions.append({ DebuggerPausePositionType::Leave, position });
+    }
+
+    Optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column);
+
+    void sort();
+
+private:
+    Vector<DebuggerPausePosition> m_positions;
+};
+
+
+struct DebuggerParseData {
+    DebuggerParseData() { }
+    ~DebuggerParseData() { }
+
+    DebuggerPausePositions pausePositions;
+};
+
+bool gatherDebuggerParseDataForSource(VM&, SourceProvider*, DebuggerParseData&);
 
 } // namespace JSC
-

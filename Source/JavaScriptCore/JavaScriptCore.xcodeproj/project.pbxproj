@@ -1657,6 +1657,8 @@
 		A59455921824744700CC3843 /* JSGlobalObjectDebuggable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */; };
 		A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */; };
 		A5945595182479EB00CC3843 /* InspectorFrontendChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5A1A0941D8CB33E004C2EB8 /* DebuggerParseData.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A1A0921D8CB12F004C2EB8 /* DebuggerParseData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5A1A0951D8CB341004C2EB8 /* DebuggerParseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A1A0931D8CB337004C2EB8 /* DebuggerParseData.cpp */; };
 		A5AB49DC1BEC8082007020FB /* PerGlobalObjectWrapperWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AB49DA1BEC8079007020FB /* PerGlobalObjectWrapperWorld.cpp */; };
 		A5AB49DD1BEC8086007020FB /* PerGlobalObjectWrapperWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AB49DB1BEC8079007020FB /* PerGlobalObjectWrapperWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5B6A74D18C6DBA600F11E91 /* ConsoleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B6A74C18C6DBA600F11E91 /* ConsoleClient.cpp */; };
@@ -3958,6 +3960,8 @@
 		A59455901824744700CC3843 /* JSGlobalObjectDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectDebuggable.cpp; sourceTree = "<group>"; };
 		A59455911824744700CC3843 /* JSGlobalObjectDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectDebuggable.h; sourceTree = "<group>"; };
 		A5945594182479EB00CC3843 /* InspectorFrontendChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendChannel.h; sourceTree = "<group>"; };
+		A5A1A0921D8CB12F004C2EB8 /* DebuggerParseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerParseData.h; sourceTree = "<group>"; };
+		A5A1A0931D8CB337004C2EB8 /* DebuggerParseData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerParseData.cpp; sourceTree = "<group>"; };
 		A5AB49DA1BEC8079007020FB /* PerGlobalObjectWrapperWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerGlobalObjectWrapperWorld.cpp; sourceTree = "<group>"; };
 		A5AB49DB1BEC8079007020FB /* PerGlobalObjectWrapperWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerGlobalObjectWrapperWorld.h; sourceTree = "<group>"; };
 		A5B6A74C18C6DBA600F11E91 /* ConsoleClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleClient.cpp; sourceTree = "<group>"; };
@@ -5520,6 +5524,8 @@
 				6AD2CB4C19B9140100065719 /* DebuggerEvalEnabler.h */,
 				A5FC84B01D1DDAC8006B5C46 /* DebuggerLocation.cpp */,
 				A5FC84B11D1DDAC8006B5C46 /* DebuggerLocation.h */,
+				A5A1A0931D8CB337004C2EB8 /* DebuggerParseData.cpp */,
+				A5A1A0921D8CB12F004C2EB8 /* DebuggerParseData.h */,
 				FEA0861F182B7A0400F6D851 /* DebuggerPrimitives.h */,
 				0F2D4DDB19832D34007D4B19 /* DebuggerScope.cpp */,
 				0F2D4DDC19832D34007D4B19 /* DebuggerScope.h */,
@@ -8322,6 +8328,7 @@
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				2684D4381C00161C0081D663 /* AirLiveness.h in Headers */,
+				A5A1A0941D8CB33E004C2EB8 /* DebuggerParseData.h in Headers */,
 				0F55989817C86C5800A1E543 /* ToNativeFromValue.h in Headers */,
 				DCEE220B1CEB9895000C2396 /* DFGControlEquivalenceAnalysis.h in Headers */,
 				0F2D4DE919832DAC007D4B19 /* ToThisStatus.h in Headers */,
@@ -9509,6 +9516,7 @@
 				148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */,
 				0FF4275715914A20004CB9FF /* LinkBuffer.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
+				A5A1A0951D8CB341004C2EB8 /* DebuggerParseData.cpp in Sources */,
 				FE3913541B794F6E00EDAF71 /* LiveObjectList.cpp in Sources */,
 				FE20CE9D15F04A9500DF3430 /* LLIntCLoop.cpp in Sources */,
 				0F4680D214BBD16500BFE272 /* LLIntData.cpp in Sources */,

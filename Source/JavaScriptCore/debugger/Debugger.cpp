@@ -27,10 +27,10 @@
 #include "Error.h"
 #include "HeapIterationScope.h"
 #include "Interpreter.h"
+#include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSCInlines.h"
 #include "MarkedSpaceInlines.h"
 #include "Parser.h"
 #include "Protect.h"
@@ -183,6 +183,9 @@ void Debugger::detach(JSGlobalObject* globalObject, ReasonForDetach reason)
         clearDebuggerRequests(globalObject);
 
     globalObject->setDebugger(nullptr);
+
+    if (m_globalObjects.isEmpty())
+        clearParsedData();
 }
 
 bool Debugger::isAttached(JSGlobalObject* globalObject)
@@ -251,6 +254,8 @@ void Debugger::didEvaluateScript(double startTime, ProfilingReason reason)
 
 void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, BreakpointState enabledOrNot)
 {
+    ASSERT(breakpoint.resolved);
+
     ScriptExecutable* executable = codeBlock->ownerScriptExecutable();
 
     SourceID sourceID = static_cast<SourceID>(executable->sourceID());
@@ -278,6 +283,7 @@ void Debugger::toggleBreakpoint(CodeBlock* codeBlock, Breakpoint& breakpoint, Br
         if (line == endLine && column > endColumn)
             return;
     }
+
     if (!codeBlock->hasOpDebugForLineAndColumn(line, column))
         return;
 
@@ -331,15 +337,55 @@ void Debugger::recompileAllJSFunctions()
     m_vm.deleteAllCode();
 }
 
-BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine, unsigned& actualColumn)
+DebuggerParseData& Debugger::debuggerParseData(SourceID sourceID, SourceProvider* provider)
 {
+    auto iter = m_parseDataMap.find(sourceID);
+    if (iter != m_parseDataMap.end())
+        return iter->value;
+
+    DebuggerParseData parseData;
+    gatherDebuggerParseDataForSource(m_vm, provider, parseData);
+    auto result = m_parseDataMap.add(sourceID, parseData);
+    return result.iterator->value;
+}
+
+void Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceProvider)
+{
+    RELEASE_ASSERT(!breakpoint.resolved);
+    ASSERT(breakpoint.sourceID != noSourceID);
+
+    // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
+    // Inspector breakpoint line and column values are zero-based but the executable
+    // and CodeBlock line and column values are one-based.
+    unsigned line = breakpoint.line + 1;
+    unsigned column = breakpoint.column ? breakpoint.column : Breakpoint::unspecifiedColumn;
+
+    DebuggerParseData& parseData = debuggerParseData(breakpoint.sourceID, sourceProvider);
+    Optional<JSTextPosition> resolvedPosition = parseData.pausePositions.breakpointLocationForLineColumn((int)line, (int)column);
+    if (!resolvedPosition)
+        return;
+
+    unsigned resolvedLine = resolvedPosition->line;
+    unsigned resolvedColumn = resolvedPosition->offset - resolvedPosition->lineStartOffset + 1;
+
+    breakpoint.line = resolvedLine - 1;
+    breakpoint.column = resolvedColumn - 1;
+    breakpoint.resolved = true;
+}
+
+BreakpointID Debugger::setBreakpoint(Breakpoint& breakpoint, bool& existing)
+{
+    ASSERT(breakpoint.resolved);
+    ASSERT(breakpoint.sourceID != noSourceID);
+
     SourceID sourceID = breakpoint.sourceID;
     unsigned line = breakpoint.line;
     unsigned column = breakpoint.column;
 
-    SourceIDToBreakpointsMap::iterator it = m_sourceIDToBreakpoints.find(sourceID);
+    SourceIDToBreakpointsMap::iterator it = m_sourceIDToBreakpoints.find(breakpoint.sourceID);
     if (it == m_sourceIDToBreakpoints.end())
         it = m_sourceIDToBreakpoints.set(sourceID, LineToBreakpointsMap()).iterator;
+
     LineToBreakpointsMap::iterator breaksIt = it->value.find(line);
     if (breaksIt == it->value.end())
         breaksIt = it->value.set(line, adoptRef(new BreakpointsList)).iterator;
@@ -347,26 +393,23 @@ BreakpointID Debugger::setBreakpoint(Breakpoint breakpoint, unsigned& actualLine
     BreakpointsList& breakpoints = *breaksIt->value;
     for (Breakpoint* current = breakpoints.head(); current; current = current->next()) {
         if (current->column == column) {
-            // The breakpoint already exists. We're not allowed to create a new
-            // breakpoint at this location. Rather than returning the breakpointID
-            // of the pre-existing breakpoint, we need to return noBreakpointID
-            // to indicate that we're not creating a new one.
-            return noBreakpointID;
+            // Found existing breakpoint. Do not create a duplicate at this location.
+            existing = true;
+            return current->id;
         }
     }
 
+    existing = false;
     BreakpointID id = ++m_topBreakpointID;
     RELEASE_ASSERT(id != noBreakpointID);
 
     breakpoint.id = id;
-    actualLine = line;
-    actualColumn = column;
 
     Breakpoint* newBreakpoint = new Breakpoint(breakpoint);
     breakpoints.append(newBreakpoint);
     m_breakpointIDToBreakpoint.set(id, newBreakpoint);
 
-    toggleBreakpoint(breakpoint, BreakpointEnabled);
+    toggleBreakpoint(*newBreakpoint, BreakpointEnabled);
 
     return id;
 }
@@ -420,7 +463,7 @@ bool Debugger::hasBreakpoint(SourceID sourceID, const TextPosition& position, Br
 
     unsigned line = position.m_line.zeroBasedInt();
     unsigned column = position.m_column.zeroBasedInt();
-
+    
     LineToBreakpointsMap::const_iterator breaksIt = it->value.find(line);
     if (breaksIt == it->value.end())
         return false;
@@ -528,6 +571,11 @@ void Debugger::clearDebuggerRequests(JSGlobalObject* globalObject)
 
     ClearDebuggerRequestsFunctor functor(globalObject);
     m_vm.heap.forEachCodeBlock(functor);
+}
+
+void Debugger::clearParsedData()
+{
+    m_parseDataMap.clear();
 }
 
 void Debugger::setBreakpointsActivated(bool activated)

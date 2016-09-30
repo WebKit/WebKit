@@ -2341,14 +2341,14 @@ void BlockNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void EmptyStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
 }
 
 // ------------------------------ DebuggerStatementNode ---------------------------
 
 void DebuggerStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(DidReachBreakpoint, lastLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(DidReachBreakpoint, position());
 }
 
 // ------------------------------ ExprStatementNode ----------------------------
@@ -2356,7 +2356,7 @@ void DebuggerStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterI
 void ExprStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     ASSERT(m_expr);
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
     generator.emitNode(dst, m_expr);
 }
 
@@ -2365,7 +2365,7 @@ void ExprStatementNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 void DeclarationStatement::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
     ASSERT(m_expr);
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
     generator.emitNode(m_expr);
 }
 
@@ -2453,7 +2453,7 @@ bool IfElseNode::tryFoldBreakAndContinue(BytecodeGenerator& generator, Statement
 
 void IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitDebugHook(WillExecuteStatement, m_condition->firstLine(), m_condition->startOffset(), m_condition->lineStartOffset());
+    generator.emitDebugHook(m_condition, WillExecuteStatement);
     
     RefPtr<Label> beforeThen = generator.newLabel();
     RefPtr<Label> beforeElse = generator.newLabel();
@@ -2499,7 +2499,7 @@ void DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitNodeInTailPosition(dst, m_statement);
 
     generator.emitLabel(scope->continueTarget());
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
     generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
 
     generator.emitLabel(scope->breakTarget());
@@ -2512,7 +2512,7 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
     RefPtr<Label> topOfLoop = generator.newLabel();
 
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
     generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
 
     generator.emitLabel(topOfLoop.get());
@@ -2522,7 +2522,7 @@ void WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitNodeInTailPosition(dst, m_statement);
 
     generator.emitLabel(scope->continueTarget());
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
 
     generator.emitNodeInConditionContext(m_expr, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
 
@@ -2542,17 +2542,17 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
     if (m_expr1 || m_expr2) {
         ExpressionNode* firstExpr = m_expr1 ? m_expr1 : m_expr2;
-        generator.emitDebugHook(WillExecuteStatement, firstExpr->firstLine(), firstExpr->startOffset(), firstExpr->lineStartOffset());
+        generator.emitDebugHook(firstExpr, WillExecuteStatement);
     }
 
     if (m_expr1) {
-        generator.emitDebugHook(WillExecuteExpression, m_expr1->firstLine(), m_expr1->startOffset(), m_expr1->lineStartOffset());
+        generator.emitDebugHook(m_expr1, WillExecuteExpression);
         generator.emitNode(generator.ignoredResult(), m_expr1);
     }
 
     RefPtr<Label> topOfLoop = generator.newLabel();
     if (m_expr2) {
-        generator.emitDebugHook(WillExecuteExpression, m_expr2->firstLine(), m_expr2->startOffset(), m_expr2->lineStartOffset());
+        generator.emitDebugHook(m_expr2, WillExecuteExpression);
         generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), FallThroughMeansTrue);
     }
 
@@ -2565,12 +2565,12 @@ void ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(scope->continueTarget());
     generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
     if (m_expr3) {
-        generator.emitDebugHook(WillExecuteStatement, m_expr3->firstLine(), m_expr3->startOffset(), m_expr3->lineStartOffset());
+        generator.emitDebugHook(m_expr3, WillExecuteStatement);
         generator.emitNode(generator.ignoredResult(), m_expr3);
     }
 
     if (m_expr2) {
-        generator.emitDebugHook(WillExecuteStatement, m_expr2->firstLine(), m_expr2->startOffset(), m_expr2->lineStartOffset());
+        generator.emitDebugHook(m_expr2, WillExecuteStatement);
         generator.emitNodeInConditionContext(m_expr2, topOfLoop.get(), scope->breakTarget(), FallThroughMeansFalse);
     } else
         generator.emitJump(topOfLoop.get());
@@ -2701,7 +2701,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     RegisterID* forLoopSymbolTable = nullptr;
     generator.pushLexicalScope(this, BytecodeGenerator::TDZCheckOptimization::Optimize, BytecodeGenerator::NestedScopeType::IsNested, &forLoopSymbolTable);
 
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
 
     if (m_lexpr->isAssignResolveNode())
         generator.emitNode(generator.ignoredResult(), m_lexpr);
@@ -2751,7 +2751,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.emitLabel(scope->continueTarget());
         generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
         generator.emitInc(i.get());
-        generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+        generator.emitDebugHook(m_expr, WillExecuteStatement);
         generator.emitJump(loopStart.get());
 
         generator.emitLabel(scope->breakTarget());
@@ -2791,7 +2791,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
         generator.emitInc(enumeratorIndex.get());
         generator.emitEnumeratorStructurePropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-        generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+        generator.emitDebugHook(m_expr, WillExecuteStatement);
         generator.emitJump(loopStart.get());
         
         generator.emitLabel(scope->breakTarget());
@@ -2828,7 +2828,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         generator.prepareLexicalScopeForNextForLoopIteration(this, forLoopSymbolTable);
         generator.emitInc(enumeratorIndex.get());
         generator.emitEnumeratorGenericPropertyName(propertyName.get(), enumerator.get(), enumeratorIndex.get());
-        generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+        generator.emitDebugHook(m_expr, WillExecuteStatement);
         generator.emitJump(loopStart.get());
 
         generator.emitLabel(scope->breakTarget());
@@ -2925,7 +2925,7 @@ Label* ContinueNode::trivialTarget(BytecodeGenerator& generator)
 
 void ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
     
     LabelScopePtr scope = generator.continueTarget(m_ident);
     ASSERT(scope);
@@ -2954,7 +2954,7 @@ Label* BreakNode::trivialTarget(BytecodeGenerator& generator)
 
 void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
     
     LabelScopePtr scope = generator.breakTarget(m_ident);
     ASSERT(scope);
@@ -2969,7 +2969,8 @@ void BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
+
     ASSERT(generator.codeType() == FunctionCode);
 
     if (dst == generator.ignoredResult())
@@ -2996,7 +2997,7 @@ void ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
 
     RefPtr<RegisterID> scope = generator.emitNode(m_expr);
     generator.emitExpressionInfo(m_divot, m_divot - m_expressionLength, m_divot);
@@ -3171,7 +3172,7 @@ void CaseBlockNode::emitBytecodeForBlock(BytecodeGenerator& generator, RegisterI
 
 void SwitchNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitDebugHook(WillExecuteStatement, m_expr->firstLine(), m_expr->startOffset(), m_expr->lineStartOffset());
+    generator.emitDebugHook(m_expr, WillExecuteStatement);
     
     LabelScopePtr scope = generator.newLabelScope(LabelScope::Switch);
 
@@ -3201,7 +3202,7 @@ void LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 void ThrowNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    generator.emitDebugHook(WillExecuteStatement, firstLine(), startOffset(), lineStartOffset());
+    generator.emitDebugHook(this);
 
     if (dst == generator.ignoredResult())
         dst = 0;

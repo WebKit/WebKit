@@ -3180,7 +3180,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         callFrame.append(newTemporary());
 
     if (m_shouldEmitDebugHooks && debuggableCall == DebuggableCall::Yes)
-        emitDebugHook(WillExecuteExpression, divotStart.line, divotStart.offset, divotStart.lineStartOffset);
+        emitDebugHook(WillExecuteExpression, divotStart);
 
     emitExpressionInfo(divot, divotStart, divotEnd);
 
@@ -3234,7 +3234,7 @@ RegisterID* BytecodeGenerator::emitCallForwardArgumentsInTailPosition(RegisterID
 RegisterID* BytecodeGenerator::emitCallVarargs(OpcodeID opcode, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall debuggableCall)
 {
     if (m_shouldEmitDebugHooks && debuggableCall == DebuggableCall::Yes)
-        emitDebugHook(WillExecuteExpression, divotStart.line, divotStart.offset, divotStart.lineStartOffset);
+        emitDebugHook(WillExecuteExpression, divotStart);
 
     emitExpressionInfo(divot, divotStart, divotEnd);
 
@@ -3459,16 +3459,32 @@ void BytecodeGenerator::emitPopWithScope()
     RELEASE_ASSERT(stackEntry.m_isWithScope);
 }
 
-void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, unsigned charOffset, unsigned lineStart)
+void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, const JSTextPosition& divot)
 {
     if (!m_shouldEmitDebugHooks)
         return;
 
-    JSTextPosition divot(line, charOffset, lineStart);
     emitExpressionInfo(divot, divot, divot);
     emitOpcode(op_debug);
     instructions().append(debugHookID);
     instructions().append(false);
+}
+
+void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, unsigned charOffset, unsigned lineStart)
+{
+    emitDebugHook(debugHookID, JSTextPosition(line, charOffset, lineStart));
+}
+
+void BytecodeGenerator::emitDebugHook(StatementNode* statement)
+{
+    RELEASE_ASSERT(statement->needsDebugHook());
+    emitDebugHook(WillExecuteStatement, statement->position());
+}
+
+void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, DebugHookID debugHookID)
+{
+    RELEASE_ASSERT(expr->needsDebugHook());
+    emitDebugHook(debugHookID, expr->position());
 }
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
@@ -4134,7 +4150,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         if (forLoopNode) {
             RELEASE_ASSERT(forLoopNode->isForOfNode());
             prepareLexicalScopeForNextForLoopIteration(forLoopNode, forLoopSymbolTable);
-            emitDebugHook(WillExecuteStatement, forLoopNode->expr()->firstLine(), forLoopNode->expr()->startOffset(), forLoopNode->expr()->lineStartOffset());
+            emitDebugHook(forLoopNode->expr(), WillExecuteStatement);
         }
 
         {

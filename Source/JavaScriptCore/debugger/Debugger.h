@@ -24,6 +24,7 @@
 #include "Breakpoint.h"
 #include "CallData.h"
 #include "DebuggerCallFrame.h"
+#include "DebuggerParseData.h"
 #include "DebuggerPrimitives.h"
 #include "JSCJSValue.h"
 #include <wtf/HashMap.h>
@@ -72,9 +73,11 @@ public:
     void detach(JSGlobalObject*, ReasonForDetach);
     bool isAttached(JSGlobalObject*);
 
-    BreakpointID setBreakpoint(Breakpoint, unsigned& actualLine, unsigned& actualColumn);
+    void resolveBreakpoint(Breakpoint&, SourceProvider*);
+    BreakpointID setBreakpoint(Breakpoint&, bool& existing);
     void removeBreakpoint(BreakpointID);
     void clearBreakpoints();
+
     void activateBreakpoints() { setBreakpointsActivated(true); }
     void deactivateBreakpoints() { setBreakpointsActivated(false); }
     bool breakpointsActive() const { return m_breakpointsActivated; }
@@ -178,6 +181,8 @@ private:
 
     bool hasBreakpoint(SourceID, const TextPosition&, Breakpoint* hitBreakpoint);
 
+    DebuggerParseData& debuggerParseData(SourceID, SourceProvider*);
+
     void updateNeedForOpDebugCallbacks();
 
     // These update functions are only needed because our current breakpoints are
@@ -207,9 +212,11 @@ private:
     void toggleBreakpoint(Breakpoint&, BreakpointState);
 
     void clearDebuggerRequests(JSGlobalObject*);
+    void clearParsedData();
 
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
+    HashMap<SourceID, DebuggerParseData> m_parseDataMap;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseAtNextOpportunity : 1;

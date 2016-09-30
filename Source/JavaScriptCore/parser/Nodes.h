@@ -27,6 +27,7 @@
 
 #include "BuiltinNames.h"
 #include "Error.h"
+#include "Interpreter.h"
 #include "JITCode.h"
 #include "ParserArena.h"
 #include "ParserTokens.h"
@@ -190,8 +191,12 @@ namespace JSC {
 
         ResultType resultDescriptor() const { return m_resultType; }
 
+        bool needsDebugHook() { return m_needsDebugHook; }
+        void setNeedsDebugHook() { m_needsDebugHook = true; }
+
     private:
         ResultType m_resultType;
+        bool m_needsDebugHook { false };
     };
 
     class StatementNode : public Node {
@@ -213,14 +218,19 @@ namespace JSC {
         virtual bool isExprStatement() const { return false; }
         virtual bool isBreak() const { return false; }
         virtual bool isContinue() const { return false; }
+        virtual bool isLabel() const { return false; }
         virtual bool isBlock() const { return false; }
         virtual bool isFuncDeclNode() const { return false; }
         virtual bool isModuleDeclarationNode() const { return false; }
         virtual bool isForOfNode() const { return false; }
 
+        bool needsDebugHook() { return m_needsDebugHook; }
+        void setNeedsDebugHook() { m_needsDebugHook = true; }
+
     protected:
         StatementNode* m_next;
         int m_lastLine;
+        bool m_needsDebugHook { false };
     };
 
     class VariableEnvironmentNode : public ParserArenaDeletable {
@@ -1545,6 +1555,8 @@ namespace JSC {
     class LabelNode : public StatementNode, public ThrowableExpressionData {
     public:
         LabelNode(const JSTokenLocation&, const Identifier& name, StatementNode*);
+
+        bool isLabel() const override { return true; }
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;

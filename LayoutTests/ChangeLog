@@ -1,5 +1,42 @@
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Breakpoints on blank lines or comments don't break
+        https://bugs.webkit.org/show_bug.cgi?id=9885
+        <rdar://problem/6134406>
+
+        Reviewed by Mark Lam.
+
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt: Added.
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html: Added.
+        * inspector/debugger/breakpoints/resolved-dump-each-line-expected.txt: Added.
+        * inspector/debugger/breakpoints/resolved-dump-each-line.html: Added.
+        * inspector/debugger/breakpoints/resources/dump-functions.js: Added.
+        * inspector/debugger/breakpoints/resources/dump-general.js: Added.
+        Test for resolved breakpoint locations in all kinds of different source code.
+
+        * inspector/debugger/breakpoints/resources/dump.js: Added.
+        (TestPage.registerInitializer):
+        (TestPage.registerInitializer.window.addDumpAllPauseLocationsTestCase):
+        (TestPage.registerInitializer.window.addDumpEachLinePauseLocationTestCase):
+        Shared code to run different generalized tests for logging all resolved
+        breakpoint locations or the resolved breakpoint location if a breakpoint
+        is set on each individual line.
+
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.insertCaretIntoStringAtIndex):
+        (TestPage.registerInitializer.window.findScript):
+        (TestPage.registerInitializer.window.loadLinesFromSourceCode):
+        (TestPage.registerInitializer.window.loadMainPageContent):
+        (TestPage.registerInitializer.window.logResolvedBreakpointLinesWithContext):
+        (TestPage.registerInitializer.window.logLinesWithContext):
+        Make some more code shared and provide a way to log two locations,
+        used to see where a breakpoint was set and where it resolved to.
+
+        * inspector/debugger/setBreakpoint-expected.txt:
+        Update error message. Should not include a period.
+
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Stepping out of a function finishes the line that called it.
         https://bugs.webkit.org/show_bug.cgi?id=155325
         <rdar://problem/25094578>

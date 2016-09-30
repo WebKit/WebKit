@@ -24,12 +24,12 @@
 #include "Parser.h"
 
 #include "ASTBuilder.h"
+#include "DebuggerParseData.h"
 #include "JSCInlines.h"
 #include "SetForScope.h"
 #include "VM.h"
 #include <utility>
 #include <wtf/StringPrintStream.h>
-
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\
     propagateError(); \
@@ -190,7 +190,7 @@ void Parser<LexerType>::logError(bool shouldPrintToken, const A& value1, const B
 }
 
 template <typename LexerType>
-Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType)
+Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKind, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType, DebuggerParseData* debuggerParseData)
     : m_vm(vm)
     , m_source(&source)
     , m_hasStackOverflow(false)
@@ -203,6 +203,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     , m_superBinding(superBinding)
     , m_defaultConstructorKind(defaultConstructorKind)
     , m_immediateParentAllowsFunctionDeclarationInStatement(false)
+    , m_debuggerParseData(debuggerParseData)
 {
     m_lexer = std::make_unique<LexerType>(vm, builtinMode, scriptMode);
     m_lexer->setCode(source, &m_parserArena);
@@ -592,9 +593,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
     m_statementDepth++;
     TreeStatement result = 0;
     bool shouldSetEndOffset = true;
+    bool shouldSetPauseLocation = false;
+
     switch (m_token.m_type) {
     case CONSTTOKEN:
         result = parseVariableDeclaration(context, DeclarationType::ConstDeclaration);
+        shouldSetPauseLocation = true;
         break;
     case LET: {
         bool shouldParseVariableDeclaration = true;
@@ -616,7 +620,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
             bool allowFunctionDeclarationAsStatement = true;
             result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
         }
-
+        shouldSetPauseLocation = !context.shouldSkipPauseLocation(result);
         break;
     }
     case CLASSTOKEN:
@@ -648,6 +652,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         // ``` function foo() { label: function bar() { } } ```
         bool allowFunctionDeclarationAsStatement = true;
         result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
+        shouldSetPauseLocation = !context.shouldSkipPauseLocation(result);
         break;
     }
     default:
@@ -657,8 +662,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
         break;
     }
 
-    if (result && shouldSetEndOffset)
-        context.setEndOffset(result, m_lastTokenEndPosition.offset);
+    if (result) {
+        if (shouldSetEndOffset)
+            context.setEndOffset(result, m_lastTokenEndPosition.offset);
+        if (shouldSetPauseLocation)
+            recordPauseLocation(context.breakpointLocation(result));
+    }
 
     return result;
 }
@@ -700,6 +709,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseDoWhileStatem
     semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a do-while loop condition");
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Unable to parse do-while loop condition");
+    recordPauseLocation(context.breakpointLocation(expr));
     handleProductionOrFail(CLOSEPAREN, ")", "end", "do-while loop condition");
     if (match(SEMICOLON))
         next(); // Always performs automatic semicolon insertion.
@@ -718,9 +728,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWhileStatemen
     semanticFailIfTrue(match(CLOSEPAREN), "Must provide an expression as a while loop condition");
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Unable to parse while loop condition");
+    recordPauseLocation(context.breakpointLocation(expr));
     int endLine = tokenLine();
     handleProductionOrFail(CLOSEPAREN, ")", "end", "while loop condition");
-    
+
     const Identifier* unused = 0;
     startLoop();
     TreeStatement statement = parseStatement(context, unused);
@@ -922,6 +933,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseArrowFun
     TreeSourceElements sourceElements = context.createSourceElements();
     TreeStatement body = context.createReturnStatement(location, expr, start, end);
     context.setEndOffset(body, m_lastTokenEndPosition.offset);
+    recordPauseLocation(context.breakpointLocation(body));
     context.appendStatement(sourceElements, body);
 
     return sourceElements;
@@ -1249,6 +1261,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         }
         TreeExpression expr = parseExpression(context);
         failIfFalse(expr, "Expected expression to enumerate");
+        recordPauseLocation(context.breakpointLocation(expr));
         JSTextPosition exprEnd = lastTokenEndPosition();
         
         int endLine = tokenLine();
@@ -1291,11 +1304,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         declsEnd = lastTokenEndPosition();
         m_allowsIn = true;
         failIfFalse(decls, "Cannot parse for loop declarations");
+        recordPauseLocation(context.breakpointLocation(decls));
     }
     
     if (match(SEMICOLON)) {
     standardForLoop:
         // Standard for loop
+        if (decls)
+            recordPauseLocation(context.breakpointLocation(decls));
         next();
         TreeExpression condition = 0;
         failIfTrue(forLoopConstDoesNotHaveInitializer && isConstDeclaration, "const variables in for loops must have initializers");
@@ -1303,6 +1319,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         if (!match(SEMICOLON)) {
             condition = parseExpression(context);
             failIfFalse(condition, "Cannot parse for loop condition expression");
+            recordPauseLocation(context.breakpointLocation(condition));
         }
         consumeOrFail(SEMICOLON, "Expected a ';' after the for loop condition expression");
         
@@ -1310,6 +1327,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         if (!match(CLOSEPAREN)) {
             increment = parseExpression(context);
             failIfFalse(increment, "Cannot parse for loop iteration expression");
+            recordPauseLocation(context.breakpointLocation(increment));
         }
         int endLine = tokenLine();
         handleProductionOrFail(CLOSEPAREN, ")", "end", "for-loop header");
@@ -1335,6 +1353,7 @@ enumerationLoop:
     }
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Cannot parse subject for-", isOfEnumeration ? "of" : "in", " statement");
+    recordPauseLocation(context.breakpointLocation(expr));
     JSTextPosition exprEnd = lastTokenEndPosition();
     int endLine = tokenLine();
     
@@ -1469,6 +1488,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseWithStatement
     int start = tokenStart();
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Cannot parse 'with' subject expression");
+    recordPauseLocation(context.breakpointLocation(expr));
     JSTextPosition end = lastTokenEndPosition();
     int endLine = tokenLine();
     handleProductionOrFail(CLOSEPAREN, ")", "start", "subject of a 'with' statement");
@@ -1489,6 +1509,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseSwitchStateme
     handleProductionOrFail(OPENPAREN, "(", "start", "subject of a 'switch'");
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr, "Cannot parse switch subject expression");
+    recordPauseLocation(context.breakpointLocation(expr));
     int endLine = tokenLine();
     
     handleProductionOrFail(CLOSEPAREN, ")", "end", "subject of a 'switch'");
@@ -1681,6 +1702,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     failIfStackOverflow();
     TreeStatement result = 0;
     bool shouldSetEndOffset = true;
+    bool shouldSetPauseLocation = false;
     bool parentAllowsFunctionDeclarationAsStatement = m_immediateParentAllowsFunctionDeclarationInStatement;
     m_immediateParentAllowsFunctionDeclarationInStatement = false;
 
@@ -1691,6 +1713,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         break;
     case VAR:
         result = parseVariableDeclaration(context, DeclarationType::VarDeclaration);
+        shouldSetPauseLocation = true;
         break;
     case FUNCTION: {
         const bool isAsync = false;
@@ -1701,6 +1724,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         JSTokenLocation location(tokenLocation());
         next();
         result = context.createEmptyStatement(location);
+        shouldSetPauseLocation = true;
         break;
     }
     case IF:
@@ -1717,12 +1741,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         break;
     case CONTINUE:
         result = parseContinueStatement(context);
+        shouldSetPauseLocation = true;
         break;
     case BREAK:
         result = parseBreakStatement(context);
+        shouldSetPauseLocation = true;
         break;
     case RETURN:
         result = parseReturnStatement(context);
+        shouldSetPauseLocation = true;
         break;
     case WITH:
         result = parseWithStatement(context);
@@ -1732,12 +1759,14 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         break;
     case THROW:
         result = parseThrowStatement(context);
+        shouldSetPauseLocation = true;
         break;
     case TRY:
         result = parseTryStatement(context);
         break;
     case DEBUGGER:
         result = parseDebuggerStatement(context);
+        shouldSetPauseLocation = true;
         break;
     case EOFTOK:
     case CASE:
@@ -1755,6 +1784,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case YIELD: {
         bool allowFunctionDeclarationAsStatement = false;
         result = parseExpressionOrLabelStatement(context, allowFunctionDeclarationAsStatement);
+        shouldSetPauseLocation = !context.shouldSkipPauseLocation(result);
         break;
     }
     case STRING:
@@ -1768,11 +1798,17 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
         if (directive && nonTrivialExpressionCount != m_parserState.nonTrivialExpressionCount)
             directive = nullptr;
         result = exprStatement;
+        shouldSetPauseLocation = true;
         break;
     }
 
-    if (result && shouldSetEndOffset)
-        context.setEndOffset(result, m_lastTokenEndPosition.offset);
+    if (result) {
+        if (shouldSetEndOffset)
+            context.setEndOffset(result, m_lastTokenEndPosition.offset);
+        if (shouldSetPauseLocation)
+            recordPauseLocation(context.breakpointLocation(result));
+    }
+
     return result;
 }
 
@@ -1908,10 +1944,17 @@ template <class TreeBuilder> TreeFunctionBody Parser<LexerType>::parseFunctionBo
 
     DepthManager statementDepth(&m_statementDepth);
     m_statementDepth = 0;
-    if (bodyType == ArrowFunctionBodyExpression)
-        failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(syntaxChecker), "Cannot parse body of this arrow function");
-    else
-        failIfFalse(parseSourceElements(syntaxChecker, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
+    if (bodyType == ArrowFunctionBodyExpression) {
+        if (m_debuggerParseData)
+            failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(context), "Cannot parse body of this arrow function");
+        else
+            failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(syntaxChecker), "Cannot parse body of this arrow function");
+    } else {
+        if (m_debuggerParseData)
+            failIfFalse(parseSourceElements(context, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
+        else
+            failIfFalse(parseSourceElements(syntaxChecker, CheckForStrictMode), bodyType == StandardFunctionBodyBlock ? "Cannot parse body of this function" : "Cannot parse body of this arrow function");
+    }
     unsigned endColumn = tokenColumn();
     return context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, endColumn, functionKeywordStart, functionNameStart, parametersStart, strictMode(), constructorKind, superBinding, parameterCount, functionLength, parseMode, isArrowFunctionBodyExpression);
 }
@@ -2080,6 +2123,9 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
     auto loadCachedFunction = [&] () -> bool {
         if (UNLIKELY(!Options::useSourceProviderCache()))
+            return false;
+
+        if (UNLIKELY(m_debuggerParseData))
             return false;
 
         ASSERT(parametersStart != -1);
@@ -2328,8 +2374,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     if (functionBodyType == ArrowFunctionBodyExpression) {
         location = locationBeforeLastToken();
         functionInfo.endOffset = location.endOffset;
+    } else {
+        recordFunctionEntryLocation(JSTextPosition(startLocation.line, startLocation.startOffset, startLocation.lineStartOffset));
+        recordFunctionLeaveLocation(JSTextPosition(location.line, location.startOffset, location.lineStartOffset));
     }
-    
+
     // Cache the tokenizer state and the function scope the first time the function is parsed.
     // Any future reparsing can then skip the function.
     // For arrow function is 8 = x=>x + 4 symbols;
@@ -2833,6 +2882,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
 
     TreeExpression condition = parseExpression(context);
     failIfFalse(condition, "Expected a expression as the condition for an if statement");
+    recordPauseLocation(context.breakpointLocation(condition));
     int end = tokenLine();
     handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
 
@@ -2868,6 +2918,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseIfStatement(T
 
         TreeExpression innerCondition = parseExpression(context);
         failIfFalse(innerCondition, "Expected a expression as the condition for an if statement");
+        recordPauseLocation(context.breakpointLocation(innerCondition));
         int innerEnd = tokenLine();
         handleProductionOrFail2(CLOSEPAREN, ")", "end", "'if' condition");
         const Identifier* unused = 0;
@@ -3850,6 +3901,36 @@ template <class TreeBuilder> bool Parser<LexerType>::shouldCheckPropertyForUnder
 
     // A Constant property that is not a Computed or Shorthand Constant property.
     return context.getType(property) == PropertyNode::Constant;
+}
+
+template <typename LexerType>
+void Parser<LexerType>::recordPauseLocation(const JSTextPosition& position)
+{
+    if (LIKELY(!m_debuggerParseData))
+        return;
+
+    if (position.line < 0)
+        return;
+
+    m_debuggerParseData->pausePositions.appendPause(position);
+}
+
+template <typename LexerType>
+void Parser<LexerType>::recordFunctionEntryLocation(const JSTextPosition& position)
+{
+    if (LIKELY(!m_debuggerParseData))
+        return;
+
+    m_debuggerParseData->pausePositions.appendEntry(position);
+}
+
+template <typename LexerType>
+void Parser<LexerType>::recordFunctionLeaveLocation(const JSTextPosition& position)
+{
+    if (LIKELY(!m_debuggerParseData))
+        return;
+
+    m_debuggerParseData->pausePositions.appendLeave(position);
 }
 
 template <typename LexerType>

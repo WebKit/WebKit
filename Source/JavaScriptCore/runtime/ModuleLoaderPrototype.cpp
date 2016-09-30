@@ -117,7 +117,7 @@ EncodedJSValue JSC_HOST_CALL moduleLoaderPrototypeParseModule(ExecState* exec)
     String source = exec->argument(1).toString(exec)->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    SourceCode sourceCode = makeSource(source, moduleKey.impl());
+    SourceCode sourceCode = makeSource(source, moduleKey.impl(), TextPosition::minimumPosition(), SourceProviderSourceType::Module);
 
     CodeProfiling profile(sourceCode);
 

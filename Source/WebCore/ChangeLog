@@ -1,5 +1,19 @@
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Breakpoints on blank lines or comments don't break
+        https://bugs.webkit.org/show_bug.cgi?id=9885
+        <rdar://problem/6134406>
+
+        Reviewed by Mark Lam.
+
+        Tests: inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html
+               inspector/debugger/breakpoints/resolved-dump-each-line.html
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Stepping out of a function finishes the line that called it.
         https://bugs.webkit.org/show_bug.cgi?id=155325
         <rdar://problem/25094578>

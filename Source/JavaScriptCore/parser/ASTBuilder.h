@@ -612,6 +612,11 @@ public:
         return isObjectLiteral(node) || isArrayLiteral(node);
     }
 
+    bool shouldSkipPauseLocation(StatementNode* statement) const
+    {
+        return !statement || statement->isLabel();
+    }
+
     StatementNode* createEmptyStatement(const JSTokenLocation& location) { return new (m_parserArena) EmptyStatementNode(location); }
 
     StatementNode* createDeclarationStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
@@ -968,6 +973,17 @@ public:
         node->setStartOffset(offset);
     }
 
+    JSTextPosition breakpointLocation(StatementNode* statement)
+    {
+        statement->setNeedsDebugHook();
+        return statement->position();
+    }
+
+    JSTextPosition breakpointLocation(ExpressionNode* expr)
+    {
+        expr->setNeedsDebugHook();
+        return expr->position();
+    }
 
     void propagateArgumentsUse() { usesArguments(); }
     

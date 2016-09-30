@@ -454,6 +454,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
     : ScriptExecutable(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType, NoIntrinsic)
 {
+    ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
 }
 
 void EvalExecutable::destroy(JSCell* cell)
@@ -466,6 +467,7 @@ const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecut
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->vm().programExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
 {
+    ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
     m_typeProfilingStartOffset = 0;
     m_typeProfilingEndOffset = source.length() - 1;
     if (exec->vm().typeProfiler() || exec->vm().controlFlowProfiler())
@@ -482,6 +484,7 @@ const ClassInfo ModuleProgramExecutable::s_info = { "ModuleProgramExecutable", &
 ModuleProgramExecutable::ModuleProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->vm().moduleProgramExecutableStructure.get(), exec->vm(), source, false, DerivedContextType::None, false, EvalContextType::None, NoIntrinsic)
 {
+    ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Module);
     m_typeProfilingStartOffset = 0;
     m_typeProfilingEndOffset = source.length() - 1;
     if (exec->vm().typeProfiler() || exec->vm().controlFlowProfiler())
@@ -751,6 +754,7 @@ WebAssemblyExecutable::WebAssemblyExecutable(VM& vm, const SourceCode& source, J
     , m_module(vm, this, module)
     , m_functionIndex(functionIndex)
 {
+    ASSERT(source.provider()->sourceType() == SourceProviderSourceType::WebAssembly);
 }
 
 void WebAssemblyExecutable::destroy(JSCell* cell)

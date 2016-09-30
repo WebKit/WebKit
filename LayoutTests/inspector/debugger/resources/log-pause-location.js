@@ -1,5 +1,6 @@
 TestPage.registerInitializer(() => {
     let lines = [];
+    let linesSourceCode = null;
 
     // Switch back to String.prototype.padStart once this is fixed:
     // FIXME: <https://webkit.org/b/161944> stringProtoFuncRepeatCharacter will return `null` when it should not
@@ -10,12 +11,78 @@ TestPage.registerInitializer(() => {
         return " ".repeat(desired - length) + this;
     };
 
-    function insertCaretIntoStringAtIndex(str, index) {
-        return str.slice(0, index) + "|" + str.slice(index);
+    function insertCaretIntoStringAtIndex(str, index, caret="|") {
+        return str.slice(0, index) + caret + str.slice(index);
     }
 
-    function logLinesWithContext(location, context) {
-        if (!WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
+    window.findScript = function(regex) {
+        let resources = WebInspector.frameResourceManager.mainFrame.resources;
+        for (let resource of resources) {
+            if (regex.test(resource.url))
+                return resource.scripts[0];
+        }
+    }
+
+    window.loadLinesFromSourceCode = function(sourceCode) {
+        linesSourceCode = sourceCode;
+        return sourceCode.requestContent()
+            .then((content) => {
+                lines = sourceCode.content.split(/\n/);
+                return lines;
+            })
+            .catch(() => {
+                InspectorTest.fail("Failed to load script content.");
+                InspectorTest.completeTest();
+            });
+    }
+
+    window.loadMainPageContent = function() {
+        return loadLinesFromSourceCode(WebInspector.frameResourceManager.mainFrame.mainResource);
+    }
+
+    window.logResolvedBreakpointLinesWithContext = function(inputLocation, resolvedLocation, context) {
+        if (resolvedLocation.sourceCode !== linesSourceCode && !WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(resolvedLocation.sourceCode)) {
+            InspectorTest.log("--- Source Unavailable ---");
+            return;
+        }
+
+        InspectorTest.assert(inputLocation.lineNumber <= resolvedLocation.lineNumber, "Input line number should always precede resolve location line number.");
+        InspectorTest.assert(inputLocation.lineNumber !== resolvedLocation.lineNumber || inputLocation.columnNumber <= resolvedLocation.columnNumber, "Input position should always precede resolve position.");
+
+        const inputCaret = "#";
+        const resolvedCaret = "|";
+
+        let startLine = inputLocation.lineNumber - context;
+        let endLine = resolvedLocation.lineNumber + context;
+        for (let lineNumber = startLine; lineNumber <= endLine; ++lineNumber) {
+            let lineContent = lines[lineNumber];
+            if (typeof lineContent !== "string")
+                continue;
+
+            let hasInputLocation = lineNumber === inputLocation.lineNumber;
+            let hasResolvedLocation = lineNumber === resolvedLocation.lineNumber;
+
+            let prefix = "    ";
+            if (hasInputLocation && hasResolvedLocation) {
+                prefix = "-=> ";
+                lineContent = insertCaretIntoStringAtIndex(lineContent, resolvedLocation.columnNumber, resolvedCaret);
+                if (inputLocation.columnNumber !== resolvedLocation.columnNumber)
+                    lineContent = insertCaretIntoStringAtIndex(lineContent, inputLocation.columnNumber, inputCaret);
+            } else if (hasInputLocation) {
+                prefix = " -> ";
+                lineContent = insertCaretIntoStringAtIndex(lineContent, inputLocation.columnNumber, inputCaret);
+            } else if (hasResolvedLocation) {
+                prefix = " => ";
+                lineContent = insertCaretIntoStringAtIndex(lineContent, resolvedLocation.columnNumber, resolvedCaret);
+            }
+
+            let number = lineNumber.toString().myPadStart(3);
+            InspectorTest.log(`${prefix}${number}    ${lineContent}`);
+        }
+    }
+
+    window.logLinesWithContext = function(location, context) {
+        if (location.sourceCode !== linesSourceCode && !WebInspector.frameResourceManager.mainFrame.mainResource.scripts.includes(location.sourceCode)) {
             InspectorTest.log("--- Source Unavailable ---");
             return;
         }
@@ -107,17 +174,6 @@ TestPage.registerInitializer(() => {
                 });
             }
         });
-    }
-
-    window.loadMainPageContent = function() {
-        return WebInspector.frameResourceManager.mainFrame.mainResource.requestContent()
-            .then((content) => {
-                lines = WebInspector.frameResourceManager.mainFrame.mainResource.content.split(/\n/);
-            })
-            .catch(() => {
-                InspectorTest.fail("Failed to load page content.");
-                InspectorTest.completeTest();
-            });
     }
 });
 

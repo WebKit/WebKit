@@ -1,5 +1,255 @@
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Breakpoints on blank lines or comments don't break
+        https://bugs.webkit.org/show_bug.cgi?id=9885
+        <rdar://problem/6134406>
+
+        Reviewed by Mark Lam.
+
+        This change introduces a way to perform a Debugger Parse of a script.
+        This debugger parse gathers a list of breakpoint locations, which
+        the backend uses to resolve breakpoint locations that came from the
+        Inspector frontend to the exact location we would actually pause.
+        We gather this information from the parser so that we can eagerly
+        get this information without requiring the code to have executed (the
+        real op_debugs are generated during bytecode generation when code
+        is actually evaluated).
+
+        If an input location was on a line with whitespace or a comment, the
+        resolved breakpoint location would be before the next statement that
+        will be executed. That may be the next line, or even later. We also
+        update our policy when setting breakpoints on and around function
+        statements to better match user expectations.
+
+        For example, when resolving breakpoints in:
+
+            1.  // Comment
+            2.  before;
+            3.
+            4.  function foo() {
+            5.      inside;
+            6.  }
+            7.
+            8.  after;
+
+        A breakpoint on line 1, a comment, resolves to line 2 the next
+        statement that will execute.
+
+        A breakpoint on line 3 or 7, empty lines, resolves to line 8 the next
+        statement that will execute. This skips past the definition of foo,
+        just like stepping would have done. The creation of foo would have
+        been hoisted, which would have happened before execution of the
+        other statements.
+
+        A breakpoint on line 4, a function signature, resolves to line 5,
+        inside the function. Users would expect to pause inside of a function
+        when setting a breakpoint on that function's name or opening brace.
+
+        A breakpoint on line 6, a function's closing brace, resolves to
+        line 6. The debugger will pause whenever execution leaves foo due to
+        a return and not an exception. This matches stepping behavior. An
+        explicit or implicit return (the implicit return undefined) will
+        pause on the closing brace as we leave the function, giving users
+        an opportunity to inspect the final state before leaving.
+
+        --
+
+        At this point, op_debug's are still emitted at custom locations during
+        bytecode generation of other statements / expressions. In order to
+        ensure the generated op_debugs correspond to locations the Parser
+        determined were breakpoint locations, the Parser sets a "needs debug
+        hook" flag on the nodes it will use for breakpoint locations, and
+        we assert during bytecode generation that op_debugs are only emitted
+        for nodes that were marked as needing debug hooks.
+
+        This still leaves open the possibility that the Parser will mark
+        some nodes that get missed during bytecode generation, so we might
+        fail to emit some op_debugs. The next step will be eliminating the
+        custom emitDebugHooks spread across StatementNode and ExpressionNode
+        subclasses, and instead always generating op_debugs whenever we
+        emit a flagged node.
+
+        --
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        New DebuggerParseData files.
+
+        * API/JSScriptRef.cpp:
+        (OpaqueJSScript::OpaqueJSScript):
+        * jsc.cpp:
+        (functionCheckModuleSyntax):
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::sourceType):
+        (JSC::StringSourceProvider::create):
+        (JSC::StringSourceProvider::StringSourceProvider):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        (JSC::SourceProvider::startPosition): Deleted.
+        Add a new type on SourceProvider to distinguish if its script was
+        intended to be a Script, Module, or WebAssembly. This information
+        will be needed to know how to best parse this file when the
+        debugger decides to lazily parse.
+
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        (JSC::WebAssemblyExecutable::WebAssemblyExecutable):
+        * runtime/ModuleLoaderPrototype.cpp:
+        (JSC::moduleLoaderPrototypeParseModule):
+        ASSERT the SourceProvider type matches the executable type we are
+        creating for it.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::breakpointLocation):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        When gathering breakpoint positions, get the position from the
+        current node. In the SyntaxChecker, return an invalid position.
+
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::needsDebugHook):
+        (JSC::ExpressionNode::setNeedsDebugHook):
+        (JSC::StatementNode::needsDebugHook):
+        (JSC::StatementNode::setNeedsDebugHook):
+        When gathering breakpoint positions, mark the node as needing
+        a debug hook. For now we assert op_debugs generated must come
+        from these nodes. Later we should just generate op_debugs for
+        these nodes.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseDoWhileStatement):
+        (JSC::Parser<LexerType>::parseWhileStatement):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBodySourceElements):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseWithStatement):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseIfStatement):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::parse):
+        Add an optional DebuggerParseData struct to the Parser. When available
+        the Parser will gather debugger data, and parse all functions with the
+        ASTBuilder instead of SyntaxChecking inner functions.
+
+        * debugger/DebuggerParseData.cpp: Added.
+        (JSC::DebuggerPausePositions::breakpointLocationForLineColumn):
+        (JSC::DebuggerPausePositions::sort):
+        (JSC::gatherDebuggerParseData):
+        (JSC::gatherDebuggerParseDataForSource):
+        * debugger/DebuggerParseData.h: Copied from Source/JavaScriptCore/debugger/DebuggerPrimitives.h.
+        (JSC::DebuggerPausePositions::DebuggerPausePositions):
+        (JSC::DebuggerPausePositions::appendPause):
+        (JSC::DebuggerPausePositions::appendEntry):
+        (JSC::DebuggerPausePositions::appendLeave):
+        The DebuggerParseData struct currently only contains a list of pause positions.
+        Once populated it can resolve an input location to a pause position.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitCallVarargs):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::DeclarationStatement::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        Emit op_debugs for the nodes themselves. Assert when we do that the
+        Parser had marked them as needing a debug hook.
+
+        * debugger/Breakpoint.h:
+        (JSC::Breakpoint::Breakpoint):
+        A breakpoint may be resolved or unresolved. Debugger::resolveBreakpoint
+        must be used to resolve the breakpoint. Most methods now require a
+        resolved breakpoint.
+
+        * debugger/Debugger.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::debuggerParseData):
+        (JSC::Debugger::resolveBreakpoint):
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::clearParsedData):
+        Provide a public method to resolve a breakpoint location in a script.
+        This will gather debugger parse data for the script if none is available.
+        Ensure clients have resolved a breakpoint before attempting to set it.
+        Currently we allow only a single breakpoint at a location. This may
+        need to change if multiple breakpoints resolve to the same location
+        but have different actions.
+
+        * inspector/ScriptDebugListener.h:
+        ScriptDebugServer::Script is effectively duplicating most of the data from
+        a SourceProvider. We should eliminate this and just use SourceProvider.
+
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::setBreakpointActions):
+        (Inspector::ScriptDebugServer::removeBreakpointActions):
+        (Inspector::ScriptDebugServer::getActionsForBreakpoint):
+        (Inspector::ScriptDebugServer::clearBreakpointActions):
+        (Inspector::ScriptDebugServer::evaluateBreakpointAction):
+        (Inspector::ScriptDebugServer::dispatchDidParseSource):
+        (Inspector::ScriptDebugServer::handleBreakpointHit):
+        (Inspector::ScriptDebugServer::setBreakpoint): Deleted.
+        (Inspector::ScriptDebugServer::removeBreakpoint): Deleted.
+        (Inspector::ScriptDebugServer::clearBreakpoints): Deleted.
+        * inspector/ScriptDebugServer.h:
+        Reduce ScriptDebugServer's involvement in breakpoints to just handling
+        breakpoint actions. Eventually we should eliminate it alltogether and
+        fold breakpoint logic into Debugger or DebugAgent.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::buildDebuggerLocation):
+        (Inspector::parseLocation):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::didSetBreakpoint):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        The Inspector can set breakpoints in multiple ways.
+        Ensure that once we have the Script that we always
+        resolve the breakpoint location before setting the
+        breakpoint. The different paths are:
+        
+        - setBreakpoint(scriptId, location)
+          - Here we know the SourceProvider by its SourceID
+            - resolve and set
+        
+        - setBreakpointByURL(url, location)
+          - Search for existing Scripts that match the URL
+            - resolve in each and set
+          - When new Scripts are parsed that match the URL
+            - resolve and set
+            
+
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Stepping out of a function finishes the line that called it.
         https://bugs.webkit.org/show_bug.cgi?id=155325
         <rdar://problem/25094578>

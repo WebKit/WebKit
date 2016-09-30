@@ -389,9 +389,13 @@ public:
         return isObjectLiteral(type) || isArrayLiteral(type);
     }
 
+    bool shouldSkipPauseLocation(int) const { return true; }
+
     void setEndOffset(int, int) { }
     int endOffset(int) { return 0; }
     void setStartOffset(int, int) { }
+
+    JSTextPosition breakpointLocation(int) { return JSTextPosition(-1, 0, 0); }
 
     void propagateArgumentsUse() { }
 

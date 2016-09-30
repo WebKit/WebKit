@@ -49,7 +49,7 @@ public:
 
 private:
     CachedScriptSourceProvider(CachedScript* cachedScript)
-        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition())
+        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), JSC::SourceProviderSourceType::Program)
         , m_cachedScript(cachedScript)
     {
         m_cachedScript->addClient(this);

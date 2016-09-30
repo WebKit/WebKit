@@ -47,6 +47,7 @@ class Identifier;
 class VM;
 class SourceCode;
 class SyntaxChecker;
+struct DebuggerParseData;
 
 // Macros to make the more common TreeBuilder types a little less verbose
 #define TreeStatement typename TreeBuilder::Statement
@@ -847,7 +848,7 @@ class Parser {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    Parser(VM*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, JSParserScriptMode, SourceParseMode, SuperBinding, ConstructorKind defaultConstructorKind = ConstructorKind::None, DerivedContextType = DerivedContextType::None, bool isEvalContext = false, EvalContextType = EvalContextType::None);
+    Parser(VM*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, JSParserScriptMode, SourceParseMode, SuperBinding, ConstructorKind defaultConstructorKind = ConstructorKind::None, DerivedContextType = DerivedContextType::None, bool isEvalContext = false, EvalContextType = EvalContextType::None, DebuggerParseData* = nullptr);
     ~Parser();
 
     template <class ParsedNode>
@@ -1370,7 +1371,11 @@ private:
         m_errorMessage = String(msg);
         ASSERT(!m_errorMessage.isNull());
     }
-    
+
+    ALWAYS_INLINE void recordPauseLocation(const JSTextPosition&);
+    ALWAYS_INLINE void recordFunctionEntryLocation(const JSTextPosition&);
+    ALWAYS_INLINE void recordFunctionLeaveLocation(const JSTextPosition&);
+
     void startLoop() { currentScope()->startLoop(); }
     void endLoop() { currentScope()->endLoop(); }
     void startSwitch() { currentScope()->startSwitch(); }
@@ -1706,7 +1711,8 @@ private:
     bool m_isEvalContext;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
     RefPtr<ModuleScopeData> m_moduleScopeData;
-    
+    DebuggerParseData* m_debuggerParseData;
+
     struct DepthManager {
         DepthManager(int* depth)
         : m_originalDepth(*depth)
@@ -1826,11 +1832,14 @@ std::unique_ptr<ParsedNode> parse(
     const Identifier& name, JSParserBuiltinMode builtinMode,
     JSParserStrictMode strictMode, JSParserScriptMode scriptMode, SourceParseMode parseMode, SuperBinding superBinding,
     ParserError& error, JSTextPosition* positionBeforeLastNewline = nullptr,
-    ConstructorKind defaultConstructorKind = ConstructorKind::None, DerivedContextType derivedContextType = DerivedContextType::None, EvalContextType evalContextType = EvalContextType::None)
+    ConstructorKind defaultConstructorKind = ConstructorKind::None,
+    DerivedContextType derivedContextType = DerivedContextType::None,
+    EvalContextType evalContextType = EvalContextType::None,
+    DebuggerParseData* debuggerParseData = nullptr)
 {
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType);
+        Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKind, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData);
         std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();

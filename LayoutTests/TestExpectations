@@ -139,6 +139,8 @@ webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]
 webkit.org/b/161951 [ Debug ] inspector/debugger/stepping [ Skip ]
 webkit.org/b/161951 [ Release ] inspector/debugger/stepping [ Slow ]
 
+[ Debug ] inspector/debugger/breakpoints [ Slow ]
+
 webkit.org/b/129639 inspector/dom/dom-search-crash.html [ Skip ]
 
 webkit.org/b/128736 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass ]

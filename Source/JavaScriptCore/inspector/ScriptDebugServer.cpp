@@ -36,7 +36,6 @@
 #include "Exception.h"
 #include "JSCInlines.h"
 #include "JSJavaScriptCallFrame.h"
-#include "JSLock.h"
 #include "JavaScriptCallFrame.h"
 #include "ScriptValue.h"
 #include "SourceProvider.h"
@@ -56,32 +55,36 @@ ScriptDebugServer::~ScriptDebugServer()
 {
 }
 
-JSC::BreakpointID ScriptDebugServer::setBreakpoint(JSC::SourceID sourceID, const ScriptBreakpoint& scriptBreakpoint, unsigned* actualLineNumber, unsigned* actualColumnNumber)
+void ScriptDebugServer::setBreakpointActions(BreakpointID id, const ScriptBreakpoint& scriptBreakpoint)
 {
-    if (!sourceID)
-        return JSC::noBreakpointID;
+    ASSERT(id != noBreakpointID);
+    ASSERT(!m_breakpointIDToActions.contains(id));
 
-    JSC::Breakpoint breakpoint(sourceID, scriptBreakpoint.lineNumber, scriptBreakpoint.columnNumber, scriptBreakpoint.condition, scriptBreakpoint.autoContinue, scriptBreakpoint.ignoreCount);
-    JSC::BreakpointID id = Debugger::setBreakpoint(breakpoint, *actualLineNumber, *actualColumnNumber);
-    if (id != JSC::noBreakpointID && !scriptBreakpoint.actions.isEmpty()) {
-#ifndef NDEBUG
-        BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(id);
-        ASSERT(it == m_breakpointIDToActions.end());
-#endif
-        const BreakpointActions& actions = scriptBreakpoint.actions;
-        m_breakpointIDToActions.set(id, actions);
-    }
-    return id;
+    m_breakpointIDToActions.set(id, scriptBreakpoint.actions);
 }
 
-void ScriptDebugServer::removeBreakpoint(JSC::BreakpointID id)
+void ScriptDebugServer::removeBreakpointActions(BreakpointID id)
 {
-    ASSERT(id != JSC::noBreakpointID);
-    BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(id);
-    if (it != m_breakpointIDToActions.end())
-        m_breakpointIDToActions.remove(it);
+    ASSERT(id != noBreakpointID);
 
-    Debugger::removeBreakpoint(id);
+    m_breakpointIDToActions.remove(id);
+}
+
+const BreakpointActions& ScriptDebugServer::getActionsForBreakpoint(BreakpointID id)
+{
+    ASSERT(id != noBreakpointID);
+
+    auto entry = m_breakpointIDToActions.find(id);
+    if (entry != m_breakpointIDToActions.end())
+        return entry->value;
+
+    static NeverDestroyed<BreakpointActions> emptyActionVector = BreakpointActions();
+    return emptyActionVector;
+}
+
+void ScriptDebugServer::clearBreakpointActions()
+{
+    m_breakpointIDToActions.clear();
 }
 
 bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& breakpointAction)
@@ -111,7 +114,7 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
         JSC::ExecState* exec = debuggerCallFrame->globalExec();
         if (exception)
             reportException(exec, exception);
-        
+
         dispatchBreakpointActionProbe(exec, breakpointAction, exception ? exception->value() : result);
         break;
     }
@@ -120,12 +123,6 @@ bool ScriptDebugServer::evaluateBreakpointAction(const ScriptBreakpointAction& b
     }
 
     return true;
-}
-
-void ScriptDebugServer::clearBreakpoints()
-{
-    Debugger::clearBreakpoints();
-    m_breakpointIDToActions.clear();
 }
 
 void ScriptDebugServer::dispatchDidPause(ScriptDebugListener* listener)
@@ -197,7 +194,9 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
 {
     JSC::SourceID sourceID = sourceProvider->asID();
 
+    // FIXME: <https://webkit.org/b/162773> Web Inspector: Simplify ScriptDebugListener::Script to use SourceProvider
     ScriptDebugListener::Script script;
+    script.sourceProvider = sourceProvider;
     script.url = sourceProvider->url();
     script.source = sourceProvider->source().toString();
     script.startLine = sourceProvider->startPosition().m_line.zeroBasedInt();
@@ -289,9 +288,9 @@ void ScriptDebugServer::handleBreakpointHit(JSC::JSGlobalObject* globalObject, c
 
     m_currentProbeBatchId++;
 
-    BreakpointIDToActionsMap::iterator it = m_breakpointIDToActions.find(breakpoint.id);
-    if (it != m_breakpointIDToActions.end()) {
-        BreakpointActions actions = it->value;
+    auto entry = m_breakpointIDToActions.find(breakpoint.id);
+    if (entry != m_breakpointIDToActions.end()) {
+        BreakpointActions actions = entry->value;
         for (size_t i = 0; i < actions.size(); ++i) {
             if (!evaluateBreakpointAction(actions[i]))
                 return;
@@ -316,17 +315,6 @@ void ScriptDebugServer::handlePause(JSGlobalObject* vmEntryGlobalObject, Debugge
 
     didContinue(vmEntryGlobalObject);
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue);
-}
-
-const BreakpointActions& ScriptDebugServer::getActionsForBreakpoint(JSC::BreakpointID breakpointID)
-{
-    ASSERT(breakpointID != JSC::noBreakpointID);
-
-    if (m_breakpointIDToActions.contains(breakpointID))
-        return m_breakpointIDToActions.find(breakpointID)->value;
-    
-    static NeverDestroyed<BreakpointActions> emptyActionVector = BreakpointActions();
-    return emptyActionVector;
 }
 
 void ScriptDebugServer::addListener(ScriptDebugListener* listener)

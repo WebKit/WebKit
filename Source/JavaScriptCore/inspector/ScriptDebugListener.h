@@ -30,6 +30,7 @@
 #pragma once
 
 #include "debugger/Debugger.h"
+#include "parser/SourceProvider.h"
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -43,6 +44,7 @@ public:
         String source;
         String sourceURL;
         String sourceMappingURL;
+        RefPtr<JSC::SourceProvider> sourceProvider;
         int startLine {0};
         int startColumn {0};
         int endLine {0};
