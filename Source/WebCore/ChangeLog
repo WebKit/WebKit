@@ -1,5 +1,17 @@
 2016-09-30  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser: parsing a URL with an empty host and a colon should fail
+        https://bugs.webkit.org/show_bug.cgi?id=162795
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseHostAndPort):
+
+2016-09-30  Alex Christensen  <achristensen@webkit.org>
+
         URLParser: handle syntax violations in non-UTF-8 encoded queries
         https://bugs.webkit.org/show_bug.cgi?id=162770
 

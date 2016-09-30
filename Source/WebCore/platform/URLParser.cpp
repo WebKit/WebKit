@@ -2478,6 +2478,8 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd())
         return false;
+    if (*iterator == ':')
+        return false;
     if (*iterator == '[') {
         auto ipv6End = iterator;
         while (!ipv6End.atEnd() && *ipv6End != ']')

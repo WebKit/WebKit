@@ -292,6 +292,10 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
     checkURL("http://127.0.0.1.", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
     checkURL("http://127.0.0.1./", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
+    checkURL("http://host:123?", {"http", "", "", "host", 123, "/", "", "", "http://host:123/?"});
+    checkURL("http://host:123?query", {"http", "", "", "host", 123, "/", "query", "", "http://host:123/?query"});
+    checkURL("http://host:123#", {"http", "", "", "host", 123, "/", "", "", "http://host:123/#"});
+    checkURL("http://host:123#fragment", {"http", "", "", "host", 123, "/", "", "fragment", "http://host:123/#fragment"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -707,6 +711,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("A://",
         {"a", "", "", "", 0, "/", "", "", "a:///"},
         {"a", "", "", "", 0, "//", "", "", "a://"});
+    checkURLDifferences("http://://",
+        {"", "", "", "", 0, "", "", "", "http://://"},
+        {"http", "", "", "", 0, "//", "", "", "http://://"});
+    checkURLDifferences("http://:123?",
+        {"", "", "", "", 0, "", "", "", "http://:123?"},
+        {"http", "", "", "", 123, "/", "", "", "http://:123/?"});
+    checkURLDifferences("http:/:",
+        {"", "", "", "", 0, "", "", "", "http:/:"},
+        {"http", "", "", "", 0, "/", "", "", "http://:/"});
+    checkURLDifferences("asdf://:",
+        {"", "", "", "", 0, "", "", "", "asdf://:"},
+        {"asdf", "", "", "", 0, "", "", "", "asdf://:"});
+    checkURLDifferences("http://:",
+        {"", "", "", "", 0, "", "", "", "http://:"},
+        {"http", "", "", "", 0, "/", "", "", "http://:/"});
     checkRelativeURLDifferences("//C|/foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
         {"", "", "", "", 0, "", "", "", "//C|/foo/bar"});
@@ -885,6 +904,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail(String(), "about:blank");
     shouldFail("http://127.0.0.1:abc");
     shouldFail("http://host:abc");
+    shouldFail("http://:abc");
     shouldFail("http://a:@", "about:blank");
     shouldFail("http://:b@", "about:blank");
     shouldFail("http://:@", "about:blank");
