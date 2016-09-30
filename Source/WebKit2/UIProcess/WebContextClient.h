@@ -31,8 +31,6 @@
 #include "WKContext.h"
 
 namespace API {
-class Array;
-
 template<> struct ClientTraits<WKContextClientBase> {
     typedef std::tuple<WKContextClientV0, WKContextClientV1, WKContextClientV2> Versions;
 };
@@ -48,7 +46,6 @@ public:
     void plugInAutoStartOriginHashesChanged(WebProcessPool*);
     void networkProcessDidCrash(WebProcessPool*);
     void databaseProcessDidCrash(WebProcessPool*);
-    PassRefPtr<API::Data> copyWebCryptoMasterKey(WebProcessPool*);
 };
 
 } // namespace WebKit
