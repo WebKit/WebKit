@@ -35,11 +35,13 @@ namespace WebCore {
 
 class CachedResourceLoader;
 class FontDescription;
-class FontFeatureSettings;
 class FontPlatformData;
 class SVGDocument;
 class SVGFontElement;
 struct FontCustomPlatformData;
+
+template <typename T> class FontTaggedSettings;
+typedef FontTaggedSettings<int> FontFeatureSettings;
 
 class CachedFont : public CachedResource {
 public:

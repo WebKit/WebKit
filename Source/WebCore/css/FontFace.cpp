@@ -343,7 +343,7 @@ String FontFace::featureSettings() const
         return ASCIILiteral("normal");
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (auto& feature : m_backing->featureSettings())
-        list->append(CSSFontFeatureValue::create(FontFeatureTag(feature.tag()), feature.value()));
+        list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
     return list->cssText();
 }
 

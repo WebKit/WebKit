@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +25,20 @@
  */
 
 #include "config.h"
-#include "FontFeatureSettings.h"
+#include "FontTaggedSettings.h"
+
+#include "TextStream.h"
 
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
-FontFeature::FontFeature(const FontFeatureTag& tag, int value)
-    : m_tag(tag)
-    , m_value(value)
-{
-}
-
-FontFeature::FontFeature(FontFeatureTag&& tag, int value)
-    : m_tag(WTFMove(tag))
-    , m_value(value)
-{
-}
-
-bool FontFeature::operator==(const FontFeature& other) const
-{
-    return m_tag == other.m_tag && m_value == other.m_value;
-}
-
-bool FontFeature::operator<(const FontFeature& other) const
-{
-    return (m_tag < other.m_tag) || (m_tag == other.m_tag && m_value < other.m_value);
-}
-
-void FontFeatureSettings::insert(FontFeature&& feature)
-{
-    // This vector will almost always have 0 or 1 items in it. Don't bother with the overhead of a binary search or a hash set.
-    size_t i;
-    for (i = 0; i < m_list.size(); ++i) {
-        if (feature < m_list[i])
-            break;
-    }
-    m_list.insert(i, WTFMove(feature));
-}
-
+template <>
 unsigned FontFeatureSettings::hash() const
 {
     IntegerHasher hasher;
     for (auto& feature : m_list) {
-        hasher.add(FontFeatureTagHash::hash(feature.tag()));
+        hasher.add(FourCharacterTagHash::hash(feature.tag()));
         hasher.add(feature.value());
     }
     return hasher.hash();

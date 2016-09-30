@@ -1,3 +1,86 @@
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Templatize internal FontFeatureSettings class for variation font support
+        https://bugs.webkit.org/show_bug.cgi?id=162774
+
+        Reviewed by Alex Christensen.
+
+        Font features and font variations are similar in that they are identified
+        by four-character tags and an associated value. However, the value is an
+        int for font features and is a float for font variations. In order to
+        simplify code, we can use the same class for both, and use a template
+        argument to distinguish between the two. Then, typedefs can be used to
+        name them.
+
+        No new tests because there is no behavior change.
+
+        * WebCore.xcodeproj/project.pbxproj: Rename FontFeatureSettings.{cpp,h}
+        to FontTaggedSettings.{cpp,h}
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontFeatureValue.cpp:
+        (WebCore::CSSFontFeatureValue::CSSFontFeatureValue):
+        * css/CSSFontFeatureValue.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::featureSettings):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontFeatureTag):
+        * loader/cache/CachedFont.h:
+        * platform/graphics/FontDescription.h:
+        * platform/graphics/FontFeatureSettings.cpp:
+        (WebCore::FontFeature::FontFeature): Deleted.
+        (WebCore::FontFeature::operator==): Deleted.
+        (WebCore::FontFeature::operator<): Deleted.
+        (WebCore::FontFeatureSettings::insert): Deleted.
+        (WebCore::FontFeatureSettings::hash): Deleted.
+        * platform/graphics/FontFeatureSettings.h: Removed.
+        (WebCore::fontFeatureTag): Deleted.
+        (WebCore::FontFeatureTagHash::hash): Deleted.
+        (WebCore::FontFeatureTagHash::equal): Deleted.
+        (WebCore::FontFeatureTagHashTraits::constructDeletedValue): Deleted.
+        (WebCore::FontFeatureTagHashTraits::isDeletedValue): Deleted.
+        (WebCore::FontFeature::operator!=): Deleted.
+        (WebCore::FontFeature::tag): Deleted.
+        (WebCore::FontFeature::value): Deleted.
+        (WebCore::FontFeature::enabled): Deleted.
+        (WebCore::FontFeatureSettings::operator==): Deleted.
+        (WebCore::FontFeatureSettings::operator!=): Deleted.
+        (WebCore::FontFeatureSettings::size): Deleted.
+        (WebCore::FontFeatureSettings::operator[]): Deleted.
+        (WebCore::FontFeatureSettings::at): Deleted.
+        (WebCore::FontFeatureSettings::begin): Deleted.
+        (WebCore::FontFeatureSettings::end): Deleted.
+        * platform/graphics/FontTaggedSettings.cpp: Renamed from Source/WebCore/platform/graphics/FontFeatureSettings.cpp.
+        (WebCore::FontFeatureSettings::hash):
+        * platform/graphics/FontTaggedSettings.h: Added.
+        (WebCore::fontFeatureTag):
+        (WebCore::FourCharacterTagHash::hash):
+        (WebCore::FourCharacterTagHash::equal):
+        (WebCore::FourCharacterTagHashTraits::constructDeletedValue):
+        (WebCore::FourCharacterTagHashTraits::isDeletedValue):
+        (WebCore::FontTaggedSetting::operator!=):
+        (WebCore::FontTaggedSetting::tag):
+        (WebCore::FontTaggedSetting::value):
+        (WebCore::FontTaggedSetting::enabled):
+        (WebCore::FontTaggedSetting<T>::FontTaggedSetting):
+        (WebCore::=):
+        (WebCore::FontTaggedSetting<T>::operator<):
+        (WebCore::FontTaggedSettings::operator==):
+        (WebCore::FontTaggedSettings::operator!=):
+        (WebCore::FontTaggedSettings::isEmpty):
+        (WebCore::FontTaggedSettings::size):
+        (WebCore::FontTaggedSettings::operator[]):
+        (WebCore::FontTaggedSettings::at):
+        (WebCore::FontTaggedSettings::begin):
+        (WebCore::FontTaggedSettings::end):
+        (WebCore::FontTaggedSettings<T>::insert):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::tagEquals):
+        (WebCore::appendOpenTypeFeature):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         Fragment serialization should always use 'xml:' prefix for attributes in XML namespace

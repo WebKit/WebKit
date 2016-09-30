@@ -38,10 +38,12 @@ class CSSFontSelector;
 class Font;
 struct FontCustomPlatformData;
 class FontDescription;
-class FontFeatureSettings;
 struct FontVariantSettings;
 class SVGFontFaceElement;
 class SharedBuffer;
+
+template <typename T> class FontTaggedSettings;
+typedef FontTaggedSettings<int> FontFeatureSettings;
 
 class CSSFontFaceSource final : public CachedFontClient {
     WTF_MAKE_FAST_ALLOCATED;

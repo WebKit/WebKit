@@ -53,7 +53,7 @@
 #include "CursorList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "FontFeatureSettings.h"
+#include "FontTaggedSettings.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Pair.h"
 #include "PseudoElement.h"
@@ -2876,7 +2876,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 return cssValuePool.createIdentifierValue(CSSValueNormal);
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (auto& feature : featureSettings)
-                list->append(CSSFontFeatureValue::create(FontFeatureTag(feature.tag()), feature.value()));
+                list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
             return list;
         }
 #if ENABLE(CSS_GRID_LAYOUT)

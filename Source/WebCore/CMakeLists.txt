@@ -2204,7 +2204,7 @@ set(WebCore_SOURCES
     platform/graphics/FontCascade.cpp
     platform/graphics/FontCascadeFonts.cpp
     platform/graphics/FontDescription.cpp
-    platform/graphics/FontFeatureSettings.cpp
+    platform/graphics/FontTaggedSettings.cpp
     platform/graphics/FontGenericFamilies.cpp
     platform/graphics/FontPlatformData.cpp
     platform/graphics/FontRanges.cpp

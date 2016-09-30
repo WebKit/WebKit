@@ -47,7 +47,7 @@ static inline void appendRawTrueTypeFeature(CFMutableArrayRef features, int type
     CFArrayAppendValue(features, feature.get());
 }
 
-static inline bool tagEquals(FontFeatureTag tag, const char comparison[4])
+static inline bool tagEquals(FontTag tag, const char comparison[4])
 {
     return equalIgnoringASCIICase(tag.data(), comparison, 4);
 }
@@ -133,7 +133,7 @@ static inline void appendTrueTypeFeature(CFMutableArrayRef features, const FontF
 
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
-    RetainPtr<CFStringRef> featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontFeatureTag::value_type), kCFStringEncodingASCII, false));
+    RetainPtr<CFStringRef> featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
     int rawFeatureValue = feature.value();
     RetainPtr<CFNumberRef> featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
     CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
@@ -142,7 +142,7 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
     CFArrayAppendValue(features, featureDictionary.get());
 }
 
-typedef HashMap<FontFeatureTag, int, FontFeatureTagHash, FontFeatureTagHashTraits> FeaturesMap;
+typedef HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits> FeaturesMap;
 
 static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
 {
