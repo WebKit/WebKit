@@ -1,3 +1,22 @@
+2016-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Second time going into fullscreen using silverlight, will hide the menu bar and dock for Safari
+        https://bugs.webkit.org/show_bug.cgi?id=162805
+        rdar://problem/28208495
+
+        Reviewed by Dan Bernstein.
+
+        Turns out that the WindowRef wrappers for full screen NSWindows can end up in the m_windows HashSet,
+        and never go away. 
+        
+        Fix this by storing the canonical CGWindowIDs in the hash map instead.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::cgWindowID):
+        (WebKit::windowCoversAnyScreen):
+        (WebKit::FullscreenWindowTracker::windowShown):
+        (WebKit::FullscreenWindowTracker::windowHidden):
+
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Create runtime flag for variation font work

@@ -70,8 +70,7 @@ public:
     template<typename T> void windowHidden(T window);
 
 private:
-    typedef HashSet<void*> WindowSet;
-    WindowSet m_windows;
+    HashSet<CGWindowID> m_windows;
 };
 
 static bool rectCoversAnyScreen(NSRect rect)
@@ -94,18 +93,33 @@ static bool windowCoversAnyScreen(WindowRef window)
 
     return rectCoversAnyScreen(NSRectFromCGRect(bounds));
 }
-#endif
 
-static bool windowCoversAnyScreen(NSWindow* window)
+static CGWindowID cgWindowID(WindowRef window)
 {
-    return rectCoversAnyScreen([window frame]);
+    return reinterpret_cast<CGWindowID>(WKGetNativeWindowFromWindowRef(window));
 }
 
-template<typename T> void FullscreenWindowTracker::windowShown(T window)
+#endif
+
+static bool windowCoversAnyScreen(NSWindow *window)
 {
+    return rectCoversAnyScreen(window.frame);
+}
+
+static CGWindowID cgWindowID(NSWindow *window)
+{
+    return window.windowNumber;
+}
+
+template<typename T>
+void FullscreenWindowTracker::windowShown(T window)
+{
+    CGWindowID windowID = cgWindowID(window);
+    if (!windowID)
+        return;
+
     // If this window is already visible then there is nothing to do.
-    WindowSet::iterator it = m_windows.find(window);
-    if (it != m_windows.end())
+    if (m_windows.contains(windowID))
         return;
     
     // If the window is not full-screen then we're not interested in it.
@@ -114,21 +128,23 @@ template<typename T> void FullscreenWindowTracker::windowShown(T window)
 
     bool windowSetWasEmpty = m_windows.isEmpty();
 
-    m_windows.add(window);
+    m_windows.add(windowID);
     
     // If this is the first full screen window to be shown, notify the UI process.
     if (windowSetWasEmpty)
         PluginProcess::singleton().setFullscreenWindowIsShowing(true);
 }
 
-template<typename T> void FullscreenWindowTracker::windowHidden(T window)
+template<typename T>
+void FullscreenWindowTracker::windowHidden(T window)
 {
-    // If this is not a window that we're tracking then there is nothing to do.
-    WindowSet::iterator it = m_windows.find(window);
-    if (it == m_windows.end())
+    CGWindowID windowID = cgWindowID(window);
+    if (!windowID)
         return;
 
-    m_windows.remove(it);
+    // If this is not a window that we're tracking then there is nothing to do.
+    if (!m_windows.remove(windowID))
+        return;
 
     // If this was the last full screen window that was visible, notify the UI process.
     if (m_windows.isEmpty())
