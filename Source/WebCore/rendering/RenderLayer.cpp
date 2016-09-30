@@ -137,7 +137,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class ClipRects {
+class ClipRects : public RefCounted<ClipRects> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ClipRects> create()
@@ -149,8 +149,6 @@ public:
     {
         return adoptRef(*new ClipRects(other));
     }
-
-    ClipRects() = default;
 
     void reset()
     {
@@ -172,13 +170,6 @@ public:
     bool fixed() const { return m_fixed; }
     void setFixed(bool fixed) { m_fixed = fixed; }
 
-    void ref() { m_refCount++; }
-    void deref()
-    {
-        if (!--m_refCount)
-            delete this;
-    }
-
     bool operator==(const ClipRects& other) const
     {
         return m_overflowClipRect == other.overflowClipRect()
@@ -197,6 +188,8 @@ public:
     }
 
 private:
+    ClipRects() = default;
+
     ClipRects(const LayoutRect& clipRect)
         : m_overflowClipRect(clipRect)
         , m_fixedClipRect(clipRect)
@@ -205,18 +198,17 @@ private:
     }
 
     ClipRects(const ClipRects& other)
-        : m_overflowClipRect(other.overflowClipRect())
+        : m_fixed(other.fixed())
+        , m_overflowClipRect(other.overflowClipRect())
         , m_fixedClipRect(other.fixedClipRect())
         , m_posClipRect(other.posClipRect())
-        , m_fixed(other.fixed())
     {
     }
 
+    bool m_fixed { false };
     ClipRect m_overflowClipRect;
     ClipRect m_fixedClipRect;
     ClipRect m_posClipRect;
-    unsigned m_refCount = 1;
-    bool m_fixed = false;
 };
 
 class ClipRectsCache {
@@ -232,8 +224,15 @@ public:
 #endif
     }
 
-    ClipRects* getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) { return m_clipRects[getIndex(clipRectsType, respectOverflow)].get(); }
-    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, RefPtr<ClipRects>&& clipRects) { m_clipRects[getIndex(clipRectsType, respectOverflow)] = WTFMove(clipRects); }
+    ClipRects* getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) const
+    {
+        return m_clipRects[getIndex(clipRectsType, respectOverflow)].get();
+    }
+
+    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, RefPtr<ClipRects>&& clipRects)
+    {
+        m_clipRects[getIndex(clipRectsType, respectOverflow)] = WTFMove(clipRects);
+    }
 
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
@@ -241,11 +240,12 @@ public:
 #endif
 
 private:
-    int getIndex(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow)
+    unsigned getIndex(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) const
     {
-        int index = static_cast<int>(clipRectsType);
+        unsigned index = static_cast<unsigned>(clipRectsType);
         if (respectOverflow == RespectOverflowClip)
-            index += static_cast<int>(NumCachedClipRectsTypes);
+            index += static_cast<unsigned>(NumCachedClipRectsTypes);
+        ASSERT_WITH_SECURITY_IMPLICATION(index < NumCachedClipRectsTypes * 2);
         return index;
     }
 
@@ -5418,9 +5418,9 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
             // This code is useful to check cached clip rects, but is too expensive to leave enabled in debug builds by default.
             ClipRectsContext tempContext(clipRectsContext);
             tempContext.clipRectsType = TemporaryClipRects;
-            ClipRects tempClipRects;
+            Ref<ClipRects> tempClipRects = ClipRects::create();
             calculateClipRects(tempContext, tempClipRects);
-            ASSERT(tempClipRects == *clipRects);
+            ASSERT(tempClipRects.get() == *clipRects);
 #endif
             return *clipRects; // We have the correct cached value.
         }

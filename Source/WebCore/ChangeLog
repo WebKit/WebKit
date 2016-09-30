@@ -1,3 +1,23 @@
+2016-09-30  Zalan Bujtas  <zalan@apple.com>
+
+        Remove ClipRects's custom refcounting.
+        https://bugs.webkit.org/show_bug.cgi?id=162798
+
+        Reviewed by Simon Fraser.
+
+        It's safer to use RefCounted<>. 
+
+        No change in functionality.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::ClipRects::ClipRects):
+        (WebCore::ClipRectsCache::getClipRects):
+        (WebCore::ClipRectsCache::setClipRects):
+        (WebCore::ClipRectsCache::getIndex):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::ClipRects::ref): Deleted.
+        (WebCore::ClipRects::deref): Deleted.
+
 2016-09-30  Chris Dumez  <cdumez@apple.com>
 
         FileSaver.js does not work in WebKit
