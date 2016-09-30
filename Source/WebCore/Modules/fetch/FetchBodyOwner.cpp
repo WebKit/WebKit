@@ -52,10 +52,12 @@ void FetchBodyOwner::stop()
     m_body.cleanConsumePromise();
 
     if (m_blobLoader) {
+        bool isUniqueReference = hasOneRef();
         if (m_blobLoader->loader)
             m_blobLoader->loader->stop();
+        // After that point, 'this' may be destroyed, since unsetPendingActivity should have been called.
+        ASSERT_UNUSED(isUniqueReference, isUniqueReference || !m_blobLoader);
     }
-    ASSERT(!m_blobLoader);
 }
 
 bool FetchBodyOwner::isDisturbedOrLocked() const

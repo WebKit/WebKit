@@ -1,3 +1,17 @@
+2016-09-30  Youenn Fablet  <youenn@apple.com>
+
+        DumpRenderTree crashed in com.apple.WebCore: WTF::Optional<WebCore::FetchBodyOwner::BlobLoader>::operator bool const + 12
+        https://bugs.webkit.org/show_bug.cgi?id=162483
+
+        Reviewed by Alex Christensen.
+
+        Test: fetch/closing-while-fetching-blob.html
+        No change of behavior.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::stop): Asserting m_blobLoader is null (meaning that unsetPendingActivity was done)
+        only in case FetchBodyOwner has no risk being destroyed.
+
 2016-09-30  Youenn Fablet  <youennf@gmail.com>
 
         [Fetch API] Add support for URLSearchParams body
