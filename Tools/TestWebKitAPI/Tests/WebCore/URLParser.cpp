@@ -292,6 +292,9 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://127.0.0.1", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
     checkURL("http://127.0.0.1.", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
     checkURL("http://127.0.0.1./", {"http", "", "", "127.0.0.1.", 0, "/", "", "", "http://127.0.0.1./"});
+    checkURL("http://0x100.0/", {"http", "", "", "0x100.0", 0, "/", "", "", "http://0x100.0/"});
+    checkURL("http://0.0.0x100.0/", {"http", "", "", "0.0.0x100.0", 0, "/", "", "", "http://0.0.0x100.0/"});
+    checkURL("http://0.0.0.0x100/", {"http", "", "", "0.0.0.0x100", 0, "/", "", "", "http://0.0.0.0x100/"});
     checkURL("http://host:123?", {"http", "", "", "host", 123, "/", "", "", "http://host:123/?"});
     checkURL("http://host:123?query", {"http", "", "", "host", 123, "/", "query", "", "http://host:123/?query"});
     checkURL("http://host:123#", {"http", "", "", "host", 123, "/", "", "", "http://host:123/#"});
@@ -792,7 +795,6 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("http://f:010/c", "http://example.org/foo/bar",
         {"http", "", "", "f", 10, "/c", "", "", "http://f:10/c"},
         {"http", "", "", "f", 10, "/c", "", "", "http://f:010/c"});
-    checkURL("http://0.0.0.0x100/", {"http", "", "", "0.0.0.0x100", 0, "/", "", "", "http://0.0.0.0x100/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)

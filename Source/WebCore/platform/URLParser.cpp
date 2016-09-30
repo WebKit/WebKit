@@ -2206,8 +2206,8 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
     }
     if (!iterator.atEnd() || !items.size() || items.size() > 4)
         return Nullopt;
-    if (items.size() > 2) {
-        for (size_t i = 0; i < items.size() - 2; i++) {
+    if (items.size() > 1) {
+        for (size_t i = 0; i < items.size() - 1; i++) {
             if (items[i] > 255)
                 return Nullopt;
         }
