@@ -1,3 +1,16 @@
+2016-09-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Add radiusX / radiusY / rotationAngle to WebPlatformTouchPoint
+        https://bugs.webkit.org/show_bug.cgi?id=162787
+        <rdar://problem/28554292>
+
+        Reviewed by Benjamin Poulain.
+
+        Extend Touch constructor test coverage to cover radiusX / radiusY / rotationAngle
+        attributes.
+
+        * fast/events/touch/touch-constructor.html:
+
 2016-09-30  Saam Barati  <sbarati@apple.com>
 
         Arrow functions should not allow duplicate parameter names

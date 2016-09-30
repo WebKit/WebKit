@@ -25,14 +25,6 @@ function validateTouch(touch, dictionary)
         shouldBe("createdTouch.screenX", "init.screenX");
     else
         shouldBe("createdTouch.screenX", "0");
-    if (init.hasOwnProperty("screenX"))
-        shouldBe("createdTouch.screenX", "init.screenX");
-    else
-        shouldBe("createdTouch.screenX", "0");
-    if (init.hasOwnProperty("screenX"))
-        shouldBe("createdTouch.screenX", "init.screenX");
-    else
-        shouldBe("createdTouch.screenX", "0");
     if (init.hasOwnProperty("screenY"))
         shouldBe("createdTouch.screenY", "init.screenY");
     else
@@ -53,6 +45,18 @@ function validateTouch(touch, dictionary)
         shouldBe("createdTouch.clientY", "init.clientY");
     else
         shouldBe("createdTouch.clientY", "0");
+    if (init.hasOwnProperty("radiusX"))
+        shouldBe("createdTouch.radiusX", "init.radiusX");
+    else
+        shouldBe("createdTouch.radiusX", "0");
+    if (init.hasOwnProperty("radiusY"))
+        shouldBe("createdTouch.radiusY", "init.radiusY");
+    else
+        shouldBe("createdTouch.radiusY", "0");
+    if (init.hasOwnProperty("rotationAngle"))
+        shouldBe("createdTouch.rotationAngle", "init.rotationAngle");
+    else
+        shouldBe("createdTouch.rotationAngle", "0");
     if (init.hasOwnProperty("force"))
         shouldBe("createdTouch.force", "init.force");
     else
@@ -64,12 +68,12 @@ shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body })");
 validateTouch(touch, { identifier: 1, target: document.body });
 
 debug("");
-shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7 })");
-validateTouch(touch, { identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7 });
+shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7, radiusX: 8, radiusY: 9, rotationAngle: 10 })");
+validateTouch(touch, { identifier: 1, target: document.body, clientX: 1, clientY: 2, screenX: 3, screenY: 4, pageX: 5, pageY: 6, force: 7, radiusX: 8, radiusY: 9, rotationAngle: 10 });
 
 debug("");
-shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, clientX: 8.5, clientY: 9.5 })");
-validateTouch(touch, { identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, clientX: 8.5, clientY: 9.5 });
+shouldNotThrow("touch = new Touch({ identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, radiusX: 8.5, radiusY: 9.5, rotationAngle: 10.5 })");
+validateTouch(touch, { identifier: 1, target: document.body, clientX: 1.5, clientY: 2.5, screenX: 3.5, screenY: 4.5, pageX: 5.5, pageY: 6.5, force: 7.5, radiusX: 8.5, radiusY: 9.5, rotationAngle: 10.5 });
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

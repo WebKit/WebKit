@@ -325,6 +325,12 @@ public:
     TouchPointState state() const { return phase(); }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+    void setRadiusX(double radiusX) { m_radiusX = radiusX; }
+    double radiusX() const { return m_radiusX; }
+    void setRadiusY(double radiusY) { m_radiusY = radiusY; }
+    double radiusY() const { return m_radiusY; }
+    void setRotationAngle(double rotationAngle) { m_rotationAngle = rotationAngle; }
+    double rotationAngle() const { return m_rotationAngle; }
     void setForce(double force) { m_force = force; }
     double force() const { return m_force; }
     void setAltitudeAngle(double altitudeAngle) { m_altitudeAngle = altitudeAngle; }
@@ -343,6 +349,9 @@ private:
     WebCore::IntPoint m_location;
     uint32_t m_phase;
 #if ENABLE(IOS_TOUCH_EVENTS)
+    double m_radiusX { 0 };
+    double m_radiusY { 0 };
+    double m_rotationAngle { 0 };
     double m_force { 0 };
     double m_altitudeAngle { 0 };
     double m_azimuthAngle { 0 };

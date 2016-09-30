@@ -103,6 +103,10 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
         WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
+        // FIXME: We should use touchPoint.majorRadiusInScreenCoordinates for radiusX / radiusY once it is available (rdar://problem/28555313).
+        platformTouchPoint.setRadiusX(0);
+        platformTouchPoint.setRadiusY(0);
+        platformTouchPoint.setRotationAngle(0); // Not available in _UIWebTouchEvent yet.
         platformTouchPoint.setForce(touchPoint.force);
 #if defined UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA && UI_WEB_TOUCH_EVENT_HAS_STYLUS_DATA
         platformTouchPoint.setAltitudeAngle(touchPoint.altitudeAngle);
