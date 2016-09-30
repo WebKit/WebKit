@@ -85,5 +85,8 @@
     [RaisesException] void setUserInterfaceDirectionPolicy(DOMString policy);
     [RaisesException] DOMString systemLayoutDirection();
     [RaisesException] void setSystemLayoutDirection(DOMString direction);
+
+    [RaisesException] boolean variationFontsEnabled();
+    [RaisesException] void setVariationFontsEnabled(boolean enabled);
 };
 

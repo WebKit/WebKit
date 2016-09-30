@@ -273,6 +273,8 @@ springTimingFunctionEnabled initial=false
 
 treatIPAddressAsDomain initial=false
 
+variationFontsEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
+
 # Runtime-enabled features
 visualViewportEnabled initial=false
 

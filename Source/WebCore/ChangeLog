@@ -1,5 +1,25 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Create runtime flag for variation font work
+        https://bugs.webkit.org/show_bug.cgi?id=162780
+
+        Reviewed by Alex Christensen.
+
+        No new tests because there is no behavior change.
+
+        Variation font work should be behind a runtime flag.
+
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::variationFontsEnabled):
+        (WebCore::InternalSettings::setVariationFontsEnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Templatize internal FontFeatureSettings class for variation font support
         https://bugs.webkit.org/show_bug.cgi?id=162774
 

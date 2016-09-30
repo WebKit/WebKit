@@ -107,6 +107,8 @@ public:
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
 #endif
+        bool m_variationFontsEnabled;
+
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;
@@ -166,6 +168,8 @@ public:
     void setUserInterfaceDirectionPolicy(const String& policy, ExceptionCode&);
     String systemLayoutDirection(ExceptionCode&);
     void setSystemLayoutDirection(const String& direction, ExceptionCode&);
+    bool variationFontsEnabled(ExceptionCode&);
+    void setVariationFontsEnabled(bool, ExceptionCode&);
 
     static void setAllowsAnySSLCertificate(bool);
 

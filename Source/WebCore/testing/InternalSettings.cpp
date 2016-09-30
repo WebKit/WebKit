@@ -108,6 +108,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
+    , m_variationFontsEnabled(settings.variationFontsEnabled())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
     , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
@@ -183,6 +184,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 #endif
+    settings.setVariationFontsEnabled(m_variationFontsEnabled);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
     settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);
@@ -647,6 +649,18 @@ void InternalSettings::setSystemLayoutDirection(const String& direction, Excepti
 void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
 {
     Settings::setAllowsAnySSLCertificate(allowsAnyCertificate);
+}
+
+bool InternalSettings::variationFontsEnabled(ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettingsReturn(false);
+    return settings()->variationFontsEnabled();
+}
+
+void InternalSettings::setVariationFontsEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setVariationFontsEnabled(enabled);
 }
 
 // If you add to this list, make sure that you update the Backup class for test reproducability!
