@@ -113,12 +113,9 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& st
         ASSERT(data);
         return { *data };
     }
-    if (value.inherits(JSC::JSArrayBufferView::info())) {
-        auto data = toArrayBufferView(value);
-        ASSERT(data);
-        // FIXME: We should be able to efficiently get a Ref<const T> from a RefPtr<T>.
-        return { *data };
-    }
+    if (value.inherits(JSC::JSArrayBufferView::info()))
+        return { toArrayBufferView(value).releaseConstNonNull() };
+
     return { };
 }
 

@@ -62,16 +62,17 @@ public:
     ALWAYS_INLINE ~RefPtr() { derefIfNotNull(std::exchange(m_ptr, nullptr)); }
 
     T* get() const { return m_ptr; }
-    
+
     // FIXME: Remove release() and change all call sites to call WTFMove().
     RefPtr<T> release() { RefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
+    Ref<const T> releaseConstNonNull() { ASSERT(m_ptr); Ref<const T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
     T* leakRef() WARN_UNUSED_RETURN;
 
     T& operator*() const { ASSERT(m_ptr); return *m_ptr; }
     ALWAYS_INLINE T* operator->() const { return m_ptr; }
-    
+
     bool operator!() const { return !m_ptr; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.

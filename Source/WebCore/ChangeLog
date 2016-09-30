@@ -1,3 +1,15 @@
+2016-09-30  Youenn Fablet  <youenn@apple.com>
+
+        Add a way to go from a RefPtr<T> to Ref<const T>
+        https://bugs.webkit.org/show_bug.cgi?id=162683
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, fix 32-bit build.
