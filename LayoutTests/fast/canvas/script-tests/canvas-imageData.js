@@ -62,3 +62,8 @@ function testTransparentBlack(data) {
 
 var imageData2 = new ImageData(100,100);
 shouldBeTrue('testTransparentBlack(imageData2.data)');
+
+var data = new Uint8ClampedArray(400);
+var imageData2 = new ImageData(data, 20, 5);
+shouldBe("imageData2.data", "data");
+

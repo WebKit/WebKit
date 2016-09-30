@@ -4882,7 +4882,7 @@ PASS ImageData interface: existence and properties of interface prototype object
 PASS ImageData interface: existence and properties of interface prototype object's "constructor" property 
 PASS ImageData interface: attribute width 
 PASS ImageData interface: attribute height 
-FAIL ImageData interface: attribute data assert_true: The prototype object must have a property "data" expected true got false
+PASS ImageData interface: attribute data 
 PASS Path2D interface: existence and properties of interface object 
 PASS Path2D interface object length 
 PASS Path2D interface object name 

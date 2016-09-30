@@ -40,6 +40,7 @@ Test that we got a reference rather than a copy.
 PASS imageData.data[1] is 100
 
 PASS testTransparentBlack(imageData2.data) is true
+PASS imageData2.data is data
 PASS successfullyParsed is true
 
 TEST COMPLETE
