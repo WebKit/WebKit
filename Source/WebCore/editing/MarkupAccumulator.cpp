@@ -498,15 +498,20 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
         result.append(attribute.name().localName());
     else {
         if (!attribute.namespaceURI().isEmpty()) {
-            AtomicStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : 0;
-            bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
-            if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
-                if (AtomicStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : 0)
-                    prefixedName.setPrefix(AtomicString(prefix));
-                else {
-                    bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
-                    if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom && namespaces)
-                        generateUniquePrefix(prefixedName, *namespaces);
+            if (attribute.namespaceURI() == XMLNames::xmlNamespaceURI) {
+                // Always use xml as prefix if the namespace is the XML namespace.
+                prefixedName.setPrefix(xmlAtom);
+            } else {
+                AtomicStringImpl* foundNS = namespaces && attribute.prefix().impl() ? namespaces->get(attribute.prefix().impl()) : 0;
+                bool prefixIsAlreadyMappedToOtherNS = foundNS && foundNS != attribute.namespaceURI().impl();
+                if (attribute.prefix().isEmpty() || !foundNS || prefixIsAlreadyMappedToOtherNS) {
+                    if (AtomicStringImpl* prefix = namespaces ? namespaces->get(attribute.namespaceURI().impl()) : 0)
+                        prefixedName.setPrefix(AtomicString(prefix));
+                    else {
+                        bool shouldBeDeclaredUsingAppendNamespace = !attribute.prefix().isEmpty() && !foundNS;
+                        if (!shouldBeDeclaredUsingAppendNamespace && attribute.localName() != xmlnsAtom && namespaces)
+                            generateUniquePrefix(prefixedName, *namespaces);
+                    }
                 }
             }
         }

@@ -1,3 +1,30 @@
+2016-09-30  Chris Dumez  <cdumez@apple.com>
+
+        Fragment serialization should always use 'xml:' prefix for attributes in XML namespace
+        https://bugs.webkit.org/show_bug.cgi?id=162803
+
+        Reviewed by Sam Weinig.
+
+        Fragment serialization should always use 'xml:' prefix for attributes in XML namespace:
+        - https://html.spec.whatwg.org/#serialising-html-fragments
+        """
+        If the attribute is in the XML namespace
+        -> The attribute's serialized name is the string "xml:" followed by the attribute's local name.
+        """
+
+        - https://www.w3.org/TR/DOM-Parsing/#dfn-concept-xml-serialization-algorithm
+        """
+        If ns is the XML namespace, then let qualified name be the concatenation of the string "xml:"
+        and the value of node's localName.
+        """
+
+        Firefox complies with the specification.
+
+        No new tests, rebaselined existing test.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendAttribute):
+
 2016-09-30  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed, rolling out r206611.

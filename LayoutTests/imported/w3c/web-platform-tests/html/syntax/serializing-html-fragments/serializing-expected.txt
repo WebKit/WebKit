@@ -54,13 +54,13 @@ FAIL outerHTML 24 <span><!--data--></span> assert_equals: expected "<span><!--da
 PASS outerHTML 25 <span><a><b><c></c></b><d>e</d><f><g>h</g></f></a></span> 
 PASS outerHTML 26 <span b="c"></span> 
 PASS innerHTML Attribute in the XML namespace 
-FAIL innerHTML Attribute in the XML namespace with the prefix not set to xml: assert_equals: expected "<svg xml:foo=\"test\"></svg>" but got "<svg abc:foo=\"test\"></svg>"
+PASS innerHTML Attribute in the XML namespace with the prefix not set to xml: 
 PASS innerHTML Non-'xmlns' attribute in the xmlns namespace 
 PASS innerHTML 'xmlns' attribute in the xmlns namespace 
 FAIL innerHTML Attribute in non-standard namespace assert_equals: expected "<svg abc:def=\"test\"></svg>" but got "<svg def=\"test\"></svg>"
 PASS innerHTML <span> starting with U+000A 
 PASS outerHTML Attribute in the XML namespace 
-FAIL outerHTML Attribute in the XML namespace with the prefix not set to xml: assert_equals: expected "<span><svg xml:foo=\"test\"></svg></span>" but got "<span><svg abc:foo=\"test\"></svg></span>"
+PASS outerHTML Attribute in the XML namespace with the prefix not set to xml: 
 PASS outerHTML Non-'xmlns' attribute in the xmlns namespace 
 PASS outerHTML 'xmlns' attribute in the xmlns namespace 
 FAIL outerHTML Attribute in non-standard namespace assert_equals: expected "<span><svg abc:def=\"test\"></svg></span>" but got "<span><svg def=\"test\"></svg></span>"
