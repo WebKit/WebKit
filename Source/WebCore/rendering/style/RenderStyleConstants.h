@@ -707,7 +707,6 @@ enum class ApplePayButtonType {
     Plain,
     Buy,
     SetUp,
-    InStore,
 };
 #endif
 

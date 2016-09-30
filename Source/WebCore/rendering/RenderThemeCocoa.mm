@@ -78,8 +78,6 @@ static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
         return PKPaymentButtonTypeBuy;
     case ApplePayButtonType::SetUp:
         return PKPaymentButtonTypeSetUp;
-    case ApplePayButtonType::InStore:
-        return PKPaymentButtonTypeInStore;
     }
 }
 
