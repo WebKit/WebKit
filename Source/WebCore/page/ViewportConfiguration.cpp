@@ -209,10 +209,10 @@ double ViewportConfiguration::minimumScale() const
 
 bool ViewportConfiguration::allowsUserScaling() const
 {
-    return m_forceAlwaysUserScalable || allowsUserScalingIgnoringForceAlwaysScaling();
+    return m_forceAlwaysUserScalable || allowsUserScalingIgnoringAlwaysScalable();
 }
     
-bool ViewportConfiguration::allowsUserScalingIgnoringForceAlwaysScaling() const
+bool ViewportConfiguration::allowsUserScalingIgnoringAlwaysScalable() const
 {
     return shouldIgnoreScalingConstraints() || m_configuration.allowsUserScaling;
 }

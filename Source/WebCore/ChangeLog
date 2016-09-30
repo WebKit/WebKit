@@ -1,3 +1,25 @@
+2016-09-29  Nan Wang  <n_wang@apple.com>
+
+        AX: iOS: Tapping <input> in Safari zooms in a bit when page has max scale = 1
+        https://bugs.webkit.org/show_bug.cgi?id=162471
+
+        Reviewed by Simon Fraser.
+
+        If the author has defined a maximum scale, we should honor that when keyboard focus moves
+        to a text field, instead of using the forceAlwaysUserScalableMaximumScale.
+
+        Tests: fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html
+               fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html
+               fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html
+
+        * page/ViewportConfiguration.cpp:
+        (WebCore::ViewportConfiguration::allowsUserScaling):
+        (WebCore::ViewportConfiguration::allowsUserScalingIgnoringAlwaysScalable):
+        (WebCore::ViewportConfiguration::allowsUserScalingIgnoringForceAlwaysScaling): Deleted.
+        * page/ViewportConfiguration.h:
+        (WebCore::ViewportConfiguration::maximumScaleIgnoringAlwaysScalable):
+        (WebCore::ViewportConfiguration::maximumScale): Deleted.
+
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix syntax violation handling in IPv4 address parsing

@@ -1,3 +1,23 @@
+2016-09-29  Nan Wang  <n_wang@apple.com>
+
+        AX: iOS: Tapping <input> in Safari zooms in a bit when page has max scale = 1
+        https://bugs.webkit.org/show_bug.cgi?id=162471
+
+        Reviewed by Simon Fraser.
+
+        Moved focus input related tests to the right place.
+
+        * fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale-expected.txt: Added.
+        * fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html: Added.
+        * fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no-expected.txt: Added.
+        * fast/forms/ios/user-scalable-does-not-scale-for-keyboard-focus-with-user-scalable-no.html: Added.
+        * fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale-expected.txt: Added.
+        * fast/forms/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html: Added.
+        * fast/viewport/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale-expected.txt: Removed.
+        * fast/viewport/ios/user-scalable-does-not-scale-for-keyboard-focus-with-author-defined-scale.html: Removed.
+        * fast/viewport/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale-expected.txt: Removed.
+        * fast/viewport/ios/user-scalable-scales-for-keyboard-focus-with-no-author-defined-scale.html: Removed.
+
 2016-09-29  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Update Touch constructor test to cover clientX / clientY attributes

@@ -1,24 +1,27 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
 <script src="../../../resources/js-test-pre.js"></script>
-<meta name="viewport">
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <script id="ui-script" type="text/plain">
     (function() {
-       uiController.uiScriptComplete(uiController.zoomScale);
+        uiController.didEndZoomingCallback = function() {
+            uiController.uiScriptComplete(uiController.zoomScale);
+        };
+        
+        uiController.singleTapAtPoint(10, 10, function() {});
     })();
 </script></head>
 
 <body onload="runTest();">
-<p id="result">This test has to run in iOS WebKitTestRunner.</p>
-
 <input type="text" id="textfield">
+<p id="result">This test has to run in iOS WebKitTestRunner.</p>
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-    description("This tests that when the author does not define a scale or width, that zooming in on focused nodes changes the scale.");
+    description("This tests that even though force user scalable = true, we won't scale if a text field gets focus and the page has user-scalable=no");
 
     if (window.testRunner) {
         window.jsTestIsAsync = true;
@@ -29,10 +32,8 @@
     {
         if (testRunner.runUIScript) {
             var uiScript = document.getElementById('ui-script').text;
-            testRunner.setIgnoresViewportScaleLimits(false);
-            document.getElementById("textfield").focus();
             testRunner.runUIScript(document.getElementById('ui-script').text, function(result) {
-                debug("Maximum zoom scale was: " + Number(result).toFixed(2));
+                debug("Zoom scale is: " + result);
                 finishJSTest();
             });
         }

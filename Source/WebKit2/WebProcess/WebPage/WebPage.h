@@ -518,6 +518,7 @@ public:
 
     double minimumPageScaleFactor() const;
     double maximumPageScaleFactor() const;
+    double maximumPageScaleFactorIgnoringAlwaysScalable() const;
     bool allowsUserScaling() const;
     bool hasStablePageScaleFactor() const { return m_hasStablePageScaleFactor; }
 

@@ -66,6 +66,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << selectionRect;
     encoder << minimumScaleFactor;
     encoder << maximumScaleFactor;
+    encoder << maximumScaleFactorIgnoringAlwaysScalable;
     encoder << nodeFontSize;
     encoder << hasNextNode;
     encoder << hasPreviousNode;
@@ -79,7 +80,7 @@ void AssistedNodeInformation::encode(IPC::Encoder& encoder) const
     encoder << isMultiSelect;
     encoder << isReadOnly;
     encoder << allowsUserScaling;
-    encoder << allowsUserScalingIgnoringForceAlwaysScaling;
+    encoder << allowsUserScalingIgnoringAlwaysScalable;
     encoder << insideFixedPosition;
     encoder << value;
     encoder << valueAsNumber;
@@ -99,6 +100,9 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
         return false;
 
     if (!decoder.decode(result.maximumScaleFactor))
+        return false;
+    
+    if (!decoder.decode(result.maximumScaleFactorIgnoringAlwaysScalable))
         return false;
 
     if (!decoder.decode(result.nodeFontSize))
@@ -140,7 +144,7 @@ bool AssistedNodeInformation::decode(IPC::Decoder& decoder, AssistedNodeInformat
     if (!decoder.decode(result.allowsUserScaling))
         return false;
     
-    if (!decoder.decode(result.allowsUserScalingIgnoringForceAlwaysScaling))
+    if (!decoder.decode(result.allowsUserScalingIgnoringAlwaysScalable))
         return false;
 
     if (!decoder.decode(result.insideFixedPosition))
