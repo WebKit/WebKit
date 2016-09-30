@@ -42,6 +42,7 @@ enum KeyUsage {
 
 [
     Conditional=SUBTLE_CRYPTO,
+    Exposed=(Window,Worker),
     GenerateIsReachable=Impl,
     SkipVTableValidation
 ] interface CryptoKey {

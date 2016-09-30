@@ -1,3 +1,28 @@
+2016-09-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Expose CryptoKey to web workers
+        https://bugs.webkit.org/show_bug.cgi?id=162640
+        <rdar://problem/28182204>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: crypto/workers/aes-postMessage-worker.html
+               crypto/workers/hmac-postMessage-worker.html
+               crypto/workers/hrsa-postMessage-worker.html
+               crypto/workers/multiple-postMessage-worker.html
+               crypto/workers/rsa-postMessage-worker.html
+
+        * crypto/CryptoKey.idl:
+        * crypto/SerializedCryptoKeyWrap.h:
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::deleteDefaultWebCryptoMasterKey):
+        Add a way to delete the default web crypto master key such that we can test
+        these APIs and cleanup.
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::wrapCryptoKey):
+        (WebCore::WorkerGlobalScope::unwrapCryptoKey):
+        * workers/WorkerGlobalScope.h:
+
 2016-09-29  Nan Wang  <n_wang@apple.com>
 
         AX: iOS: Tapping <input> in Safari zooms in a bit when page has max scale = 1

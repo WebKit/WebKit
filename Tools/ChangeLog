@@ -1,3 +1,16 @@
+2016-09-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Expose CryptoKey to web workers
+        https://bugs.webkit.org/show_bug.cgi?id=162640
+        <rdar://problem/28182204>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/SerializedCryptoKeyWrap.mm: Added.
+        (TestWebKitAPI::TEST_F):
+        Add API tests for SerializedCryptoKeyWrap APIs.
+
 2016-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix syntax violation handling in IPv4 address parsing

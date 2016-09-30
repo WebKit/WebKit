@@ -9,8 +9,12 @@ onmessage = function(evt)
         postMessage({ result:false, message:'key.extractable should be true' });
     else if (key.algorithm.name != "HMAC")
         postMessage({ result:false, message:'key.algorithm.name should be "HMAC"' });
-    else if (key.usages.toString() != "decrypt,encrypt,sign,verify")
-        postMessage({ result:false, message:'key.usages should be ["decrypt", "encrypt", "sign", "verify"]' });
+    else if (key.algorithm.length != 16)
+        postMessage({ result:false, message:'key.algorithm.length should be 16' });
+    else if (key.algorithm.hash.name != "SHA-1")
+        postMessage({ result:false, message:'key.algorithm.hash.name should be "SHA-1"' });
+    else if (key.usages.toString() != "sign,verify")
+        postMessage({ result:false, message:'key.usages should be ["sign", "verify"]' });
     else
         postMessage({ result:true, key:key });
 }

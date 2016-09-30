@@ -145,8 +145,15 @@ public:
     void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) override;
 
 #if ENABLE(SUBTLE_CRYPTO)
-    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) override;
-    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) override;
+    // The following two functions are side effects of providing extra protection to serialized
+    // CryptoKey data that went through the structured clone algorithm to local storage such as
+    // IndexedDB. They don't provide any proctection against communications between mainThread
+    // and workerThreads. In fact, they cause extra expense as workerThreads cannot talk to clients
+    // to unwrap/wrap crypto keys. Hence, workerThreads must always ask mainThread to unwrap/wrap
+    // keys, which results in a second communication and plain keys being transferred between
+    // workerThreads and the mainThread.
+    bool wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) final;
+    bool unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) final;
 #endif
 
     Crypto& crypto() const;

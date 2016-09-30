@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <script src="../../resources/js-test-pre.js"></script>
-<script src="resources/common.js"></script>
+<script src="../resources/common.js"></script>
 </head>
 <body>
 <script>
 
-description("Test sending crypto keys via postMessage to a worker.");
+description("Test sending aes crypto keys via postMessage to a worker.");
 
 jsTestIsAsync = true;
 
-importTestKeys().then(function(keys) {
-    var worker = new Worker("resources/postMessage-worker.js");
+crypto.subtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: "aes-cbc", length: 128}, true, ["encrypt", "decrypt"]).then(function(localKey) {
+    var worker = new Worker("resources/aes-postMessage-worker.js");
     worker.onmessage = function(evt) {
         if (!evt.data.result) {
             testFailed("Check failed in worker: " + evt.data.message);
@@ -22,13 +22,13 @@ importTestKeys().then(function(keys) {
             key = evt.data.key;
             shouldBe("key.type", "'secret'");
             shouldBe("key.extractable", "true");
-            shouldBe("key.algorithm.name", "'HMAC'");
-            shouldBe("key.algorithm.length", "16");
-            shouldBe("key.usages", '["decrypt", "encrypt", "sign", "verify"]');
+            shouldBe("key.algorithm.name", "'AES-CBC'");
+            shouldBe("key.algorithm.length", "128");
+            shouldBe("key.usages", "['decrypt', 'encrypt']");
         }
         finishJSTest();
     }
-    worker.postMessage(keys.hmacSha1);
+    worker.postMessage(localKey);
 });
 </script>
 <script src="../../resources/js-test-post.js"></script>

@@ -1,23 +1,3 @@
-function importTestKeys()
-{
-    var keyFormat = "raw";
-    var data = asciiToUint8Array("16 bytes of key!");
-    var extractable = true;
-    var keyUsages = ['encrypt', 'decrypt', 'sign', 'verify'];
-
-    var hmacPromise = crypto.subtle.importKey(keyFormat, data, {name: 'hmac', hash: {name: 'sha-1'}}, extractable, keyUsages);
-    var aesCbcPromise = crypto.subtle.importKey(keyFormat, data, {name: 'AES-CBC'}, extractable, keyUsages);
-    var aesCbcJustDecrypt = crypto.subtle.importKey(keyFormat, data, {name: 'AES-CBC'}, false, ['decrypt']);
-
-    return Promise.all([hmacPromise, aesCbcPromise, aesCbcJustDecrypt]).then(function(results) {
-        return {
-            hmacSha1: results[0],
-            aesCbc: results[1],
-            aesCbcJustDecrypt: results[2],
-        };
-    });
-}
-
 // Verifies that the given "bytes" holds the same value as "expectedHexString".
 // "bytes" can be anything recognized by "bytesToHexString()".
 function bytesShouldMatchHexString(testDescription, expectedHexString, bytes)
@@ -101,5 +81,5 @@ var Base64URL = {
     }
 };
 
-if (!crypto.subtle)
+if (!(typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) && !crypto.subtle)
     crypto.subtle = crypto.webkitSubtle;

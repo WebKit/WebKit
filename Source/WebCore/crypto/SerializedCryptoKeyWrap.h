@@ -33,7 +33,15 @@
 
 namespace WebCore {
 
+// The purpose of the following APIs is to protect serialized CryptoKey data in IndexedDB or
+// any other local storage that go through the structured clone algorithm. However, a side effect
+// of this extra layer of protection is redundant communications between mainThread(document) and
+// workerThreads. Please refer to WorkerGlobalScope for detailed explanation. P.S. This extra layer
+// of protection is not required by the spec as of 11 December 2014:
+// https://www.w3.org/TR/WebCryptoAPI/#security-developers
+
 WEBCORE_EXPORT bool getDefaultWebCryptoMasterKey(Vector<uint8_t>&);
+WEBCORE_EXPORT bool deleteDefaultWebCryptoMasterKey();
 
 WEBCORE_EXPORT bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result);
 WEBCORE_EXPORT bool unwrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key);

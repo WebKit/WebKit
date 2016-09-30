@@ -169,6 +169,22 @@ bool getDefaultWebCryptoMasterKey(Vector<uint8_t>& masterKey)
     return true;
 }
 
+bool deleteDefaultWebCryptoMasterKey()
+{
+    NSDictionary *query = @{
+        (id)kSecClass : (id)kSecClassGenericPassword,
+        (id)kSecAttrAccount : masterKeyAccountNameForCurrentApplication(),
+    };
+
+    OSStatus status = SecItemDelete((CFDictionaryRef)query);
+    if (status) {
+        if (status != errSecItemNotFound && status != errSecUserCanceled)
+            WTFLogAlways("Could not delete WebCrypto master key in Keychain, error %d", (int)status);
+        return false;
+    }
+    return true;
+}
+
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
     Vector<uint8_t> kek(16);

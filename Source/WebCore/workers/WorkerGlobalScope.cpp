@@ -46,6 +46,7 @@
 #include "SecurityOriginPolicy.h"
 #include "SocketProvider.h"
 #include "URL.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerObjectProxy.h"
@@ -383,14 +384,40 @@ WorkerEventQueue& WorkerGlobalScope::eventQueue() const
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
-bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&)
+bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
-    return false;
+    bool result = false, done = false;
+    m_thread.workerLoaderProxy().postTaskToLoader([&result, &key, &wrappedKey, &done, workerGlobalScope = this](ScriptExecutionContext& context) {
+        result = context.wrapCryptoKey(key, wrappedKey);
+        done = true;
+        workerGlobalScope->postTask([](ScriptExecutionContext& context) {
+            ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        });
+    });
+
+    MessageQueueWaitResult waitResult = MessageQueueMessageReceived;
+    while (!done && waitResult != MessageQueueTerminated)
+        waitResult = m_thread.runLoop().runInMode(this, WorkerRunLoop::defaultMode());
+
+    return result;
 }
 
-bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&)
+bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
-    return false;
+    bool result = false, done = false;
+    m_thread.workerLoaderProxy().postTaskToLoader([&result, &wrappedKey, &key, &done, workerGlobalScope = this](ScriptExecutionContext& context) {
+        result = context.unwrapCryptoKey(wrappedKey, key);
+        done = true;
+        workerGlobalScope->postTask([](ScriptExecutionContext& context) {
+            ASSERT_UNUSED(context, context.isWorkerGlobalScope());
+        });
+    });
+
+    MessageQueueWaitResult waitResult = MessageQueueMessageReceived;
+    while (!done && waitResult != MessageQueueTerminated)
+        waitResult = m_thread.runLoop().runInMode(this, WorkerRunLoop::defaultMode());
+
+    return result;
 }
 #endif // ENABLE(SUBTLE_CRYPTO)
 

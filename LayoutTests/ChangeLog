@@ -1,3 +1,88 @@
+2016-09-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Expose CryptoKey to web workers
+        https://bugs.webkit.org/show_bug.cgi?id=162640
+        <rdar://problem/28182204>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/resources/common.js: Renamed from LayoutTests/crypto/subtle/resources/common.js.
+        * crypto/subtle/aes-cbc-192-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-256-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html:
+        * crypto/subtle/aes-cbc-encrypt-decrypt.html:
+        * crypto/subtle/aes-cbc-generate-key.html:
+        * crypto/subtle/aes-cbc-import-jwk.html:
+        * crypto/subtle/aes-cbc-invalid-length.html:
+        * crypto/subtle/aes-cbc-unwrap-failure.html:
+        * crypto/subtle/aes-cbc-unwrap-rsa.html:
+        * crypto/subtle/aes-cbc-wrap-rsa-non-extractable.html:
+        * crypto/subtle/aes-cbc-wrap-rsa.html:
+        * crypto/subtle/aes-cbc-wrong-key-class.html:
+        * crypto/subtle/aes-export-key.html:
+        * crypto/subtle/aes-kw-key-manipulation.html:
+        * crypto/subtle/aes-kw-wrap-unwrap-aes.html:
+        * crypto/subtle/aes-postMessage-expected.txt:
+        * crypto/subtle/aes-postMessage.html:
+        * crypto/subtle/argument-conversion.html:
+        * crypto/subtle/array-buffer-view-offset.html:
+        * crypto/subtle/crypto-key-algorithm-gc.html:
+        * crypto/subtle/crypto-key-usages-gc.html:
+        * crypto/subtle/hmac-check-algorithm.html:
+        * crypto/subtle/hmac-export-key.html:
+        * crypto/subtle/hmac-generate-key.html:
+        * crypto/subtle/hmac-import-jwk.html:
+        * crypto/subtle/hmac-postMessage-expected.txt:
+        * crypto/subtle/hmac-postMessage.html:
+        * crypto/subtle/hmac-sign-verify-empty-key.html:
+        * crypto/subtle/hmac-sign-verify.html:
+        * crypto/subtle/import-jwk.html:
+        * crypto/subtle/jwk-export-use-values.html:
+        * crypto/subtle/jwk-import-use-values.html:
+        * crypto/subtle/postMessage-worker-expected.txt: Removed.
+        * crypto/subtle/rsa-export-generated-keys.html:
+        * crypto/subtle/rsa-export-key.html:
+        * crypto/subtle/rsa-export-private-key.html:
+        * crypto/subtle/rsa-indexeddb-non-exportable-private.html:
+        * crypto/subtle/rsa-indexeddb-non-exportable.html:
+        * crypto/subtle/rsa-indexeddb-private.html:
+        * crypto/subtle/rsa-indexeddb.html:
+        * crypto/subtle/rsa-oaep-generate-non-extractable-key.html:
+        * crypto/subtle/rsa-oaep-key-manipulation.html:
+        * crypto/subtle/rsa-oaep-plaintext-length.html:
+        * crypto/subtle/rsa-oaep-wrap-unwrap-aes.html:
+        * crypto/subtle/rsa-postMessage.html:
+        * crypto/subtle/rsaes-pkcs1-v1_5-decrypt.html:
+        * crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html:
+        * crypto/subtle/rsassa-pkcs1-v1_5-sign-verify.html:
+        * crypto/subtle/sha-1.html:
+        * crypto/subtle/sha-224.html:
+        * crypto/subtle/sha-256.html:
+        * crypto/subtle/sha-384.html:
+        * crypto/subtle/sha-512.html:
+        * crypto/subtle/unimplemented-unwrap-crash.html:
+        * crypto/subtle/unwrapKey-check-usage.html:
+        * crypto/subtle/wrapKey-check-usage.html:
+        * crypto/workers/aes-postMessage-worker-expected.txt: Added.
+        * crypto/workers/aes-postMessage-worker.html: Added.
+        * crypto/workers/hmac-postMessage-worker-expected.txt: Added.
+        * crypto/workers/hmac-postMessage-worker.html: Renamed from LayoutTests/crypto/subtle/postMessage-worker.html.
+        * crypto/workers/hrsa-postMessage-worker-expected.txt: Added.
+        * crypto/workers/hrsa-postMessage-worker.html: Added.
+        * crypto/workers/multiple-postMessage-worker-expected.txt: Added.
+        * crypto/workers/multiple-postMessage-worker.html: Added.
+        * crypto/workers/resources/aes-postMessage-worker.js: Added.
+        * crypto/workers/resources/hmac-postMessage-worker.js: Renamed from LayoutTests/crypto/subtle/resources/postMessage-worker.js.
+        * crypto/workers/resources/hrsa-postMessage-worker.js: Added.
+        * crypto/workers/resources/rsa-postMessage-worker.js: Added.
+        * crypto/workers/rsa-postMessage-worker-expected.txt: Added.
+        * crypto/workers/rsa-postMessage-worker.html: Added.
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
 2016-09-29  Nan Wang  <n_wang@apple.com>
 
         AX: iOS: Tapping <input> in Safari zooms in a bit when page has max scale = 1
