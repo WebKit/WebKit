@@ -442,13 +442,13 @@ JITPutByIdGenerator JIT::emitPutByValWithCachedId(ByValInfo* byValInfo, Instruct
 
     // Write barrier breaks the registers. So after issuing the write barrier,
     // reload the registers.
-    emitWriteBarrier(base, value, ShouldFilterValue);
     emitGetVirtualRegisters(base, regT0, value, regT1);
 
     JITPutByIdGenerator gen(
         m_codeBlock, CodeOrigin(m_bytecodeOffset), CallSiteIndex(m_bytecodeOffset), RegisterSet::stubUnavailableRegisters(),
         JSValueRegs(regT0), JSValueRegs(regT1), regT2, m_codeBlock->ecmaMode(), putKind);
     gen.generateFastPath(*this);
+    emitWriteBarrier(base, value, ShouldFilterBase);
     doneCases.append(jump());
 
     Label coldPathBegin = label();

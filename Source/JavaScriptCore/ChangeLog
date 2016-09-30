@@ -1,3 +1,19 @@
+2016-09-29  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r206555): It made Dromaeo/jslib-style-jquery.html crash
+        https://bugs.webkit.org/show_bug.cgi?id=162721
+
+        Reviewed by Keith Miller.
+        
+        The put_by_id-in-put_by_val optimization had the write barrier in the wrong place and
+        incorrectly filtered on value instead of base.
+        
+        No reduced test case. You really need to run Dromaeo/jslib to catch it. I love Dromaeo's
+        ability to catch GC bugs.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitPutByValWithCachedId):
+
 2016-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Arrow functions do not infer name from computed property but normal functions do
