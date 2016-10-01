@@ -1152,6 +1152,10 @@ static inline bool isKeywordPropertyID(CSSPropertyID propertyId)
 #if ENABLE(CSS_TRAILING_WORD)
     case CSSPropertyAppleTrailingWord:
 #endif
+#if ENABLE(APPLE_PAY)
+    case CSSPropertyApplePayButtonStyle:
+    case CSSPropertyApplePayButtonType:
+#endif
     case CSSPropertyFontVariantPosition:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantAlternates:
