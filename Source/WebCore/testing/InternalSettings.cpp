@@ -653,7 +653,7 @@ void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)
 
 bool InternalSettings::variationFontsEnabled(ExceptionCode& ec)
 {
-    InternalSettingsGuardForSettingsReturn(false);
+    InternalSettingsGuardForSettingsReturn(true);
     return settings()->variationFontsEnabled();
 }
 
