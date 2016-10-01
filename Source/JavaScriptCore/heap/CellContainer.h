@@ -83,8 +83,6 @@ public:
     
     bool isMarked(HeapCell*) const;
     bool isMarked(HeapVersion markingVersion, HeapCell*) const;
-    bool isMarkedOrNewlyAllocated(HeapCell*) const;
-    bool isMarkedOrNewlyAllocated(HeapVersion markingVersion, HeapCell*) const;
     
     void noteMarked();
     

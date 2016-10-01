@@ -72,9 +72,7 @@ public:
     ALWAYS_INLINE bool isMarked() { return m_isMarked.load(std::memory_order_relaxed); }
     ALWAYS_INLINE bool isMarked(HeapCell*) { return m_isMarked.load(std::memory_order_relaxed); }
     ALWAYS_INLINE bool isMarkedConcurrently(HeapVersion, HeapCell*) { return m_isMarked.load(std::memory_order_relaxed); }
-    bool isMarkedOrNewlyAllocated() { return isMarked() || isNewlyAllocated(); }
-    bool isMarkedOrNewlyAllocated(HeapCell*) { return isMarkedOrNewlyAllocated(); }
-    bool isLive() { return isMarkedOrNewlyAllocated(); }
+    bool isLive() { return isMarked() || isNewlyAllocated(); }
     
     bool hasValidCell() const { return m_hasValidCell; }
     

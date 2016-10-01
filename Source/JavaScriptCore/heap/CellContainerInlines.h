@@ -59,20 +59,6 @@ inline bool CellContainer::isMarked(HeapVersion markingVersion, HeapCell* cell) 
     return markedBlock().isMarked(markingVersion, cell);
 }
 
-inline bool CellContainer::isMarkedOrNewlyAllocated(HeapCell* cell) const
-{
-    if (isLargeAllocation())
-        return largeAllocation().isMarkedOrNewlyAllocated();
-    return markedBlock().isMarkedOrNewlyAllocated(cell);
-}
-
-inline bool CellContainer::isMarkedOrNewlyAllocated(HeapVersion markingVersion, HeapCell* cell) const
-{
-    if (isLargeAllocation())
-        return largeAllocation().isMarkedOrNewlyAllocated();
-    return markedBlock().isMarkedOrNewlyAllocated(markingVersion, cell);
-}
-
 inline void CellContainer::noteMarked()
 {
     if (!isLargeAllocation())

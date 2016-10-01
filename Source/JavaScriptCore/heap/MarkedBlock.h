@@ -160,9 +160,6 @@ public:
         bool isLive(const HeapCell*);
         bool isLiveCell(const void*);
 
-        bool isMarkedOrNewlyAllocated(const HeapCell*);
-        bool isMarkedOrNewlyAllocated(HeapVersion markingVersion, const HeapCell*);
-            
         bool isNewlyAllocated(const void*);
         void setNewlyAllocated(const void*);
         void clearNewlyAllocated(const void*);
@@ -256,9 +253,6 @@ public:
     bool isMarkedConcurrently(HeapVersion markingVersion, const void*);
     bool testAndSetMarked(const void*);
         
-    bool isMarkedOrNewlyAllocated(const HeapCell*);
-    bool isMarkedOrNewlyAllocated(HeapVersion markingVersion, const HeapCell*);
-    
     bool isAtom(const void*);
     void clearMarked(const void*);
     
@@ -547,16 +541,6 @@ inline bool MarkedBlock::Handle::clearNewlyAllocated()
         return true;
     }
     return false;
-}
-
-inline bool MarkedBlock::Handle::isMarkedOrNewlyAllocated(HeapVersion markingVersion, const HeapCell* cell)
-{
-    return m_block->isMarked(markingVersion, cell) || (m_newlyAllocated && isNewlyAllocated(cell));
-}
-
-inline bool MarkedBlock::isMarkedOrNewlyAllocated(HeapVersion markingVersion, const HeapCell* cell)
-{
-    return isMarked(markingVersion, cell) || (m_handle.m_newlyAllocated && m_handle.isNewlyAllocated(cell));
 }
 
 inline bool MarkedBlock::isAtom(const void* p)

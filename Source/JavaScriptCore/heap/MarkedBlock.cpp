@@ -388,16 +388,6 @@ bool MarkedBlock::isMarked(const void* p)
     return isMarked(vm()->heap.objectSpace().markingVersion(), p);
 }
 
-bool MarkedBlock::Handle::isMarkedOrNewlyAllocated(const HeapCell* cell)
-{
-    return isMarkedOrNewlyAllocated(vm()->heap.objectSpace().markingVersion(), cell);
-}
-
-bool MarkedBlock::isMarkedOrNewlyAllocated(const HeapCell* cell)
-{
-    return isMarkedOrNewlyAllocated(vm()->heap.objectSpace().markingVersion(), cell);
-}
-
 void MarkedBlock::Handle::didConsumeFreeList()
 {
     if (false)

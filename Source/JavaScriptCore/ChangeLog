@@ -1,3 +1,25 @@
+2016-10-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of isMarkedOrNewlyAllocated
+        https://bugs.webkit.org/show_bug.cgi?id=162842
+
+        Reviewed by Dan Bernstein.
+        
+        This function has become dead code. This change removes it.
+
+        * heap/CellContainer.h:
+        * heap/CellContainerInlines.h:
+        (JSC::CellContainer::isMarkedOrNewlyAllocated): Deleted.
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::isLive):
+        (JSC::LargeAllocation::isMarkedOrNewlyAllocated): Deleted.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::isMarkedOrNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::isMarkedOrNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::isMarkedOrNewlyAllocated): Deleted.
+
 2016-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rename DebugHookID to DebugHookType
