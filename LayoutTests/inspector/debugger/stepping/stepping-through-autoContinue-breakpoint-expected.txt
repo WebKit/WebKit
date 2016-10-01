@@ -1,0 +1,57 @@
+ALERT: 1.5
+ALERT: 1
+ALERT: 2
+ALERT: 3
+Ensure stepping works through an autoContinue breakpoint.
+
+
+== Running test suite: Debugger.StepThroughAutoContinueBreakpoint
+-- Running test case: StepThroughAutoContinueBreakpoint
+PAUSED (debugger-statement)
+PAUSE AT entry:8:5
+      4    <script src="../resources/log-pause-location.js"></script>
+      5    <script>
+      6    function entry() {
+ ->   7        |debugger;
+      8        alert(1);
+      9        alert(2); // Set an autoContinue breakpoint on this line.
+     10        alert(3);
+
+PAUSE AT entry:9:5
+      5    <script>
+      6    function entry() {
+      7        debugger;
+ ->   8        |alert(1);
+      9        alert(2); // Set an autoContinue breakpoint on this line.
+     10        alert(3);
+     11    }
+
+PAUSE AT entry:10:5
+      6    function entry() {
+      7        debugger;
+      8        alert(1);
+ ->   9        |alert(2); // Set an autoContinue breakpoint on this line.
+     10        alert(3);
+     11    }
+     12    
+
+PAUSE AT entry:11:5
+      7        debugger;
+      8        alert(1);
+      9        alert(2); // Set an autoContinue breakpoint on this line.
+ ->  10        |alert(3);
+     11    }
+     12    
+     13    // ---------
+
+PAUSE AT entry:12:2
+      8        alert(1);
+      9        alert(2); // Set an autoContinue breakpoint on this line.
+     10        alert(3);
+ ->  11    }|
+     12    
+     13    // ---------
+     14    
+
+RESUMED
+

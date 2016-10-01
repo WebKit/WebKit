@@ -1,5 +1,16 @@
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Stepping to a line with an autoContinue breakpoint should still pause
+        https://bugs.webkit.org/show_bug.cgi?id=161712
+        <rdar://problem/28193970>
+
+        Reviewed by Brian Burg.
+
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint.html: Added.
+
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Stepping over/out of a function sometimes resumes instead of taking you to caller
         https://bugs.webkit.org/show_bug.cgi?id=162802
         <rdar://problem/28569982>

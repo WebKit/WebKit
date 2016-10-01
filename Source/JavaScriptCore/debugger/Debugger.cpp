@@ -691,13 +691,15 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     if (m_suppressAllPauses)
         return;
 
-    Breakpoint breakpoint;
-    bool didHitBreakpoint = false;
+    DebuggerPausedScope debuggerPausedScope(*this);
+
     bool pauseNow = m_pauseAtNextOpportunity;
     pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
 
-    DebuggerPausedScope debuggerPausedScope(*this);
+    bool didPauseForStep = pauseNow;
+    bool didHitBreakpoint = false;
 
+    Breakpoint breakpoint;
     intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_currentCallFrame);
     pauseNow |= didHitBreakpoint = hasBreakpoint(sourceID, position, &breakpoint);
@@ -717,9 +719,15 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
         handleBreakpointHit(vmEntryGlobalObject, breakpoint);
         // Note that the actions can potentially stop the debugger, so we need to check that
         // we still have a current call frame when we get back.
-        if (breakpoint.autoContinue || !m_currentCallFrame)
+        if (!m_currentCallFrame)
             return;
-        m_pausingBreakpointID = breakpoint.id;
+
+        if (breakpoint.autoContinue) {
+            if (!didPauseForStep)
+                return;
+            didHitBreakpoint = false;
+        } else
+            m_pausingBreakpointID = breakpoint.id;
     }
 
     {

@@ -1,3 +1,16 @@
+2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping to a line with an autoContinue breakpoint should still pause
+        https://bugs.webkit.org/show_bug.cgi?id=161712
+        <rdar://problem/28193970>
+
+        Reviewed by Brian Burg.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        If we stepped to an auto-continue breakpoint we should continue
+        stepping, not just continue.
+
 2016-09-30  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should support trapping memory accesses
