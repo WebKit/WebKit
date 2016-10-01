@@ -39,14 +39,14 @@ namespace JSC {
 
 const ClassInfo JSGeneratorFunction::s_info = { "GeneratorFunction", &Base::s_info, nullptr, CREATE_METHOD_TABLE(JSGeneratorFunction) };
 
-JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope)
-    : Base(vm, executable, scope, scope->globalObject()->generatorFunctionStructure())
+JSGeneratorFunction::JSGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+    : Base(vm, executable, scope, structure)
 {
 }
 
-JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope)
+JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
 {
-    JSGeneratorFunction* generatorFunction = new (NotNull, allocateCell<JSGeneratorFunction>(vm.heap)) JSGeneratorFunction(vm, executable, scope);
+    JSGeneratorFunction* generatorFunction = new (NotNull, allocateCell<JSGeneratorFunction>(vm.heap)) JSGeneratorFunction(vm, executable, scope, structure);
     ASSERT(generatorFunction->structure()->globalObject());
     generatorFunction->finishCreation(vm);
     return generatorFunction;
@@ -54,14 +54,19 @@ JSGeneratorFunction* JSGeneratorFunction::createImpl(VM& vm, FunctionExecutable*
 
 JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    JSGeneratorFunction* generatorFunction = createImpl(vm, executable, scope);
+    return create(vm, executable, scope, scope->globalObject()->generatorFunctionStructure());
+}
+
+JSGeneratorFunction* JSGeneratorFunction::create(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
+{
+    JSGeneratorFunction* generatorFunction = createImpl(vm, executable, scope, structure);
     executable->singletonFunction()->notifyWrite(vm, generatorFunction, "Allocating a generator function");
     return generatorFunction;
 }
 
 JSGeneratorFunction* JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint(VM& vm, FunctionExecutable* executable, JSScope* scope)
 {
-    return createImpl(vm, executable, scope);
+    return createImpl(vm, executable, scope, scope->globalObject()->generatorFunctionStructure());
 }
 
 } // namespace JSC

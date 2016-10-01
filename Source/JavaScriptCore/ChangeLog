@@ -1,3 +1,35 @@
+2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] GeneratorFunction constructor should instantiate generator function
+        https://bugs.webkit.org/show_bug.cgi?id=162838
+
+        Reviewed by Saam Barati.
+
+        GeneratorFunction's constructor should return an instance of JSGeneratorFunction
+        instead of JSFunction. In this patch, we fix the following 2 things.
+
+        1. GeneratorFunction constructor should use JSGeneratorFunction
+
+            Previously, we used JSFunction to construct a result. It's wrong. We use JSGeneratorFunction.
+
+        2. Pass newTarget into GeneratorFunction constructor to make it subclassible
+
+            We did not leverage newTarget when using GeneratorFunction constructor.
+            Using it correctly to create the subclass Structure and making GeneratorFunction subclassible.
+
+        Test262 test covers (1), but (2) is not covered. We add tests that covers both to stress tests.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::constructGeneratorFunctionConstructor):
+        * runtime/JSGeneratorFunction.cpp:
+        (JSC::JSGeneratorFunction::JSGeneratorFunction):
+        (JSC::JSGeneratorFunction::createImpl):
+        (JSC::JSGeneratorFunction::create):
+        (JSC::JSGeneratorFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSGeneratorFunction.h:
+
 2016-10-01  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of isMarkedOrNewlyAllocated

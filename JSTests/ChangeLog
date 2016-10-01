@@ -1,3 +1,17 @@
+2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] GeneratorFunction constructor should instantiate generator function
+        https://bugs.webkit.org/show_bug.cgi?id=162838
+
+        Reviewed by Saam Barati.
+
+        * stress/generator-function-constructor-is-subclassible.js: Added.
+        (shouldBe):
+        (GeneratorFunction):
+        (prototype.hello):
+        * stress/generator-function-constructor.js:
+        * test262.yaml:
+
 2016-09-30  Saam Barati  <sbarati@apple.com>
 
         Arrow functions should not allow duplicate parameter names

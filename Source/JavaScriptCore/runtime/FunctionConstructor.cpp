@@ -24,6 +24,7 @@
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSFunction.h"
+#include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
 #include <wtf/text/StringBuilder.h>
@@ -125,9 +126,11 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         return throwException(exec, scope, exception);
     }
 
-    Structure* subclassStructure = InternalFunction::createSubclassStructure(exec, newTarget, globalObject->functionStructure());
+    Structure* subclassStructure = InternalFunction::createSubclassStructure(exec, newTarget, functionConstructionMode == FunctionConstructionMode::Generator ? globalObject->generatorFunctionStructure() : globalObject->functionStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
+    if (functionConstructionMode == FunctionConstructionMode::Generator)
+        return JSGeneratorFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
     return JSFunction::create(vm, function, globalObject->globalScope(), subclassStructure);
 }
 
