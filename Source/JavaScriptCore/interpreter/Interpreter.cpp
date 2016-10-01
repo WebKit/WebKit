@@ -1220,7 +1220,7 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
     return checkedReturn(result);
 }
 
-NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID)
+NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookType debugHookType)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -1231,7 +1231,7 @@ NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHook
     ASSERT(callFrame->codeBlock()->hasDebuggerRequests());
     ASSERT_UNUSED(scope, !scope.exception());
 
-    switch (debugHookID) {
+    switch (debugHookType) {
         case DidEnterCallFrame:
             debugger->callEvent(callFrame);
             break;

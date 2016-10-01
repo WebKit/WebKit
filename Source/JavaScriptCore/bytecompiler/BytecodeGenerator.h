@@ -676,10 +676,10 @@ namespace JSC {
         void emitPutDerivedConstructorToArrowFunctionContextScope();
         RegisterID* emitLoadDerivedConstructorFromArrowFunctionLexicalEnvironment();
 
-        void emitDebugHook(DebugHookID, const JSTextPosition&);
-        void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
+        void emitDebugHook(DebugHookType, const JSTextPosition&);
+        void emitDebugHook(DebugHookType, unsigned line, unsigned charOffset, unsigned lineStart);
         void emitDebugHook(StatementNode*);
-        void emitDebugHook(ExpressionNode*, DebugHookID);
+        void emitDebugHook(ExpressionNode*, DebugHookType);
         void emitWillLeaveCallFrameDebugHook();
 
         bool isInFinallyBlock() { return m_finallyDepth > 0; }

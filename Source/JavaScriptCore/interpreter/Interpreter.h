@@ -67,7 +67,7 @@ namespace JSC {
 
     enum UnwindStart : uint8_t { UnwindFromCurrentFrame, UnwindFromCallerFrame };
 
-    enum DebugHookID {
+    enum DebugHookType {
         WillExecuteProgram,
         DidExecuteProgram,
         DidEnterCallFrame,
@@ -210,7 +210,7 @@ namespace JSC {
         
         NEVER_INLINE HandlerInfo* unwind(VM&, CallFrame*&, Exception*, UnwindStart);
         void notifyDebuggerOfExceptionToBeThrown(CallFrame*, Exception*);
-        NEVER_INLINE void debug(CallFrame*, DebugHookID);
+        NEVER_INLINE void debug(CallFrame*, DebugHookType);
         static JSString* stackTraceAsString(VM&, const Vector<StackFrame>&);
 
         static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState*);

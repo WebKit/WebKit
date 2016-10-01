@@ -1179,12 +1179,12 @@ void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue enc
         throwTypeError(exec, scope, errorMessage);
 }
 
-void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookID)
+void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookType)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
 
-    vm.interpreter->debug(exec, static_cast<DebugHookID>(debugHookID));
+    vm.interpreter->debug(exec, static_cast<DebugHookType>(debugHookType));
 }
 
 #if ENABLE(DFG_JIT)

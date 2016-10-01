@@ -3459,20 +3459,20 @@ void BytecodeGenerator::emitPopWithScope()
     RELEASE_ASSERT(stackEntry.m_isWithScope);
 }
 
-void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, const JSTextPosition& divot)
+void BytecodeGenerator::emitDebugHook(DebugHookType debugHookType, const JSTextPosition& divot)
 {
     if (!m_shouldEmitDebugHooks)
         return;
 
     emitExpressionInfo(divot, divot, divot);
     emitOpcode(op_debug);
-    instructions().append(debugHookID);
+    instructions().append(debugHookType);
     instructions().append(false);
 }
 
-void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, unsigned charOffset, unsigned lineStart)
+void BytecodeGenerator::emitDebugHook(DebugHookType debugHookType, unsigned line, unsigned charOffset, unsigned lineStart)
 {
-    emitDebugHook(debugHookID, JSTextPosition(line, charOffset, lineStart));
+    emitDebugHook(debugHookType, JSTextPosition(line, charOffset, lineStart));
 }
 
 void BytecodeGenerator::emitDebugHook(StatementNode* statement)
@@ -3481,10 +3481,10 @@ void BytecodeGenerator::emitDebugHook(StatementNode* statement)
     emitDebugHook(WillExecuteStatement, statement->position());
 }
 
-void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, DebugHookID debugHookID)
+void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, DebugHookType debugHookType)
 {
     RELEASE_ASSERT(expr->needsDebugHook());
-    emitDebugHook(debugHookID, expr->position());
+    emitDebugHook(debugHookType, expr->position());
 }
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()

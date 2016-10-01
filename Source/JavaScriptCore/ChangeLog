@@ -1,3 +1,23 @@
+2016-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Rename DebugHookID to DebugHookType
+        https://bugs.webkit.org/show_bug.cgi?id=162820
+
+        Reviewed by Alex Christensen.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::debugHookName):
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::debug):
+        * interpreter/Interpreter.h:
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stepping to a line with an autoContinue breakpoint should still pause
