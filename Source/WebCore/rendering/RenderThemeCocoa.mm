@@ -91,6 +91,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
     paintInfo.context().setShouldSmoothFonts(true);
     paintInfo.context().scale(FloatSize(1, -1));
 
+    CGContextSetTextMatrix(paintInfo.context().platformContext(), CGAffineTransformIdentity);
     PKDrawApplePayButton(paintInfo.context().platformContext(), CGRectMake(paintRect.x(), -paintRect.maxY(), paintRect.width(), paintRect.height()), 1.0, toPKPaymentButtonType(renderer.style().applePayButtonType()), toPKPaymentButtonStyle(renderer.style().applePayButtonStyle()), renderer.style().locale());
 
     return false;
