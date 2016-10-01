@@ -60,8 +60,9 @@ class Kind {
 public:
     Kind(Opcode opcode)
         : m_opcode(opcode)
+        , m_isChill(false)
+        , m_traps(false)
     {
-        u.bits = 0;
     }
     
     Kind()
@@ -72,7 +73,7 @@ public:
     Opcode opcode() const { return m_opcode; }
     void setOpcode(Opcode opcode) { m_opcode = opcode; }
     
-    bool hasExtraBits() const { return !!u.bits; }
+    bool hasExtraBits() const { return m_isChill || m_traps; }
     
     // Chill bit. This applies to division-based arithmetic ops, which may trap on some
     // platforms or exhibit bizarre behavior when passed certain inputs. The non-chill
@@ -100,12 +101,44 @@ public:
     }
     bool isChill() const
     {
-        return hasIsChill() && u.isChill;
+        return m_isChill;
     }
     void setIsChill(bool isChill)
     {
         ASSERT(hasIsChill());
-        u.isChill = isChill;
+        m_isChill = isChill;
+    }
+    
+    // Traps bit. This applies to memory access ops. It means that the instruction could
+    // trap as part of some check it performs, and that we mean to make this observable. This
+    // currently only applies to memory accesses (loads and stores). You don't get to find out where
+    // in the Procedure the trap happened. If you try to work it out using Origin, you'll have a bad
+    // time because the instruction selector is too sloppy with Origin().
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=162688
+    bool hasTraps() const
+    {
+        switch (m_opcode) {
+        case Load8Z:
+        case Load8S:
+        case Load16Z:
+        case Load16S:
+        case Load:
+        case Store8:
+        case Store16:
+        case Store:
+            return true;
+        default:
+            return false;
+        }
+    }
+    bool traps() const
+    {
+        return m_traps;
+    }
+    void setTraps(bool traps)
+    {
+        ASSERT(hasTraps());
+        m_traps = traps;
     }
     
     // Rules for adding new properties:
@@ -119,7 +152,8 @@ public:
     bool operator==(const Kind& other) const
     {
         return m_opcode == other.m_opcode
-            && u.bits == other.u.bits;
+            && m_isChill == other.m_isChill
+            && m_traps == other.m_traps;
     }
     
     bool operator!=(const Kind& other) const
@@ -133,13 +167,14 @@ public:
     {
         // It's almost certainly more important that this hash function is cheap to compute than
         // anything else. We can live with some kind hash collisions.
-        return m_opcode + u.bits * 111;
+        return m_opcode + (static_cast<unsigned>(m_isChill) << 16) + (static_cast<unsigned>(m_traps) << 7);
     }
     
     Kind(WTF::HashTableDeletedValueType)
         : m_opcode(Oops)
+        , m_isChill(true)
+        , m_traps(false)
     {
-        u.bits = 1;
     }
     
     bool isHashTableDeletedValue() const
@@ -149,10 +184,8 @@ public:
     
 private:
     Opcode m_opcode;
-    union {
-        bool isChill;
-        uint16_t bits;
-    } u;
+    bool m_isChill : 1;
+    bool m_traps : 1;
 };
 
 // For every flag 'foo' you add, it's customary to create a Kind B3::foo(Kind) function that makes
@@ -160,11 +193,18 @@ private:
 //
 //     block->appendNew<Value>(m_proc, chill(Mod), Origin(), a, b);
 //
-// That looks pretty slick. Let's keep it that way.
+// I like to make the flag name fill in the sentence "Mod _____" (like "isChill" or "traps") while
+// the flag constructor fills in the phrase "_____ Mod" (like "chill" or "trapping").
 
 inline Kind chill(Kind kind)
 {
     kind.setIsChill(true);
+    return kind;
+}
+
+inline Kind trapping(Kind kind)
+{
+    kind.setTraps(true);
     return kind;
 }
 

@@ -191,6 +191,7 @@ public:
             case Mod:
             case BitAnd:
             case BitXor:
+                VALIDATE(!value->kind().traps(), ("At ", *value));
                 switch (value->opcode()) {
                 case Div:
                 case Mod:
@@ -339,14 +340,14 @@ public:
             case Load8S:
             case Load16Z:
             case Load16S:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Int32, ("At ", *value));
                 validateStackAccess(value);
                 break;
             case Load:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() != Void, ("At ", *value));
@@ -354,7 +355,7 @@ public:
                 break;
             case Store8:
             case Store16:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
@@ -362,7 +363,7 @@ public:
                 validateStackAccess(value);
                 break;
             case Store:
-                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(!value->kind().isChill(), ("At ", *value));
                 VALIDATE(value->numChildren() == 2, ("At ", *value));
                 VALIDATE(value->child(1)->type() == pointerType(), ("At ", *value));
                 VALIDATE(value->type() == Void, ("At ", *value));

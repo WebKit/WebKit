@@ -635,6 +635,7 @@ Effects Value::effects() const
         result.terminal = true;
         break;
     }
+    result.exitsSideways |= traps();
     return result;
 }
 

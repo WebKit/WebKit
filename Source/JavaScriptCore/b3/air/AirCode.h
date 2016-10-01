@@ -162,7 +162,7 @@ public:
     Vector<std::unique_ptr<BasicBlock>>& blockList() { return m_blocks; }
 
     // Finds the smallest index' such that at(index') != null and index' >= index.
-    unsigned findFirstBlockIndex(unsigned index) const;
+    JS_EXPORT_PRIVATE unsigned findFirstBlockIndex(unsigned index) const;
 
     // Finds the smallest index' such that at(index') != null and index' > index.
     unsigned findNextBlockIndex(unsigned index) const;

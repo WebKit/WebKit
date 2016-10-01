@@ -69,6 +69,7 @@ public:
     // It's good practice to mirror Kind methods here, so you can say value->isBlah()
     // instead of value->kind().isBlah().
     bool isChill() const { return kind().isChill(); }
+    bool traps() const { return kind().traps(); }
 
     Origin origin() const { return m_origin; }
     void setOrigin(Origin origin) { m_origin = origin; }

@@ -13108,6 +13108,119 @@ void testLoadFence()
     checkDoesNotUseInstruction(*code, "dmb    ishst");
 }
 
+void testTrappingLoad()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, trapping(Load), Int32, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), &x)));
+    CHECK_EQ(compileAndRun<int>(proc), 42);
+    unsigned trapsCount = 0;
+    for (Air::BasicBlock* block : proc.code()) {
+        for (Air::Inst& inst : *block) {
+            if (inst.kind.traps)
+                trapsCount++;
+        }
+    }
+    CHECK_EQ(trapsCount, 1u);
+}
+
+void testTrappingStore()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    root->appendNew<MemoryValue>(
+        proc, trapping(Store), Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 111),
+        root->appendNew<ConstPtrValue>(proc, Origin(), &x));
+    root->appendNew<Value>(proc, Return, Origin());
+    compileAndRun<int>(proc);
+    CHECK_EQ(x, 111);
+    unsigned trapsCount = 0;
+    for (Air::BasicBlock* block : proc.code()) {
+        for (Air::Inst& inst : *block) {
+            if (inst.kind.traps)
+                trapsCount++;
+        }
+    }
+    CHECK_EQ(trapsCount, 1u);
+}
+
+void testTrappingLoadAddStore()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    ConstPtrValue* ptr = root->appendNew<ConstPtrValue>(proc, Origin(), &x);
+    root->appendNew<MemoryValue>(
+        proc, trapping(Store), Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<MemoryValue>(proc, trapping(Load), Int32, Origin(), ptr),
+            root->appendNew<Const32Value>(proc, Origin(), 3)),
+        ptr);
+    root->appendNew<Value>(proc, Return, Origin());
+    compileAndRun<int>(proc);
+    CHECK_EQ(x, 45);
+    bool traps = false;
+    for (Air::BasicBlock* block : proc.code()) {
+        for (Air::Inst& inst : *block) {
+            if (inst.kind.traps)
+                traps = true;
+        }
+    }
+    CHECK(traps);
+}
+
+void testTrappingLoadDCE()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    root->appendNew<MemoryValue>(
+        proc, trapping(Load), Int32, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), &x));
+    root->appendNew<Value>(proc, Return, Origin());
+    compileAndRun<int>(proc);
+    unsigned trapsCount = 0;
+    for (Air::BasicBlock* block : proc.code()) {
+        for (Air::Inst& inst : *block) {
+            if (inst.kind.traps)
+                trapsCount++;
+        }
+    }
+    CHECK_EQ(trapsCount, 1u);
+}
+
+void testTrappingStoreElimination()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    int x = 42;
+    Value* ptr = root->appendNew<ConstPtrValue>(proc, Origin(), &x);
+    root->appendNew<MemoryValue>(
+        proc, trapping(Store), Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 43),
+        ptr);
+    root->appendNew<MemoryValue>(
+        proc, trapping(Store), Origin(),
+        root->appendNew<Const32Value>(proc, Origin(), 44),
+        ptr);
+    root->appendNew<Value>(proc, Return, Origin());
+    compileAndRun<int>(proc);
+    unsigned storeCount = 0;
+    for (Value* value : proc.values()) {
+        if (MemoryValue::isStore(value->opcode()))
+            storeCount++;
+    }
+    CHECK_EQ(storeCount, 2u);
+}
+
 void testMoveConstants()
 {
     auto check = [] (Procedure& proc) {
@@ -14609,6 +14722,11 @@ void run(const char* filter)
     RUN(testMemoryFence());
     RUN(testStoreFence());
     RUN(testLoadFence());
+    RUN(testTrappingLoad());
+    RUN(testTrappingStore());
+    RUN(testTrappingLoadAddStore());
+    RUN(testTrappingLoadDCE());
+    RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
     
     if (tasks.isEmpty())

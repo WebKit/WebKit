@@ -1,3 +1,81 @@
+2016-09-30  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should support trapping memory accesses
+        https://bugs.webkit.org/show_bug.cgi?id=162689
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds a traps flag to B3::Kind. It also makes B3::Kind work more like Air::Kind, in the
+        sense that it's a bag of distinct bits - it doesn't need to be a union unless we get enough
+        things that it would make a difference.
+        
+        The only analysis that needs to know about traps is effects. It now knows that traps implies
+        sideExits, which means that this turns off DCE. The only optimization that needs to know
+        about traps is eliminateCommonSubexpressions(), which needs to pessimize its store
+        elimination if the store traps.
+        
+        The hard part of this change is teaching the instruction selector to faithfully carry the
+        traps flag down to Air. I got this to work by making ArgPromise a non-copyable object that
+        knows whether you've used it in an instruction. It knows when you call consume(). If you do
+        this then ArgPromise cannot be destructed without first passing your inst through it. This,
+        along with a few other hacks, means that all of the load-op and load-op-store fusions
+        correctly carry the trap bit: if any of the B3 loads or stores involved traps then you get
+        traps in Air.
+        
+        This framework also sets us up to do bug 162688, since the ArgPromise::inst() hook is
+        powerful enough to allow wrapping the instruction with a Patch.
+        
+        I added some tests to testb3 that verify that optimizations are appropriately inhibited and
+        that the traps flag survives until the bitter end of Air.
+
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3Kind.cpp:
+        (JSC::B3::Kind::dump):
+        * b3/B3Kind.h:
+        (JSC::B3::Kind::Kind):
+        (JSC::B3::Kind::hasExtraBits):
+        (JSC::B3::Kind::isChill):
+        (JSC::B3::Kind::setIsChill):
+        (JSC::B3::Kind::hasTraps):
+        (JSC::B3::Kind::traps):
+        (JSC::B3::Kind::setTraps):
+        (JSC::B3::Kind::operator==):
+        (JSC::B3::Kind::hash):
+        (JSC::B3::trapping):
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::ArgPromise::swap):
+        (JSC::B3::Air::LowerToAir::ArgPromise::ArgPromise):
+        (JSC::B3::Air::LowerToAir::ArgPromise::operator=):
+        (JSC::B3::Air::LowerToAir::ArgPromise::~ArgPromise):
+        (JSC::B3::Air::LowerToAir::ArgPromise::setTraps):
+        (JSC::B3::Air::LowerToAir::ArgPromise::consume):
+        (JSC::B3::Air::LowerToAir::ArgPromise::inst):
+        (JSC::B3::Air::LowerToAir::trappingInst):
+        (JSC::B3::Air::LowerToAir::loadPromiseAnyOpcode):
+        (JSC::B3::Air::LowerToAir::appendUnOp):
+        (JSC::B3::Air::LowerToAir::appendBinOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp):
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp):
+        (JSC::B3::Air::LowerToAir::appendStore):
+        (JSC::B3::Air::LowerToAir::append):
+        (JSC::B3::Air::LowerToAir::createGenericCompare):
+        (JSC::B3::Air::LowerToAir::createBranch):
+        (JSC::B3::Air::LowerToAir::createCompare):
+        (JSC::B3::Air::LowerToAir::createSelect):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * b3/B3Value.h:
+        * b3/air/AirCode.h:
+        * b3/testb3.cpp:
+        (JSC::B3::testTrappingLoad):
+        (JSC::B3::testTrappingStore):
+        (JSC::B3::testTrappingLoadAddStore):
+        (JSC::B3::testTrappingLoadDCE):
+        (JSC::B3::testTrappingStoreElimination):
+        (JSC::B3::run):
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Stepping over/out of a function sometimes resumes instead of taking you to caller

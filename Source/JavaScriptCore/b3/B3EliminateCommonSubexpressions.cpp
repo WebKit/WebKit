@@ -466,7 +466,7 @@ private:
     template<typename Filter>
     void handleStoreAfterClobber(Value* ptr, HeapRange range, const Filter& filter)
     {
-        if (findStoreAfterClobber(ptr, range, filter)) {
+        if (!m_value->traps() && findStoreAfterClobber(ptr, range, filter)) {
             m_value->replaceWithNop();
             m_changed = true;
             return;

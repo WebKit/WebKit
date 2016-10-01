@@ -39,6 +39,8 @@ void Kind::dump(PrintStream& out) const
     CommaPrinter comma(", ", "<");
     if (isChill())
         out.print(comma, "Chill");
+    if (traps())
+        out.print(comma, "Traps");
     if (comma.didPrint())
         out.print(">");
 }
