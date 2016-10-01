@@ -1,5 +1,14 @@
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Declare that our variation fonts work is in progress
+        https://bugs.webkit.org/show_bug.cgi?id=162816
+
+        Reviewed by Simon Fraser.
+
+        * features.json:
+
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Turn variation fonts on by default
         https://bugs.webkit.org/show_bug.cgi?id=162818
 

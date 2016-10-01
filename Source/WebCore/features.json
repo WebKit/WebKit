@@ -18,6 +18,17 @@
         }
     },
     {
+        "name": "CSS Fonts Level 4",
+        "url": "https://drafts.csswg.org/css-fonts-4/",
+        "keywords": ["css fonts", "fonts"],
+        "category": "css",
+        "contact": {
+            "name": "Myles C. Maxfield",
+            "twitter": "@Litherum",
+            "email": "mmaxfield@apple.com"
+        }
+    },
+    {
         "name": "CSS Grid Layout Level 1",
         "status": {
             "status": "In Development",
@@ -803,6 +814,18 @@
         "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template",
         "specification": "Web Components",
         "description": "Declares HTML fragments that can be cloned and inserted into the document by a script."
+    },
+    {
+        "name": "Variation Fonts",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/css-fonts-4/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=162815",
+        "documentation-url": "https://drafts.csswg.org/css-fonts-4/",
+        "specification": "CSS Fonts Level 4",
+        "description": "Allows selection of variation values along fonts' exposed axes."
     }
     ]
 }
