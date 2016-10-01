@@ -80,11 +80,11 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     CGContextRef cgContext = context.platformContext();
     switch (CGContextGetType(cgContext)) {
     case kCGContextTypeBitmap:
-        colorSpace = adoptCF(CGBitmapContextGetColorSpace(cgContext));
+        colorSpace = CGBitmapContextGetColorSpace(cgContext);
         break;
 #if USE(IOSURFACE)
     case kCGContextTypeIOSurface:
-        colorSpace = adoptCF(CGIOSurfaceContextGetColorSpace(cgContext));
+        colorSpace = CGIOSurfaceContextGetColorSpace(cgContext);
         break;
 #endif
     default:

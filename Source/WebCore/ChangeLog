@@ -1,3 +1,20 @@
+2016-09-30  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r203424): WebCore::ImageBuffer::createCompatibleBuffer() in ImageBufferCG.cpp over-releases CGColorSpaceRef objects
+        <https://webkit.org/b/162823>
+        <rdar://problem/27723268>
+
+        Reviewed by Joseph Pecoraro.
+
+        Code is covered by existing tests, but no crashes have been
+        observed in practice.  May require running one test multiple
+        times to reproduce.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer): Don't use
+        adoptCF() when the function doesn't return a +1 retained
+        CGColorSpaceRef.
+
 2016-09-30  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Fix build break since r206661. Unreviewed
