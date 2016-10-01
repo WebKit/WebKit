@@ -1862,12 +1862,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         if (_page->editorState().isInPasswordField || !(hasWebSelection || _page->editorState().selectionIsRange))
             return NO;
 
-        NSUInteger textLength = _page->editorState().postLayoutData().selectedTextLength;
-        // See FIXME above for _define.
-        if (!textLength || textLength > 200)
-            return NO;
-        
-        return YES;
+        return _page->editorState().postLayoutData().selectedTextLength > 0;
     }
 
     if (action == @selector(_addShortcut:)) {

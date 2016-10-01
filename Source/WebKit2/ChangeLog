@@ -1,3 +1,16 @@
+2016-09-30  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Editing menu omits the Share command if the selected text is longer than 200 characters
+        https://bugs.webkit.org/show_bug.cgi?id=162821
+        <rdar://problem/28409828>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformAction:withSender:]): Changed to return YES for the _share:
+          action even if the selection is longer than 200 characters. While Define should not have
+          been available for longer selections, Share does not have such a limitation.
+
 2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Turn variation fonts on by default
