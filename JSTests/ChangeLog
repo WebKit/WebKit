@@ -1,5 +1,14 @@
 2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Align attributes of Generator related properties to spec
+        https://bugs.webkit.org/show_bug.cgi?id=162839
+
+        Reviewed by Saam Barati.
+
+        * test262.yaml:
+
+2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] GeneratorFunction constructor should instantiate generator function
         https://bugs.webkit.org/show_bug.cgi?id=162838
 

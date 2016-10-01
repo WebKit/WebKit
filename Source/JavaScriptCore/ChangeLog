@@ -1,5 +1,25 @@
 2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [ES6] Align attributes of Generator related properties to spec
+        https://bugs.webkit.org/show_bug.cgi?id=162839
+
+        Reviewed by Saam Barati.
+
+        This patch fixes attributes of Generator related properties.
+        These fixes are covered by test262.
+
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        * runtime/GeneratorFunctionConstructor.h:
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * runtime/GeneratorFunctionPrototype.h:
+        * runtime/GeneratorPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
+2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [ES6] GeneratorFunction constructor should instantiate generator function
         https://bugs.webkit.org/show_bug.cgi?id=162838
 
