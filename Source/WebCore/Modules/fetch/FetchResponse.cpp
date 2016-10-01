@@ -103,7 +103,7 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)
 {
-    auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto response = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());
@@ -126,9 +126,9 @@ void FetchResponse::BodyLoader::didSucceed()
     m_response.m_body.loadingSucceeded();
 
 #if ENABLE(READABLE_STREAM_API)
-    if (m_response.m_readableStreamSource && m_response.m_body.type() != FetchBody::Type::Loaded) {
-        // We only close the stream if FetchBody already enqueued data.
-        // Otherwise, FetchBody will close the stream when enqueuing data.
+    if (m_response.m_readableStreamSource && m_response.body().isEmpty()) {
+        // We only close the stream if FetchBody already enqueued all data.
+        // Otherwise, FetchBody will close the stream after enqueuing the data.
         m_response.m_readableStreamSource->close();
         m_response.m_readableStreamSource = nullptr;
     }
@@ -209,8 +209,14 @@ void FetchResponse::BodyLoader::stop()
 void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
 {
     ASSERT(type <= static_cast<unsigned>(FetchBodyConsumer::Type::Text));
+    auto consumerType = static_cast<FetchBodyConsumer::Type>(type);
 
-    switch (static_cast<FetchBodyConsumer::Type>(type)) {
+    if (isLoading()) {
+        consumeOnceLoadingFinished(consumerType, WTFMove(wrapper));
+        return;
+    }
+
+    switch (consumerType) {
     case FetchBodyConsumer::Type::ArrayBuffer:
         arrayBuffer(WTFMove(wrapper));
         return;
@@ -250,7 +256,7 @@ void FetchResponse::consumeBodyAsStream()
 {
     ASSERT(m_readableStreamSource);
     m_isDisturbed = true;
-    if (body().type() != FetchBody::Type::Loading) {
+    if (!isLoading()) {
         body().consumeAsStream(*this, *m_readableStreamSource);
         if (!m_readableStreamSource->isStarting())
             m_readableStreamSource = nullptr;
@@ -272,7 +278,7 @@ ReadableStreamSource* FetchResponse::createReadableStreamSource()
     ASSERT(!m_readableStreamSource);
     ASSERT(!m_isDisturbed);
 
-    if (body().isEmpty())
+    if (body().isEmpty() && !isLoading())
         return nullptr;
 
     m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));

@@ -262,7 +262,7 @@ void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRe
 
         ASSERT(scriptExecutionContext());
         m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
-        if (m_body.type() == FetchBody::Type::None) {
+        if (m_body.isEmpty()) {
             ec = TypeError;
             return;
         }

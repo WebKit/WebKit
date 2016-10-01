@@ -1,3 +1,61 @@
+2016-10-01  Youenn Fablet  <youenn@apple.com>
+
+        removing FetchBoyd::m_type
+
+        Remove FetchBody::m_type
+        https://bugs.webkit.org/show_bug.cgi?id=162841
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+
+        Removing FetchBody::m_type and using m_data in lieu.
+        Introducing temporarily FetchBody::m_isEmpty to handle the case of null bodies.
+        Null body handling should be moved to FetchBodyOwner in a follow-up patch.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::FetchBody):
+        (WebCore::FetchBody::extract):
+        (WebCore::FetchBody::arrayBuffer):
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::json):
+        (WebCore::FetchBody::text):
+        (WebCore::FetchBody::consumeOnceLoadingFinished):
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::loadingSucceeded):
+        (WebCore::FetchBody::bodyForInternalRequest):
+        (WebCore::FetchBody::clone):
+        (WebCore::FetchBody::consumeText): Deleted.
+        (WebCore::FetchBody::consumeBlob): Deleted.
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::isEmpty):
+        (WebCore::FetchBody::isBlob):
+        (WebCore::FetchBody::isFormData):
+        (WebCore::FetchBody::isArrayBuffer):
+        (WebCore::FetchBody::isArrayBufferView):
+        (WebCore::FetchBody::isURLSearchParams):
+        (WebCore::FetchBody::isText):
+        (WebCore::FetchBody::FetchBody):
+        (WebCore::FetchBody::setContentType): Deleted.
+        (WebCore::FetchBody::urlSearchParamsBody): Deleted.
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::consumeOnceLoadingFinished):
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        (WebCore::FetchBodyOwner::finishBlobLoading): Deleted.
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::body): Deleted.
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::fetch):
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::consume):
+        (WebCore::FetchResponse::consumeBodyAsStream):
+        (WebCore::FetchResponse::createReadableStreamSource):
+        (WebCore::FetchResponse::finishConsumingStream): Deleted.
+        * Modules/fetch/FetchResponse.h:
+
 2016-09-30  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r203424): WebCore::ImageBuffer::createCompatibleBuffer() in ImageBufferCG.cpp over-releases CGColorSpaceRef objects
