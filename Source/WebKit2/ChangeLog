@@ -1,3 +1,15 @@
+2016-09-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Follow-up patch after r206701
+        https://bugs.webkit.org/show_bug.cgi?id=162818
+
+        Unreviewed.
+
+        I missed one place required to enable an experimental feature by default.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+
 2016-09-30  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Editing menu omits the Share command if the selected text is longer than 200 characters
