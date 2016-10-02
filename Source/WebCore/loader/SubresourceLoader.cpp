@@ -200,7 +200,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
                 m_frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
         }
 
-        if (!m_documentLoader->cachedResourceLoader().canRequestAfterRedirection(m_resource->type(), newRequest.url(), options())) {
+        if (!m_documentLoader->cachedResourceLoader().canRequest(m_resource->type(), newRequest.url(), options(), false /* forPreload */, true /* didReceiveRedirectResponse */)) {
             cancel();
             return;
         }
