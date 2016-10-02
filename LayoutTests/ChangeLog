@@ -1,5 +1,17 @@
 2016-10-02  Chris Dumez  <cdumez@apple.com>
 
+        Add support for KeyboardEvent.repeat attribute
+        https://bugs.webkit.org/show_bug.cgi?id=162854
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+
+2016-10-02  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r206692 and r206718.
 
         Seems to have caused >200 failures on Sierra

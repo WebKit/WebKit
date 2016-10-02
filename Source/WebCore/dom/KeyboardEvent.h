@@ -36,6 +36,7 @@ class PlatformKeyboardEvent;
 struct KeyboardEventInit : public UIEventWithKeyStateInit {
     String keyIdentifier;
     unsigned location { 0 };
+    bool repeat { false };
 };
 
 class KeyboardEvent final : public UIEventWithKeyState {
@@ -80,6 +81,7 @@ public:
     
     const String& keyIdentifier() const { return m_keyIdentifier; }
     unsigned location() const { return m_location; }
+    bool repeat() const { return m_repeat; }
 
     WEBCORE_EXPORT bool getModifierState(const String& keyIdentifier) const;
 
@@ -113,6 +115,7 @@ private:
     std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;
     String m_keyIdentifier;
     unsigned m_location;
+    bool m_repeat : 1;
     bool m_altGraphKey : 1;
 
 #if PLATFORM(COCOA)

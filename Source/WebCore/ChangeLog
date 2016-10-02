@@ -1,3 +1,20 @@
+2016-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.repeat attribute
+        https://bugs.webkit.org/show_bug.cgi?id=162854
+
+        Reviewed by Darin Adler.
+
+        Add support for KeyboardEvent.repeat attribute:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-repeat
+
+        No new tests, extended existing test.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+
 2016-10-02  Darin Adler  <darin@apple.com>
 
         Rename ExceptionCode-based exception handling to "legacy"

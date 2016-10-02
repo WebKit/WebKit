@@ -19,6 +19,9 @@ PASS new KeyboardEvent('eventType', { cancelable: false }).cancelable is false
 PASS new KeyboardEvent('eventType', { cancelable: true }).cancelable is true
 PASS new KeyboardEvent('eventType', { view: window }).view is window
 PASS new KeyboardEvent('eventType', { view: this }).view is this
+PASS new KeyboardEvent('eventType', { }).repeat is false
+PASS new KeyboardEvent('eventType', { repeat: false }).repeat is false
+PASS new KeyboardEvent('eventType', { repeat: true }).repeat is true
 PASS new KeyboardEvent('eventType', { view: testObject }).view threw exception TypeError: Dictionary member is not of type Window.
 PASS new KeyboardEvent('eventType', { view: document }).view threw exception TypeError: Dictionary member is not of type Window.
 PASS new KeyboardEvent('eventType', { view: undefined }).view is null

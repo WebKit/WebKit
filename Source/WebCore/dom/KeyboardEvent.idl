@@ -37,6 +37,8 @@
     [InitializedByEventConstructor] readonly attribute boolean metaKey;
     readonly attribute boolean altGraphKey;
 
+    [InitializedByEventConstructor] readonly attribute boolean repeat;
+
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initKeyboardEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
