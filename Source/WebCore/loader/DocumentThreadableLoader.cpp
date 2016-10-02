@@ -216,12 +216,27 @@ static inline void reportCrossOriginResourceSharingError(ThreadableLoaderClient&
     client.didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Cross-origin redirection denied by Cross-Origin Resource Sharing policy.", ResourceError::Type::AccessControl));
 }
 
+static inline void reportRedirectionWithBadScheme(ThreadableLoaderClient& client, const URL& url)
+{
+    client.didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Redirection to URL with a scheme that is not HTTP(S).", ResourceError::Type::AccessControl));
+}
+
 void DocumentThreadableLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     ASSERT(m_client);
     ASSERT_UNUSED(resource, resource == m_resource);
 
     Ref<DocumentThreadableLoader> protectedThis(*this);
+
+    // FIXME: We restrict this check to Fetch API for the moment, as this might disrupt WorkerScriptLoader.
+    // Reassess this check based on https://github.com/whatwg/fetch/issues/393 discussions.
+    // We should also disable that check in navigation mode.
+    if (!request.url().protocolIsInHTTPFamily() && m_options.initiator == cachedResourceRequestInitiators().fetch) {
+        reportRedirectionWithBadScheme(*m_client, request.url());
+        clearResource();
+        return;
+    }
+
     if (!isAllowedByContentSecurityPolicy(request.url(), redirectResponse.isNull() ? ContentSecurityPolicy::RedirectResponseReceived::No : ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
         reportContentSecurityPolicyError(*m_client, redirectResponse.url());
         clearResource();
