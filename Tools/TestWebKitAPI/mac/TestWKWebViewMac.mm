@@ -37,25 +37,22 @@
 #import <wtf/RetainPtr.h>
 
 @implementation TestMessageHandler {
-    dispatch_block_t _handler;
-    NSString *_message;
+    NSMutableDictionary<NSString *, dispatch_block_t> *_messageHandlers;
 }
 
-- (instancetype)initWithMessage:(NSString *)message handler:(dispatch_block_t)handler
+- (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler
 {
-    if (!(self = [super init]))
-        return nil;
+    if (!_messageHandlers)
+        _messageHandlers = [NSMutableDictionary dictionary];
 
-    _handler = [handler copy];
-    _message = message;
-
-    return self;
+    _messageHandlers[message] = [handler copy];
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    if ([(NSString *)[message body] isEqualToString:_message] && _handler)
-        _handler();
+    dispatch_block_t handler = _messageHandlers[message.body];
+    if (handler)
+        handler();
 }
 
 @end
@@ -140,6 +137,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 @implementation TestWKWebView {
     TestWKWebViewHostWindow *_hostWindow;
+    RetainPtr<TestMessageHandler> _testHandler;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -172,10 +170,12 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action
 {
-    RetainPtr<TestMessageHandler> handler = adoptNS([[TestMessageHandler alloc] initWithMessage:message handler:action]);
-    WKUserContentController* contentController = [[self configuration] userContentController];
-    [contentController removeScriptMessageHandlerForName:@"testHandler"];
-    [contentController addScriptMessageHandler:handler.get() name:@"testHandler"];
+    if (!_testHandler) {
+        _testHandler = adoptNS([[TestMessageHandler alloc] init]);
+        [[[self configuration] userContentController] addScriptMessageHandler:_testHandler.get() name:@"testHandler"];
+    }
+
+    [_testHandler addMessage:message withHandler:action];
 }
 
 - (void)loadTestPageNamed:(NSString *)pageName
@@ -223,7 +223,9 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 }
 
 - (void)performAfterLoading:(dispatch_block_t)actions {
-    TestMessageHandler *handler = [[TestMessageHandler alloc] initWithMessage:@"loaded" handler:actions];
+    TestMessageHandler *handler = [[TestMessageHandler alloc] init];
+    [handler addMessage:@"loaded" withHandler:actions];
+
     NSString *onloadScript = @"window.onload = () => window.webkit.messageHandlers.onloadHandler.postMessage('loaded')";
     WKUserScript *script = [[WKUserScript alloc] initWithSource:onloadScript injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
 

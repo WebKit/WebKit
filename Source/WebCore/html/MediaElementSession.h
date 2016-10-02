@@ -124,6 +124,8 @@ public:
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     double mostRecentUserInteractionTime() const;
 
+    bool allowsPlaybackControlsForAutoplayingAudio() const;
+
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

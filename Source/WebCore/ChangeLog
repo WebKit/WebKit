@@ -1,3 +1,33 @@
+2016-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls for Soundcloud easily falls out of sync with what's actually playing
+        https://bugs.webkit.org/show_bug.cgi?id=162843
+        <rdar://problem/28176874>
+
+        Reviewed by Beth Dakin.
+
+        Currently, audio elements are subject to the same main content restrictions as video elements. This is
+        problematic on sites where audio elements are really the main content, such as soundcloud. We need a different
+        heuristic for determining whether audio elements such as these should be allowed to show playback controls.
+
+        Furthermore, we currently forbid autoplaying audio from showing controls if it has user gesture restrictions
+        (i.e. it started playing via script). This is, again, problematic on sites where audio elements are played one
+        after another (such as on soundcloud). Even though a subsequent audio element may have been triggered via
+        script, we might want still want to show controls for it if the user has explicitly triggered other elements on
+        the page to begin playing. However, if the user has not gestured on any media in the page, we still should not
+        show controls for audio elements that begin playing via script.
+
+        Adds two new unit tests to TestWebKitAPI simulating audio playback behavior on soundcloud.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::removeBehaviorRestriction):
+        (WebCore::MediaElementSession::canShowControlsManager):
+        (WebCore::MediaElementSession::allowsPlaybackControlsForAutoplayingAudio):
+        * html/MediaElementSession.h:
+        * page/Page.h:
+        (WebCore::Page::allowsPlaybackControlsForAutoplayingAudio):
+        (WebCore::Page::setAllowsPlaybackControlsForAutoplayingAudio):
+
 2016-10-02  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r206683.

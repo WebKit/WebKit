@@ -1,3 +1,26 @@
+2016-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls for Soundcloud easily falls out of sync with what's actually playing
+        https://bugs.webkit.org/show_bug.cgi?id=162843
+        <rdar://problem/28176874>
+
+        Reviewed by Beth Dakin.
+
+        Adds two new tests simulating audio playback behavior on soundcloud. Also tweaks some of the WKWebView test
+        message handling logic to support having multiple message-handler mappings.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/VideoControlsManager.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/play-audio-on-click.html: Added.
+        * TestWebKitAPI/mac/TestWKWebViewMac.h:
+        * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+        (-[TestMessageHandler addMessage:withHandler:]):
+        (-[TestMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[TestWKWebView performAfterReceivingMessage:action:]):
+        (-[TestWKWebView performAfterLoading:]):
+        (-[TestMessageHandler initWithMessage:handler:]): Deleted.
+
 2016-09-30  Alex Christensen  <achristensen@webkit.org>
 
         Fix off-by-one error in URLParser::parseIPv4Host

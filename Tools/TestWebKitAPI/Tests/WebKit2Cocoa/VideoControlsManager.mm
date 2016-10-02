@@ -313,6 +313,42 @@ TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedWithScript)
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
 }
 
+TEST(VideoControlsManager, VideoControlsManagerAudioElementStartedByInteraction)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
+
+    [webView loadTestPageNamed:@"play-audio-on-click"];
+    [webView waitForPageToLoadWithAutoplayingVideos:0];
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:YES];
+
+    // An audio element MUST be started with a user gesture in order to have a controls manager, so the expectation is YES.
+    [webView expectControlsManager:YES afterReceivingMessage:@"playing-first"];
+    EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"first"]);
+}
+
+TEST(VideoControlsManager, VideoControlsManagerAudioElementFollowingUserInteraction)
+{
+    RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 400, 400));
+
+    [webView loadTestPageNamed:@"play-audio-on-click"];
+    [webView waitForPageToLoadWithAutoplayingVideos:0];
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:YES];
+
+    [webView performAfterReceivingMessage:@"playing-first" action:^ {
+        [webView evaluateJavaScript:@"seekToEnd()" completionHandler:nil];
+    }];
+
+    __block bool secondAudioPlaying = false;
+    [webView performAfterReceivingMessage:@"playing-second" action:^ {
+        secondAudioPlaying = true;
+    }];
+    TestWebKitAPI::Util::run(&secondAudioPlaying);
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        if ([webView _hasActiveVideoForControlsManager] && [[webView controlledElementID] isEqualToString:@"second"])
+            break;
+    }
+}
+
 TEST(VideoControlsManager, VideoControlsManagerTearsDownMediaControlsOnDealloc)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 100, 100));

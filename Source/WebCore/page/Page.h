@@ -511,6 +511,9 @@ public:
     WEBCORE_EXPORT void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
 
+    bool allowsPlaybackControlsForAutoplayingAudio() const { return m_allowsPlaybackControlsForAutoplayingAudio; }
+    void setAllowsPlaybackControlsForAutoplayingAudio(bool allowsPlaybackControlsForAutoplayingAudio) { m_allowsPlaybackControlsForAutoplayingAudio = allowsPlaybackControlsForAutoplayingAudio; }
+
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionToServer& idbConnection();
 #endif
@@ -719,6 +722,7 @@ private:
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
     
     bool m_allowsMediaDocumentInlinePlayback { false };
+    bool m_allowsPlaybackControlsForAutoplayingAudio { false };
     bool m_showAllPlugins { false };
     bool m_controlledByAutomation { false };
     bool m_resourceCachingDisabled { false };

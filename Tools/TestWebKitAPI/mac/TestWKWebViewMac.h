@@ -31,7 +31,7 @@
 #if WK_API_ENABLED && PLATFORM(MAC)
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
-- (instancetype)initWithMessage:(NSString *)message handler:(dispatch_block_t)handler;
+- (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
 @end
 
 @interface TestWKWebView : WKWebView
