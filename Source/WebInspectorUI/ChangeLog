@@ -1,3 +1,16 @@
+2016-10-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Exception thrown when hovering network waterfall graphs during reload
+        https://bugs.webkit.org/show_bug.cgi?id=162850
+        <rdar://problem/28579653>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WebInspector.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        Check that the node's data grid reference is valid before use.
+        (WebInspector.ResourceTimelineDataGridNode):
+
 2016-10-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Selection does not show up over execution highlight ranges

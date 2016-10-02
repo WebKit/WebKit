@@ -374,6 +374,8 @@ WebInspector.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode e
         };
 
         recordBar.element.addEventListener("mouseleave", () => {
+            if (!this.dataGrid)
+                return;
             this.dataGrid._dismissPopoverTimeout = setTimeout(() => this.dataGrid._popover.dismiss(), WebInspector.ResourceTimelineDataGridNode.DelayedPopoverDismissalTimeout);
         }, {once: true});
 
