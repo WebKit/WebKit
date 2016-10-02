@@ -126,7 +126,7 @@ bool setJSTestInterfaceConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 
 class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestInterfacePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestInterfacePrototype>(vm.heap)) JSTestInterfacePrototype(vm, globalObject, structure);
@@ -149,7 +149,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestInterface> JSTestInterfaceConstructor;
+using JSTestInterfaceConstructor = JSDOMConstructor<JSTestInterface>;
 
 /* Hash table for constructor */
 

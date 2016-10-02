@@ -39,7 +39,7 @@ bool setJSTestOverloadedConstructorsWithSequenceConstructor(JSC::ExecState*, JSC
 
 class JSTestOverloadedConstructorsWithSequencePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestOverloadedConstructorsWithSequencePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestOverloadedConstructorsWithSequencePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructorsWithSequencePrototype>(vm.heap)) JSTestOverloadedConstructorsWithSequencePrototype(vm, globalObject, structure);
@@ -62,7 +62,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestOverloadedConstructorsWithSequence> JSTestOverloadedConstructorsWithSequenceConstructor;
+using JSTestOverloadedConstructorsWithSequenceConstructor = JSDOMConstructor<JSTestOverloadedConstructorsWithSequence>;
 
 static inline EncodedJSValue constructJSTestOverloadedConstructorsWithSequence1(ExecState* state)
 {

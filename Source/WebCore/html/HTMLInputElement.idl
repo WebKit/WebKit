@@ -44,8 +44,8 @@
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
     [Reflect] attribute DOMString max;
-    [SetterRaisesException] attribute long minLength;
-    [SetterRaisesException] attribute long maxLength;
+    [SetterMayThrowLegacyException] attribute long minLength;
+    [SetterMayThrowLegacyException] attribute long maxLength;
     [Reflect] attribute DOMString min;
     [Reflect] attribute boolean multiple;
     [Reflect] attribute DOMString name;
@@ -53,18 +53,18 @@
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
     [Reflect] attribute boolean required;
-    [SetterRaisesException] attribute unsigned long size; // Changed string -> long -> unsigned long
+    [SetterMayThrowLegacyException] attribute unsigned long size; // Changed string -> long -> unsigned long
     [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString step;
     attribute DOMString type; // readonly dropped as part of DOM level 2
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString value;
-    [SetterRaisesException] attribute Date? valueAsDate;
-    [SetterRaisesException] attribute unrestricted double valueAsNumber;
+    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString value;
+    [SetterMayThrowLegacyException] attribute Date? valueAsDate;
+    [SetterMayThrowLegacyException] attribute unrestricted double valueAsNumber;
 
-    [RaisesException] void stepUp(optional long n = 1);
-    [RaisesException] void stepDown(optional long n = 1);
+    [MayThrowLegacyException] void stepUp(optional long n = 1);
+    [MayThrowLegacyException] void stepDown(optional long n = 1);
 
     attribute unsigned long width;
     readonly attribute boolean willValidate;
@@ -80,8 +80,8 @@
     [Custom] attribute long selectionEnd;
     [Custom] attribute DOMString selectionDirection;
 
-    [RaisesException] void setRangeText(DOMString replacement);
-    [RaisesException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
+    [MayThrowLegacyException] void setRangeText(DOMString replacement);
+    [MayThrowLegacyException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);
 
     [Custom] void setSelectionRange(long start, long end, optional DOMString direction);
 

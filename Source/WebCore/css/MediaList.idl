@@ -29,11 +29,11 @@
     ImplementationLacksVTable,
     JSCustomHeader,
 ] interface MediaList {
-    [SetterRaisesException, TreatNullAs=EmptyString] attribute DOMString mediaText;
+    [SetterMayThrowLegacyException, TreatNullAs=EmptyString] attribute DOMString mediaText;
     readonly attribute unsigned long length;
 
     getter DOMString? item(unsigned long index);
 
-    [RaisesException] void deleteMedium(DOMString oldMedium);
-    [RaisesException] void appendMedium(DOMString newMedium);
+    [MayThrowLegacyException] void deleteMedium(DOMString oldMedium);
+    [MayThrowLegacyException] void appendMedium(DOMString newMedium);
 };

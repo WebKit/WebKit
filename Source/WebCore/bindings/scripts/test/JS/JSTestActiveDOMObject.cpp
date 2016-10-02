@@ -46,7 +46,7 @@ bool setJSTestActiveDOMObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, J
 
 class JSTestActiveDOMObjectPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestActiveDOMObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestActiveDOMObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestActiveDOMObjectPrototype>(vm.heap)) JSTestActiveDOMObjectPrototype(vm, globalObject, structure);
@@ -69,7 +69,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSTestActiveDOMObject> JSTestActiveDOMObjectConstructor;
+using JSTestActiveDOMObjectConstructor = JSDOMConstructorNotConstructable<JSTestActiveDOMObject>;
 
 /* Hash table */
 

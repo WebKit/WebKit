@@ -37,7 +37,7 @@ bool setJSreadonlyConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Encoded
 
 class JSreadonlyPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSreadonlyPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSreadonlyPrototype* ptr = new (NotNull, JSC::allocateCell<JSreadonlyPrototype>(vm.heap)) JSreadonlyPrototype(vm, globalObject, structure);
@@ -60,7 +60,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSreadonly> JSreadonlyConstructor;
+using JSreadonlyConstructor = JSDOMConstructorNotConstructable<JSreadonly>;
 
 template<> JSValue JSreadonlyConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

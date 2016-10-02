@@ -35,7 +35,7 @@ enum OscillatorType {
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
 ] interface OscillatorNode : AudioNode {
-    [SetterRaisesException] attribute OscillatorType type;
+    [SetterMayThrowLegacyException] attribute OscillatorType type;
 
     // Playback state constants.
     const unsigned short UNSCHEDULED_STATE = 0;
@@ -48,8 +48,8 @@ enum OscillatorType {
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    [RaisesException] void start(optional unrestricted double when = 0);
-    [RaisesException] void stop(optional unrestricted double when = 0);
+    [MayThrowLegacyException] void start(optional unrestricted double when = 0);
+    [MayThrowLegacyException] void stop(optional unrestricted double when = 0);
 
     void setPeriodicWave(PeriodicWave? wave); // FIXME: The parameter should not be nullable.
 

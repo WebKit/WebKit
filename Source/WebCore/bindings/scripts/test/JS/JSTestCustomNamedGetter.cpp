@@ -44,7 +44,7 @@ bool setJSTestCustomNamedGetterConstructor(JSC::ExecState*, JSC::EncodedJSValue,
 
 class JSTestCustomNamedGetterPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestCustomNamedGetterPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCustomNamedGetterPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetterPrototype>(vm.heap)) JSTestCustomNamedGetterPrototype(vm, globalObject, structure);
@@ -67,7 +67,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSTestCustomNamedGetter> JSTestCustomNamedGetterConstructor;
+using JSTestCustomNamedGetterConstructor = JSDOMConstructorNotConstructable<JSTestCustomNamedGetter>;
 
 template<> JSValue JSTestCustomNamedGetterConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

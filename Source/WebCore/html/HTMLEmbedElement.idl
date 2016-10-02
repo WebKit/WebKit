@@ -30,6 +30,6 @@
 [Reflect] attribute DOMString type;
 [Reflect] attribute DOMString width;
 
-[CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
+[CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
 };
 

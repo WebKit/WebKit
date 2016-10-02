@@ -31,35 +31,35 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element? documentElement;
 
-    [NewObject, RaisesException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
+    [NewObject, MayThrowLegacyException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
     [NewObject] DocumentFragment   createDocumentFragment();
 
     [NewObject] Text createTextNode(DOMString data);
     [NewObject] Comment createComment(DOMString data);
-    [NewObject, RaisesException] CDATASection createCDATASection(DOMString data);
-    [NewObject, RaisesException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
-    [NewObject, RaisesException] Attr createAttribute(DOMString name);
+    [NewObject, MayThrowLegacyException] CDATASection createCDATASection(DOMString data);
+    [NewObject, MayThrowLegacyException] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
+    [NewObject, MayThrowLegacyException] Attr createAttribute(DOMString name);
 
     HTMLCollection getElementsByTagName(DOMString tagname);
 
-    [NewObject, RaisesException] Node importNode(Node importedNode, optional boolean deep = false);
+    [NewObject, MayThrowLegacyException] Node importNode(Node importedNode, optional boolean deep = false);
 
-    [NewObject, RaisesException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
-    [NewObject, RaisesException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, MayThrowLegacyException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
+    [NewObject, MayThrowLegacyException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     [ImplementedAs=characterSetWithUTF8Fallback] readonly attribute DOMString inputEncoding;
 
     readonly attribute DOMString? xmlEncoding;
-    [SetterRaisesException] attribute DOMString? xmlVersion;
+    [SetterMayThrowLegacyException] attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    [RaisesException] Node adoptNode(Node source);
+    [MayThrowLegacyException] Node adoptNode(Node source);
 
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
 
-    [RaisesException, NewObject] Event createEvent(DOMString eventType);
+    [MayThrowLegacyException, NewObject] Event createEvent(DOMString eventType);
 
     [NewObject] Range createRange();
 
@@ -80,11 +80,11 @@
     readonly attribute DOMString contentType;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver);
+    [MayThrowLegacyException] XPathExpression createExpression(optional DOMString expression = "undefined", optional XPathNSResolver? resolver);
     XPathNSResolver createNSResolver(Node? nodeResolver);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver,
+    [MayThrowLegacyException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver,
         optional unsigned short type = 0, optional XPathResult? inResult);
 
     // FIXME: The default value for the last parameter should be the empty string.
@@ -101,12 +101,12 @@
     attribute DOMString designMode;
 
     readonly attribute USVString referrer;
-    [SetterRaisesException] attribute USVString domain;
+    [SetterMayThrowLegacyException] attribute USVString domain;
     [ImplementedAs=urlForBindings] readonly attribute USVString URL;
 
-    [GetterRaisesException, SetterRaisesException] attribute USVString cookie;
+    [GetterMayThrowLegacyException, SetterMayThrowLegacyException] attribute USVString cookie;
 
-    [SetterRaisesException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
+    [SetterMayThrowLegacyException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images;
@@ -169,7 +169,7 @@
 #if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
 #include <WebKitAdditions/DocumentIOS.idl>
 #elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [NewObject, RaisesException] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
+    [NewObject, MayThrowLegacyException] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
         optional long identifier = 0,
         optional long pageX = 0, optional long pageY = 0, optional long screenX = 0, optional long screenY = 0,
         optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,

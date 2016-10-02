@@ -32,7 +32,7 @@
 #else
     CustomConstructor(unrestricted double startTime, unrestricted double endTime, ArrayBuffer data),
 #endif
-    ConstructorRaisesException,
+    ConstructorMayThrowLegacyException,
 ] interface DataCue : TextTrackCue {
     attribute ArrayBuffer data;
 

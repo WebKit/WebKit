@@ -40,7 +40,7 @@ bool setJSTestExceptionConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 
 class JSTestExceptionPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestExceptionPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestExceptionPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestExceptionPrototype>(vm.heap)) JSTestExceptionPrototype(vm, globalObject, structure);
@@ -63,7 +63,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSTestException> JSTestExceptionConstructor;
+using JSTestExceptionConstructor = JSDOMConstructorNotConstructable<JSTestException>;
 
 /* Hash table */
 

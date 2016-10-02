@@ -60,10 +60,10 @@ interface FetchRequest {
     readonly attribute RequestRedirect redirect;
     readonly attribute DOMString integrity;
 
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] FetchRequest clone();
+    [NewObject, CallWith=ScriptExecutionContext, MayThrowLegacyException] FetchRequest clone();
 
-    [PrivateIdentifier, RaisesException] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
-    [PrivateIdentifier, RaisesException] FetchHeaders initializeWith(DOMString input, Dictionary init);
-    [PrivateIdentifier, RaisesException, CallWith=ScriptState] void setBody(any body, FetchRequest? request);
+    [PrivateIdentifier, MayThrowLegacyException] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
+    [PrivateIdentifier, MayThrowLegacyException] FetchHeaders initializeWith(DOMString input, Dictionary init);
+    [PrivateIdentifier, MayThrowLegacyException, CallWith=ScriptState] void setBody(any body, FetchRequest? request);
 };
 FetchRequest implements FetchBody;

@@ -1,3 +1,232 @@
+2016-10-02  Darin Adler  <darin@apple.com>
+
+        Rename ExceptionCode-based exception handling to "legacy"
+        https://bugs.webkit.org/show_bug.cgi?id=162859
+
+        Reviewed by Chris Dumez.
+
+        RaisesException is now MayThrowLegacyException.
+
+        A follow-up patch soon will add MayThrowException for the new style,
+        where we use ExceptionOr<> as the return type instead of an ExceptionCode
+        out argument.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Removed the quotation marks from the syntax object->{PropertyName} so the
+        renaming script could handle it. Tweaked various comments and logic for clarity.
+        Changed to use the perl "x if y" syntax for brevity in many places.
+        Renamed with the script and by hand. Added code to skip including the same header
+        in both the implementation file and the header, just to make generated bindings
+        slightly smaller and faster to compile. Used "using" instead of "typedef".
+
+        * bindings/scripts/IDLAttributes.txt: Updated from old names to new ones.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/encryptedmedia/MediaKeySession.idl:
+        * Modules/encryptedmedia/MediaKeys.idl:
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/MediaDevices.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.idl:
+        * Modules/notifications/NotificationCenter.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webdatabase/DOMWindowWebDatabase.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/test/TestImplements.idl:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestNamedConstructor.idl:
+        * bindings/scripts/test/TestNondeterministic.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSupplemental.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/CSSCharsetRule.idl:
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSSupportsRule.idl:
+        * css/CSSValue.idl:
+        * css/FontFace.idl:
+        * css/FontFaceSet.idl:
+        * css/MediaList.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/CharacterData.idl:
+        * dom/ChildNode.idl:
+        * dom/CustomElementRegistry.idl:
+        * dom/DataTransferItemList.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/EventTarget.idl:
+        * dom/MessagePort.idl:
+        * dom/MutationObserver.idl:
+        * dom/NamedNodeMap.idl:
+        * dom/Node.idl:
+        * dom/ParentNode.idl:
+        * dom/Range.idl:
+        * dom/ShadowRoot.idl:
+        * dom/Text.idl:
+        * fileapi/FileReader.idl:
+        * fileapi/FileReaderSync.idl:
+        * html/DOMTokenList.idl:
+        * html/DOMURL.idl:
+        * html/HTMLCanvasElement.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOptionElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLProgressElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTableRowElement.idl:
+        * html/HTMLTableSectionElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/HTMLVideoElement.idl:
+        * html/ImageData.idl:
+        * html/MediaController.idl:
+        * html/TimeRanges.idl:
+        * html/URLUtils.idl:
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/OESVertexArrayObject.idl:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * html/track/DataCue.idl:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.idl:
+        * html/track/VTTCue.idl:
+        * html/track/VTTRegion.idl:
+        * loader/appcache/DOMApplicationCache.idl:
+        * page/Crypto.idl:
+        * page/DOMSelection.idl:
+        * page/DOMWindow.idl:
+        * page/EventSource.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * page/Performance.idl:
+        * page/UserMessageHandler.idl:
+        * page/WindowOrWorkerGlobalScope.idl:
+        * storage/Storage.idl:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimatedBoolean.idl:
+        * svg/SVGAnimatedEnumeration.idl:
+        * svg/SVGAnimatedInteger.idl:
+        * svg/SVGAnimatedNumber.idl:
+        * svg/SVGAnimatedString.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGColor.idl:
+        * svg/SVGGlyphRefElement.idl:
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.idl:
+        * svg/SVGMatrix.idl:
+        * svg/SVGNumberList.idl:
+        * svg/SVGPaint.idl:
+        * svg/SVGPathSegList.idl:
+        * svg/SVGPointList.idl:
+        * svg/SVGPreserveAspectRatio.idl:
+        * svg/SVGStringList.idl:
+        * svg/SVGStyleElement.idl:
+        * svg/SVGTextContentElement.idl:
+        * svg/SVGTransformList.idl:
+        * svg/SVGViewSpec.idl:
+        * testing/InternalSettings.idl:
+        * testing/Internals.idl:
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/Worker.idl:
+        * xml/DOMParser.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathEvaluator.idl:
+        * xml/XPathExpression.idl:
+        * xml/XPathResult.idl:
+        Allowed the rename script to rename the exception-related extended attributes.
+
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        * bindings/scripts/test/JS/JSInterfaceName.h:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestIterable.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSattribute.h:
+        * bindings/scripts/test/JS/JSreadonly.cpp:
+        * bindings/scripts/test/JS/JSreadonly.h:
+        Regenerated.
+
+
 2016-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls for Soundcloud easily falls out of sync with what's actually playing

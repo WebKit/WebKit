@@ -52,17 +52,17 @@
 
     [Immutable] SVGPOINT immutablePointFunction();
 
-    [RaisesException] SEQUENCE_OF_STRINGS stringSequenceFunction(SEQUENCE_OF_STRINGS values);
-    [RaisesException] sequence<STRING> stringSequenceFunction2(sequence<STRING> values);
+    [MayThrowLegacyException] SEQUENCE_OF_STRINGS stringSequenceFunction(SEQUENCE_OF_STRINGS values);
+    [MayThrowLegacyException] sequence<STRING> stringSequenceFunction2(sequence<STRING> values);
 
     boolean callWithSequenceThatRequiresInclude(sequence<TestEventTarget> sequenceArg);
 
     // Exceptions
-    [RaisesException] void methodWithException();
-    [GetterRaisesException] attribute long attrWithGetterException;
-    [SetterRaisesException] attribute long attrWithSetterException;
-    [GetterRaisesException] attribute DOMString stringAttrWithGetterException;
-    [SetterRaisesException] attribute DOMString stringAttrWithSetterException;
+    [MayThrowLegacyException] void methodWithException();
+    [GetterMayThrowLegacyException] attribute long attrWithGetterException;
+    [SetterMayThrowLegacyException] attribute long attrWithSetterException;
+    [GetterMayThrowLegacyException] attribute DOMString stringAttrWithGetterException;
+    [SetterMayThrowLegacyException] attribute DOMString stringAttrWithSetterException;
 };
 
 typedef unrestricted float         DOUBLE;

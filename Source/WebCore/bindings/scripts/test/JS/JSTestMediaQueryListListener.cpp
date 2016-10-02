@@ -44,7 +44,7 @@ bool setJSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::EncodedJSV
 
 class JSTestMediaQueryListListenerPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestMediaQueryListListenerPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestMediaQueryListListenerPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(vm.heap)) JSTestMediaQueryListListenerPrototype(vm, globalObject, structure);
@@ -67,7 +67,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSTestMediaQueryListListener> JSTestMediaQueryListListenerConstructor;
+using JSTestMediaQueryListListenerConstructor = JSDOMConstructorNotConstructable<JSTestMediaQueryListListener>;
 
 template<> JSValue JSTestMediaQueryListListenerConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

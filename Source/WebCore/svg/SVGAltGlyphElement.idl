@@ -26,8 +26,8 @@
 [
     Conditional=SVG_FONTS,
 ] interface SVGAltGlyphElement : SVGTextPositioningElement {
-    [SetterRaisesException] attribute DOMString glyphRef;
-    [SetterRaisesException] attribute DOMString format;
+    [SetterMayThrowLegacyException] attribute DOMString glyphRef;
+    [SetterMayThrowLegacyException] attribute DOMString format;
 };
 
 SVGAltGlyphElement implements SVGURIReference;

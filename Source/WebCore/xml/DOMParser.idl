@@ -22,5 +22,5 @@
     ConstructorCallWith=Document,
     ImplementationLacksVTable,
 ] interface DOMParser {
-    [RaisesException, NewObject] Document parseFromString(DOMString str, DOMString contentType);
+    [MayThrowLegacyException, NewObject] Document parseFromString(DOMString str, DOMString contentType);
 };

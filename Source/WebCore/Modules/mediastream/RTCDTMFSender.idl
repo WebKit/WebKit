@@ -34,7 +34,7 @@
     readonly attribute long duration;
     readonly attribute long interToneGap;
 
-    [RaisesException] void insertDTMF(DOMString tones, optional long duration, optional long interToneGap);
+    [MayThrowLegacyException] void insertDTMF(DOMString tones, optional long duration, optional long interToneGap);
 
     attribute EventHandler ontonechange;
 };

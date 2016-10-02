@@ -28,13 +28,13 @@
 
     DOMString? getAttribute(DOMString name);
 
-    [RaisesException, CEReactions] void setAttribute(DOMString name, DOMString value);
+    [MayThrowLegacyException, CEReactions] void setAttribute(DOMString name, DOMString value);
 
     [CEReactions] void removeAttribute(DOMString name);
     Attr? getAttributeNode(DOMString name);
 
-    [RaisesException, CEReactions] Attr? setAttributeNode(Attr newAttr);
-    [RaisesException, CEReactions] Attr removeAttributeNode(Attr oldAttr);
+    [MayThrowLegacyException, CEReactions] Attr? setAttributeNode(Attr newAttr);
+    [MayThrowLegacyException, CEReactions] Attr removeAttributeNode(Attr oldAttr);
 
     HTMLCollection getElementsByTagName(DOMString name);
 
@@ -43,13 +43,13 @@
 
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-    [RaisesException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [MayThrowLegacyException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
     [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-    [RaisesException, CEReactions] Attr? setAttributeNodeNS(Attr newAttr);
+    [MayThrowLegacyException, CEReactions] Attr? setAttributeNodeNS(Attr newAttr);
     boolean hasAttribute(DOMString name);
 
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
@@ -97,15 +97,15 @@
     sequence<DOMString> getAttributeNames();
 
     HTMLCollection getElementsByClassName(DOMString name);
-    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString innerHTML;
-    [TreatNullAs=EmptyString, SetterRaisesException] attribute DOMString outerHTML;
+    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
+    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString outerHTML;
 
     [Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
 
-    [RaisesException] boolean matches(DOMString selectors);
-    [RaisesException] Element closest(DOMString selectors);    
-    [ImplementedAs=matches, RaisesException] boolean webkitMatchesSelector(DOMString selectors);
+    [MayThrowLegacyException] boolean matches(DOMString selectors);
+    [MayThrowLegacyException] Element closest(DOMString selectors);    
+    [ImplementedAs=matches, MayThrowLegacyException] boolean webkitMatchesSelector(DOMString selectors);
 
     // CSSOM View Module API
     ClientRectList getClientRects();
@@ -124,9 +124,9 @@
     [Reflect] attribute DOMString uiactions;
 #endif
 
-    [RaisesException] Element insertAdjacentElement(DOMString where, Element element);
-    [RaisesException] void insertAdjacentHTML(DOMString where, DOMString html);
-    [RaisesException] void insertAdjacentText(DOMString where, DOMString text);
+    [MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);
+    [MayThrowLegacyException] void insertAdjacentHTML(DOMString where, DOMString html);
+    [MayThrowLegacyException] void insertAdjacentText(DOMString where, DOMString text);
 
     [Conditional=POINTER_LOCK] void requestPointerLock();
 
@@ -135,7 +135,7 @@
     [Conditional=CSS_REGIONS] sequence<Range> webkitGetRegionFlowRanges();
 
     // Shadow DOM API
-    [EnabledAtRuntime=ShadowDOM, RaisesException] ShadowRoot attachShadow(ShadowRootInit init);
+    [EnabledAtRuntime=ShadowDOM, MayThrowLegacyException] ShadowRoot attachShadow(ShadowRootInit init);
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
     [EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
 

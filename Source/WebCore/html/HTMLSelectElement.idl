@@ -35,17 +35,17 @@
     readonly attribute DOMString type;
 
     readonly attribute HTMLOptionsCollection options;
-    [SetterRaisesException] attribute unsigned long length;
+    [SetterMayThrowLegacyException] attribute unsigned long length;
 
     getter HTMLOptionElement? item(unsigned long index);
     HTMLOptionElement? namedItem(DOMString name);
 
-    [RaisesException] void add(HTMLElement element, optional HTMLElement? before = null);
+    [MayThrowLegacyException] void add(HTMLElement element, optional HTMLElement? before = null);
     // FIXME: Should be:
     // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [RaisesException] void add(HTMLElement element, long index);
+    [MayThrowLegacyException] void add(HTMLElement element, long index);
 
-    [RaisesException] void remove(); // ChildNode overload
+    [MayThrowLegacyException] void remove(); // ChildNode overload
     // FIXME: This overload is not in the specification and was dropped in Blink.
     void remove(HTMLOptionElement option);
     [ImplementedAs=removeByIndex] void remove(long index);

@@ -41,6 +41,6 @@
     void add(File? file);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
+    [MayThrowLegacyException] void add(optional DOMString data = "undefined", optional DOMString type = "undefined");
 };
 

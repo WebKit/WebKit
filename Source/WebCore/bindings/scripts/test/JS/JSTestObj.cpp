@@ -60,7 +60,6 @@
 #include "SVGStaticPropertyTearOff.h"
 #include "SerializedScriptValue.h"
 #include "Settings.h"
-#include "TestObj.h"
 #include "URL.h"
 #include "WebCoreJSClientData.h"
 #include <inspector/ScriptArguments.h>
@@ -970,7 +969,7 @@ bool setJSTestObjConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJ
 
 class JSTestObjPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestObjPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestObjPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestObjPrototype>(vm.heap)) JSTestObjPrototype(vm, globalObject, structure);
@@ -993,7 +992,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestObj> JSTestObjConstructor;
+using JSTestObjConstructor = JSDOMConstructor<JSTestObj>;
 
 /* Hash table */
 

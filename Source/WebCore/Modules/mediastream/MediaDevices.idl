@@ -35,5 +35,5 @@
     MediaTrackSupportedConstraints getSupportedConstraints();
 
     [Custom, PrivateIdentifier, PublicIdentifier] Promise getUserMedia(Dictionary options);
-    [RaisesException] Promise enumerateDevices();
+    [MayThrowLegacyException] Promise enumerateDevices();
 };

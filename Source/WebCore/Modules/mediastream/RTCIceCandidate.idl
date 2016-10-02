@@ -32,7 +32,7 @@
 [
     Conditional=WEB_RTC,
     Constructor(Dictionary dictionary),
-    ConstructorRaisesException,
+    ConstructorMayThrowLegacyException,
     PrivateIdentifier,
     PublicIdentifier
 ] interface RTCIceCandidate {

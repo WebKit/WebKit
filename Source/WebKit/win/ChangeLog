@@ -1,3 +1,12 @@
+2016-10-02  Darin Adler  <darin@apple.com>
+
+        Rename ExceptionCode-based exception handling to "legacy"
+        https://bugs.webkit.org/show_bug.cgi?id=162859
+
+        Reviewed by Chris Dumez.
+
+        * Interfaces/DOMEvents.idl: Let the script rename here (in a comment).
+
 2016-09-29  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation of PluginView when NETSCAPE_PLUGIN_API is disabled

@@ -37,7 +37,7 @@ interface HTMLFrameElement : HTMLElement {
     // Extensions
     readonly attribute DOMWindow contentWindow;
 
-    [CheckSecurityForNode, RaisesException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
 
     // FIXME: No other browser has this attribute.
     [CustomSetter] attribute DOMString location;

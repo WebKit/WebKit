@@ -34,8 +34,8 @@
     readonly attribute IDBDatabase db;
     readonly attribute DOMError error;
 
-    [RaisesExceptionWithMessage] IDBObjectStore objectStore (DOMString name);
-    [RaisesExceptionWithMessage] void abort ();
+    [MayThrowLegacyExceptionWithMessage] IDBObjectStore objectStore (DOMString name);
+    [MayThrowLegacyExceptionWithMessage] void abort ();
 
     attribute EventHandler onabort;
     attribute EventHandler oncomplete;

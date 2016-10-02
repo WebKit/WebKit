@@ -27,7 +27,7 @@ interface HTMLTableRowElement : HTMLElement {
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
     [Reflect] attribute DOMString vAlign;
-    [RaisesException] HTMLElement insertCell(optional long index = -1);
-    [RaisesException] void deleteCell(long index);
+    [MayThrowLegacyException] HTMLElement insertCell(optional long index = -1);
+    [MayThrowLegacyException] void deleteCell(long index);
 };
 

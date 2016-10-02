@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSTestOverloadedConstructors : public JSDOMWrapper<TestOverloadedConstructors> {
 public:
-    typedef JSDOMWrapper<TestOverloadedConstructors> Base;
+    using Base = JSDOMWrapper<TestOverloadedConstructors>;
     static JSTestOverloadedConstructors* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestOverloadedConstructors>&& impl)
     {
         JSTestOverloadedConstructors* ptr = new (NotNull, JSC::allocateCell<JSTestOverloadedConstructors>(globalObject->vm().heap)) JSTestOverloadedConstructors(structure, *globalObject, WTFMove(impl));

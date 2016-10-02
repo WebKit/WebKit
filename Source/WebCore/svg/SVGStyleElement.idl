@@ -26,8 +26,8 @@
 
 interface SVGStyleElement : SVGElement {
              attribute boolean disabled;
-             [SetterRaisesException] attribute DOMString type;
-             [SetterRaisesException] attribute DOMString media;
-             [SetterRaisesException] attribute DOMString title;
+             [SetterMayThrowLegacyException] attribute DOMString type;
+             [SetterMayThrowLegacyException] attribute DOMString media;
+             [SetterMayThrowLegacyException] attribute DOMString title;
 };
 

@@ -24,7 +24,7 @@
  */
 
 [NoInterfaceObject] interface URLUtils {
-    [SetterRaisesException, URL] attribute USVString href;
+    [SetterMayThrowLegacyException, URL] attribute USVString href;
 
     [NotEnumerable] DOMString toString();
 

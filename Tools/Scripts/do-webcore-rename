@@ -99,7 +99,13 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "JSDOMBuild" => "JSDOMConvert",
+    "ConstructorRaisesException" => "ConstructorMayThrowLegacyException",
+    "GetterRaisesException" => "GetterMayThrowLegacyException",
+    "GetterRaisesExceptionWithMessage" => "GetterMayThrowLegacyExceptionWithMessage",
+    "RaisesException" => "MayThrowLegacyException",
+    "RaisesExceptionWithMessage" => "MayThrowLegacyExceptionWithMessage",
+    "SetterRaisesException" => "SetterMayThrowLegacyException",
+    "SetterRaisesExceptionWithMessage" => "SetterMayThrowLegacyExceptionWithMessage",
 );
 
 my %renamesContemplatedForTheFuture = (

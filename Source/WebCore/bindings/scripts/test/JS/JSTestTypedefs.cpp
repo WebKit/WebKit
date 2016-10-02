@@ -76,7 +76,7 @@ bool setJSTestTypedefsConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Enc
 
 class JSTestTypedefsPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestTypedefsPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestTypedefsPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefsPrototype>(vm.heap)) JSTestTypedefsPrototype(vm, globalObject, structure);
@@ -99,7 +99,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestTypedefs> JSTestTypedefsConstructor;
+using JSTestTypedefsConstructor = JSDOMConstructor<JSTestTypedefs>;
 
 /* Hash table */
 

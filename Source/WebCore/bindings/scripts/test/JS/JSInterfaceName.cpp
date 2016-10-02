@@ -37,7 +37,7 @@ bool setJSInterfaceNameConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::En
 
 class JSInterfaceNamePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSInterfaceNamePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSInterfaceNamePrototype* ptr = new (NotNull, JSC::allocateCell<JSInterfaceNamePrototype>(vm.heap)) JSInterfaceNamePrototype(vm, globalObject, structure);
@@ -60,7 +60,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSInterfaceName> JSInterfaceNameConstructor;
+using JSInterfaceNameConstructor = JSDOMConstructorNotConstructable<JSInterfaceName>;
 
 template<> JSValue JSInterfaceNameConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

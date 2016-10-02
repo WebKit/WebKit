@@ -41,7 +41,7 @@
     attribute Node implementsNode;
 
     void implementsMethod1();
-    [CallWith=ScriptExecutionContext, RaisesException] TestObj implementsMethod2(DOMString strArg, TestObj objArg);
+    [CallWith=ScriptExecutionContext, MayThrowLegacyException] TestObj implementsMethod2(DOMString strArg, TestObj objArg);
     [Custom] void implementsMethod3();
     static void implementsMethod4();
 

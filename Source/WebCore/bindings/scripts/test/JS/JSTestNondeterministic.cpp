@@ -33,7 +33,6 @@
 #if ENABLE(WEB_REPLAY)
 #include "MemoizedDOMResult.h"
 #include <replay/InputCursor.h>
-#include <wtf/NeverDestroyed.h>
 #endif
 
 using namespace JSC;
@@ -60,7 +59,7 @@ bool setJSTestNondeterministicConstructor(JSC::ExecState*, JSC::EncodedJSValue, 
 
 class JSTestNondeterministicPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestNondeterministicPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestNondeterministicPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestNondeterministicPrototype>(vm.heap)) JSTestNondeterministicPrototype(vm, globalObject, structure);
@@ -83,7 +82,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSTestNondeterministic> JSTestNondeterministicConstructor;
+using JSTestNondeterministicConstructor = JSDOMConstructorNotConstructable<JSTestNondeterministic>;
 
 template<> JSValue JSTestNondeterministicConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

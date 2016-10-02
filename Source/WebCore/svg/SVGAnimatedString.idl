@@ -26,7 +26,7 @@
 [
     SkipVTableValidation
 ] interface SVGAnimatedString {
-    [SetterRaisesException] attribute DOMString baseVal;
+    [SetterMayThrowLegacyException] attribute DOMString baseVal;
     readonly attribute DOMString animVal;
 };
 

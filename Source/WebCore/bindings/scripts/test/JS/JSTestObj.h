@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSTestObj : public JSDOMWrapper<TestObj> {
 public:
-    typedef JSDOMWrapper<TestObj> Base;
+    using Base = JSDOMWrapper<TestObj>;
     static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestObj>&& impl)
     {
         JSTestObj* ptr = new (NotNull, JSC::allocateCell<JSTestObj>(globalObject->vm().heap)) JSTestObj(structure, *globalObject, WTFMove(impl));

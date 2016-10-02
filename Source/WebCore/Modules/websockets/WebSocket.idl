@@ -34,7 +34,7 @@
     Conditional=WEB_SOCKETS,
     Constructor(USVString url, optional sequence<DOMString> protocols = []),
     Constructor(USVString url, DOMString protocol),
-    ConstructorRaisesException,
+    ConstructorMayThrowLegacyException,
     ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime,
     Exposed=(Window,Worker),
@@ -60,12 +60,12 @@
     readonly attribute DOMString? protocol;
     readonly attribute DOMString? extensions;
 
-    [SetterRaisesException] attribute DOMString binaryType;
+    [SetterMayThrowLegacyException] attribute DOMString binaryType;
 
-    [RaisesException] void send(ArrayBuffer data);
-    [RaisesException] void send(ArrayBufferView data);
-    [RaisesException] void send(Blob data);
-    [RaisesException] void send(USVString data);
+    [MayThrowLegacyException] void send(ArrayBuffer data);
+    [MayThrowLegacyException] void send(ArrayBufferView data);
+    [MayThrowLegacyException] void send(Blob data);
+    [MayThrowLegacyException] void send(USVString data);
 
-    [RaisesException] void close([Clamp] optional unsigned short code, optional DOMString reason);
+    [MayThrowLegacyException] void close([Clamp] optional unsigned short code, optional DOMString reason);
 };

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSTestTypedefs : public JSDOMWrapper<TestTypedefs> {
 public:
-    typedef JSDOMWrapper<TestTypedefs> Base;
+    using Base = JSDOMWrapper<TestTypedefs>;
     static JSTestTypedefs* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
     {
         JSTestTypedefs* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefs>(globalObject->vm().heap)) JSTestTypedefs(structure, *globalObject, WTFMove(impl));

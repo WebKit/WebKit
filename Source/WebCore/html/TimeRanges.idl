@@ -29,7 +29,7 @@
     ExportMacro=WEBCORE_EXPORT,
 ] interface TimeRanges {
     readonly attribute unsigned long length;
-    [RaisesException] unrestricted double start(unsigned long index);
-    [RaisesException] unrestricted double end(unsigned long index);
+    [MayThrowLegacyException] unrestricted double start(unsigned long index);
+    [MayThrowLegacyException] unrestricted double end(unsigned long index);
 };
 

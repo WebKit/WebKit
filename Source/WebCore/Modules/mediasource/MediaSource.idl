@@ -46,19 +46,19 @@ enum EndOfStreamError {
     // Subset of sourceBuffers that provide data for the selected/enabled tracks.
     readonly attribute SourceBufferList activeSourceBuffers;
 
-    [SetterRaisesException] attribute unrestricted double duration;
+    [SetterMayThrowLegacyException] attribute unrestricted double duration;
 
-    [RaisesException] SourceBuffer addSourceBuffer(DOMString type);
-    [RaisesException] void removeSourceBuffer(SourceBuffer buffer);
+    [MayThrowLegacyException] SourceBuffer addSourceBuffer(DOMString type);
+    [MayThrowLegacyException] void removeSourceBuffer(SourceBuffer buffer);
 
     readonly attribute DOMString readyState;
     
-    [RaisesException] void endOfStream(optional EndOfStreamError error);
+    [MayThrowLegacyException] void endOfStream(optional EndOfStreamError error);
 
     static boolean isTypeSupported (DOMString type);
 
-    [RaisesException] void setLiveSeekableRange(double start, double end);
-    [RaisesException] void clearLiveSeekableRange();
+    [MayThrowLegacyException] void setLiveSeekableRange(double start, double end);
+    [MayThrowLegacyException] void clearLiveSeekableRange();
 
     attribute EventHandler onsourceopen;
     attribute EventHandler onsourceended;

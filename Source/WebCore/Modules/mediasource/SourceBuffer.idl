@@ -39,31 +39,31 @@
     ExportMacro=WEBCORE_EXPORT,
 ] interface SourceBuffer : EventTarget {
 
-    [SetterRaisesException] attribute AppendMode mode;
+    [SetterMayThrowLegacyException] attribute AppendMode mode;
 
     readonly attribute boolean updating;
   
     // Returns the time ranges buffered.
-    [GetterRaisesException] readonly attribute TimeRanges buffered;
+    [GetterMayThrowLegacyException] readonly attribute TimeRanges buffered;
 
     // Applies an offset to media segment timestamps.
-    [SetterRaisesException] attribute double timestampOffset;
+    [SetterMayThrowLegacyException] attribute double timestampOffset;
 
     // Track support
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
     [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
 
-    [SetterRaisesException] attribute double appendWindowStart;
-    [SetterRaisesException] attribute unrestricted double appendWindowEnd;
+    [SetterMayThrowLegacyException] attribute double appendWindowStart;
+    [SetterMayThrowLegacyException] attribute unrestricted double appendWindowEnd;
 
     // Append segment data.
-    [RaisesException] void appendBuffer(ArrayBuffer data);
-    [RaisesException] void appendBuffer(ArrayBufferView data);
+    [MayThrowLegacyException] void appendBuffer(ArrayBuffer data);
+    [MayThrowLegacyException] void appendBuffer(ArrayBufferView data);
 
     // Abort the current segment append sequence.
-    [RaisesException] void abort();
-    [RaisesException] void remove(unrestricted double start, unrestricted double end);
+    [MayThrowLegacyException] void abort();
+    [MayThrowLegacyException] void remove(unrestricted double start, unrestricted double end);
 
     attribute EventHandler onupdatestart;
     attribute EventHandler onupdate;

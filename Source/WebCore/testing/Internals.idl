@@ -82,7 +82,7 @@ enum UserInterfaceLayoutDirection {
     // Animated image pausing testing.
     boolean hasPausedImageAnimations(Element element);
 
-    [RaisesException] DOMString elementRenderTreeAsText(Element element);
+    [MayThrowLegacyException] DOMString elementRenderTreeAsText(Element element);
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
@@ -100,91 +100,87 @@ enum UserInterfaceLayoutDirection {
 
     CSSStyleDeclaration computedStyleIncludingVisitedInfo(Element element);
 
-    [RaisesException] Node ensureShadowRoot(Element host);
+    [MayThrowLegacyException] Node ensureShadowRoot(Element host);
     Node ensureUserAgentShadowRoot(Element host);
-    [RaisesException] Node createShadowRoot(Element host);
+    [MayThrowLegacyException] Node createShadowRoot(Element host);
     Node shadowRoot(Element host);
 
-    [RaisesException] DOMString shadowRootType(Node root);
+    [MayThrowLegacyException] DOMString shadowRootType(Node root);
     DOMString shadowPseudoId(Element element);
     void setShadowPseudoId(Element element, DOMString id);
     Node treeScopeRootNode(Node node);
     Node parentTreeScope(Node node);
 
     // Spatial Navigation testing
-    [RaisesException] unsigned long lastSpatialNavigationCandidateCount();
+    [MayThrowLegacyException] unsigned long lastSpatialNavigationCandidateCount();
 
     // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
-    [RaisesException] void suspendAnimations();
-    [RaisesException] void resumeAnimations();
-    [RaisesException] boolean animationsAreSuspended();
-    [RaisesException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, unrestricted double pauseTime, Element element);
-    [RaisesException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, unrestricted double pauseTime, Element element, DOMString pseudoId);
+    [MayThrowLegacyException] void suspendAnimations();
+    [MayThrowLegacyException] void resumeAnimations();
+    [MayThrowLegacyException] boolean animationsAreSuspended();
+    [MayThrowLegacyException] boolean pauseAnimationAtTimeOnElement(DOMString animationName, unrestricted double pauseTime, Element element);
+    [MayThrowLegacyException] boolean pauseAnimationAtTimeOnPseudoElement(DOMString animationName, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
     // CSS Transition testing.
-    [RaisesException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
-    [RaisesException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
+    [MayThrowLegacyException] boolean pauseTransitionAtTimeOnElement(DOMString propertyName, unrestricted double pauseTime, Element element);
+    [MayThrowLegacyException] boolean pauseTransitionAtTimeOnPseudoElement(DOMString property, unrestricted double pauseTime, Element element, DOMString pseudoId);
 
     DOMString visiblePlaceholder(Element element);
     void selectColorInColorChooser(HTMLInputElement element, DOMString colorValue);
-    [RaisesException] sequence<DOMString> formControlStateOfPreviousHistoryItem();
-    [RaisesException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
+    [MayThrowLegacyException] sequence<DOMString> formControlStateOfPreviousHistoryItem();
+    [MayThrowLegacyException] void setFormControlStateOfPreviousHistoryItem(sequence<DOMString> values);
 
-    [RaisesException] ClientRect absoluteCaretBounds();
+    [MayThrowLegacyException] ClientRect absoluteCaretBounds();
 
     ClientRect boundingBox(Element element);
 
-    [RaisesException] ClientRectList inspectorHighlightRects();
-    [RaisesException] DOMString inspectorHighlightObject();
+    [MayThrowLegacyException] ClientRectList inspectorHighlightRects();
+    [MayThrowLegacyException] DOMString inspectorHighlightObject();
 
-    [RaisesException] unsigned long markerCountForNode(Node node, DOMString markerType);
-    [RaisesException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
-    [RaisesException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
-    [RaisesException] DOMString dumpMarkerRects(DOMString markerType);
+    [MayThrowLegacyException] unsigned long markerCountForNode(Node node, DOMString markerType);
+    [MayThrowLegacyException] Range markerRangeForNode(Node node, DOMString markerType, unsigned long index);
+    [MayThrowLegacyException] DOMString markerDescriptionForNode(Node node, DOMString markerType, unsigned long index);
+    [MayThrowLegacyException] DOMString dumpMarkerRects(DOMString markerType);
     void addTextMatchMarker(Range range, boolean isActive);
-    [RaisesException] void setMarkedTextMatchesAreHighlighted(boolean flag);
+    [MayThrowLegacyException] void setMarkedTextMatchesAreHighlighted(boolean flag);
 
     void invalidateFontCache();
 
-    [RaisesException] void setScrollViewPosition(long x, long y);
+    [MayThrowLegacyException] void setScrollViewPosition(long x, long y);
 
-    [RaisesException] void setViewBaseBackgroundColor(DOMString colorValue);
+    [MayThrowLegacyException] void setViewBaseBackgroundColor(DOMString colorValue);
 
-    [RaisesException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);
-    [RaisesException] void setPaginationLineGridEnabled(boolean enabled);
+    [MayThrowLegacyException] void setPagination(DOMString mode, long gap, optional long pageLength = 0);
+    [MayThrowLegacyException] void setPaginationLineGridEnabled(boolean enabled);
 
-    [RaisesException] DOMString configurationForViewport(unrestricted float devicePixelRatio,
-                                       long deviceWidth,
-                                       long deviceHeight,
-                                       long availableWidth,
-                                       long availableHeight);
+    [MayThrowLegacyException] DOMString configurationForViewport(unrestricted float devicePixelRatio, long deviceWidth, long deviceHeight, long availableWidth, long availableHeight);
 
-    [RaisesException] boolean wasLastChangeUserEdit(Element textField);
+    [MayThrowLegacyException] boolean wasLastChangeUserEdit(Element textField);
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
     void setEditingValue(HTMLInputElement inputElement, DOMString value);
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
     void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
-    [RaisesException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
-    [RaisesException] unsigned long countFindMatches(DOMString text, unsigned long findOptions);
+    [MayThrowLegacyException] unsigned long countMatchesForText(DOMString text, unsigned long findOptions, DOMString markMatches);
+    [MayThrowLegacyException] unsigned long countFindMatches(DOMString text, unsigned long findOptions);
 
-    [RaisesException] DOMString autofillFieldName(Element formControlElement);
+    [MayThrowLegacyException] DOMString autofillFieldName(Element formControlElement);
 
-    [RaisesException] void paintControlTints();
+    [MayThrowLegacyException] void paintControlTints();
 
-    [RaisesException] void scrollElementToRect(Element element, long x, long y, long w, long h);
+    [MayThrowLegacyException] void scrollElementToRect(Element element, long x, long y, long w, long h);
 
     Range rangeFromLocationAndLength(Element scope, long rangeLocation, long rangeLength);
     unsigned long locationFromRange(Element scope, Range range);
     unsigned long lengthFromRange(Element scope, Range range);
     DOMString rangeAsText(Range range);
     Range subrange(Range range, long rangeLocation, long rangeLength);
-    [RaisesException] Range rangeForDictionaryLookupAtLocation(long x, long y);
+    [MayThrowLegacyException] Range rangeForDictionaryLookupAtLocation(long x, long y);
 
-    [RaisesException] void setDelegatesScrolling(boolean enabled);
+    [MayThrowLegacyException] void setDelegatesScrolling(boolean enabled);
 
-    [RaisesException] long lastSpellCheckRequestSequence();
-    [RaisesException] long lastSpellCheckProcessedSequence();
+    [MayThrowLegacyException] long lastSpellCheckRequestSequence();
+    [MayThrowLegacyException] long lastSpellCheckProcessedSequence();
 
     sequence<DOMString> userPreferredLanguages();
     void setUserPreferredLanguages(sequence<DOMString> languages);
@@ -192,10 +188,10 @@ enum UserInterfaceLayoutDirection {
     sequence<DOMString> userPreferredAudioCharacteristics();
     void setUserPreferredAudioCharacteristic(DOMString characteristic);
 
-    [RaisesException] unsigned long wheelEventHandlerCount();
-    [RaisesException] unsigned long touchEventHandlerCount();
+    [MayThrowLegacyException] unsigned long wheelEventHandlerCount();
+    [MayThrowLegacyException] unsigned long touchEventHandlerCount();
 
-    [RaisesException] NodeList nodesFromRect(Document document, long x, long y,
+    [MayThrowLegacyException] NodeList nodesFromRect(Document document, long x, long y,
         unsigned long topPadding, unsigned long rightPadding, unsigned long bottomPadding, unsigned long leftPadding,
         boolean ignoreClipping, boolean allowShadowContent, boolean allowChildFrameContent);
 
@@ -204,9 +200,9 @@ enum UserInterfaceLayoutDirection {
 
     void updateEditorUINowIfScheduled();
 
-    [RaisesException] boolean hasSpellingMarker(long from, long length);
-    [RaisesException] boolean hasGrammarMarker(long from, long length);
-    [RaisesException] boolean hasAutocorrectedMarker(long from, long length);
+    [MayThrowLegacyException] boolean hasSpellingMarker(long from, long length);
+    [MayThrowLegacyException] boolean hasGrammarMarker(long from, long length);
+    [MayThrowLegacyException] boolean hasAutocorrectedMarker(long from, long length);
     void setContinuousSpellCheckingEnabled(boolean enabled);
     void setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     void setAutomaticLinkDetectionEnabled(boolean enabled);
@@ -214,14 +210,14 @@ enum UserInterfaceLayoutDirection {
     void setAutomaticTextReplacementEnabled(boolean enabled);
     void setAutomaticSpellingCorrectionEnabled(boolean enabled);
 
-    [RaisesException] void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
+    [MayThrowLegacyException] void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
 
-    [RaisesException] boolean isOverwriteModeEnabled();
-    [RaisesException] void toggleOverwriteModeEnabled();
+    [MayThrowLegacyException] boolean isOverwriteModeEnabled();
+    [MayThrowLegacyException] void toggleOverwriteModeEnabled();
 
-    [RaisesException] unsigned long numberOfScrollableAreas();
+    [MayThrowLegacyException] unsigned long numberOfScrollableAreas();
 
-    [RaisesException] boolean isPageBoxVisible(long pageNumber);
+    [MayThrowLegacyException] boolean isPageBoxVisible(long pageNumber);
 
     unsigned long imageFrameIndex(HTMLImageElement element);
 
@@ -234,63 +230,63 @@ enum UserInterfaceLayoutDirection {
     const unsigned short LAYER_TREE_INCLUDES_REPAINT_RECTS = 4;
     const unsigned short LAYER_TREE_INCLUDES_PAINTING_PHASES = 8;
     const unsigned short LAYER_TREE_INCLUDES_CONTENT_LAYERS = 16;
-    [RaisesException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
+    [MayThrowLegacyException] DOMString layerTreeAsText(Document document, optional unsigned short flags = 0);
 
-    [RaisesException] DOMString scrollingStateTreeAsText();
-    [RaisesException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
-    [RaisesException] ClientRectList nonFastScrollableRects();
+    [MayThrowLegacyException] DOMString scrollingStateTreeAsText();
+    [MayThrowLegacyException] DOMString mainThreadScrollingReasons(); // FIXME: rename to synchronousScrollingReasons().
+    [MayThrowLegacyException] ClientRectList nonFastScrollableRects();
 
-    [RaisesException] DOMString repaintRectsAsText();
+    [MayThrowLegacyException] DOMString repaintRectsAsText();
 
     // These throw if the element does not have a compositing layer.
-    [RaisesException] void setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
-    [RaisesException] void setElementTracksDisplayListReplay(Element element, boolean trackReplay);
+    [MayThrowLegacyException] void setElementUsesDisplayListDrawing(Element element, boolean usesDisplayListDrawing);
+    [MayThrowLegacyException] void setElementTracksDisplayListReplay(Element element, boolean trackReplay);
 
     // Flags for displayListForElement.
     const unsigned short DISPLAY_LIST_INCLUDES_PLATFORM_OPERATIONS = 1;
     // Returns the recorded display list.
-    [RaisesException] DOMString displayListForElement(Element element, optional unsigned short flags = 0);
+    [MayThrowLegacyException] DOMString displayListForElement(Element element, optional unsigned short flags = 0);
     // Returns the display list that was actually painted.
-    [RaisesException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
+    [MayThrowLegacyException] DOMString replayDisplayListForElement(Element element, optional unsigned short flags = 0);
 
-    [RaisesException] void garbageCollectDocumentResources();
+    [MayThrowLegacyException] void garbageCollectDocumentResources();
 
-    [RaisesException] void insertAuthorCSS(DOMString css);
-    [RaisesException] void insertUserCSS(DOMString css);
+    [MayThrowLegacyException] void insertAuthorCSS(DOMString css);
+    [MayThrowLegacyException] void insertUserCSS(DOMString css);
 
     readonly attribute boolean isUnderMemoryPressure;
     void beginSimulatedMemoryPressure();
     void endSimulatedMemoryPressure();
 
 #if defined(ENABLE_BATTERY_STATUS) && ENABLE_BATTERY_STATUS
-    [RaisesException] void setBatteryStatus(DOMString eventType, boolean charging, unrestricted double chargingTime, unrestricted double dischargingTime, unrestricted double level);
+    [MayThrowLegacyException] void setBatteryStatus(DOMString eventType, boolean charging, unrestricted double chargingTime, unrestricted double dischargingTime, unrestricted double level);
 #endif
 
 #if defined(ENABLE_PROXIMITY_EVENTS) && ENABLE_PROXIMITY_EVENTS
-    [RaisesException] void setDeviceProximity(DOMString eventType, unrestricted double value, unrestricted double min, unrestricted double max);
+    [MayThrowLegacyException] void setDeviceProximity(DOMString eventType, unrestricted double value, unrestricted double min, unrestricted double max);
 #endif
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     DOMWindow openDummyInspectorFrontend(DOMString url);
     void closeDummyInspectorFrontend();
-    [RaisesException] void setInspectorIsUnderTest(boolean isUnderTest);
+    [MayThrowLegacyException] void setInspectorIsUnderTest(boolean isUnderTest);
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     sequence<DOMString> shortcutIconURLs();
     long numberOfPages(optional unrestricted double pageWidthInPixels = 800, optional unrestricted double pageHeightInPixels = 600);
-    [RaisesException] DOMString pageProperty(DOMString propertyName, long pageNumber);
-    [RaisesException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
+    [MayThrowLegacyException] DOMString pageProperty(DOMString propertyName, long pageNumber);
+    [MayThrowLegacyException] DOMString pageSizeAndMarginsInPixels(long pageIndex, long width, long height, long marginTop, long marginRight, long marginBottom, long marginLeft);
 
-    [RaisesException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
-    [RaisesException] void setPageZoomFactor(unrestricted float zoomFactor);
-    [RaisesException] void setTextZoomFactor(unrestricted float zoomFactor);
+    [MayThrowLegacyException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
+    [MayThrowLegacyException] void setPageZoomFactor(unrestricted float zoomFactor);
+    [MayThrowLegacyException] void setTextZoomFactor(unrestricted float zoomFactor);
 
-    [RaisesException] void setUseFixedLayout(boolean useFixedLayout);
-    [RaisesException] void setFixedLayoutSize(long width, long height);
+    [MayThrowLegacyException] void setUseFixedLayout(boolean useFixedLayout);
+    [MayThrowLegacyException] void setFixedLayoutSize(long width, long height);
 
-    [RaisesException] void setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [MayThrowLegacyException] void setViewExposedRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
     void setHeaderHeight(unrestricted float height);
     void setFooterHeight(unrestricted float height);
@@ -317,33 +313,33 @@ enum UserInterfaceLayoutDirection {
 
     // These functions both reset the tracked repaint rects. They are intended to be used in the following order:
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
-    [RaisesException] void startTrackingRepaints();
-    [RaisesException] void stopTrackingRepaints();
+    [MayThrowLegacyException] void startTrackingRepaints();
+    [MayThrowLegacyException] void stopTrackingRepaints();
 
-    [RaisesException] void startTrackingLayerFlushes();
-    [RaisesException] unsigned long layerFlushCount();
+    [MayThrowLegacyException] void startTrackingLayerFlushes();
+    [MayThrowLegacyException] unsigned long layerFlushCount();
 
     // Query if a timer is currently throttled, to debug timer throttling.
-    [RaisesException] boolean isTimerThrottled(long timerHandle);
+    [MayThrowLegacyException] boolean isTimerThrottled(long timerHandle);
 
     boolean isRequestAnimationFrameThrottled();
     boolean areTimersThrottled();
 
-    [RaisesException] void startTrackingStyleRecalcs();
-    [RaisesException] unsigned long styleRecalcCount();
+    [MayThrowLegacyException] void startTrackingStyleRecalcs();
+    [MayThrowLegacyException] unsigned long styleRecalcCount();
 
-    [RaisesException] void startTrackingCompositingUpdates();
-    [RaisesException] unsigned long compositingUpdateCount();
+    [MayThrowLegacyException] void startTrackingCompositingUpdates();
+    [MayThrowLegacyException] unsigned long compositingUpdateCount();
 
     // |node| should be Document, HTMLIFrameElement, or unspecified.
     // If |node| is an HTMLIFrameElement, it assumes node.contentDocument is
     // specified without security checks. Unspecified or null means this document.
-    [RaisesException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
+    [MayThrowLegacyException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node? node = null);
 
     readonly attribute unsigned long layoutCount;
 
     // Returns a string with information about the mouse cursor used at the specified client location.
-    [RaisesException] DOMString getCurrentCursorInfo();
+    [MayThrowLegacyException] DOMString getCurrentCursorInfo();
 
     DOMString markerTextForListItem(Element element);
 
@@ -362,7 +358,7 @@ enum UserInterfaceLayoutDirection {
     void enableAutoSizeMode(boolean enabled, long minimumWidth, long minimumHeight, long maximumWidth, long maximumHeight);
 
     [Conditional=VIDEO] void simulateAudioInterruption(HTMLMediaElement element);
-    [Conditional=VIDEO, RaisesException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
+    [Conditional=VIDEO, MayThrowLegacyException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
 
     [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
 
@@ -370,10 +366,10 @@ enum UserInterfaceLayoutDirection {
 
     DOMString getImageSourceURL(Element element);
 
-    [Conditional=VIDEO_TRACK, RaisesException] DOMString captionsStyleSheetOverride();
-    [Conditional=VIDEO_TRACK, RaisesException] void setCaptionsStyleSheetOverride(DOMString override);
-    [Conditional=VIDEO_TRACK, RaisesException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
-    [Conditional=VIDEO_TRACK, RaisesException] void setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO_TRACK, MayThrowLegacyException] DOMString captionsStyleSheetOverride();
+    [Conditional=VIDEO_TRACK, MayThrowLegacyException] void setCaptionsStyleSheetOverride(DOMString override);
+    [Conditional=VIDEO_TRACK, MayThrowLegacyException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
+    [Conditional=VIDEO_TRACK, MayThrowLegacyException] void setCaptionDisplayMode(DOMString mode);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);
@@ -385,17 +381,17 @@ enum UserInterfaceLayoutDirection {
     boolean isVibrating();
 #endif
 
-    [RaisesException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
+    [MayThrowLegacyException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
     boolean isPluginSnapshotted(Element element);
 
-    [RaisesException] ClientRect selectionBounds();
+    [MayThrowLegacyException] ClientRect selectionBounds();
 
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
     [Conditional=MEDIA_SOURCE] sequence<DOMString> bufferedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] sequence<DOMString> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] void setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
 
-    [Conditional=VIDEO, RaisesException] void beginMediaSessionInterruption(DOMString interruptionType);
+    [Conditional=VIDEO, MayThrowLegacyException] void beginMediaSessionInterruption(DOMString interruptionType);
     [Conditional=VIDEO] void endMediaSessionInterruption(DOMString flags);
     [Conditional=MEDIA_SESSION] void sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory category);
     [Conditional=MEDIA_SESSION] void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category);
@@ -404,20 +400,20 @@ enum UserInterfaceLayoutDirection {
     [Conditional=MEDIA_SESSION] void sendMediaControlEvent(MediaControlEvent event);
     [Conditional=VIDEO] void applicationDidEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
-    [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
+    [Conditional=VIDEO, MayThrowLegacyException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);
     [Conditional=VIDEO] void setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
     [Conditional=WEB_AUDIO] void setAudioContextRestrictions(AudioContext context, DOMString restrictions);
-    [Conditional=VIDEO, RaisesException] void postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
+    [Conditional=VIDEO, MayThrowLegacyException] void postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
     [Conditional=WIRELESS_PLAYBACK_TARGET] void setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
-    [Conditional=WIRELESS_PLAYBACK_TARGET, RaisesException] void setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
+    [Conditional=WIRELESS_PLAYBACK_TARGET, MayThrowLegacyException] void setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=MEDIA_STREAM] void setMockMediaCaptureDevicesEnabled(boolean enabled);
 
     [Conditional=VIDEO] void simulateSystemSleep();
     [Conditional=VIDEO] void simulateSystemWake();
     [Conditional=VIDEO] boolean elementIsBlockingDisplaySleep(HTMLMediaElement element);
 
-    [RaisesException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
-    [RaisesException] DOMString pageOverlayLayerTreeAsText();
+    [MayThrowLegacyException] MockPageOverlay installMockPageOverlay(PageOverlayType type);
+    [MayThrowLegacyException] DOMString pageOverlayLayerTreeAsText();
 
     void setPageMuted(boolean muted);
     boolean isPagePlayingAudio();
@@ -431,10 +427,10 @@ enum UserInterfaceLayoutDirection {
     [Conditional=CONTENT_FILTERING] readonly attribute MockContentFilterSettings mockContentFilterSettings;
 
 #if defined(ENABLE_CSS_SCROLL_SNAP) && ENABLE_CSS_SCROLL_SNAP
-    [RaisesException] DOMString scrollSnapOffsets(Element element);
+    [MayThrowLegacyException] DOMString scrollSnapOffsets(Element element);
 #endif
 
-    [RaisesException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
+    [MayThrowLegacyException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 
     [Conditional=VIDEO] DOMString getCurrentMediaControlsStatusForElement(HTMLMediaElement element);
 
@@ -447,7 +443,7 @@ enum UserInterfaceLayoutDirection {
     DOMString resourceLoadStatisticsForOrigin(DOMString domain);
     void setResourceLoadStatisticsEnabled(boolean enable);
 
-    [RaisesException] void setCanShowModalDialogOverride(boolean allow);
+    [MayThrowLegacyException] void setCanShowModalDialogOverride(boolean allow);
 
     DOMString composedTreeAsText(Node parent);
 

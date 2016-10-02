@@ -37,11 +37,11 @@
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
-    [RaisesException] void webkitEnterFullscreen();
+    [MayThrowLegacyException] void webkitEnterFullscreen();
     void webkitExitFullscreen();
 
     // Note the different capitalization of the "S" in FullScreen.
-    [RaisesException] void webkitEnterFullScreen();
+    [MayThrowLegacyException] void webkitEnterFullScreen();
     void webkitExitFullScreen();
 
     [Conditional=WIRELESS_PLAYBACK_TARGET] attribute boolean webkitWirelessVideoPlaybackDisabled;

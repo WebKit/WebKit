@@ -32,7 +32,7 @@
     attribute unsigned long width;
     attribute unsigned long height;
 
-    [Custom, RaisesException] DOMString toDataURL(optional DOMString? type);
+    [Custom, MayThrowLegacyException] DOMString toDataURL(optional DOMString? type);
 
     // The custom binding is needed to handle context creation attributes.
     [Custom] any getContext(DOMString contextId, any... arguments);

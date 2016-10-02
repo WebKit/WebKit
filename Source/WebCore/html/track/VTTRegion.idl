@@ -33,12 +33,12 @@
     readonly attribute TextTrack track;
 
     attribute DOMString id;
-    [SetterRaisesException] attribute unrestricted double width;
-    [SetterRaisesException] attribute long height;
-    [SetterRaisesException] attribute unrestricted double regionAnchorX;
-    [SetterRaisesException] attribute unrestricted double regionAnchorY;
-    [SetterRaisesException] attribute unrestricted double viewportAnchorX;
-    [SetterRaisesException] attribute unrestricted double viewportAnchorY;
-    [SetterRaisesException] attribute DOMString scroll;
+    [SetterMayThrowLegacyException] attribute unrestricted double width;
+    [SetterMayThrowLegacyException] attribute long height;
+    [SetterMayThrowLegacyException] attribute unrestricted double regionAnchorX;
+    [SetterMayThrowLegacyException] attribute unrestricted double regionAnchorY;
+    [SetterMayThrowLegacyException] attribute unrestricted double viewportAnchorX;
+    [SetterMayThrowLegacyException] attribute unrestricted double viewportAnchorY;
+    [SetterMayThrowLegacyException] attribute DOMString scroll;
 };
 

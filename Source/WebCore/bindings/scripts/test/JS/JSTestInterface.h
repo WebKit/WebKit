@@ -30,7 +30,7 @@ namespace WebCore {
 
 class WEBCORE_EXPORT JSTestInterface : public JSDOMWrapper<TestInterface> {
 public:
-    typedef JSDOMWrapper<TestInterface> Base;
+    using Base = JSDOMWrapper<TestInterface>;
     static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterface>&& impl)
     {
         JSTestInterface* ptr = new (NotNull, JSC::allocateCell<JSTestInterface>(globalObject->vm().heap)) JSTestInterface(structure, *globalObject, WTFMove(impl));

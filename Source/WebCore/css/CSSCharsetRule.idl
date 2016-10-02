@@ -20,6 +20,6 @@
 
 // Introduced in DOM Level 2:
 interface CSSCharsetRule : CSSRule {
-    [SetterRaisesException] attribute DOMString? encoding;
+    [SetterMayThrowLegacyException] attribute DOMString? encoding;
 };
 

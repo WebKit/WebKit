@@ -68,7 +68,7 @@ bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::Encode
 JSC::EncodedJSValue jsTestGlobalObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestGlobalObjectConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 
-typedef JSDOMConstructorNotConstructable<JSTestGlobalObject> JSTestGlobalObjectConstructor;
+using JSTestGlobalObjectConstructor = JSDOMConstructorNotConstructable<JSTestGlobalObject>;
 
 /* Hash table */
 

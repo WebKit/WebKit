@@ -33,8 +33,8 @@
     readonly attribute TextTrack track;
 
     attribute DOMString id;
-    [SetterRaisesException] attribute unrestricted double startTime;
-    [SetterRaisesException] attribute unrestricted double endTime;
+    [SetterMayThrowLegacyException] attribute unrestricted double startTime;
+    [SetterMayThrowLegacyException] attribute unrestricted double endTime;
     attribute boolean pauseOnExit;
 
     attribute EventHandler onenter;

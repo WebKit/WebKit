@@ -36,8 +36,8 @@
     readonly attribute any key;
     readonly attribute any primaryKey;
 
-    [CallWith=ScriptState, RaisesExceptionWithMessage] IDBRequest update(any value);
-    [RaisesExceptionWithMessage] void advance([EnforceRange] unsigned long count);
-    [CallWith=ScriptState, ImplementedAs=continueFunction, RaisesExceptionWithMessage] void continue(optional any key);
-    [CallWith=ScriptState, ImplementedAs=deleteFunction, RaisesExceptionWithMessage] IDBRequest delete();
+    [CallWith=ScriptState, MayThrowLegacyExceptionWithMessage] IDBRequest update(any value);
+    [MayThrowLegacyExceptionWithMessage] void advance([EnforceRange] unsigned long count);
+    [CallWith=ScriptState, ImplementedAs=continueFunction, MayThrowLegacyExceptionWithMessage] void continue(optional any key);
+    [CallWith=ScriptState, ImplementedAs=deleteFunction, MayThrowLegacyExceptionWithMessage] IDBRequest delete();
 };

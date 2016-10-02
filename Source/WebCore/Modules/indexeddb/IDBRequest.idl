@@ -35,7 +35,7 @@
     SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
     [CustomGetter] readonly attribute any result;
-    [GetterRaisesExceptionWithMessage] readonly attribute DOMError error;
+    [GetterMayThrowLegacyExceptionWithMessage] readonly attribute DOMError error;
     [CustomGetter] readonly attribute any source;
     readonly attribute IDBTransaction transaction;
     readonly attribute DOMString readyState;

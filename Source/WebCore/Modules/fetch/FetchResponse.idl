@@ -40,7 +40,7 @@ enum ResponseType { "basic", "cors", "default", "error", "opaque", "opaqueredire
 ]
 interface FetchResponse {
     [NewObject, CallWith=ScriptExecutionContext] static FetchResponse error();
-    [NewObject, CallWith=ScriptExecutionContext, RaisesException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
+    [NewObject, CallWith=ScriptExecutionContext, MayThrowLegacyException] static FetchResponse redirect(DOMString url, optional unsigned short status = 302);
 
     readonly attribute ResponseType type;
 
@@ -71,7 +71,7 @@ interface FetchResponse {
 
     [PrivateIdentifier] Promise consume(unsigned short type);
     [PrivateIdentifier] boolean isLoading();
-    [PrivateIdentifier, RaisesException] void setStatus(unsigned short status, DOMString statusText);
+    [PrivateIdentifier, MayThrowLegacyException] void setStatus(unsigned short status, DOMString statusText);
     [CallWith=ScriptState, PrivateIdentifier] void initializeWith(any body);
     [PrivateIdentifier, NewObject] ReadableStreamSource createReadableStreamSource();
     [PrivateIdentifier] boolean isDisturbed();

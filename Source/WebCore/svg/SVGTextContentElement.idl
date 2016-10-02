@@ -34,14 +34,14 @@ interface SVGTextContentElement : SVGGraphicsElement {
 
     long getNumberOfChars();
     unrestricted float getComputedTextLength();
-    [RaisesException] unrestricted float getSubStringLength(optional unsigned long offset = 0,
+    [MayThrowLegacyException] unrestricted float getSubStringLength(optional unsigned long offset = 0,
                              optional unsigned long length = 0);
-    [RaisesException] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
-    [RaisesException] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
-    [RaisesException] SVGRect getExtentOfChar(optional unsigned long offset = 0);
-    [RaisesException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
+    [MayThrowLegacyException] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
+    [MayThrowLegacyException] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
+    [MayThrowLegacyException] SVGRect getExtentOfChar(optional unsigned long offset = 0);
+    [MayThrowLegacyException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
     long getCharNumAtPosition(SVGPoint point);
-    [RaisesException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
+    [MayThrowLegacyException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };
 
 // FIXME: SVGTextContentElement is not supposed to implement SVGExternalResourcesRequired.

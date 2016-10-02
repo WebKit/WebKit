@@ -26,10 +26,10 @@
 [
     Conditional=ENCRYPTED_MEDIA_V2,
     Constructor(DOMString keySystem),
-    ConstructorRaisesException,
+    ConstructorMayThrowLegacyException,
     InterfaceName=WebKitMediaKeys,
 ] interface MediaKeys {
-    [CallWith=ScriptExecutionContext, RaisesException] MediaKeySession createSession(DOMString type, Uint8Array initData);
+    [CallWith=ScriptExecutionContext, MayThrowLegacyException] MediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;
 };

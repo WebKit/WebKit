@@ -34,7 +34,7 @@
     Conditional=LEGACY_NOTIFICATIONS,
     NoInterfaceObject,
 ] interface NotificationCenter {
-   [RaisesException] Notification createNotification(DOMString iconUrl, DOMString title, DOMString body);
+   [MayThrowLegacyException] Notification createNotification(DOMString iconUrl, DOMString title, DOMString body);
 
    long checkPermission();
    void requestPermission(optional VoidCallback? callback);

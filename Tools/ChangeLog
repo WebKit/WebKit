@@ -1,3 +1,12 @@
+2016-10-02  Darin Adler  <darin@apple.com>
+
+        Rename ExceptionCode-based exception handling to "legacy"
+        https://bugs.webkit.org/show_bug.cgi?id=162859
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/do-webcore-rename: Updated script to do this round of renames.
+
 2016-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Media controls for Soundcloud easily falls out of sync with what's actually playing

@@ -37,7 +37,7 @@ bool setJSTestCustomConstructorWithNoInterfaceObjectConstructor(JSC::ExecState*,
 
 class JSTestCustomConstructorWithNoInterfaceObjectPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestCustomConstructorWithNoInterfaceObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestCustomConstructorWithNoInterfaceObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestCustomConstructorWithNoInterfaceObjectPrototype>(vm.heap)) JSTestCustomConstructorWithNoInterfaceObjectPrototype(vm, globalObject, structure);
@@ -60,7 +60,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestCustomConstructorWithNoInterfaceObject> JSTestCustomConstructorWithNoInterfaceObjectConstructor;
+using JSTestCustomConstructorWithNoInterfaceObjectConstructor = JSDOMConstructor<JSTestCustomConstructorWithNoInterfaceObject>;
 
 template<> JSC::EncodedJSValue JSC_HOST_CALL JSTestCustomConstructorWithNoInterfaceObjectConstructor::construct(JSC::ExecState* exec)
 {

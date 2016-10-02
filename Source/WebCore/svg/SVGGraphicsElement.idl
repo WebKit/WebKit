@@ -32,7 +32,7 @@ interface SVGGraphicsElement : SVGElement {
     SVGRect getBBox();
     SVGMatrix getCTM();
     SVGMatrix getScreenCTM();
-    [RaisesException] SVGMatrix getTransformToElement(optional SVGElement? element = null);
+    [MayThrowLegacyException] SVGMatrix getTransformToElement(optional SVGElement? element = null);
 };
 
 SVGGraphicsElement implements SVGTests;

@@ -55,13 +55,13 @@
     
     readonly attribute unsigned short primitiveType;
 
-    [RaisesException] void setFloatValue(optional unsigned short unitType = 0, optional unrestricted float floatValue = NaN);
-    [RaisesException] unrestricted float getFloatValue(optional unsigned short unitType = 0);
+    [MayThrowLegacyException] void setFloatValue(optional unsigned short unitType = 0, optional unrestricted float floatValue = NaN);
+    [MayThrowLegacyException] unrestricted float getFloatValue(optional unsigned short unitType = 0);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void setStringValue(optional unsigned short stringType = 0, optional DOMString stringValue = "undefined");
-    [RaisesException] DOMString getStringValue();
-    [RaisesException] Counter getCounterValue();
-    [RaisesException] Rect getRectValue();
-    [RaisesException] RGBColor getRGBColorValue();
+    [MayThrowLegacyException] void setStringValue(optional unsigned short stringType = 0, optional DOMString stringValue = "undefined");
+    [MayThrowLegacyException] DOMString getStringValue();
+    [MayThrowLegacyException] Counter getCounterValue();
+    [MayThrowLegacyException] Rect getRectValue();
+    [MayThrowLegacyException] RGBColor getRGBColorValue();
 };

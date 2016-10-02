@@ -56,18 +56,18 @@ enum XMLHttpRequestResponseType {
     const unsigned short LOADING = 3;
     const unsigned short DONE = 4;
 
-    [SetterRaisesException] attribute unsigned long timeout;
+    [SetterMayThrowLegacyException] attribute unsigned long timeout;
     readonly attribute unsigned short readyState;
 
-    [SetterRaisesException] attribute boolean withCredentials;
+    [SetterMayThrowLegacyException] attribute boolean withCredentials;
 
     // Use overloading rather than "boolean async = true" because legacy content prevents treating the 'async' argument being undefined identical from it being omitted.
-    [RaisesException] void open(DOMString method, DOMString url);
-    [RaisesException] void open(DOMString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null);
+    [MayThrowLegacyException] void open(DOMString method, DOMString url);
+    [MayThrowLegacyException] void open(DOMString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null);
 
-    [RaisesException] void setRequestHeader(DOMString header, DOMString value);
+    [MayThrowLegacyException] void setRequestHeader(DOMString header, DOMString value);
 
-    [Custom, RaisesException] void send();
+    [Custom, MayThrowLegacyException] void send();
 
     void abort();
 
@@ -76,10 +76,10 @@ enum XMLHttpRequestResponseType {
     // response
     DOMString getAllResponseHeaders();
     DOMString? getResponseHeader(DOMString header);
-    [GetterRaisesException, CustomGetter] readonly attribute DOMString? responseText;
-    [GetterRaisesException] readonly attribute Document responseXML;
+    [GetterMayThrowLegacyException, CustomGetter] readonly attribute DOMString? responseText;
+    [GetterMayThrowLegacyException] readonly attribute Document responseXML;
 
-    [SetterRaisesException] attribute XMLHttpRequestResponseType responseType;
+    [SetterMayThrowLegacyException] attribute XMLHttpRequestResponseType responseType;
     [JSBuiltin] readonly attribute Object response;
 
     readonly attribute unsigned short status;
@@ -90,5 +90,5 @@ enum XMLHttpRequestResponseType {
     [PrivateIdentifier, Custom] any retrieveResponse();
 
     // Extension
-    [RaisesException] void overrideMimeType(DOMString override);
+    [MayThrowLegacyException] void overrideMimeType(DOMString override);
 };

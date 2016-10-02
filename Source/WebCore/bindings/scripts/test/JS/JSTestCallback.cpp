@@ -59,7 +59,7 @@ JSTestCallback::~JSTestCallback()
 #endif
 }
 
-typedef JSDOMConstructorNotConstructable<JSTestCallback> JSTestCallbackConstructor;
+using JSTestCallbackConstructor = JSDOMConstructorNotConstructable<JSTestCallback>;
 
 /* Hash table for constructor */
 

@@ -30,11 +30,11 @@
     readonly attribute unsigned long numberOfInputs;
     readonly attribute unsigned long numberOfOutputs;
 
-    [SetterRaisesException] attribute unsigned long channelCount;
-    [SetterRaisesException] attribute DOMString channelCountMode;
-    [SetterRaisesException] attribute DOMString channelInterpretation;
+    [SetterMayThrowLegacyException] attribute unsigned long channelCount;
+    [SetterMayThrowLegacyException] attribute DOMString channelCountMode;
+    [SetterMayThrowLegacyException] attribute DOMString channelInterpretation;
 
-    [RaisesException] void connect(AudioNode? destination, optional unsigned long output = 0, optional unsigned long input = 0);
-    [RaisesException] void connect(AudioParam? destination, optional unsigned long output = 0);
-    [RaisesException] void disconnect(optional unsigned long output = 0);
+    [MayThrowLegacyException] void connect(AudioNode? destination, optional unsigned long output = 0, optional unsigned long input = 0);
+    [MayThrowLegacyException] void connect(AudioParam? destination, optional unsigned long output = 0);
+    [MayThrowLegacyException] void disconnect(optional unsigned long output = 0);
 };

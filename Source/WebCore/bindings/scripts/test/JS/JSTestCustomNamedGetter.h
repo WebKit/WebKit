@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSTestCustomNamedGetter : public JSDOMWrapper<TestCustomNamedGetter> {
 public:
-    typedef JSDOMWrapper<TestCustomNamedGetter> Base;
+    using Base = JSDOMWrapper<TestCustomNamedGetter>;
     static JSTestCustomNamedGetter* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCustomNamedGetter>&& impl)
     {
         JSTestCustomNamedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestCustomNamedGetter>(globalObject->vm().heap)) JSTestCustomNamedGetter(structure, *globalObject, WTFMove(impl));

@@ -41,16 +41,16 @@
     readonly attribute unsigned long rangeCount;
 
     void collapse(Node? node, optional unsigned long offset = 0);
-    [RaisesException] void collapseToEnd();
-    [RaisesException] void collapseToStart();
+    [MayThrowLegacyException] void collapseToEnd();
+    [MayThrowLegacyException] void collapseToStart();
 
     void deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartial = false);
     void selectAllChildren(Node node);
 
-    [RaisesException] void extend(Node node, optional unsigned long offset = 0);
+    [MayThrowLegacyException] void extend(Node node, optional unsigned long offset = 0);
 
-    [RaisesException] Range getRangeAt(unsigned long index);
+    [MayThrowLegacyException] Range getRangeAt(unsigned long index);
     void removeAllRanges();
     void addRange(Range range);
 

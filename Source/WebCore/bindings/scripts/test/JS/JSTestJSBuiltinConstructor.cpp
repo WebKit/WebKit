@@ -46,7 +46,7 @@ bool setJSTestJSBuiltinConstructorConstructor(JSC::ExecState*, JSC::EncodedJSVal
 
 class JSTestJSBuiltinConstructorPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestJSBuiltinConstructorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestJSBuiltinConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructorPrototype>(vm.heap)) JSTestJSBuiltinConstructorPrototype(vm, globalObject, structure);
@@ -69,7 +69,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSBuiltinConstructor<JSTestJSBuiltinConstructor> JSTestJSBuiltinConstructorConstructor;
+using JSTestJSBuiltinConstructorConstructor = JSBuiltinConstructor<JSTestJSBuiltinConstructor>;
 
 template<> JSValue JSTestJSBuiltinConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {

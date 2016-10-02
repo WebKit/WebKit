@@ -40,7 +40,7 @@ bool setJSattributeConstructor(JSC::ExecState*, JSC::EncodedJSValue, JSC::Encode
 
 class JSattributePrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSattributePrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSattributePrototype* ptr = new (NotNull, JSC::allocateCell<JSattributePrototype>(vm.heap)) JSattributePrototype(vm, globalObject, structure);
@@ -63,7 +63,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructorNotConstructable<JSattribute> JSattributeConstructor;
+using JSattributeConstructor = JSDOMConstructorNotConstructable<JSattribute>;
 
 /* Hash table */
 

@@ -29,7 +29,7 @@ namespace WebCore {
 
 class JSattribute : public JSDOMWrapper<attribute> {
 public:
-    typedef JSDOMWrapper<attribute> Base;
+    using Base = JSDOMWrapper<attribute>;
     static JSattribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
     {
         JSattribute* ptr = new (NotNull, JSC::allocateCell<JSattribute>(globalObject->vm().heap)) JSattribute(structure, *globalObject, WTFMove(impl));

@@ -28,7 +28,7 @@ namespace WebCore {
 
 class JSTestClassWithJSBuiltinConstructor : public JSDOMWrapper<TestClassWithJSBuiltinConstructor> {
 public:
-    typedef JSDOMWrapper<TestClassWithJSBuiltinConstructor> Base;
+    using Base = JSDOMWrapper<TestClassWithJSBuiltinConstructor>;
     static JSTestClassWithJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestClassWithJSBuiltinConstructor>&& impl)
     {
         JSTestClassWithJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestClassWithJSBuiltinConstructor>(globalObject->vm().heap)) JSTestClassWithJSBuiltinConstructor(structure, *globalObject, WTFMove(impl));

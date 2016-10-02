@@ -32,9 +32,9 @@
 interface TestNondeterministic {
     [Nondeterministic] readonly attribute long nondeterministicReadonlyAttr;
     [Nondeterministic] attribute DOMString nondeterministicWriteableAttr;
-    [Nondeterministic, RaisesException] attribute DOMString nondeterministicExceptionAttr;
-    [Nondeterministic, GetterRaisesException] attribute DOMString nondeterministicGetterExceptionAttr;
-    [Nondeterministic, SetterRaisesException] attribute DOMString nondeterministicSetterExceptionAttr;
+    [Nondeterministic, MayThrowLegacyException] attribute DOMString nondeterministicExceptionAttr;
+    [Nondeterministic, GetterMayThrowLegacyException] attribute DOMString nondeterministicGetterExceptionAttr;
+    [Nondeterministic, SetterMayThrowLegacyException] attribute DOMString nondeterministicSetterExceptionAttr;
 
     [Nondeterministic] boolean nondeterministicZeroArgFunction();
 };

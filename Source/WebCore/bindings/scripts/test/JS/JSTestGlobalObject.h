@@ -30,7 +30,7 @@ class TestGlobalObject;
 
 class JSTestGlobalObject : public JSDOMWrapper<TestGlobalObject> {
 public:
-    typedef JSDOMWrapper<TestGlobalObject> Base;
+    using Base = JSDOMWrapper<TestGlobalObject>;
     static JSTestGlobalObject* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGlobalObject>&& impl)
     {
         JSTestGlobalObject* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObject>(globalObject->vm().heap)) JSTestGlobalObject(structure, *globalObject, WTFMove(impl));
@@ -89,7 +89,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 class JSTestGlobalObjectPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestGlobalObjectPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestGlobalObjectPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObjectPrototype>(vm.heap)) JSTestGlobalObjectPrototype(vm, globalObject, structure);

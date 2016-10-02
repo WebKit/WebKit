@@ -46,7 +46,7 @@ bool setJSTestEventConstructorConstructor(JSC::ExecState*, JSC::EncodedJSValue, 
 
 class JSTestEventConstructorPrototype : public JSC::JSNonFinalObject {
 public:
-    typedef JSC::JSNonFinalObject Base;
+    using Base = JSC::JSNonFinalObject;
     static JSTestEventConstructorPrototype* create(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
         JSTestEventConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorPrototype>(vm.heap)) JSTestEventConstructorPrototype(vm, globalObject, structure);
@@ -69,7 +69,7 @@ private:
     void finishCreation(JSC::VM&);
 };
 
-typedef JSDOMConstructor<JSTestEventConstructor> JSTestEventConstructorConstructor;
+using JSTestEventConstructorConstructor = JSDOMConstructor<JSTestEventConstructor>;
 
 template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::construct(ExecState* state)
 {

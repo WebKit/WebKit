@@ -31,12 +31,12 @@ interface SVGMatrix {
     attribute unrestricted double f;
 
     SVGMatrix multiply(SVGMatrix secondMatrix);
-    [RaisesException] SVGMatrix inverse();
+    [MayThrowLegacyException] SVGMatrix inverse();
     [Immutable] SVGMatrix translate(unrestricted float x, unrestricted float y);
     [Immutable] SVGMatrix scale(unrestricted float scaleFactor);
     [Immutable] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
     [Immutable] SVGMatrix rotate(unrestricted float angle);
-    [RaisesException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
+    [MayThrowLegacyException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
     [Immutable] SVGMatrix flipX();
     [Immutable] SVGMatrix flipY();
     [Immutable] SVGMatrix skewX(unrestricted float angle);

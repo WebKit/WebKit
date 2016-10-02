@@ -33,16 +33,16 @@
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
-    [RaisesException] void setStart(Node refNode, unsigned long offset);
-    [RaisesException] void setEnd(Node refNode, unsigned long offset);
+    [MayThrowLegacyException] void setStart(Node refNode, unsigned long offset);
+    [MayThrowLegacyException] void setEnd(Node refNode, unsigned long offset);
 
-    [RaisesException] void setStartBefore(Node refNode);
-    [RaisesException] void setStartAfter(Node refNode);
-    [RaisesException] void setEndBefore(Node refNode);
-    [RaisesException] void setEndAfter(Node refNode);
+    [MayThrowLegacyException] void setStartBefore(Node refNode);
+    [MayThrowLegacyException] void setStartAfter(Node refNode);
+    [MayThrowLegacyException] void setEndBefore(Node refNode);
+    [MayThrowLegacyException] void setEndAfter(Node refNode);
     void collapse(optional boolean toStart = false);
-    [RaisesException] void selectNode(Node refNode);
-    [RaisesException] void selectNodeContents(Node refNode);
+    [MayThrowLegacyException] void selectNode(Node refNode);
+    [MayThrowLegacyException] void selectNodeContents(Node refNode);
 
     // CompareHow
     const unsigned short START_TO_START = 0;
@@ -50,13 +50,13 @@
     const unsigned short END_TO_END = 2;
     const unsigned short END_TO_START = 3;
 
-    [RaisesException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+    [MayThrowLegacyException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-    [RaisesException] void deleteContents();
-    [RaisesException, NewObject] DocumentFragment extractContents();
-    [RaisesException, NewObject] DocumentFragment cloneContents();
-    [RaisesException] void insertNode(Node newNode);
-    [RaisesException] void surroundContents(Node newParent);
+    [MayThrowLegacyException] void deleteContents();
+    [MayThrowLegacyException, NewObject] DocumentFragment extractContents();
+    [MayThrowLegacyException, NewObject] DocumentFragment cloneContents();
+    [MayThrowLegacyException] void insertNode(Node newNode);
+    [MayThrowLegacyException] void surroundContents(Node newParent);
     [NewObject] Range cloneRange();
     DOMString toString();
 
@@ -65,9 +65,9 @@
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
 
-    [RaisesException, NewObject] DocumentFragment createContextualFragment(DOMString html);
+    [MayThrowLegacyException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
-    [RaisesException] short compareNode(Node refNode);
+    [MayThrowLegacyException] short compareNode(Node refNode);
 
     // CompareResults
     const unsigned short NODE_BEFORE = 0;
@@ -75,11 +75,11 @@
     const unsigned short NODE_BEFORE_AND_AFTER = 2;
     const unsigned short NODE_INSIDE = 3;
 
-    [RaisesException] boolean intersectsNode(Node refNode);
+    [MayThrowLegacyException] boolean intersectsNode(Node refNode);
 
-    [RaisesException] short comparePoint(Node refNode, unsigned long offset);
-    [RaisesException] boolean isPointInRange(Node refNode, unsigned long offset);
+    [MayThrowLegacyException] short comparePoint(Node refNode, unsigned long offset);
+    [MayThrowLegacyException] boolean isPointInRange(Node refNode, unsigned long offset);
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [RaisesException] void expand(optional DOMString unit = "undefined");
+    [MayThrowLegacyException] void expand(optional DOMString unit = "undefined");
 };

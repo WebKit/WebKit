@@ -33,7 +33,7 @@ Conditional=*
 Constructor
 ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorConditional=*
-ConstructorRaisesException
+ConstructorMayThrowLegacyException
 ConstructorTemplate=Event|TypedArray
 Custom
 CustomCall
@@ -68,8 +68,8 @@ ExportToWrappedFunction
 Exposed=*
 ForwardDeclareInHeader
 GenerateIsReachable=|Impl|ImplWebGLRenderingContext|ImplDocument|ImplElementRoot|ImplFrame|ImplOwnerNodeRoot|ImplScriptExecutionContext
-GetterRaisesException
-GetterRaisesExceptionWithMessage
+GetterMayThrowLegacyException
+GetterMayThrowLegacyExceptionWithMessage
 Immutable
 ImplementedAs=*
 ImplementationLacksVTable
@@ -95,6 +95,8 @@ JSGenerateToNativeObject
 JSLegacyParent=*
 LenientThis
 MasqueradesAsUndefined
+MayThrowLegacyException
+MayThrowLegacyExceptionWithMessage
 NamedConstructor=*
 NewImpurePropertyFiresWatchpoints
 NewObject
@@ -106,16 +108,14 @@ PassContext
 PrivateIdentifier
 PublicIdentifier
 PutForwards=*
-RaisesException
-RaisesExceptionWithMessage
 Reflect=*
 Replaceable
 ReportExtraMemoryCost
 ReportExternalMemoryCost
 RequiresExistingAtomicString
-SetterRaisesException
-SetterRaisesExceptionWithMessage
 SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
+SetterMayThrowLegacyException
+SetterMayThrowLegacyExceptionWithMessage
 SkipVTableValidation
 SuppressToJSObject
 TreatNullAs=EmptyString
