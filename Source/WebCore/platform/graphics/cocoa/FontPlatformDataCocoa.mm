@@ -122,8 +122,8 @@ static RetainPtr<CTFontDescriptorRef> cascadeToLastResortAndVariationsFontDescri
 // FIXME: Remove this when <rdar://problem/28449441> is fixed.
 #define WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
 
-#if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG
     CFDictionaryRef attributes = cascadeToLastResortAttributesDictionary();
+#if WORKAROUND_CORETEXT_VARIATIONS_WITH_FALLBACK_LIST_BUG
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(originalFont, kCTFontVariationAttribute)));
     if (!variations)
 #endif

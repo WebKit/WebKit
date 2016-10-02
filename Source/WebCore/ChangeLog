@@ -1,3 +1,10 @@
+2016-10-02  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the build after r206692.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor):
+
 2016-10-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206716.
