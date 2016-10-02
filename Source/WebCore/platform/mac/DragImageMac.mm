@@ -121,7 +121,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            [image->currentFrameNSImage() drawInRect:destRect fromRect:NSMakeRect(0, 0, size.width(), size.height()) operation:NSCompositeSourceOver fraction:1.0];
+            [image->getNSImage() drawInRect:destRect fromRect:NSMakeRect(0, 0, size.width(), size.height()) operation:NSCompositeSourceOver fraction:1.0];
 #pragma clang diagnostic pop
             [rotatedDragImage.get() unlockFocus];
 
@@ -129,7 +129,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientationDescri
         }
     }
 
-    auto dragImage = image->currentFrameNSImage();
+    RetainPtr<NSImage> dragImage = adoptNS([image->getNSImage() copy]);
     [dragImage.get() setSize:(NSSize)size];
     return dragImage;
 }

@@ -1,3 +1,17 @@
+2016-10-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r206683.
+
+        This change caused API test WebKit2.FindMatches to fail on
+        Mac.
+
+        Reverted changeset:
+
+        "The dragged image should be the current frame only of the
+        animated image"
+        https://bugs.webkit.org/show_bug.cgi?id=162109
+        http://trac.webkit.org/changeset/206683
+
 2016-09-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The dragged image should be the current frame only of the animated image

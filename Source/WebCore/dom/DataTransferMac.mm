@@ -49,7 +49,7 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
             location.setY(imageRect.height() - (elementRect.y() - imageRect.y() + m_dragLocation.y()));
         }
     } else if (m_dragImage) {
-        result = m_dragImage->image()->currentFrameNSImage();
+        result = m_dragImage->image()->getNSImage();
         
         location = m_dragLocation;
         location.setY([result size].height - location.y());

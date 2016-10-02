@@ -255,7 +255,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    CFDataRef imageData = pasteboardImage.image->tiffRepresentation();
+    CFDataRef imageData = pasteboardImage.image->getTIFFRepresentation();
     if (!imageData)
         return;
 

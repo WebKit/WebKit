@@ -74,14 +74,14 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     return Image::nullImage();
 }
 
-CFDataRef BitmapImage::tiffRepresentation()
+CFDataRef BitmapImage::getTIFFRepresentation()
 {
     if (m_tiffRep)
         return m_tiffRep.get();
 
-    auto nativeImages = framesNativeImages();
+    auto nativeImages = this->framesNativeImages();
 
-    // If nativeImages.size() is zero, we know for certain this image doesn't have valid data
+    // If framesImages.size() is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
     // in certain circumstances that call will spam the console with an error message
     if (!nativeImages.size())
@@ -103,26 +103,17 @@ CFDataRef BitmapImage::tiffRepresentation()
 }
 
 #if USE(APPKIT)
-NSImage* BitmapImage::nsImage()
+NSImage* BitmapImage::getNSImage()
 {
     if (m_nsImage)
         return m_nsImage.get();
 
-    CFDataRef data = tiffRepresentation();
+    CFDataRef data = getTIFFRepresentation();
     if (!data)
-        return nullptr;
+        return 0;
     
     m_nsImage = adoptNS([[NSImage alloc] initWithData:(NSData*)data]);
     return m_nsImage.get();
-}
-
-RetainPtr<NSImage> BitmapImage::currentFrameNSImage()
-{
-    auto nativeImage = this->nativeImageForCurrentFrame();
-    if (!nativeImage)
-        return nullptr;
-
-    return adoptNS([[NSImage alloc] initWithCGImage:nativeImage.get() size:NSZeroSize]);
 }
 #endif
 

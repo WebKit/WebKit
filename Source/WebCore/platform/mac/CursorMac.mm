@@ -48,9 +48,9 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
 #endif
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
-    auto nsImage = image->currentFrameNSImage();
+    NSImage* nsImage = image->getNSImage();
     if (!nsImage)
-        return nullptr;
+        return 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
@@ -78,7 +78,7 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     [[[nsImage representations] objectAtIndex:0] setSize:expandedSize];
 #endif
 
-    return adoptNS([[NSCursor alloc] initWithImage:nsImage.get() hotSpot:hotSpot]);
+    return adoptNS([[NSCursor alloc] initWithImage:nsImage hotSpot:hotSpot]);
     END_BLOCK_OBJC_EXCEPTIONS;
     return nullptr;
 }
