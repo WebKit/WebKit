@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include "CalculationValue.h"
+#include "TextStream.h"
 
 #include <limits>
 
@@ -44,6 +45,11 @@ Ref<CalculationValue> CalculationValue::create(std::unique_ptr<CalcExpressionNod
 float CalcExpressionNumber::evaluate(float) const
 {
     return m_value;
+}
+
+void CalcExpressionNumber::dump(TextStream& ts) const
+{
+    ts << TextStream::FormatNumberRespectingIntegers(m_value);
 }
 
 bool CalcExpressionNumber::operator==(const CalcExpressionNode& other) const
@@ -86,6 +92,11 @@ bool CalcExpressionBinaryOperation::operator==(const CalcExpressionNode& other) 
     return other.type() == CalcExpressionNodeBinaryOperation && *this == toCalcExpressionBinaryOperation(other);
 }
 
+void CalcExpressionBinaryOperation::dump(TextStream& ts) const
+{
+    ts << *m_leftSide << " " << m_operator << " " << *m_rightSide;
+}
+
 float CalcExpressionLength::evaluate(float maxValue) const
 {
     return floatValueForLength(m_length, maxValue);
@@ -96,6 +107,11 @@ bool CalcExpressionLength::operator==(const CalcExpressionNode& other) const
     return other.type() == CalcExpressionNodeLength && *this == toCalcExpressionLength(other);
 }
 
+void CalcExpressionLength::dump(TextStream& ts) const
+{
+    ts << m_length;
+}
+
 float CalcExpressionBlendLength::evaluate(float maxValue) const
 {
     return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);
@@ -104,6 +120,36 @@ float CalcExpressionBlendLength::evaluate(float maxValue) const
 bool CalcExpressionBlendLength::operator==(const CalcExpressionNode& other) const
 {
     return other.type() == CalcExpressionNodeBlendLength && *this == toCalcExpressionBlendLength(other);
+}
+
+void CalcExpressionBlendLength::dump(TextStream& ts) const
+{
+    ts << "blend(" << m_from << ", " << m_to << ", " << m_progress << ")";
+}
+
+TextStream& operator<<(TextStream& ts, CalcOperator op)
+{
+    switch (op) {
+    case CalcAdd: ts << "+"; break;
+    case CalcSubtract: ts << "-"; break;
+    case CalcMultiply: ts << "*"; break;
+    case CalcDivide: ts << "/"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const CalculationValue& value)
+{
+    ts << "calc(";
+    ts << value.expression();
+    ts << ")";
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const CalcExpressionNode& expressionNode)
+{
+    expressionNode.dump(ts);
+    return ts;
 }
 
 } // namespace WebCore

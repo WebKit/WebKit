@@ -415,6 +415,8 @@ inline bool Length::isFitContent() const
     return type() == FitContent;
 }
 
+Length convertTo100PercentMinusLength(const Length&);
+
 TextStream& operator<<(TextStream&, Length);
 
 } // namespace WebCore

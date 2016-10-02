@@ -1,5 +1,17 @@
 2016-10-01  Simon Fraser  <simon.fraser@apple.com>
 
+        Support transitions/animations of background-position with right/bottom-relative values
+        https://bugs.webkit.org/show_bug.cgi?id=162048
+
+        Reviewed by Dean Jackson.
+
+        * transitions/background-position-transitions-expected.txt: Added.
+        * transitions/background-position-transitions.html: Added.
+        * transitions/resources/transition-test-helpers.js:
+        * transitions/svg-transitions-expected.txt:
+
+2016-10-01  Simon Fraser  <simon.fraser@apple.com>
+
         Bad cast when CSS position programmatically changed from -webkit-sticky to fixed
         https://bugs.webkit.org/show_bug.cgi?id=160826
 
