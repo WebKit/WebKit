@@ -1,3 +1,18 @@
+2016-10-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r206692 and r206718.
+
+        Seems to have caused >200 failures on Sierra
+
+        Reverted changesets:
+
+        "Implement rendering of font-variation-settings"
+        https://bugs.webkit.org/show_bug.cgi?id=162782
+        http://trac.webkit.org/changeset/206692
+
+        "Tried to fix the build after r206692."
+        http://trac.webkit.org/changeset/206718
+
 2016-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Support transitions/animations of background-position with right/bottom-relative values
