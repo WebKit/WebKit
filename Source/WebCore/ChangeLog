@@ -1,5 +1,21 @@
 2016-10-02  Chris Dumez  <cdumez@apple.com>
 
+        Add support for KeyboardEvent.getModifierState() operation
+        https://bugs.webkit.org/show_bug.cgi?id=162855
+
+        Reviewed by Darin Adler.
+
+        Add support for KeyboardEvent.getModifierState() operation:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-getmodifierstate
+
+        Test: fast/events/constructors/keyboard-event-getModifierState.html
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::getModifierState):
+        * dom/KeyboardEvent.idl:
+
+2016-10-02  Chris Dumez  <cdumez@apple.com>
+
         Add support for KeyboardEvent.repeat attribute
         https://bugs.webkit.org/show_bug.cgi?id=162854
 

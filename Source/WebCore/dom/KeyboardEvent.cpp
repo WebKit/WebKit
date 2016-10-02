@@ -169,6 +169,9 @@ bool KeyboardEvent::getModifierState(const String& keyIdentifier) const
         return altKey();
     if (keyIdentifier == "Meta")
         return metaKey();
+    if (keyIdentifier == "AltGraph")
+        return altGraphKey();
+    // FIXME: We should support CapsLock, Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
     return false;
 }
 

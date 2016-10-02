@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This tests KeyboardEvent.getModifierState().");
+
+var event = new KeyboardEvent('keydown', { });
+shouldBeFalse("event.getModifierState('Control')");
+shouldBeFalse("event.getModifierState('Alt')");
+shouldBeFalse("event.getModifierState('Shift')");
+shouldBeFalse("event.getModifierState('Meta')");
+
+var event = new KeyboardEvent('keydown', { ctrlKey: true });
+shouldBeTrue("event.getModifierState('Control')");
+shouldBeFalse("event.getModifierState('Alt')");
+shouldBeFalse("event.getModifierState('Shift')");
+shouldBeFalse("event.getModifierState('Meta')");
+
+var event = new KeyboardEvent('keydown', { altKey: true });
+shouldBeFalse("event.getModifierState('Control')");
+shouldBeTrue("event.getModifierState('Alt')");
+shouldBeFalse("event.getModifierState('Shift')");
+shouldBeFalse("event.getModifierState('Meta')");
+
+var event = new KeyboardEvent('keydown', { shiftKey: true });
+shouldBeFalse("event.getModifierState('Control')");
+shouldBeFalse("event.getModifierState('Alt')");
+shouldBeTrue("event.getModifierState('Shift')");
+shouldBeFalse("event.getModifierState('Meta')");
+
+var event = new KeyboardEvent('keydown', { metaKey: true });
+shouldBeFalse("event.getModifierState('Control')");
+shouldBeFalse("event.getModifierState('Alt')");
+shouldBeFalse("event.getModifierState('Shift')");
+shouldBeTrue("event.getModifierState('Meta')");
+
+var event = new KeyboardEvent('keydown', { ctrlKey: true, altKey: true, shiftKey: true, metaKey: true });
+shouldBeTrue("event.getModifierState('Control')");
+shouldBeTrue("event.getModifierState('Alt')");
+shouldBeTrue("event.getModifierState('Shift')");
+shouldBeTrue("event.getModifierState('Meta')");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

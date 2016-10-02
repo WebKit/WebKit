@@ -39,6 +39,8 @@
 
     [InitializedByEventConstructor] readonly attribute boolean repeat;
 
+    boolean getModifierState(DOMString keyArg);
+
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initKeyboardEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
