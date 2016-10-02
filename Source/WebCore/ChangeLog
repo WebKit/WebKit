@@ -1,3 +1,24 @@
+2016-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Bad cast when CSS position programmatically changed from -webkit-sticky to fixed
+        https://bugs.webkit.org/show_bug.cgi?id=160826
+
+        Reviewed by Zalan Bujtas.
+        
+        If a scrolling state tree node changed type (e.g. from sticky to fixed), we'd fail
+        to recreate the node so keep a node with the wrong type.
+        
+        Fix by destroying the node and making a new one with a new ID in this case. The
+        new ID is necessary to ensure that the scrolling tree is updated.
+
+        Test: fast/scrolling/sticky-to-fixed.html
+
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::nodeTypeAndParentMatch):
+        (WebCore::ScrollingStateTree::attachNode):
+        (WebCore::ScrollingStateTree::stateNodeForID):
+        * page/scrolling/ScrollingStateTree.h:
+
 2016-10-01  Youenn Fablet  <youenn@apple.com>
 
         removing FetchBoyd::m_type
