@@ -107,7 +107,7 @@
     border-bottom: 1px dotted hsl(78, 18%, 58%);
 }
 
-.text-editor > .CodeMirror .execution-range-highlight {
+.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext) {
     background-color: hsl(90, 30%, 82%);
 }
 

@@ -39,7 +39,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             lineNumbers: true,
             lineWrapping: false,
             matchBrackets: true,
-            autoCloseBrackets: true
+            autoCloseBrackets: true,
+            styleSelectedText: true,
         });
 
         this._codeMirror.on("change", this._contentChanged.bind(this));

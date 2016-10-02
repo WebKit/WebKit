@@ -1,3 +1,25 @@
+2016-10-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Selection does not show up over execution highlight ranges
+        https://bugs.webkit.org/show_bug.cgi?id=162844
+        <rdar://problem/28579121>
+
+        Reviewed by Matt Baker.
+
+        * Scripts/update-codemirror-resources.rb:
+        * UserInterface/External/CodeMirror/mark-selection.js: Added.
+        * UserInterface/Main.html:
+        New add-on that makes selection a text marker so it can be styled
+        at the same level as other text markers.
+
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .execution-range-highlight:not(.CodeMirror-selectedtext)):
+        Don't use execution-range-highlight styles if the text is selected.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor):
+        Enable the text selection as text markers addon.
+
 2016-09-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Make debugger stepping highlights work in inline <script>s
