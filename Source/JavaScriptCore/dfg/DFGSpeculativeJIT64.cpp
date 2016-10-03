@@ -4602,6 +4602,79 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case MapHash: {
+        switch (node->child1().useKind()) {
+        case BooleanUse:
+        case Int32Use:
+        case SymbolUse:
+        case ObjectUse: {
+            JSValueOperand input(this, node->child1(), ManualOperandSpeculation);
+            GPRTemporary result(this, Reuse, input);
+            GPRTemporary temp(this);
+
+            GPRReg inputGPR = input.gpr();
+            GPRReg resultGPR = result.gpr();
+            GPRReg tempGPR = temp.gpr();
+
+            speculate(node, node->child1());
+
+            m_jit.move(inputGPR, resultGPR);
+            m_jit.wangsInt64Hash(resultGPR, tempGPR);
+            int32Result(resultGPR, node);
+            break;
+        }
+        case CellUse:
+        case StringUse: {
+            SpeculateCellOperand input(this, node->child1());
+            GPRTemporary result(this);
+            Optional<GPRTemporary> temp;
+
+            GPRReg tempGPR;
+            if (node->child1().useKind() == CellUse) {
+                temp = GPRTemporary(this);
+                tempGPR = temp->gpr();
+            }
+
+            GPRReg inputGPR = input.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            MacroAssembler::JumpList slowPath;
+            MacroAssembler::JumpList done;
+
+            if (node->child1().useKind() == StringUse)
+                speculateString(node->child1(), inputGPR);
+            else {
+                auto isString = m_jit.branch8(MacroAssembler::Equal, MacroAssembler::Address(inputGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType));
+                m_jit.move(inputGPR, resultGPR);
+                m_jit.wangsInt64Hash(resultGPR, tempGPR);
+                done.append(m_jit.jump());
+                isString.link(&m_jit);
+            }
+
+            m_jit.loadPtr(MacroAssembler::Address(inputGPR, JSString::offsetOfValue()), resultGPR);
+            slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, resultGPR));
+            m_jit.load32(MacroAssembler::Address(resultGPR, StringImpl::flagsOffset()), resultGPR);
+            m_jit.urshift32(MacroAssembler::TrustedImm32(StringImpl::s_flagCount), resultGPR);
+            slowPath.append(m_jit.branchTest32(MacroAssembler::Zero, resultGPR));
+            done.append(m_jit.jump());
+
+            slowPath.link(&m_jit);
+            silentSpillAllRegisters(resultGPR);
+            callOperation(operationMapHash, resultGPR, JSValueRegs(inputGPR));
+            silentFillAllRegisters(resultGPR);
+            m_jit.exceptionCheck();
+
+            done.link(&m_jit);
+            int32Result(resultGPR, node);
+            break;
+        }
+        default:
+            RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
+            break;
+        }
+        
+        if (node->child1().useKind() != UntypedUse)
+            break;
+
         JSValueOperand input(this, node->child1());
         GPRTemporary temp(this);
         GPRTemporary result(this);

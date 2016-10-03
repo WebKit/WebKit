@@ -1,3 +1,24 @@
+2016-10-03  Saam Barati  <sbarati@apple.com>
+
+        MapHash should speculate on the type of its child node
+        https://bugs.webkit.org/show_bug.cgi?id=161922
+
+        Reviewed by Filip Pizlo.
+
+        This allows us to remove runtime type checks when we've already
+        proven the type of the incoming value.
+
+        This is a 2-3% speedup on ES6SampleBench/Basic.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::wangsInt64Hash):
+        (JSC::FTL::DFG::LowerDFGToB3::mapHashString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+
 2016-10-03  Filip Pizlo  <fpizlo@apple.com>
 
         B3 trapping memory accesses should be documented

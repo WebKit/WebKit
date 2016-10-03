@@ -1,3 +1,16 @@
+2016-10-03  Saam Barati  <sbarati@apple.com>
+
+        MapHash should speculate on the type of its child node
+        https://bugs.webkit.org/show_bug.cgi?id=161922
+
+        Reviewed by Filip Pizlo.
+
+        I gave the main generator a name so it's easier to see what
+        it is when using the sampling profiler.
+
+        * ES6SampleBench/Basic/ast.js:
+        (Basic.Program):
+
 2016-09-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Remove the x2 computation of row sizes with indefinite heights

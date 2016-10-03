@@ -1599,9 +1599,40 @@ private:
             fixEdge<KnownCellUse>(node->child1());
             break;
 
-        case MapHash:
+        case MapHash: {
+            if (node->child1()->shouldSpeculateBoolean()) {
+                fixEdge<BooleanUse>(node->child1());
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixEdge<Int32Use>(node->child1());
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateSymbol()) {
+                fixEdge<SymbolUse>(node->child1());
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateObject()) {
+                fixEdge<ObjectUse>(node->child1());
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateString()) {
+                fixEdge<StringUse>(node->child1());
+                break;
+            }
+
+            if (node->child1()->shouldSpeculateCell()) {
+                fixEdge<CellUse>(node->child1());
+                break;
+            }
+
             fixEdge<UntypedUse>(node->child1());
             break;
+        }
 
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.

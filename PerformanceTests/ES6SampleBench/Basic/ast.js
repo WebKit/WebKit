@@ -257,7 +257,7 @@ Basic.End = function*(state)
 
 Basic.End.isBlockEnd = true;
 
-Basic.Program = function*(state)
+Basic.Program = function* programGenerator(state)
 {
     state.validate(state.program == this, "State must match program");
     let maxLineNumber = Math.max(...this.statements.keys());

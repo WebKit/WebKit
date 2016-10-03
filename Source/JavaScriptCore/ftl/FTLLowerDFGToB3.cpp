@@ -6335,49 +6335,10 @@ private:
         setBoolean(m_out.phi(Int32, notCellResult, cellResult));
     }
 
-    void compileMapHash()
+    LValue wangsInt64Hash(LValue input)
     {
-        LValue value = lowJSValue(m_node->child1());
-
-        LBasicBlock isCellCase = m_out.newBlock();
-        LBasicBlock notCell = m_out.newBlock();
-        LBasicBlock slowCase = m_out.newBlock();
-        LBasicBlock straightHash = m_out.newBlock();
-        LBasicBlock isNumberCase = m_out.newBlock();
-        LBasicBlock isStringCase = m_out.newBlock();
-        LBasicBlock nonEmptyStringCase = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
-
-        m_out.branch(
-            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(notCell));
-
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
-        LValue isString = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
-        m_out.branch(
-            isString, unsure(isStringCase), unsure(straightHash));
-
-        m_out.appendTo(isStringCase, nonEmptyStringCase);
-        LValue stringImpl = m_out.loadPtr(value, m_heaps.JSString_value);
-        m_out.branch(
-            m_out.equal(stringImpl, m_out.constIntPtr(0)), rarely(slowCase), usually(nonEmptyStringCase));
-
-        m_out.appendTo(nonEmptyStringCase, notCell);
-        LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
-        ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
-        m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
-            rarely(slowCase), usually(continuation));
-
-        m_out.appendTo(notCell, isNumberCase);
-        m_out.branch(
-            isNumber(value), unsure(isNumberCase), unsure(straightHash));
-
-        m_out.appendTo(isNumberCase, straightHash);
-        m_out.branch(
-            isInt32(value), unsure(straightHash), unsure(slowCase));
-
-        m_out.appendTo(straightHash, slowCase);
         // key += ~(key << 32);
-        LValue key = value;
+        LValue key = input;
         LValue temp = key;
         temp = m_out.shl(temp, m_out.constInt32(32));
         temp = m_out.bitNot(temp);
@@ -6414,7 +6375,121 @@ private:
         key = m_out.bitXor(key, temp);
         key = m_out.castToInt32(key);
 
-        ValueFromBlock fastResult = m_out.anchor(key);
+        return key;
+    }
+
+    LValue mapHashString(LValue string)
+    {
+        LBasicBlock nonEmptyStringCase = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.equal(stringImpl, m_out.constIntPtr(0)), unsure(slowCase), unsure(nonEmptyStringCase));
+
+        LBasicBlock lastNext = m_out.appendTo(nonEmptyStringCase, slowCase);
+        LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
+        ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
+        m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
+            unsure(slowCase), unsure(continuation));
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(
+            vmCall(Int32, m_out.operation(operationMapHash), m_callFrame, string));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        return m_out.phi(Int32, slowResult, nonEmptyStringHashResult);
+    }
+
+    void compileMapHash()
+    {
+        switch (m_node->child1().useKind()) {
+        case BooleanUse:
+        case Int32Use:
+        case SymbolUse:
+        case ObjectUse: {
+            LValue key = lowJSValue(m_node->child1(), ManualOperandSpeculation);
+            speculate(m_node->child1());
+            setInt32(wangsInt64Hash(key));
+            return;
+        }
+
+        case CellUse: {
+            LBasicBlock isString = m_out.newBlock();
+            LBasicBlock notString = m_out.newBlock();
+            LBasicBlock continuation = m_out.newBlock();
+
+            LValue value = lowCell(m_node->child1());
+            LValue isStringValue = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
+            m_out.branch(
+                isStringValue, unsure(isString), unsure(notString));
+
+            LBasicBlock lastNext = m_out.appendTo(isString, notString);
+            ValueFromBlock stringResult = m_out.anchor(mapHashString(value));
+            m_out.jump(continuation);
+
+            m_out.appendTo(notString, continuation);
+            ValueFromBlock notStringResult = m_out.anchor(wangsInt64Hash(value));
+            m_out.jump(continuation);
+
+            m_out.appendTo(continuation, lastNext);
+            setInt32(m_out.phi(Int32, stringResult, notStringResult));
+            return;
+        }
+
+        case StringUse: {
+            LValue string = lowString(m_node->child1());
+            setInt32(mapHashString(string));
+            return;
+        }
+
+        default:
+            RELEASE_ASSERT(m_node->child1().useKind() == UntypedUse);
+            break;
+        }
+
+        LValue value = lowJSValue(m_node->child1());
+
+        LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock notCell = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock straightHash = m_out.newBlock();
+        LBasicBlock isNumberCase = m_out.newBlock();
+        LBasicBlock isStringCase = m_out.newBlock();
+        LBasicBlock nonEmptyStringCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(
+            isCell(value, provenType(m_node->child1())), unsure(isCellCase), unsure(notCell));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, isStringCase);
+        LValue isString = m_out.equal(m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType), m_out.constInt32(StringType));
+        m_out.branch(
+            isString, unsure(isStringCase), unsure(straightHash));
+
+        m_out.appendTo(isStringCase, nonEmptyStringCase);
+        LValue stringImpl = m_out.loadPtr(value, m_heaps.JSString_value);
+        m_out.branch(
+            m_out.equal(stringImpl, m_out.constIntPtr(0)), rarely(slowCase), usually(nonEmptyStringCase));
+
+        m_out.appendTo(nonEmptyStringCase, notCell);
+        LValue hash = m_out.lShr(m_out.load32(stringImpl, m_heaps.StringImpl_hashAndFlags), m_out.constInt32(StringImpl::s_flagCount));
+        ValueFromBlock nonEmptyStringHashResult = m_out.anchor(hash);
+        m_out.branch(m_out.equal(hash, m_out.constInt32(0)),
+            unsure(slowCase), unsure(continuation));
+
+        m_out.appendTo(notCell, isNumberCase);
+        m_out.branch(
+            isNumber(value), unsure(isNumberCase), unsure(straightHash));
+
+        m_out.appendTo(isNumberCase, straightHash);
+        m_out.branch(
+            isInt32(value), unsure(straightHash), unsure(slowCase));
+
+        m_out.appendTo(straightHash, slowCase);
+        ValueFromBlock fastResult = m_out.anchor(wangsInt64Hash(value));
         m_out.jump(continuation);
 
         m_out.appendTo(slowCase, continuation);
