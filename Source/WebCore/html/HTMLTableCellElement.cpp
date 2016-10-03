@@ -169,10 +169,6 @@ const AtomicString& HTMLTableCellElement::scope() const
 
     const AtomicString& value = attributeWithoutSynchronization(HTMLNames::scopeAttr);
 
-    // Only conforming for th elements.
-    if (!hasTagName(thTag))
-        return value;
-
     if (equalIgnoringASCIICase(value, row))
         return row;
     if (equalIgnoringASCIICase(value, col))

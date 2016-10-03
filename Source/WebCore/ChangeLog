@@ -1,3 +1,20 @@
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        td.scope should only return known values
+        https://bugs.webkit.org/show_bug.cgi?id=162755
+
+        Reviewed by Sam Weinig.
+
+        td.scope should only return known values:
+        - https://html.spec.whatwg.org/#dom-th-scope
+
+        Firefox conforms to the specification.
+
+        No new tests, rebaselined existing test.
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::scope):
+
 2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Simplify AuthenticationChallenge

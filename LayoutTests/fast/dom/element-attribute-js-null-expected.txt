@@ -192,7 +192,7 @@ TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.ch
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.chOff]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.headers]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.height]
-TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.scope]
+TEST SUCCEEDED: The value was the empty string. [tested HTMLTableCellElement.scope]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.vAlign]
 TEST SUCCEEDED: The value was the string 'null'. [tested HTMLTableCellElement.width]
 
