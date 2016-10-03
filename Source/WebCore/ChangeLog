@@ -1,3 +1,21 @@
+2016-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should strip tabs at all locations
+        https://bugs.webkit.org/show_bug.cgi?id=162836
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by adding tabs to each location of each API test
+        except tests that test the encoding of surrogate pairs,
+        because inserting a tab between the pairs changes the encoding.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::takesTwoAdvancesUntilEnd):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::parseIPv4Number):
+        (WebCore::URLParser::parseIPv4Host):
+        * platform/URLParser.h:
+
 2016-10-03  Antti Koivisto  <antti@apple.com>
 
         Remove Document::elementSheet()

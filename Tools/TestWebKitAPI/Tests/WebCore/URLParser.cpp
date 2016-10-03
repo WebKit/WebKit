@@ -69,7 +69,23 @@ static bool eq(const String& s1, const String& s2)
     return s1.utf8() == s2.utf8();
 }
 
-static void checkURL(const String& urlString, const ExpectedParts& parts, bool checkTabs = true)
+static String insertTabAtLocation(const String& string, size_t location)
+{
+    ASSERT(location <= string.length());
+    return makeString(string.substring(0, location), "\t", string.substring(location));
+}
+
+static ExpectedParts invalidParts(const String& urlStringWithTab)
+{
+    return {"", "", "", "", 0, "" , "", "", urlStringWithTab};
+}
+
+enum class TestTabs { No, Yes };
+
+// Inserting tabs between surrogate pairs changes the encoded value instead of being skipped by the URLParser.
+const TestTabs testTabsValueForSurrogatePairs = TestTabs::No;
+
+static void checkURL(const String& urlString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     bool wasEnabled = URLParser::enabled();
     URLParser::setEnabled(true);
@@ -102,11 +118,12 @@ static void checkURL(const String& urlString, const ExpectedParts& parts, bool c
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
     EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 
-    if (checkTabs) {
+    if (testTabs == TestTabs::Yes) {
         for (size_t i = 0; i < urlString.length(); ++i) {
-            String urlStringWithTab = makeString(urlString.substring(0, i), "\t", urlString.substring(i));
-            ExpectedParts invalidPartsWithTab = {"", "", "", "", 0, "" , "", "", urlStringWithTab};
-            checkURL(urlStringWithTab, parts.isInvalid() ? invalidPartsWithTab : parts, false);
+            String urlStringWithTab = insertTabAtLocation(urlString, i);
+            checkURL(urlStringWithTab,
+                parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+                TestTabs::No);
         }
     }
 }
@@ -273,8 +290,6 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://127.\t0.0.1/", {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"});
     checkURL("http://./", {"http", "", "", ".", 0, "/", "", "", "http://./"});
     checkURL("http://.", {"http", "", "", ".", 0, "/", "", "", "http://./"});
-    checkURL("http://123\t.256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
-    checkURL("http://123.\t256/", {"http", "", "", "123.256", 0, "/", "", "", "http://123.256/"});
     checkURL("notspecial:/a", {"notspecial", "", "", "", 0, "/a", "", "", "notspecial:/a"});
     checkURL("notspecial:", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
     checkURL("notspecial:/", {"notspecial", "", "", "", 0, "/", "", "", "notspecial:/"});
@@ -305,7 +320,7 @@ TEST_F(URLParserTest, Basic)
     checkURL("http://:@host", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
 }
 
-static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, bool checkTabs = true)
+static void checkRelativeURL(const String& urlString, const String& baseURLString, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     bool wasEnabled = URLParser::enabled();
     URLParser::setEnabled(true);
@@ -338,11 +353,13 @@ static void checkRelativeURL(const String& urlString, const String& baseURLStrin
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
     EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
     
-    if (checkTabs) {
+    if (testTabs == TestTabs::Yes) {
         for (size_t i = 0; i < urlString.length(); ++i) {
-            String urlStringWithTab = makeString(urlString.substring(0, i), "\t", urlString.substring(i));
-            ExpectedParts invalidPartsWithTab = {"", "", "", "", 0, "" , "", "", urlStringWithTab};
-            checkRelativeURL(urlStringWithTab, baseURLString, parts.isInvalid() ? invalidPartsWithTab : parts, false);
+            String urlStringWithTab = insertTabAtLocation(urlString, i);
+            checkRelativeURL(urlStringWithTab,
+                baseURLString,
+                parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+                TestTabs::No);
         }
     }
 }
@@ -422,7 +439,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("http:\\\\host\\foo", "about:blank", {"http", "", "", "host", 0, "/foo", "", "", "http://host/foo"});
 }
 
-static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
+static void checkURLDifferences(const String& urlString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
     bool wasEnabled = URLParser::enabled();
     URLParser::setEnabled(true);
@@ -455,10 +472,18 @@ static void checkURLDifferences(const String& urlString, const ExpectedParts& pa
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
     EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
     
-    // FIXME: check tabs here like we do for checkURL and checkRelativeURL.
+    if (testTabs == TestTabs::Yes) {
+        for (size_t i = 0; i < urlString.length(); ++i) {
+            String urlStringWithTab = insertTabAtLocation(urlString, i);
+            checkURLDifferences(urlStringWithTab,
+                partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
+                partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+                TestTabs::No);
+        }
+    }
 }
 
-static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld)
+static void checkRelativeURLDifferences(const String& urlString, const String& baseURLString, const ExpectedParts& partsNew, const ExpectedParts& partsOld, TestTabs testTabs = TestTabs::Yes)
 {
     bool wasEnabled = URLParser::enabled();
     URLParser::setEnabled(true);
@@ -491,7 +516,15 @@ static void checkRelativeURLDifferences(const String& urlString, const String& b
     EXPECT_TRUE(URLParser::internalValuesConsistent(url));
     EXPECT_TRUE(URLParser::internalValuesConsistent(oldURL));
 
-    // FIXME: check tabs here like we do for checkURL and checkRelativeURL.
+    if (testTabs == TestTabs::Yes) {
+        for (size_t i = 0; i < urlString.length(); ++i) {
+            String urlStringWithTab = insertTabAtLocation(urlString, i);
+            checkRelativeURLDifferences(urlStringWithTab, baseURLString,
+                partsNew.isInvalid() ? invalidParts(urlStringWithTab) : partsNew,
+                partsOld.isInvalid() ? invalidParts(urlStringWithTab) : partsOld,
+                TestTabs::No);
+        }
+    }
 }
 
 // These are differences between the new URLParser and the old URL::parse which make URLParser more standards compliant.
@@ -617,7 +650,7 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("http:/example.com/", "http://example.org/foo/bar",
         {"http", "", "", "example.org", 0, "/example.com/", "", "", "http://example.org/example.com/"},
         {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"});
-    
+
     // This behavior matches Chrome and Firefox, but not WebKit using URL::parse.
     // The behavior of URL::parse is clearly wrong because reparsing file://path would make path the host.
     // The spec is unclear.
@@ -647,7 +680,7 @@ TEST_F(URLParserTest, ParserDifferences)
 
     checkRelativeURLDifferences(utf16String(u"http://foo:💩@example.com/bar"), "http://other.com/",
         {"http", "foo", utf16String(u"💩"), "example.com", 0, "/bar", "", "", "http://foo:%F0%9F%92%A9@example.com/bar"},
-        {"", "", "", "", 0, "", "", "", utf16String(u"http://foo:💩@example.com/bar")});
+        {"", "", "", "", 0, "", "", "", utf16String(u"http://foo:💩@example.com/bar")}, testTabsValueForSurrogatePairs);
     checkRelativeURLDifferences("http://&a:foo(b]c@d:2/", "http://example.org/foo/bar",
         {"http", "&a", "foo(b]c", "d", 2, "/", "", "", "http://&a:foo(b%5Dc@d:2/"},
         {"", "", "", "", 0, "", "", "", "http://&a:foo(b]c@d:2/"});
@@ -701,7 +734,7 @@ TEST_F(URLParserTest, ParserDifferences)
         {"foo", "", "", "", 0, "//", "", "", "foo://"});
     checkURLDifferences(utf16String(u"http://host?ß😍#ß😍"),
         {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")},
-        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"});
+        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"}, testTabsValueForSurrogatePairs);
     checkURLDifferences(utf16String(u"http://host/path#💩\t💩"),
         {"http", "", "", "host", 0, "/path", "", utf16String(u"💩💩"), utf16String(u"http://host/path#💩💩")},
         {"http", "", "", "host", 0, "/path", "", "%F0%9F%92%A9%F0%9F%92%A9", "http://host/path#%F0%9F%92%A9%F0%9F%92%A9"});
@@ -975,7 +1008,7 @@ TEST_F(URLParserTest, AdditionalTests)
     const wchar_t validSurrogateEnd = 0xDD55;
     const wchar_t invalidSurrogateEnd = 'A';
     checkURL(utf16String<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, validSurrogateEnd, '\0'}),
-        {"http", "", "", "w", 0, "/%F0%90%85%95", "", "", "http://w/%F0%90%85%95"}, false);
+        {"http", "", "", "w", 0, "/%F0%90%85%95", "", "", "http://w/%F0%90%85%95"}, testTabsValueForSurrogatePairs);
 
     // URLParser matches Chrome and Firefox but not URL::parse.
     checkURLDifferences(utf16String<12>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', surrogateBegin, invalidSurrogateEnd}),
@@ -995,7 +1028,7 @@ TEST_F(URLParserTest, AdditionalTests)
         {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
 }
 
-static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, bool checkTabs = true)
+static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
 {
     URLParser parser(urlString, { }, encoding);
     auto url = parser.result();
@@ -1009,19 +1042,20 @@ static void checkURL(const String& urlString, const TextEncoding& encoding, cons
     EXPECT_TRUE(eq(parts.fragment, url.fragmentIdentifier()));
     EXPECT_TRUE(eq(parts.string, url.string()));
 
-    if (checkTabs) {
+    if (testTabs == TestTabs::Yes) {
         for (size_t i = 0; i < urlString.length(); ++i) {
-            String urlStringWithTab = makeString(urlString.substring(0, i), "\t", urlString.substring(i));
-            ExpectedParts invalidPartsWithTab = {"", "", "", "", 0, "" , "", "", urlStringWithTab};
-            checkURL(urlStringWithTab, encoding, parts.isInvalid() ? invalidPartsWithTab : parts, false);
+            String urlStringWithTab = insertTabAtLocation(urlString, i);
+            checkURL(urlStringWithTab, encoding,
+                parts.isInvalid() ? invalidParts(urlStringWithTab) : parts,
+                TestTabs::No);
         }
     }
 }
 
 TEST_F(URLParserTest, QueryEncoding)
 {
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, false);
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, false);
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, testTabsValueForSurrogatePairs);
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, testTabsValueForSurrogatePairs);
 
     TextEncoding latin1(String("latin1"));
     checkURL("http://host/?query with%20spaces", latin1, {"http", "", "", "host", 0, "/", "query%20with%20spaces", "", "http://host/?query%20with%20spaces"});

@@ -1,5 +1,19 @@
 2016-10-03  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should ignore tabs at all locations
+        https://bugs.webkit.org/show_bug.cgi?id=162836
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::checkURL):
+        (TestWebKitAPI::checkRelativeURL):
+        (TestWebKitAPI::checkURLDifferences):
+        (TestWebKitAPI::checkRelativeURLDifferences):
+        (TestWebKitAPI::TEST_F):
+
+2016-10-03  Alex Christensen  <achristensen@webkit.org>
+
         URLParser: fragment-only URLs relative to file URLs should just add a fragment
         https://bugs.webkit.org/show_bug.cgi?id=162871
 

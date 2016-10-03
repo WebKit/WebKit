@@ -426,6 +426,18 @@ ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator
 }
 
 template<typename CharacterType>
+bool URLParser::takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType> iterator)
+{
+    if (iterator.atEnd())
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    if (iterator.atEnd())
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+    return iterator.atEnd();
+}
+
+template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterType> iterator)
 {
     if (iterator.atEnd() || !isASCIIAlpha(*iterator))
@@ -1542,7 +1554,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             do {
                 LOG_STATE("FileHost");
                 if (isSlashQuestionOrHash(*c)) {
-                    bool windowsQuirk = c.codeUnitsSince(authorityOrHostBegin) == 2 && isWindowsDriveLetter(authorityOrHostBegin);
+                    bool windowsQuirk = takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType>(authorityOrHostBegin, c))
+                        && isWindowsDriveLetter(authorityOrHostBegin);
                     if (windowsQuirk) {
                         syntaxViolation(authorityOrHostBegin);
                         appendToASCIIBuffer('/');
@@ -2100,6 +2113,11 @@ Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& 
     if (!iterator.atEnd() && *iterator == '.')
         return Nullopt;
     while (!iterator.atEnd()) {
+        if (isTabOrNewline(*iterator)) {
+            didSeeSyntaxViolation = true;
+            ++iterator;
+            continue;
+        }
         if (*iterator == '.') {
             ASSERT(!value.hasOverflowed());
             return value.unsafeGet();
@@ -2173,6 +2191,11 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
     items.reserveInitialCapacity(4);
     bool didSeeSyntaxViolation = false;
     while (!iterator.atEnd()) {
+        if (isTabOrNewline(*iterator)) {
+            didSeeSyntaxViolation = true;
+            ++iterator;
+            continue;
+        }
         if (items.size() >= 4)
             return Nullopt;
         if (auto item = parseIPv4Number(iterator, didSeeSyntaxViolation))
