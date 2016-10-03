@@ -37,8 +37,9 @@
 extern "C" {
 #endif
 
-#if !defined(WIN32) && !defined(_WIN32) \
-    && !((defined(__CC_ARM) || defined(__ARMCC__)) && !defined(__linux__)) /* RVCT */
+#if !defined(_NATIVE_WCHAR_T_DEFINED) /* MSVC */ \
+    && (!defined(__WCHAR_MAX__) || (__WCHAR_MAX__ > 0xffffU)) /* ISO C/C++ */ \
+    && (!defined(WCHAR_MAX) || (WCHAR_MAX > 0xffffU)) /* RVCT */
 /*!
 @typedef JSChar
 @abstract A UTF-16 code unit. One, or a sequence of two, can encode any Unicode

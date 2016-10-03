@@ -1,3 +1,12 @@
+2016-10-03  Nicolas Breidinger  <Nicolas.Breidinger@sony.com>
+
+        JSStringRef should define JSChar without platform checks
+        https://bugs.webkit.org/show_bug.cgi?id=162808
+
+        Reviewed by Mark Lam.
+
+        * API/JSStringRef.h:
+
 2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Align attributes of Generator related properties to spec
