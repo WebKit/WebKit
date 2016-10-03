@@ -1,3 +1,20 @@
+2016-10-03  Zalan Bujtas  <zalan@apple.com>
+
+        Log an error to stderr when FrameView::layout() fails to clean all the renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=162835
+
+        Reviewed by Simon Fraser.
+
+        We've come across multiple layout/painting bugs caused by renderers left dirty
+        after FrameView::layout(). This patch helps catching such issues early.
+        Once all the blocking bugs are fixed (webkit.org/b/162835), logging should be replaced with ASSERT(). 
+
+        Not testable.
+
+        * page/FrameView.cpp:
+        (WebCore::RenderTreeNeedsLayoutChecker::~RenderTreeNeedsLayoutChecker):
+        (WebCore::FrameView::layout):
+
 2016-10-03  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add D2D Bitmap Image handling code

@@ -202,6 +202,40 @@ private:
     bool m_didDisableLayoutState { false };
 };
 
+#ifndef NDEBUG
+class RenderTreeNeedsLayoutChecker {
+public :
+    RenderTreeNeedsLayoutChecker(const RenderElement& layoutRoot)
+        : m_layoutRoot(layoutRoot)
+    {
+    }
+
+    ~RenderTreeNeedsLayoutChecker()
+    {
+        auto reportNeedsLayoutError = [] (const RenderObject& renderer) {
+            WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, "post-layout: dirty renderer(s)");
+            renderer.showRenderTreeForThis();
+        };
+
+        if (m_layoutRoot.needsLayout()) {
+            reportNeedsLayoutError(m_layoutRoot);
+            return;
+        }
+
+        for (auto* descendant = m_layoutRoot.firstChild(); descendant; descendant = descendant->nextInPreOrder(&m_layoutRoot)) {
+            if (!descendant->needsLayout())
+                continue;
+            
+            reportNeedsLayoutError(*descendant);
+            return;
+        }
+    }
+
+private:
+    const RenderElement& m_layoutRoot;
+};
+#endif
+
 FrameView::FrameView(Frame& frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
@@ -1421,7 +1455,9 @@ void FrameView::layout(bool allowSubtree)
         forceLayoutParentViewIfNeeded();
 
         ASSERT(m_layoutPhase == InRenderTreeLayout);
-
+#ifndef NDEBUG
+        RenderTreeNeedsLayoutChecker checker(*root);
+#endif
         root->layout();
 
 #if ENABLE(TEXT_AUTOSIZING)
