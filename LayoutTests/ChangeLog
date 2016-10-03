@@ -1,3 +1,14 @@
+2016-10-03  Andy Estes  <aestes@apple.com>
+
+        ASSERTION FAILED: result in WebCore::CSSParser::parseURI
+        https://bugs.webkit.org/show_bug.cgi?id=141638
+        <rdar://problem/27709952>
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/url-with-multi-byte-unicode-escape-expected.txt: Added a test for an unquoted URL.
+        * fast/css/url-with-multi-byte-unicode-escape.html:
+
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
         td.scope should only return known values

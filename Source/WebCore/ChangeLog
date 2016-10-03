@@ -1,3 +1,21 @@
+2016-10-03  Andy Estes  <aestes@apple.com>
+
+        ASSERTION FAILED: result in WebCore::CSSParser::parseURI
+        https://bugs.webkit.org/show_bug.cgi?id=141638
+        <rdar://problem/27709952>
+
+        Reviewed by Andreas Kling.
+
+        CSSParser::parseURIInternal() failed to parse unquoted URLs with Unicode escape sequences
+        greater than 0xFF, even when the destination character type was multi-byte. Fixed by
+        checking the size of DestCharacterType instead of SrcCharacterType.
+
+        Updated fast/css/url-with-multi-byte-unicode-escape.html to test for an unquoted URL.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseURIInternal): For code points greater than 0xFF, only returned
+        false if sizeof(DestCharacterType) == 1.
+
 2016-10-03  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: empty relative URLs should not copy fragment from the base URL

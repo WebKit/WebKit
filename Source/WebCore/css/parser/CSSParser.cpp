@@ -11736,7 +11736,7 @@ inline bool CSSParser::parseURIInternal(SrcCharacterType*& src, DestCharacterTyp
             *dest++ = *src++;
         else {
             unsigned unicode = parseEscape<SrcCharacterType>(src);
-            if (unicode > 0xff && sizeof(SrcCharacterType) == 1)
+            if (unicode > 0xff && sizeof(DestCharacterType) == 1)
                 return false;
             UnicodeToChars(dest, unicode);
         }
