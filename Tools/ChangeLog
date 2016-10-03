@@ -1,3 +1,15 @@
+2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Cleanup persistent credential storage code
+        https://bugs.webkit.org/show_bug.cgi?id=162777
+
+        Reviewed by Alex Christensen.
+
+        Use USE(LIBSECRET) instead of ENABLE(CREDENTIAL_STORAGE).
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp:
+        (testWebViewAuthenticationStorage):
+
 2016-10-02  Darin Adler  <darin@apple.com>
 
         Rename ExceptionCode-based exception handling to "legacy"

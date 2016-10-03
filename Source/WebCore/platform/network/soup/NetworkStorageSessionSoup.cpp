@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2013 University of Szeged. All rights reserved.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +32,18 @@
 
 #include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
+#include <libsoup/soup.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GUniquePtr.h>
+
+#if USE(LIBSECRET)
+#include "GRefPtrGtk.h"
+#include <glib/gi18n-lib.h>
+#define SECRET_WITH_UNSTABLE 1
+#define SECRET_API_SUBJECT_TO_CHANGE 1
+#include <libsecret/secret.h>
+#endif
 
 namespace WebCore {
 
@@ -44,6 +55,9 @@ NetworkStorageSession::NetworkStorageSession(SessionID sessionID, std::unique_pt
 
 NetworkStorageSession::~NetworkStorageSession()
 {
+#if USE(LIBSECRET)
+    g_cancellable_cancel(m_persisentStorageCancellable.get());
+#endif
 }
 
 static std::unique_ptr<NetworkStorageSession>& defaultSession()
@@ -78,11 +92,150 @@ SoupNetworkSession& NetworkStorageSession::soupNetworkSession() const
     return m_session ? *m_session : SoupNetworkSession::defaultSession();
 }
 
-void NetworkStorageSession::setSoupNetworkSession(std::unique_ptr<SoupNetworkSession> session)
+#if USE(LIBSECRET)
+static const char* schemeFromProtectionSpaceServerType(ProtectionSpaceServerType serverType)
 {
-    m_session = WTFMove(session);
+    switch (serverType) {
+    case ProtectionSpaceServerHTTP:
+    case ProtectionSpaceProxyHTTP:
+        return SOUP_URI_SCHEME_HTTP;
+    case ProtectionSpaceServerHTTPS:
+    case ProtectionSpaceProxyHTTPS:
+        return SOUP_URI_SCHEME_HTTPS;
+    case ProtectionSpaceServerFTP:
+    case ProtectionSpaceProxyFTP:
+        return SOUP_URI_SCHEME_FTP;
+    case ProtectionSpaceServerFTPS:
+    case ProtectionSpaceProxySOCKS:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return SOUP_URI_SCHEME_HTTP;
 }
 
-}
+static const char* authTypeFromProtectionSpaceAuthenticationScheme(ProtectionSpaceAuthenticationScheme scheme)
+{
+    switch (scheme) {
+    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+        return "Basic";
+    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+        return "Digest";
+    case ProtectionSpaceAuthenticationSchemeNTLM:
+        return "NTLM";
+    case ProtectionSpaceAuthenticationSchemeNegotiate:
+        return "Negotiate";
+    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+        ASSERT_NOT_REACHED();
+        break;
+    case ProtectionSpaceAuthenticationSchemeUnknown:
+        return "unknown";
+    }
 
+    ASSERT_NOT_REACHED();
+    return "unknown";
+}
+#endif // USE(LIBSECRET)
+
+void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionSpace& protectionSpace, Function<void (Credential&&)> completionHandler)
+{
+#if USE(LIBSECRET)
+    if (m_sessionID.isEphemeral()) {
+        completionHandler({ });
+        return;
+    }
+
+    const String& realm = protectionSpace.realm();
+    if (realm.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    GRefPtr<GHashTable> attributes = adoptGRef(secret_attributes_build(SECRET_SCHEMA_COMPAT_NETWORK,
+        "domain", realm.utf8().data(),
+        "server", protectionSpace.host().utf8().data(),
+        "port", protectionSpace.port(),
+        "protocol", schemeFromProtectionSpaceServerType(protectionSpace.serverType()),
+        "authtype", authTypeFromProtectionSpaceAuthenticationScheme(protectionSpace.authenticationScheme()),
+        nullptr));
+    if (!attributes) {
+        completionHandler({ });
+        return;
+    }
+
+    m_persisentStorageCancellable = adoptGRef(g_cancellable_new());
+    m_persisentStorageCompletionHandler = WTFMove(completionHandler);
+    secret_service_search(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(),
+        static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), m_persisentStorageCancellable.get(),
+        [](GObject* source, GAsyncResult* result, gpointer userData) {
+            GUniqueOutPtr<GError> error;
+            GUniquePtr<GList> elements(secret_service_search_finish(SECRET_SERVICE(source), result, &error.outPtr()));
+            if (g_error_matches (error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
+                return;
+
+            NetworkStorageSession* session = static_cast<NetworkStorageSession*>(userData);
+            auto completionHandler = std::exchange(session->m_persisentStorageCompletionHandler, nullptr);
+            if (error || !elements || !elements->data) {
+                completionHandler({ });
+                return;
+            }
+
+            GRefPtr<SecretItem> secretItem = adoptGRef(static_cast<SecretItem*>(elements->data));
+            GRefPtr<GHashTable> attributes = adoptGRef(secret_item_get_attributes(secretItem.get()));
+            String user = String::fromUTF8(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "user")));
+            if (user.isEmpty()) {
+                completionHandler({ });
+                return;
+            }
+
+            size_t length;
+            GRefPtr<SecretValue> secretValue = adoptGRef(secret_item_get_secret(secretItem.get()));
+            const char* passwordData = secret_value_get(secretValue.get(), &length);
+            completionHandler(Credential(user, String::fromUTF8(passwordData, length), CredentialPersistencePermanent));
+    }, this);
+#else
+    UNUSED_PARAM(protectionSpace);
+    completionHandler({ });
 #endif
+}
+
+void NetworkStorageSession::saveCredentialToPersistentStorage(const ProtectionSpace& protectionSpace, const Credential& credential)
+{
+#if USE(LIBSECRET)
+    if (m_sessionID.isEphemeral())
+        return;
+
+    if (credential.isEmpty())
+        return;
+
+    const String& realm = protectionSpace.realm();
+    if (realm.isEmpty())
+        return;
+
+    GRefPtr<GHashTable> attributes = adoptGRef(secret_attributes_build(SECRET_SCHEMA_COMPAT_NETWORK,
+        "domain", realm.utf8().data(),
+        "server", protectionSpace.host().utf8().data(),
+        "port", protectionSpace.port(),
+        "protocol", schemeFromProtectionSpaceServerType(protectionSpace.serverType()),
+        "authtype", authTypeFromProtectionSpaceAuthenticationScheme(protectionSpace.authenticationScheme()),
+        nullptr));
+    if (!attributes)
+        return;
+
+    g_hash_table_insert(attributes.get(), g_strdup("user"), g_strdup(credential.user().utf8().data()));
+    CString utf8Password = credential.password().utf8();
+    GRefPtr<SecretValue> newSecretValue = adoptGRef(secret_value_new(utf8Password.data(), utf8Password.length(), "text/plain"));
+    secret_service_store(nullptr, SECRET_SCHEMA_COMPAT_NETWORK, attributes.get(), SECRET_COLLECTION_DEFAULT, _("WebKitGTK+ password"),
+        newSecretValue.get(), nullptr, nullptr, nullptr);
+#else
+    UNUSED_PARAM(protectionSpace);
+    UNUSED_PARAM(credential);
+#endif
+}
+
+} // namespace WebCore
+
+#endif // USE(SOUP)

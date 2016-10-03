@@ -1,5 +1,43 @@
 2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Cleanup persistent credential storage code
+        https://bugs.webkit.org/show_bug.cgi?id=162777
+
+        Reviewed by Alex Christensen.
+
+        We have this feature behind ENABLE_CREDENTIAL_STORAGE flag, which is confusing, because we use credential
+        storage unconditionally and this is only about persistent storage. Also the flag assumes libsecret is available,
+        and since it's only used by GTK sometimes we use GTK ifdefs instead of CREDENTIAL_STORAGE. So, I think we should
+        use USE(LIBSECRET) instead, and reduce a bit the ifdefs in common soup code. Another problem is that current
+        implementation is always used, while it should depend on the current network storage session and never used in
+        ephemeral sessions. This patch moves the code from CredentialBackingStore to NetworkStorageSessionSoup and
+        modernizes a bit.
+
+        * PlatformGTK.cmake: Remove CredentialBackingStore.cpp.
+        * platform/gtk/GRefPtrGtk.cpp: Use USE(LIBSECRET)
+        * platform/gtk/GRefPtrGtk.h:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/gtk/CredentialBackingStore.cpp: Removed.
+        * platform/network/gtk/CredentialBackingStore.h: Removed.
+        * platform/network/soup/NetworkStorageSessionSoup.cpp:
+        (WebCore::NetworkStorageSession::~NetworkStorageSession):
+        (WebCore::schemeFromProtectionSpaceServerType):
+        (WebCore::authTypeFromProtectionSpaceAuthenticationScheme):
+        (WebCore::NetworkStorageSession::getCredentialFromPersistentStorage):
+        (WebCore::NetworkStorageSession::saveCredentialToPersistentStorage):
+        (WebCore::NetworkStorageSession::ensurePrivateBrowsingSession): Deleted.
+        (WebCore::NetworkStorageSession::switchToNewTestingSession): Deleted.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::continueDidReceiveAuthenticationChallenge): Deleted.
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential): Deleted.
+        (WebCore::ResourceHandle::receivedCancellation): Deleted.
+
+2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix the build with coordinated graphics enabled after r206712.
 
         * page/scrolling/ScrollingStateTree.cpp:

@@ -87,6 +87,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 wi
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ${GTK3_SUPPORTS_WAYLAND})
 WEBKIT_OPTION_DEFINE(USE_LIBNOTIFY "Whether to enable the default web notification implementation." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyphenation implementation." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
@@ -133,7 +134,6 @@ endif ()
 # without approval from a GTK+ reviewer. There must be strong reason to support
 # changing the value of the option.
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS PUBLIC OFF)
-WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CREDENTIAL_STORAGE PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_DRAG_SUPPORT PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_GEOLOCATION PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ICONDATABASE PUBLIC ON)
@@ -228,10 +228,10 @@ if (ENABLE_ACCELERATED_2D_CANVAS)
     endif ()
 endif ()
 
-if (ENABLE_CREDENTIAL_STORAGE)
+if (USE_LIBSECRET)
     find_package(Libsecret)
     if (NOT LIBSECRET_FOUND)
-        message(FATAL_ERROR "libsecret is needed for ENABLE_CREDENTIAL_STORAGE")
+        message(FATAL_ERROR "libsecret is needed for USE_LIBSECRET")
     endif ()
 endif ()
 

@@ -162,8 +162,6 @@ list(APPEND WebCore_SOURCES
 
     platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp
 
-    platform/network/gtk/CredentialBackingStore.cpp
-
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp
     platform/network/soup/CookieJarSoup.cpp

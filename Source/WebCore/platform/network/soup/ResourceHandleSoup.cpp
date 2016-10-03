@@ -66,10 +66,6 @@
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
 
-#if PLATFORM(GTK)
-#include "CredentialBackingStore.h"
-#endif
-
 namespace WebCore {
 
 static const size_t gDefaultReadBufferSize = 8192;
@@ -230,17 +226,15 @@ static void gotHeadersCallback(SoupMessage* message, gpointer data)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-#if PLATFORM(GTK)
     // We are a bit more conservative with the persistent credential storage than the session store,
     // since we are waiting until we know that this authentication succeeded before actually storing.
     // This is because we want to avoid hitting the disk twice (once to add and once to remove) for
     // incorrect credentials or polluting the keychain with invalid credentials.
-    if (!isAuthenticationFailureStatusCode(message->status_code) && message->status_code < 500 && !d->m_credentialDataToSaveInPersistentStore.credential.isEmpty()) {
-        credentialBackingStore().storeCredentialsForChallenge(
-            d->m_credentialDataToSaveInPersistentStore.challenge,
+    if (!isAuthenticationFailureStatusCode(message->status_code) && message->status_code < 500) {
+        d->m_context->storageSession().saveCredentialToPersistentStorage(
+            d->m_credentialDataToSaveInPersistentStore.protectionSpace,
             d->m_credentialDataToSaveInPersistentStore.credential);
     }
-#endif
 
     // The original response will be needed later to feed to willSendRequest in
     // doRedirect() in case we are redirected. For this reason, we store it here.
@@ -970,13 +964,6 @@ void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
     gIgnoreSSLErrors = ignoreSSLErrors;
 }
 
-#if PLATFORM(GTK)
-void getCredentialFromPersistentStoreCallback(const Credential& credential, void* data)
-{
-    static_cast<ResourceHandle*>(data)->continueDidReceiveAuthenticationChallenge(credential);
-}
-#endif
-
 void ResourceHandle::continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage)
 {
     ASSERT(!d->m_currentWebChallenge.isNull());
@@ -1030,16 +1017,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     d->m_currentWebChallenge = challenge;
     soup_session_pause_message(challenge.soupSession(), challenge.soupMessage());
 
-#if PLATFORM(GTK)
     // We could also do this before we even start the request, but that would be at the expense
     // of all request latency, versus a one-time latency for the small subset of requests that
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
     if (useCredentialStorage) {
-        credentialBackingStore().credentialForChallenge(challenge, getCredentialFromPersistentStoreCallback, this);
+        d->m_context->storageSession().getCredentialFromPersistentStorage(challenge.protectionSpace(), [this, protectedThis = makeRef(*this)] (Credential&& credential) {
+            continueDidReceiveAuthenticationChallenge(WTFMove(credential));
+        });
         return;
     }
-#endif
 
     continueDidReceiveAuthenticationChallenge(Credential());
 }
@@ -1074,12 +1061,10 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
             CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
-#if PLATFORM(GTK)
         if (credential.persistence() == CredentialPersistencePermanent) {
             d->m_credentialDataToSaveInPersistentStore.credential = credential;
-            d->m_credentialDataToSaveInPersistentStore.challenge = challenge;
+            d->m_credentialDataToSaveInPersistentStore.protectionSpace = challenge.protectionSpace();
         }
-#endif
     }
 
     ASSERT(challenge.soupSession());

@@ -178,11 +178,9 @@ namespace WebCore {
         int m_redirectCount;
         size_t m_previousPosition;
         bool m_useAuthenticationManager;
-#endif
-#if PLATFORM(GTK)
         struct {
             Credential credential;
-            AuthenticationChallenge challenge;
+            ProtectionSpace protectionSpace;
         } m_credentialDataToSaveInPersistentStore;
 #endif
 

@@ -1,3 +1,15 @@
+2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Cleanup persistent credential storage code
+        https://bugs.webkit.org/show_bug.cgi?id=162777
+
+        Reviewed by Alex Christensen.
+
+        Remove ENABLE(CREDENTIAL_STORAGE) build flag and replace it by USE(LIBSECRET).
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2016-09-29  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: linkified refs to #document and #text are not usually navigable nodes; consider delinkifying them

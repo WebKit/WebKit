@@ -195,7 +195,7 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
 
     // If WebKit has been compiled with libsecret, and private browsing is disabled
     // then check that credentials can be saved.
-#if ENABLE(CREDENTIAL_STORAGE)
+#if USE(LIBSECRET)
     webkit_settings_set_enable_private_browsing(webkit_web_view_get_settings(test->m_webView), FALSE);
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     request = test->waitForAuthenticationRequest();

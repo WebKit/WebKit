@@ -23,7 +23,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#if ENABLE(CREDENTIAL_STORAGE)
+#if USE(LIBSECRET)
 #define SECRET_WITH_UNSTABLE 1
 #define SECRET_API_SUBJECT_TO_CHANGE 1
 #include <libsecret/secret.h>
@@ -44,7 +44,7 @@ template <> void derefGPtr(GtkTargetList* ptr)
         gtk_target_list_unref(ptr);
 }
 
-#if ENABLE(CREDENTIAL_STORAGE)
+#if USE(LIBSECRET)
 template <> SecretValue* refGPtr(SecretValue* ptr)
 {
     if (ptr)

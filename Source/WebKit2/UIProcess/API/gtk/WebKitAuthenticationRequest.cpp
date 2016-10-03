@@ -161,7 +161,7 @@ gboolean webkit_authentication_request_can_save_credentials(WebKitAuthentication
 {
     g_return_val_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request), FALSE);
 
-#if ENABLE(CREDENTIAL_STORAGE)
+#if USE(LIBSECRET)
     return !request->priv->privateBrowsingEnabled;
 #else
     return FALSE;

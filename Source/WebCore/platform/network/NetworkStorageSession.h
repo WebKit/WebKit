@@ -34,6 +34,11 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if USE(SOUP)
+#include <wtf/Function.h>
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 class NetworkingContext;
@@ -66,7 +71,8 @@ public:
     ~NetworkStorageSession();
 
     SoupNetworkSession& soupNetworkSession() const;
-    void setSoupNetworkSession(std::unique_ptr<SoupNetworkSession>);
+    void getCredentialFromPersistentStorage(const ProtectionSpace&, Function<void (Credential&&)> completionHandler);
+    void saveCredentialToPersistentStorage(const ProtectionSpace&, const Credential&);
 #else
     NetworkStorageSession(SessionID, NetworkingContext*);
     ~NetworkStorageSession();
@@ -82,6 +88,10 @@ private:
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
 #elif USE(SOUP)
     std::unique_ptr<SoupNetworkSession> m_session;
+#if USE(LIBSECRET)
+    Function<void (Credential&&)> m_persisentStorageCompletionHandler;
+    GRefPtr<GCancellable> m_persisentStorageCancellable;
+#endif
 #else
     RefPtr<NetworkingContext> m_context;
 #endif
