@@ -1,3 +1,21 @@
+2016-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid null dereference when changing focus in design mode.
+        https://bugs.webkit.org/show_bug.cgi?id=162877
+        <rdar://problem/28061261>
+
+        Reviewed by Chris Dumez.
+
+        The bare m_frame pointer in DOMWindow can be cleared when setting focus to a new element. Check
+        that the m_frame pointer is non-null before using it after calling a routine that could
+        clear the pointer value.
+
+        Test: fast/frames/iframe-focus-crash.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus): Check that the pointer is still non-null after setting the
+        current focused element to nullptr.
+
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for KeyboardEvent.key attribute

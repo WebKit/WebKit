@@ -1005,7 +1005,9 @@ void DOMWindow::focus(bool allowFocus)
     if (focusedFrame && focusedFrame != m_frame)
         focusedFrame->document()->setFocusedElement(nullptr);
 
-    m_frame->eventHandler().focusDocumentView();
+    // setFocusedElement may clear m_frame, so recheck before using it.
+    if (m_frame)
+        m_frame->eventHandler().focusDocumentView();
 }
 
 void DOMWindow::blur()
