@@ -102,10 +102,12 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
     if (ScrollingStateNode* node = stateNodeForID(newNodeID)) {
         if (nodeTypeAndParentMatch(*node, nodeType, parentID))
             return newNodeID;
-        
+
+#if ENABLE(ASYNC_SCROLLING)
         // If the type has changed, we need to destroy and recreate the node with a new ID.
         if (nodeType != node->nodeType())
             newNodeID = m_scrollingCoordinator->uniqueScrollLayerID();
+#endif
 
         // The node is being re-parented. To do that, we'll remove it, and then create a new node.
         removeNodeAndAllDescendants(node, SubframeNodeRemoval::Orphan);
