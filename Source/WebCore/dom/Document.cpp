@@ -629,8 +629,6 @@ Document::~Document()
     if (m_styleSheetList)
         m_styleSheetList->detachFromDocument();
 
-    if (m_elementSheet)
-        m_elementSheet->detachFromDocument();
     extensionStyleSheets().detachFromDocument();
 
     clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
@@ -2963,16 +2961,6 @@ void Document::updateBaseURL()
     if (!m_baseURL.isValid())
         m_baseURL = URL();
 
-    if (m_elementSheet) {
-        // Element sheet is silly. It never contains anything.
-        ASSERT(!m_elementSheet->contents().ruleCount());
-        bool usesStyleBasedEditability = m_elementSheet->contents().usesStyleBasedEditability();
-        m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
-        // FIXME: So we are not really the parser. The right fix is to eliminate the element sheet completely.
-        if (usesStyleBasedEditability)
-            m_elementSheet->contents().parserSetUsesStyleBasedEditability();
-    }
-
     if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
         // Base URL change changes any relative visited links.
         // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
@@ -3158,16 +3146,9 @@ void Document::didRemoveAllPendingStylesheet()
         view()->scrollToFragment(m_url);
 }
 
-CSSStyleSheet& Document::elementSheet()
-{
-    if (!m_elementSheet)
-        m_elementSheet = CSSStyleSheet::createInline(*this, m_baseURL);
-    return *m_elementSheet;
-}
-
 bool Document::usesStyleBasedEditability() const
 {
-    if (m_elementSheet && m_elementSheet->contents().usesStyleBasedEditability())
+    if (m_hasElementUsingStyleBasedEditability)
         return true;
 
     ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
@@ -3176,6 +3157,11 @@ bool Document::usesStyleBasedEditability() const
     auto& authorSheets = const_cast<AuthorStyleSheets&>(authorStyleSheets());
     authorSheets.flushPendingUpdate();
     return authorSheets.usesStyleBasedEditability();
+}
+
+void Document::setHasElementUsingStyleBasedEditability()
+{
+    m_hasElementUsingStyleBasedEditability = true;
 }
 
 void Document::processHttpEquiv(const String& equiv, const String& content, bool isInDocumentHead)

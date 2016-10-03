@@ -26,22 +26,11 @@
 #ifndef JSCSSStyleDeclarationCustom_h
 #define JSCSSStyleDeclarationCustom_h
 
-#include "CSSRule.h"
-#include "CSSStyleDeclaration.h"
-#include "CSSStyleSheet.h"
-#include "JSCSSStyleDeclaration.h"
-#include "JSStyleSheetCustom.h"
-
 namespace WebCore {
 
-inline void* root(CSSStyleDeclaration* style)
-{
-    if (CSSRule* parentRule = style->parentRule())
-        return root(parentRule);
-    if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
-        return root(styleSheet);
-    return style;
-}
+class CSSStyleDeclaration;
+
+void* root(CSSStyleDeclaration*);
 
 }
 

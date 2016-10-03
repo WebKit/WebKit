@@ -135,14 +135,13 @@ static Ref<ImmutableStyleProperties> createStyleProperties(ParsedPropertyVector&
 
 Ref<ImmutableStyleProperties> CSSParserImpl::parseInlineStyleDeclaration(const String& string, Element* element)
 {
-    Document& document = element->document();
-    CSSParserContext context = CSSParserContext(document.elementSheet().contents().parserContext());
-    CSSParserMode mode = element->isHTMLElement() && !document.inQuirksMode() ? HTMLStandardMode : HTMLQuirksMode;
-    context.mode = mode;
-    CSSParserImpl parser(context, &document.elementSheet().contents());
+    CSSParserContext context(element->document());
+    context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
+
+    CSSParserImpl parser(context);
     CSSTokenizer::Scope scope(string);
     parser.consumeDeclarationList(scope.tokenRange(), StyleRule::Style);
-    return createStyleProperties(parser.m_parsedProperties, mode);
+    return createStyleProperties(parser.m_parsedProperties, context.mode);
 }
 
 bool CSSParserImpl::parseDeclarationList(MutableStyleProperties* declaration, const String& string, const CSSParserContext& context)

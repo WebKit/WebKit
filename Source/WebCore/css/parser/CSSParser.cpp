@@ -1312,22 +1312,16 @@ RefPtr<CSSValueList> CSSParser::parseFontFaceValue(const AtomicString& string)
     return WTFMove(valueList);
 }
 
-CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
+CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration, CSSPropertyID propertyID, const String& string, bool important, const CSSParserContext& context, StyleSheetContents* contextStyleSheet)
 {
     ASSERT(!string.isEmpty());
-    CSSParser::ParseResult result = parseSimpleLengthValue(declaration, propertyID, string, important, cssParserMode);
+    CSSParser::ParseResult result = parseSimpleLengthValue(declaration, propertyID, string, important, context.mode);
     if (result != ParseResult::Error)
         return result;
 
-    result = parseColorValue(declaration, propertyID, string, important, cssParserMode);
+    result = parseColorValue(declaration, propertyID, string, important,  context.mode);
     if (result != ParseResult::Error)
         return result;
-
-    CSSParserContext context(cssParserMode);
-    if (contextStyleSheet) {
-        context = contextStyleSheet->parserContext();
-        context.mode = cssParserMode;
-    }
 
     result = parseKeywordValue(declaration, propertyID, string, important, context, contextStyleSheet);
     if (result != ParseResult::Error)
@@ -1341,14 +1335,8 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return parser.parseValue(declaration, propertyID, string, important, contextStyleSheet);
 }
 
-CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomicString& propertyName, const String& string, bool important, CSSParserMode cssParserMode, StyleSheetContents* contextStyleSheet)
+CSSParser::ParseResult CSSParser::parseCustomPropertyValue(MutableStyleProperties& declaration, const AtomicString& propertyName, const String& string, bool important, const CSSParserContext& context, StyleSheetContents* contextStyleSheet)
 {
-    CSSParserContext context(cssParserMode);
-    if (contextStyleSheet) {
-        context = contextStyleSheet->parserContext();
-        context.mode = cssParserMode;
-    }
-
     CSSParser parser(context);
     parser.setCustomPropertyName(propertyName);
     return parser.parseValue(declaration, CSSPropertyCustom, string, important, contextStyleSheet);
@@ -1447,9 +1435,9 @@ void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorLis
 
 Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, Element* element)
 {
-    CSSParserContext context = element->document().elementSheet().contents().parserContext();
+    CSSParserContext context(element->document());
     context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
-    return CSSParser(context).parseDeclaration(string, &element->document().elementSheet().contents());
+    return CSSParser(context).parseDeclaration(string, nullptr);
 }
 
 Ref<ImmutableStyleProperties> CSSParser::parseDeclaration(const String& string, StyleSheetContents* contextStyleSheet)

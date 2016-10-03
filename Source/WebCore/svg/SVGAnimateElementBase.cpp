@@ -236,7 +236,7 @@ static inline void applyCSSPropertyToTarget(SVGElement& targetElement, CSSProper
 {
     ASSERT(!targetElement.m_deletionHasBegun);
 
-    if (!targetElement.ensureAnimatedSMILStyleProperties().setProperty(id, value, false, 0))
+    if (!targetElement.ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
         return;
 
     targetElement.setNeedsStyleRecalc(SyntheticStyleChange);

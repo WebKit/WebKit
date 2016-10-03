@@ -1,3 +1,65 @@
+2016-10-03  Antti Koivisto  <antti@apple.com>
+
+        Remove Document::elementSheet()
+        https://bugs.webkit.org/show_bug.cgi?id=162876
+
+        Reviewed by Andreas Kling.
+
+        This is a Document owned stylesheet that exists as a context for parsing element inline style.
+        It never contains any rules and is generally confusing.
+
+        This patch removes the requirement for a stylesheet to be present for CSSParser to operate in
+        the correct context. Inline style is now parsed without stylesheet and a context object is
+        passed instead.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::root):
+        * bindings/js/JSCSSStyleDeclarationCustom.h:
+        (WebCore::root): Deleted.
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::cssParserContext):
+        (WebCore::StyleRuleCSSStyleDeclaration::parentStyleSheet):
+        (WebCore::StyleRuleCSSStyleDeclaration::cssParserContext):
+        (WebCore::InlineCSSStyleDeclaration::parentStyleSheet):
+        (WebCore::InlineCSSStyleDeclaration::cssParserContext):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (WebCore::PropertySetCSSStyleDeclaration::didMutate): Deleted.
+        * css/StyleProperties.cpp:
+        (WebCore::MutableStyleProperties::setProperty):
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        (WebCore::MutableStyleProperties::parseDeclaration):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseCustomPropertyValue):
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseInlineStyleDeclaration):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::usesStyleBasedEditability):
+        (WebCore::Document::setHasElementUsingStyleBasedEditability):
+        (WebCore::Document::elementSheet): Deleted.
+        * dom/Document.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::setInlineStyleFromString):
+        (WebCore::StyledElement::invalidateStyleAttribute):
+
+            The usesStyleBasedEditability bit used to be set via the elementSheet. Instead check for it after inline style mutations.
+
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::invalidateStyleAttribute): Deleted.
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::applyCSSPropertyToTarget):
+
 2016-10-03  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid null dereference when changing focus in design mode.

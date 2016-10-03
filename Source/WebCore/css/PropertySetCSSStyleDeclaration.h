@@ -26,6 +26,7 @@
 #ifndef PropertySetCSSStyleDeclaration_h
 #define PropertySetCSSStyleDeclaration_h
 
+#include "CSSParserMode.h"
 #include "CSSStyleDeclaration.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -75,6 +76,7 @@ protected:
     enum MutationType { NoChanges, PropertyChanged };
     virtual bool willMutate() WARN_UNUSED_RETURN { return true; }
     virtual void didMutate(MutationType) { }
+    virtual CSSParserContext cssParserContext() const;
 
     MutableStyleProperties* m_propertySet;
     std::unique_ptr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
@@ -105,6 +107,7 @@ private:
 
     bool willMutate() final WARN_UNUSED_RETURN;
     void didMutate(MutationType) final;
+    CSSParserContext cssParserContext() const final;
 
     unsigned m_refCount;
     CSSRule* m_parentRule;
@@ -125,6 +128,7 @@ private:
     void clearParentElement() final { m_parentElement = 0; }
 
     void didMutate(MutationType) final;
+    CSSParserContext cssParserContext() const final;
 
     StyledElement* m_parentElement;
 };

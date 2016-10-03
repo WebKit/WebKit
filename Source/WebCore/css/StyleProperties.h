@@ -199,7 +199,8 @@ public:
     bool addParsedProperty(const CSSProperty&);
 
     // These expand shorthand properties into multiple properties.
-    bool setProperty(CSSPropertyID, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
+    bool setProperty(CSSPropertyID, const String& value, bool important, CSSParserContext, StyleSheetContents* = nullptr);
+    bool setProperty(CSSPropertyID, const String& value, bool important = false);
     void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
@@ -214,7 +215,7 @@ public:
     void mergeAndOverrideOnConflict(const StyleProperties&);
 
     void clear();
-    bool parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet);
+    bool parseDeclaration(const String& styleDeclaration, CSSParserContext, StyleSheetContents* = nullptr);
 
     WEBCORE_EXPORT CSSStyleDeclaration* ensureCSSStyleDeclaration();
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(StyledElement* parentElement);
@@ -225,7 +226,7 @@ public:
     Vector<CSSProperty, 4> m_propertyVector;
 
     // Methods for querying and altering CSS custom properties.
-    bool setCustomProperty(const String& propertyName, const String& value, bool important = false, StyleSheetContents* contextStyleSheet = 0);
+    bool setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext, StyleSheetContents* = nullptr);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
 private:

@@ -131,8 +131,8 @@ public:
     RefPtr<StyleKeyframe> parseKeyframeRule(StyleSheetContents*, const String&);
     bool parseSupportsCondition(const String&);
 
-    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, CSSParserMode, StyleSheetContents*);
-    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomicString& propertyName, const String&, bool important, CSSParserMode, StyleSheetContents* contextStyleSheet);
+    static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&, StyleSheetContents*);
+    static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomicString& propertyName, const String&, bool important, const CSSParserContext&, StyleSheetContents* contextStyleSheet);
 
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool isValidSystemColorValue(CSSValueID);

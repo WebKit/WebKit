@@ -31,6 +31,7 @@
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StyleProperties.h"
+#include "StyleSheetContents.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -153,7 +154,7 @@ void PropertySetCSSStyleDeclaration::setCssText(const String& text, ExceptionCod
     if (!willMutate())
         return;
 
-    bool changed = m_propertySet->parseDeclaration(text, contextStyleSheet());
+    bool changed = m_propertySet->parseDeclaration(text, cssParserContext(), contextStyleSheet());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
@@ -231,7 +232,12 @@ void PropertySetCSSStyleDeclaration::setProperty(const String& propertyName, con
         return;
 
     ec = 0;
-    bool changed = propertyID != CSSPropertyCustom ? m_propertySet->setProperty(propertyID, value, important, contextStyleSheet()) : m_propertySet->setCustomProperty(propertyName, value, important, contextStyleSheet());
+
+    bool changed;
+    if (propertyID == CSSPropertyCustom)
+        changed = m_propertySet->setCustomProperty(propertyName, value, important, cssParserContext(), contextStyleSheet());
+    else
+        changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext(), contextStyleSheet());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
@@ -290,7 +296,7 @@ bool PropertySetCSSStyleDeclaration::setPropertyInternal(CSSPropertyID propertyI
         return false;
 
     ec = 0;
-    bool changed = m_propertySet->setProperty(propertyID, value, important, contextStyleSheet());
+    bool changed = m_propertySet->setProperty(propertyID, value, important, cssParserContext(), contextStyleSheet());
 
     didMutate(changed ? PropertyChanged : NoChanges);
 
@@ -319,6 +325,11 @@ StyleSheetContents* PropertySetCSSStyleDeclaration::contextStyleSheet() const
 { 
     CSSStyleSheet* cssStyleSheet = parentStyleSheet();
     return cssStyleSheet ? &cssStyleSheet->contents() : 0;
+}
+
+CSSParserContext PropertySetCSSStyleDeclaration::cssParserContext() const
+{
+    return CSSParserContext(m_propertySet->cssParserMode());
 }
 
 Ref<MutableStyleProperties> PropertySetCSSStyleDeclaration::copyProperties() const
@@ -373,7 +384,16 @@ void StyleRuleCSSStyleDeclaration::didMutate(MutationType type)
 
 CSSStyleSheet* StyleRuleCSSStyleDeclaration::parentStyleSheet() const
 {
-    return m_parentRule ? m_parentRule->parentStyleSheet() : 0;
+    return m_parentRule ? m_parentRule->parentStyleSheet() : nullptr;
+}
+
+CSSParserContext StyleRuleCSSStyleDeclaration::cssParserContext() const
+{
+    auto* styleSheet = contextStyleSheet();
+    if (!styleSheet)
+        return PropertySetCSSStyleDeclaration::cssParserContext();
+
+    return styleSheet->parserContext();
 }
 
 void StyleRuleCSSStyleDeclaration::reattach(MutableStyleProperties& propertySet)
@@ -399,7 +419,17 @@ void InlineCSSStyleDeclaration::didMutate(MutationType type)
 
 CSSStyleSheet* InlineCSSStyleDeclaration::parentStyleSheet() const
 {
-    return m_parentElement ? &m_parentElement->document().elementSheet() : 0;
+    return nullptr;
+}
+
+CSSParserContext InlineCSSStyleDeclaration::cssParserContext() const
+{
+    if (!m_parentElement)
+        return PropertySetCSSStyleDeclaration::cssParserContext();
+
+    CSSParserContext context(m_parentElement->document());
+    context.mode = m_propertySet->cssParserMode();
+    return context;
 }
 
 } // namespace WebCore

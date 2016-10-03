@@ -725,28 +725,37 @@ bool StyleProperties::isPropertyImplicit(CSSPropertyID propertyID) const
     return propertyAt(foundPropertyIndex).isImplicit();
 }
 
-bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important, CSSParserContext parserContext, StyleSheetContents* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty())
         return removeProperty(propertyID);
 
+    parserContext.mode = cssParserMode();
+
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseValue(*this, propertyID, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseValue(*this, propertyID, value, important, parserContext, contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
-bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, const String& value, bool important)
+{
+    CSSParserContext parserContext(cssParserMode());
+    return setProperty(propertyID, value, important, parserContext);
+}
+
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, const String& value, bool important, CSSParserContext parserContext, StyleSheetContents* contextStyleSheet)
 {
     // Setting the value to an empty string just removes the property in both IE and Gecko.
     // Setting it to null seems to produce less consistent results, but we treat it just the same.
     if (value.isEmpty())
         return removeCustomProperty(propertyName);
 
+    parserContext.mode = cssParserMode();
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, cssParserMode(), contextStyleSheet) == CSSParser::ParseResult::Changed;
+    return CSSParser::parseCustomPropertyValue(*this, propertyName, value, important, parserContext, contextStyleSheet) == CSSParser::ParseResult::Changed;
 }
 
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
@@ -798,16 +807,13 @@ bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, CSSPropertyID
     return setProperty(CSSProperty(propertyID, CSSValuePool::singleton().createIdentifierValue(identifier), important));
 }
 
-bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, StyleSheetContents* contextStyleSheet)
+bool MutableStyleProperties::parseDeclaration(const String& styleDeclaration, CSSParserContext context, StyleSheetContents* contextStyleSheet)
 {
     auto oldProperties = WTFMove(m_propertyVector);
     m_propertyVector.clear();
 
-    CSSParserContext context(cssParserMode());
-    if (contextStyleSheet) {
-        context = contextStyleSheet->parserContext();
-        context.mode = cssParserMode();
-    }
+    context.mode = cssParserMode();
+
     CSSParser parser(context);
     parser.parseDeclaration(*this, styleDeclaration, 0, contextStyleSheet);
 

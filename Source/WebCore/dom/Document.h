@@ -648,8 +648,8 @@ public:
     bool canNavigate(Frame* targetFrame);
     Frame* findUnsafeParentScrollPropagationBoundary();
 
-    CSSStyleSheet& elementSheet();
     bool usesStyleBasedEditability() const;
+    void setHasElementUsingStyleBasedEditability();
     
     virtual Ref<DocumentParser> createParser();
     DocumentParser* parser() const { return m_parser.get(); }
@@ -1446,7 +1446,7 @@ private:
 
     std::unique_ptr<DOMImplementation> m_implementation;
 
-    RefPtr<CSSStyleSheet> m_elementSheet;
+    bool m_hasElementUsingStyleBasedEditability { false };
 
     bool m_printing;
     bool m_paginatedForScreen;

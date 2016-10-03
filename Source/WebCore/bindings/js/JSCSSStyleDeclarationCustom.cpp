@@ -29,10 +29,15 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "CSSRule.h"
+#include "CSSStyleDeclaration.h"
+#include "CSSStyleSheet.h"
 #include "CSSValue.h"
 #include "HashTools.h"
+#include "JSCSSStyleDeclaration.h"
 #include "JSCSSValue.h"
 #include "JSNode.h"
+#include "JSStyleSheetCustom.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StyleProperties.h"
@@ -47,6 +52,17 @@
 using namespace JSC;
 
 namespace WebCore {
+
+void* root(CSSStyleDeclaration* style)
+{
+    if (auto* parentRule = style->parentRule())
+        return root(parentRule);
+    if (auto* styleSheet = style->parentStyleSheet())
+        return root(styleSheet);
+    if (auto* parentElement = style->parentElement())
+        return root(parentElement);
+    return style;
+}
 
 void JSCSSStyleDeclaration::visitAdditionalChildren(SlotVisitor& visitor)
 {
