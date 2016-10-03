@@ -67,7 +67,6 @@ extern "C" {
     M(StorageAPI) \
     M(TextInput) \
     M(ViewGestures) \
-    M(VirtualMemory) \
     M(VisibleRects) \
 
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
