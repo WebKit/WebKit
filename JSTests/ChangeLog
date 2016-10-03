@@ -1,3 +1,12 @@
+2016-10-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] GeneratorFunction (a.k.a. GeneratorWrapperFunction)'s prototype object does not have constructor property
+        https://bugs.webkit.org/show_bug.cgi?id=162849
+
+        Reviewed by Geoffrey Garen.
+
+        * test262.yaml:
+
 2016-10-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Align attributes of Generator related properties to spec

@@ -357,12 +357,16 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
         PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
         if (!isValidOffset(offset)) {
             JSObject* prototype = nullptr;
-            if (thisObject->jsExecutable()->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode)
+            if (thisObject->jsExecutable()->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode) {
+                // Unlike function instances, the object that is the value of the a GeneratorFunction's prototype
+                // property does not have a constructor property whose value is the GeneratorFunction instance.
+                // https://tc39.github.io/ecma262/#sec-generatorfunction-instances-prototype
                 prototype = constructEmptyObject(exec, thisObject->globalObject(vm)->generatorPrototype());
-            else
+            } else {
                 prototype = constructEmptyObject(exec);
+                prototype->putDirect(vm, vm.propertyNames->constructor, thisObject, DontEnum);
+            }
 
-            prototype->putDirect(vm, vm.propertyNames->constructor, thisObject, DontEnum);
             thisObject->putDirect(vm, vm.propertyNames->prototype, prototype, DontDelete | DontEnum);
             offset = thisObject->getDirectOffset(vm, vm.propertyNames->prototype, attributes);
             ASSERT(isValidOffset(offset));
