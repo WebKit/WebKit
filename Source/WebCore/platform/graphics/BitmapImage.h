@@ -122,6 +122,9 @@ public:
     NativeImagePtr nativeImageOfSize(const IntSize&) override;
     Vector<NativeImagePtr> framesNativeImages() override;
 #endif
+#if USE(DIRECT2D)
+    void setRenderTarget(GraphicsContext&);
+#endif
 
 protected:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);

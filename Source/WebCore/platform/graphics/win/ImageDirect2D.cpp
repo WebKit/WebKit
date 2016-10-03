@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #include "config.h"
 #include "Image.h"
 
-#if USE(CG)
-
 #include "BitmapImage.h"
 #include "BitmapInfo.h"
-#include "GraphicsContextCG.h"
-#include <ApplicationServices/ApplicationServices.h>
+#include "GraphicsContext.h"
+#include "ImageObserver.h"
+#include "NotImplemented.h"
+#include <d2d1.h>
 #include <windows.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -42,23 +42,19 @@ RefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
 {
     DIBSECTION dibSection;
     if (!GetObject(hBitmap, sizeof(DIBSECTION), &dibSection))
-        return 0;
+        return nullptr;
 
     ASSERT(dibSection.dsBm.bmBitsPixel == 32);
     if (dibSection.dsBm.bmBitsPixel != 32)
-        return 0;
+        return nullptr;
 
     ASSERT(dibSection.dsBm.bmBits);
     if (!dibSection.dsBm.bmBits)
-        return 0;
+        return nullptr;
 
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreate(dibSection.dsBm.bmBits, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight, 8,
-        dibSection.dsBm.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst));
+    notImplemented();
 
-    // The BitmapImage takes ownership of this.
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
-
-    return adoptRef(new BitmapImage(WTFMove(cgImage)));
+    return nullptr;
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
@@ -71,19 +67,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     ASSERT(bmpInfo.bmBitsPixel == 32);
     int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
     
-    CGContextRef cgContext = CGBitmapContextCreate(bmpInfo.bmBits, bmpInfo.bmWidth, bmpInfo.bmHeight,
-        8, bmpInfo.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-  
-    GraphicsContext gc(cgContext);
-
-    FloatSize imageSize = BitmapImage::size();
-    if (size)
-        drawFrameMatchingSourceSize(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), *size, CompositeCopy);
-    else
-        draw(gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), CompositeCopy, BlendModeNormal, ImageOrientationDescription());
-
-    // Do cleanup
-    CGContextRelease(cgContext);
+    notImplemented();
 
     return true;
 }
@@ -92,8 +76,9 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        CGImageRef image = frameImageAtIndex(i).get();
-        if (image && CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
+        auto image = frameImageAtIndex(i).get();
+        auto imageSize = image->GetSize();
+        if (image && clampTo<size_t>(imageSize.height) == static_cast<size_t>(srcSize.height()) && clampTo<size_t>(imageSize.width) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
             draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), compositeOp, BlendModeNormal, ImageOrientationDescription());
@@ -107,6 +92,21 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
     draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 
-} // namespace WebCore
+void BitmapImage::setRenderTarget(GraphicsContext& context)
+{
+    m_source.setRenderTarget(context);
+}
 
-#endif
+void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
+{
+    if (!nativeImageForCurrentFrame())
+        return;
+
+    ctxt.drawPattern(*this, destRect, tileRect, patternTransform, phase, spacing, op, blendMode);
+
+    if (imageObserver())
+        imageObserver()->didDraw(this);
+}
+
+} // namespace WebCore

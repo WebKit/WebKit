@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2016 Apple Inc.  All rights reserved.
- * Copyright (C) 2007-2008 Torch Mobile, Inc.
- * Copyright (C) 2012 Company 100 Inc.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,49 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "GraphicsTypes.h"
-#include "ImageOrientation.h"
-
-#if USE(CG)
+#include "Image.h"
+#include "IntSize.h"
+#include <runtime/Uint8ClampedArray.h>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-typedef struct CGImage* CGImageRef;
-#elif USE(CAIRO)
-#include "RefPtrCairo.h"
-#elif USE(WINGDI)
-#include "SharedBitmap.h"
-#endif
 
-#if USE(DIRECT2D)
-#include "COMPtr.h"
-#include <d2d1.h>
-#endif
+interface ID2D1RenderTarget;
 
 namespace WebCore {
 
-class Color;
-class FloatRect;
-class IntSize;
-class GraphicsContext;
+struct ImageBufferData {
+    IntSize backingStoreSize;
+    Checked<unsigned, RecordOverflow> bytesPerRow;
 
-#if USE(CG)
-typedef RetainPtr<CGImageRef> NativeImagePtr;
-#elif USE(DIRECT2D)
-typedef COMPtr<ID2D1Bitmap> NativeImagePtr;
-#elif USE(CAIRO)
-typedef RefPtr<cairo_surface_t> NativeImagePtr;
-#elif USE(WINGDI)
-typedef RefPtr<SharedBitmap> NativeImagePtr;
-#endif
+    // Only for software ImageBuffers.
+    void* data { nullptr };
+    std::unique_ptr<GraphicsContext> context;
+    ID2D1RenderTarget* m_compatibleTarget { nullptr };
 
-IntSize nativeImageSize(const NativeImagePtr&);
-bool nativeImageHasAlpha(const NativeImagePtr&);
-Color nativeImageSinglePixelSolidColor(const NativeImagePtr&);
+    RefPtr<Uint8ClampedArray> getData(const IntRect&, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale) const;
+    void putData(Uint8ClampedArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize&, bool accelerateRendering, bool unmultiplied, float resolutionScale);
+};
 
-float subsamplingScale(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect);
-
-void drawNativeImage(const NativeImagePtr&, GraphicsContext&, const FloatRect&, const FloatRect&, const IntSize&, CompositeOperator, BlendMode, const ImageOrientation&);
-void clearNativeImageSubimages(const NativeImagePtr&);
-    
-}
+} // namespace WebCore

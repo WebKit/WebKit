@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if USE(CG)
-#include "ImageBufferDataCG.h"
-#elif USE(DIRECT2D)
-#include "ImageBufferDataDirect2D.h"
-#elif USE(CAIRO)
-#include "ImageBufferDataCairo.h"
+#include "config.h"
+#include "ImageBufferData.h"
+
+#if USE(DIRECT2D)
+
+#include "GraphicsContext.h"
+#include "IntRect.h"
+#include "NotImplemented.h"
+#include <d2d1.h>
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
+#include <runtime/Uint8ClampedArray.h>
+#include <wtf/Assertions.h>
+
+namespace WebCore {
+
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect&, const IntSize&, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */) const
+{
+    notImplemented();
+    return nullptr;
+}
+
+void ImageBufferData::putData(Uint8ClampedArray*& /* source */, const IntSize& /* sourceSize */, const IntRect& /* sourceRect */, const IntPoint& /* destPoint */, const IntSize& /* size */, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */)
+{
+    notImplemented();
+}
+
+} // namespace WebCore
+
 #endif

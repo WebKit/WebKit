@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class GraphicsContext;
 class ImageDecoder;
 class ImageOrientation;
 class IntPoint;
@@ -94,6 +95,10 @@ public:
     SubsamplingLevel subsamplingLevelForScale(float);
     void setAllowSubsampling(bool allowSubsampling) { m_allowSubsampling = allowSubsampling; }
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
+
+#if USE(DIRECT2D)
+    void setRenderTarget(GraphicsContext& context) { m_frameCache.setRenderTarget(context); }
+#endif
 
 private:
     void clearFrameBufferCache(size_t);

@@ -1,3 +1,43 @@
+2016-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add D2D Bitmap Image handling code
+        https://bugs.webkit.org/show_bug.cgi?id=162761
+
+        Reviewed by Dean Jackson.
+
+        This patch lands a set of new files that implement
+        Image and BitmapImage features on Windows using
+        Direct2D.
+
+        The desired ID2D1RenderTarget handle is needed by the
+        image decoder so that it can load the resulting bitmap
+        into the GPU.
+
+        No new tests until complete backend lands.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw): Tell the Direct2D image decoder
+        which render target to use.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageBuffer.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferData.h:
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::setRenderTarget): Added.
+        * platform/graphics/ImageFrameCache.h:
+        (WebCore::ImageFrameCache::decoder): Added.
+        * platform/graphics/ImageSource.cpp:
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::setRenderTarget):
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp: Added.
+        * platform/graphics/win/ImageBufferDataDirect2D.h: Added.
+        * platform/graphics/win/ImageBufferDirect2D.cpp: Added.
+        * platform/graphics/win/ImageCGWin.cpp:
+        * platform/graphics/win/ImageDecoderDirect2D.cpp: Added.
+        * platform/graphics/win/ImageDecoderDirect2D.h: Added.
+        * platform/graphics/win/ImageDirect2D.cpp: Added.
+        * platform/graphics/win/NativeImageDirect2D.cpp: Added.
+
 2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove unused methods toSoupMessage from ResourceRequest/Response

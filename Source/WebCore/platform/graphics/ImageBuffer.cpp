@@ -81,7 +81,7 @@ FloatRect ImageBuffer::clampedRect(const FloatRect& rect)
     return FloatRect(rect.location(), clampedSize(rect.size()));
 }
 
-#if !USE(CG)
+#if !(USE(CG) || USE(DIRECT2D))
 FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
 {
     return size;

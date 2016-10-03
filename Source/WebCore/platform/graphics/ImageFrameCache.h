@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class GraphicsContext;
 class Image;
 class ImageDecoder;
 
@@ -43,6 +44,8 @@ public:
     ImageFrameCache(NativeImagePtr&&);
 
     void setDecoder(ImageDecoder* decoder) { m_decoder = decoder; }
+    ImageDecoder* decoder() const { return m_decoder; }
+
     unsigned decodedSize() const { return m_decodedSize; }
     void destroyDecodedData(bool destroyAll = true, size_t count = 0);
     bool destroyDecodedDataIfNecessary(bool destroyAll = true, size_t count = 0);
@@ -78,6 +81,10 @@ public:
     float frameDurationAtIndex(size_t);
     ImageOrientation frameOrientationAtIndex(size_t);
     NativeImagePtr frameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
+
+#if USE(DIRECT2D)
+    void setRenderTarget(GraphicsContext&);
+#endif
 
 private:
     template<typename T, T (ImageDecoder::*functor)() const>

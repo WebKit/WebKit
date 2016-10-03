@@ -141,6 +141,10 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
+#if USE(DIRECT2D)
+    setRenderTarget(context);
+#endif
+
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
 #else

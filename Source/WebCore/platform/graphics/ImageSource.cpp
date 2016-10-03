@@ -31,6 +31,9 @@
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
+#elif USE(DIRECT2D)
+#include "ImageDecoderDirect2D.h"
+#include <WinCodec.h>
 #else
 #include "ImageDecoder.h"
 #endif

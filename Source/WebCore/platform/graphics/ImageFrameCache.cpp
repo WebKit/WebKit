@@ -31,6 +31,10 @@
 
 #if USE(CG)
 #include "ImageDecoderCG.h"
+#elif USE(DIRECT2D)
+#include "GraphicsContext.h"
+#include "ImageDecoderDirect2D.h"
+#include <WinCodec.h>
 #else
 #include "ImageDecoder.h"
 #endif
@@ -373,5 +377,13 @@ NativeImagePtr ImageFrameCache::frameImageAtIndex(size_t index, SubsamplingLevel
 {
     return frameMetadataAtIndex<NativeImagePtr, (&ImageFrame::nativeImage)>(index, subsamplingLevel, ImageFrame::Caching::MetadataAndImage);
 }
+
+#if USE(DIRECT2D)
+void ImageFrameCache::setRenderTarget(GraphicsContext& context)
+{
+    if (m_decoder)
+        m_decoder->setRenderTarget(context.platformContext());
+}
+#endif
 
 }
