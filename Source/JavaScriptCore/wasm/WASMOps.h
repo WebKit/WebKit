@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// This file is auto-generated using wasm.json.
+
 #pragma once
 
 #if ENABLE(WEBASSEMBLY)
@@ -30,46 +32,71 @@
 namespace JSC { namespace WASM {
 
 #define FOR_EACH_WASM_SPECIAL_OP(macro) \
-    macro(I32Const, 0x10, NA) \
-    macro(GetLocal, 0x14, NA) \
-    macro(SetLocal, 0x15, NA)
+    macro(I32Const, 0x10, Oops) \
+    macro(I64Const, 0x11, Oops) \
+    macro(F64Const, 0x12, Oops) \
+    macro(F32Const, 0x13, Oops) \
+    macro(GetLocal, 0x14, Oops) \
+    macro(SetLocal, 0x15, Oops) \
+    macro(TeeLocal, 0x19, Oops) \
+    macro(GetGlobal, 0xbb, Oops) \
+    macro(SetGlobal, 0xbc, Oops)
 
 #define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
-    macro(Block, 0x01, NA) \
-    macro(Loop, 0x02, NA) \
-    macro(If, 0x03, NA) \
-    macro(Else, 0x04, NA) \
-    macro(Branch, 0x06, NA) \
-    macro(BranchIf, 0x07, NA) \
-    macro(Return, 0x09, NA) \
-    macro(End, 0x0f, NA)
+    macro(Unreachable, 0x0, Oops) \
+    macro(Block, 0x1, Oops) \
+    macro(Loop, 0x2, Oops) \
+    macro(If, 0x3, Oops) \
+    macro(Else, 0x4, Oops) \
+    macro(Select, 0x5, Oops) \
+    macro(Br, 0x6, Oops) \
+    macro(BrIf, 0x7, Oops) \
+    macro(BrTable, 0x8, Oops) \
+    macro(Return, 0x9, Oops) \
+    macro(Drop, 0xb, Oops) \
+    macro(Nop, 0xa, Oops) \
+    macro(End, 0xf, Oops)
 
 #define FOR_EACH_WASM_UNARY_OP(macro) \
     macro(I32Clz, 0x57, Clz) \
-    /* macro(I32Ctz, 0x58) */ \
-    /* macro(I32PopCnt, 0x59) */ \
-    /* macro(I32Eqz, 0x5a) */ \
+    macro(I32Ctz, 0x58, Oops) \
+    macro(I32Popcnt, 0x59, Oops) \
     macro(I64Clz, 0x72, Clz) \
-    /* macro(I64Ctz, 0x73) */ \
-    /* macro(I64PopCnt, 0x74) */ \
-    /* macro(I64Eqz, 0xba) */
+    macro(I64Ctz, 0x73, Oops) \
+    macro(I64Popcnt, 0x74, Oops) \
+    macro(F32Abs, 0x7b, Oops) \
+    macro(F32Neg, 0x7c, Oops) \
+    macro(F32Copysign, 0x7d, Oops) \
+    macro(F32Ceil, 0x7e, Oops) \
+    macro(F32Floor, 0x7f, Oops) \
+    macro(F32Trunc, 0x80, Oops) \
+    macro(F32Nearest, 0x81, Oops) \
+    macro(F32Sqrt, 0x82, Oops) \
+    macro(F64Abs, 0x8f, Oops) \
+    macro(F64Neg, 0x90, Oops) \
+    macro(F64Copysign, 0x91, Oops) \
+    macro(F64Ceil, 0x92, Oops) \
+    macro(F64Floor, 0x93, Oops) \
+    macro(F64Trunc, 0x94, Oops) \
+    macro(F64Nearest, 0x95, Oops) \
+    macro(F64Sqrt, 0x96, Oops)
 
 #define FOR_EACH_WASM_BINARY_OP(macro) \
     macro(I32Add, 0x40, Add) \
     macro(I32Sub, 0x41, Sub) \
     macro(I32Mul, 0x42, Mul) \
     macro(I32DivS, 0x43, Div) \
-    /* macro(I32DivU, 0x44) */ \
+    macro(I32DivU, 0x44, Oops) \
     macro(I32RemS, 0x45, Mod) \
-    /* macro(I32RemU, 0x46, Mod) */ \
+    macro(I32RemU, 0x46, Oops) \
     macro(I32And, 0x47, BitAnd) \
     macro(I32Or, 0x48, BitOr) \
     macro(I32Xor, 0x49, BitXor) \
     macro(I32Shl, 0x4a, Shl) \
     macro(I32ShrU, 0x4b, SShr) \
     macro(I32ShrS, 0x4c, ZShr) \
-    /* macro(I32RotR, 0xb6) */ \
-    /* macro(I32RotL, 0xb7) */ \
+    macro(I32Rotr, 0xb6, Oops) \
+    macro(I32Rotl, 0xb7, Oops) \
     macro(I32Eq, 0x4d, Equal) \
     macro(I32Ne, 0x4e, NotEqual) \
     macro(I32LtS, 0x4f, LessThan) \
@@ -84,23 +111,52 @@ namespace JSC { namespace WASM {
     macro(I64Sub, 0x5c, Sub) \
     macro(I64Mul, 0x5d, Mul) \
     macro(I64DivS, 0x5e, Div) \
-    /* macro(I64DivU, 0x5f) */ \
+    macro(I64DivU, 0x5f, Oops) \
     macro(I64RemS, 0x60, Mod) \
-    /* macro(I64RemU, 0x61) */ \
+    macro(I64RemU, 0x61, Oops) \
     macro(I64And, 0x62, BitAnd) \
     macro(I64Or, 0x63, BitOr) \
     macro(I64Xor, 0x64, BitXor) \
     macro(I64Shl, 0x65, Shl) \
     macro(I64ShrU, 0x66, SShr) \
     macro(I64ShrS, 0x67, ZShr) \
-    /* macro(I64RotR, 0xb8) */ \
-    /* macro(I64RotL, 0xb9) */ \
+    macro(I64Rotr, 0xb8, Oops) \
+    macro(I64Rotl, 0xb9, Oops) \
     macro(I64Eq, 0x68, Equal) \
     macro(I64Ne, 0x69, NotEqual) \
     macro(I64LtS, 0x6a, LessThan) \
     macro(I64LeS, 0x6b, LessEqual) \
     macro(I64LtU, 0x6c, Below) \
     macro(I64LeU, 0x6d, BelowEqual) \
+    macro(I64GtS, 0x6e, GreaterThan) \
+    macro(I64GeS, 0x6f, GreaterEqual) \
+    macro(I64GtU, 0x70, Above) \
+    macro(I64GeU, 0x71, AboveEqual) \
+    macro(F32Add, 0x75, Oops) \
+    macro(F32Sub, 0x76, Oops) \
+    macro(F32Mul, 0x77, Oops) \
+    macro(F32Div, 0x78, Oops) \
+    macro(F32Min, 0x79, Oops) \
+    macro(F32Max, 0x7a, Oops) \
+    macro(F32Eq, 0x83, Oops) \
+    macro(F32Ne, 0x84, Oops) \
+    macro(F32Lt, 0x85, Oops) \
+    macro(F32Le, 0x86, Oops) \
+    macro(F32Gt, 0x87, Oops) \
+    macro(F32Ge, 0x88, Oops) \
+    macro(F64Add, 0x89, Oops) \
+    macro(F64Sub, 0x8a, Oops) \
+    macro(F64Mul, 0x8b, Oops) \
+    macro(F64Div, 0x8c, Oops) \
+    macro(F64Min, 0x8d, Oops) \
+    macro(F64Max, 0x8e, Oops) \
+    macro(F64Eq, 0x97, Oops) \
+    macro(F64Ne, 0x98, Oops) \
+    macro(F64Lt, 0x99, Oops) \
+    macro(F64Le, 0x9a, Oops) \
+    macro(F64Gt, 0x9b, Oops) \
+    macro(F64Ge, 0x9c, Oops)
+
 
 
 #define FOR_EACH_WASM_OP(macro) \
@@ -141,3 +197,4 @@ inline bool isControlOp(OpType op)
 } } // namespace JSC::WASM
 
 #endif // ENABLE(WEBASSEMBLY)
+

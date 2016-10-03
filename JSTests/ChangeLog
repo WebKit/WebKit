@@ -1,3 +1,15 @@
+2016-10-03  JF Bastien  <jfbastien@apple.com>
+
+        Auto-generate WASMOps.h, share with testing JSON file
+        https://bugs.webkit.org/show_bug.cgi?id=162870
+
+        Reviewed by Keith Miller.
+
+        * stress/wasm/to-c++.js: Added. Generates WASMOps.h, siilar to the current one but with more data.
+        (const.opcode_iterator):
+        (opcode_macroizer):
+        * stress/wasm/wasm.json: Added. Data from 0xC binary format version.
+
 2016-10-03  Saam Barati  <sbarati@apple.com>
 
         MapHash should speculate on the type of its child node

@@ -1,3 +1,16 @@
+2016-10-03  JF Bastien  <jfbastien@apple.com>
+
+        Auto-generate WASMOps.h, share with testing JSON file
+        https://bugs.webkit.org/show_bug.cgi?id=162870
+
+        Reviewed by Keith Miller.
+
+        Add a few new opcodes, but keep this mostly as-is for now. I want
+        to generate smarter code but will do so in a later update to
+        reduce disruption.
+
+        * wasm/WASMOps.h: auto-generated from ./JSTests/stress/wasm/to-c++.js
+
 2016-10-03  Michael Saboff  <msaboff@apple.com>
 
         Creating pcToOriginMap in FTL shouldn't insert unnecessary NOPs

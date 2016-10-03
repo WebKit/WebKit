@@ -214,14 +214,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.addElse(m_controlStack.last());
     }
 
-    case OpType::Branch:
-    case OpType::BranchIf: {
+    case OpType::Br:
+    case OpType::BrIf: {
         uint32_t target;
         if (!parseVarUInt32(target) || target >= m_controlStack.size())
             return false;
 
         ExpressionType condition = Context::emptyExpression;
-        if (op == OpType::BranchIf)
+        if (op == OpType::BrIf)
             condition = m_expressionStack.takeLast();
         else
             m_unreachableBlocks = 1;
@@ -245,6 +245,19 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.endBlock(data, m_expressionStack);
     }
 
+    case OpType::Unreachable:
+    case OpType::Select:
+    case OpType::BrTable:
+    case OpType::Nop:
+    case OpType::Drop:
+    case OpType::I64Const:
+    case OpType::F32Const:
+    case OpType::F64Const:
+    case OpType::TeeLocal:
+    case OpType::GetGlobal:
+    case OpType::SetGlobal:
+        // FIXME: Not yet implemented.
+        return false;
     }
 
     // Unknown opcode.
@@ -284,8 +297,8 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
     }
 
     // two immediate cases
-    case OpType::Branch:
-    case OpType::BranchIf: {
+    case OpType::Br:
+    case OpType::BrIf: {
         uint32_t unused;
         if (!parseVarUInt32(unused))
             return false;
