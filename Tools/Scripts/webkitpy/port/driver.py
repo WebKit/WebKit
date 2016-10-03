@@ -338,7 +338,10 @@ class Driver(object):
         environment['TMPDIR'] = str(self._driver_tempdir)
         environment['DIRHELPER_USER_DIR_SUFFIX'] = self._driver_user_directory_suffix
         # Put certain normally persistent files into the temp directory (e.g. IndexedDB storage).
-        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
+        if sys.platform == 'cygwin':
+            environment['DUMPRENDERTREE_TEMP'] = path.cygpath(str(self._driver_tempdir))
+        else:
+            environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
         environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
         environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
