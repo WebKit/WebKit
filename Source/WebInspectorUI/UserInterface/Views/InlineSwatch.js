@@ -51,8 +51,10 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
             break;
         }
 
+        this._boundSwatchElementClicked = null;
         if (!readOnly) {
-            this._swatchElement.addEventListener("click", this._swatchElementClicked.bind(this));
+            this._boundSwatchElementClicked = this._swatchElementClicked.bind(this);
+            this._swatchElement.addEventListener("click", this._boundSwatchElementClicked);
             if (this._type === WebInspector.InlineSwatch.Type.Color)
                 this._swatchElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this));
         }
@@ -83,7 +85,7 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
         this._updateSwatch(true);
     }
 
-    // Protected
+    // Popover delegate
 
     didDismissPopover(popover)
     {
@@ -92,6 +94,9 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
         if (typeof this._valueEditor.removeListeners === "function")
             this._valueEditor.removeListeners();
+
+        if (this._boundSwatchElementClicked)
+            this._swatchElement.addEventListener("click", this._boundSwatchElementClicked);
 
         this.dispatchEventToListeners(WebInspector.InlineSwatch.Event.Deactivated);
     }
@@ -164,6 +169,9 @@ WebInspector.InlineSwatch = class InlineSwatch extends WebInspector.Object
 
         popover.content = this._valueEditor.element;
         popover.present(bounds.pad(2), [WebInspector.RectEdge.MIN_X]);
+
+        if (this._boundSwatchElementClicked)
+            this._swatchElement.removeEventListener("click", this._boundSwatchElementClicked);
 
         this.dispatchEventToListeners(WebInspector.InlineSwatch.Event.Activated);
 
