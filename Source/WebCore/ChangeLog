@@ -1,3 +1,33 @@
+2016-10-03  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] LayoutItem and Button classes
+        https://bugs.webkit.org/show_bug.cgi?id=162868
+        <rdar://problem/28590166>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the new Button class and its parent class LayoutItem. We will subclass Button
+        a lot in coming patches, as it provides a way to create a button and provide a delegate to
+        respond to UI events via the `uiDelegate` property. A Button extends a LayoutItem, another
+        class that we'll subclass heavily in coming patches, which is simply a LayoutNode with a
+        `layoutDelegate` which allows to set the node's `layoutTraits`, a bit-mask allowing to
+        specify layout attributes such as the platform and playback styles. 
+
+        Tests: media/modern-media-controls/button/button.html
+               media/modern-media-controls/layout-item/layout-item.html
+
+        * Modules/modern-media-controls/controls/button.css: Added.
+        (button):
+        * Modules/modern-media-controls/controls/button.js: Added.
+        (Button):
+        (Button.prototype.get enabled):
+        (Button.prototype.set enabled):
+        (Button.prototype.handleEvent):
+        (Button.prototype._handleUIEvent):
+        * Modules/modern-media-controls/controls/layout-item.js: Added.
+        (LayoutItem.prototype.get layoutTraits):
+        (LayoutItem):
+
 2016-10-03  Andy Estes  <aestes@apple.com>
 
         ASSERTION FAILED: url.containsOnlyASCII() in WebCore::checkEncodedString() when parsing an invalid CSS cursor URL

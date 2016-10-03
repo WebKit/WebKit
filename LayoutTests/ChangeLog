@@ -1,3 +1,18 @@
+2016-10-03  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] LayoutItem and Button classes
+        https://bugs.webkit.org/show_bug.cgi?id=162868
+        <rdar://problem/28590166>
+
+        Reviewed by Dean Jackson.
+
+        Testing all public properties and methods of the LayoutItem and Button classes.
+
+        * media/modern-media-controls/button/button-expected.txt: Added.
+        * media/modern-media-controls/button/button.html: Added.
+        * media/modern-media-controls/layout-item/layout-item-expected.txt: Added.
+        * media/modern-media-controls/layout-item/layout-item.html: Added.
+
 2016-10-03  Andy Estes  <aestes@apple.com>
 
         ASSERTION FAILED: url.containsOnlyASCII() in WebCore::checkEncodedString() when parsing an invalid CSS cursor URL
