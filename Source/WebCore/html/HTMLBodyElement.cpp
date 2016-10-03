@@ -82,7 +82,7 @@ void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& 
     if (name == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
-            auto imageValue = CSSImageValue::create(document().completeURL(url).string());
+            auto imageValue = CSSImageValue::create(document().completeURL(url));
             imageValue.get().setInitiator(localName());
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));
         }

@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-CSSImageValue::CSSImageValue(const String& url)
+CSSImageValue::CSSImageValue(URL&& url)
     : CSSValue(ImageClass)
-    , m_url(url)
+    , m_url(WTFMove(url))
     , m_accessedImage(false)
 {
 }
@@ -65,7 +65,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
     if (!m_accessedImage) {
         m_accessedImage = true;
 
-        CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
+        CachedResourceRequest request(ResourceRequest(m_url), options);
         if (m_initiatorName.isEmpty())
             request.setInitiator(cachedResourceRequestInitiators().css);
         else

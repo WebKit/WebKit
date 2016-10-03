@@ -1,3 +1,44 @@
+2016-10-03  Andy Estes  <aestes@apple.com>
+
+        ASSERTION FAILED: url.containsOnlyASCII() in WebCore::checkEncodedString() when parsing an invalid CSS cursor URL
+        https://bugs.webkit.org/show_bug.cgi?id=162763
+        <rdar://problem/28572758>
+
+        Reviewed by Youenn Fablet.
+
+        CSSCursorImageValue copies the URL of its underlying CSSImageValue by using the
+        ParsedURLString URL constructor on the String returned by CSSImageValue::url(). While
+        CSSImageValues were always being constructed from a URL implicitly converted to a String,
+        nothing ensured that the URL was valid. For invalid URLs, URL::string() returns the string
+        it was constructed with, which might still represent a relative URL or contain non-ASCII
+        characters, violating the preconditions of the ParsedURLString URL constructor and causing
+        an assertion to fail in Debug builds.
+
+        Fix this by having CSSImageValue store its image URL using a WebCore::URL rather than a
+        String. CSSCursorImageValue can then copy this URL instead of attempting to re-parse a
+        possibly-invalid URL string.
+
+        Test: fast/css/cursor-with-invalid-url.html
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue): Copied m_imageValue.url() into
+        m_originalURL instead of using the ParsedURLString URL constructor, since
+        CSSImageValue::url() now returns a WebCore::URL.
+        (WebCore::CSSCursorImageValue::loadImage): Created a URL from cursorElement->href() by
+        calling Document::completeURL().
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue): Changed to take a URL&& instead of a const String&.
+        (WebCore::CSSImageValue::loadImage): Stopped calling Document::completeURL(), since m_url is
+        now a WebCore::URL.
+        * css/CSSImageValue.h: Changed url() to return a const URL&, and changed m_url to be a URL.
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute): Removed a call to
+        URL::string().
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute): Ditto.
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForPresentationAttribute): Ditto.
+
 2016-10-03  Zalan Bujtas  <zalan@apple.com>
 
         Log an error to stderr when FrameView::layout() fails to clean all the renderers.

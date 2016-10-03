@@ -1,5 +1,16 @@
 2016-10-03  Andy Estes  <aestes@apple.com>
 
+        ASSERTION FAILED: url.containsOnlyASCII() in WebCore::checkEncodedString() when parsing an invalid CSS cursor URL
+        https://bugs.webkit.org/show_bug.cgi?id=162763
+        <rdar://problem/28572758>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/css/cursor-with-invalid-url.html: Added.
+        * fast/css/cursor-with-invalid-url-expected.txt: Added.
+
+2016-10-03  Andy Estes  <aestes@apple.com>
+
         ASSERTION FAILED: result in WebCore::CSSParser::parseURI
         https://bugs.webkit.org/show_bug.cgi?id=141638
         <rdar://problem/27709952>

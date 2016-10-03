@@ -52,7 +52,7 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedN
     else if (name == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url).string())));
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url))));
     } else if (name == valignAttr) {
         if (equalLettersIgnoringASCIICase(value, "top"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
