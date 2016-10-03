@@ -558,3 +558,5 @@ webkit.org/b/162524 [ Sierra Release ] http/tests/cache/disk-cache/disk-cache-re
 webkit.org/b/162510 [ Debug ] fast/images/animated-gif-restored-from-bfcache.html [ Pass Failure ]
 
 webkit.org/b/161745 http/tests/security/anchor-download-allow-data.html [ Pass Failure ]
+
+webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
