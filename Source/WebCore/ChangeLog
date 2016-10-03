@@ -1,3 +1,64 @@
+2016-10-03  Youenn Fablet  <youenn@apple.com>
+
+        Remove FetchBody::m_isEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=162857
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Moving handling of null bodies in FetchBodyOwner, by having an Optional<FetchBody> in FetchBodyOwner.
+        Moving storage of m_contentType in FetchBodyOwner.
+
+        Moving header storage from FetchResponse/FetchRequest to FetchBodyOwner, as it helps updating m_contentType.
+
+        * Modules/fetch/FetchBody.cpp: removing m_isEmpty and m_contentType.
+        (WebCore::FetchBody::extract): Computes the default content-type which is stored in FetchBodyOwner.
+        (WebCore::FetchBody::blob):
+        (WebCore::FetchBody::consume):
+        (WebCore::FetchBody::consumeAsStream):
+        (WebCore::FetchBody::loadingSucceeded):
+        (WebCore::FetchBody::bodyForInternalRequest):
+        (WebCore::FetchBody::clone):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::loadingBody):
+        (WebCore::FetchBody::FetchBody):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::FetchBodyOwner):
+        (WebCore::FetchBodyOwner::stop):
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::cloneBody): Needs to clone m_contentType as well.
+        (WebCore::FetchBodyOwner::extractBody):
+        (WebCore::FetchBodyOwner::updateContentType):
+        (WebCore::FetchBodyOwner::consumeOnceLoadingFinished):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        (WebCore::FetchBodyOwner::loadBlob):
+        (WebCore::FetchBodyOwner::blobLoadingSucceeded):
+        (WebCore::FetchBodyOwner::blobLoadingFailed):
+        (WebCore::FetchBodyOwner::finishBlobLoading):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::body):
+        (WebCore::FetchBodyOwner::isBodyNull):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody):
+        (WebCore::FetchRequest::internalRequest):
+        (WebCore::FetchRequest::clone):
+        * Modules/fetch/FetchRequest.h:
+        (WebCore::FetchRequest::FetchRequest):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::initializeWith):
+        (WebCore::FetchResponse::FetchResponse):
+        (WebCore::FetchResponse::cloneForJS):
+        (WebCore::FetchResponse::fetch):
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse):
+        (WebCore::FetchResponse::BodyLoader::start):
+        (WebCore::FetchResponse::createReadableStreamSource):
+        * Modules/fetch/FetchResponse.h:
+
 2016-10-03  Andy Estes  <aestes@apple.com>
 
         ASSERTION FAILED: result in WebCore::CSSParser::parseURI

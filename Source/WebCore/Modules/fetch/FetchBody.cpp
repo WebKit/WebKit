@@ -47,90 +47,39 @@
 
 namespace WebCore {
 
-FetchBody::FetchBody(Ref<const Blob>&& blob)
-    : m_data(WTFMove(blob))
-    , m_contentType(this->blobBody().type())
+Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value, String& contentType)
 {
-}
-
-FetchBody::FetchBody(DOMFormData& formData, Document& document)
-    : m_data(FormData::createMultiPart(formData, formData.encoding(), &document))
-    , m_contentType(makeString("multipart/form-data;boundary=", this->formDataBody().boundary().data()))
-{
-}
-
-FetchBody::FetchBody(String&& text)
-    : m_data(WTFMove(text))
-    , m_contentType(ASCIILiteral("text/plain;charset=UTF-8"))
-{
-}
-
-FetchBody::FetchBody(Ref<const ArrayBuffer>&& data)
-    : m_data(WTFMove(data))
-{
-}
-
-FetchBody::FetchBody(Ref<const ArrayBufferView>&& dataView)
-    : m_data(WTFMove(dataView))
-{
-}
-
-FetchBody::FetchBody(Ref<const URLSearchParams>&& url)
-    : m_data(WTFMove(url))
-    , m_contentType(ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8"))
-{
-}
-
-FetchBody::FetchBody(const String& contentType, const FetchBodyConsumer& consumer)
-    : m_contentType(contentType)
-    , m_consumer(consumer)
-{
-}
-
-FetchBody FetchBody::extract(ScriptExecutionContext& context, JSC::ExecState& state, JSC::JSValue value)
-{
-    if (value.inherits(JSBlob::info()))
-        return FetchBody(*JSBlob::toWrapped(value));
+    if (value.inherits(JSBlob::info())) {
+        auto& blob = *JSBlob::toWrapped(value);
+        contentType = blob.type();
+        return FetchBody(blob);
+    }
     if (value.inherits(JSDOMFormData::info())) {
         ASSERT(!context.isWorkerGlobalScope());
-        return FetchBody(*JSDOMFormData::toWrapped(value), static_cast<Document&>(context));
+        auto& domFormData = *JSDOMFormData::toWrapped(value);
+        auto formData = FormData::createMultiPart(domFormData, domFormData.encoding(), &static_cast<Document&>(context));
+        contentType = makeString("multipart/form-data;boundary=", formData->boundary().data());
+        return FetchBody(WTFMove(formData));
     }
-    if (value.isString())
+    if (value.isString()) {
+        contentType = ASCIILiteral("text/plain;charset=UTF-8");
         return FetchBody(value.toWTFString(&state));
-    if (value.inherits(JSURLSearchParams::info()))
+    }
+    if (value.inherits(JSURLSearchParams::info())) {
+        contentType = ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8");
         return FetchBody(*JSURLSearchParams::toWrapped(value));
-    if (value.inherits(JSReadableStream::info())) {
-        FetchBody body;
-        body.m_isEmpty = false;
-        return body;
-    } if (value.inherits(JSC::JSArrayBuffer::info())) {
+    }
+    if (value.inherits(JSReadableStream::info()))
+        return FetchBody();
+    if (value.inherits(JSC::JSArrayBuffer::info())) {
         ArrayBuffer* data = toArrayBuffer(value);
         ASSERT(data);
-        return { *data };
+        return FetchBody(*data);
     }
     if (value.inherits(JSC::JSArrayBufferView::info()))
-        return { toArrayBufferView(value).releaseConstNonNull() };
+        return FetchBody(toArrayBufferView(value).releaseConstNonNull());
 
-    return { };
-}
-
-FetchBody FetchBody::extractFromBody(FetchBody* body)
-{
-    if (!body)
-        return { };
-
-    return FetchBody(WTFMove(*body));
-}
-
-void FetchBody::updateContentType(FetchHeaders& headers)
-{
-    String contentType = headers.fastGet(HTTPHeaderName::ContentType);
-    if (!contentType.isNull()) {
-        m_contentType = contentType;
-        return;
-    }
-    if (!m_contentType.isNull())
-        headers.fastSet(HTTPHeaderName::ContentType, m_contentType);
+    return Nullopt;
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
@@ -139,10 +88,10 @@ void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
+void FetchBody::blob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& contentType)
 {
     m_consumer.setType(FetchBodyConsumer::Type::Blob);
-    m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
+    m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(contentType)));
     consume(owner, WTFMove(promise));
 }
 
@@ -194,16 +143,12 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         consumeBlob(owner, WTFMove(promise));
         return;
     }
-    if (m_consumer.hasData()) {
-        m_consumer.resolve(WTFMove(promise));
-        return;
-    }
     if (isFormData()) {
         // FIXME: Support consuming FormData.
         promise->reject(0);
         return;
     }
-    ASSERT_NOT_REACHED();
+    m_consumer.resolve(WTFMove(promise));
 }
 
 #if ENABLE(READABLE_STREAM_API)
@@ -227,12 +172,12 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchResponseSource& sour
     } else if (isBlob()) {
         owner.loadBlob(blobBody(), nullptr);
         m_data = nullptr;
-    } else if (m_consumer.hasData())
-        closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
-    else if (isEmpty())
-        closeStream = true;
-    else
+    } else if (isFormData())
         source.error(ASCIILiteral("not implemented"));
+    else if (m_consumer.hasData())
+        closeStream = source.enqueue(m_consumer.takeAsArrayBuffer());
+    else
+        closeStream = true;
 
     if (closeStream)
         source.close();
@@ -275,15 +220,12 @@ void FetchBody::loadingFailed()
 
 void FetchBody::loadingSucceeded()
 {
-    m_isEmpty = !m_consumer.hasData();
     if (m_consumePromise)
         m_consumer.resolve(m_consumePromise.releaseNonNull());
 }
 
 RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& context) const
 {
-    if (isEmpty())
-        return nullptr;
     if (isText())
         return FormData::create(UTF8Encoding().encode(textBody(), EntitiesForUnencodables));
     if (isURLSearchParams())
@@ -310,8 +252,7 @@ RefPtr<FormData> FetchBody::bodyForInternalRequest(ScriptExecutionContext& conte
 FetchBody FetchBody::clone() const
 {
     ASSERT(!m_consumePromise);
-    FetchBody clone(m_contentType, m_consumer);
-    clone.m_isEmpty = m_isEmpty;
+    FetchBody clone(m_consumer);
 
     if (isArrayBuffer())
         clone.m_data = arrayBufferBody();

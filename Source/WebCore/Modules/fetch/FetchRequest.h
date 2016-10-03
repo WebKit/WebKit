@@ -32,7 +32,6 @@
 #if ENABLE(FETCH_API)
 
 #include "FetchBodyOwner.h"
-#include "FetchHeaders.h"
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
 
@@ -45,7 +44,7 @@ typedef int ExceptionCode;
 
 class FetchRequest final : public FetchBodyOwner {
 public:
-    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, { }, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
+    static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
 
     FetchHeaders* initializeWith(FetchRequest&, const Dictionary&, ExceptionCode&);
     FetchHeaders* initializeWith(const String&, const Dictionary&, ExceptionCode&);
@@ -95,7 +94,7 @@ public:
     const String& internalRequestReferrer() const { return m_internalRequest.referrer; }
 
 private:
-    FetchRequest(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, InternalRequest&&);
+    FetchRequest(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
 
     void initializeOptions(const Dictionary&, ExceptionCode&);
 
@@ -103,14 +102,12 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    Ref<FetchHeaders> m_headers;
     InternalRequest m_internalRequest;
     mutable String m_requestURL;
 };
 
-inline FetchRequest::FetchRequest(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
-    : FetchBodyOwner(context, WTFMove(body))
-    , m_headers(WTFMove(headers))
+inline FetchRequest::FetchRequest(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, InternalRequest&& internalRequest)
+    : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_internalRequest(WTFMove(internalRequest))
 {
 }

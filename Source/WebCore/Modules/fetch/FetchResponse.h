@@ -31,7 +31,6 @@
 #if ENABLE(FETCH_API)
 
 #include "FetchBodyOwner.h"
-#include "FetchHeaders.h"
 #include "ResourceResponse.h"
 #include <runtime/TypedArrays.h>
 
@@ -53,7 +52,7 @@ class FetchResponse final : public FetchBodyOwner {
 public:
     using Type = ResourceResponse::Type;
 
-    static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
+    static Ref<FetchResponse> create(ScriptExecutionContext& context) { return adoptRef(*new FetchResponse(context, Nullopt, FetchHeaders::create(FetchHeaders::Guard::Response), ResourceResponse())); }
     static Ref<FetchResponse> error(ScriptExecutionContext&);
     static RefPtr<FetchResponse> redirect(ScriptExecutionContext&, const String&, int, ExceptionCode&);
 
@@ -88,7 +87,7 @@ public:
     bool isLoading() const { return !!m_bodyLoader; }
 
 private:
-    FetchResponse(ScriptExecutionContext&, FetchBody&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+    FetchResponse(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
     static void startFetching(ScriptExecutionContext&, const FetchRequest&, FetchPromise&&);
 
@@ -121,7 +120,6 @@ private:
     };
 
     ResourceResponse m_response;
-    Ref<FetchHeaders> m_headers;
     Optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
 

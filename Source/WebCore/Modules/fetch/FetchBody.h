@@ -37,6 +37,7 @@
 #include "FormData.h"
 #include "JSDOMPromise.h"
 #include "URLSearchParams.h"
+#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace JSC {
@@ -55,7 +56,7 @@ class ScriptExecutionContext;
 class FetchBody {
 public:
     void arrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
-    void blob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void blob(FetchBodyOwner&, Ref<DeferredPromise>&&, const String&);
     void json(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void text(FetchBodyOwner&, Ref<DeferredPromise>&&);
     void formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise) { promise.get().reject(0); }
@@ -64,7 +65,6 @@ public:
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
 #endif
 
-    bool isEmpty() const { return m_isEmpty; }
     bool isBlob() const { return std::experimental::holds_alternative<Ref<const Blob>>(m_data); }
     bool isFormData() const { return std::experimental::holds_alternative<Ref<FormData>>(m_data); }
     bool isArrayBuffer() const { return std::experimental::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
@@ -72,13 +72,8 @@ public:
     bool isURLSearchParams() const { return std::experimental::holds_alternative<Ref<const URLSearchParams>>(m_data); }
     bool isText() const { return std::experimental::holds_alternative<String>(m_data); }
 
-    void updateContentType(FetchHeaders&);
-    void setContentType(const String& contentType) { m_contentType = contentType; }
-    String contentType() const { return m_contentType; }
-
-    static FetchBody extract(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue);
-    static FetchBody extractFromBody(FetchBody*);
-    FetchBody() : m_isEmpty(true) { }
+    static Optional<FetchBody> extract(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue, String&);
+    static FetchBody loadingBody() { return { }; }
 
     void loadingFailed();
     void loadingSucceeded();
@@ -93,13 +88,14 @@ public:
     FetchBody clone() const;
 
 private:
-    FetchBody(Ref<const Blob>&&);
-    FetchBody(Ref<const ArrayBuffer>&&);
-    FetchBody(Ref<const ArrayBufferView>&&);
-    FetchBody(DOMFormData&, Document&);
-    FetchBody(String&&);
-    FetchBody(Ref<const URLSearchParams>&&);
-    FetchBody(const String&, const FetchBodyConsumer&);
+    explicit FetchBody(Ref<const Blob>&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(Ref<const ArrayBuffer>&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(Ref<const ArrayBufferView>&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(Ref<FormData>&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(String&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(Ref<const URLSearchParams>&& data) : m_data(WTFMove(data)) { }
+    explicit FetchBody(const FetchBodyConsumer& consumer) : m_consumer(consumer) { }
+    FetchBody() = default;
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
@@ -118,9 +114,6 @@ private:
     const URLSearchParams& urlSearchParamsBody() const { return std::experimental::get<Ref<const URLSearchParams>>(m_data).get(); }
 
     std::experimental::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String> m_data { nullptr };
-    String m_contentType;
-
-    bool m_isEmpty { false };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
     RefPtr<DeferredPromise> m_consumePromise;

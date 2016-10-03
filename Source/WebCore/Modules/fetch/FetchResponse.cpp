@@ -83,14 +83,13 @@ void FetchResponse::setStatus(int status, const String& statusText, ExceptionCod
 void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)
 {
     ASSERT(scriptExecutionContext());
-    m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
-    m_body.updateContentType(m_headers);
+    extractBody(*scriptExecutionContext(), execState, body);
+    updateContentType();
 }
 
-FetchResponse::FetchResponse(ScriptExecutionContext& context, FetchBody&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
-    : FetchBodyOwner(context, WTFMove(body))
+FetchResponse::FetchResponse(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+    : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_response(WTFMove(response))
-    , m_headers(WTFMove(headers))
 {
 }
 
@@ -98,12 +97,15 @@ Ref<FetchResponse> FetchResponse::cloneForJS()
 {
     ASSERT(scriptExecutionContext());
     ASSERT(!isDisturbedOrLocked());
-    return adoptRef(*new FetchResponse(*scriptExecutionContext(), m_body.clone(), FetchHeaders::create(headers()), ResourceResponse(m_response)));
+
+    auto clone = adoptRef(*new FetchResponse(*scriptExecutionContext(), Nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    clone->cloneBody(*this);
+    return clone;
 }
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, FetchPromise&& promise)
 {
-    auto response = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
 
     // Setting pending activity until BodyLoader didFail or didSucceed callback is called.
     response->setPendingActivity(response.ptr());
@@ -123,10 +125,10 @@ const String& FetchResponse::url() const
 void FetchResponse::BodyLoader::didSucceed()
 {
     ASSERT(m_response.hasPendingActivity());
-    m_response.m_body.loadingSucceeded();
+    m_response.m_body->loadingSucceeded();
 
 #if ENABLE(READABLE_STREAM_API)
-    if (m_response.m_readableStreamSource && m_response.body().isEmpty()) {
+    if (m_response.m_readableStreamSource && !m_response.body().consumer().hasData()) {
         // We only close the stream if FetchBody already enqueued all data.
         // Otherwise, FetchBody will close the stream after enqueuing the data.
         m_response.m_readableStreamSource->close();
@@ -174,7 +176,6 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 
     m_response.m_response = resourceResponse;
     m_response.m_headers->filterAndFill(resourceResponse.httpHeaderFields(), FetchHeaders::Guard::Response);
-    m_response.m_body.setContentType(m_response.m_headers->fastGet(HTTPHeaderName::ContentType));
 
     std::exchange(m_promise, Nullopt)->resolve(m_response);
 }
@@ -194,7 +195,7 @@ void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 
 bool FetchResponse::BodyLoader::start(ScriptExecutionContext& context, const FetchRequest& request)
 {
-    m_loader = std::make_unique<FetchLoader>(*this, &m_response.m_body.consumer());
+    m_loader = std::make_unique<FetchLoader>(*this, &m_response.m_body->consumer());
     m_loader->start(context, request);
     return m_loader->isStarted();
 }
@@ -278,7 +279,7 @@ ReadableStreamSource* FetchResponse::createReadableStreamSource()
     ASSERT(!m_readableStreamSource);
     ASSERT(!m_isDisturbed);
 
-    if (body().isEmpty() && !isLoading())
+    if (isBodyNull())
         return nullptr;
 
     m_readableStreamSource = adoptRef(*new FetchResponseSource(*this));

@@ -33,6 +33,7 @@
 
 #include "ActiveDOMObject.h"
 #include "FetchBody.h"
+#include "FetchHeaders.h"
 #include "FetchLoader.h"
 #include "FetchLoaderClient.h"
 #include "FetchResponseSource.h"
@@ -41,7 +42,7 @@ namespace WebCore {
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
-    FetchBodyOwner(ScriptExecutionContext&, FetchBody&&);
+    FetchBodyOwner(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&);
 
     // Exposed Body API
     bool isDisturbed() const { return m_isDisturbed; };
@@ -59,8 +60,13 @@ public:
     bool isActive() const { return !!m_blobLoader; }
 
 protected:
-    const FetchBody& body() const { return m_body; }
-    FetchBody& body() { return m_body; }
+    const FetchBody& body() const { return *m_body; }
+    FetchBody& body() { return *m_body; }
+    bool isBodyNull() const { return !m_body; }
+    void cloneBody(const FetchBodyOwner&);
+
+    void extractBody(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue);
+    void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
     // ActiveDOMObject API
@@ -89,11 +95,13 @@ private:
     };
 
 protected:
-    FetchBody m_body;
+    Optional<FetchBody> m_body;
+    String m_contentType;
     bool m_isDisturbed { false };
 #if ENABLE(READABLE_STREAM_API)
     RefPtr<FetchResponseSource> m_readableStreamSource;
 #endif
+    Ref<FetchHeaders> m_headers;
 
 private:
     Optional<BlobLoader> m_blobLoader;

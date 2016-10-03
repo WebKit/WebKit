@@ -261,23 +261,21 @@ void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRe
         }
 
         ASSERT(scriptExecutionContext());
-        m_body = FetchBody::extract(*scriptExecutionContext(), execState, body);
-        if (m_body.isEmpty()) {
+        extractBody(*scriptExecutionContext(), execState, body);
+        if (isBodyNull()) {
             ec = TypeError;
             return;
         }
-    }
-    else if (request && !request->m_body.isEmpty()) {
+    } else if (request && !request->isBodyNull()) {
         if (!methodCanHaveBody(m_internalRequest)) {
             ec = TypeError;
             return;
         }
 
-        m_body = FetchBody::extractFromBody(&request->m_body);
+        m_body = WTFMove(request->m_body);
         request->setDisturbed();
     }
-
-    m_body.updateContentType(m_headers);
+    updateContentType();
 }
 
 String FetchRequest::referrer() const
@@ -302,7 +300,9 @@ ResourceRequest FetchRequest::internalRequest() const
 
     ResourceRequest request = m_internalRequest.request;
     request.setHTTPHeaderFields(m_headers->internalHeaders());
-    request.setHTTPBody(body().bodyForInternalRequest(*scriptExecutionContext()));
+
+    if (!isBodyNull())
+        request.setHTTPBody(body().bodyForInternalRequest(*scriptExecutionContext()));
 
     return request;
 }
@@ -314,7 +314,9 @@ RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, Except
         return nullptr;
     }
 
-    return adoptRef(*new FetchRequest(context, m_body.clone(), FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
+    auto clone = adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
+    clone->cloneBody(*this);
+    return WTFMove(clone);
 }
 
 const char* FetchRequest::activeDOMObjectName() const
