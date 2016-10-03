@@ -1,3 +1,12 @@
+2016-10-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/security/anchor-download-allow-data.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=161745
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-10-03  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] LayoutItem and Button classes
