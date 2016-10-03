@@ -1,3 +1,25 @@
+2016-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: empty relative URLs should not copy fragment from the base URL
+        https://bugs.webkit.org/show_bug.cgi?id=162864
+
+        Reviewed by Chris Dumez.
+
+        Covered by new API tests.
+
+        * platform/URL.cpp:
+        (WebCore::URL::removeFragmentIdentifier):
+        Optimize removing fragments, now that it happens more often. We don't need to reparse, 
+        because the result will always be equal to just a substring when removing the fragment at the end.
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::copyASCIIStringUntil):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::containsOnlyC0ControlOrSpace):
+        (WebCore::URLParser::URLParser):
+        (WebCore::URLParser::parse):
+        * platform/URLParser.h:
+        Because we are not copying the fragment, we can simplify and remove some unreachable code.
+
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
         td.scope should only return known values

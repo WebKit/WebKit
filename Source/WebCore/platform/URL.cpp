@@ -1106,14 +1106,14 @@ void URL::setFragmentIdentifier(const String& s)
 
 void URL::removeFragmentIdentifier()
 {
-    if (!m_isValid)
+    if (!m_isValid) {
+        ASSERT(!m_fragmentEnd);
+        ASSERT(!m_queryEnd);
         return;
-    if (URLParser::enabled()) {
-        // FIXME: We shouldn't need to parse here.
-        URLParser parser(m_string.left(m_queryEnd));
-        *this = parser.result();
-    } else
-        parse(m_string.left(m_queryEnd));
+    }
+    if (m_fragmentEnd > m_queryEnd)
+        m_string = m_string.left(m_queryEnd);
+    m_fragmentEnd = m_queryEnd;
 }
     
 void URL::setQuery(const String& query)

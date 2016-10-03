@@ -758,21 +758,17 @@ size_t URLParser::urlLengthUntilPart(const URL& url, URLPart part)
     return 0;
 }
 
-void URLParser::copyASCIIStringUntil(const String& string, size_t lengthIf8Bit, size_t lengthIf16Bit)
+void URLParser::copyASCIIStringUntil(const String& string, size_t length)
 {
-    if (string.isNull()) {
-        ASSERT(!lengthIf8Bit);
-        ASSERT(!lengthIf16Bit);
+    RELEASE_ASSERT(length <= string.length());
+    if (string.isNull())
         return;
-    }
     ASSERT(m_asciiBuffer.isEmpty());
     if (string.is8Bit()) {
-        RELEASE_ASSERT(lengthIf8Bit <= string.length());
-        appendToASCIIBuffer(string.characters8(), lengthIf8Bit);
+        appendToASCIIBuffer(string.characters8(), length);
     } else {
-        RELEASE_ASSERT(lengthIf16Bit <= string.length());
         const UChar* characters = string.characters16();
-        for (size_t i = 0; i < lengthIf16Bit; ++i) {
+        for (size_t i = 0; i < length; ++i) {
             UChar c = characters[i];
             ASSERT_WITH_SECURITY_IMPLICATION(isASCII(c));
             appendToASCIIBuffer(c);
@@ -787,28 +783,10 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
 
     m_asciiBuffer.clear();
     m_unicodeFragmentBuffer.clear();
-    if (part == URLPart::FragmentEnd) {
-        copyASCIIStringUntil(base.m_string, urlLengthUntilPart(base, URLPart::FragmentEnd), urlLengthUntilPart(base, URLPart::QueryEnd));
-        if (!base.m_string.is8Bit()) {
-            const String& fragment = base.m_string;
-            bool seenUnicode = false;
-            for (size_t i = base.m_queryEnd; i < base.m_fragmentEnd; ++i) {
-                if (!seenUnicode && !isASCII(fragment[i]))
-                    seenUnicode = true;
-                if (seenUnicode)
-                    m_unicodeFragmentBuffer.uncheckedAppend(fragment[i]);
-                else
-                    m_asciiBuffer.uncheckedAppend(fragment[i]);
-            }
-        }
-    } else {
-        size_t length = urlLengthUntilPart(base, part);
-        copyASCIIStringUntil(base.m_string, length, length);
-    }
+    copyASCIIStringUntil(base.m_string, urlLengthUntilPart(base, part));
     switch (part) {
     case URLPart::FragmentEnd:
-        m_url.m_fragmentEnd = base.m_fragmentEnd;
-        FALLTHROUGH;
+        RELEASE_ASSERT_NOT_REACHED();
     case URLPart::QueryEnd:
         m_url.m_queryEnd = base.m_queryEnd;
         FALLTHROUGH;
@@ -1082,8 +1060,10 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
     : m_inputString(input)
 {
     if (input.isNull()) {
-        if (base.isValid() && !base.m_cannotBeABaseURL)
+        if (base.isValid() && !base.m_cannotBeABaseURL) {
             m_url = base;
+            m_url.removeFragmentIdentifier();
+        }
         return;
     }
 
@@ -1097,7 +1077,8 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
 
     ASSERT(!m_url.m_isValid
         || m_didSeeSyntaxViolation == (m_url.string() != input)
-        || (input.isEmpty() && m_url.m_string == base.m_string));
+        || (input.isAllSpecialCharacters<isC0ControlOrSpace>()
+            && m_url.m_string == base.m_string.left(base.m_queryEnd)));
     ASSERT(internalValuesConsistent(m_url));
 #if !ASSERT_DISABLED
     if (!m_didSeeSyntaxViolation) {
@@ -1755,6 +1736,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         LOG_FINAL_STATE("SchemeStart");
         if (!currentPosition(c) && base.isValid() && !base.m_cannotBeABaseURL) {
             m_url = base;
+            m_url.removeFragmentIdentifier();
             return;
         }
         failure();
@@ -1788,8 +1770,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::Relative:
         LOG_FINAL_STATE("Relative");
-        copyURLPartsUntil(base, URLPart::FragmentEnd, c);
-        break;
+        RELEASE_ASSERT_NOT_REACHED();
     case State::RelativeSlash:
         LOG_FINAL_STATE("RelativeSlash");
         copyURLPartsUntil(base, URLPart::PortEnd, c);
