@@ -190,10 +190,10 @@ void generate(Code& code, CCallHelpers& jit)
     PCToOriginMap& pcToOriginMap = code.proc().pcToOriginMap();
     auto addItem = [&] (Inst& inst) {
         if (!inst.origin) {
-            pcToOriginMap.appendItem(jit.label(), Origin());
+            pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), Origin());
             return;
         }
-        pcToOriginMap.appendItem(jit.label(), inst.origin->origin());
+        pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), inst.origin->origin());
     };
 
     for (BasicBlock* block : code) {

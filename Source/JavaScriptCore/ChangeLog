@@ -1,3 +1,21 @@
+2016-10-03  Michael Saboff  <msaboff@apple.com>
+
+        Creating pcToOriginMap in FTL shouldn't insert unnecessary NOPs
+        https://bugs.webkit.org/show_bug.cgi?id=162879
+
+        Reviewed by Filip Pizlo.
+
+        If there is a recent watchpoint label, using MacroAssembler::label() will pad
+        the instruction stream with NOPs to provide space for a jump.  This changes
+        Air::generate() to use labelIgnoringWatchpoints() to create pcToOriginMap
+        entries to eliminate unneccesary NOPs.
+        
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * b3/testb3.cpp:
+        (JSC::B3::testPCOriginMapDoesntInsertNops): New test.
+        (JSC::B3::run):
+
 2016-10-03  Saam Barati  <sbarati@apple.com>
 
         MapHash should speculate on the type of its child node

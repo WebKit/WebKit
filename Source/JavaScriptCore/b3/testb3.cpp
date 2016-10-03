@@ -13301,6 +13301,32 @@ void testMoveConstants()
     }
 }
 
+void testPCOriginMapDoesntInsertNops()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    CCallHelpers::Label watchpointLabel;
+
+    PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            watchpointLabel = jit.watchpointLabel();
+        });
+
+    patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+    patchpoint->setGenerator(
+        [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+            CCallHelpers::Label labelIgnoringWatchpoints = jit.labelIgnoringWatchpoints();
+
+            CHECK(watchpointLabel == labelIgnoringWatchpoints);
+        });
+
+    root->appendNew<Value>(proc, Return, Origin());
+
+    compile(proc);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14747,6 +14773,7 @@ void run(const char* filter)
     RUN(testTrappingLoadDCE());
     RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
+    RUN(testPCOriginMapDoesntInsertNops());
     
     if (tasks.isEmpty())
         usage();
