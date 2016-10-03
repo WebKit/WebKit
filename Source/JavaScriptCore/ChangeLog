@@ -1,3 +1,19 @@
+2016-10-03  Christopher Reid  <Christopher.Reid@am.sony.com>
+
+        Offline asm should not output masm assembly when using a x86_64 asm backend
+        https://bugs.webkit.org/show_bug.cgi?id=162705
+
+        When cross compiling on windows to Clang, masm was being generated simply because
+        the os was windows. This change adds a command line parameter --assembler=MASM
+        to set the output assembly to masm.
+        The functions isGCC and isCompilingToWindows were removed as they are no longer called.
+
+        Reviewed by Mark Lam.
+
+        * CMakeLists.txt:
+        * offlineasm/asm.rb:
+        * offlineasm/x86.rb:
+
 2016-10-03  JF Bastien  <jfbastien@apple.com>
 
         Auto-generate WASMOps.h, share with testing JSON file
