@@ -33,6 +33,7 @@
 #import "Scrollbar.h"
 #import "WebCoreSystemInterface.h"
 #import "WindowsKeyboardCodes.h"
+#import <HIToolbox/Events.h>
 #import <mach/mach_time.h>
 #import <wtf/ASCIICType.h>
 
@@ -220,30 +221,78 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 
 static inline String textFromEvent(NSEvent* event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if ([event type] == NSEventTypeFlagsChanged)
+#else
     if ([event type] == NSFlagsChanged)
-#pragma clang diagnostic pop
+#endif
         return emptyString();
     return String([event characters]);
 }
 
 static inline String unmodifiedTextFromEvent(NSEvent* event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if ([event type] == NSEventTypeFlagsChanged)
+#else
     if ([event type] == NSFlagsChanged)
-#pragma clang diagnostic pop
+#endif
         return emptyString();
     return String([event charactersIgnoringModifiers]);
 }
 
+String keyForKeyEvent(NSEvent *event)
+{
+    // This constant was missing before OS X Sierra.
+#ifndef kVK_RightCommand
+#define kVK_RightCommand 0x36
+#endif
+    switch ([event keyCode]) {
+    case kVK_RightCommand:
+    case kVK_Command:
+        return ASCIILiteral("Meta");
+    case kVK_Shift:
+    case kVK_RightShift:
+        return ASCIILiteral("Shift");
+    case kVK_CapsLock:
+        return ASCIILiteral("CapsLock");
+    case kVK_Option: // Left Alt.
+    case kVK_RightOption: // Right Alt.
+        return ASCIILiteral("Alt");
+    case kVK_Control:
+    case kVK_RightControl:
+        return ASCIILiteral("Control");
+    }
+
+    // If more than one key is being pressed and the key combination includes one or more modifier keys
+    // that result in the key no longer producing a printable character (e.g., Control + a), then the
+    // key value should be the printable key value that would have been produced if the key had been
+    // typed with the default keyboard layout with no modifier keys except for Shift and AltGr applied.
+    // https://w3c.github.io/uievents/#keys-guidelines
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    bool isControlDown = ([event modifierFlags] & NSEventModifierFlagControl);
+#else
+    bool isControlDown = ([event modifierFlags] & NSControlKeyMask);
+#endif
+    NSString *s = isControlDown ? [event charactersIgnoringModifiers] : [event characters];
+    auto length = [s length];
+    // characters / charactersIgnoringModifiers return an empty string for dead keys.
+    // https://developer.apple.com/reference/appkit/nsevent/1534183-characters
+    if (!length)
+        return ASCIILiteral("Dead");
+    // High unicode codepoints are coded with a character sequence in Mac OS X.
+    if (length > 1)
+        return s;
+    return keyForCharCode([s characterAtIndex:0]);
+}
+
 String keyIdentifierForKeyEvent(NSEvent* event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([event type] == NSFlagsChanged)
-#pragma clang diagnostic pop
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if ([event type] == NSEventTypeFlagsChanged) {
+#else
+    if ([event type] == NSFlagsChanged) {
+#endif
         switch ([event keyCode]) {
             case 54: // Right Command
             case 55: // Left Command
@@ -268,6 +317,7 @@ String keyIdentifierForKeyEvent(NSEvent* event)
                 ASSERT_NOT_REACHED();
                 return emptyString();
         }
+    }
     
     NSString *s = [event charactersIgnoringModifiers];
     if ([s length] != 1) {
@@ -561,6 +611,7 @@ public:
         m_text = textFromEvent(event);
         m_unmodifiedText = unmodifiedTextFromEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
+        m_key = keyForKeyEvent(event);
         m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

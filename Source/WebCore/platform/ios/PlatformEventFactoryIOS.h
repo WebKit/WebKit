@@ -49,6 +49,7 @@ public:
 #endif
 };
 
+WEBCORE_EXPORT String keyForKeyEvent(WebEvent *);
 WEBCORE_EXPORT String keyIdentifierForKeyEvent(WebEvent *);
 
 } // namespace WebCore

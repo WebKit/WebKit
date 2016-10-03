@@ -1,5 +1,33 @@
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Rebaseline because that the tests are failing differently now that we support
+        the key attribute on KeyboardEvent but are still missing other standard API
+        on this interface.
+
+        * web-platform-tests/dom/events/Event-init-while-dispatching-expected.txt:
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Rebaseline because that the tests are failing differently now that we support
+        the key attribute on KeyboardEvent but are still missing other standard API
+        on this interface.
+
+        * web-platform-tests/dom/events/Event-init-while-dispatching-expected.txt:
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
         td.scope should only return known values
         https://bugs.webkit.org/show_bug.cgi?id=162755
 

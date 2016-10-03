@@ -28,18 +28,28 @@
     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
 
-    [InitializedByEventConstructor] readonly attribute DOMString keyIdentifier;
+    [InitializedByEventConstructor, Conditional=KEYBOARD_KEY_ATTRIBUTE] readonly attribute DOMString key;
+
+    // FIXME: We should support this.
+    // [InitializedByEventConstructor] readonly attribute DOMString code;
+
     [InitializedByEventConstructor] readonly attribute unsigned long location;
-    [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation; // Deprecated.
+
     [InitializedByEventConstructor] readonly attribute boolean ctrlKey;
     [InitializedByEventConstructor] readonly attribute boolean shiftKey;
     [InitializedByEventConstructor] readonly attribute boolean altKey;
     [InitializedByEventConstructor] readonly attribute boolean metaKey;
-    readonly attribute boolean altGraphKey;
-
     [InitializedByEventConstructor] readonly attribute boolean repeat;
 
+    // FIXME: We should support this.
+    // readonly attribute boolean isComposing;
+
     boolean getModifierState(DOMString keyArg);
+
+    // Everything below is legacy.
+    [InitializedByEventConstructor] readonly attribute DOMString keyIdentifier;
+    [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation;
+    readonly attribute boolean altGraphKey;
 
     // FIXME: this does not match the version in the DOM spec.
     // FIXME: Using "undefined" as default parameter value is wrong.

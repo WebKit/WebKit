@@ -104,6 +104,9 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()),
                           true, true, key.timestamp(), view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
     , m_keyEvent(std::make_unique<PlatformKeyboardEvent>(key))
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+    , m_key(key.key())
+#endif
     , m_keyIdentifier(key.keyIdentifier())
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
@@ -127,6 +130,9 @@ KeyboardEvent::KeyboardEvent(WTF::HashTableDeletedValueType)
 
 KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventInit& initializer)
     : UIEventWithKeyState(eventType, initializer)
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+    , m_key(initializer.key)
+#endif
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.location)
     , m_repeat(initializer.repeat)

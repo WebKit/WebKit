@@ -30,6 +30,7 @@
 
 namespace WebCore {
 
+String keyForCharCode(unichar charCode);
 String keyIdentifierForCharCode(unichar charCode);
 
 int windowsKeyCodeForKeyCode(uint16_t keyCode);

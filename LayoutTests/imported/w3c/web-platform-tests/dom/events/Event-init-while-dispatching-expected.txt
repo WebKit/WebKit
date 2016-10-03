@@ -1,5 +1,5 @@
 
-FAIL Calling initKeyboardEvent while dispatching. assert_equals: initKeyboardEvent key setter should short-circuit expected (string) "A" but got (undefined) undefined
+PASS Calling initKeyboardEvent while dispatching. 
 PASS Calling initMouseEvent while dispatching. 
 PASS Calling initCustomEvent while dispatching. 
 PASS Calling initUIEvent while dispatching. 

@@ -1,3 +1,45 @@
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/key-events-in-input-button-expected.txt:
+        * fast/events/key-events-in-input-button.html:
+        * fast/events/key-events-in-input-text-expected.txt:
+        * fast/events/key-events-in-input-text.html:
+        * fast/events/keyboardevent-key-expected.txt: Added.
+        * fast/events/keyboardevent-key.html: Added.
+        * fast/events/special-key-events-in-input-text-expected.txt:
+        * fast/events/special-key-events-in-input-text.html:
+        * platform/ios-simulator/TestExpectations:
+
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/key-events-in-input-button-expected.txt:
+        * fast/events/key-events-in-input-button.html:
+        * fast/events/key-events-in-input-text-expected.txt:
+        * fast/events/key-events-in-input-text.html:
+        * fast/events/keyboardevent-key-expected.txt: Added.
+        * fast/events/keyboardevent-key.html: Added.
+        * fast/events/special-key-events-in-input-text-expected.txt:
+        * fast/events/special-key-events-in-input-text.html:
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/index-cursor.html as flaky on mac-wk2.

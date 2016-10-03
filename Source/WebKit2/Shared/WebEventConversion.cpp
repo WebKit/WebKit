@@ -191,6 +191,9 @@ public:
         // PlatformKeyboardEvent
         m_text = webEvent.text();
         m_unmodifiedText = webEvent.unmodifiedText();
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+        m_key = webEvent.key();
+#endif
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
 #if USE(APPKIT) || PLATFORM(GTK)

@@ -255,6 +255,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DATA_DETECTION 1
 #endif
 
+#if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
+#define ENABLE_KEYBOARD_KEY_ATTRIBUTE 1
+#endif
+
 #endif /* PLATFORM(COCOA) */
 
 #if !PLATFORM(COCOA)
@@ -767,6 +771,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 
 #if !defined(ENABLE_XSLT)
 #define ENABLE_XSLT 1
+#endif
+
+#if !defined(ENABLE_KEYBOARD_KEY_ATTRIBUTE)
+#define ENABLE_KEYBOARD_KEY_ATTRIBUTE 0
 #endif
 
 /* Asserts, invariants for macro definitions */

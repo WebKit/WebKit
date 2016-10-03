@@ -129,6 +129,23 @@ String keyIdentifierForKeyEvent(WebEvent *event)
     return keyIdentifierForCharCode(CFStringGetCharacterAtIndex((CFStringRef)s, 0));
 }
 
+String keyForKeyEvent(WebEvent *event)
+{
+    NSString *characters = event.characters;
+    auto length = [characters length];
+
+    // characters return an empty string for dead keys.
+    // https://developer.apple.com/reference/appkit/nsevent/1534183-characters
+    // "Dead" is defined here https://w3c.github.io/uievents-key/#keys-composition.
+    if (!length)
+        return ASCIILiteral("Dead");
+
+    if (length > 1)
+        return characters;
+
+    return keyForCharCode([characters characterAtIndex:0]);
+}
+
 class PlatformKeyboardEventBuilder : public PlatformKeyboardEvent {
 public:
     PlatformKeyboardEventBuilder(WebEvent *event)
@@ -141,6 +158,7 @@ public:
 
         m_text = event.characters;
         m_unmodifiedText = event.charactersIgnoringModifiers;
+        m_key = keyForKeyEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_windowsVirtualKeyCode = event.keyCode;
         m_autoRepeat = event.isKeyRepeating;

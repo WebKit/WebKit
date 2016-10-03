@@ -1,3 +1,79 @@
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Add support for KeyboardEvent.key attribute:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-key
+
+        This is behind a compile time flag that is only enabled on Mac and
+        iOS and the implementation is still missing for other platforms.
+
+        Test: fast/events/keyboardevent-key.html
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::key):
+        * platform/cocoa/KeyEventCocoa.h:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyForCharCode):
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::keyForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder): Deleted.
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue):
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue):
+
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.key attribute
+        https://bugs.webkit.org/show_bug.cgi?id=36267
+
+        Reviewed by Darin Adler.
+
+        Add support for KeyboardEvent.key attribute:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-key
+
+        This is behind a compile time flag that is only enabled on Mac and
+        iOS and the implementation is still missing for other platforms.
+
+        Test: fast/events/keyboardevent-key.html
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::key):
+        * platform/cocoa/KeyEventCocoa.h:
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyForCharCode):
+        * platform/ios/PlatformEventFactoryIOS.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::keyForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder): Deleted.
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue):
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue):
+
 2016-10-03  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: fragment-only URLs relative to file URLs should just add a fragment

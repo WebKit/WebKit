@@ -46,6 +46,7 @@ WEBCORE_EXPORT NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 // FIXME: WebKit2 has a lot of code copied and pasted from PlatformEventFactoryMac in WebEventFactory. More of it should be shared with WebCore.
 WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent *);
 WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent *);
+WEBCORE_EXPORT String keyForKeyEvent(NSEvent *);
 WEBCORE_EXPORT double eventTimeStampSince1970(NSEvent *);
 
 #endif

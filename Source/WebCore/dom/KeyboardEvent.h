@@ -34,6 +34,9 @@ class Node;
 class PlatformKeyboardEvent;
 
 struct KeyboardEventInit : public UIEventWithKeyStateInit {
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+    String key;
+#endif
     String keyIdentifier;
     unsigned location { 0 };
     bool repeat { false };
@@ -46,9 +49,6 @@ public:
         DOM_KEY_LOCATION_LEFT       = 0x01,
         DOM_KEY_LOCATION_RIGHT      = 0x02,
         DOM_KEY_LOCATION_NUMPAD     = 0x03
-        // FIXME: The following values are not supported yet (crbug.com/265446)
-        // DOM_KEY_LOCATION_MOBILE     = 0x04,
-        // DOM_KEY_LOCATION_JOYSTICK   = 0x05
     };
 
     static Ref<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, DOMWindow* view)
@@ -79,6 +79,10 @@ public:
         const String& keyIdentifier, unsigned location,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey = false);
     
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+    const String& key() const { return m_key; }
+#endif
+
     const String& keyIdentifier() const { return m_keyIdentifier; }
     unsigned location() const { return m_location; }
     bool repeat() const { return m_repeat; }
@@ -108,11 +112,14 @@ private:
     WEBCORE_EXPORT KeyboardEvent();
     WEBCORE_EXPORT KeyboardEvent(const PlatformKeyboardEvent&, DOMWindow*);
     KeyboardEvent(const AtomicString&, const KeyboardEventInit&);
-    // FIXME: This method should be get ride of in the future.
+    // FIXME: This method should be get rid of in the future.
     // DO NOT USE IT!
     KeyboardEvent(WTF::HashTableDeletedValueType);
 
     std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;
+#if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
+    String m_key;
+#endif
     String m_keyIdentifier;
     unsigned m_location;
     bool m_repeat : 1;
