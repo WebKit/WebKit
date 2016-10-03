@@ -1459,3 +1459,5 @@ webkit.org/b/162626 imported/w3c/web-platform-tests/media-source/mediasource-liv
 webkit.org/b/162647 [ Sierra+ ] http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
 
 webkit.org/b/162830 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Timeout ]
+
+webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
