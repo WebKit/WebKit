@@ -358,6 +358,13 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL(utf16String(u"http://www.foo。bar.com"), "http://other.com/", {"http", "", "", "www.foo.bar.com", 0, "/", "", "", "http://www.foo.bar.com/"});
     checkRelativeURL(utf16String(u"sc://ñ.test/"), "about:blank", {"sc", "", "", "xn--ida.test", 0, "/", "", "", "sc://xn--ida.test/"});
     checkRelativeURL("#fragment", "http://host/path", {"http", "", "", "host", 0, "/path", "", "fragment", "http://host/path#fragment"});
+    checkRelativeURL("#fragment", "file:///path", {"file", "", "", "", 0, "/path", "", "fragment", "file:///path#fragment"});
+    checkRelativeURL("#fragment", "file:///path#old", {"file", "", "", "", 0, "/path", "", "fragment", "file:///path#fragment"});
+    checkRelativeURL("#", "file:///path#old", {"file", "", "", "", 0, "/path", "", "", "file:///path#"});
+    checkRelativeURL("  ", "file:///path#old", {"file", "", "", "", 0, "/path", "", "", "file:///path"});
+    checkRelativeURL("#", "file:///path", {"file", "", "", "", 0, "/path", "", "", "file:///path#"});
+    checkRelativeURL("#", "file:///path?query", {"file", "", "", "", 0, "/path", "query", "", "file:///path?query#"});
+    checkRelativeURL("#", "file:///path?query#old", {"file", "", "", "", 0, "/path", "query", "", "file:///path?query#"});
     checkRelativeURL("?query", "http://host/path", {"http", "", "", "host", 0, "/path", "query", "", "http://host/path?query"});
     checkRelativeURL("?query#fragment", "http://host/path", {"http", "", "", "host", 0, "/path", "query", "fragment", "http://host/path?query#fragment"});
     checkRelativeURL(utf16String(u"?β"), "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "%CE%B2", "", "http://example.org/foo/bar?%CE%B2"});

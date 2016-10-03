@@ -1,3 +1,16 @@
+2016-10-03  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: fragment-only URLs relative to file URLs should just add a fragment
+        https://bugs.webkit.org/show_bug.cgi?id=162871
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        Instead of adding ///# after copying the base URL to the query, just add an #.
+
 2016-10-03  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] LayoutItem and Button classes

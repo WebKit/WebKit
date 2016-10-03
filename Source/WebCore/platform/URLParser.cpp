@@ -1461,17 +1461,20 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             case '#':
                 syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"))
+                if (base.isValid() && base.protocolIs("file")) {
                     copyURLPartsUntil(base, URLPart::QueryEnd, c);
-                appendToASCIIBuffer("///#", 4);
-                m_url.m_userStart = currentPosition(c) - 2;
-                m_url.m_userEnd = m_url.m_userStart;
-                m_url.m_passwordEnd = m_url.m_userStart;
-                m_url.m_hostEnd = m_url.m_userStart;
-                m_url.m_portEnd = m_url.m_userStart;
-                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-                m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
-                m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+                    appendToASCIIBuffer('#');
+                } else {
+                    appendToASCIIBuffer("///#", 4);
+                    m_url.m_userStart = currentPosition(c) - 2;
+                    m_url.m_userEnd = m_url.m_userStart;
+                    m_url.m_passwordEnd = m_url.m_userStart;
+                    m_url.m_hostEnd = m_url.m_userStart;
+                    m_url.m_portEnd = m_url.m_userStart;
+                    m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                    m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                    m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
+                }
                 state = State::Fragment;
                 ++c;
                 break;
