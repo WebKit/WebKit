@@ -28,6 +28,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
+#include "Logging.h"
 #include "MachPort.h"
 #include <WebCore/MachSendRight.h>
 #include <WebCore/MachVMSPI.h>
@@ -105,7 +106,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     mach_vm_address_t address;
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, round_page(size), VM_FLAGS_ANYWHERE);
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr);
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %{public}s (%x)", nullptr, size, mach_error_string(kr), kr);
         return nullptr;
     }
 
@@ -138,7 +139,7 @@ static WebCore::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, S
     mach_port_t port;
     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. %{public}s (%x)", nullptr, mach_error_string(kr), kr);
         return { };
     }
 
@@ -174,8 +175,10 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
     kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, round_page(handle.m_size), 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
-    if (kr != KERN_SUCCESS)
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %{public}s (%x)", nullptr, mach_error_string(kr), kr);
         return nullptr;
+    }
 
     auto sharedMemory(adoptRef(*new SharedMemory));
     sharedMemory->m_size = handle.m_size;
@@ -190,12 +193,18 @@ SharedMemory::~SharedMemory()
 {
     if (m_data) {
         kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), round_page(m_size));
-        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+        if (kr != KERN_SUCCESS) {
+            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %{public}s (%x)", this, mach_error_string(kr), kr);
+            ASSERT_NOT_REACHED();
+        }
     }
 
     if (m_port) {
         kern_return_t kr = mach_port_deallocate(mach_task_self(), m_port);
-        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+        if (kr != KERN_SUCCESS) {
+            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate port. %{public}s (%x)", this, mach_error_string(kr), kr);
+            ASSERT_NOT_REACHED();
+        }
     }        
 }
     
