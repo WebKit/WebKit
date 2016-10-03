@@ -75,12 +75,12 @@ std::unique_ptr<SoupNetworkSession> SoupNetworkSession::createForSoupSession(Sou
     return std::unique_ptr<SoupNetworkSession>(new SoupNetworkSession(soupSession));
 }
 
-static void authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
+static void authenticateCallback(SoupSession*, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
     if (!handle)
         return;
-    handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, handle.get()));
+    handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(soupMessage, soupAuth, retrying, handle.get()));
 }
 
 #if ENABLE(WEB_TIMING) && !SOUP_CHECK_VERSION(2, 49, 91)

@@ -1,5 +1,31 @@
 2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Simplify AuthenticationChallenge
+        https://bugs.webkit.org/show_bug.cgi?id=162784
+
+        Reviewed by Alex Christensen.
+
+        We don't really need to keep references to the SoupSession and SoupMessage in AuthenticationChallenge, the
+        SoupNetworkSession callback already forwards the challenge to the right ResourceHandle.
+
+        * platform/network/soup/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::authenticationClient):
+        (WebCore::AuthenticationChallenge::soupSession): Deleted.
+        (WebCore::AuthenticationChallenge::soupMessage): Deleted.
+        * platform/network/soup/AuthenticationChallengeSoup.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::platformCompare):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::continueDidReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::authenticateCallback):
+
+2016-10-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Cleanup persistent credential storage code
         https://bugs.webkit.org/show_bug.cgi?id=162777
 

@@ -969,19 +969,16 @@ void ResourceHandle::continueDidReceiveAuthenticationChallenge(const Credential&
     ASSERT(!d->m_currentWebChallenge.isNull());
     AuthenticationChallenge& challenge = d->m_currentWebChallenge;
 
-    ASSERT(challenge.soupSession());
-    ASSERT(challenge.soupMessage());
+    ASSERT(d->m_soupMessage);
     if (!credentialFromPersistentStorage.isEmpty())
         challenge.setProposedCredential(credentialFromPersistentStorage);
 
     if (!client()) {
-        soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+        soup_session_unpause_message(d->soupSession(), d->m_soupMessage.get());
         clearAuthentication();
         return;
     }
 
-    ASSERT(challenge.soupSession());
-    ASSERT(challenge.soupMessage());
     client()->didReceiveAuthenticationChallenge(this, challenge);
 }
 
@@ -1015,7 +1012,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     }
 
     d->m_currentWebChallenge = challenge;
-    soup_session_pause_message(challenge.soupSession(), challenge.soupMessage());
+    soup_session_pause_message(d->soupSession(), d->m_soupMessage.get());
 
     // We could also do this before we even start the request, but that would be at the expense
     // of all request latency, versus a one-time latency for the small subset of requests that
@@ -1036,7 +1033,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
-    soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+    soup_session_unpause_message(d->soupSession(), d->m_soupMessage.get());
 
     clearAuthentication();
 }
@@ -1067,10 +1064,9 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         }
     }
 
-    ASSERT(challenge.soupSession());
-    ASSERT(challenge.soupMessage());
+    ASSERT(d->m_soupMessage);
     soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
-    soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+    soup_session_unpause_message(d->soupSession(), d->m_soupMessage.get());
 
     clearAuthentication();
 }
@@ -1086,9 +1082,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         return;
     }
 
-    ASSERT(challenge.soupSession());
-    ASSERT(challenge.soupMessage());
-    soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+    ASSERT(d->m_soupMessage);
+    soup_session_unpause_message(d->soupSession(), d->m_soupMessage.get());
 
     if (client())
         client()->receivedCancellation(this, challenge);
