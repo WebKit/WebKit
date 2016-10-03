@@ -84,7 +84,8 @@
     
     <p>The value kind is a combination of an opcode and optional flags. The flags allow a single
       opcode to have many variants. For example, Div and Mod may have the Chill flag set to indicate
-      that they should not trap on corner cases.</p>
+      that they should not trap on corner cases. Alternatively, Load/Store opcodes may have the
+      Traps flag set to indicate that they should trap deterministically.</p>
     
     <p>Values also have a unique 32-bit index that is used as the name.</p>
     
@@ -162,6 +163,9 @@
       T)".  This means that the value must take two children of the same type and returns a
       value of that type.  We use the type IntPtr to mean either Int32, or Int64, depending on
       the platform.</p>
+    
+    <p>Some opcodes can have some flags set. A description of flags follows the description of
+      opcodes.</p>
 
     <h3>Opcode descriptions</h3>
 
@@ -236,30 +240,16 @@
         according to the IEEE 854 spec.</dd>
 
       <dt>T Div(T, T)</dt>
-      <dd>
-        <p>Works with any type except Void.  For integer types, this represents signed
-          division with round-to-zero.  By default, its behavior is undefined for x/0 or
-          -2<sup>31</sup>/-1.  For floating point types, this represents division according
-          to the IEEE 854 spec.</p>
-        <p>Integer Div may have the Chill flag set. You can create a Chill Div by saying
-          <code>chill(Div)</code> instead of <code>Div</code>; the former creates a Kind
-          that has Div as the opcode and has the Chill bit set. An operation is said to be
-          chill if it returns a sensible value whenever its non-chill form would have had
-          undefined behavior. Chill Div turns x/0 into 0 and -2<sup>31</sup>/-1 into
-          -2<sup>31</sup>. We recognize this in IR because it's exactly the semantics of
-          division on ARM64, and it's also exactly the semantics that JavaScript wants for
-          "(x/y)|0".</p>
-      </dd>
+      <dd>Works with any type except Void.  For integer types, this represents signed
+        division with round-to-zero.  By default, its behavior is undefined for x/0 or
+        -2<sup>31</sup>/-1.  For floating point types, this represents division according
+        to the IEEE 854 spec. Integer Div may have the Chill flag set.</dd>
 
       <dt>T Mod(T, T)</dt>
-      <dd>
-        <p>Works with any type except Void.  For integer types, this represents signed
-          modulo. By default, its behavior is undefined for x%0 or -2<sup>31</sup>%-1.  For
-          floating point types, this represents modulo according to "fmod()".</p>
-        <p>Integer Mod may have the Chill flag set. You can create a Chill Mod by saying
-          <code>chill(Mod)</code>. Chill Mod turns x%0 into 0 and -2<sup>31</sup>%-1 into
-          0.</p>
-      </dd>
+      <dd>Works with any type except Void.  For integer types, this represents signed
+        modulo. By default, its behavior is undefined for x%0 or -2<sup>31</sup>%-1.  For
+        floating point types, this represents modulo according to "fmod()". Integer Mod may have the
+        Chill flag set.</dd>
 
       <dt>T Neg(T)</dt>
       <dd>Works with any type except Void.  For integer types, this represents twos-complement
@@ -394,43 +384,45 @@
       <dt>Int32 Load8Z(IntPtr, offset)</dt>
       <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
         signed integer offset to the child value.  Zero extends the loaded byte, so the high 24
-        bits are all zero.  Must use the MemoryValue class.</dd>
+        bits are all zero.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
 
       <dt>Int32 Load8S(IntPtr, offset)</dt>
       <dd>Loads a byte from the address, which is computed by adding the compile-time 32-bit
         signed integer offset to the child value.  Sign extends the loaded byte.  Must use the
-        MemoryValue class.</dd>
+        MemoryValue class.  May have the Traps flag set.</dd>
 
       <dt>Int32 Load16Z(IntPtr, offset)</dt>
       <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
         32-bit signed integer offset to the child value.  Zero extends the loaded 16-bit
         integer, so the high 16 bits are all zero.  Misaligned loads are not penalized.  Must
-        use the MemoryValue class.</dd>
+        use the MemoryValue class.  May have the Traps flag set.</dd>
 
       <dt>Int32 Load16S(IntPtr, offset)</dt>
       <dd>Loads a 16-bit integer from the address, which is computed by adding the compile-time
         32-bit signed integer offset to the child value.  Sign extends the loaded 16-bit
-        integer.  Misaligned loads are not penalized.  Must use the MemoryValue class.</dd>
+        integer.  Misaligned loads are not penalized.  Must use the MemoryValue class.  May have the
+        Traps flag set.</dd>
 
       <dt>T Load(IntPtr, offset)</dt>
       <dd>Valid for any type except Void.  Loads a value of that type from the address, which is
         computed by adding the compile-time 32-bit signed integer offset to the child value.
-        Misaligned loads are not penalized.  Must use the MemoryValue class.</dd>
+        Misaligned loads are not penalized.  Must use the MemoryValue class.  May have the Traps
+        flag set.</dd>
 
       <dt>Void Store8(Int32, IntPtr, offset)</dt>
       <dd>Stores a the low byte of the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Must use the MemoryValue
-        class.</dd>
+        class.  May have the Traps flag set.</dd>
 
       <dt>Void Store16(Int32, IntPtr, offset)</dt>
       <dd>Stores a the low 16 bits of the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
-        not penalized.  Must use the MemoryValue class.</dd>
+        not penalized.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
 
       <dt>Void Store(T, IntPtr, offset)</dt>
       <dd>Stores the value in the first child into the address computed by adding the
         compile-time 32-bit signed integer offset to the second child.  Misaligned stores are
-        not penalized.  Must use the MemoryValue class.</dd>
+        not penalized.  Must use the MemoryValue class.  May have the Traps flag set.</dd>
       
       <dt>Void Fence()</dt>
       <dd>Abstracts standalone data fences on x86 and ARM. Must use the FenceValue class, which has
@@ -634,7 +626,46 @@ root->appendSuccessor(thirdEntrypoint);</code></pre>
         at the end of the basic block.  The block must have zero successors. Note that we also use
         the Oops opcode to mean "no such opcode" in some B3 transformations.</dd>
     </dl>
-
+    
+    <h2>Flags</h2>
+    
+    <p>This section describes flags. These may be set in
+      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Kind.h"><code>Kind</code></a>.</p>
+    
+    <dl>
+      <dt>Chill</dt>
+      <dd><i>Applies to: Div, Mod.</i> You can create a chill Div/Mod by saying
+        <code>chill(Div)</code>. This creates a Kind that has the Chill flag set. This can only be
+        used with interer types. An operation is said to be chill if it returns a sensible value
+        whenever its non-chill form would have had undefined behavior. Chill Div turns x/0 into 0
+        and -2<sup>31</sup>/-1 into -2<sup>31</sup>. We recognize this in IR because it's exactly
+        the semantics of division on ARM64, and it's also exactly the semantics that JavaScript
+        wants for "(x/y)|0". Chill Mod turns x%0 into 0 and -2<sup>31</sup>%-1 into 0. This matches
+        the semantics of JavaScript "(x%y)|0".</dd>
+      
+      <dt>Traps</dt>
+      <dd><i>Applies to: Load8Z, Load8S, Load16Z, Load16S, Load, Store8, Store16, Store.</i> You can
+        create a trapping Kind from an opcode by saying <code>trapping(opcode)</code>. For example,
+        <code>trapping(Load)</code>. An operation is said to be trapping if it will cause a page
+        fault when used on an invalid pointer and this page fault will be observed. This means that
+        the compiler cannot fudge when the page fault happens. This is logically equivalent to what
+        B3 calls <code>Effects::exitsSideways</code>, but further implies that if any of the B3
+        values used to fuse an Air instruction were trapping, then the Air instruction must have its
+        <code>Air::Kind::traps</code> flag set. The compiler won't help you identify where you
+        trapped. Even if you use the compiler's origin facility to track down the trap location, you
+        may get the origin of any B3 value that was incorporated into the fused instruction that
+        caused the trap. For example, "Add(Load&lt;Traps&gt;(ptr), $1)" may claim to trap at the Add
+        rather than the Load on x86, because this pattern is a perfect candidate for add-load
+        fusion. Nevertheless, you are guaranteed to get the trap and the trap will be observed at
+        the point you intended. For example, the compiler will not hoist a trapping load past any
+        effects, even those outside of its read range, because the trap is presumed to read top. The
+        compiler will not attempt to DCE a trapping load. The compiler will not attempt to sink or
+        eliminate any trapping stores, even if they are dead because of a guaranteed subsequent
+        store to the same address, because we conservatively assume that the store was done for the
+        trap effect. This feature is meant to support high throughput memory safety checks in
+        WebAssembly.</dd>
+    </dl>
+    
   </div>
 </body>
 </html>

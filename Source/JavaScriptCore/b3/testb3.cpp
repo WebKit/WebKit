@@ -13113,11 +13113,19 @@ void testTrappingLoad()
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int x = 42;
-    root->appendNew<Value>(
-        proc, Return, Origin(),
-        root->appendNew<MemoryValue>(
-            proc, trapping(Load), Int32, Origin(),
-            root->appendNew<ConstPtrValue>(proc, Origin(), &x)));
+    MemoryValue* value = root->appendNew<MemoryValue>(
+        proc, trapping(Load), Int32, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), &x));
+    Effects expectedEffects;
+    expectedEffects.exitsSideways = true;
+    expectedEffects.controlDependent= true;
+    expectedEffects.reads = HeapRange::top();
+    CHECK_EQ(value->range(), HeapRange::top());
+    CHECK_EQ(value->effects(), expectedEffects);
+    value->setRange(HeapRange(0));
+    CHECK_EQ(value->range(), HeapRange(0));
+    CHECK_EQ(value->effects(), expectedEffects); // We still reads top!
+    root->appendNew<Value>(proc, Return, Origin(), value);
     CHECK_EQ(compileAndRun<int>(proc), 42);
     unsigned trapsCount = 0;
     for (Air::BasicBlock* block : proc.code()) {
@@ -13134,10 +13142,21 @@ void testTrappingStore()
     Procedure proc;
     BasicBlock* root = proc.addBlock();
     int x = 42;
-    root->appendNew<MemoryValue>(
+    MemoryValue* value = root->appendNew<MemoryValue>(
         proc, trapping(Store), Origin(),
         root->appendNew<Const32Value>(proc, Origin(), 111),
         root->appendNew<ConstPtrValue>(proc, Origin(), &x));
+    Effects expectedEffects;
+    expectedEffects.exitsSideways = true;
+    expectedEffects.controlDependent= true;
+    expectedEffects.reads = HeapRange::top();
+    expectedEffects.writes = HeapRange::top();
+    CHECK_EQ(value->range(), HeapRange::top());
+    CHECK_EQ(value->effects(), expectedEffects);
+    value->setRange(HeapRange(0));
+    CHECK_EQ(value->range(), HeapRange(0));
+    expectedEffects.writes = HeapRange(0);
+    CHECK_EQ(value->effects(), expectedEffects); // We still reads top!
     root->appendNew<Value>(proc, Return, Origin());
     compileAndRun<int>(proc);
     CHECK_EQ(x, 111);
@@ -13258,10 +13277,10 @@ void testMoveConstants()
         Procedure proc;
         BasicBlock* root = proc.addBlock();
         Value* a = root->appendNew<MemoryValue>(
-            proc, Load, Int32, Origin(), 
+            proc, Load, pointerType(), Origin(), 
             root->appendNew<ConstPtrValue>(proc, Origin(), 0x123412341234));
         Value* b = root->appendNew<MemoryValue>(
-            proc, Load, Int32, Origin(),
+            proc, Load, pointerType(), Origin(),
             root->appendNew<ConstPtrValue>(proc, Origin(), 0x123412341334));
         root->appendNew<CCallValue>(proc, Void, Origin(), a, b);
         root->appendNew<Value>(proc, Return, Origin());

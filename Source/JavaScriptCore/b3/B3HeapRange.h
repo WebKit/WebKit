@@ -98,7 +98,7 @@ public:
         return WTF::rangesOverlap(m_begin, m_end, other.m_begin, other.m_end);
     }
 
-    void dump(PrintStream& out) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
 private:
     unsigned m_begin;

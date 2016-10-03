@@ -59,6 +59,9 @@ void MemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     if (m_offset)
         out.print(comma, "offset = ", m_offset);
+    if ((isLoad() && effects().reads != range())
+        || (isStore() && effects().writes != range()))
+        out.print(comma, "range = ", range());
 }
 
 Value* MemoryValue::cloneImpl() const

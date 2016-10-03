@@ -1,3 +1,26 @@
+2016-10-03  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 trapping memory accesses should be documented
+        https://bugs.webkit.org/show_bug.cgi?id=162845
+
+        Reviewed by Geoffrey Garen.
+        
+        While writing some documentation, I found some small holes in the code.
+
+        * b3/B3Effects.cpp:
+        (JSC::B3::Effects::operator==): Need this to write tests.
+        (JSC::B3::Effects::operator!=): Need this to write tests.
+        * b3/B3Effects.h:
+        * b3/B3HeapRange.h:
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::dumpMeta): Sometimes the heap range dump won't show you the memory value's actual range. This makes the dump show you the actual range in that case.
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects): While documenting this, I remembered that trapping also has to imply reading top. I fixed this.
+        * b3/testb3.cpp:
+        (JSC::B3::testTrappingLoad): Added checks for the effects of trapping loads.
+        (JSC::B3::testTrappingStore): Added checks for the effects of trapping stores.
+        (JSC::B3::testMoveConstants): Made this not crash with validation.
+
 2016-10-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] GeneratorFunction (a.k.a. GeneratorWrapperFunction)'s prototype object does not have constructor property

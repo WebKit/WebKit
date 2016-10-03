@@ -635,7 +635,10 @@ Effects Value::effects() const
         result.terminal = true;
         break;
     }
-    result.exitsSideways |= traps();
+    if (traps()) {
+        result.exitsSideways = true;
+        result.reads = HeapRange::top();
+    }
     return result;
 }
 

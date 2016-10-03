@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,22 @@ bool Effects::interferes(const Effects& other) const
     return writes.overlaps(other.writes)
         || writes.overlaps(other.reads)
         || reads.overlaps(other.writes);
+}
+
+bool Effects::operator==(const Effects& other) const
+{
+    return terminal == other.terminal
+        && exitsSideways == other.exitsSideways
+        && controlDependent == other.controlDependent
+        && writesLocalState == other.writesLocalState
+        && readsLocalState == other.readsLocalState
+        && writes == other.writes
+        && reads == other.reads;
+}
+
+bool Effects::operator!=(const Effects& other) const
+{
+    return !(*this == other);
 }
 
 void Effects::dump(PrintStream& out) const
