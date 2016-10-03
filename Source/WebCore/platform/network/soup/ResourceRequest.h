@@ -94,7 +94,6 @@ namespace WebCore {
         void updateSoupMessageHeaders(SoupMessageHeaders*) const;
         void updateFromSoupMessageHeaders(SoupMessageHeaders*);
         void updateSoupMessage(SoupMessage*) const;
-        SoupMessage* toSoupMessage() const;
         void updateFromSoupMessage(SoupMessage*);
         void updateSoupRequest(SoupRequest*) const;
         void updateFromSoupRequest(SoupRequest*);

@@ -79,20 +79,6 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
     updateSoupMessageMembers(soupMessage);
 }
 
-SoupMessage* ResourceRequest::toSoupMessage() const
-{
-    SoupMessage* soupMessage = soup_message_new(httpMethod().ascii().data(), url().string().utf8().data());
-    if (!soupMessage)
-        return 0;
-
-    updateSoupMessageMembers(soupMessage);
-
-    // Body data is only handled at ResourceHandleSoup::startHttp for
-    // now; this is because this may not be a good place to go
-    // openning and mmapping files. We should maybe revisit this.
-    return soupMessage;
-}
-
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
     bool shouldPortBeResetToZero = m_url.hasPort() && !m_url.port();

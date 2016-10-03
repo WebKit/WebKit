@@ -56,7 +56,6 @@ public:
         updateFromSoupMessage(soupMessage);
     }
 
-    SoupMessage* toSoupMessage() const;
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
     void updateFromSoupMessage(SoupMessage*);
     void updateFromSoupMessageHeaders(const SoupMessageHeaders*);
