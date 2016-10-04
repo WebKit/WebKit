@@ -58,6 +58,9 @@ public:
     bool canProduceAudio() const;
 
     WEBCORE_EXPORT virtual bool hasActiveNowPlayingSession() const { return false; }
+    WEBCORE_EXPORT virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
+    WEBCORE_EXPORT virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
+    WEBCORE_EXPORT virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
 
     bool willIgnoreSystemInterruptions() const { return m_willIgnoreSystemInterruptions; }
     void setWillIgnoreSystemInterruptions(bool ignore) { m_willIgnoreSystemInterruptions = ignore; }

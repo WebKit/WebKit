@@ -1,3 +1,28 @@
+2016-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Media controls are displayed in the incorrect state momentarily after switching between tabs playing media
+        https://bugs.webkit.org/show_bug.cgi?id=162766
+        <rdar://problem/28533523>
+
+        Reviewed by Jer Noble.
+
+        When showing Now Playing controls for a media session, we should first set up the Now Playing info and
+        playback state before telling MediaRemote to make the session visible. This is WebKit work in ensuring that
+        when switching Now Playing sessions by switching tabs, we do not first display an invalid Now Playing state
+        before updating to the expected state.
+
+        Adds 2 new WebKit API tests in NowPlayingControlsTests: NowPlayingControlsHideAfterShowingClearsInfo and
+        NowPlayingControlsClearInfoAfterSessionIsNoLongerValid.
+
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::lastUpdatedNowPlayingTitle):
+        (WebCore::PlatformMediaSessionManager::lastUpdatedNowPlayingDuration):
+        (WebCore::PlatformMediaSessionManager::lastUpdatedNowPlayingElapsedTime):
+        (WebCore::PlatformMediaSessionManager::hasActiveNowPlayingSession): Deleted.
+        * platform/audio/mac/MediaSessionManagerMac.h:
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::updateNowPlayingInfo):
+
 2016-10-04  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] ReadableStream should be errored with TypeError values
