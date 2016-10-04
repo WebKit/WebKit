@@ -1,5 +1,18 @@
 2016-10-04  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser: query-only URLs relative to file URLs should just add a query
+        https://bugs.webkit.org/show_bug.cgi?id=162888
+
+        Reviewed by Tim Horton.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        Like bug 206749 but with queries instead of fragments.
+
+2016-10-04  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should match URL::parse and other browsers when parsing a URL containing only scheme://
         https://bugs.webkit.org/show_bug.cgi?id=162909
 

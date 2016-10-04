@@ -398,6 +398,10 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("#", "file:///path?query#old", {"file", "", "", "", 0, "/path", "query", "", "file:///path?query#"});
     checkRelativeURL("?query", "http://host/path", {"http", "", "", "host", 0, "/path", "query", "", "http://host/path?query"});
     checkRelativeURL("?query#fragment", "http://host/path", {"http", "", "", "host", 0, "/path", "query", "fragment", "http://host/path?query#fragment"});
+    checkRelativeURL("?new", "file:///path?old#fragment", {"file", "", "", "", 0, "/path", "new", "", "file:///path?new"});
+    checkRelativeURL("?", "file:///path?old#fragment", {"file", "", "", "", 0, "/path", "", "", "file:///path?"});
+    checkRelativeURL("?", "file:///path", {"file", "", "", "", 0, "/path", "", "", "file:///path?"});
+    checkRelativeURL("?query", "file:///path", {"file", "", "", "", 0, "/path", "query", "", "file:///path?query"});
     checkRelativeURL(utf16String(u"?β"), "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "%CE%B2", "", "http://example.org/foo/bar?%CE%B2"});
     checkRelativeURL("?", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar?"});
     checkRelativeURL("#", "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "", "http://example.org/foo/bar#"});

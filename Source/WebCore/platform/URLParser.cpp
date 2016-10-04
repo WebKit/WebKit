@@ -1468,23 +1468,27 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             case '?':
                 syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"))
+                if (base.isValid() && base.protocolIs("file")) {
                     copyURLPartsUntil(base, URLPart::PathEnd, c);
-                appendToASCIIBuffer("///?", 4);
-                ++c;
+                    appendToASCIIBuffer('?');
+                    ++c;
+                } else {
+                    appendToASCIIBuffer("///?", 4);
+                    ++c;
+                    m_url.m_userStart = currentPosition(c) - 2;
+                    m_url.m_userEnd = m_url.m_userStart;
+                    m_url.m_passwordEnd = m_url.m_userStart;
+                    m_url.m_hostEnd = m_url.m_userStart;
+                    m_url.m_portEnd = m_url.m_userStart;
+                    m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
+                    m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
+                }
                 if (isUTF8Encoding)
                     state = State::UTF8Query;
                 else {
                     queryBegin = c;
                     state = State::NonUTF8Query;
                 }
-                m_url.m_userStart = currentPosition(c) - 2;
-                m_url.m_userEnd = m_url.m_userStart;
-                m_url.m_passwordEnd = m_url.m_userStart;
-                m_url.m_hostEnd = m_url.m_userStart;
-                m_url.m_portEnd = m_url.m_userStart;
-                m_url.m_pathAfterLastSlash = m_url.m_userStart + 1;
-                m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
                 break;
             case '#':
                 syntaxViolation(c);
