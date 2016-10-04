@@ -35,6 +35,7 @@
 #include "JSCellInlines.h"
 #include "JSFunction.h"
 #include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

@@ -29,6 +29,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <cstdint>
+
 namespace JSC { namespace WASM {
 
 #define FOR_EACH_WASM_SPECIAL_OP(macro) \
@@ -170,6 +172,14 @@ namespace JSC { namespace WASM {
 enum OpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
 };
+
+template<typename Int>
+inline bool isValidOpType(Int i)
+{
+    // Bitset of valid ops.
+    static const uint8_t valid[] = { 0xff, 0x8f, 0xff, 0x2, 0xff, 0xff, 0x7f, 0xa, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x1f };
+    return 0 <= i && i <= 188 && (valid[i / 8] & (1 << (i % 8)));
+}
 
 enum class BinaryOpType : uint8_t {
     FOR_EACH_WASM_BINARY_OP(CREATE_ENUM_VALUE)

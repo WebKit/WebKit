@@ -79,6 +79,8 @@ ALWAYS_INLINE bool Parser::consumeCharacter(char c)
 ALWAYS_INLINE bool Parser::consumeString(const char* str)
 {
     unsigned start = m_offset;
+    if (m_offset >= m_sourceLength)
+        return false;
     for (unsigned i = 0; str[i]; i++) {
         if (!consumeCharacter(str[i])) {
             m_offset = start;
@@ -90,7 +92,7 @@ ALWAYS_INLINE bool Parser::consumeString(const char* str)
 
 ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
 {
-    if (m_offset + 4 >= m_sourceLength)
+    if (m_sourceLength < 4 || m_offset >= m_sourceLength - 4)
         return false;
     result = *reinterpret_cast<const uint32_t*>(m_source.data() + m_offset);
     m_offset += 4;

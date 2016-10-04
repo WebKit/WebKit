@@ -1,3 +1,13 @@
+2016-10-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: handle a few corner cases
+        https://bugs.webkit.org/show_bug.cgi?id=162884
+
+        Reviewed by Keith Miller.
+
+        * stress/wasm/generate-wasmops-header.js:
+        (const.opcodeIterator): max opcode value
+
 2016-10-03  JF Bastien  <jfbastien@apple.com>
 
         Auto-generate WASMOps.h, share with testing JSON file

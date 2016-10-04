@@ -101,7 +101,7 @@ bool FunctionParser<Context>::parseBlock()
 {
     while (true) {
         uint8_t op;
-        if (!parseUInt7(op))
+        if (!parseUInt7(op) || !isValidOpType(op))
             return false;
 
         if (verbose) {
@@ -260,8 +260,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return false;
     }
 
-    // Unknown opcode.
-    return false;
+    ASSERT_NOT_REACHED();
 }
 
 template<typename Context>

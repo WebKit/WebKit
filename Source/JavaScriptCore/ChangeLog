@@ -1,3 +1,20 @@
+2016-10-04  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: handle a few corner cases
+        https://bugs.webkit.org/show_bug.cgi?id=162884
+
+        Reviewed by Keith Miller.
+
+        * wasm/JSWASMModule.cpp: missing include broke cmake build
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::parseBlock): check op is valid
+        (JSC::WASM::FunctionParser<Context>::parseExpression): switch covers all cases
+        * wasm/WASMOps.h:
+        (JSC::WASM::isValidOpType): op is valid
+        * wasm/WASMParser.h:
+        (JSC::WASM::Parser::consumeString): avoid str[i] being one-past-the-end
+        (JSC::WASM::Parser::parseUInt32): shift math around to avoid overflow
+
 2016-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r206778): Release JSC test ChakraCore.yaml/ChakraCore/test/Error/validate_line_column.js.default failing

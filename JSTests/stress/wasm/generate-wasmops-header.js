@@ -4,12 +4,12 @@ const jsonFile = 'wasm.json';
 const wasm = JSON.parse(read(jsonFile));
 const opcodes = wasm.opcode;
 
-// Iterate through opcodes which match filter.
-const opcodeIterator = (filter) => {
+// Iterate through opcodes which match filter, and on each iteration yield ret.
+const opcodeIterator = (filter, ret = op => { return {name: op, opcode: opcodes[op]}; }) => {
     return function*() {
         for (let op in opcodes)
             if (filter(opcodes[op]))
-                yield {name: op, opcode: opcodes[op]};
+                yield ret(op);
     };
 };
 
@@ -37,6 +37,21 @@ const defines = [
     "\n\n#define FOR_EACH_WASM_BINARY_OP(macro)",
     ...opcodeMacroizer(op => (op.category === "arithmetic" || op.category === "comparison") && op.parameter.length === 2),
     "\n\n"].join("");
+
+const opValueSet = new Set(opcodeIterator(op => true, op => opcodes[op].value)());
+const maxOpValue = Math.max(...opValueSet);
+const validOps = (() => {
+    // Create a bitset of valid ops.
+    let v = "";
+    for (let i = 0; i < maxOpValue / 8; ++i) {
+        let entry = 0;
+        for (let j = 0; j < 8; ++j)
+            if (opValueSet.has(i * 8 + j))
+                entry |= 1 << j;
+        v += (i ? ", " : "") + "0x" + entry.toString(16);
+    }
+    return v;
+})();
 
 const template = `/*
  * Copyright (C) 2016 Apple Inc. All rights reserved.
@@ -69,6 +84,8 @@ const template = `/*
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <cstdint>
+
 namespace JSC { namespace WASM {
 
 ${defines}
@@ -84,6 +101,14 @@ ${defines}
 enum OpType : uint8_t {
     FOR_EACH_WASM_OP(CREATE_ENUM_VALUE)
 };
+
+template<typename Int>
+inline bool isValidOpType(Int i)
+{
+    // Bitset of valid ops.
+    static const uint8_t valid[] = { ${validOps} };
+    return 0 <= i && i <= ${maxOpValue} && (valid[i / 8] & (1 << (i % 8)));
+}
 
 enum class BinaryOpType : uint8_t {
     FOR_EACH_WASM_BINARY_OP(CREATE_ENUM_VALUE)
