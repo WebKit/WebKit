@@ -1,3 +1,29 @@
+2016-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Properly kill web processes in the launching state
+        https://bugs.webkit.org/show_bug.cgi?id=162938
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        Add m_xpcConnection member.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Store the XPC connection in the m_xpcConnection member variable.
+        In the reply handler, handle m_xpcConnection being null.
+
+        (WebKit::ProcessLauncher::platformInvalidate):
+        Cancel and kill the connection.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::terminateProcess):
+        Get rid of an assertion.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::requestTermination):
+        Handle the launching state.
+
 2016-10-04  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

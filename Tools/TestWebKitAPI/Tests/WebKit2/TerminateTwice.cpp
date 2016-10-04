@@ -32,9 +32,6 @@
 
 namespace TestWebKitAPI {
 
-// Disabled in debug mode while investigating <https://bugs.webkit.org/show_bug.cgi?id=136012>.
-#ifdef NDEBUG
-
 static bool loaded;
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -67,8 +64,6 @@ TEST(WebKit2, TerminateTwice)
     // And now we terminate the page before the process launch is complete.
     WKPageTerminate(webView.page());
 }
-
-#endif
 
 } // namespace TestWebKitAPI
 

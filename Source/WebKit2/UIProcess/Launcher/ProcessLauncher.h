@@ -86,6 +86,10 @@ private:
 
     Client* m_client;
 
+#if PLATFORM(COCOA)
+    OSObjectPtr<xpc_connection_t> m_xpcConnection;
+#endif
+
     WeakPtrFactory<ProcessLauncher> m_weakPtrFactory;
     const LaunchOptions m_launchOptions;
     bool m_isLaunching;

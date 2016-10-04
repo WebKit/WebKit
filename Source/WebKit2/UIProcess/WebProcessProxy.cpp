@@ -768,7 +768,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet
 
 void WebProcessProxy::requestTermination()
 {
-    if (state() != State::Running)
+    if (state() == State::Terminated)
         return;
 
     ChildProcessProxy::terminate();

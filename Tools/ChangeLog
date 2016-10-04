@@ -1,3 +1,13 @@
+2016-10-04  Anders Carlsson  <andersca@apple.com>
+
+        Properly kill web processes in the launching state
+        https://bugs.webkit.org/show_bug.cgi?id=162938
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKit2/TerminateTwice.cpp:
+        Enable this test again.
+
 2016-10-04  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: query-only URLs relative to file URLs should just add a query

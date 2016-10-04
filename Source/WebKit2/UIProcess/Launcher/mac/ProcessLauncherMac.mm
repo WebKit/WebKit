@@ -96,11 +96,13 @@ static NSString *systemDirectoryPath()
 
 void ProcessLauncher::launchProcess()
 {
-    auto connection = adoptOSObject(xpc_connection_create(serviceName(m_launchOptions), dispatch_get_main_queue()));
+    ASSERT(!m_xpcConnection);
+
+    m_xpcConnection = adoptOSObject(xpc_connection_create(serviceName(m_launchOptions), dispatch_get_main_queue()));
 
     uuid_t uuid;
     uuid_generate(uuid);
-    xpc_connection_set_oneshot_instance(connection.get(), uuid);
+    xpc_connection_set_oneshot_instance(m_xpcConnection.get(), uuid);
 
     // Inherit UI process localization. It can be different from child process default localization:
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
@@ -130,12 +132,12 @@ void ProcessLauncher::launchProcess()
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }
 
-    xpc_connection_set_bootstrap(connection.get(), initializationMessage.get());
+    xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
 
     if (shouldLeakBoost(m_launchOptions)) {
         auto preBootstrapMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
         xpc_dictionary_set_string(preBootstrapMessage.get(), "message-name", "pre-bootstrap");
-        xpc_connection_send_message(connection.get(), preBootstrapMessage.get());
+        xpc_connection_send_message(m_xpcConnection.get(), preBootstrapMessage.get());
     }
     
     // Create the listening port.
@@ -180,7 +182,7 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
     auto weakProcessLauncher = m_weakPtrFactory.createWeakPtr();
-    xpc_connection_set_event_handler(connection.get(), [weakProcessLauncher, listeningPort](xpc_object_t event) {
+    xpc_connection_set_event_handler(m_xpcConnection.get(), [weakProcessLauncher, listeningPort](xpc_object_t event) {
         ASSERT(xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -195,22 +197,32 @@ void ProcessLauncher::launchProcess()
 
         // And the receive right.
         mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
+
+        processLauncher->m_xpcConnection = nullptr;
+
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
     });
 
-    xpc_connection_resume(connection.get());
+    xpc_connection_resume(m_xpcConnection.get());
 
     ref();
-    xpc_connection_send_message_with_reply(connection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
+    xpc_connection_send_message_with_reply(m_xpcConnection.get(), bootstrapMessage.get(), dispatch_get_main_queue(), ^(xpc_object_t reply) {
         // Errors are handled in the event handler.
         if (xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
 
-            // The process has finished launching, grab the pid from the connection.
-            pid_t processIdentifier = xpc_connection_get_pid(connection.get());
+            if (!m_xpcConnection) {
+                // The process was terminated.
+                didFinishLaunchingProcess(0, IPC::Connection::Identifier());
+                return;
+            }
 
-            didFinishLaunchingProcess(processIdentifier, IPC::Connection::Identifier(listeningPort, connection));
+            // The process has finished launching, grab the pid from the connection.
+            pid_t processIdentifier = xpc_connection_get_pid(m_xpcConnection.get());
+
+            didFinishLaunchingProcess(processIdentifier, IPC::Connection::Identifier(listeningPort, m_xpcConnection));
+            m_xpcConnection = nullptr;
         }
 
         deref();
@@ -233,6 +245,12 @@ void ProcessLauncher::terminateProcess()
     
 void ProcessLauncher::platformInvalidate()
 {
+    if (!m_xpcConnection)
+        return;
+
+    xpc_connection_cancel(m_xpcConnection.get());
+    xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
+    m_xpcConnection = nullptr;
 }
 
 } // namespace WebKit
