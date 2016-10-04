@@ -282,6 +282,8 @@ webkit.org/b/151455 [ Release ] http/tests/xmlhttprequest/workers/methods-async.
 
 webkit.org/b/162945 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Failure ]
 
+webkit.org/b/162946 http/tests/cache/disk-cache/disk-cache-media.html [ Pass Failure ]
+
 webkit.org/b/150542 fast/forms/state-restore-per-form.html [ Pass Timeout ]
 
 webkit.org/b/151709 [ Release ] http/tests/xmlhttprequest/workers/methods.html [ Pass Timeout ]
