@@ -1,3 +1,42 @@
+2016-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement rendering of font-variation-settings
+        https://bugs.webkit.org/show_bug.cgi?id=162782
+
+        Reviewed by Zalan Bujtas.
+
+        (Re-landing after fixing tests.)
+
+        Because the heavy lifting for font-variation-settings is done by CoreText, 
+        this patch is fairly minimal. It simply hooks up the CSS property to CoreText. 
+
+        There is an existing bug in CoreText where variations inside fonts do not 
+        survive the addition of a cascade list. Therefore, FontPlatformData::ctFont() 
+        needs to work around this (conditionally) by resupplying the variation at 
+        the same time as the cascade list. The CoreText bug is <rdar://problem/28449441>. 
+
+        Tests: fast/text/variations/duplicate.html
+               fast/text/variations/exist.html
+               fast/text/variations/inheritance.html
+               fast/text/variations/order.html
+               fast/text/variations/outofbounds.html
+
+        * platform/graphics/FontCache.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        (WebCore::fontWithFamily):
+        (WebCore::FontCache::createFontPlatformData):
+        (WebCore::FontCache::systemFallbackForCharacters):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortAttributesDictionary):
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor):
+        (WebCore::FontPlatformData::ctFont):
+        (WebCore::cascadeToLastResortFontDescriptor): Deleted.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::updateCachedSystemFontDescription):
+
 2016-10-03  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should strip tabs at all locations
