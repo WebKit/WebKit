@@ -1587,7 +1587,22 @@ private:
                 fixEdge<SetObjectUse>(node->child1());
             else
                 RELEASE_ASSERT_NOT_REACHED();
-            fixEdge<UntypedUse>(node->child2());
+
+            if (node->child2()->shouldSpeculateBoolean())
+                fixEdge<BooleanUse>(node->child2());
+            else if (node->child2()->shouldSpeculateInt32())
+                fixEdge<Int32Use>(node->child2());
+            else if (node->child2()->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(node->child2());
+            else if (node->child2()->shouldSpeculateObject())
+                fixEdge<ObjectUse>(node->child2());
+            else if (node->child2()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child2());
+            else if (node->child2()->shouldSpeculateCell())
+                fixEdge<CellUse>(node->child2());
+            else
+                fixEdge<UntypedUse>(node->child2());
+
             fixEdge<Int32Use>(node->child3());
             break;
 

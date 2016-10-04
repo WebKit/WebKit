@@ -1,3 +1,23 @@
+2016-10-03  Saam Barati  <sbarati@apple.com>
+
+        GetMapBucket node should speculate on the type of its 'key' child
+        https://bugs.webkit.org/show_bug.cgi?id=161638
+
+        Reviewed by Filip Pizlo.
+
+        This eliminates type-check branches when we've already
+        proven the type of the incoming key. Also, it reduces
+        the branches we emit when type checking the bucket's key.
+
+        This is a 2-3% speedup on ES6SampleBench/Basic.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+
 2016-10-03  Christopher Reid  <Christopher.Reid@am.sony.com>
 
         Offline asm should not output masm assembly when using a x86_64 asm backend

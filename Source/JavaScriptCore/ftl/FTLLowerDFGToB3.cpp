@@ -6509,14 +6509,6 @@ private:
         LBasicBlock notPresentInTable = m_out.newBlock();
         LBasicBlock notEmptyValue = m_out.newBlock();
         LBasicBlock notDeletedValue = m_out.newBlock();
-        LBasicBlock notBitEqual = m_out.newBlock();
-        LBasicBlock bucketKeyNotCell = m_out.newBlock();
-        LBasicBlock bucketKeyIsCell = m_out.newBlock();
-        LBasicBlock bothAreCells = m_out.newBlock();
-        LBasicBlock bucketKeyIsString = m_out.newBlock();
-        LBasicBlock bucketKeyIsNumber = m_out.newBlock();
-        LBasicBlock bothAreNumbers = m_out.newBlock();
-        LBasicBlock bucketKeyIsInt32 = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopStart);
@@ -6529,7 +6521,10 @@ private:
         else
             RELEASE_ASSERT_NOT_REACHED();
 
-        LValue key = lowJSValue(m_node->child2());
+        LValue key = lowJSValue(m_node->child2(), ManualOperandSpeculation);
+        if (m_node->child2().useKind() != UntypedUse)
+            speculate(m_node->child2());
+
         LValue hash = lowInt32(m_node->child3());
 
         LValue hashMapImpl = m_out.loadPtr(map, m_node->child1().useKind() == MapObjectUse ? m_heaps.JSMap_hashMapImpl : m_heaps.JSSet_hashMapImpl);
@@ -6551,43 +6546,105 @@ private:
         m_out.branch(m_out.equal(hashMapBucket, m_out.constIntPtr(HashMapImpl<HashMapBucket<HashMapBucketDataKey>>::deletedValue())),
             unsure(loopAround), unsure(notDeletedValue));
 
-        m_out.appendTo(notDeletedValue, notBitEqual);
+        m_out.appendTo(notDeletedValue, loopAround);
         LValue bucketKey = m_out.load64(hashMapBucket, m_heaps.HashMapBucket_key);
+
         // Perform Object.is()
-        m_out.branch(m_out.equal(key, bucketKey),
-            unsure(continuation), unsure(notBitEqual));
+        switch (m_node->child2().useKind()) {
+        case BooleanUse:
+        case Int32Use:
+        case SymbolUse:
+        case ObjectUse: {
+            m_out.branch(m_out.equal(key, bucketKey),
+                unsure(continuation), unsure(loopAround));
+            break;
+        }
+        case StringUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock bucketKeyIsCell = m_out.newBlock();
 
-        m_out.appendTo(notBitEqual, bucketKeyIsCell);
-        m_out.branch(isCell(bucketKey),
-            unsure(bucketKeyIsCell), unsure(bucketKeyNotCell));
+            m_out.branch(m_out.equal(key, bucketKey),
+                unsure(continuation), unsure(notBitEqual));
 
-        m_out.appendTo(bucketKeyIsCell, bothAreCells);
-        m_out.branch(isCell(key),
-            unsure(bothAreCells), unsure(loopAround));
+            m_out.appendTo(notBitEqual, bucketKeyIsCell);
+            m_out.branch(isCell(bucketKey),
+                unsure(bucketKeyIsCell), unsure(loopAround));
 
-        m_out.appendTo(bothAreCells, bucketKeyIsString);
-        m_out.branch(isString(bucketKey),
-            unsure(bucketKeyIsString), unsure(loopAround));
+            m_out.appendTo(bucketKeyIsCell, loopAround);
+            m_out.branch(isString(bucketKey),
+                unsure(slowPath), unsure(loopAround));
+            break;
+        }
+        case CellUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock bucketKeyIsCell = m_out.newBlock();
+            LBasicBlock bucketKeyIsString = m_out.newBlock();
 
-        m_out.appendTo(bucketKeyIsString, bucketKeyNotCell);
-        m_out.branch(isString(key),
-            unsure(slowPath), unsure(loopAround));
+            m_out.branch(m_out.equal(key, bucketKey),
+                unsure(continuation), unsure(notBitEqual));
 
-        m_out.appendTo(bucketKeyNotCell, bucketKeyIsNumber);
-        m_out.branch(isNotNumber(bucketKey),
-            unsure(loopAround), unsure(bucketKeyIsNumber));
+            m_out.appendTo(notBitEqual, bucketKeyIsCell);
+            m_out.branch(isCell(bucketKey),
+                unsure(bucketKeyIsCell), unsure(loopAround));
 
-        m_out.appendTo(bucketKeyIsNumber, bothAreNumbers);
-        m_out.branch(isNotNumber(key),
-            unsure(loopAround), unsure(bothAreNumbers));
+            m_out.appendTo(bucketKeyIsCell, bucketKeyIsString);
+            m_out.branch(isString(bucketKey),
+                unsure(bucketKeyIsString), unsure(loopAround));
 
-        m_out.appendTo(bothAreNumbers, bucketKeyIsInt32);
-        m_out.branch(isNotInt32(bucketKey),
-            unsure(slowPath), unsure(bucketKeyIsInt32));
+            m_out.appendTo(bucketKeyIsString, loopAround);
+            m_out.branch(isString(key),
+                unsure(slowPath), unsure(loopAround));
+            break;
+        }
+        case UntypedUse: {
+            LBasicBlock notBitEqual = m_out.newBlock();
+            LBasicBlock bucketKeyIsCell = m_out.newBlock();
+            LBasicBlock bothAreCells = m_out.newBlock();
+            LBasicBlock bucketKeyIsString = m_out.newBlock();
+            LBasicBlock bucketKeyNotCell = m_out.newBlock();
+            LBasicBlock bucketKeyIsNumber = m_out.newBlock();
+            LBasicBlock bothAreNumbers = m_out.newBlock();
+            LBasicBlock bucketKeyIsInt32 = m_out.newBlock();
 
-        m_out.appendTo(bucketKeyIsInt32, loopAround);
-        m_out.branch(isNotInt32(key),
-            unsure(slowPath), unsure(loopAround));
+            m_out.branch(m_out.equal(key, bucketKey),
+                unsure(continuation), unsure(notBitEqual));
+
+            m_out.appendTo(notBitEqual, bucketKeyIsCell);
+            m_out.branch(isCell(bucketKey),
+                unsure(bucketKeyIsCell), unsure(bucketKeyNotCell));
+
+            m_out.appendTo(bucketKeyIsCell, bothAreCells);
+            m_out.branch(isCell(key),
+                unsure(bothAreCells), unsure(loopAround));
+
+            m_out.appendTo(bothAreCells, bucketKeyIsString);
+            m_out.branch(isString(bucketKey),
+                unsure(bucketKeyIsString), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyIsString, bucketKeyNotCell);
+            m_out.branch(isString(key),
+                unsure(slowPath), unsure(loopAround));
+
+            m_out.appendTo(bucketKeyNotCell, bucketKeyIsNumber);
+            m_out.branch(isNotNumber(bucketKey),
+                unsure(loopAround), unsure(bucketKeyIsNumber));
+
+            m_out.appendTo(bucketKeyIsNumber, bothAreNumbers);
+            m_out.branch(isNotNumber(key),
+                unsure(loopAround), unsure(bothAreNumbers));
+
+            m_out.appendTo(bothAreNumbers, bucketKeyIsInt32);
+            m_out.branch(isNotInt32(bucketKey),
+                unsure(slowPath), unsure(bucketKeyIsInt32));
+
+            m_out.appendTo(bucketKeyIsInt32, loopAround);
+            m_out.branch(isNotInt32(key),
+                unsure(slowPath), unsure(loopAround));
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
 
         m_out.appendTo(loopAround, slowPath);
         m_out.addIncomingToPhi(unmaskedIndex, m_out.anchor(m_out.add(index, m_out.int32One)));
