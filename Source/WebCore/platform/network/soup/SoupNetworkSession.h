@@ -47,21 +47,12 @@ public:
     static std::unique_ptr<SoupNetworkSession> createTestingSession();
     static std::unique_ptr<SoupNetworkSession> createForSoupSession(SoupSession*);
 
-    enum SSLPolicyFlags {
-        SSLStrict = 1 << 0,
-        SSLUseSystemCAFile = 1 << 1
-    };
-    typedef unsigned SSLPolicy;
-
     SoupSession* soupSession() const { return m_soupSession.get(); }
 
     void setCookieJar(SoupCookieJar*);
     SoupCookieJar* cookieJar() const;
 
     static void clearOldSoupCache(const String& cacheDirectory);
-
-    void setSSLPolicy(SSLPolicy);
-    SSLPolicy sslPolicy() const;
 
     void setupHTTPProxyFromEnvironment();
 
