@@ -1,5 +1,21 @@
 2016-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        REGRESSION (r206778): Release JSC test ChakraCore.yaml/ChakraCore/test/Error/validate_line_column.js.default failing
+        https://bugs.webkit.org/show_bug.cgi?id=162937
+
+        Reviewed by Saam Barati.
+
+        We dropped expression info accidentally at r206777.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::ClassExprNode::emitBytecode):
+
+2016-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DOMJIT] Introduce DOMJIT::GetterSetter to tell JIT information
         https://bugs.webkit.org/show_bug.cgi?id=162916
 

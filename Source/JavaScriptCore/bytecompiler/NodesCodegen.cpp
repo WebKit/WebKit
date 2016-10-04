@@ -595,7 +595,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
             propertyNameRegister = generator.emitNode(node.m_expression);
 
         generator.emitSetFunctionNameIfNeeded(node.m_assign, value.get(), propertyNameRegister.get());
-        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable);
+        generator.emitCallDefineProperty(newObj, propertyNameRegister.get(), value.get(), nullptr, nullptr, BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
         return;
     }
     if (const auto* identifier = node.name()) {
@@ -3611,10 +3611,10 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
     RefPtr<RegisterID> constructorNameRegister = generator.emitLoad(nullptr, propertyNames.constructor);
     generator.emitCallDefineProperty(prototype.get(), constructorNameRegister.get(), constructor.get(), nullptr, nullptr,
-        BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable);
+        BytecodeGenerator::PropertyConfigurable | BytecodeGenerator::PropertyWritable, m_position);
 
     RefPtr<RegisterID> prototypeNameRegister = generator.emitLoad(nullptr, propertyNames.prototype);
-    generator.emitCallDefineProperty(constructor.get(), prototypeNameRegister.get(), prototype.get(), nullptr, nullptr, 0);
+    generator.emitCallDefineProperty(constructor.get(), prototypeNameRegister.get(), prototype.get(), nullptr, nullptr, 0, m_position);
 
     if (m_staticMethods)
         generator.emitNode(constructor.get(), m_staticMethods);

@@ -3278,7 +3278,7 @@ void BytecodeGenerator::emitLogShadowChickenTailIfNecessary()
 }
 
 void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* propertyNameRegister,
-    RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options)
+    RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options, const JSTextPosition& position)
 {
     DefinePropertyAttributes attributes;
     if (options & PropertyConfigurable)
@@ -3300,6 +3300,8 @@ void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* p
         attributes.setSet();
 
     ASSERT(!valueRegister || (!getterRegister && !setterRegister));
+
+    emitExpressionInfo(position, position, position);
 
     if (attributes.hasGet() || attributes.hasSet()) {
         RefPtr<RegisterID> throwTypeErrorFunction;

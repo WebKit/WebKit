@@ -588,7 +588,7 @@ namespace JSC {
             PropertyEnumerable   = 1 << 2,
         };
         void emitCallDefineProperty(RegisterID* newObj, RegisterID* propertyNameRegister,
-            RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options);
+            RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options, const JSTextPosition&);
 
         void emitEnumeration(ThrowableExpressionData* enumerationNode, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* = nullptr, RegisterID* forLoopSymbolTable = nullptr);
 
