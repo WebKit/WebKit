@@ -2327,8 +2327,10 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
                 return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
 
             Vector<uint8_t> masterKey;
+#if ENABLE(SUBTLE_CRYPTO)
             if (!getDefaultWebCryptoMasterKey(masterKey))
                 return nullptr;
+#endif
 
             return API::Data::create(masterKey.data(), masterKey.size());
         }

@@ -1,3 +1,12 @@
+2016-10-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ build fix.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient): Guard the call to getDefaultWebCryptoMasterKey()
+        with ENABLE(SUBTLE_CRYPTO), since the same guard is used for the definition. Fixes
+        GTK+ production builds where the feature is disabled.
+
 2016-10-03  Keith Rollin  <krollin@apple.com>
 
         More logging to diagnose "WebKit encountered an internal error" messages
