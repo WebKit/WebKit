@@ -1,3 +1,23 @@
+2016-10-04  Youenn Fablet  <youenn@apple.com>
+
+        [mac-wk1] LayoutTest http/tests/security/cached-cross-origin-preloading-css-stylesheet.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=162791
+
+        Reviewed by Alex Christensen.
+
+        Flackiness was due to one preload sometimes arriving after the test was finished.
+        This causes the issue of not having the preload actually being checked against CORS and the console error was not displayed.
+        Making the test wait 1 second after all loads finish to ensure the preload will also finishes.
+
+        Cleaning the test and improving it by:
+        - making each load to take 1 second (so that preload is not finished when actual load happens
+        - adding some comments explaining each subtest
+        - printing DONE at the end of all loads.
+
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet-expected.txt:
+        * http/tests/security/cached-cross-origin-preloading-css-stylesheet.html:
+        * platform/mac-wk1/TestExpectations: Removed flaky expectation.
+
 2016-10-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement rendering of font-variation-settings
