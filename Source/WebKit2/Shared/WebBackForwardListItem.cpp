@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-static uint64_t highestUsedItemID = 0;
+static uint64_t highestItemID = 0;
 
 PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::create(BackForwardListItemState backForwardListItemState, uint64_t pageID)
 {
@@ -41,8 +41,8 @@ WebBackForwardListItem::WebBackForwardListItem(BackForwardListItemState backForw
     : m_itemState(WTFMove(backForwardListItemState))
     , m_pageID(pageID)
 {
-    if (m_itemState.identifier > highestUsedItemID)
-        highestUsedItemID = m_itemState.identifier;
+    if (m_itemState.identifier > highestItemID)
+        highestItemID = m_itemState.identifier;
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
@@ -100,7 +100,7 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
 
 uint64_t WebBackForwardListItem::highestUsedItemID()
 {
-    return highestUsedItemID;
+    return highestItemID;
 }
 
 } // namespace WebKit
