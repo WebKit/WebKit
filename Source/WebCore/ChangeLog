@@ -1,3 +1,11 @@
+2016-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r206773.
+
+        Exclude Direct2D definitions when building for normal CG Windows.
+
+        * platform/graphics/GraphicsContext.h:
+
 2016-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Introduce DOMJIT::GetterSetter to tell JIT information

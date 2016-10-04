@@ -509,7 +509,6 @@ public:
     void drawRoundCorner(bool newClip, RECT clipRect, RECT rectWin, HDC dc, int width, int height);
 #else
     GraphicsContext(HDC, bool hasAlpha = false); // FIXME: To be removed.
-    GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
 
     // When set to true, child windows should be rendered into this context
     // rather than allowing them just to render to the screen. Defaults to
@@ -546,6 +545,9 @@ public:
     // The bitmap should be non-premultiplied.
     void drawWindowsBitmap(WindowsBitmap*, const IntPoint&);
 #endif
+#if USE(DIRECT2D)
+    GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
+
     WEBCORE_EXPORT static ID2D1Factory* systemFactory();
     WEBCORE_EXPORT static ID2D1RenderTarget* defaultRenderTarget();
 
@@ -555,6 +557,7 @@ public:
 
     ID2D1SolidColorBrush* solidStrokeBrush();
     ID2D1SolidColorBrush* solidFillBrush();
+#endif
 #else // PLATFORM(WIN)
     bool shouldIncludeChildWindows() const { return false; }
 #endif // PLATFORM(WIN)
@@ -572,11 +575,11 @@ private:
 
 #if PLATFORM(WIN) && !USE(WINGDI)
     void platformInit(HDC, bool hasAlpha = false);
-    void platformInit(HDC, ID2D1RenderTarget**, RECT, bool hasAlpha = false);
-    void platformInit(ID2D1RenderTarget*);
 #endif
 
 #if USE(DIRECT2D)
+    void platformInit(HDC, ID2D1RenderTarget**, RECT, bool hasAlpha = false);
+    void platformInit(ID2D1RenderTarget*);
     void drawWithoutShadow(const FloatRect& boundingRect, const std::function<void(ID2D1RenderTarget*)>&);
     void drawWithShadow(const FloatRect& boundingRect, const std::function<void(ID2D1RenderTarget*)>&);
 #endif
