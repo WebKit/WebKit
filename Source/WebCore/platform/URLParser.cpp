@@ -1400,16 +1400,31 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 }
                 bool isSlash = *c == '/' || (m_urlIsSpecial && *c == '\\');
                 if (isSlash || *c == '?' || *c == '#') {
-                    m_url.m_userEnd = currentPosition(authorityOrHostBegin);
-                    m_url.m_passwordEnd = m_url.m_userEnd;
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
-                        failure();
-                        return;
-                    }
-                    if (UNLIKELY(!isSlash)) {
-                        syntaxViolation(c);
-                        appendToASCIIBuffer('/');
-                        m_url.m_pathAfterLastSlash = currentPosition(c);
+                    auto iterator = CodePointIterator<CharacterType>(authorityOrHostBegin, c);
+                    if (iterator.atEnd()) {
+                        size_t position = currentPosition(c);
+                        ASSERT(m_url.m_userStart == position);
+                        RELEASE_ASSERT(position >= 2);
+                        position -= 2;
+                        ASSERT(parsedDataView(position, 2) == "//");
+                        m_url.m_userStart = position;
+                        m_url.m_userEnd = position;
+                        m_url.m_passwordEnd = position;
+                        m_url.m_hostEnd = position;
+                        m_url.m_portEnd = position;
+                        m_url.m_pathAfterLastSlash = position + 2;
+                    } else {
+                        m_url.m_userEnd = currentPosition(authorityOrHostBegin);
+                        m_url.m_passwordEnd = m_url.m_userEnd;
+                        if (!parseHostAndPort(iterator)) {
+                            failure();
+                            return;
+                        }
+                        if (UNLIKELY(!isSlash)) {
+                            syntaxViolation(c);
+                            appendToASCIIBuffer('/');
+                            m_url.m_pathAfterLastSlash = currentPosition(c);
+                        }
                     }
                     state = State::Path;
                     break;
@@ -1818,15 +1833,22 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_userEnd = currentPosition(authorityOrHostBegin);
         m_url.m_passwordEnd = m_url.m_userEnd;
         if (authorityOrHostBegin.atEnd()) {
-            m_url.m_hostEnd = m_url.m_userEnd;
-            m_url.m_portEnd = m_url.m_userEnd;
+            RELEASE_ASSERT(m_url.m_userStart >= 2);
+            ASSERT(parsedDataView(m_url.m_userStart - 2, 2) == "//");
+            m_url.m_userStart -= 2;
+            m_url.m_userEnd = m_url.m_userStart;
+            m_url.m_passwordEnd = m_url.m_userStart;
+            m_url.m_hostEnd = m_url.m_userStart;
+            m_url.m_portEnd = m_url.m_userStart;
+            m_url.m_pathEnd = m_url.m_userStart + 2;
         } else if (!parseHostAndPort(authorityOrHostBegin)) {
             failure();
             return;
+        } else {
+            syntaxViolation(c);
+            appendToASCIIBuffer('/');
+            m_url.m_pathEnd = m_url.m_portEnd + 1;
         }
-        syntaxViolation(c);
-        appendToASCIIBuffer('/');
-        m_url.m_pathEnd = m_url.m_portEnd + 1;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
         m_url.m_queryEnd = m_url.m_pathEnd;
         m_url.m_fragmentEnd = m_url.m_pathEnd;
