@@ -1,3 +1,30 @@
+2016-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add initial D2D GraphicsContext implementation
+        https://bugs.webkit.org/show_bug.cgi?id=162917
+
+        Reviewed by Dean Jackson.
+
+        This patch lands a set of new files that implement the GraphicsContext
+        features on Windows using Direct2D.
+
+        No new tests until complete backend lands.
+
+        * platform/graphics/Color.h: Add new casting operator.
+        * platform/graphics/FloatSize.h: Ditto.
+        * platform/graphics/GraphicsContext.cpp: Update for Direct2D
+        implementation.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::operator D2D1_VECTOR_4F): Added.
+        * platform/graphics/win/GraphicsContextCGWin.cpp: Add compiler
+        guard to avoid building when using Direct2D.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp: Added.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h: Added.
+        * platform/graphics/win/GraphicsContextWin.cpp: Update for Direct2D
+        includes.
+        * platform/graphics/win/TransformationMatrixDirect2D.cpp: Fix comment.
+
 2016-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove SSLPolicyFlags from SoupNetworkSession

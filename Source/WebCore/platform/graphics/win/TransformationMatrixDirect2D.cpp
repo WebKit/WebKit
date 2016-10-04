@@ -72,4 +72,4 @@ AffineTransform::operator D2D1_MATRIX_3X2_F() const
 
 }
 
-#endif // USE(DIRECT2D)
+#endif

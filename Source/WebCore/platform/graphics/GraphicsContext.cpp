@@ -834,7 +834,7 @@ void GraphicsContext::clipOutRoundedRect(const FloatRoundedRect& rect)
     clipOut(path);
 }
 
-#if !USE(CG) && !USE(CAIRO)
+#if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
 IntRect GraphicsContext::clipBounds() const
 {
     ASSERT_NOT_REACHED();
@@ -902,7 +902,7 @@ void GraphicsContext::fillRoundedRect(const FloatRoundedRect& rect, const Color&
         fillRect(rect.rect(), color, compositeOperation(), blendMode);
 }
 
-#if !USE(CG) && !USE(CAIRO)
+#if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
 void GraphicsContext::fillRectWithRoundedHole(const IntRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
 {
     if (paintingDisabled())
@@ -957,7 +957,7 @@ void GraphicsContext::setDrawLuminanceMask(bool drawLuminanceMask)
         m_displayListRecorder->updateState(m_state, GraphicsContextState::DrawLuminanceMaskChange);
 }
 
-#if !USE(CG)
+#if !USE(CG) && !USE(DIRECT2D)
 // Implement this if you want to go push the drawing mode into your native context immediately.
 void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 {
@@ -970,13 +970,13 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 }
 #endif
 
-#if !USE(CG)
+#if !USE(CG) && !USE(DIRECT2D)
 void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 {
 }
 #endif
 
-#if !USE(CG) && !USE(CAIRO)
+#if !USE(CG) && !USE(DIRECT2D) && !USE(CAIRO)
 bool GraphicsContext::isAcceleratedContext() const
 {
     return false;
@@ -1012,7 +1012,7 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
     }
 }
 
-#if !USE(CG)
+#if !USE(CG) && !USE(DIRECT2D)
 void GraphicsContext::platformApplyDeviceScaleFactor(float)
 {
 }
@@ -1060,7 +1060,7 @@ void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
     strokePath(path);
 }
 
-#if !USE(CG)
+#if !USE(CG) && !USE(DIRECT2D)
 void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
 {
     if (paintingDisabled())

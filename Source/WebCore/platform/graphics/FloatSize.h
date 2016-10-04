@@ -130,7 +130,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    WEBCORE_EXPORT explicit FloatSize(const D2D1_SIZE_F&); // don't do this implicitly since it's lossy
+    WEBCORE_EXPORT FloatSize(const D2D1_SIZE_F&);
     operator D2D1_SIZE_F() const;
 #endif
 

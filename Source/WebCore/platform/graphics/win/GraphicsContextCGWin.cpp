@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GraphicsContextCG.h"
 
+#if USE(CG)
+
 #include "AffineTransform.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "Path.h"
@@ -262,3 +264,4 @@ void GraphicsContextPlatformPrivate::flush()
 }
 
 }
+#endif
