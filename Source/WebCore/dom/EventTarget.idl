@@ -42,8 +42,7 @@ dictionary EventListenerOptions {
     boolean capture = false;
 };
 
-dictionary AddEventListenerOptions {
-    boolean capture = false;
+dictionary AddEventListenerOptions : EventListenerOptions {
     boolean passive = false;
     boolean once = false;
 };

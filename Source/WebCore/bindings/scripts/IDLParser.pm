@@ -130,6 +130,7 @@ struct( domEnum => {
 });
 
 struct( domDictionary => {
+    parent => '$',  # Parent class identifier
     name => '$',
     members => '@', # List of 'domSignature'
     extendedAttributes => '$',
@@ -659,7 +660,8 @@ sub parseDictionary
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
         $dictionary->name($nameToken->value());
-        $self->parseInheritance();
+        my $parents = $self->parseInheritance();
+        $dictionary->parent($parents->[0]);
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         $dictionary->members($self->parseDictionaryMembers());
         $self->assertTokenValue($self->getToken(), "}", __LINE__);

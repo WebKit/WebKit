@@ -474,3 +474,14 @@ dictionary TestDictionaryThatShouldTolerateNull {
     TestEnumType enumerationValue;
     boolean booleanWithoutDefault;
 };
+
+dictionary ParentDictionary {
+    boolean parentMember2;
+    boolean parentMember1;
+};
+
+dictionary ChildDictionary : ParentDictionary {
+    boolean childMember2;
+    boolean childMember1;
+};
+

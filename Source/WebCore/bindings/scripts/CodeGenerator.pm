@@ -455,6 +455,16 @@ sub IsDictionaryType
     return 0;
 }
 
+sub GetDictionaryByName
+{
+    my ($object, $name) = @_;
+    return unless defined($name);
+
+    for my $dictionary (@{$useDocument->dictionaries}) {
+        return $dictionary if $dictionary->name eq $name;
+    }
+}
+
 sub HasDictionaryImplementationNameOverride
 {
     my ($object, $type) = @_;

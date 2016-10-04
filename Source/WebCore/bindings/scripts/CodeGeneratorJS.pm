@@ -953,10 +953,10 @@ sub GenerateConversionRuleWithLeadingComma
 
 sub GenerateDictionaryImplementationContent
 {
-    my ($interface, $dictionaries) = @_;
+    my ($interface, $allDictionaries) = @_;
 
     my $result = "";
-    foreach my $dictionary (@$dictionaries) {
+    foreach my $dictionary (@$allDictionaries) {
         my $name = $dictionary->name;
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -988,79 +988,90 @@ sub GenerateDictionaryImplementationContent
         $result .= "    }\n";
 
         # 3. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
+
         # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
-        # FIXME: We do not support dictionary inheritence yet.
-
-        # 5. For each dictionary dictionary in dictionaries, in order:
-        foreach my $member (@{$dictionary->members}) {
-            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
-
-            my $type = $member->type;
-
-            # 5.1. Let key be the identifier of member.
-            my $key = $member->name;
-
-            # 5.2. Let value be an ECMAScript value, depending on Type(V):
-            $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
-
-            my $nativeType = GetNativeTypeFromSignature($interface, $member);
-            if ($member->isOptional && !defined $member->default) {
-                $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
-            } else {
-                $result .= "    $nativeType $key;\n";
-            }
-
-            # 5.3. If value is not undefined, then:
-            $result .= "    if (!${key}Value.isUndefined()) {\n";
-            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
-            if ($codeGenerator->IsWrapperType($type)) {
-                AddToImplIncludes("JS${type}.h");
-                die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
-                my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
-                $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
-            } elsif ($codeGenerator->IsDictionaryType($type)) {
-                my $nativeType = GetNativeType($interface, $type);
-                $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
-            } else {
-                my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
-                $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
-            }
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
-            # Value is undefined.
-            # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
-            if ($member->isOptional && defined $member->default) {
-                $result .= "    } else\n";
-                $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
-            } elsif (!$member->isOptional) {
-                # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
-                $result .= "    } else {\n";
-                $result .= "        throwTypeError(&state, throwScope);\n";
-                $result .= "        return Nullopt;\n";
-                $result .= "    }\n";
-            } else {
-                $result .= "    }\n";
-            }
+        my @dictionaries;
+        push(@dictionaries, $dictionary);
+        my $parentDictionary = $codeGenerator->GetDictionaryByName($dictionary->parent);
+        while (defined($parentDictionary)) {
+            unshift(@dictionaries, $parentDictionary);
+            $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary->parent);
         }
 
-        # 6. Return dict.
         my $arguments = "";
         my $comma = "";
-        foreach my $member (@{$dictionary->members}) {
-            my $value;
-            if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
-                $value = "*" . $member->name;
-            } elsif ($codeGenerator->IsDictionaryType($member->type)) {
-                $value = $member->name . ".value()";
-            } else {
-                $value = "WTFMove(" . $member->name . ")";
+
+        # 5. For each dictionary dictionary in dictionaries, in order:
+        foreach my $dictionary (@dictionaries) {
+            # For each dictionary member member declared on dictionary, in lexicographical order:
+            my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
+            foreach my $member (@sortedMembers) {
+                $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
+
+                my $type = $member->type;
+
+                # 5.1. Let key be the identifier of member.
+                my $key = $member->name;
+
+                # 5.2. Let value be an ECMAScript value, depending on Type(V):
+                $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
+
+                my $nativeType = GetNativeTypeFromSignature($interface, $member);
+                if ($member->isOptional && !defined $member->default) {
+                    $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
+                } else {
+                    $result .= "    $nativeType $key;\n";
+                }
+
+                # 5.3. If value is not undefined, then:
+                $result .= "    if (!${key}Value.isUndefined()) {\n";
+                # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
+                if ($codeGenerator->IsWrapperType($type)) {
+                    AddToImplIncludes("JS${type}.h");
+                    die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
+                    my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
+                    $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
+                } elsif ($codeGenerator->IsDictionaryType($type)) {
+                    my $nativeType = GetNativeType($interface, $type);
+                    $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
+                } else {
+                    my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
+                    $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+                }
+                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
+                # Value is undefined.
+                # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
+                if ($member->isOptional && defined $member->default) {
+                    $result .= "    } else\n";
+                    $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
+                } elsif (!$member->isOptional) {
+                    # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
+                    $result .= "    } else {\n";
+                    $result .= "        throwTypeError(&state, throwScope);\n";
+                    $result .= "        return Nullopt;\n";
+                    $result .= "    }\n";
+                } else {
+                    $result .= "    }\n";
+                }
             }
-            $arguments .= $comma . $value;
-            $comma = ", ";
+
+            # 6. Return dict.
+            foreach my $member (@{$dictionary->members}) {
+                my $value;
+                if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
+                    $value = "*" . $member->name;
+                } elsif ($codeGenerator->IsDictionaryType($member->type)) {
+                    $value = $member->name . ".value()";
+                } else {
+                    $value = "WTFMove(" . $member->name . ")";
+                }
+                $arguments .= $comma . $value;
+                $comma = ", ";
+            }
         }
 
         $result .= "    return $className { " . $arguments . " };\n";
         $result .= "}\n\n";
-
         $result .= "#endif\n\n" if $conditionalString;
     }
     return $result;

@@ -530,10 +530,37 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
-    JSValue enumerationValueWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault"));
-    Converter<TestObj::EnumType>::OptionalValue enumerationValueWithoutDefault;
-    if (!enumerationValueWithoutDefaultValue.isUndefined()) {
-        enumerationValueWithoutDefault = convert<TestObj::EnumType>(state, enumerationValueWithoutDefaultValue);
+    JSValue anyTypedefValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyTypedefValue"));
+    JSC::JSValue anyTypedefValue;
+    if (!anyTypedefValueValue.isUndefined()) {
+        anyTypedefValue = convert<JSC::JSValue>(state, anyTypedefValueValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        anyTypedefValue = jsUndefined();
+    JSValue anyValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyValue"));
+    JSC::JSValue anyValue;
+    if (!anyValueValue.isUndefined()) {
+        anyValue = convert<JSC::JSValue>(state, anyValueValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        anyValue = jsUndefined();
+    JSValue booleanWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithDefault"));
+    bool booleanWithDefault;
+    if (!booleanWithDefaultValue.isUndefined()) {
+        booleanWithDefault = convert<bool>(state, booleanWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        booleanWithDefault = false;
+    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+    Converter<bool>::OptionalValue booleanWithoutDefault;
+    if (!booleanWithoutDefaultValue.isUndefined()) {
+        booleanWithoutDefault = convert<bool>(state, booleanWithoutDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue dictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
+    Converter<TestObj::DictionaryThatShouldTolerateNull>::OptionalValue dictionaryMember;
+    if (!dictionaryMemberValue.isUndefined()) {
+        dictionaryMember = convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(state, dictionaryMemberValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     JSValue enumerationValueWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault"));
@@ -550,48 +577,49 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         enumerationValueWithEmptyStringDefault = TestObj::EnumType::EmptyString;
-    JSValue stringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
-    String stringWithDefault;
-    if (!stringWithDefaultValue.isUndefined()) {
-        stringWithDefault = convert<String>(state, stringWithDefaultValue);
+    JSValue enumerationValueWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault"));
+    Converter<TestObj::EnumType>::OptionalValue enumerationValueWithoutDefault;
+    if (!enumerationValueWithoutDefaultValue.isUndefined()) {
+        enumerationValueWithoutDefault = convert<TestObj::EnumType>(state, enumerationValueWithoutDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue integerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integer"));
+    Converter<int32_t>::OptionalValue integer;
+    if (!integerValue.isUndefined()) {
+        integer = convert<int32_t>(state, integerValue, NormalConversion);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue integerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
+    int32_t integerWithDefault;
+    if (!integerWithDefaultValue.isUndefined()) {
+        integerWithDefault = convert<int32_t>(state, integerWithDefaultValue, NormalConversion);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
-        stringWithDefault = "defaultString";
-    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
-    Converter<String>::OptionalValue stringWithoutDefault;
-    if (!stringWithoutDefaultValue.isUndefined()) {
-        stringWithoutDefault = convert<String>(state, stringWithoutDefaultValue);
+        integerWithDefault = 0;
+    JSValue largeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeInteger"));
+    Converter<int64_t>::OptionalValue largeInteger;
+    if (!largeIntegerValue.isUndefined()) {
+        largeInteger = convert<int64_t>(state, largeIntegerValue, NormalConversion);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
-    JSValue booleanWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithDefault"));
-    bool booleanWithDefault;
-    if (!booleanWithDefaultValue.isUndefined()) {
-        booleanWithDefault = convert<bool>(state, booleanWithDefaultValue);
+    JSValue largeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
+    int64_t largeIntegerWithDefault;
+    if (!largeIntegerWithDefaultValue.isUndefined()) {
+        largeIntegerWithDefault = convert<int64_t>(state, largeIntegerWithDefaultValue, NormalConversion);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
-        booleanWithDefault = false;
-    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
-    Converter<bool>::OptionalValue booleanWithoutDefault;
-    if (!booleanWithoutDefaultValue.isUndefined()) {
-        booleanWithoutDefault = convert<bool>(state, booleanWithoutDefaultValue);
+        largeIntegerWithDefault = 0;
+    JSValue nullableNodeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableNode"));
+    Node* nullableNode;
+    if (!nullableNodeValue.isUndefined()) {
+        nullableNode = convertWrapperType<Node, JSNode>(state, nullableNodeValue, IsNullable::Yes);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
-    JSValue sequenceOfStringsValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "sequenceOfStrings"));
-    Converter<Vector<String>>::OptionalValue sequenceOfStrings;
-    if (!sequenceOfStringsValue.isUndefined()) {
-        sequenceOfStrings = convert<Vector<String>>(state, sequenceOfStringsValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
+    } else
+        nullableNode = nullptr;
     JSValue restrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
     Converter<double>::OptionalValue restrictedDouble;
     if (!restrictedDoubleValue.isUndefined()) {
         restrictedDouble = convert<double>(state, restrictedDoubleValue, ShouldAllowNonFinite::No);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
-    JSValue unrestrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));
-    Converter<double>::OptionalValue unrestrictedDouble;
-    if (!unrestrictedDoubleValue.isUndefined()) {
-        unrestrictedDouble = convert<double>(state, unrestrictedDoubleValue, ShouldAllowNonFinite::Yes);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     JSValue restrictedDoubleWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault"));
@@ -601,23 +629,10 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         restrictedDoubleWithDefault = 0;
-    JSValue unrestrictedDoubleWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault"));
-    double unrestrictedDoubleWithDefault;
-    if (!unrestrictedDoubleWithDefaultValue.isUndefined()) {
-        unrestrictedDoubleWithDefault = convert<double>(state, unrestrictedDoubleWithDefaultValue, ShouldAllowNonFinite::Yes);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        unrestrictedDoubleWithDefault = 0;
     JSValue restrictedFloatValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedFloat"));
     Converter<float>::OptionalValue restrictedFloat;
     if (!restrictedFloatValue.isUndefined()) {
         restrictedFloat = convert<float>(state, restrictedFloatValue, ShouldAllowNonFinite::No);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
-    JSValue unrestrictedFloatValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloat"));
-    Converter<float>::OptionalValue unrestrictedFloat;
-    if (!unrestrictedFloatValue.isUndefined()) {
-        unrestrictedFloat = convert<float>(state, unrestrictedFloatValue, ShouldAllowNonFinite::Yes);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     JSValue restrictedFloatWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault"));
@@ -627,13 +642,12 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         restrictedFloatWithDefault = 0;
-    JSValue unrestrictedFloatWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault"));
-    float unrestrictedFloatWithDefault;
-    if (!unrestrictedFloatWithDefaultValue.isUndefined()) {
-        unrestrictedFloatWithDefault = convert<float>(state, unrestrictedFloatWithDefaultValue, ShouldAllowNonFinite::Yes);
+    JSValue sequenceOfStringsValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "sequenceOfStrings"));
+    Converter<Vector<String>>::OptionalValue sequenceOfStrings;
+    if (!sequenceOfStringsValue.isUndefined()) {
+        sequenceOfStrings = convert<Vector<String>>(state, sequenceOfStringsValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        unrestrictedFloatWithDefault = 0;
+    }
     JSValue smallIntegerClampedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallIntegerClamped"));
     Converter<int8_t>::OptionalValue smallIntegerClamped;
     if (!smallIntegerClampedValue.isUndefined()) {
@@ -659,19 +673,45 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         smallUnsignedIntegerWithDefault = 0;
-    JSValue integerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integer"));
-    Converter<int32_t>::OptionalValue integer;
-    if (!integerValue.isUndefined()) {
-        integer = convert<int32_t>(state, integerValue, NormalConversion);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
-    JSValue integerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
-    int32_t integerWithDefault;
-    if (!integerWithDefaultValue.isUndefined()) {
-        integerWithDefault = convert<int32_t>(state, integerWithDefaultValue, NormalConversion);
+    JSValue stringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
+    String stringWithDefault;
+    if (!stringWithDefaultValue.isUndefined()) {
+        stringWithDefault = convert<String>(state, stringWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
-        integerWithDefault = 0;
+        stringWithDefault = "defaultString";
+    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+    Converter<String>::OptionalValue stringWithoutDefault;
+    if (!stringWithoutDefaultValue.isUndefined()) {
+        stringWithoutDefault = convert<String>(state, stringWithoutDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue unrestrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));
+    Converter<double>::OptionalValue unrestrictedDouble;
+    if (!unrestrictedDoubleValue.isUndefined()) {
+        unrestrictedDouble = convert<double>(state, unrestrictedDoubleValue, ShouldAllowNonFinite::Yes);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue unrestrictedDoubleWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault"));
+    double unrestrictedDoubleWithDefault;
+    if (!unrestrictedDoubleWithDefaultValue.isUndefined()) {
+        unrestrictedDoubleWithDefault = convert<double>(state, unrestrictedDoubleWithDefaultValue, ShouldAllowNonFinite::Yes);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        unrestrictedDoubleWithDefault = 0;
+    JSValue unrestrictedFloatValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloat"));
+    Converter<float>::OptionalValue unrestrictedFloat;
+    if (!unrestrictedFloatValue.isUndefined()) {
+        unrestrictedFloat = convert<float>(state, unrestrictedFloatValue, ShouldAllowNonFinite::Yes);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue unrestrictedFloatWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault"));
+    float unrestrictedFloatWithDefault;
+    if (!unrestrictedFloatWithDefaultValue.isUndefined()) {
+        unrestrictedFloatWithDefault = convert<float>(state, unrestrictedFloatWithDefaultValue, ShouldAllowNonFinite::Yes);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        unrestrictedFloatWithDefault = 0;
     JSValue unsignedIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedInteger"));
     Converter<uint32_t>::OptionalValue unsignedInteger;
     if (!unsignedIntegerValue.isUndefined()) {
@@ -685,19 +725,6 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         unsignedIntegerWithDefault = 0;
-    JSValue largeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeInteger"));
-    Converter<int64_t>::OptionalValue largeInteger;
-    if (!largeIntegerValue.isUndefined()) {
-        largeInteger = convert<int64_t>(state, largeIntegerValue, NormalConversion);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
-    JSValue largeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
-    int64_t largeIntegerWithDefault;
-    if (!largeIntegerWithDefaultValue.isUndefined()) {
-        largeIntegerWithDefault = convert<int64_t>(state, largeIntegerWithDefaultValue, NormalConversion);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        largeIntegerWithDefault = 0;
     JSValue unsignedLargeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger"));
     Converter<uint64_t>::OptionalValue unsignedLargeInteger;
     if (!unsignedLargeIntegerValue.isUndefined()) {
@@ -711,33 +738,6 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         unsignedLargeIntegerWithDefault = 0;
-    JSValue nullableNodeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableNode"));
-    Node* nullableNode;
-    if (!nullableNodeValue.isUndefined()) {
-        nullableNode = convertWrapperType<Node, JSNode>(state, nullableNodeValue, IsNullable::Yes);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        nullableNode = nullptr;
-    JSValue anyValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyValue"));
-    JSC::JSValue anyValue;
-    if (!anyValueValue.isUndefined()) {
-        anyValue = convert<JSC::JSValue>(state, anyValueValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        anyValue = jsUndefined();
-    JSValue anyTypedefValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyTypedefValue"));
-    JSC::JSValue anyTypedefValue;
-    if (!anyTypedefValueValue.isUndefined()) {
-        anyTypedefValue = convert<JSC::JSValue>(state, anyTypedefValueValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else
-        anyTypedefValue = jsUndefined();
-    JSValue dictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
-    Converter<TestObj::DictionaryThatShouldTolerateNull>::OptionalValue dictionaryMember;
-    if (!dictionaryMemberValue.isUndefined()) {
-        dictionaryMember = convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(state, dictionaryMemberValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
     return TestObj::Dictionary { WTFMove(enumerationValueWithoutDefault), WTFMove(enumerationValueWithDefault), WTFMove(enumerationValueWithEmptyStringDefault), WTFMove(stringWithDefault), WTFMove(stringWithoutDefault), WTFMove(booleanWithDefault), WTFMove(booleanWithoutDefault), WTFMove(sequenceOfStrings), WTFMove(restrictedDouble), WTFMove(unrestrictedDouble), WTFMove(restrictedDoubleWithDefault), WTFMove(unrestrictedDoubleWithDefault), WTFMove(restrictedFloat), WTFMove(unrestrictedFloat), WTFMove(restrictedFloatWithDefault), WTFMove(unrestrictedFloatWithDefault), WTFMove(smallIntegerClamped), WTFMove(smallIntegerWithDefault), WTFMove(smallUnsignedIntegerEnforcedRange), WTFMove(smallUnsignedIntegerWithDefault), WTFMove(integer), WTFMove(integerWithDefault), WTFMove(unsignedInteger), WTFMove(unsignedIntegerWithDefault), WTFMove(largeInteger), WTFMove(largeIntegerWithDefault), WTFMove(unsignedLargeInteger), WTFMove(unsignedLargeIntegerWithDefault), WTFMove(nullableNode), WTFMove(anyValue), WTFMove(anyTypedefValue), dictionaryMember.value() };
 }
 
@@ -752,15 +752,6 @@ template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDiction
         return Nullopt;
     }
     if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return Nullopt;
-    }
-    JSValue requiredEnumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
-    TestObj::EnumType requiredEnumerationValue;
-    if (!requiredEnumerationValueValue.isUndefined()) {
-        requiredEnumerationValue = convert<TestObj::EnumType>(state, requiredEnumerationValueValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    } else {
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
@@ -788,6 +779,15 @@ template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDiction
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
+    JSValue requiredEnumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
+    TestObj::EnumType requiredEnumerationValue;
+    if (!requiredEnumerationValueValue.isUndefined()) {
+        requiredEnumerationValue = convert<TestObj::EnumType>(state, requiredEnumerationValueValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
     return TestObj::DictionaryThatShouldNotTolerateNull { WTFMove(requiredEnumerationValue), WTFMove(booleanWithoutDefault), *nonNullableNode, requiredDictionaryMember.value() };
 }
 
@@ -805,16 +805,16 @@ template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
-    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
-    Converter<TestObj::EnumType>::OptionalValue enumerationValue;
-    if (!enumerationValueValue.isUndefined()) {
-        enumerationValue = convert<TestObj::EnumType>(state, enumerationValueValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
     JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
     Converter<bool>::OptionalValue booleanWithoutDefault;
     if (!booleanWithoutDefaultValue.isUndefined()) {
         booleanWithoutDefault = convert<bool>(state, booleanWithoutDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+    Converter<TestObj::EnumType>::OptionalValue enumerationValue;
+    if (!enumerationValueValue.isUndefined()) {
+        enumerationValue = convert<TestObj::EnumType>(state, enumerationValueValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     return TestObj::DictionaryThatShouldTolerateNull { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
@@ -834,19 +834,89 @@ template<> Optional<AlternateDictionaryName> convertDictionary<AlternateDictiona
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
-    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
-    Converter<TestObj::EnumType>::OptionalValue enumerationValue;
-    if (!enumerationValueValue.isUndefined()) {
-        enumerationValue = convert<TestObj::EnumType>(state, enumerationValueValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
-    }
     JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
     Converter<bool>::OptionalValue booleanWithoutDefault;
     if (!booleanWithoutDefaultValue.isUndefined()) {
         booleanWithoutDefault = convert<bool>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
+    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+    Converter<TestObj::EnumType>::OptionalValue enumerationValue;
+    if (!enumerationValueValue.isUndefined()) {
+        enumerationValue = convert<TestObj::EnumType>(state, enumerationValueValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
     return AlternateDictionaryName { WTFMove(enumerationValue), WTFMove(booleanWithoutDefault) };
+}
+
+template<> Optional<TestObj::ParentDictionary> convertDictionary<TestObj::ParentDictionary>(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    bool isNullOrUndefined = value.isUndefinedOrNull();
+    auto* object = isNullOrUndefined ? nullptr : value.getObject();
+    if (UNLIKELY(!isNullOrUndefined && !object)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    JSValue parentMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember1"));
+    Converter<bool>::OptionalValue parentMember1;
+    if (!parentMember1Value.isUndefined()) {
+        parentMember1 = convert<bool>(state, parentMember1Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue parentMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember2"));
+    Converter<bool>::OptionalValue parentMember2;
+    if (!parentMember2Value.isUndefined()) {
+        parentMember2 = convert<bool>(state, parentMember2Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    return TestObj::ParentDictionary { WTFMove(parentMember2), WTFMove(parentMember1) };
+}
+
+template<> Optional<TestObj::ChildDictionary> convertDictionary<TestObj::ChildDictionary>(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    bool isNullOrUndefined = value.isUndefinedOrNull();
+    auto* object = isNullOrUndefined ? nullptr : value.getObject();
+    if (UNLIKELY(!isNullOrUndefined && !object)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    JSValue parentMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember1"));
+    Converter<bool>::OptionalValue parentMember1;
+    if (!parentMember1Value.isUndefined()) {
+        parentMember1 = convert<bool>(state, parentMember1Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue parentMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember2"));
+    Converter<bool>::OptionalValue parentMember2;
+    if (!parentMember2Value.isUndefined()) {
+        parentMember2 = convert<bool>(state, parentMember2Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue childMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "childMember1"));
+    Converter<bool>::OptionalValue childMember1;
+    if (!childMember1Value.isUndefined()) {
+        childMember1 = convert<bool>(state, childMember1Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue childMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "childMember2"));
+    Converter<bool>::OptionalValue childMember2;
+    if (!childMember2Value.isUndefined()) {
+        childMember2 = convert<bool>(state, childMember2Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    return TestObj::ChildDictionary { WTFMove(parentMember2), WTFMove(parentMember1), WTFMove(childMember2), WTFMove(childMember1) };
 }
 
 // Functions
