@@ -1588,6 +1588,7 @@ private:
             else
                 RELEASE_ASSERT_NOT_REACHED();
 
+#if USE(JSVALUE64)
             if (node->child2()->shouldSpeculateBoolean())
                 fixEdge<BooleanUse>(node->child2());
             else if (node->child2()->shouldSpeculateInt32())
@@ -1602,6 +1603,9 @@ private:
                 fixEdge<CellUse>(node->child2());
             else
                 fixEdge<UntypedUse>(node->child2());
+#else
+            fixEdge<UntypedUse>(node->child2());
+#endif // USE(JSVALUE64)
 
             fixEdge<Int32Use>(node->child3());
             break;
@@ -1615,6 +1619,7 @@ private:
             break;
 
         case MapHash: {
+#if USE(JSVALUE64)
             if (node->child1()->shouldSpeculateBoolean()) {
                 fixEdge<BooleanUse>(node->child1());
                 break;
@@ -1646,6 +1651,9 @@ private:
             }
 
             fixEdge<UntypedUse>(node->child1());
+#else
+            fixEdge<UntypedUse>(node->child1());
+#endif // USE(JSVALUE64)
             break;
         }
 

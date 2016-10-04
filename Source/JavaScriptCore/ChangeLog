@@ -1,3 +1,12 @@
+2016-10-04  Saam Barati  <sbarati@apple.com>
+
+        Follow up fix to GetMapBucket and MapHash speculating on child node types.
+        To fix this, on 32-bit platforms, we do not speculate on the child
+        type since we just call into C code for these nodes.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2016-10-03  Saam Barati  <sbarati@apple.com>
 
         GetMapBucket node should speculate on the type of its 'key' child
