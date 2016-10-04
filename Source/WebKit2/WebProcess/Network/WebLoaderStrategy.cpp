@@ -305,6 +305,8 @@ void WebLoaderStrategy::resumePendingRequests()
 
 void WebLoaderStrategy::networkProcessCrashed()
 {
+    RELEASE_LOG_ERROR(Network, "WebLoaderStrategy::networkProcessCrashed: failing all pending resource loaders");
+
     for (auto& loader : m_webResourceLoaders)
         scheduleInternallyFailedLoad(*loader.value->resourceLoader());
 
@@ -337,6 +339,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     HangDetectionDisabler hangDetectionDisabler;
 
     if (!WebProcess::singleton().networkConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
+        RELEASE_LOG_ERROR_IF_ALLOWED(loadParameters.sessionID, "loadResourceSynchronously: failed sending synchronous network process message (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", loadParameters.webPageID, loadParameters.webFrameID, loadParameters.identifier);
         response = ResourceResponse();
         error = internalError(request.url());
     }

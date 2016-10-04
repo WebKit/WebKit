@@ -199,6 +199,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 
     if (!buffer) {
         LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
+        RELEASE_LOG_IF_ALLOWED("didReceiveResource: Unable to create SharedBuffer (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_trackingParameters.pageID, m_trackingParameters.frameID, m_trackingParameters.resourceID);
         m_coreLoader->didFail(internalError(m_coreLoader->request().url()));
         return;
     }
