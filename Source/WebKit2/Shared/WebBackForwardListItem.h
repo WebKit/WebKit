@@ -64,7 +64,7 @@ public:
     void setSnapshot(PassRefPtr<ViewSnapshot> snapshot) { m_itemState.snapshot = snapshot; }
 #endif
 
-    static uint64_t highedUsedItemID();
+    static uint64_t highestUsedItemID();
 
 private:
     explicit WebBackForwardListItem(BackForwardListItemState, uint64_t pageID);

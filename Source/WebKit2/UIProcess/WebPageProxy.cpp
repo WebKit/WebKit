@@ -5463,7 +5463,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.userAgent = userAgent();
     parameters.itemStates = m_backForwardList->itemStates();
     parameters.sessionID = m_sessionID;
-    parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highestUsedItemID();
     parameters.userContentControllerID = m_userContentController->identifier();
     parameters.visitedLinkTableID = m_visitedLinkStore->identifier();
     parameters.websiteDataStoreID = m_websiteDataStore->identifier();

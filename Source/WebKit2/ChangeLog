@@ -1,3 +1,17 @@
+2016-10-04  Tim Horton  <timothy_horton@apple.com>
+
+        Fix a typo in WebBackForwardListItem (highed->highest)
+        https://bugs.webkit.org/show_bug.cgi?id=162935
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::highestUsedItemID):
+        (WebKit::WebBackForwardListItem::highedUsedItemID): Deleted.
+        * Shared/WebBackForwardListItem.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+
 2016-10-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Introduce DOMJIT::GetterSetter to tell JIT information

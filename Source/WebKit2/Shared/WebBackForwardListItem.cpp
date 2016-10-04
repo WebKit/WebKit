@@ -98,7 +98,7 @@ bool WebBackForwardListItem::itemIsInSameDocument(const WebBackForwardListItem& 
     return documentTreesAreEqual(mainFrameState, otherMainFrameState);
 }
 
-uint64_t WebBackForwardListItem::highedUsedItemID()
+uint64_t WebBackForwardListItem::highestUsedItemID()
 {
     return highestUsedItemID;
 }
