@@ -360,17 +360,10 @@ void RelatedNodeRetargeter::collectTreeScopes()
 #if !ASSERT_DISABLED
 void RelatedNodeRetargeter::checkConsistency(Node& currentTarget)
 {
-    ASSERT(!m_retargetedRelatedNode || currentTarget.isUnclosedNode(*m_retargetedRelatedNode));
-
-    // http://w3c.github.io/webcomponents/spec/shadow/#dfn-retargeting-algorithm
-    Node& base = currentTarget;
-    for (Node* targetAncestor = &m_relatedNode; targetAncestor; targetAncestor = targetAncestor->parentOrShadowHostNode()) {
-        if (targetAncestor->rootNode().containsIncludingShadowDOM(&base)) {
-            ASSERT(m_retargetedRelatedNode == targetAncestor);
-            return;
-        }
-    }
-    ASSERT(!m_retargetedRelatedNode || m_hasDifferentTreeRoot);
+    if (!m_retargetedRelatedNode)
+        return;
+    ASSERT(currentTarget.isUnclosedNode(*m_retargetedRelatedNode));
+    ASSERT(m_retargetedRelatedNode == &currentTarget.treeScope().retargetToScope(m_relatedNode));
 }
 #endif
 

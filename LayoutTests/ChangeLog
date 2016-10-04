@@ -1,3 +1,15 @@
+2016-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ShadowRoot interface should have elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=162882
+
+        Reviewed by Chris Dumez.
+
+        Add a W3C style testharness.js test for elementFromPoint on ShadowRoot.
+
+        * fast/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint-expected.txt: Added.
+        * fast/shadow-dom/DocumentOrShadowRoot-prototype-elementFromPoint.html: Added.
+
 2016-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-family: cursive should map to KaiTi in Chinese

@@ -1,3 +1,46 @@
+2016-10-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ShadowRoot interface should have elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=162882
+
+        Reviewed by Chris Dumez.
+
+        Add elementFromPoint to ShadowRoot's prototype as specified at:
+        https://www.w3.org/TR/shadow-dom/#extensions-to-the-documentorshadowroot-mixin
+        with changes proposed at https://github.com/w3c/csswg-drafts/issues/556
+
+        Added TreeScope::retargetToScope which implements 
+
+        This patch also factors DocumentOrShadowRoot.idl out of Document and ShadowRoot interfaces to better match
+        the latest DOM specification: https://dom.spec.whatwg.org/#mixin-documentorshadowroot
+
+        Test: fast/shadow-dom/Document-prototype-elementFromPoint.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::nodeFromPoint): Moved to TreeScope.
+        (WebCore::Document::elementFromPoint): Moved to TreeScope.
+        * dom/Document.h:
+        * dom/Document.idl: Moved elementFromPoint and activeElement to DocumentOrShadowRoot.idl.
+        * dom/DocumentOrShadowRoot.idl: Added.
+        * dom/EventPath.cpp:
+        (WebCore::RelatedNodeRetargeter::checkConsistency): Use newly added TreeScope::retargetToScope.
+        * dom/ShadowRoot.idl: Moved activeElement to DocumentOrShadowRoot.idl.
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::retargetToScope): Added. Implements https://dom.spec.whatwg.org/#retarget efficiently.
+        Instead of checking whether A (node) is a shadow-including inclusive ancestor of B (this scope) at each
+        parent, find the lowest ancestor which contains both A and B, and return the self-inclusive ancestor of B
+        in that tree. To find the lowest common ancestor in O(n), traverse all ancestors of A and B separately and
+        do a top-down traversal. The last tree scope in which A's ancestor and B's ancestor match is the lowest
+        common ancestor.
+        (WebCore::TreeScope::nodeFromPoint): Moved from Document.
+        (WebCore::TreeScope::elementFromPoint): Moved from Document. Use retargetToScope and parentInComposedTree
+        instead of parentNode and ancestorInThisScope to match the semantics proposed in
+        https://github.com/w3c/csswg-drafts/issues/556
+        * dom/TreeScope.h:
+
 2016-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-family: cursive should map to KaiTi in Chinese

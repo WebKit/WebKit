@@ -301,6 +301,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DeviceOrientationEvent.idl \
     $(WebCore)/dom/Document.idl \
     $(WebCore)/dom/DocumentFragment.idl \
+    $(WebCore)/dom/DocumentOrShadowRoot.idl \
     $(WebCore)/dom/DocumentType.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ErrorEvent.idl \

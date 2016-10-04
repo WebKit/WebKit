@@ -71,6 +71,9 @@ public:
     Document& documentScope() const { return *m_documentScope; }
     static ptrdiff_t documentScopeMemoryOffset() { return OBJECT_OFFSETOF(TreeScope, m_documentScope); }
 
+    // https://dom.spec.whatwg.org/#retarget
+    Node& retargetToScope(Node&) const;
+
     Node* ancestorInThisScope(Node*) const;
 
     void addImageMap(HTMLMapElement&);
@@ -82,6 +85,8 @@ public:
     void addLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     void removeLabel(const AtomicStringImpl& forAttributeValue, HTMLLabelElement&);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
+
+    WEBCORE_EXPORT Element* elementFromPoint(int x, int y);
 
     DOMSelection* getSelection() const;
 
@@ -110,6 +115,8 @@ protected:
         ASSERT(document);
         m_documentScope = document;
     }
+
+    Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint);
 
 private:
     ContainerNode& m_rootNode;

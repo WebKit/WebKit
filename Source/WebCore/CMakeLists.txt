@@ -391,6 +391,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DeviceOrientationEvent.idl
     dom/Document.idl
     dom/DocumentFragment.idl
+    dom/DocumentOrShadowRoot.idl
     dom/DocumentType.idl
     dom/Element.idl
     dom/ErrorEvent.idl

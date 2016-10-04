@@ -32,6 +32,7 @@
 #include "ElementIterator.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLLabelElement.h"
@@ -39,6 +40,7 @@
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
 #include "Page.h"
+#include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include "TreeScopeAdopter.h"
@@ -168,6 +170,38 @@ void TreeScope::removeElementByName(const AtomicStringImpl& name, Element& eleme
     m_elementsByName->remove(name, element);
 }
 
+
+Node& TreeScope::retargetToScope(Node& node) const
+{
+    auto& scope = node.treeScope();
+    if (LIKELY(this == &scope || !node.isInShadowTree()))
+        return node;
+    ASSERT(is<ShadowRoot>(scope.rootNode()));
+
+    Vector<TreeScope*, 8> nodeTreeScopes;
+    for (auto* currentScope = &scope; currentScope; currentScope = currentScope->parentTreeScope())
+        nodeTreeScopes.append(currentScope);
+    ASSERT(nodeTreeScopes.size() >= 2);
+
+    Vector<const TreeScope*, 8> ancestorScopes;
+    for (auto* currentScope = this; currentScope; currentScope = currentScope->parentTreeScope())
+        ancestorScopes.append(currentScope);
+
+    size_t i = nodeTreeScopes.size();
+    size_t j = ancestorScopes.size();
+    while (i > 0 && j > 0 && nodeTreeScopes[i - 1] == ancestorScopes[j - 1]) {
+        --i;
+        --j;
+    }
+
+    bool nodeIsInOuterTreeScope = !i;
+    if (nodeIsInOuterTreeScope)
+        return node;
+
+    ShadowRoot& shadowRootInLowestCommonTreeScope = downcast<ShadowRoot>(nodeTreeScopes[i - 1]->rootNode());
+    return *shadowRootInLowestCommonTreeScope.host();
+}
+
 Node* TreeScope::ancestorInThisScope(Node* node) const
 {
     for (; node; node = node->shadowHost()) {
@@ -243,6 +277,58 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
     }
 
     return m_labelsByForAttribute->getElementByLabelForAttribute(*forAttributeValue.impl(), *this);
+}
+
+Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint)
+{
+    auto* frame = documentScope().frame();
+    auto* view = documentScope().view();
+    if (!frame || !view)
+        return nullptr;
+
+    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+
+    LayoutPoint contentsPoint = clientPoint;
+    contentsPoint.scale(scaleFactor, scaleFactor);
+    contentsPoint.moveBy(view->contentsScrollPosition());
+
+    LayoutRect visibleRect;
+#if PLATFORM(IOS)
+    visibleRect = view->unobscuredContentRect();
+#else
+    visibleRect = view->visibleContentRect();
+#endif
+    if (!visibleRect.contains(contentsPoint))
+        return nullptr;
+
+    HitTestResult result(contentsPoint);
+    documentScope().renderView()->hitTest(HitTestRequest(), result);
+
+    if (localPoint)
+        *localPoint = result.localPoint();
+
+    return result.innerNode();
+}
+
+Element* TreeScope::elementFromPoint(int x, int y)
+{
+    Document& document = documentScope();
+    if (!document.hasLivingRenderTree())
+        return nullptr;
+
+    Node* node = nodeFromPoint(LayoutPoint(x, y), nullptr);
+    if (!node)
+        return nullptr;
+
+    node = &retargetToScope(*node);
+    while (!is<Element>(*node)) {
+        node = node->parentInComposedTree();
+        if (!node)
+            break;
+        node = &retargetToScope(*node);
+    }
+
+    return downcast<Element>(node);
 }
 
 DOMSelection* TreeScope::getSelection() const

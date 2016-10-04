@@ -397,9 +397,6 @@ public:
 
     NamedFlowCollection& namedFlows();
 
-    Element* elementFromPoint(int x, int y) { return elementFromPoint(LayoutPoint(x, y)); }
-    WEBCORE_EXPORT Element* elementFromPoint(const LayoutPoint& clientPoint);
-
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
 
@@ -1362,8 +1359,6 @@ private:
     void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
     PageVisibilityState pageVisibilityState() const;
-
-    Node* nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* localPoint = nullptr);
 
     template <CollectionType collectionType>
     Ref<HTMLCollection> ensureCachedCollection();

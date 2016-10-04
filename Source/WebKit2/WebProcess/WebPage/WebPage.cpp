@@ -3213,7 +3213,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(store.getBoolValueForKey(WebPreferencesKey::customElementsEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(true || store.getBoolValueForKey(WebPreferencesKey::customElementsEnabledKey()));
 #endif
 
 #if ENABLE(WEBGL2)
