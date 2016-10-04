@@ -41,7 +41,7 @@ enum Pointer {
 } // namespace Special
 
 enum class LinkTimeConstant {
-    DefinePropertyFunction,
+    ThrowTypeErrorFunction,
 };
 const unsigned LinkTimeConstantCount = 1;
 

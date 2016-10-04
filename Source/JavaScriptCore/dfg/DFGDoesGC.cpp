@@ -111,6 +111,8 @@ bool doesGC(Graph& graph, Node* node)
     case PutGetterSetterById:
     case PutGetterByVal:
     case PutSetterByVal:
+    case DefineDataProperty:
+    case DefineAccessorProperty:
     case DeleteById:
     case DeleteByVal:
     case CheckStructure:

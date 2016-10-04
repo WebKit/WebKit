@@ -35,6 +35,7 @@
 #include "BuiltinExecutables.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSGeneratorFunction.h"
@@ -1542,6 +1543,9 @@ RegisterID* BytecodeGenerator::emitMoveLinkTimeConstant(RegisterID* dst, LinkTim
         m_codeBlock->addConstant(type);
         m_linkTimeConstantRegisters[constantIndex] = &m_constantPoolRegisters[index];
     }
+
+    if (!dst)
+        return m_linkTimeConstantRegisters[constantIndex];
 
     emitOpcode(op_mov);
     instructions().append(dst->index());
@@ -3274,38 +3278,59 @@ void BytecodeGenerator::emitLogShadowChickenTailIfNecessary()
 }
 
 void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* propertyNameRegister,
-    RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options, const JSTextPosition& position)
+    RegisterID* valueRegister, RegisterID* getterRegister, RegisterID* setterRegister, unsigned options)
 {
-    RefPtr<RegisterID> descriptorRegister = emitNewObject(newTemporary());
-
-    RefPtr<RegisterID> trueRegister = emitLoad(newTemporary(), true);
+    DefinePropertyAttributes attributes;
     if (options & PropertyConfigurable)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().configurable, trueRegister.get(), PropertyNode::Unknown);
+        attributes.setConfigurable(true);
+
     if (options & PropertyWritable)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().writable, trueRegister.get(), PropertyNode::Unknown);
-    else if (valueRegister) {
-        RefPtr<RegisterID> falseRegister = emitLoad(newTemporary(), false);
-        emitDirectPutById(descriptorRegister.get(), propertyNames().writable, falseRegister.get(), PropertyNode::Unknown);
-    }
+        attributes.setWritable(true);
+    else if (valueRegister)
+        attributes.setWritable(false);
+
     if (options & PropertyEnumerable)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().enumerable, trueRegister.get(), PropertyNode::Unknown);
+        attributes.setEnumerable(true);
 
     if (valueRegister)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().value, valueRegister, PropertyNode::Unknown);
+        attributes.setValue();
     if (getterRegister)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().get, getterRegister, PropertyNode::Unknown);
+        attributes.setGet();
     if (setterRegister)
-        emitDirectPutById(descriptorRegister.get(), propertyNames().set, setterRegister, PropertyNode::Unknown);
+        attributes.setSet();
 
-    RefPtr<RegisterID> definePropertyRegister = emitMoveLinkTimeConstant(newTemporary(), LinkTimeConstant::DefinePropertyFunction);
+    ASSERT(!valueRegister || (!getterRegister && !setterRegister));
 
-    CallArguments callArguments(*this, nullptr, 3);
-    emitLoad(callArguments.thisRegister(), jsUndefined());
-    emitMove(callArguments.argumentRegister(0), newObj);
-    emitMove(callArguments.argumentRegister(1), propertyNameRegister);
-    emitMove(callArguments.argumentRegister(2), descriptorRegister.get());
+    if (attributes.hasGet() || attributes.hasSet()) {
+        RefPtr<RegisterID> throwTypeErrorFunction;
+        if (!attributes.hasGet() || !attributes.hasSet())
+            throwTypeErrorFunction = emitMoveLinkTimeConstant(nullptr, LinkTimeConstant::ThrowTypeErrorFunction);
 
-    emitCall(newTemporary(), definePropertyRegister.get(), NoExpectedFunction, callArguments, position, position, position, DebuggableCall::No);
+        RefPtr<RegisterID> getter;
+        if (attributes.hasGet())
+            getter = getterRegister;
+        else
+            getter = throwTypeErrorFunction;
+
+        RefPtr<RegisterID> setter;
+        if (attributes.hasSet())
+            setter = setterRegister;
+        else
+            setter = throwTypeErrorFunction;
+
+        emitOpcode(op_define_accessor_property);
+        instructions().append(newObj->index());
+        instructions().append(propertyNameRegister->index());
+        instructions().append(getter->index());
+        instructions().append(setter->index());
+        instructions().append(emitLoad(nullptr, jsNumber(attributes.rawRepresentation()))->index());
+    } else {
+        emitOpcode(op_define_data_property);
+        instructions().append(newObj->index());
+        instructions().append(propertyNameRegister->index());
+        instructions().append(valueRegister->index());
+        instructions().append(emitLoad(nullptr, jsNumber(attributes.rawRepresentation()))->index());
+    }
 }
 
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)

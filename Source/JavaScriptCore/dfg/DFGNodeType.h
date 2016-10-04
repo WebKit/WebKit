@@ -198,6 +198,8 @@ namespace JSC { namespace DFG {
     macro(PutGetterSetterById, NodeMustGenerate) \
     macro(PutGetterByVal, NodeMustGenerate) \
     macro(PutSetterByVal, NodeMustGenerate) \
+    macro(DefineDataProperty, NodeMustGenerate | NodeHasVarArgs) \
+    macro(DefineAccessorProperty, NodeMustGenerate | NodeHasVarArgs) \
     macro(DeleteById, NodeResultBoolean | NodeMustGenerate) \
     macro(DeleteByVal, NodeResultBoolean | NodeMustGenerate) \
     macro(CheckStructure, NodeMustGenerate) \

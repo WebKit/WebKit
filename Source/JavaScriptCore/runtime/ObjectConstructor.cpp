@@ -107,14 +107,6 @@ void ObjectConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject, Obj
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().getOwnPropertyNamesPrivateName(), objectConstructorGetOwnPropertyNames, DontEnum, 1);
 }
 
-JSFunction* ObjectConstructor::addDefineProperty(ExecState* exec, JSGlobalObject* globalObject)
-{
-    VM& vm = exec->vm();
-    JSFunction* definePropertyFunction = JSFunction::create(vm, globalObject, 3, vm.propertyNames->defineProperty.string(), objectConstructorDefineProperty);
-    putDirectWithoutTransition(vm, vm.propertyNames->defineProperty, definePropertyFunction, DontEnum);
-    return definePropertyFunction;
-}
-
 // ES 19.1.1.1 Object([value])
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSValue newTarget)
 {

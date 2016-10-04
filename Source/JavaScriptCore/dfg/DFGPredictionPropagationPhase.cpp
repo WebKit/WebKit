@@ -1041,6 +1041,8 @@ private:
         case PutGetterSetterById:
         case PutGetterByVal:
         case PutSetterByVal:
+        case DefineDataProperty:
+        case DefineAccessorProperty:
         case DFG::Jump:
         case Branch:
         case Switch:

@@ -4479,6 +4479,16 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case DefineDataProperty: {
+        compileDefineDataProperty(node);
+        break;
+    }
+
+    case DefineAccessorProperty: {
+        compileDefineAccessorProperty(node);
+        break;
+    }
+
     case GetGlobalLexicalVariable:
     case GetGlobalVar: {
         GPRTemporary resultPayload(this);

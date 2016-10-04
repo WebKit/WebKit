@@ -1458,6 +1458,18 @@ _llint_op_put_setter_by_val:
     dispatch(5)
 
 
+_llint_op_define_data_property:
+    traceExecution()
+    callOpcodeSlowPath(_slow_path_define_data_property)
+    dispatch(5)
+
+
+_llint_op_define_accessor_property:
+    traceExecution()
+    callOpcodeSlowPath(_slow_path_define_accessor_property)
+    dispatch(6)
+
+
 _llint_op_jtrue:
     traceExecution()
     jumpTrueOrFalse(

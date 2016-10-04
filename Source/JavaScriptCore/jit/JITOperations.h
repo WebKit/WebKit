@@ -58,6 +58,7 @@ class RegExpObject;
 class Register;
 class Structure;
 class StructureStubInfo;
+class Symbol;
 class SymbolTable;
 class WatchpointSet;
 
@@ -110,6 +111,7 @@ typedef char* UnusedPtr;
     Ssi: StructureStubInfo*
     St: Structure*
     Symtab: SymbolTable*
+    Sym: Symbol*
     T: StringImpl*
     V: void
     Vm: VM*
@@ -268,6 +270,14 @@ typedef void (JIT_OPERATION *V_JITOperation_EPZJ)(ExecState*, void*, int32_t, En
 typedef void (JIT_OPERATION *V_JITOperation_ESsiJJI)(ExecState*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*);
 typedef void (JIT_OPERATION *V_JITOperation_EJJJI)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*);
 typedef void (JIT_OPERATION *V_JITOperation_EJJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue);
+typedef void (JIT_OPERATION *V_JITOperation_EOJJZ)(ExecState*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOJssJZ)(ExecState*, JSObject*, JSString*, EncodedJSValue, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOIJZ)(ExecState*, JSObject*, UniquedStringImpl*, EncodedJSValue, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOSymJZ)(ExecState*, JSObject*, Symbol*, EncodedJSValue, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOJOOZ)(ExecState*, JSObject*, EncodedJSValue, JSObject*, JSObject*, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOJssOOZ)(ExecState*, JSObject*, JSString*, JSObject*, JSObject*, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOIOOZ)(ExecState*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t);
+typedef void (JIT_OPERATION *V_JITOperation_EOSymOOZ)(ExecState*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t);
 typedef void (JIT_OPERATION *V_JITOperation_EWs)(ExecState*, WatchpointSet*);
 typedef void (JIT_OPERATION *V_JITOperation_EZ)(ExecState*, int32_t);
 typedef void (JIT_OPERATION *V_JITOperation_EZJ)(ExecState*, int32_t, EncodedJSValue);

@@ -33,6 +33,7 @@
 #include "ClonedArguments.h"
 #include "CodeProfiling.h"
 #include "CommonSlowPathsExceptions.h"
+#include "DefinePropertyAttributes.h"
 #include "DirectArguments.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
@@ -927,6 +928,41 @@ SLOW_PATH_DECL(slow_path_put_by_val_with_this)
     CHECK_EXCEPTION();
     PutPropertySlot slot(thisValue, exec->codeBlock()->isStrictMode());
     baseValue.put(exec, property, value, slot);
+    END();
+}
+
+SLOW_PATH_DECL(slow_path_define_data_property)
+{
+    BEGIN();
+    JSObject* base = asObject(OP_C(1).jsValue());
+    JSValue property = OP_C(2).jsValue();
+    JSValue value = OP_C(3).jsValue();
+    JSValue attributes = OP_C(4).jsValue();
+    ASSERT(attributes.isInt32());
+
+    auto propertyName = property.toPropertyKey(exec);
+    CHECK_EXCEPTION();
+    PropertyDescriptor descriptor = toPropertyDescriptor(value, jsUndefined(), jsUndefined(), DefinePropertyAttributes(attributes.asInt32()));
+    ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
+    base->methodTable(vm)->defineOwnProperty(base, exec, propertyName, descriptor, true);
+    END();
+}
+
+SLOW_PATH_DECL(slow_path_define_accessor_property)
+{
+    BEGIN();
+    JSObject* base = asObject(OP_C(1).jsValue());
+    JSValue property = OP_C(2).jsValue();
+    JSValue getter = OP_C(3).jsValue();
+    JSValue setter = OP_C(4).jsValue();
+    JSValue attributes = OP_C(5).jsValue();
+    ASSERT(attributes.isInt32());
+
+    auto propertyName = property.toPropertyKey(exec);
+    CHECK_EXCEPTION();
+    PropertyDescriptor descriptor = toPropertyDescriptor(jsUndefined(), getter, setter, DefinePropertyAttributes(attributes.asInt32()));
+    ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
+    base->methodTable(vm)->defineOwnProperty(base, exec, propertyName, descriptor, true);
     END();
 }
 

@@ -1657,6 +1657,39 @@ private:
             break;
         }
 
+        case DefineDataProperty: {
+            fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+            Edge& propertyEdge = m_graph.varArgChild(node, 1);
+            if (propertyEdge->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(propertyEdge);
+            else if (propertyEdge->shouldSpeculateStringIdent())
+                fixEdge<StringIdentUse>(propertyEdge);
+            else if (propertyEdge->shouldSpeculateString())
+                fixEdge<StringUse>(propertyEdge);
+            else
+                fixEdge<UntypedUse>(propertyEdge);
+            fixEdge<UntypedUse>(m_graph.varArgChild(node, 2));
+            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 3));
+            break;
+        }
+
+        case DefineAccessorProperty: {
+            fixEdge<CellUse>(m_graph.varArgChild(node, 0));
+            Edge& propertyEdge = m_graph.varArgChild(node, 1);
+            if (propertyEdge->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(propertyEdge);
+            else if (propertyEdge->shouldSpeculateStringIdent())
+                fixEdge<StringIdentUse>(propertyEdge);
+            else if (propertyEdge->shouldSpeculateString())
+                fixEdge<StringUse>(propertyEdge);
+            else
+                fixEdge<UntypedUse>(propertyEdge);
+            fixEdge<CellUse>(m_graph.varArgChild(node, 2));
+            fixEdge<CellUse>(m_graph.varArgChild(node, 3));
+            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 4));
+            break;
+        }
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:
@@ -1725,8 +1758,6 @@ private:
         case PutByValWithThis:
         case GetByValWithThis:
         case CompareEqPtr:
-            break;
-            
             break;
 #else
         default:

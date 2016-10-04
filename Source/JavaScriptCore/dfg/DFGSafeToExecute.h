@@ -213,6 +213,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutGetterSetterById:
     case PutGetterByVal:
     case PutSetterByVal:
+    case DefineDataProperty:
+    case DefineAccessorProperty:
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:

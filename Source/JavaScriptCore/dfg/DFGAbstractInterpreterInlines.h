@@ -2656,6 +2656,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         clobberWorld(node->origin.semantic, clobberLimit);
         break;
     }
+
+    case DefineDataProperty:
+    case DefineAccessorProperty:
+        clobberWorld(node->origin.semantic, clobberLimit);
+        break;
         
     case In: {
         // FIXME: We can determine when the property definitely exists based on abstract

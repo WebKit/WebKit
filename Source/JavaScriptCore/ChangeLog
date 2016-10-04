@@ -1,3 +1,155 @@
+2016-09-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add a new byte code op_define_property instead of calling defineProperty
+        https://bugs.webkit.org/show_bug.cgi?id=162108
+
+        Reviewed by Saam Barati.
+
+        To construct ES6 class, we emitted bytecode that performs the following operations.
+
+            1. construct a new object
+            2. put "configurable", "enumerable" etc. fields
+            3. call "defineProperty" function
+
+        However, this approach has problems. Every time we define a class method, we need to create
+        a new object to represent property descriptor. This can be removed if we can introduce
+        a special bytecode or special function.
+
+        This patch introduces new bytecodes, op_define_data_property and op_define_accessor_property.
+        Instead of taking an object, they takes several registers to avoid object allocations.
+        We're planning to use this bytecode to implement Object.defineProperty in builtin JS next.
+        This allows us to leverage object allocation sinking. And it also gives us a chance to use
+        faster ::get and ::hasProperty in JS.
+
+        Originally, I attempted to create one bytecode, op_define_property. However, it takes too many
+        children in DFG and uses so many registers in DFG. This leads tricky program in 32bit platforms.
+        Furthermore, it does not fit to the number of x64 argument registers. So instead, we introduce
+        two bytecodes.
+
+        And for op_define_accessor_property, we perform CellUse edge filter to getter and setter children.
+        This edge filter makes us possible to use SpeculateCellOperand and reduce the number of used registers
+        in comparison with JSValueOperand. To make children Cells even if we do not specify some accessors (for
+        example, { get: func, set: null } case), we fill registers with special throwTypeErrorFunction.
+        The attributes bitset keep information like "This property descriptor only has getter slot".
+
+        In these two bytecodes, we take attributes (configurable, enumerable, writable, hasGetter etc.) as
+        register instead of embedding constant int value because we will use these bytecodes to implement
+        Object.defineProperty next. In Object.defineProperty case, an attributes are not statically defined
+        at bytecode compiling time.
+
+        Run ES6SampleBench/Air 20 times. The result shows ~2% performance improvement.
+
+        Baseline:
+            firstIteration:     84.05 ms +- 4.37 ms
+            averageWorstCase:   40.54 ms +- 2.81 ms
+            steadyState:        3317.49 ms +- 48.25 ms
+            summary:            223.51 ms +- 5.07 ms
+
+        Patched:
+            firstIteration:     84.46 ms +- 4.22 ms
+            averageWorstCase:   41.48 ms +- 2.33 ms
+            steadyState:        3253.48 ms +- 29.31 ms
+            summary:            224.40 ms +- 4.72 ms
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/SpecialPointer.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitMoveLinkTimeConstant):
+        (JSC::BytecodeGenerator::emitCallDefineProperty):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::BitwiseNotNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        (JSC::ObjectPatternNode::bindValue):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDefineDataProperty):
+        (JSC::DFG::SpeculativeJIT::compileDefineAccessorProperty):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDefineDataProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDefineAccessorProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByValWithThis): Deleted.
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::setupFourStubArgsGPR): Deleted.
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupFourStubArgsGPR):
+        (JSC::CCallHelpers::setupFiveStubArgsGPR):
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        (JSC::CCallHelpers::setupStubArgsGPR):
+        (JSC::CCallHelpers::prepareForTailCallSlow): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_define_data_property):
+        (JSC::JIT::emit_op_define_accessor_property):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/DefinePropertyAttributes.h: Added.
+        (JSC::DefinePropertyAttributes::DefinePropertyAttributes):
+        (JSC::DefinePropertyAttributes::rawRepresentation):
+        (JSC::DefinePropertyAttributes::hasValue):
+        (JSC::DefinePropertyAttributes::setValue):
+        (JSC::DefinePropertyAttributes::hasGet):
+        (JSC::DefinePropertyAttributes::setGet):
+        (JSC::DefinePropertyAttributes::hasSet):
+        (JSC::DefinePropertyAttributes::setSet):
+        (JSC::DefinePropertyAttributes::writable):
+        (JSC::DefinePropertyAttributes::configurable):
+        (JSC::DefinePropertyAttributes::enumerable):
+        (JSC::DefinePropertyAttributes::setWritable):
+        (JSC::DefinePropertyAttributes::setConfigurable):
+        (JSC::DefinePropertyAttributes::setEnumerable):
+        (JSC::DefinePropertyAttributes::fillWithTriState):
+        (JSC::DefinePropertyAttributes::extractTriState):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::throwTypeErrorFunction):
+        (JSC::JSGlobalObject::definePropertyFunction): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::addDefineProperty): Deleted.
+        * runtime/ObjectConstructor.h:
+        * runtime/PropertyDescriptor.h:
+        (JSC::toPropertyDescriptor):
+
 2016-10-04  Saam Barati  <sbarati@apple.com>
 
         Follow up fix to GetMapBucket and MapHash speculating on child node types.

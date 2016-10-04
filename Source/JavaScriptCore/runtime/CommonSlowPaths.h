@@ -256,5 +256,7 @@ SLOW_PATH_HIDDEN_DECL(slow_path_get_by_id_with_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_get_by_val_with_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_put_by_id_with_this);
 SLOW_PATH_HIDDEN_DECL(slow_path_put_by_val_with_this);
+SLOW_PATH_HIDDEN_DECL(slow_path_define_data_property);
+SLOW_PATH_HIDDEN_DECL(slow_path_define_accessor_property);
 
 } // namespace JSC

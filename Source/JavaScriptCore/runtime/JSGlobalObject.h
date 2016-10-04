@@ -233,7 +233,7 @@ public:
     WriteBarrier<JSFunction> m_evalFunction;
     WriteBarrier<JSFunction> m_callFunction;
     WriteBarrier<JSFunction> m_applyFunction;
-    WriteBarrier<JSFunction> m_definePropertyFunction;
+    WriteBarrier<JSFunction> m_throwTypeErrorFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoToStringFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_arrayProtoValuesFunction;
     LazyProperty<JSGlobalObject, JSFunction> m_initializePromiseFunction;
@@ -478,7 +478,7 @@ public:
     JSFunction* evalFunction() const { return m_evalFunction.get(); }
     JSFunction* callFunction() const { return m_callFunction.get(); }
     JSFunction* applyFunction() const { return m_applyFunction.get(); }
-    JSFunction* definePropertyFunction() const { return m_definePropertyFunction.get(); }
+    JSFunction* throwTypeErrorFunction() const { return m_throwTypeErrorFunction.get(); }
     JSFunction* arrayProtoToStringFunction() const { return m_arrayProtoToStringFunction.get(this); }
     JSFunction* arrayProtoValuesFunction() const { return m_arrayProtoValuesFunction.get(this); }
     JSFunction* initializePromiseFunction() const { return m_initializePromiseFunction.get(this); }

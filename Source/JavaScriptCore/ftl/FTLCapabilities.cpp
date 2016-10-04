@@ -263,6 +263,8 @@ inline CapabilityLevel canCompile(Node* node)
     case CompareGreater:
     case CompareGreaterEq:
     case CompareStrictEq:
+    case DefineDataProperty:
+    case DefineAccessorProperty:
         // These are OK.
         break;
 

@@ -566,6 +566,8 @@ namespace JSC {
         void emit_op_put_getter_setter_by_id(Instruction*);
         void emit_op_put_getter_by_val(Instruction*);
         void emit_op_put_setter_by_val(Instruction*);
+        void emit_op_define_data_property(Instruction*);
+        void emit_op_define_accessor_property(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_rshift(Instruction*);
         void emit_op_set_function_name(Instruction*);

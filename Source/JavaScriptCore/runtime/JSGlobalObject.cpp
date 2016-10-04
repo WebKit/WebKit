@@ -404,7 +404,7 @@ void JSGlobalObject::init(VM& vm)
     m_functionProtoHasInstanceSymbolFunction.set(vm, this, hasInstanceSymbolFunction);
     m_throwTypeErrorGetterSetter.initLater(
         [] (const Initializer<GetterSetter>& init) {
-            JSFunction* thrower = JSFunction::create(init.vm, init.owner, 0, String(), globalFuncThrowTypeError);
+            JSFunction* thrower = init.owner->throwTypeErrorFunction();
             GetterSetter* getterSetter = GetterSetter::create(init.vm, init.owner);
             getterSetter->setGetter(init.vm, init.owner, thrower);
             getterSetter->setSetter(init.vm, init.owner, thrower);
@@ -581,8 +581,8 @@ m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, th
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
     m_objectConstructor.set(vm, this, objectConstructor);
 
-    JSFunction* definePropertyFunction = m_objectConstructor->addDefineProperty(exec, this);
-    m_definePropertyFunction.set(vm, this, definePropertyFunction);
+    JSFunction* throwTypeErrorFunction = JSFunction::create(vm, this, 0, String(), globalFuncThrowTypeError);
+    m_throwTypeErrorFunction.set(vm, this, throwTypeErrorFunction);
 
     JSCell* functionConstructor = FunctionConstructor::create(vm, FunctionConstructor::createStructure(vm, this, m_functionPrototype.get()), m_functionPrototype.get());
     ArrayConstructor* arrayConstructor = ArrayConstructor::create(vm, this, ArrayConstructor::createStructure(vm, this, m_functionPrototype.get()), m_arrayPrototype.get(), m_speciesGetterSetter.get());
@@ -803,7 +803,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     m_specialPointers[Special::ObjectConstructor] = objectConstructor;
     m_specialPointers[Special::ArrayConstructor] = arrayConstructor;
 
-    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::DefinePropertyFunction)] = m_definePropertyFunction.get();
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::ThrowTypeErrorFunction)] = m_throwTypeErrorFunction.get();
 
     if (UNLIKELY(Options::useDollarVM())) {
         JSDollarVMPrototype* dollarVMPrototype = JSDollarVMPrototype::create(vm, this, JSDollarVMPrototype::createStructure(vm, this, m_objectPrototype.get()));
@@ -1066,7 +1066,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_evalFunction);
     visitor.append(&thisObject->m_callFunction);
     visitor.append(&thisObject->m_applyFunction);
-    visitor.append(&thisObject->m_definePropertyFunction);
+    visitor.append(&thisObject->m_throwTypeErrorFunction);
     thisObject->m_arrayProtoToStringFunction.visit(visitor);
     thisObject->m_arrayProtoValuesFunction.visit(visitor);
     thisObject->m_initializePromiseFunction.visit(visitor);

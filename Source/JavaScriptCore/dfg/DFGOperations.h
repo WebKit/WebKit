@@ -113,6 +113,14 @@ void JIT_OPERATION operationPutByIdWithThis(ExecState*, EncodedJSValue, EncodedJ
 void JIT_OPERATION operationPutByIdWithThisStrict(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValWithThis(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationPutByValWithThisStrict(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue, EncodedJSValue) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataProperty(ExecState*, JSObject*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertyString(ExecState*, JSObject*, JSString*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineDataPropertySymbol(ExecState*, JSObject*, Symbol*, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorProperty(ExecState*, JSObject*, EncodedJSValue, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertyString(ExecState*, JSObject*, JSString*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationDefineAccessorPropertySymbol(ExecState*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState*, double value, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPop(ExecState*, JSArray*) WTF_INTERNAL;

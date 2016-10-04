@@ -1770,6 +1770,18 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Instruction* currentInstruction, 
     return slowCases;
 }
 
+void JIT::emit_op_define_data_property(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_define_data_property);
+    slowPathCall.call();
+}
+
+void JIT::emit_op_define_accessor_property(Instruction* currentInstruction)
+{
+    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_define_accessor_property);
+    slowPathCall.call();
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

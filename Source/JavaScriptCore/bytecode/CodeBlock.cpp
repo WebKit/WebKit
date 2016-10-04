@@ -1235,6 +1235,25 @@ void CodeBlock::dumpBytecode(
             out.printf("%s, %s, %d, %s", registerName(r0).data(), registerName(r1).data(), n0, registerName(r2).data());
             break;
         }
+        case op_define_data_property: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int r3 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "define_data_property");
+            out.printf("%s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data());
+            break;
+        }
+        case op_define_accessor_property: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
+            int r3 = (++it)->u.operand;
+            int r4 = (++it)->u.operand;
+            printLocationAndOp(out, exec, location, it, "define_accessor_property");
+            out.printf("%s, %s, %s, %s, %s", registerName(r0).data(), registerName(r1).data(), registerName(r2).data(), registerName(r3).data(), registerName(r4).data());
+            break;
+        }
         case op_del_by_id: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

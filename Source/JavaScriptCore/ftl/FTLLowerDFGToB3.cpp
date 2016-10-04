@@ -691,6 +691,12 @@ private:
         case PutByValWithThis:
             compilePutByValWithThis();
             break;
+        case DefineDataProperty:
+            compileDefineDataProperty();
+            break;
+        case DefineAccessorProperty:
+            compileDefineAccessorProperty();
+            break;
         case ArrayPush:
             compileArrayPush();
             break;
@@ -2762,6 +2768,71 @@ private:
 
         vmCall(Void, m_out.operation(m_graph.isStrictModeFor(m_node->origin.semantic) ? operationPutByValWithThisStrict : operationPutByValWithThis),
             m_callFrame, base, thisValue, property, value);
+    }
+
+    void compileDefineDataProperty()
+    {
+        LValue base = lowCell(m_graph.varArgChild(m_node, 0));
+        LValue value  = lowJSValue(m_graph.varArgChild(m_node, 2));
+        LValue attributes = lowInt32(m_graph.varArgChild(m_node, 3));
+        Edge& propertyEdge = m_graph.varArgChild(m_node, 1);
+        switch (propertyEdge.useKind()) {
+        case StringUse: {
+            LValue property = lowString(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineDataPropertyString), m_callFrame, base, property, value, attributes);
+            break;
+        }
+        case StringIdentUse: {
+            LValue property = lowStringIdent(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineDataPropertyStringIdent), m_callFrame, base, property, value, attributes);
+            break;
+        }
+        case SymbolUse: {
+            LValue property = lowSymbol(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineDataPropertySymbol), m_callFrame, base, property, value, attributes);
+            break;
+        }
+        case UntypedUse: {
+            LValue property = lowJSValue(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineDataProperty), m_callFrame, base, property, value, attributes);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    void compileDefineAccessorProperty()
+    {
+        LValue base = lowCell(m_graph.varArgChild(m_node, 0));
+        LValue getter = lowCell(m_graph.varArgChild(m_node, 2));
+        LValue setter = lowCell(m_graph.varArgChild(m_node, 3));
+        LValue attributes = lowInt32(m_graph.varArgChild(m_node, 4));
+        Edge& propertyEdge = m_graph.varArgChild(m_node, 1);
+        switch (propertyEdge.useKind()) {
+        case StringUse: {
+            LValue property = lowString(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineAccessorPropertyString), m_callFrame, base, property, getter, setter, attributes);
+            break;
+        }
+        case StringIdentUse: {
+            LValue property = lowStringIdent(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineAccessorPropertyStringIdent), m_callFrame, base, property, getter, setter, attributes);
+            break;
+        }
+        case SymbolUse: {
+            LValue property = lowSymbol(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineAccessorPropertySymbol), m_callFrame, base, property, getter, setter, attributes);
+            break;
+        }
+        case UntypedUse: {
+            LValue property = lowJSValue(propertyEdge);
+            vmCall(Void, m_out.operation(operationDefineAccessorProperty), m_callFrame, base, property, getter, setter, attributes);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
     }
     
     void compilePutById()
