@@ -108,11 +108,11 @@ inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& 
 }
 
 template<>
-inline void ReadableStreamDefaultController::error<String>(const String& result)
+inline void ReadableStreamDefaultController::error<String>(const String& errorMessage)
 {
     JSC::ExecState& state = globalExec();
     JSC::JSLockHolder locker(&state);
-    error(state, jsString(&state, result));
+    error(state, JSC::createTypeError(&state, errorMessage));
 }
 
 } // namespace WebCore

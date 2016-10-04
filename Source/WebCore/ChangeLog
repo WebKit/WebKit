@@ -1,3 +1,17 @@
+2016-10-04  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] ReadableStream should be errored with TypeError values
+        https://bugs.webkit.org/show_bug.cgi?id=162895
+
+        Reviewed by Alex Christensen.
+
+        Test: imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didFail): Removing FIXME.
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::error<String>): Erroring with TypeError values.
+
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
         Bindings do not throw a TypeError if a required dictionary member is missing

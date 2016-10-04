@@ -159,8 +159,6 @@ void FetchResponse::BodyLoader::didFail()
     if (m_loader->isStarted())
         m_response.m_bodyLoader = Nullopt;
 
-    // FIXME: Handle the case of failing after didReceiveResponse is called.
-
     m_response.unsetPendingActivity(&m_response);
 }
 
