@@ -1,5 +1,14 @@
 2016-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/cache/disk-cache/disk-cache-204-status-code.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=162685
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-10-04  Ryan Haddad  <ryanhaddad@apple.com>
+
         Land TestExpectations for rdar://problem/28586837.
 
         Unreviewed test gardening.
