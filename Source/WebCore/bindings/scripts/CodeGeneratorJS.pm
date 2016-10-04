@@ -951,14 +951,6 @@ sub GenerateConversionRuleWithLeadingComma
     return "";
 }
 
-sub GenerateDefaultValueWithLeadingComma
-{
-    my ($interface, $member) = @_;
-
-    return "" unless $member->isOptional && defined $member->default;
-    return ", " . GenerateDefaultValue($interface, $member);
-}
-
 sub GenerateDictionaryImplementationContent
 {
     my ($interface, $dictionaries) = @_;
@@ -975,58 +967,84 @@ sub GenerateDictionaryImplementationContent
         # FIXME: A little ugly to have this be a side effect instead of a return value.
         AddToImplIncludes("JSDOMConvert.h");
 
-        my $defaultValues = "";
-        my $comma = "";
-        foreach my $member (@{$dictionary->members}) {
-            if (!$member->isOptional) {
-                $defaultValues = "";
-                last;
-            }
-            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
-            $defaultValues .= $comma . (defined $member->default ? GenerateDefaultValue($interface, $member) : "{ }");
-            $comma = ", ";
-        }
-
+        # https://heycam.github.io/webidl/#es-dictionary
         $result .= "template<> Optional<$className> convertDictionary<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
         $result .= "    VM& vm = state.vm();\n";
         $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-        $result .= "    if (value.isUndefinedOrNull())\n" if $defaultValues;
-        $result .= "        return $className { " . $defaultValues . " };\n" if $defaultValues;
-        $result .= "    auto* object = value.getObject();\n";
-        $result .= "    if (UNLIKELY(!object || object->type() == RegExpObjectType)) {\n";
+        $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
+        $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
+        # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
+        $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
         $result .= "        throwTypeError(&state, throwScope);\n";
         $result .= "        return Nullopt;\n";
         $result .= "    }\n";
 
-        my $needExceptionCheck = 0;
+        # 2. If V is a native RegExp object, then throw a TypeError.
+        # FIXME: This RegExp special handling is likely to go away in the specification.
+        $result .= "    if (UNLIKELY(object && object->type() == RegExpObjectType)) {\n";
+        $result .= "        throwTypeError(&state, throwScope);\n";
+        $result .= "        return Nullopt;\n";
+        $result .= "    }\n";
+
+        # 3. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
+        # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
+        # FIXME: We do not support dictionary inheritence yet.
+
+        # 5. For each dictionary dictionary in dictionaries, in order:
         foreach my $member (@{$dictionary->members}) {
-            if ($needExceptionCheck) {
-                $result .= "    RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
-            }
-            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
+            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
+
             my $type = $member->type;
-            my $name = $member->name;
-            my $value = "object->get(&state, Identifier::fromString(&state, \"${name}\"))";
+
+            # 5.1. Let key be the identifier of member.
+            my $key = $member->name;
+
+            # 5.2. Let value be an ECMAScript value, depending on Type(V):
+            $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
+
+            my $nativeType = GetNativeTypeFromSignature($interface, $member);
+            if ($member->isOptional && !defined $member->default) {
+                $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
+            } else {
+                $result .= "    $nativeType $key;\n";
+            }
+
+            # 5.3. If value is not undefined, then:
+            $result .= "    if (!${key}Value.isUndefined()) {\n";
+            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
             if ($codeGenerator->IsWrapperType($type)) {
                 AddToImplIncludes("JS${type}.h");
                 die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
                 my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
-                $result .= "    auto* $name = convertWrapperType<$type, JS${type}>(state, $value, $nullableParameter);\n";
+                $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
             } elsif ($codeGenerator->IsDictionaryType($type)) {
                 my $nativeType = GetNativeType($interface, $type);
-                $result .= "    auto $name = convertDictionary<$nativeType>(state, $value);\n";
+                $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
             } else {
-                my $function = $member->isOptional ? "convertOptional" : "convert";
-                $result .= "    auto $name = ${function}<" . GetNativeTypeFromSignature($interface, $member) . ">(state, $value"
-                    . GenerateConversionRuleWithLeadingComma($interface, $member)
-                    . GenerateDefaultValueWithLeadingComma($interface, $member) . ");\n";
+                my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
+                $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
             }
-            $needExceptionCheck = 1;
+            $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
+            # Value is undefined.
+            # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
+            if ($member->isOptional && defined $member->default) {
+                $result .= "    } else\n";
+                $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
+            } elsif (!$member->isOptional) {
+                # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
+                $result .= "    } else {\n";
+                $result .= "        throwTypeError(&state, throwScope);\n";
+                $result .= "        return Nullopt;\n";
+                $result .= "    }\n";
+            } else {
+                $result .= "    }\n";
+            }
         }
 
+        # 6. Return dict.
         my $arguments = "";
-        $comma = "";
+        my $comma = "";
         foreach my $member (@{$dictionary->members}) {
             my $value;
             if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {

@@ -139,10 +139,13 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
     auto* attributeChangedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "attributeChangedCallback"));
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (attributeChangedCallback) {
-        auto value = convertOptional<Vector<String>>(state, constructor->get(&state, Identifier::fromString(&state, "observedAttributes")));
+        auto observedAttributesValue = constructor->get(&state, Identifier::fromString(&state, "observedAttributes"));
         RETURN_IF_EXCEPTION(scope, JSValue());
-        if (value)
-            elementInterface->setAttributeChangedCallback(attributeChangedCallback, *value);
+        if (!observedAttributesValue.isUndefined()) {
+            auto observedAttributes = convert<Vector<String>>(state, observedAttributesValue);
+            RETURN_IF_EXCEPTION(scope, JSValue());
+            elementInterface->setAttributeChangedCallback(attributeChangedCallback, observedAttributes);
+        }
     }
 
     PrivateName uniquePrivateName;

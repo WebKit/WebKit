@@ -1,3 +1,44 @@
+2016-10-03  Chris Dumez  <cdumez@apple.com>
+
+        Bindings do not throw a TypeError if a required dictionary member is missing
+        https://bugs.webkit.org/show_bug.cgi?id=162734
+
+        Reviewed by Geoffrey Garen.
+
+        Bindings should throw a TypeError if a required dictionary member is missing.
+        For example, if there is a "required long id" member in a dictionary that is
+        missing, our bindings would prevously pass 0 to the implementation instead
+        of throwing a TypeError.
+
+        Relevant specification:
+        - https://heycam.github.io/webidl/#es-dictionary
+
+        I aligned our bindings generator implementation with the specification,
+        except for the support for dictionary inheritance that is still missing
+        and will be addressed in a follow-up patch.
+
+        No new tests, I rebaselined the bindings tests and this is already covered
+        by fast/events/touch/touch-constructor.html on iOS.
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert): Deleted.
+        (WebCore::Converter<bool>::convert): Deleted.
+        (WebCore::Converter<String>::convert): Deleted.
+        (WebCore::Converter<IDLDOMString>::convert): Deleted.
+        (WebCore::Converter<IDLUSVString>::convert): Deleted.
+        (WebCore::Converter<JSC::JSValue>::convert): Deleted.
+        (WebCore::Converter<int8_t>::convert): Deleted.
+        (WebCore::Converter<uint8_t>::convert): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldTolerateNull>):
+        (WebCore::convertDictionary<AlternateDictionaryName>):
+
 2016-10-03  Zalan Bujtas  <zalan@apple.com>
 
         [ListItems] Render tree should be all clean by the end of FrameView::layout().
