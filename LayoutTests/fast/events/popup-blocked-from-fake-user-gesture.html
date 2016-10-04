@@ -20,7 +20,7 @@
             {
                 window.event = stolenEvent;
                 win = window.open("about:blank", "blank");
-                shouldBeUndefined("win");
+                shouldBeNull("win");
             }
 
             clickHandler = clickHandler1;

@@ -22,7 +22,7 @@
                     shouldBeNonNull("newWindow");
                     firstIntervalExecution = false;
                 } else {
-                    shouldBeUndefined("newWindow");
+                    shouldBeNull("newWindow");
                     clearInterval(intervalId);
                     if (window.testRunner)
                         testRunner.notifyDone();

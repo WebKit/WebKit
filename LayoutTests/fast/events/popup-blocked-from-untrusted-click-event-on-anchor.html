@@ -9,7 +9,7 @@
             var win;
             function popup() {
                 win = window.open('about:blank','blank','height=200,width=200');
-                shouldBeUndefined("win");
+                shouldBeNull("win");
             }
 
             if (window.testRunner) {

@@ -1,3 +1,27 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Return null when window.open() is popup blocked
+        https://bugs.webkit.org/show_bug.cgi?id=162897
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline existing tests to reflect behavior change.
+
+        * fast/events/popup-blocked-from-fake-button-click-expected.txt:
+        * fast/events/popup-blocked-from-fake-button-click.html:
+        * fast/events/popup-blocked-from-fake-focus-expected.txt:
+        * fast/events/popup-blocked-from-fake-focus.html:
+        * fast/events/popup-blocked-from-fake-user-gesture-expected.txt:
+        * fast/events/popup-blocked-from-fake-user-gesture.html:
+        * fast/events/popup-blocked-from-untrusted-click-event-on-anchor-expected.txt:
+        * fast/events/popup-blocked-from-untrusted-click-event-on-anchor.html:
+        * fast/events/popup-blocking-timers3-expected.txt:
+        * fast/events/popup-blocking-timers3.html:
+        * fast/events/popup-blocking-timers4-expected.txt:
+        * fast/events/popup-blocking-timers4.html:
+        * fast/events/popup-blocking-timers6-expected.txt:
+        * fast/events/popup-blocking-timers6.html:
+
 2016-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/cache/disk-cache/disk-cache-204-status-code.html as flaky on mac-wk2.

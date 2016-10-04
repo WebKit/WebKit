@@ -16,7 +16,7 @@
                 newWindow = window.open("about:blank");
                 self.focus();
                 debug("Test calling window.open() with a 1001 ms delay. A popup should not be allowed.")
-                shouldBeUndefined("newWindow");
+                shouldBeNull("newWindow");
 
                 if (window.testRunner)
                     testRunner.notifyDone();

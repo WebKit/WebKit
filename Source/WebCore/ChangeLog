@@ -1,5 +1,23 @@
 2016-10-04  Chris Dumez  <cdumez@apple.com>
 
+        Return null when window.open() is popup blocked
+        https://bugs.webkit.org/show_bug.cgi?id=162897
+
+        Reviewed by Michael Catanzaro.
+
+        The return value of window.open() when the popup is blocked should be null:
+        - https://github.com/whatwg/html/pull/1854
+        - https://github.com/whatwg/html/issues/1851
+
+        Firefox / Edge return null.
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open):
+
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
         [Web IDL] Add support for dictionary inheritance
         https://bugs.webkit.org/show_bug.cgi?id=162907
 

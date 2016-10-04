@@ -17,7 +17,7 @@
                     newWindow = window.open("about:blank");
                     self.focus();
                     debug("Test calling window.open() in a nested call to setTimeout(). A popup should not be allowed.")
-                    shouldBeUndefined("newWindow");
+                    shouldBeNull("newWindow");
                     if (window.testRunner)
                         testRunner.notifyDone();
                 }, 0);

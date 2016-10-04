@@ -433,7 +433,7 @@ JSValue JSDOMWindow::open(ExecState& state)
 
     RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, target, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
     if (!openedWindow)
-        return jsUndefined();
+        return jsNull();
     return toJS(&state, openedWindow.get());
 }
 
