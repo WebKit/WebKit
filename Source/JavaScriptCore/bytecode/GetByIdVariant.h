@@ -32,6 +32,9 @@
 #include "StructureSet.h"
 
 namespace JSC {
+namespace DOMJIT {
+class GetterSetter;
+}
 
 class CallLinkStatus;
 class GetByIdStatus;
@@ -43,7 +46,8 @@ public:
         const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,
         const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
         std::unique_ptr<CallLinkStatus> = nullptr,
-        JSFunction* = nullptr);
+        JSFunction* = nullptr,
+        DOMJIT::GetterSetter* = nullptr);
 
     ~GetByIdVariant();
     
@@ -62,6 +66,7 @@ public:
     CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
     JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
     Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
+    DOMJIT::GetterSetter* domJIT() const { return m_domJIT; }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
@@ -80,6 +85,7 @@ private:
     PropertyOffset m_offset;
     std::unique_ptr<CallLinkStatus> m_callLinkStatus;
     JSFunction* m_intrinsicFunction;
+    DOMJIT::GetterSetter* m_domJIT;
 };
 
 } // namespace JSC

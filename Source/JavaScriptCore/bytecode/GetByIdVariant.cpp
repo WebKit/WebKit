@@ -36,12 +36,14 @@ GetByIdVariant::GetByIdVariant(
     const StructureSet& structureSet, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet,
     std::unique_ptr<CallLinkStatus> callLinkStatus,
-    JSFunction* intrinsicFunction)
+    JSFunction* intrinsicFunction,
+    DOMJIT::GetterSetter* domJIT)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
     , m_callLinkStatus(WTFMove(callLinkStatus))
     , m_intrinsicFunction(intrinsicFunction)
+    , m_domJIT(domJIT)
 {
     if (!structureSet.size()) {
         ASSERT(offset == invalidOffset);
@@ -65,6 +67,7 @@ GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
     m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
     m_intrinsicFunction = other.m_intrinsicFunction;
+    m_domJIT = other.m_domJIT;
     if (other.m_callLinkStatus)
         m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
     else
@@ -103,6 +106,9 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
     if (!canMergeIntrinsicStructures(other))
         return false;
 
+    if (m_domJIT != other.m_domJIT)
+        return false;
+
     if (m_conditionSet.isEmpty() != other.m_conditionSet.isEmpty())
         return false;
     
@@ -138,6 +144,8 @@ void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print(", call = ", *m_callLinkStatus);
     if (m_intrinsicFunction)
         out.print(", intrinsic = ", *m_intrinsicFunction);
+    if (m_domJIT)
+        out.print(", domjit = ", RawPointer(m_domJIT));
     out.print(">");
 }
 

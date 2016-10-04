@@ -15,6 +15,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/bytecompiler"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/dfg"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/disassembler"
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/domjit"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/heap"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/debugger"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/JavaScriptCore/interpreter"

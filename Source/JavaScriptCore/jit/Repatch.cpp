@@ -33,6 +33,7 @@
 #include "CallFrameShuffler.h"
 #include "DFGOperations.h"
 #include "DFGSpeculativeJIT.h"
+#include "DOMJITGetterSetter.h"
 #include "DirectArguments.h"
 #include "FTLThunks.h"
 #include "GCAwareJITStubRoutine.h"
@@ -260,6 +261,10 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
         if (slot.isCacheableGetter())
             getter = jsDynamicCast<JSFunction*>(slot.getterSetter()->getter());
 
+        DOMJIT::GetterSetter* domJIT = nullptr;
+        if (slot.isCacheableCustom() && slot.domJIT())
+            domJIT = slot.domJIT();
+
         if (kind == GetByIDKind::Pure) {
             AccessCase::AccessType type;
             if (slot.isCacheableValue())
@@ -290,7 +295,8 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             newCase = AccessCase::get(
                 vm, codeBlock, type, offset, structure, conditionSet, loadTargetFromProxy,
                 slot.watchpointSet(), slot.isCacheableCustom() ? slot.customGetter() : nullptr,
-                slot.isCacheableCustom() ? slot.slotBase() : nullptr);
+                slot.isCacheableCustom() ? slot.slotBase() : nullptr,
+                domJIT);
         }
     }
 

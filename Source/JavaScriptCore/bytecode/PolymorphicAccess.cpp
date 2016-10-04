@@ -220,7 +220,7 @@ std::unique_ptr<AccessCase> AccessCase::tryGet(
 std::unique_ptr<AccessCase> AccessCase::get(
     VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure,
     const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet,
-    PropertySlot::GetValueFunc customGetter, JSObject* customSlotBase)
+    PropertySlot::GetValueFunc customGetter, JSObject* customSlotBase, DOMJIT::GetterSetter* domJIT)
 {
     std::unique_ptr<AccessCase> result(new AccessCase());
 
@@ -229,12 +229,13 @@ std::unique_ptr<AccessCase> AccessCase::get(
     result->m_structure.set(vm, owner, structure);
     result->m_conditionSet = conditionSet;
 
-    if (viaProxy || additionalSet || result->doesCalls() || customGetter || customSlotBase) {
+    if (viaProxy || additionalSet || result->doesCalls() || customGetter || customSlotBase || domJIT) {
         result->m_rareData = std::make_unique<RareData>();
         result->m_rareData->viaProxy = viaProxy;
         result->m_rareData->additionalSet = additionalSet;
         result->m_rareData->customAccessor.getter = customGetter;
         result->m_rareData->customSlotBase.setMayBeNull(vm, owner, customSlotBase);
+        result->m_rareData->domJIT = domJIT;
     }
 
     return result;
@@ -385,6 +386,7 @@ std::unique_ptr<AccessCase> AccessCase::clone() const
         result->m_rareData->customAccessor.opaque = rareData->customAccessor.opaque;
         result->m_rareData->customSlotBase = rareData->customSlotBase;
         result->m_rareData->intrinsicFunction = rareData->intrinsicFunction;
+        result->m_rareData->domJIT = rareData->domJIT;
     }
     return result;
 }

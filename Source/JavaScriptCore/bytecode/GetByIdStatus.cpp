@@ -37,6 +37,9 @@
 #include <wtf/ListDump.h>
 
 namespace JSC {
+namespace DOMJIT {
+class GetterSetter;
+}
 
 bool GetByIdStatus::appendVariant(const GetByIdVariant& variant)
 {
@@ -215,6 +218,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
             case ComplexGetStatus::Inlineable: {
                 std::unique_ptr<CallLinkStatus> callLinkStatus;
                 JSFunction* intrinsicFunction = nullptr;
+                DOMJIT::GetterSetter* domJIT = nullptr;
 
                 switch (access.type()) {
                 case AccessCase::Load:
@@ -234,6 +238,12 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     }
                     break;
                 }
+                case AccessCase::CustomAccessorGetter: {
+                    domJIT = access.domJIT();
+                    if (!domJIT)
+                        return GetByIdStatus(slowPathState, true);
+                    break;
+                }
                 default: {
                     // FIXME: It would be totally sweet to support more of these at some point in the
                     // future. https://bugs.webkit.org/show_bug.cgi?id=133052
@@ -244,7 +254,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                 GetByIdVariant variant(
                     StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet(), WTFMove(callLinkStatus),
-                    intrinsicFunction);
+                    intrinsicFunction,
+                    domJIT);
 
                 if (!result.appendVariant(variant))
                     return GetByIdStatus(slowPathState, true);

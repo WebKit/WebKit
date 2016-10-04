@@ -58,6 +58,10 @@
 
 namespace JSC {
 
+namespace DOMJIT {
+class GetterSetter;
+}
+
 namespace Profiler {
 class ExecutionCounter;
 }

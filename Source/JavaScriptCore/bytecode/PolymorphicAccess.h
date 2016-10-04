@@ -37,6 +37,9 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
+namespace DOMJIT {
+class GetterSetter;
+}
 
 class CodeBlock;
 class PolymorphicAccess;
@@ -130,7 +133,8 @@ public:
         bool viaProxy = false,
         WatchpointSet* additionalSet = nullptr,
         PropertySlot::GetValueFunc = nullptr,
-        JSObject* customSlotBase = nullptr);
+        JSObject* customSlotBase = nullptr,
+        DOMJIT::GetterSetter* = nullptr);
     
     static std::unique_ptr<AccessCase> megamorphicLoad(VM&, JSCell* owner);
     
@@ -184,6 +188,12 @@ public:
     Intrinsic intrinsic() const
     {
         return intrinsicFunction()->intrinsic();
+    }
+
+    DOMJIT::GetterSetter* domJIT() const
+    {
+        ASSERT(m_rareData);
+        return m_rareData->domJIT;
     }
 
     WatchpointSet* additionalSet() const
@@ -284,6 +294,7 @@ private:
     public:
         RareData()
             : viaProxy(false)
+            , domJIT(nullptr)
         {
             customAccessor.opaque = nullptr;
         }
@@ -300,6 +311,7 @@ private:
         } customAccessor;
         WriteBarrier<JSObject> customSlotBase;
         WriteBarrier<JSFunction> intrinsicFunction;
+        DOMJIT::GetterSetter* domJIT;
     };
 
     std::unique_ptr<RareData> m_rareData;

@@ -79,6 +79,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/ForwardingHeaders"
     "${WEBCORE_DIR}/ForwardingHeaders/bindings"
     "${WEBCORE_DIR}/ForwardingHeaders/bytecode"
+    "${WEBCORE_DIR}/ForwardingHeaders/domjit"
     "${WEBCORE_DIR}/ForwardingHeaders/debugger"
     "${WEBCORE_DIR}/ForwardingHeaders/heap"
     "${WEBCORE_DIR}/ForwardingHeaders/inspector"
