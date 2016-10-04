@@ -1,3 +1,13 @@
+2016-10-04  Alex Christensen  <achristensen@webkit.org>
+
+        Add tests verifying non-special URL hosts are parsed according to spec
+        https://bugs.webkit.org/show_bug.cgi?id=162885
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-10-04  Anders Carlsson  <andersca@apple.com>
 
         Properly kill web processes in the launching state

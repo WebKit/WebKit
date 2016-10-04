@@ -850,6 +850,15 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("http://f:010/c", "http://example.org/foo/bar",
         {"http", "", "", "f", 10, "/c", "", "", "http://f:10/c"},
         {"http", "", "", "f", 10, "/c", "", "", "http://f:010/c"});
+    checkURLDifferences("notspecial://HoSt",
+        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
+        {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"});
+    checkURLDifferences("notspecial://H%4fSt",
+        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
+        {"notspecial", "", "", "H%4fSt", 0, "", "", "", "notspecial://H%4fSt"});
+    checkURLDifferences(utf16String(u"notspecial://H😍ßt"),
+        {"notspecial", "", "", "xn--hsst-qc83c", 0, "/", "", "", "notspecial://xn--hsst-qc83c/"},
+        {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
 }
 
 TEST_F(URLParserTest, DefaultPort)
