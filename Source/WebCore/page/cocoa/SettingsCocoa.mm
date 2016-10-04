@@ -69,11 +69,13 @@ void Settings::initializeDefaultFontFamilies()
     setSerifFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
     setFixedFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
     setSansSerifFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+    setCursiveFontFamily("Kaiti TC", USCRIPT_TRADITIONAL_HAN);
 
     setStandardFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
     setSerifFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
     setFixedFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
     setSansSerifFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setCursiveFontFamily("Kaiti SC", USCRIPT_SIMPLIFIED_HAN);
 
     setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
     setFixedFontFamily(osakaMonoIsInstalled() ? "Osaka-Mono" : "Hiragino Sans", USCRIPT_KATAKANA_OR_HIRAGANA);

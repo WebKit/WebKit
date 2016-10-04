@@ -1,3 +1,14 @@
+2016-10-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-family: cursive should map to KaiTi in Chinese
+        https://bugs.webkit.org/show_bug.cgi?id=162889
+        <rdar://problem/28363547>
+
+        Reviewed by Tim Horton.
+
+        * fast/text/cursive-zh-expected.html: Added.
+        * fast/text/cursive-zh.html: Added.
+
 2016-10-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/cache/disk-cache/disk-cache-media.html as flaky on mac-wk2.
