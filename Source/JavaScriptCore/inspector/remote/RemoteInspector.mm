@@ -696,7 +696,7 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 
 void RemoteInspector::receivedGetListingMessage(NSDictionary *)
 {
-    pushListingsNow();
+    pushListingsSoon();
 }
 
 void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)

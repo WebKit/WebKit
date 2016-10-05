@@ -1,3 +1,25 @@
+2016-10-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: don't synchronously send a listing message if we might need to query _WKAutomationDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=162810
+        <rdar://problem/28571460>
+
+        Reviewed by Timothy Hatcher.
+
+        We shouldn't ever access the _WKAutomationDelegate through RemoteInspector::Client methods
+        off of the main thread, because it could cause problems. This happens when we pushListingsNow()
+        in response to a WIRApplicationGetListingMessage XPC message. In this case, just use
+        pushListingsSoon() since it dispatches on the correct (main) queue to gather listing information.
+
+        This may induce a slight update delay when first connecting to the UIProcess through RemoteInspector,
+        but this is at most 200ms and will coalesce with other updates that happen when UIProcess gets set up.
+
+        There are no other code paths through RemoteInspector (for UIProcess) that could cause a call
+        to pushListingsNow(), so this only needs to be changed in the XPC message handler.
+
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::receivedGetListingMessage):
+
 2016-10-04  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: handle a few corner cases
