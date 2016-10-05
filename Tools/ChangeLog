@@ -1,3 +1,31 @@
+2016-10-05  Jeremy Jones  <jeremyj@apple.com>
+
+        Add MobileMiniBrowser tests for control center and looping fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=162748
+
+        Reviewed by Jer Noble.
+
+        Refactor existing MobileMiniBrowserTests and add new tests for 
+        - fullscreen rotation
+        - fullscreen looping (failing)
+        - control center interruption (failing)
+
+        * MobileMiniBrowser/MobileMiniBrowser.xcodeproj/project.pbxproj:
+        * MobileMiniBrowser/MobileMiniBrowserFramework/Resources/looping2s.html: Added.
+        * MobileMiniBrowser/MobileMiniBrowserFramework/test2s.mp4: Added.
+        * MobileMiniBrowser/MobileMiniBrowserUITests/MobileMiniBrowserUITests.m:
+        (-[MobileMiniBrowserUITests setUp]):
+        (-[MobileMiniBrowserUITests waitToTapButtonNamed:forApp:]):
+        (-[MobileMiniBrowserUITests loadURL:]):
+        (-[MobileMiniBrowserUITests requireMinFPS:sampleDurationSeconds:message:]):
+        (-[MobileMiniBrowserUITests ensureFullscreenControls]):
+        (-[MobileMiniBrowserUITests timeForTimeString:]):
+        (-[MobileMiniBrowserUITests testBasicVideoPlayback]):
+        (-[MobileMiniBrowserUITests testBasicVideoFullscreen]):
+        (-[MobileMiniBrowserUITests testVideoFullscreenAndRotationAnimation]):
+        (-[MobileMiniBrowserUITests testVideoFullscreenControlCenter]):
+        (-[MobileMiniBrowserUITests testLoopingFullscreenLockup]):
+
 2016-10-05  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should correctly strip unnecessary 0's in IPv6 addresses

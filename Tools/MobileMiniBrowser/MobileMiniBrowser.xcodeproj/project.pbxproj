@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439A1D908D0C00D186B5 /* looping2s.html */; };
+		3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3F0B439C1D908DE700D186B5 /* test2s.mp4 */; };
 		CD1DAF971D709E3600017CF0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAF961D709E3600017CF0 /* main.m */; };
 		CD1DAFA51D709E3600017CF0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD1DAFA31D709E3600017CF0 /* LaunchScreen.storyboard */; };
 		CD1DAFB01D709E3600017CF0 /* MobileMiniBrowserUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = CD1DAFAF1D709E3600017CF0 /* MobileMiniBrowserUITests.m */; };
@@ -63,6 +65,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3F0B439A1D908D0C00D186B5 /* looping2s.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = looping2s.html; path = Resources/looping2s.html; sourceTree = "<group>"; };
+		3F0B439C1D908DE700D186B5 /* test2s.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test2s.mp4; sourceTree = "<group>"; };
 		CD1DAF921D709E3600017CF0 /* MobileMiniBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileMiniBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD1DAF961D709E3600017CF0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CD1DAF981D709E3600017CF0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -200,8 +204,10 @@
 			isa = PBXGroup;
 			children = (
 				CDA985151D76477900EBC399 /* test.mp4 */,
+				3F0B439C1D908DE700D186B5 /* test2s.mp4 */,
 				CDA985131D76474100EBC399 /* index.html */,
 				CDA985171D7647CD00EBC399 /* looping.html */,
+				3F0B439A1D908D0C00D186B5 /* looping2s.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -345,10 +351,12 @@
 			files = (
 				CDA9851A1D76483400EBC399 /* index.html in Resources */,
 				CD498B521D763D8800681FA7 /* Assets.xcassets in Resources */,
+				3F0B439B1D908D0C00D186B5 /* looping2s.html in Resources */,
 				CD498B511D763D7F00681FA7 /* Main.storyboard in Resources */,
 				CDA9851B1D76483400EBC399 /* looping.html in Resources */,
 				CD498B531D763D9300681FA7 /* Info.plist in Resources */,
 				CDA985191D76483400EBC399 /* test.mp4 in Resources */,
+				3F0B439D1D908DE700D186B5 /* test2s.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
