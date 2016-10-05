@@ -96,12 +96,8 @@ void PseudoElement::didAttachRenderers()
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
         auto child = content->createContentRenderer(document(), style);
-        if (renderer->isChildAllowed(*child, style)) {
-            auto* childPtr = child.get();
+        if (renderer->isChildAllowed(*child, style))
             renderer->addChild(child.leakPtr());
-            if (is<RenderQuote>(*childPtr))
-                downcast<RenderQuote>(*childPtr).attachQuote();
-        }
     }
 }
 
