@@ -1043,6 +1043,9 @@ private:
         case Unreachable:
             compileUnreachable();
             break;
+        case ToLowerCase:
+            compileToLowerCase();
+            break;
 
         case PhantomLocal:
         case LoopHint:
@@ -8621,6 +8624,60 @@ private:
 
         DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
         nonSpeculativeCompare(intFunctor, fallbackFunction);
+    }
+
+    void compileToLowerCase()
+    {
+        LBasicBlock notRope = m_out.newBlock();
+        LBasicBlock is8Bit = m_out.newBlock();
+        LBasicBlock loopTop = m_out.newBlock();
+        LBasicBlock loopBody = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue string = lowString(m_node->child1());
+        ValueFromBlock startIndex = m_out.anchor(m_out.constInt32(0));
+        ValueFromBlock startIndexForCall = m_out.anchor(m_out.constInt32(0));
+        LValue impl = m_out.loadPtr(string, m_heaps.JSString_value);
+        m_out.branch(m_out.isZero64(impl),
+            unsure(slowPath), unsure(notRope));
+
+        LBasicBlock lastNext = m_out.appendTo(notRope, is8Bit);
+
+        m_out.branch(
+            m_out.testIsZero32(
+                m_out.load32(impl, m_heaps.StringImpl_hashAndFlags),
+                m_out.constInt32(StringImpl::flagIs8Bit())),
+            unsure(slowPath), unsure(is8Bit));
+
+        m_out.appendTo(is8Bit, loopTop);
+        LValue length = m_out.load32(impl, m_heaps.StringImpl_length);
+        LValue buffer = m_out.loadPtr(impl, m_heaps.StringImpl_data);
+        ValueFromBlock fastResult = m_out.anchor(string);
+        m_out.jump(loopTop);
+
+        m_out.appendTo(loopTop, loopBody);
+        LValue index = m_out.phi(Int32, startIndex);
+        ValueFromBlock indexFromBlock = m_out.anchor(index);
+        m_out.branch(m_out.below(index, length),
+            unsure(loopBody), unsure(continuation));
+
+        m_out.appendTo(loopBody, slowPath);
+
+        LValue byte = m_out.load8ZeroExt32(m_out.baseIndex(m_heaps.characters8, buffer, m_out.zeroExtPtr(index)));
+        LValue isInvalidAsciiRange = m_out.bitAnd(byte, m_out.constInt32(~0x7F));
+        LValue isUpperCase = m_out.belowOrEqual(m_out.sub(byte, m_out.constInt32('A')), m_out.constInt32('Z' - 'A'));
+        LValue isBadCharacter = m_out.bitOr(isInvalidAsciiRange, isUpperCase);
+        m_out.addIncomingToPhi(index, m_out.anchor(m_out.add(index, m_out.int32One)));
+        m_out.branch(isBadCharacter, unsure(slowPath), unsure(loopTop));
+
+        m_out.appendTo(slowPath, continuation);
+        LValue slowPathIndex = m_out.phi(Int32, startIndexForCall, indexFromBlock);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), m_out.operation(operationToLowerCase), m_callFrame, string, slowPathIndex));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
 
     void compileResolveScope()

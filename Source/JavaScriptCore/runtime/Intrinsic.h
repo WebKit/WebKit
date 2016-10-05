@@ -65,6 +65,7 @@ enum JS_EXPORT_PRIVATE Intrinsic {
     JSMapHasIntrinsic,
     JSSetHasIntrinsic,
     HasOwnPropertyIntrinsic,
+    ToLowerCaseIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,

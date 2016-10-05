@@ -1005,6 +1005,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case ToLowerCase: {
+        forNode(node).setType(m_graph, SpecString);
+        break;
+    }
+
     case LoadFromJSMapBucket:
         forNode(node).makeHeapTop();
         break;

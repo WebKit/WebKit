@@ -938,6 +938,11 @@ public:
         m_jit.setupArgumentsWithExecState(cell);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(Jss_JITOperation_EJssUi operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(P_JITOperation_EO operation, GPRReg result, GPRReg object)
     {
         m_jit.setupArgumentsWithExecState(object);
@@ -2651,6 +2656,7 @@ public:
     void compileCompareEqPtr(Node*);
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
+    void compileToLowerCase(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

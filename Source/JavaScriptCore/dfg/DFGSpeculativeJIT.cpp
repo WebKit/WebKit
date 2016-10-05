@@ -1490,6 +1490,60 @@ void SpeculativeJIT::compilePeepHoleBooleanBranch(Node* node, Node* branchNode, 
     jump(notTaken);
 }
 
+void SpeculativeJIT::compileToLowerCase(Node* node)
+{
+    ASSERT(node->op() == ToLowerCase);
+    SpeculateCellOperand string(this, node->child1());
+    GPRTemporary temp(this);
+    GPRTemporary index(this);
+    GPRTemporary charReg(this);
+    GPRTemporary length(this);
+
+    GPRReg stringGPR = string.gpr();
+    GPRReg tempGPR = temp.gpr();
+    GPRReg indexGPR = index.gpr();
+    GPRReg charGPR = charReg.gpr();
+    GPRReg lengthGPR = length.gpr();
+
+    speculateString(node->child1(), stringGPR);
+
+    CCallHelpers::JumpList slowPath;
+
+    m_jit.move(TrustedImmPtr(0), indexGPR);
+
+    m_jit.loadPtr(MacroAssembler::Address(stringGPR, JSString::offsetOfValue()), tempGPR);
+    slowPath.append(m_jit.branchTestPtr(MacroAssembler::Zero, tempGPR));
+
+    slowPath.append(m_jit.branchTest32(
+        MacroAssembler::Zero, MacroAssembler::Address(tempGPR, StringImpl::flagsOffset()),
+        MacroAssembler::TrustedImm32(StringImpl::flagIs8Bit())));
+    m_jit.load32(MacroAssembler::Address(tempGPR, StringImpl::lengthMemoryOffset()), lengthGPR);
+    m_jit.loadPtr(MacroAssembler::Address(tempGPR, StringImpl::dataOffset()), tempGPR);
+
+    auto loopStart = m_jit.label();
+    auto loopDone = m_jit.branch32(CCallHelpers::AboveOrEqual, indexGPR, lengthGPR);
+    m_jit.load8(MacroAssembler::BaseIndex(tempGPR, indexGPR, MacroAssembler::TimesOne), charGPR);
+    slowPath.append(m_jit.branchTest32(CCallHelpers::NonZero, charGPR, TrustedImm32(~0x7F)));
+    m_jit.sub32(TrustedImm32('A'), charGPR);
+    slowPath.append(m_jit.branch32(CCallHelpers::BelowOrEqual, charGPR, TrustedImm32('Z' - 'A')));
+
+    m_jit.add32(TrustedImm32(1), indexGPR);
+    m_jit.jump().linkTo(loopStart, &m_jit);
+    
+    slowPath.link(&m_jit);
+    silentSpillAllRegisters(lengthGPR);
+    callOperation(operationToLowerCase, lengthGPR, stringGPR, indexGPR);
+    silentFillAllRegisters(lengthGPR);
+    m_jit.exceptionCheck();
+    auto done = m_jit.jump();
+
+    loopDone.link(&m_jit);
+    m_jit.move(stringGPR, lengthGPR);
+
+    done.link(&m_jit);
+    cellResult(lengthGPR, node);
+}
+
 void SpeculativeJIT::compilePeepHoleInt32Branch(Node* node, Node* branchNode, JITCompiler::RelationalCondition condition)
 {
     BasicBlock* taken = branchNode->branchData()->taken.block;

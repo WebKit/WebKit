@@ -2580,6 +2580,20 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case ToLowerCaseIntrinsic: {
+        if (argumentCountIncludingThis != 1)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* thisString = get(virtualRegisterForArgument(0, registerOffset));
+        Node* result = addToGraph(ToLowerCase, thisString);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     default:
         return false;
     }

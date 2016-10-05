@@ -1,3 +1,52 @@
+2016-10-04  Saam Barati  <sbarati@apple.com>
+
+        String.prototype.toLowerCase should be a DFG/FTL intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=162887
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        This patch makes ToLowerCase an intrinsic in the DFG/FTL. On the fast
+        path, the intrinsic will loop over an 8-bit string ensuring it's already
+        lower case, and simply return the string. In the slow path, it'll call
+        into C code to make a new string.
+
+        This is a 7-8% speedup on ES6SampleBench/Basic.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToLowerCase):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToLowerCase):
+        * jit/JITOperations.h:
+        * runtime/Intrinsic.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2016-10-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: don't synchronously send a listing message if we might need to query _WKAutomationDelegate

@@ -358,6 +358,13 @@ String String::convertToLowercaseWithoutLocale() const
     return m_impl->convertToLowercaseWithoutLocale();
 }
 
+String String::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex) const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex);
+}
+
 String String::convertToUppercaseWithoutLocale() const
 {
     if (!m_impl)

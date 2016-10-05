@@ -309,6 +309,7 @@ typedef SlowPathReturnType (JIT_OPERATION *Sprt_JITOperation_ECli)(ExecState*, C
 typedef StringImpl* (JIT_OPERATION *T_JITOperation_EJss)(ExecState*, JSString*);
 typedef JSString* (JIT_OPERATION *Jss_JITOperation_EZ)(ExecState*, int32_t);
 typedef JSString* (JIT_OPERATION *Jss_JITOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
+typedef JSString* (JIT_OPERATION *Jss_JITOperation_EJssUi)(ExecState*, JSString*, uint32_t);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

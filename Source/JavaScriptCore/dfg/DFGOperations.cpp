@@ -1514,6 +1514,22 @@ StringImpl* JIT_OPERATION operationResolveRope(ExecState* exec, JSString* string
     return string->value(exec).impl();
 }
 
+JSString* JIT_OPERATION operationToLowerCase(ExecState* exec, JSString* string, uint32_t failingIndex)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    const String& inputString = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    String lowercasedString = inputString.is8Bit() ? inputString.convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString.convertToLowercaseWithoutLocale();
+    if (lowercasedString.impl() == inputString.impl())
+        return string;
+    scope.release();
+    return jsString(exec, lowercasedString);
+}
+
 JSString* JIT_OPERATION operationSingleCharacterString(ExecState* exec, int32_t character)
 {
     VM& vm = exec->vm();

@@ -1673,6 +1673,15 @@ private:
             break;
         }
 
+        case ToLowerCase: {
+            // We currently only support StringUse since that will ensure that
+            // ToLowerCase is a pure operation. If we decide to update this with
+            // more types in the future, we need to ensure that the clobberize rules
+            // are correct.
+            fixEdge<StringUse>(node->child1());
+            break;
+        }
+
         case DefineAccessorProperty: {
             fixEdge<CellUse>(m_graph.varArgChild(node, 0));
             Edge& propertyEdge = m_graph.varArgChild(node, 1);

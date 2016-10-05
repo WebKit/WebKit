@@ -1,3 +1,24 @@
+2016-10-04  Saam Barati  <sbarati@apple.com>
+
+        String.prototype.toLowerCase should be a DFG/FTL intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=162887
+
+        Reviewed by Filip Pizlo and Yusuke Suzuki.
+
+        This patch exposes a new StringImpl function called convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit
+        which extracts slow path for the 8-bit part of convertToLowercaseWithoutLocale
+        into a helper function. I decided to extract this into its own function because
+        it may be the case that JSCs JITs will want to continue the operation
+        after it has already ensured that part of an 8-bit string is lower case.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::convertToLowercaseWithoutLocale):
+        (WTF::StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit):
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit):
+        * wtf/text/WTFString.h:
+
 2016-10-04  Chris Dumez  <cdumez@apple.com>
 
         Implement KeyboardEvent.code from the UI Event spec

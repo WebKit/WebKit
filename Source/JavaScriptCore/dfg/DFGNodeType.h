@@ -396,6 +396,8 @@ namespace JSC { namespace DFG {
     macro(GetMapBucket, NodeResultJS) \
     macro(LoadFromJSMapBucket, NodeResultJS) \
     macro(IsNonEmptyMapBucket, NodeResultBoolean) \
+    \
+    macro(ToLowerCase, NodeResultJS) \
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).

@@ -1291,6 +1291,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(MiscFields);
         def(HeapLocation(MapHasLoc, MiscFields, node->child1()), LazyNode(node));
         return;
+
+    case ToLowerCase:
+        def(PureValue(node));
+        return;
         
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();

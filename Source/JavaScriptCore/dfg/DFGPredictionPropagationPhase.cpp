@@ -754,6 +754,11 @@ private:
             setPrediction(SpecInt32Only);
             break;
         }
+
+        case ToLowerCase:
+            setPrediction(SpecString);
+            break;
+
         case ArithPow:
         case ArithSqrt:
         case ArithFRound:

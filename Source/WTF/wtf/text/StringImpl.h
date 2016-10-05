@@ -682,6 +682,7 @@ public:
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIILowercase();
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToASCIIUppercase();
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithoutLocale();
+    WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned);
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToUppercaseWithoutLocale();
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToLowercaseWithLocale(const AtomicString& localeIdentifier);
     WTF_EXPORT_STRING_API Ref<StringImpl> convertToUppercaseWithLocale(const AtomicString& localeIdentifier);

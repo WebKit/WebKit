@@ -361,6 +361,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case PutDynamicVar:
     case ResolveScope:
     case MapHash:
+    case ToLowerCase:
     case GetMapBucket:
     case LoadFromJSMapBucket:
     case IsNonEmptyMapBucket:

@@ -4888,6 +4888,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case ToLowerCase: {
+        compileToLowerCase(node);
+        break;
+    }
+
     case IsObject: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value);

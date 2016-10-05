@@ -330,6 +330,7 @@ public:
     WTF_EXPORT_STRING_API String convertToASCIILowercase() const;
     WTF_EXPORT_STRING_API String convertToASCIIUppercase() const;
     WTF_EXPORT_STRING_API String convertToLowercaseWithoutLocale() const;
+    WTF_EXPORT_STRING_API String convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned) const;
     WTF_EXPORT_STRING_API String convertToUppercaseWithoutLocale() const;
     WTF_EXPORT_STRING_API String convertToLowercaseWithLocale(const AtomicString& localeIdentifier) const;
     WTF_EXPORT_STRING_API String convertToUppercaseWithLocale(const AtomicString& localeIdentifier) const;
