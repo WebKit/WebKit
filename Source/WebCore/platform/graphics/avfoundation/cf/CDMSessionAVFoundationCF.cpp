@@ -54,7 +54,14 @@ CDMSessionAVFoundationCF::CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundatio
 RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)
 {
     UNUSED_PARAM(mimeType);
-
+#if USE(DIRECT2D)
+    UNUSED_PARAM(initData);
+    UNUSED_PARAM(destinationURL);
+    UNUSED_PARAM(errorCode);
+    UNUSED_PARAM(systemCode);
+    notImplemented();
+    return nullptr;
+#else
     String keyURI;
     String keyID;
     RefPtr<Uint8Array> certificate;
@@ -101,6 +108,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String& mi
 
     RefPtr<ArrayBuffer> keyRequestBuffer = ArrayBuffer::create(CFDataGetBytePtr(keyRequest.get()), CFDataGetLength(keyRequest.get()));
     return Uint8Array::create(keyRequestBuffer, 0, keyRequestBuffer->byteLength());
+#endif
 }
 
 void CDMSessionAVFoundationCF::releaseKeys()

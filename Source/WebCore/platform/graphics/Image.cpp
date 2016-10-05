@@ -92,6 +92,9 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
 
 void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
+#if USE(DIRECT2D)
+    notImplemented();
+#else
     Color color = singlePixelSolidColor();
     if (color.isValid()) {
         fillWithSolidColor(ctxt, destRect, color, op);
@@ -198,6 +201,7 @@ void Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const Fl
     startAnimation(DoNotCatchUp);
 #else
     startAnimation();
+#endif
 #endif
 }
 

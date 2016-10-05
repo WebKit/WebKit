@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ImageBufferData.h"
 
+#if USE(CG)
+
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <CoreGraphics/CoreGraphics.h>
@@ -544,3 +546,5 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
 }
 
 } // namespace WebCore
+
+#endif

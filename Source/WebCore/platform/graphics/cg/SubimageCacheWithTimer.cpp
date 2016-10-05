@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SubimageCacheWithTimer.h"
 
+#if USE(CG)
+
 #include <wtf/Vector.h>
 
 #if CACHE_SUBIMAGES
@@ -112,5 +114,7 @@ SubimageCacheWithTimer& subimageCache()
 }
 
 }
+
+#endif
 
 #endif

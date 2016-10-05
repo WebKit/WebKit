@@ -40,6 +40,10 @@
 #include "WOFFFileFormat.h"
 #include <wtf/Vector.h>
 
+#if USE(DIRECT2D)
+#include <dwrite.h>
+#endif
+
 namespace WebCore {
 
 CachedFont::CachedFont(CachedResourceRequest&& request, SessionID sessionID, Type type)

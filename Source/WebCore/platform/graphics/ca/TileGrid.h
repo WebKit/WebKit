@@ -51,7 +51,9 @@ public:
     TileGrid(TileController&);
     ~TileGrid();
 
+#if USE(CA)
     PlatformCALayer& containerLayer() { return m_containerLayer; }
+#endif
 
     void setIsZoomedOutTileGrid(bool);
 
@@ -83,7 +85,9 @@ public:
     double retainedTileBackingStoreMemory() const;
     unsigned blankPixelCount() const;
 
+#if USE(CG)
     void drawTileMapContents(CGContextRef, CGRect layerBounds) const;
+#endif
 
 #if PLATFORM(IOS)
     unsigned numberOfUnparentedTiles() const { return m_cohortList.size(); }
@@ -150,7 +154,9 @@ private:
     bool isUsingDisplayListDrawing(PlatformCALayer*) const override;
 
     TileController& m_controller;
+#if USE(CA)
     Ref<PlatformCALayer> m_containerLayer;
+#endif
 
     typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebTiledBackingLayerWin.h"
 
+#if USE(CA)
+
 #include "GraphicsContext.h"
 #include "PlatformCALayer.h"
 #include "TileController.h"
@@ -180,3 +182,5 @@ void WebTiledBackingLayerWin::invalidate()
     ASSERT(m_tileController);
     m_tileController = nullptr;
 }
+
+#endif

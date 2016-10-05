@@ -98,7 +98,7 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
         // for which m_p0 == m_p1.
         ASSERT(m_p0 == m_p1);
 
-        D2D1_MATRIX_3X2_F ctm;
+        D2D1_MATRIX_3X2_F ctm = { };
         d2dContext->GetTransform(&ctm);
 
         AffineTransform transform(ctm);

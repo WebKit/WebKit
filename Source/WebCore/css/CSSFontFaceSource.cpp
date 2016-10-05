@@ -47,6 +47,10 @@
 #include "SVGURIReference.h"
 #endif
 
+#if USE(DIRECT2D)
+#include <dwrite.h>
+#endif
+
 namespace WebCore {
 
 inline void CSSFontFaceSource::setStatus(Status newStatus)

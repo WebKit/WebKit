@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FontCascade.h"
 
+#if USE(CG)
+
 #include "AffineTransform.h"
 #include "FloatConversion.h"
 #include "Font.h"
@@ -218,3 +220,5 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
 }
 
 }
+
+#endif

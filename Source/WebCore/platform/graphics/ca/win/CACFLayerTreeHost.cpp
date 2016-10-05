@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CACFLayerTreeHost.h"
 
+#if USE(CA)
+
 #include "CACFLayerTreeHostClient.h"
 #include "DebugPageOverlays.h"
 #include "DefWndProcWindowClass.h"
@@ -374,3 +376,5 @@ void CACFLayerTreeHost::updateDebugInfoLayer(bool showLayer)
 }
 
 }
+
+#endif

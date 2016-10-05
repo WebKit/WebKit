@@ -579,7 +579,6 @@ private:
 
 #if USE(DIRECT2D)
     void platformInit(HDC, ID2D1RenderTarget**, RECT, bool hasAlpha = false);
-    void platformInit(ID2D1RenderTarget*);
     void drawWithoutShadow(const FloatRect& boundingRect, const std::function<void(ID2D1RenderTarget*)>&);
     void drawWithShadow(const FloatRect& boundingRect, const std::function<void(ID2D1RenderTarget*)>&);
 #endif

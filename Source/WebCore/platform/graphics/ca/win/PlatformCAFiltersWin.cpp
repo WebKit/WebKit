@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformCAFilters.h"
 
+#if USE(CA)
+
 using namespace WebCore;
 
 void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
@@ -44,3 +46,5 @@ const char* PlatformCAFilters::animatedFilterPropertyName(FilterOperation::Opera
     // Hardware filter animation not implemented on Windows.
     return "";
 }
+
+#endif

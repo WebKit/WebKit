@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +26,26 @@
 #include "config.h"
 #include "FrameWin.h"
 
-#if USE(CG)
+#if USE(DIRECT2D)
 
 #include "BitmapInfo.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
-#include "GraphicsContextCG.h"
+#include "GraphicsContext.h"
 #include "RenderObject.h"
 #include "Settings.h"
-#include <CoreGraphics/CoreGraphics.h>
+#include <d2d1.h>
 #include <windows.h>
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
 
-static void drawRectIntoContext(IntRect rect, FrameView* view, GraphicsContext& gc)
-{
-    IntPoint scrollPosition = view->scrollPosition();
-    rect.move(-scrollPosition.x(), -scrollPosition.y());
-    rect = view->convertToContainingWindow(rect);
-
-    gc.concatCTM(AffineTransform().translate(-rect.x(), -rect.y()));
-
-    view->paint(gc, rect);
-}
-
 GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
 {
+    if (!frame)
+        return nullptr;
+
     PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
     frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
 
@@ -68,15 +60,9 @@ GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
         return hbmp;
 
     HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
-    CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
-        8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGContextSaveGState(context);
 
-    GraphicsContext gc(context);
+    notImplemented();
 
-    drawRectIntoContext(ir, frame->view(), gc);
-
-    CGContextRelease(context);
     SelectObject(hdc.get(), hbmpOld);
 
     frame->view()->setPaintBehavior(oldPaintBehavior);

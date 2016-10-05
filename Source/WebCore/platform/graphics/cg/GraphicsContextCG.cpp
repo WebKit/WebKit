@@ -27,6 +27,8 @@
 #include "config.h"
 #include "GraphicsContextCG.h"
 
+#if USE(CG)
+
 #include "AffineTransform.h"
 #include "CoreGraphicsSPI.h"
 #include "DisplayListRecorder.h"
@@ -1048,7 +1050,6 @@ IntRect GraphicsContext::clipBounds() const
         return IntRect(-2048, -2048, 4096, 4096); // FIXME: display lists.
     }
 
-
     return enclosingIntRect(CGContextGetClipBoundingBox(platformContext()));
 }
 
@@ -1905,3 +1906,5 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
 }
 
 }
+
+#endif

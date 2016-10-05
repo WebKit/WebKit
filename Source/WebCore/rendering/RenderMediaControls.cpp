@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "NotImplemented.h"
 #include "PaintInfo.h"
 #include "RenderTheme.h"
 
@@ -128,6 +129,13 @@ void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle& style)
 
 bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, const RenderObject& o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if USE(DIRECT2D)
+    UNUSED_PARAM(part);
+    UNUSED_PARAM(o);
+    UNUSED_PARAM(paintInfo);
+    UNUSED_PARAM(r);
+    notImplemented();
+#else
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
     switch (part) {
@@ -214,7 +222,7 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, c
         ASSERT_NOT_REACHED();
         break;
     }
-
+#endif
     return false;
 }
 

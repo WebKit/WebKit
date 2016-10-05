@@ -1,3 +1,69 @@
+2016-10-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Disable some CoreGraphics and CoreAnimation-based logic when building for D2D
+        https://bugs.webkit.org/show_bug.cgi?id=162977
+
+        Reviewed by Alex Christensen.
+
+        Currently the Direct2D implementation does not support some of the accelerated compositing
+        features that require CoreAnimation. During this bring-up, we want to disable these routines
+        so that we can build and run in (mostly) unaccelerated drawing.
+
+        This patch mostly consists of adding "#if USE(CG)" and "#if USE(CA)" to files that are
+        specific to those implementations.
+
+        This change should have no impact on non-Direct2D ports.
+
+        No change in behavior for active ports.
+
+        * config.h: Turn of CG when building in Direct2D.
+        * css/CSSFontFaceSource.cpp:
+        * loader/cache/CachedFont.cpp:
+        * loader/cache/CachedSVGFont.cpp:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/win/FrameCGWin.cpp:
+        * page/win/FrameDirect2D.cpp: Added.
+        * platform/graphics/Font.cpp:
+        * platform/graphics/FontCache.cpp:
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/PlatformCALayer.cpp:
+        * platform/graphics/ca/TileController.cpp:
+        * platform/graphics/ca/TileGrid.cpp:
+        * platform/graphics/ca/TileGrid.h:
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp:
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        * platform/graphics/ca/win/PlatformCAAnimationWin.h:
+        * platform/graphics/ca/win/PlatformCAFiltersWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        * platform/graphics/ca/win/WebTiledBackingLayerWin.cpp:
+        * platform/graphics/cg/GradientCG.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        * platform/graphics/cg/PatternCG.cpp:
+        * platform/graphics/cg/SubimageCacheWithTimer.cpp:
+        * platform/graphics/win/FontCGWin.cpp:
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeCGWin.cpp:
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp:
+        * platform/graphics/win/GradientDirect2D.cpp:
+        * platform/graphics/win/PathDirect2D.cpp: Fix a few build problems I didn't notice
+        while building without Direct2D active.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        * platform/win/DragImageCGWin.cpp:
+        * platform/win/DragImageDirect2D.cpp: Added.
+        * rendering/RenderMediaControls.cpp:
+
 2016-10-05  Chris Dumez  <cdumez@apple.com>
 
         KeyboardEvent.getModifierState() should support "CapsLock" modifier

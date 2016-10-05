@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Font.h"
 
+#if USE(CG)
+
 #include "CoreTextSPIWin.h"
 #include "FloatRect.h"
 #include "FontCache.h"
@@ -152,3 +154,5 @@ float Font::platformWidthForGlyph(Glyph glyph) const
 }
 
 }
+
+#endif

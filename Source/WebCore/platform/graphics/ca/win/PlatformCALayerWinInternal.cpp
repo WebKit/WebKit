@@ -27,6 +27,8 @@
 
 #include "PlatformCALayerWinInternal.h"
 
+#if USE(CA)
+
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "PlatformCALayer.h"
@@ -323,3 +325,5 @@ void PlatformCALayerWinInternal::setBorderColor(const Color& value)
 
     CACFLayerSetBorderColor(owner()->platformLayer(), color.get());
 }
+
+#endif

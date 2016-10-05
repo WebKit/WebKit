@@ -26,7 +26,7 @@
 #ifndef PlatformCAAnimationWin_h
 #define PlatformCAAnimationWin_h
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CA)
 
 #include "PlatformCAAnimation.h"
 #include <wtf/RetainPtr.h>

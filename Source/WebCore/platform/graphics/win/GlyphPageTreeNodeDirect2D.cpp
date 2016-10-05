@@ -29,7 +29,7 @@
 #if USE(DIRECT2D)
 
 #include "Font.h"
-#include "TextAnalysisHelper.h"
+#include "TextAnalyzerHelper.h"
 #include <dwrite.h>
 
 namespace WebCore {

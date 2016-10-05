@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CA)
 #include "PlatformCAAnimationWin.h"
 
 #include "FloatConversion.h"

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformCALayer.h"
 
+#if USE(CA)
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreText/CoreText.h>
 #include "GraphicsContextCG.h"
@@ -37,8 +39,6 @@
 #if PLATFORM(WIN)
 #include "CoreTextSPIWin.h"
 #endif
-
-#if USE(CA)
 
 namespace WebCore {
 

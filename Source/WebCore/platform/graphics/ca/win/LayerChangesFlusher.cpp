@@ -26,6 +26,8 @@
 #include "config.h"
 #include "LayerChangesFlusher.h"
 
+#if USE(CA)
+
 #include "AbstractCACFLayerTreeHost.h"
 #include "StructuredExceptionHandlerSuppressor.h"
 #include <wtf/StdLibExtras.h>
@@ -129,3 +131,5 @@ void LayerChangesFlusher::removeHook()
 }
 
 } // namespace WebCore
+
+#endif

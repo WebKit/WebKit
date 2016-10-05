@@ -27,6 +27,8 @@
 
 #include "PlatformCALayerWin.h"
 
+#if USE(CA)
+
 #include "AbstractCACFLayerTreeHost.h"
 #include "FontCascade.h"
 #include "GDIUtilities.h"
@@ -953,3 +955,5 @@ void PlatformCALayerWin::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloa
     cg.setFillColor(Color::black);
     cg.drawText(font, TextRun(text), IntPoint(x, y));
 }
+
+#endif

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "GlyphPage.h"
 
+#if USE(CG)
+
 #include "Font.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 
@@ -58,3 +60,5 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
 }
 
 }
+
+#endif

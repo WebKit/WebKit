@@ -38,6 +38,7 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "Length.h"
+#include "NotImplemented.h"
 #include "SharedBuffer.h"
 #include "TextStream.h"
 #include <CoreGraphics/CGContext.h>
@@ -344,8 +345,12 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 
     context.translate(-m_cropBox.x(), -m_cropBox.y());
 
+#if USE(DIRECT2D)
+    notImplemented();
+#else
     // CGPDF pages are indexed from 1.
     CGContextDrawPDFPage(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));
+#endif
 }
 
 #endif // !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)

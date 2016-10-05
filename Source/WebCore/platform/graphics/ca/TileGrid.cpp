@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(CG)
+
 #include "TileGrid.h"
 
 #include "GraphicsContext.h"
@@ -762,3 +765,5 @@ void TileGrid::removeUnparentedTilesNow()
 #endif
 
 } // namespace WebCore
+
+#endif

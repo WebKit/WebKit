@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WKCACFViewLayerTreeHost.h"
 
+#if USE(CA)
+
 #include "GDIUtilities.h"
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
@@ -197,3 +199,5 @@ GraphicsDeviceAdapter* WKCACFViewLayerTreeHost::graphicsDeviceAdapter() const
 #endif
 
 } // namespace WebCore
+
+#endif

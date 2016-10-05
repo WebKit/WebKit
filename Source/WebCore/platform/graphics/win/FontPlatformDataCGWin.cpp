@@ -24,6 +24,8 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#if USE(CG)
+
 #include "SharedGDIObject.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -135,3 +137,5 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 }
 
 }
+
+#endif

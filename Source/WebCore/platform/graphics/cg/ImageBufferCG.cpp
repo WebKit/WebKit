@@ -28,6 +28,8 @@
 #include "config.h"
 #include "ImageBuffer.h"
 
+#if USE(CG)
+
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
@@ -591,3 +593,5 @@ String ImageDataToDataURL(const ImageData& source, const String& mimeType, const
 }
 
 } // namespace WebCore
+
+#endif

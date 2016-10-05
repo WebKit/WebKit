@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DragImage.h"
 
+#if USE(CG)
+
 #include "BitmapInfo.h"
 #include "CachedImage.h"
 #include "GraphicsContextCG.h"
@@ -146,3 +148,5 @@ DragImageRef createDragImageFromImage(Image* img, ImageOrientationDescription)
 }
     
 }
+
+#endif

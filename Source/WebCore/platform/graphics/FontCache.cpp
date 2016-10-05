@@ -45,6 +45,10 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+#if USE(DIRECT2D)
+#include <dwrite.h>
+#endif
+
 #if PLATFORM(IOS)
 #include <wtf/Noncopyable.h>
 

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "Gradient.h"
 
+#if USE(CG)
+
 #include "GraphicsContextCG.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/RetainPtr.h>
@@ -105,3 +107,5 @@ void Gradient::paint(CGContextRef context)
 }
 
 } //namespace
+
+#endif

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "Pattern.h"
 
+#if USE(CG)
+
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
 
@@ -90,3 +92,5 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
 }
 
 }
+
+#endif

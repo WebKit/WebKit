@@ -27,6 +27,8 @@
 
 #include "GraphicsLayerCA.h"
 
+#if USE(CA)
+
 #include "Animation.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
@@ -3993,3 +3995,5 @@ double GraphicsLayerCA::backingStoreMemoryEstimate() const
 }
 
 } // namespace WebCore
+
+#endif

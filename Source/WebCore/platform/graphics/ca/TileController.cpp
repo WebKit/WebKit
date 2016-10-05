@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TileController.h"
 
+#if USE(CG)
+
 #include "IntRect.h"
 #include "Logging.h"
 #include "PlatformCALayer.h"
@@ -735,3 +737,5 @@ void TileController::removeUnparentedTilesNow()
 #endif
 
 } // namespace WebCore
+
+#endif
