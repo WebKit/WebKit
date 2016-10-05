@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,14 @@
 
 #if PLATFORM(IOS)
 
+#import "PlatformUtilities.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
-#import "PlatformUtilities.h"
 
-static bool isDone = false;
-static bool didStartQuickLookLoad = false;
-static bool didFinishQuickLookLoad = false;
+static bool isDone;
+static bool didStartQuickLookLoad;
+static bool didFinishQuickLookLoad;
 
 @interface QuickLookNavigationDelegate : NSObject <WKNavigationDelegatePrivate>
 @end
@@ -61,17 +61,44 @@ static bool didFinishQuickLookLoad = false;
 
 @end
 
-TEST(QuickLook, NavigationDelegate)
+static void runTest(Class navigationDelegateClass)
 {
     auto webView = adoptNS([[WKWebView alloc] init]);
-    auto navigationDelegate = adoptNS([[QuickLookNavigationDelegate alloc] init]);
+    auto navigationDelegate = adoptNS([[navigationDelegateClass alloc] init]);
     [webView setNavigationDelegate:navigationDelegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"pages" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"]]];
 
+    isDone = false;
     TestWebKitAPI::Util::run(&isDone);
+}
 
+TEST(QuickLook, NavigationDelegate)
+{
+    runTest([QuickLookNavigationDelegate class]);
     EXPECT_TRUE(didStartQuickLookLoad);
     EXPECT_TRUE(didFinishQuickLookLoad);
+}
+
+@interface QuickLookDecidePolicyDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation QuickLookDecidePolicyDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    decisionHandler(WKNavigationResponsePolicyCancel);
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
+{
+    isDone = true;
+}
+
+@end
+
+TEST(QuickLook, CancelNavigationAfterResponse)
+{
+    runTest([QuickLookDecidePolicyDelegate class]);
 }
 
 #endif // PLATFORM(IOS)

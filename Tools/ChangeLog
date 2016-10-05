@@ -1,3 +1,23 @@
+2016-10-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Crash in WebResourceLoaderQuickLookDelegate when the client cancels the navigation to a QuickLook resource
+        https://bugs.webkit.org/show_bug.cgi?id=162950
+        <rdar://problem/23759114>
+
+        Reviewed by Brady Eidson.
+
+        Added a new API test.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/QuickLook.mm: Sorted imports and removed redundant
+        initialization of static bools.
+        (runTest): Factored out the common test logic between QuickLook.NavigationDelegate and
+        QuickLook.CancelNavigationAfterResponse.
+        (TEST): Added QuickLook.CancelNavigationAfterResponse.
+        (-[QuickLookDecidePolicyDelegate
+        webView:decidePolicyForNavigationResponse:decisionHandler:]): Canceled the navigation.
+        (-[QuickLookDecidePolicyDelegate webView:didFailProvisionalNavigation:withError:]): Set
+        isDone to true.
+
 2016-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for running ES6SampleBench to run-benchmark

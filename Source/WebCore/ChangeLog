@@ -1,3 +1,28 @@
+2016-10-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Crash in WebResourceLoaderQuickLookDelegate when the client cancels the navigation to a QuickLook resource
+        https://bugs.webkit.org/show_bug.cgi?id=162950
+        <rdar://problem/23759114>
+
+        Reviewed by Brady Eidson.
+
+        When we receive data from QLPreviewConverter for the first time, we call
+        ResourceLoader::didReceiveResponse() with the preview NSURLResponse from QuickLook. If the
+        client decides to cancel this navigation in decidePolicyForResponse(),
+        WebResourceLoaderQuickLookDelegate will end up with a null _resourceLoader after
+        didReceiveResponse() returns. This change adds null checks in the methods that use
+        _resourceLoader after calling -_sendDidReceiveResponseIfNecessary.
+
+        New API test: QuickLook.CancelNavigationAfterResponse
+
+        * platform/network/ios/QuickLook.mm:
+        (-[WebResourceLoaderQuickLookDelegate connection:didReceiveDataArray:]): Changed to only
+        call ResourceLoader::didReceiveDataArray() if _resourceLoader is non-null.
+        (-[WebResourceLoaderQuickLookDelegate connection:didReceiveData:lengthReceived:]): Ditto for
+        ResourceLoader::didReceiveData().
+        (-[WebResourceLoaderQuickLookDelegate connection:didFailWithError:]): Ditto for
+        ResourceLoader::didFail().
+
 2016-10-04  Chris Dumez  <cdumez@apple.com>
 
         Add support for KeyboardEvent.isComposing attribute

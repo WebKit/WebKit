@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -309,7 +309,8 @@ const char* WebCore::QLPreviewProtocol()
     if (_hasFailed)
         return;
 
-    _resourceLoader->didReceiveDataArray(reinterpret_cast<CFArrayRef>(dataArray));
+    if (_resourceLoader)
+        _resourceLoader->didReceiveDataArray(reinterpret_cast<CFArrayRef>(dataArray));
 }
 #endif
 
@@ -327,7 +328,9 @@ const char* WebCore::QLPreviewProtocol()
     // ResourceHandleMac.cpp added for a different bug.
     if (![data length])
         return;
-    _resourceLoader->didReceiveData(reinterpret_cast<const char*>([data bytes]), [data length], lengthReceived, DataPayloadBytes);
+
+    if (_resourceLoader)
+        _resourceLoader->didReceiveData(reinterpret_cast<const char*>([data bytes]), [data length], lengthReceived, DataPayloadBytes);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -348,7 +351,8 @@ const char* WebCore::QLPreviewProtocol()
     if (_hasFailed)
         return;
 
-    _resourceLoader->didFail(ResourceError(error));
+    if (_resourceLoader)
+        _resourceLoader->didFail(ResourceError(error));
 }
 
 - (void)detachHandle
