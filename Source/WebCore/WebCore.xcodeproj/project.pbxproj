@@ -2772,7 +2772,7 @@
 		7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C9DBFED1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
-		7CC16FFB1D77375300CE0877 /* IDLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC16FFA1D77375300CE0877 /* IDLTypes.h */; };
+		7CC16FFB1D77375300CE0877 /* IDLTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC16FFA1D77375300CE0877 /* IDLTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEE393817974274001D7580 /* URLRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CC564B818BABEA6001B9652 /* TelephoneNumberDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CC564B618BABEA6001B9652 /* TelephoneNumberDetector.h */; };
 		7CC564BA18BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CC564B918BAC720001B9652 /* TelephoneNumberDetectorCocoa.cpp */; };
@@ -3099,7 +3099,7 @@
 		930705EB09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 930705EA09E0C9F600B17FE4 /* JSCSSPrimitiveValue.h */; };
 		9307F1D70AF2D59000DBA31A /* HitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9307F1D50AF2D59000DBA31A /* HitTestResult.cpp */; };
 		9307F1D80AF2D59000DBA31A /* HitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 9307F1D60AF2D59000DBA31A /* HitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */ = {isa = PBXBuildFile; fileRef = 930841331CDDB15500B0958C /* JSDOMConvert.h */; };
+		930841341CDDB15500B0958C /* JSDOMConvert.h in Headers */ = {isa = PBXBuildFile; fileRef = 930841331CDDB15500B0958C /* JSDOMConvert.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930908910AF7EDE40081DF01 /* HitTestRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 930908900AF7EDE40081DF01 /* HitTestRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930C90DD19CF965300D6C21A /* InlineIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930C90DC19CF965300D6C21A /* InlineIterator.cpp */; };
 		93153BDA14181F7A00FCF5BE /* missingImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 93153BD914181F7A00FCF5BE /* missingImage@2x.png */; };

@@ -408,4 +408,8 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<typename IDLUnion<T...>::Imp
     }
 };
 
+// Used for IDL enumerations.
+template<typename T> Optional<T> parse(JSC::ExecState&, JSC::JSValue);
+template<typename T> const char* expectedEnumerationValues();
+
 } // namespace WebCore

@@ -128,10 +128,10 @@ sub GenerateInterface
     AddStringifierOperationIfNeeded($interface);
 
     if ($interface->isCallback) {
-        $object->GenerateCallbackHeader($interface);
+        $object->GenerateCallbackHeader($interface, $enumerations, $dictionaries);
         $object->GenerateCallbackImplementation($interface, $enumerations, $dictionaries);
     } else {
-        $object->GenerateHeader($interface);
+        $object->GenerateHeader($interface, $enumerations, $dictionaries);
         $object->GenerateImplementation($interface, $enumerations, $dictionaries);
     }
 }
@@ -808,14 +808,7 @@ sub GenerateEnumerationImplementationContent
 
     return "" unless @$enumerations;
 
-    # FIXME: Could optimize this to only generate the parts of each enumeration that are actually
-    # used, which would require iterating over everything in the interface.
-
     my $result = "";
-
-    $result .= "template<typename T> Optional<T> parse(ExecState&, JSValue);\n";
-    $result .= "template<typename T> const char* expectedEnumerationValues();\n\n";
-
     foreach my $enumeration (@$enumerations) {
         my $name = $enumeration->name;
 
@@ -826,9 +819,6 @@ sub GenerateEnumerationImplementationContent
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
         $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-
-        # Declare this instead of using "static" because it may be unused and we don't want warnings about that.
-        $result .= "JSString* jsStringWithCache(ExecState*, $className);\n\n";
 
         # Take an ExecState* instead of an ExecState& to match the jsStringWithCache from JSString.h.
         # FIXME: Change to take VM& instead of ExecState*.
@@ -854,10 +844,6 @@ sub GenerateEnumerationImplementationContent
         $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
         $result .= "    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);\n";
         $result .= "}\n\n";
-
-        $result .= "template<> struct JSValueTraits<$className> {\n";
-        $result .= "    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, $className value) { return jsStringWithCache(state, value); }\n";
-        $result .= "};\n\n";
 
         # FIXME: Change to take VM& instead of ExecState&.
         # FIXME: Consider using toStringOrNull to make exception checking faster.
@@ -892,10 +878,46 @@ sub GenerateEnumerationImplementationContent
         $result .= "    return result.value();\n";
         $result .= "}\n\n";
 
-        $result .= "template<> inline const char* expectedEnumerationValues<$className>()\n";
+        $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
         $result .= "{\n";
         $result .= "    return \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n";
         $result .= "}\n\n";
+
+        $result .= "#endif\n\n" if $conditionalString;
+    }
+    return $result;
+}
+
+sub GenerateEnumerationHeaderContent
+{
+    my ($interface, $enumerations) = @_;
+
+    return "" unless @$enumerations;
+
+    # FIXME: Could optimize this to only generate the parts of each enumeration that are actually
+    # used, which would require iterating over everything in the interface.
+
+    $headerIncludes{"JSDOMConvert.h"} = 1;
+
+    my $result = "";
+
+    foreach my $enumeration (@$enumerations) {
+        my $name = $enumeration->name;
+
+        my $className = GetEnumerationClassName($interface, $name);
+
+        my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
+        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+
+        $result .= "JSC::JSString* jsStringWithCache(JSC::ExecState*, $className);\n\n";
+
+        $result .= "template<> struct JSValueTraits<$className> {\n";
+        $result .= "    static JSC::JSString* arrayJSValue(JSC::ExecState* state, JSDOMGlobalObject*, $className value) { return jsStringWithCache(state, value); }\n";
+        $result .= "};\n\n";
+
+        $result .= "template<> Optional<$className> parse<$className>(JSC::ExecState&, JSC::JSValue);\n";
+        $result .= "template<> $className convert<$className>(JSC::ExecState&, JSC::JSValue);\n";
+        $result .= "template<> const char* expectedEnumerationValues<$className>();\n\n";
 
         $result .= "#endif\n\n" if $conditionalString;
     }
@@ -949,6 +971,31 @@ sub GenerateConversionRuleWithLeadingComma
     }
     return ", " . GetIntegerConversionConfiguration($member) if $codeGenerator->IsIntegerType($member->type);
     return "";
+}
+
+sub GenerateDictionaryHeaderContent
+{
+    my ($interface, $allDictionaries) = @_;
+
+    return "" unless @$allDictionaries;
+
+    $headerIncludes{"JSDOMConvert.h"} = 1;
+
+    my $result = "";
+    foreach my $dictionary (@$allDictionaries) {
+        my $name = $dictionary->name;
+
+        my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+
+        $headerIncludes{$interface->name . ".h"} = 1;
+
+        my $className = GetDictionaryClassName($interface, $name);
+        $result .= "template<> Optional<$className> convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
+
+        $result .= "#endif\n\n" if $conditionalString;
+    }
+    return $result;
 }
 
 sub GenerateDictionaryImplementationContent
@@ -1079,7 +1126,7 @@ sub GenerateDictionaryImplementationContent
 
 sub GenerateHeader
 {
-    my ($object, $interface) = @_;
+    my ($object, $interface, $enumerations, $dictionaries) = @_;
 
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
@@ -1570,6 +1617,9 @@ sub GenerateHeader
         push(@headerContent, "    using WrapperClass = ${className};\n");
         push(@headerContent, "};\n");
     }
+
+    push(@headerContent, GenerateEnumerationHeaderContent($interface, $enumerations));
+    push(@headerContent, GenerateDictionaryHeaderContent($interface, $dictionaries));
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "\n} // namespace WebCore\n");
@@ -4126,7 +4176,7 @@ sub GenerateReturnParameters
 
 sub GenerateCallbackHeader
 {
-    my ($object, $interface) = @_;
+    my ($object, $interface, $enumerations, $dictionaries) = @_;
 
     my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
@@ -4185,6 +4235,9 @@ sub GenerateCallbackHeader
     push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName&);\n");
     push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n\n");
 
+    push(@headerContent, GenerateEnumerationHeaderContent($interface, $enumerations));
+    push(@headerContent, GenerateDictionaryHeaderContent($interface, $dictionaries));
+
     push(@headerContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
@@ -4193,7 +4246,7 @@ sub GenerateCallbackHeader
 
 sub GenerateCallbackImplementation
 {
-    my ($object, $interface, $enumerations) = @_;
+    my ($object, $interface, $enumerations, $dictionaries) = @_;
 
     my $interfaceName = $interface->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
@@ -4211,6 +4264,7 @@ sub GenerateCallbackImplementation
     push(@implContent, "namespace WebCore {\n\n");
 
     push(@implContent, GenerateEnumerationImplementationContent($interface, $enumerations));
+    push(@implContent, GenerateDictionaryImplementationContent($interface, $dictionaries));
 
     # Constructor
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");

@@ -27,6 +27,7 @@
 
 #include <wtf/Brigand.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 class JSValue;

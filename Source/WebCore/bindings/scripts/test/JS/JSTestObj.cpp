@@ -34,7 +34,6 @@
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "JSDOMConvert.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
 #include "JSDOMStringList.h"
@@ -92,11 +91,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-template<typename T> Optional<T> parse(ExecState&, JSValue);
-template<typename T> const char* expectedEnumerationValues();
-
-JSString* jsStringWithCache(ExecState*, TestObj::EnumType);
-
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumType enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
@@ -112,10 +106,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::EnumType enumerationValue
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::EnumType> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::EnumType value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::EnumType> parse<TestObj::EnumType>(ExecState& state, JSValue value)
 {
@@ -143,12 +133,10 @@ template<> TestObj::EnumType convert<TestObj::EnumType>(ExecState& state, JSValu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::EnumType>()
+template<> const char* expectedEnumerationValues<TestObj::EnumType>()
 {
     return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\"";
 }
-
-JSString* jsStringWithCache(ExecState*, TestObj::Optional);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::Optional enumerationValue)
 {
@@ -165,10 +153,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Optional enumerationValue
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::Optional> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::Optional value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::Optional> parse<TestObj::Optional>(ExecState& state, JSValue value)
 {
@@ -196,12 +180,10 @@ template<> TestObj::Optional convert<TestObj::Optional>(ExecState& state, JSValu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::Optional>()
+template<> const char* expectedEnumerationValues<TestObj::Optional>()
 {
     return "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 }
-
-JSString* jsStringWithCache(ExecState*, AlternateEnumName);
 
 JSString* jsStringWithCache(ExecState* state, AlternateEnumName enumerationValue)
 {
@@ -214,10 +196,6 @@ JSString* jsStringWithCache(ExecState* state, AlternateEnumName enumerationValue
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<AlternateEnumName> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, AlternateEnumName value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<AlternateEnumName> parse<AlternateEnumName>(ExecState& state, JSValue value)
 {
@@ -241,14 +219,12 @@ template<> AlternateEnumName convert<AlternateEnumName>(ExecState& state, JSValu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<AlternateEnumName>()
+template<> const char* expectedEnumerationValues<AlternateEnumName>()
 {
     return "\"enumValue1\", \"EnumValue2\"";
 }
 
 #if ENABLE(Condition1)
-
-JSString* jsStringWithCache(ExecState*, TestObj::EnumA);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumA enumerationValue)
 {
@@ -259,10 +235,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::EnumA enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::EnumA> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::EnumA value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::EnumA> parse<TestObj::EnumA>(ExecState& state, JSValue value)
 {
@@ -284,7 +256,7 @@ template<> TestObj::EnumA convert<TestObj::EnumA>(ExecState& state, JSValue valu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::EnumA>()
+template<> const char* expectedEnumerationValues<TestObj::EnumA>()
 {
     return "\"A\"";
 }
@@ -292,8 +264,6 @@ template<> inline const char* expectedEnumerationValues<TestObj::EnumA>()
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-
-JSString* jsStringWithCache(ExecState*, TestObj::EnumB);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumB enumerationValue)
 {
@@ -304,10 +274,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::EnumB enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::EnumB> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::EnumB value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::EnumB> parse<TestObj::EnumB>(ExecState& state, JSValue value)
 {
@@ -329,7 +295,7 @@ template<> TestObj::EnumB convert<TestObj::EnumB>(ExecState& state, JSValue valu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::EnumB>()
+template<> const char* expectedEnumerationValues<TestObj::EnumB>()
 {
     return "\"B\"";
 }
@@ -337,8 +303,6 @@ template<> inline const char* expectedEnumerationValues<TestObj::EnumB>()
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-
-JSString* jsStringWithCache(ExecState*, TestObj::EnumC);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::EnumC enumerationValue)
 {
@@ -349,10 +313,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::EnumC enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::EnumC> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::EnumC value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::EnumC> parse<TestObj::EnumC>(ExecState& state, JSValue value)
 {
@@ -374,14 +334,12 @@ template<> TestObj::EnumC convert<TestObj::EnumC>(ExecState& state, JSValue valu
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::EnumC>()
+template<> const char* expectedEnumerationValues<TestObj::EnumC>()
 {
     return "\"C\"";
 }
 
 #endif
-
-JSString* jsStringWithCache(ExecState*, TestObj::Kind);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::Kind enumerationValue)
 {
@@ -394,10 +352,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Kind enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::Kind> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::Kind value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::Kind> parse<TestObj::Kind>(ExecState& state, JSValue value)
 {
@@ -421,12 +375,10 @@ template<> TestObj::Kind convert<TestObj::Kind>(ExecState& state, JSValue value)
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::Kind>()
+template<> const char* expectedEnumerationValues<TestObj::Kind>()
 {
     return "\"quick\", \"dead\"";
 }
-
-JSString* jsStringWithCache(ExecState*, TestObj::Size);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::Size enumerationValue)
 {
@@ -439,10 +391,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Size enumerationValue)
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::Size> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::Size value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::Size> parse<TestObj::Size>(ExecState& state, JSValue value)
 {
@@ -466,12 +414,10 @@ template<> TestObj::Size convert<TestObj::Size>(ExecState& state, JSValue value)
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::Size>()
+template<> const char* expectedEnumerationValues<TestObj::Size>()
 {
     return "\"small\", \"much-much-larger\"";
 }
-
-JSString* jsStringWithCache(ExecState*, TestObj::Confidence);
 
 JSString* jsStringWithCache(ExecState* state, TestObj::Confidence enumerationValue)
 {
@@ -484,10 +430,6 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Confidence enumerationVal
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
 }
-
-template<> struct JSValueTraits<TestObj::Confidence> {
-    static JSString* arrayJSValue(ExecState* state, JSDOMGlobalObject*, TestObj::Confidence value) { return jsStringWithCache(state, value); }
-};
 
 template<> Optional<TestObj::Confidence> parse<TestObj::Confidence>(ExecState& state, JSValue value)
 {
@@ -511,7 +453,7 @@ template<> TestObj::Confidence convert<TestObj::Confidence>(ExecState& state, JS
     return result.value();
 }
 
-template<> inline const char* expectedEnumerationValues<TestObj::Confidence>()
+template<> const char* expectedEnumerationValues<TestObj::Confidence>()
 {
     return "\"high\", \"kinda-low\"";
 }

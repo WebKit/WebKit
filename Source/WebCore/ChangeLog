@@ -1,3 +1,35 @@
+2016-10-05  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Declare dictionary / enumeration template specializations in the header
+        https://bugs.webkit.org/show_bug.cgi?id=162929
+
+        Reviewed by Darin Adler.
+
+        Declare dictionary / enumeration template specializations in the header
+        so that:
+        - They can be used from custom bindings code.
+        - Dictionaries / enumerations can be used to their own IDL files to
+          share them (Bug 162912).
+
+        No new tests, rebaselined bindings tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/IDLTypes.h:
+        * bindings/js/JSDOMConvert.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface):
+        (GenerateEnumerationImplementationContent):
+        (GenerateEnumerationHeaderContent):
+        (GenerateDictionaryHeaderContent):
+        (GenerateHeader):
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        (GenerateDefaultValue): Deleted.
+        (GenerateDictionaryImplementationContent): Deleted.
+        (GenerateParametersCheck): Deleted.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+
 2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA
