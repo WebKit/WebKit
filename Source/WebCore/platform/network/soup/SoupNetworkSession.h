@@ -33,9 +33,14 @@
 
 typedef struct _SoupCache SoupCache;
 typedef struct _SoupCookieJar SoupCookieJar;
+typedef struct _SoupMessage SoupMessage;
+typedef struct _SoupRequest SoupRequest;
 typedef struct _SoupSession SoupSession;
 
 namespace WebCore {
+
+class CertificateInfo;
+class ResourceError;
 
 class SoupNetworkSession {
     WTF_MAKE_NONCOPYABLE(SoupNetworkSession); WTF_MAKE_FAST_ALLOCATED;
@@ -57,6 +62,10 @@ public:
     void setupHTTPProxyFromEnvironment();
 
     void setAcceptLanguages(const Vector<String>&);
+
+    static void setShouldIgnoreTLSErrors(bool);
+    static void checkTLSErrors(SoupRequest*, SoupMessage*, std::function<void (const ResourceError&)>&&);
+    static void allowSpecificHTTPSCertificateForHost(const CertificateInfo&, const String& host);
 
 private:
     friend class NeverDestroyed<SoupNetworkSession>;

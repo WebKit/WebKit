@@ -58,48 +58,12 @@
 #include <unistd.h>
 #endif
 #include <wtf/CurrentTime.h>
-#include <wtf/SHA1.h>
 #include <wtf/glib/GRefPtr.h>
-#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
 static const size_t gDefaultReadBufferSize = 8192;
-
-class HostTLSCertificateSet {
-public:
-    void add(GTlsCertificate* certificate)
-    {
-        String certificateHash = computeCertificateHash(certificate);
-        if (!certificateHash.isEmpty())
-            m_certificates.add(certificateHash);
-    }
-
-    bool contains(GTlsCertificate* certificate)
-    {
-        return m_certificates.contains(computeCertificateHash(certificate));
-    }
-
-private:
-    static String computeCertificateHash(GTlsCertificate* certificate)
-    {
-        GRefPtr<GByteArray> certificateData;
-        g_object_get(G_OBJECT(certificate), "certificate", &certificateData.outPtr(), NULL);
-        if (!certificateData)
-            return String();
-
-        SHA1 sha1;
-        sha1.addBytes(certificateData->data, certificateData->len);
-
-        SHA1::Digest digest;
-        sha1.computeHash(digest);
-
-        return base64Encode(reinterpret_cast<const char*>(digest.data()), SHA1::hashSize);
-    }
-
-    HashSet<String> m_certificates;
-};
 
 static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const ResourceRequest&);
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
@@ -109,22 +73,6 @@ static void readCallback(GObject*, GAsyncResult*, gpointer);
 static double milisecondsSinceRequest(double requestTime);
 #endif
 static void continueAfterDidReceiveResponse(ResourceHandle*);
-
-static bool gIgnoreSSLErrors = false;
-
-typedef HashSet<String, ASCIICaseInsensitiveHash> HostsSet;
-static HostsSet& allowsAnyHTTPSCertificateHosts()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(HostsSet, hosts, ());
-    return hosts;
-}
-
-typedef HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash> CertificatesMap;
-static CertificatesMap& clientCertificates()
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(CertificatesMap, certificates, ());
-    return certificates;
-}
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -180,39 +128,19 @@ static bool isAuthenticationFailureStatusCode(int httpStatusCode)
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
 }
 
-static bool handleUnignoredTLSErrors(ResourceHandle* handle, SoupMessage* message)
-{
-    if (gIgnoreSSLErrors)
-        return false;
-
-    GTlsCertificate* certificate = nullptr;
-    GTlsCertificateFlags tlsErrors = static_cast<GTlsCertificateFlags>(0);
-    soup_message_get_https_status(message, &certificate, &tlsErrors);
-    if (!tlsErrors)
-        return false;
-
-    String host = handle->firstRequest().url().host();
-    if (allowsAnyHTTPSCertificateHosts().contains(host))
-        return false;
-
-    // We aren't ignoring errors globally, but the user may have already decided to accept this certificate.
-    auto it = clientCertificates().find(host);
-    if (it != clientCertificates().end() && it->value.contains(certificate))
-        return false;
-
-    ResourceHandleInternal* d = handle->getInternal();
-    handle->client()->didFail(handle, ResourceError::tlsError(d->m_soupRequest.get(), tlsErrors, certificate));
-    return true;
-}
-
 static void tlsErrorsChangedCallback(SoupMessage* message, GParamSpec*, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
     if (!handle || handle->cancelledOrClientless())
         return;
 
-    if (handleUnignoredTLSErrors(handle.get(), message))
+    SoupNetworkSession::checkTLSErrors(handle->getInternal()->m_soupRequest.get(), message, [handle] (const ResourceError& error) {
+        if (error.isNull())
+            return;
+
+        handle->client()->didFail(handle.get(), error);
         handle->cancel();
+    });
 }
 
 static void gotHeadersCallback(SoupMessage* message, gpointer data)
@@ -846,21 +774,6 @@ void ResourceHandle::cancel()
 bool ResourceHandle::shouldUseCredentialStorage()
 {
     return (!client() || client()->shouldUseCredentialStorage(this)) && firstRequest().url().protocolIsInHTTPFamily();
-}
-
-void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
-{
-    allowsAnyHTTPSCertificateHosts().add(host);
-}
-
-void ResourceHandle::setClientCertificate(const String& host, GTlsCertificate* certificate)
-{
-    clientCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificate);
-}
-
-void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
-{
-    gIgnoreSSLErrors = ignoreSSLErrors;
 }
 
 void ResourceHandle::continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage)

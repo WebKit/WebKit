@@ -83,12 +83,12 @@ void NetworkProcess::platformSetURLCacheSize(unsigned, uint64_t)
 
 void NetworkProcess::setIgnoreTLSErrors(bool ignoreTLSErrors)
 {
-    ResourceHandle::setIgnoreSSLErrors(ignoreTLSErrors);
+    SoupNetworkSession::setShouldIgnoreTLSErrors(ignoreTLSErrors);
 }
 
 void NetworkProcess::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
 {
-    ResourceHandle::setClientCertificate(host, certificateInfo.certificate());
+    SoupNetworkSession::allowSpecificHTTPSCertificateForHost(certificateInfo, host);
 }
 
 void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)

@@ -37,11 +37,16 @@
 #include "ResourceHandle.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SHA1.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+static bool gIgnoreTLSErrors;
 
 #if !LOG_DISABLED
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
@@ -49,6 +54,46 @@ inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char directio
     LOG(Network, "%c %s", direction, data);
 }
 #endif
+
+class HostTLSCertificateSet {
+public:
+    void add(GTlsCertificate* certificate)
+    {
+        String certificateHash = computeCertificateHash(certificate);
+        if (!certificateHash.isEmpty())
+            m_certificates.add(certificateHash);
+    }
+
+    bool contains(GTlsCertificate* certificate) const
+    {
+        return m_certificates.contains(computeCertificateHash(certificate));
+    }
+
+private:
+    static String computeCertificateHash(GTlsCertificate* certificate)
+    {
+        GRefPtr<GByteArray> certificateData;
+        g_object_get(G_OBJECT(certificate), "certificate", &certificateData.outPtr(), nullptr);
+        if (!certificateData)
+            return String();
+
+        SHA1 sha1;
+        sha1.addBytes(certificateData->data, certificateData->len);
+
+        SHA1::Digest digest;
+        sha1.computeHash(digest);
+
+        return base64Encode(reinterpret_cast<const char*>(digest.data()), SHA1::hashSize);
+    }
+
+    HashSet<String> m_certificates;
+};
+
+static HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash>& clientCertificates()
+{
+    static NeverDestroyed<HashMap<String, HostTLSCertificateSet, ASCIICaseInsensitiveHash>> certificates;
+    return certificates;
+}
 
 SoupNetworkSession& SoupNetworkSession::defaultSession()
 {
@@ -277,6 +322,41 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
 void SoupNetworkSession::setAcceptLanguages(const Vector<String>& languages)
 {
     g_object_set(m_soupSession.get(), "accept-language", buildAcceptLanguages(languages).data(), nullptr);
+}
+
+void SoupNetworkSession::setShouldIgnoreTLSErrors(bool ignoreTLSErrors)
+{
+    gIgnoreTLSErrors = ignoreTLSErrors;
+}
+
+void SoupNetworkSession::checkTLSErrors(SoupRequest* soupRequest, SoupMessage* message, std::function<void (const ResourceError&)>&& completionHandler)
+{
+    if (gIgnoreTLSErrors) {
+        completionHandler({ });
+        return;
+    }
+
+    GTlsCertificate* certificate = nullptr;
+    GTlsCertificateFlags tlsErrors = static_cast<GTlsCertificateFlags>(0);
+    soup_message_get_https_status(message, &certificate, &tlsErrors);
+    if (!tlsErrors) {
+        completionHandler({ });
+        return;
+    }
+
+    URL url(soup_request_get_uri(soupRequest));
+    auto it = clientCertificates().find(url.host());
+    if (it != clientCertificates().end() && it->value.contains(certificate)) {
+        completionHandler({ });
+        return;
+    }
+
+    completionHandler(ResourceError::tlsError(soupRequest, tlsErrors, certificate));
+}
+
+void SoupNetworkSession::allowSpecificHTTPSCertificateForHost(const CertificateInfo& certificateInfo, const String& host)
+{
+    clientCertificates().add(host, HostTLSCertificateSet()).iterator->value.add(certificateInfo.certificate());
 }
 
 } // namespace WebCore

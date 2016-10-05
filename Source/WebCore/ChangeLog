@@ -1,5 +1,28 @@
 2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Move global TLS errors handling from ResourceHandle to SoupNetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=162910
+
+        Reviewed by Alex Christensen.
+
+        So that it will be shared with network session code. Also remove setHostAllowsAnyHTTPSCertificate() that we have
+        never actually used.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::tlsErrorsChangedCallback): Use SoupNetworkSession::checkTLSErrors().
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::HostTLSCertificateSet::add):
+        (WebCore::HostTLSCertificateSet::contains):
+        (WebCore::HostTLSCertificateSet::computeCertificateHash):
+        (WebCore::clientCertificates):
+        (WebCore::SoupNetworkSession::setShouldIgnoreTLSErrors):
+        (WebCore::SoupNetworkSession::checkTLSErrors):
+        (WebCore::SoupNetworkSession::allowSpecificHTTPSCertificateForHost):
+        * platform/network/soup/SoupNetworkSession.h:
+
+2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Move request HTTP body handling to ResourceRequestSoup and simplify it
         https://bugs.webkit.org/show_bug.cgi?id=162891
 

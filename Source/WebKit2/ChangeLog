@@ -1,5 +1,18 @@
 2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Move global TLS errors handling from ResourceHandle to SoupNetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=162910
+
+        Reviewed by Alex Christensen.
+
+        Use SoupNetworkSession instead of ResourceHandle.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::setIgnoreTLSErrors):
+        (WebKit::NetworkProcess::allowSpecificHTTPSCertificateForHost):
+
+2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build with USE_REDIRECTED_XCOMPOSITE_WINDOW disabled.
 
         * UIProcess/AcceleratedDrawingAreaProxy.cpp:
