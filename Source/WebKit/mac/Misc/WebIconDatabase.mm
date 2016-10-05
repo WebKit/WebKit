@@ -163,7 +163,7 @@ static WebIconDatabaseClient* defaultClient()
     ASSERT(size.height);
     
     Image* image = iconDatabase().defaultIcon(IntSize(size));
-    return image ? image->getNSImage() : nil;
+    return image ? image->snapshotNSImage().autorelease() : nil;
 }
 
 - (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size
@@ -470,7 +470,7 @@ NSImage *webGetNSImage(Image* image, NSSize size)
     // to WebCore::Image at some point.
     if (!image)
         return nil;
-    NSImage* nsImage = image->getNSImage();
+    NSImage* nsImage = image->nsImage();
     if (!nsImage)
         return nil;
     if (!NSEqualSizes([nsImage size], size)) {

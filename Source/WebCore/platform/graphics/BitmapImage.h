@@ -96,11 +96,12 @@ public:
 
     // Accessors for native image formats.
 #if USE(APPKIT)
-    NSImage* getNSImage() override;
+    NSImage *nsImage() override;
+    RetainPtr<NSImage> snapshotNSImage() override;
 #endif
 
 #if PLATFORM(COCOA)
-    CFDataRef getTIFFRepresentation() override;
+    CFDataRef tiffRepresentation() override;
 #endif
 
 #if PLATFORM(WIN)
@@ -178,6 +179,10 @@ protected:
     bool notSolidColor() override;
 #endif
 
+#if PLATFORM(COCOA)
+    RetainPtr<CFDataRef> tiffRepresentation(const Vector<NativeImagePtr>&);
+#endif
+
 private:
     void clearTimer();
     void startTimer(double delay);
@@ -194,10 +199,10 @@ private:
     bool m_animationFinishedWhenCatchingUp { false };
 
 #if USE(APPKIT)
-    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
+    mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.
 #endif
 #if USE(CG)
-    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for frame 0. Only built lazily if someone queries for one.
+    mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
     RefPtr<Image> m_cachedImage;
 };

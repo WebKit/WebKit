@@ -146,11 +146,12 @@ public:
     // Accessors for native image formats.
 
 #if USE(APPKIT)
-    virtual NSImage* getNSImage() { return nullptr; }
+    virtual NSImage *nsImage() { return nullptr; }
+    virtual RetainPtr<NSImage> snapshotNSImage() { return nullptr; }
 #endif
 
 #if PLATFORM(COCOA)
-    virtual CFDataRef getTIFFRepresentation() { return nullptr; }
+    virtual CFDataRef tiffRepresentation() { return nullptr; }
 #endif
 
 #if PLATFORM(WIN)
@@ -193,7 +194,7 @@ protected:
 
     // Supporting tiled drawing
     virtual Color singlePixelSolidColor() const { return Color(); }
-    
+
 private:
     RefPtr<SharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
