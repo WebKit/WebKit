@@ -55,6 +55,7 @@
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebView.h"
+#import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
 #import "WebInspectorProxy.h"
