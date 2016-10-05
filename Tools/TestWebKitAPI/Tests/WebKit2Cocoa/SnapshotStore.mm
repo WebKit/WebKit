@@ -28,21 +28,20 @@
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
-#import "JavaScriptTest.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebViewMac.h"
 #import <WebKit/WKBackForwardListItemPrivate.h>
+#import <WebKit/WKPage.h>
+#import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-using namespace TestWebKitAPI;
+static bool didForceRepaint;
 
-@interface NSWindow ()
-- (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
-@end
+using namespace TestWebKitAPI;
 
 @interface WKWebView ()
 - (WKPageRef)_pageForTesting;
@@ -58,21 +57,33 @@ using namespace TestWebKitAPI;
 {
     self = [super initWithFrame:NSMakeRect(0, 0, 800, 600)];
     if (self) {
-        [self _setOverrideDeviceScaleFactor:1];
         [self _disableBackForwardSnapshotVolatilityForTesting];
         [self setAllowsBackForwardNavigationGestures:YES];
         [self _setWindowOcclusionDetectionEnabled:NO];
 
-        [self.window _setWindowResolution:1 displayIfChanged:YES];
         [self.window orderBack:nil];
     }
     return self;
 }
 
-- (void)loadPageNamed:(NSString *)pageName
+static void forceRepaintCallback(WKErrorRef error, void*)
 {
-    [self loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    [self _test_waitForDidFinishNavigation];
+    EXPECT_NULL(error);
+    didForceRepaint = true;
+}
+
+- (void)synchronouslyForceRepaint
+{
+    didForceRepaint = false;
+    WKPageForceRepaint([self _pageForTesting], 0, forceRepaintCallback);
+    TestWebKitAPI::Util::run(&didForceRepaint);
+}
+
+- (void)synchronouslyLoadTestPageAndForceRepaint:(NSString *)testPageName
+{
+    [self synchronouslyLoadTestPageNamed:testPageName];
+    [self synchronouslyForceRepaint];
+    [[self window] display];
 }
 
 @end
@@ -89,31 +100,31 @@ TEST(SnapshotStore, SnapshotUponNavigation)
 {
     RetainPtr<SnapshotTestWKWebView> webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
 
-    [webView loadPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
 
     RetainPtr<WKBackForwardListItem> firstItem = [[webView backForwardList] currentItem];
 
     RetainPtr<CGImageRef> imageBeforeNavigation = adoptCF([firstItem _copySnapshotForTesting]);
     EXPECT_NULL(imageBeforeNavigation.get());
 
-    [webView loadPageNamed:@"lots-of-text"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"lots-of-text"];
 
     // After navigating, the first item should have a valid back-forward snapshot.
     RetainPtr<CGImageRef> imageAfterNavigation = adoptCF([firstItem _copySnapshotForTesting]);
     EXPECT_NOT_NULL(imageAfterNavigation.get());
-    EXPECT_EQ(CGImageGetWidth(imageAfterNavigation.get()), (unsigned long)800);
+    EXPECT_EQ(CGImageGetWidth(imageAfterNavigation.get()), (unsigned long)(800 * [webView window].backingScaleFactor));
 }
 
 TEST(SnapshotStore, SnapshotClearedWhenItemIsRemoved)
 {
     RetainPtr<SnapshotTestWKWebView> webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
 
-    [webView loadPageNamed:@"simple"];
-    [webView loadPageNamed:@"lots-of-text"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"lots-of-text"];
 
     RetainPtr<WKBackForwardListItem> item = [[webView backForwardList] currentItem];
 
-    [webView loadPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
 
     EXPECT_NOT_NULL(adoptCF([item _copySnapshotForTesting]).get());
 
@@ -125,32 +136,73 @@ TEST(SnapshotStore, SnapshotClearedWhenItemIsRemoved)
     // The original second item is still in the forward list, and should still have a snapshot.
     EXPECT_NOT_NULL(adoptCF([item _copySnapshotForTesting]).get());
 
-    [webView loadPageNamed:@"lots-of-text"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"lots-of-text"];
 
     // The original second item shouldn't have an image anymore, because it was invalidated
     // by navigating back past it and then doing another load.
     EXPECT_NULL(adoptCF([item _copySnapshotForTesting]).get());
 }
 
+static RetainPtr<NSView> makeRedSquareView()
+{
+    RetainPtr<NSBox> redSquare = adoptNS([[NSBox alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
+    [redSquare setBoxType:NSBoxCustom];
+    [redSquare setFillColor:[NSColor redColor]];
+    return redSquare;
+}
+
 TEST(SnapshotStore, ExplicitSnapshotsChangeUponNavigation)
 {
     RetainPtr<SnapshotTestWKWebView> webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
 
-    [webView loadPageNamed:@"lots-of-text"];
+    RetainPtr<NSView> redSquare = makeRedSquareView();
+    [[webView superview] addSubview:redSquare.get()];
+
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"lots-of-text"];
 
     RetainPtr<WKBackForwardListItem> firstItem = [[webView backForwardList] currentItem];
     [webView _saveBackForwardSnapshotForItem:firstItem.get()];
+    [redSquare removeFromSuperview];
 
     RetainPtr<CGImageRef> initialSnapshot = adoptCF([firstItem _copySnapshotForTesting]);
     EXPECT_NOT_NULL(initialSnapshot);
 
-    EXPECT_JS_EQ([webView _pageForTesting], "window.scrollTo(0,100)", "undefined");
-    [webView loadPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
 
     // After navigating, the first item's snapshot should change.
     RetainPtr<CGImageRef> snapshotAfterNavigation = adoptCF([firstItem _copySnapshotForTesting]);
     EXPECT_NOT_NULL(snapshotAfterNavigation.get());
     EXPECT_FALSE(imagesAreEqual(initialSnapshot.get(), snapshotAfterNavigation.get()));
+}
+
+TEST(SnapshotStore, SnapshotsForNeverLoadedPagesDoNotChangeUponNavigation)
+{
+    RetainPtr<SnapshotTestWKWebView> webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
+
+    RetainPtr<NSView> redSquare = makeRedSquareView();
+    [[webView superview] addSubview:redSquare.get()];
+
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
+
+    WKRetainPtr<WKSessionStateRef> sessionState = adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState([webView _pageForTesting], nullptr, nullptr)));
+    WKPageRestoreFromSessionStateWithoutNavigation([webView _pageForTesting], sessionState.get());
+
+    RetainPtr<WKBackForwardListItem> firstItem = [[webView backForwardList] currentItem];
+    [webView _saveBackForwardSnapshotForItem:firstItem.get()];
+    [redSquare removeFromSuperview];
+
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"lots-of-text"];
+
+    RetainPtr<CGImageRef> initialSnapshot = adoptCF([firstItem _copySnapshotForTesting]);
+    EXPECT_NOT_NULL(initialSnapshot);
+
+    [webView synchronouslyLoadTestPageAndForceRepaint:@"simple"];
+
+    // After navigating, the first item's snapshot should not change, because it was
+    // never loaded into the view.
+    RetainPtr<CGImageRef> snapshotAfterNavigation = adoptCF([firstItem _copySnapshotForTesting]);
+    EXPECT_NOT_NULL(snapshotAfterNavigation.get());
+    EXPECT_TRUE(imagesAreEqual(initialSnapshot.get(), snapshotAfterNavigation.get()));
 }
 
 #endif // WK_API_ENABLED && PLATFORM(MAC)

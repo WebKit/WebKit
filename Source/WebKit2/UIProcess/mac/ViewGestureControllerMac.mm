@@ -399,7 +399,7 @@ void ViewGestureController::trackSwipeGesture(NSEvent *event, SwipeDirection dir
 
     m_pendingSwipeTracker.reset("starting to track swipe");
 
-    m_webPageProxy.recordNavigationSnapshot();
+    m_webPageProxy.recordAutomaticNavigationSnapshot();
 
     BOOL swipingLeft = isPhysicallySwipingLeft(direction);
     CGFloat maxProgress = swipingLeft ? 1 : 0;

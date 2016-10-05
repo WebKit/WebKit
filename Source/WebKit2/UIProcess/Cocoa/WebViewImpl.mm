@@ -3184,7 +3184,8 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
 
 void WebViewImpl::saveBackForwardSnapshotForCurrentItem()
 {
-    m_page->recordNavigationSnapshot();
+    if (WebBackForwardListItem* item = m_page->backForwardList().currentItem())
+        m_page->recordNavigationSnapshot(*item);
 }
 
 void WebViewImpl::saveBackForwardSnapshotForItem(WebBackForwardListItem& item)
