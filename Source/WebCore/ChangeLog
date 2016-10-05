@@ -1,3 +1,23 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.isComposing attribute
+        https://bugs.webkit.org/show_bug.cgi?id=162921
+
+        Reviewed by Darin Adler.
+
+        Add support for KeyboardEvent.isComposing attribute:
+        - https://www.w3.org/TR/uievents/#dom-keyboardevent-iscomposing
+        - https://www.w3.org/TR/uievents/#ref-for-dom-keyboardevent-iscomposing-3
+
+        Manual test: https://jsfiddle.net/ay92sr08/9/
+
+        No new tests, extended existing tests.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+
 2016-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         ShadowRoot interface should have elementFromPoint

@@ -1,3 +1,17 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Add support for KeyboardEvent.isComposing attribute
+        https://bugs.webkit.org/show_bug.cgi?id=162921
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage to test KeyboardEvent.isComposing.
+
+        * editing/mac/input/kotoeri-enter-to-confirm-and-newline-expected.txt:
+        * editing/mac/input/kotoeri-enter-to-confirm-and-newline.html:
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+
 2016-10-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         ShadowRoot interface should have elementFromPoint

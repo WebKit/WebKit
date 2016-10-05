@@ -41,8 +41,7 @@
     [InitializedByEventConstructor] readonly attribute boolean metaKey;
     [InitializedByEventConstructor] readonly attribute boolean repeat;
 
-    // FIXME: We should support this.
-    // readonly attribute boolean isComposing;
+    [InitializedByEventConstructor] readonly attribute boolean isComposing;
 
     boolean getModifierState(DOMString keyArg);
 

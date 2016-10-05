@@ -40,6 +40,11 @@ shouldBe("new KeyboardEvent('eventType', { }).repeat", "false");
 shouldBe("new KeyboardEvent('eventType', { repeat: false }).repeat", "false");
 shouldBe("new KeyboardEvent('eventType', { repeat: true }).repeat", "true");
 
+// isCompositing is passed.
+shouldBe("new KeyboardEvent('eventType', { }).isComposing", "false");
+shouldBe("new KeyboardEvent('eventType', { isComposing: false }).isComposing", "false");
+shouldBe("new KeyboardEvent('eventType', { isComposing: true }).isComposing", "true");
+
 // Non-window objects.
 shouldThrowErrorName("new KeyboardEvent('eventType', { view: testObject }).view", "TypeError");
 shouldThrowErrorName("new KeyboardEvent('eventType', { view: document }).view", "TypeError");

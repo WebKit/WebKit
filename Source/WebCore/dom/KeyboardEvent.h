@@ -40,6 +40,7 @@ struct KeyboardEventInit : public UIEventWithKeyStateInit {
     String keyIdentifier;
     unsigned location { 0 };
     bool repeat { false };
+    bool isComposing { false };
 };
 
 class KeyboardEvent final : public UIEventWithKeyState {
@@ -100,6 +101,8 @@ public:
     bool isKeyboardEvent() const final;
     int which() const final;
 
+    bool isComposing() const { return m_isComposing; }
+
 #if PLATFORM(COCOA)
     bool handledByInputMethod() const { return m_handledByInputMethod; }
     const Vector<KeypressCommand>& keypressCommands() const { return m_keypressCommands; }
@@ -121,13 +124,14 @@ private:
     String m_key;
 #endif
     String m_keyIdentifier;
-    unsigned m_location;
-    bool m_repeat : 1;
-    bool m_altGraphKey : 1;
+    unsigned m_location { DOM_KEY_LOCATION_STANDARD };
+    bool m_repeat { false };
+    bool m_altGraphKey { false };
+    bool m_isComposing { false };
 
 #if PLATFORM(COCOA)
     // Commands that were sent by AppKit when interpreting the event. Doesn't include input method commands.
-    bool m_handledByInputMethod;
+    bool m_handledByInputMethod { false };
     Vector<KeypressCommand> m_keypressCommands;
 #endif
 };

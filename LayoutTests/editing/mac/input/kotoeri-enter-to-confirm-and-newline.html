@@ -7,7 +7,7 @@
     To test this manually switch to the Kotoeri/Hiragana input method, and type 'toukyou'&lt;enter&gt;&lt;enter&gt;.<br />
     You should see only a single keypress event, as the very last reported event.
 </div>
-<input id="targetInput" onkeydown="keyDown()" onkeypress="keyPress()">
+<input id="targetInput" onkeydown="keyDown()" onkeyup="keyUp()" onkeypress="keyPress()">
 <ul id="console"></console>
 
 <script src="resources/logger.js"></script>
@@ -15,16 +15,20 @@
 <script>
     var shouldBeCompositionEvent = false;
     function keyDown() {
-        if (!window.testRunner) {
-            log("keydown : keyCode == " + event.keyCode);
+        log("keydown : keyCode == " + event.keyCode + ", key: " + event.key + ", isComposing: " + event.isComposing);
+        if (!window.testRunner)
             return;
-        }
+
         if (shouldBeCompositionEvent && event.keyCode != 229)
             log("FAILURE: received keyCode " + event.keyCode + " in a keydown when VK_PROCESSKEY is expected");
         else if (!shouldBeCompositionEvent && event.keyCode == 229)
             log("FAILURE: received a keyDown with VK_PROCESSKEY as the keyCode, when an actual key code was expected.");
         else
             log("Received valid keydown event");
+    }
+
+    function keyUp() {
+        log("keyup : keyCode == " + event.keyCode + ", key: " + event.key + ", isComposing: " + event.isComposing);
     }
     
     function keyPress() {
@@ -39,6 +43,9 @@
     }
     
     var targetInput = document.getElementById('targetInput');
+    targetInput.addEventListener("compositionstart", function() { log("compositionstart"); });
+    targetInput.addEventListener("compositionupdate", function() { log("compositionupdate"); });
+    targetInput.addEventListener("compositionend", function() { log("compositionend"); });
     targetInput.focus();
     if (window.testRunner) {
         testRunner.dumpAsText();

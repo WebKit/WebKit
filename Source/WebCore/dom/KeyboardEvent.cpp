@@ -24,6 +24,7 @@
 #include "KeyboardEvent.h"
 
 #include "Document.h"
+#include "Editor.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -91,14 +92,7 @@ static inline KeyboardEvent::KeyLocationCode keyLocationCode(const PlatformKeybo
     }
 }
 
-KeyboardEvent::KeyboardEvent()
-    : m_location(DOM_KEY_LOCATION_STANDARD)
-    , m_altGraphKey(false)
-#if PLATFORM(COCOA)
-    , m_handledByInputMethod(false)
-#endif
-{
-}
+KeyboardEvent::KeyboardEvent() = default;
 
 KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type()),
@@ -111,6 +105,7 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
     , m_altGraphKey(false)
+    , m_isComposing(view && view->frame() && view->frame()->editor().hasComposition())
 #if PLATFORM(COCOA)
 #if USE(APPKIT)
     , m_handledByInputMethod(key.handledByInputMethod())
@@ -137,6 +132,7 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventI
     , m_location(initializer.location)
     , m_repeat(initializer.repeat)
     , m_altGraphKey(false)
+    , m_isComposing(initializer.isComposing)
 #if PLATFORM(COCOA)
     , m_handledByInputMethod(false)
 #endif
