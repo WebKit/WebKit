@@ -1,3 +1,35 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement KeyboardEvent.code from the UI Event spec
+        https://bugs.webkit.org/show_bug.cgi?id=149584
+
+        Reviewed by Darin Adler.
+
+        Add support for Keyboard.code attribute:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-code
+        - https://w3c.github.io/uievents-code/
+
+        The feature is only enabled on Mac for now as the implementation is
+        platform-specific and Mac only.
+
+        Test: fast/events/keyboardevent-code.html
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::code):
+        (WebCore::PlatformKeyboardEvent::unmodifiedText): Deleted.
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::codeForKeyEvent):
+        (WebCore::keyIdentifierForKeyEvent):
+        * replay/SerializationMethods.cpp:
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::encodeValue):
+        (JSC::EncodingTraits<PlatformKeyboardEvent>::decodeValue):
+
 2016-10-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The dragged image should be the current frame only of the animated image

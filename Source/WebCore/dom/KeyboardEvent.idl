@@ -29,10 +29,7 @@
     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
 
     [InitializedByEventConstructor, Conditional=KEYBOARD_KEY_ATTRIBUTE] readonly attribute DOMString key;
-
-    // FIXME: We should support this.
-    // [InitializedByEventConstructor] readonly attribute DOMString code;
-
+    [InitializedByEventConstructor, Conditional=KEYBOARD_CODE_ATTRIBUTE] readonly attribute DOMString code;
     [InitializedByEventConstructor] readonly attribute unsigned long location;
 
     [InitializedByEventConstructor] readonly attribute boolean ctrlKey;

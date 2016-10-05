@@ -101,6 +101,9 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(key.key())
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    , m_code(key.code())
+#endif
     , m_keyIdentifier(key.keyIdentifier())
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
@@ -127,6 +130,9 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventI
     : UIEventWithKeyState(eventType, initializer)
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     , m_key(initializer.key)
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    , m_code(initializer.code)
 #endif
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.location)

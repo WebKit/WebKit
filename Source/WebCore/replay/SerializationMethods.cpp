@@ -259,6 +259,9 @@ EncodedValue EncodingTraits<PlatformKeyboardEvent>::encodeValue(const PlatformKe
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     ENCODE_TYPE_WITH_KEY(encodedValue, String, key, input.key());
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    ENCODE_TYPE_WITH_KEY(encodedValue, String, code, input.code());
+#endif
     ENCODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier, input.keyIdentifier());
     ENCODE_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode, input.windowsVirtualKeyCode());
     ENCODE_TYPE_WITH_KEY(encodedValue, bool, autoRepeat, input.isAutoRepeat());
@@ -281,6 +284,9 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     DECODE_TYPE_WITH_KEY(encodedValue, String, key);
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    DECODE_TYPE_WITH_KEY(encodedValue, String, code);
+#endif
     DECODE_TYPE_WITH_KEY(encodedValue, String, keyIdentifier);
     DECODE_TYPE_WITH_KEY(encodedValue, int, windowsVirtualKeyCode);
     DECODE_TYPE_WITH_KEY(encodedValue, bool, autoRepeat);
@@ -294,6 +300,9 @@ bool EncodingTraits<PlatformKeyboardEvent>::decodeValue(EncodedValue& encodedVal
     PlatformKeyboardEvent platformEvent = PlatformKeyboardEvent(type, text, unmodifiedText,
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         key,
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        code,
 #endif
         keyIdentifier, WTF::safeCast<int>(windowsVirtualKeyCode), autoRepeat, keypad, systemKey, modifiers, timestamp);
 

@@ -47,6 +47,7 @@ WEBCORE_EXPORT NSPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
 WEBCORE_EXPORT int windowsKeyCodeForKeyEvent(NSEvent *);
 WEBCORE_EXPORT String keyIdentifierForKeyEvent(NSEvent *);
 WEBCORE_EXPORT String keyForKeyEvent(NSEvent *);
+WEBCORE_EXPORT String codeForKeyEvent(NSEvent *);
 WEBCORE_EXPORT double eventTimeStampSince1970(NSEvent *);
 
 #endif

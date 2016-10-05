@@ -1,3 +1,16 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement KeyboardEvent.code from the UI Event spec
+        https://bugs.webkit.org/show_bug.cgi?id=149584
+
+        Reviewed by Darin Adler.
+
+        Add build time flag to toggle support for the code attribute on
+        KeyboardEvent and only enable it on Mac for now, given that the
+        implementation is missing on other platforms.
+
+        * wtf/FeatureDefines.h:
+
 2016-10-03  Chris Dumez  <cdumez@apple.com>
 
         Add support for KeyboardEvent.key attribute

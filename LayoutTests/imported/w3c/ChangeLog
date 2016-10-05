@@ -1,3 +1,14 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement KeyboardEvent.code from the UI Event spec
+        https://bugs.webkit.org/show_bug.cgi?id=149584
+
+        Reviewed by Darin Adler.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/dom/events/Event-subclasses-constructors-expected.txt:
+
 2016-10-04  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] ReadableStream should be errored with TypeError values

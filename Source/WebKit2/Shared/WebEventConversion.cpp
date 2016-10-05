@@ -194,6 +194,9 @@ public:
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         m_key = webEvent.key();
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        m_code = webEvent.code();
+#endif
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
 #if USE(APPKIT) || PLATFORM(GTK)

@@ -286,6 +286,218 @@ String keyForKeyEvent(NSEvent *event)
     return keyForCharCode([s characterAtIndex:0]);
 }
 
+// https://w3c.github.io/uievents-code/
+String codeForKeyEvent(NSEvent *event)
+{
+    switch ([event keyCode]) {
+    // Keys in the alphanumeric section.
+    case kVK_ANSI_Grave: return ASCIILiteral("Backquote");
+    case kVK_ANSI_Backslash: return ASCIILiteral("Backslash");
+    case kVK_Delete: return ASCIILiteral("Backspace");
+    case kVK_ANSI_LeftBracket: return ASCIILiteral("BracketLeft");
+    case kVK_ANSI_RightBracket: return ASCIILiteral("BracketRight");
+    case kVK_ANSI_Comma: return ASCIILiteral("Comma");
+    case kVK_ANSI_0: return ASCIILiteral("Digit0");
+    case kVK_ANSI_1: return ASCIILiteral("Digit1");
+    case kVK_ANSI_2: return ASCIILiteral("Digit2");
+    case kVK_ANSI_3: return ASCIILiteral("Digit3");
+    case kVK_ANSI_4: return ASCIILiteral("Digit4");
+    case kVK_ANSI_5: return ASCIILiteral("Digit5");
+    case kVK_ANSI_6: return ASCIILiteral("Digit6");
+    case kVK_ANSI_7: return ASCIILiteral("Digit7");
+    case kVK_ANSI_8: return ASCIILiteral("Digit8");
+    case kVK_ANSI_9: return ASCIILiteral("Digit9");
+    case kVK_ANSI_Equal: return ASCIILiteral("Equal");
+    case kVK_ISO_Section: return ASCIILiteral("IntlBackslash");
+    case kVK_JIS_Underscore: return ASCIILiteral("IntlRo");
+    case kVK_JIS_Yen: return ASCIILiteral("IntlYen");
+    case kVK_ANSI_A: return ASCIILiteral("KeyA");
+    case kVK_ANSI_B: return ASCIILiteral("KeyB");
+    case kVK_ANSI_C: return ASCIILiteral("KeyC");
+    case kVK_ANSI_D: return ASCIILiteral("KeyD");
+    case kVK_ANSI_E: return ASCIILiteral("KeyE");
+    case kVK_ANSI_F: return ASCIILiteral("KeyF");
+    case kVK_ANSI_G: return ASCIILiteral("KeyG");
+    case kVK_ANSI_H: return ASCIILiteral("KeyH");
+    case kVK_ANSI_I: return ASCIILiteral("KeyI");
+    case kVK_ANSI_J: return ASCIILiteral("KeyJ");
+    case kVK_ANSI_K: return ASCIILiteral("KeyK");
+    case kVK_ANSI_L: return ASCIILiteral("KeyL");
+    case kVK_ANSI_M: return ASCIILiteral("KeyM");
+    case kVK_ANSI_N: return ASCIILiteral("KeyN");
+    case kVK_ANSI_O: return ASCIILiteral("KeyO");
+    case kVK_ANSI_P: return ASCIILiteral("KeyP");
+    case kVK_ANSI_Q: return ASCIILiteral("KeyQ");
+    case kVK_ANSI_R: return ASCIILiteral("KeyR");
+    case kVK_ANSI_S: return ASCIILiteral("KeyS");
+    case kVK_ANSI_T: return ASCIILiteral("KeyT");
+    case kVK_ANSI_U: return ASCIILiteral("KeyU");
+    case kVK_ANSI_V: return ASCIILiteral("KeyV");
+    case kVK_ANSI_W: return ASCIILiteral("KeyW");
+    case kVK_ANSI_X: return ASCIILiteral("KeyX");
+    case kVK_ANSI_Y: return ASCIILiteral("KeyY");
+    case kVK_ANSI_Z: return ASCIILiteral("KeyZ");
+    case kVK_ANSI_Minus: return ASCIILiteral("Minus");
+    case kVK_ANSI_Period: return ASCIILiteral("Period");
+    case kVK_ANSI_Quote: return ASCIILiteral("Quote");
+    case kVK_ANSI_Semicolon: return ASCIILiteral("Semicolon");
+    case kVK_ANSI_Slash: return ASCIILiteral("Slash");
+
+    // Functional keys in alphanumeric section.
+    case kVK_Option: return ASCIILiteral("AltLeft");
+    case kVK_RightOption: return ASCIILiteral("AltRight");
+    case kVK_CapsLock: return ASCIILiteral("CapsLock");
+    // ContextMenu.
+    case kVK_Control: return ASCIILiteral("ControlLeft");
+    case kVK_RightControl: return ASCIILiteral("ControlRight");
+    case kVK_Return: return ASCIILiteral("Enter"); //  Labeled Return on Apple keyboards.
+    case kVK_Command: return ASCIILiteral("MetaLeft");
+    case kVK_RightCommand: return ASCIILiteral("MetaRight");
+    case kVK_Shift: return ASCIILiteral("ShiftLeft");
+    case kVK_RightShift: return ASCIILiteral("ShiftRight");
+    case kVK_Space: return ASCIILiteral("Space");
+    case kVK_Tab: return ASCIILiteral("Tab");
+
+    // Functional keys found on Japanese and Korean keyboards.
+    // Convert.
+    case kVK_JIS_Kana: return ASCIILiteral("KanaMode");
+    // Lang1.
+    case kVK_JIS_Eisu: return ASCIILiteral("Lang2"); // Japanese (Mac keyboard): eisu.
+    // Lang3.
+    // Lang4.
+    // Lang5.
+    // NonConvert.
+
+    // Keys in the ControlPad section.
+    case kVK_ForwardDelete: return ASCIILiteral("Delete");
+    case kVK_End: return ASCIILiteral("End");
+    case kVK_Help: return ASCIILiteral("Help");
+    case kVK_Home: return ASCIILiteral("Home");
+    // Insert: Not present on Apple keyboards.
+    case kVK_PageDown: return ASCIILiteral("PageDown");
+    case kVK_PageUp: return ASCIILiteral("PageUp");
+
+    // Keys in the ArrowPad section.
+    case kVK_DownArrow: return ASCIILiteral("ArrowDown");
+    case kVK_LeftArrow: return ASCIILiteral("ArrowLeft");
+    case kVK_RightArrow: return ASCIILiteral("ArrowRight");
+    case kVK_UpArrow: return ASCIILiteral("ArrowUp");
+
+    // Keys in the Numpad section.
+    case kVK_ANSI_KeypadClear: return ASCIILiteral("NumLock"); // The specification says to use "NumLock" on Mac for the numpad Clear key.
+    case kVK_ANSI_Keypad0: return ASCIILiteral("Numpad0");
+    case kVK_ANSI_Keypad1: return ASCIILiteral("Numpad1");
+    case kVK_ANSI_Keypad2: return ASCIILiteral("Numpad2");
+    case kVK_ANSI_Keypad3: return ASCIILiteral("Numpad3");
+    case kVK_ANSI_Keypad4: return ASCIILiteral("Numpad4");
+    case kVK_ANSI_Keypad5: return ASCIILiteral("Numpad5");
+    case kVK_ANSI_Keypad6: return ASCIILiteral("Numpad6");
+    case kVK_ANSI_Keypad7: return ASCIILiteral("Numpad7");
+    case kVK_ANSI_Keypad8: return ASCIILiteral("Numpad8");
+    case kVK_ANSI_Keypad9: return ASCIILiteral("Numpad9");
+    case kVK_ANSI_KeypadPlus: return ASCIILiteral("NumpadAdd");
+    // NumpadBackspace.
+    // NumpadClear: The specification says that the numpad Clear key should always be encoded as "NumLock" on Mac.
+    // NumpadClearEntry.
+    case kVK_JIS_KeypadComma: return ASCIILiteral("NumpadComma");
+    case kVK_ANSI_KeypadDecimal: return ASCIILiteral("NumpadDecimal");
+    case kVK_ANSI_KeypadDivide: return ASCIILiteral("NumpadDivide");
+    case kVK_ANSI_KeypadEnter: return ASCIILiteral("NumpadEnter");
+    case kVK_ANSI_KeypadEquals: return ASCIILiteral("NumpadEqual");
+    // NumpadHash.
+    // NumpadMemoryAdd.
+    // NumpadMemoryClear.
+    // NumpadMemoryRecall.
+    // NumpadMemoryStore.
+    // NumpadMemorySubtract.
+    case kVK_ANSI_KeypadMultiply: return ASCIILiteral("NumpadMultiply");
+    // NumpadParenLeft.
+    // NumpadParenRight.
+    // NumpadStar: The specification says to use "NumpadMultiply" for the * key on numeric keypads.
+    case kVK_ANSI_KeypadMinus: return ASCIILiteral("NumpadSubtract");
+
+    // Keys in the Function section.
+    case kVK_Escape: return ASCIILiteral("Escape");
+    case kVK_F1: return ASCIILiteral("F1");
+    case kVK_F2: return ASCIILiteral("F2");
+    case kVK_F3: return ASCIILiteral("F3");
+    case kVK_F4: return ASCIILiteral("F4");
+    case kVK_F5: return ASCIILiteral("F5");
+    case kVK_F6: return ASCIILiteral("F6");
+    case kVK_F7: return ASCIILiteral("F7");
+    case kVK_F8: return ASCIILiteral("F8");
+    case kVK_F9: return ASCIILiteral("F9");
+    case kVK_F10: return ASCIILiteral("F10");
+    case kVK_F11: return ASCIILiteral("F11");
+    case kVK_F12: return ASCIILiteral("F12");
+    case kVK_F13: return ASCIILiteral("F13");
+    case kVK_F14: return ASCIILiteral("F14");
+    case kVK_F15: return ASCIILiteral("F15");
+    case kVK_F16: return ASCIILiteral("F16");
+    case kVK_F17: return ASCIILiteral("F17");
+    case kVK_F18: return ASCIILiteral("F18");
+    case kVK_F19: return ASCIILiteral("F19");
+    case kVK_F20: return ASCIILiteral("F20");
+    // Fn: This is typically a hardware key that does not generate a separate code.
+    // FnLock.
+    // PrintScreen.
+    // ScrollLock.
+    // Pause.
+
+    // Media keys.
+    // BrowserBack.
+    // BrowserFavorites.
+    // BrowserForward.
+    // BrowserHome.
+    // BrowserRefresh.
+    // BrowserSearch.
+    // BrowserStop.
+    // Eject.
+    // LaunchApp1.
+    // LaunchApp2.
+    // LaunchMail.
+    // MediaPlayPause.
+    // MediaSelect.
+    // MediaStop.
+    // MediaTrackNext.
+    // MediaTrackPrevious.
+    // Power.
+    // Sleep.
+    case kVK_VolumeDown: return ASCIILiteral("AudioVolumeDown");
+    case kVK_Mute: return ASCIILiteral("AudioVolumeMute");
+    case kVK_VolumeUp: return ASCIILiteral("AudioVolumeUp");
+    // WakeUp.
+
+    // Legacy modifier keys.
+    // Hyper.
+    // Super.
+    // Turbo.
+
+    // Legacy process control keys.
+    // Abort.
+    // Resume.
+    // Suspend.
+
+    // Legacy editing keys.
+    // Again.
+    // Copy.
+    // Cut.
+    // Find.
+    // Open.
+    // Paste.
+    // Props.
+    // Select.
+    // Undo.
+
+    // Keys found on international keyboards.
+    // Hiragana.
+    // Katakana.
+
+    default:
+        return ASCIILiteral("Unidentified");
+    }
+}
+
 String keyIdentifierForKeyEvent(NSEvent* event)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
@@ -612,6 +824,7 @@ public:
         m_unmodifiedText = unmodifiedTextFromEvent(event);
         m_keyIdentifier = keyIdentifierForKeyEvent(event);
         m_key = keyForKeyEvent(event);
+        m_code = codeForKeyEvent(event);
         m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

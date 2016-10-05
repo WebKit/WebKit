@@ -37,6 +37,9 @@ struct KeyboardEventInit : public UIEventWithKeyStateInit {
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     String key;
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    String code;
+#endif
     String keyIdentifier;
     unsigned location { 0 };
     bool repeat { false };
@@ -83,6 +86,9 @@ public:
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     const String& key() const { return m_key; }
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    const String& code() const { return m_code; }
+#endif
 
     const String& keyIdentifier() const { return m_keyIdentifier; }
     unsigned location() const { return m_location; }
@@ -122,6 +128,9 @@ private:
     std::unique_ptr<PlatformKeyboardEvent> m_keyEvent;
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
     String m_key;
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+    String m_code;
 #endif
     String m_keyIdentifier;
     unsigned m_location { DOM_KEY_LOCATION_STANDARD };

@@ -1,3 +1,25 @@
+2016-10-04  Chris Dumez  <cdumez@apple.com>
+
+        Implement KeyboardEvent.code from the UI Event spec
+        https://bugs.webkit.org/show_bug.cgi?id=149584
+
+        Reviewed by Darin Adler.
+
+        Extend layout test coverage.
+
+        * fast/events/arrow-keys-on-body-expected.txt:
+        * fast/events/arrow-keys-on-body.html:
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+        * fast/events/key-events-in-input-button-expected.txt:
+        * fast/events/key-events-in-input-button.html:
+        * fast/events/key-events-in-input-text-expected.txt:
+        * fast/events/key-events-in-input-text.html:
+        * fast/events/keyboardevent-code-expected.txt: Added.
+        * fast/events/keyboardevent-code.html: Added.
+        * fast/events/special-key-events-in-input-text-expected.txt:
+        * fast/events/special-key-events-in-input-text.html:
+
 2016-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make it possible for a test to describe a user gesture as a stream of events in JSON format

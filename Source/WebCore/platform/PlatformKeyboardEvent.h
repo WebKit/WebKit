@@ -74,12 +74,18 @@ namespace WebCore {
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         const String& key,
 #endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        const String& code,
+#endif
         const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, double timestamp)
             : PlatformEvent(type, modifiers, timestamp)
             , m_text(text)
             , m_unmodifiedText(unmodifiedText)
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
             , m_key(key)
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+            , m_code(code)
 #endif
             , m_keyIdentifier(keyIdentifier)
             , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
@@ -111,6 +117,9 @@ namespace WebCore {
 
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         const String& key() const { return m_key; }
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        const String& code() const { return m_code; }
 #endif
 
         // Most compatible Windows virtual key code associated with the event.
@@ -167,6 +176,9 @@ namespace WebCore {
         String m_unmodifiedText;
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)
         String m_key;
+#endif
+#if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
+        String m_code;
 #endif
         String m_keyIdentifier;
         int m_windowsVirtualKeyCode;

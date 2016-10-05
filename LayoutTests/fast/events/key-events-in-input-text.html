@@ -26,6 +26,7 @@ function eventInfo(event, where) {
         return (where ? "(" + where + ") " : "") + target.tagName + " - " + event.type
             + ' - ' + [event.ctrlKey, event.altKey, event.shiftKey, event.metaKey]
             + ' - ' + event.key
+            + ' - ' + event.code
             + ' - ' + event.keyIdentifier
             + ' - ' + event.keyCode
             + ' - ' + event.charCode
@@ -40,6 +41,7 @@ function eventInfo(event, where) {
 }
 log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
         + ' - ' + "key"
+        + ' - ' + "code"
         + ' - ' + "keyIdentifier"
         + ' - ' + "keyCode"
         + ' - ' + "charCode");
