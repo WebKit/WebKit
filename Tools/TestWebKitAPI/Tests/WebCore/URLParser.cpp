@@ -570,6 +570,21 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://[a:0:0:0:b:c::d]",
         {"http", "", "", "[a::b:c:0:d]", 0, "/", "", "", "http://[a::b:c:0:d]/"},
         {"http", "", "", "[a:0:0:0:b:c::d]", 0, "/", "", "", "http://[a:0:0:0:b:c::d]/"});
+    checkURLDifferences("http://[::7f00:0001]/",
+        {"http", "", "", "[::7f00:1]", 0, "/", "", "", "http://[::7f00:1]/"},
+        {"http", "", "", "[::7f00:0001]", 0, "/", "", "", "http://[::7f00:0001]/"});
+    checkURLDifferences("http://[::7f00:00]/",
+        {"http", "", "", "[::7f00:0]", 0, "/", "", "", "http://[::7f00:0]/"},
+        {"http", "", "", "[::7f00:00]", 0, "/", "", "", "http://[::7f00:00]/"});
+    checkURLDifferences("http://[::0:7f00:0001]/",
+        {"http", "", "", "[::7f00:1]", 0, "/", "", "", "http://[::7f00:1]/"},
+        {"http", "", "", "[::0:7f00:0001]", 0, "/", "", "", "http://[::0:7f00:0001]/"});
+    checkURLDifferences("http://127.00.0.1/",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.00.0.1", 0, "/", "", "", "http://127.00.0.1/"});
+    checkURLDifferences("http://127.0.0.01/",
+        {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
+        {"http", "", "", "127.0.0.01", 0, "/", "", "", "http://127.0.0.01/"});
     checkURLDifferences("http://example.com/path1/.%2e",
         {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
         {"http", "", "", "example.com", 0, "/path1/.%2e", "", "", "http://example.com/path1/.%2e"});

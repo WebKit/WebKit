@@ -2361,6 +2361,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         }
         uint16_t value = 0;
         size_t length = 0;
+        bool leadingZeros = false;
         for (; length < 4; length++) {
             if (c.atEnd())
                 break;
@@ -2368,10 +2369,13 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
                 break;
             if (isASCIIUpper(*c))
                 syntaxViolation(hostBegin);
+            if (*c == '0' && !length)
+                leadingZeros = true;
             value = value * 0x10 + toASCIIHexValue(*c);
             advance(c, hostBegin);
         }
-        if (UNLIKELY(length > 1 && !value))
+        
+        if (UNLIKELY((value && leadingZeros) || (!value && length > 1)))
             syntaxViolation(hostBegin);
 
         address[piecePointer++] = value;

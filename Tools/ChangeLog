@@ -1,5 +1,15 @@
 2016-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should correctly strip unnecessary 0's in IPv6 addresses
+        https://bugs.webkit.org/show_bug.cgi?id=162979
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
         UTF-8 encode queries of nonspecial and websocket schemes
         https://bugs.webkit.org/show_bug.cgi?id=162956
 
