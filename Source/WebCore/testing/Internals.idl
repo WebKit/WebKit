@@ -360,7 +360,7 @@ enum UserInterfaceLayoutDirection {
     [Conditional=VIDEO] void simulateAudioInterruption(HTMLMediaElement element);
     [Conditional=VIDEO, MayThrowLegacyException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
 
-    [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
+    [Conditional=LEGACY_ENCRYPTED_MEDIA] void initializeMockCDM();
 
     [Conditional=SPEECH_SYNTHESIS] void enableMockSpeechSynthesizer();
 

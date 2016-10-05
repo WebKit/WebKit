@@ -29,7 +29,7 @@
 #include "CDMSession.h"
 #include <wtf/HashMap.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 namespace WebCore {
 
@@ -56,6 +56,6 @@ protected:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // CDMSessionClearKey_h

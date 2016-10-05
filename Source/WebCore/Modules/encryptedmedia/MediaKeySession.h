@@ -26,7 +26,7 @@
 #ifndef MediaKeySession_h
 #define MediaKeySession_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "ActiveDOMObject.h"
 #include "CDMSession.h"
@@ -117,6 +117,6 @@ private:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // MediaKeySession_h

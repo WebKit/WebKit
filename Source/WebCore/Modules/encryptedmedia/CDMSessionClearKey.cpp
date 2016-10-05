@@ -44,7 +44,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 using namespace JSC;
 

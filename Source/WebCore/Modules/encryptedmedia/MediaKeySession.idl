@@ -24,7 +24,7 @@
      */
 
 [
-    Conditional=ENCRYPTED_MEDIA_V2,
+    Conditional=LEGACY_ENCRYPTED_MEDIA,
     InterfaceName=WebKitMediaKeySession,
     ActiveDOMObject,
 ] interface MediaKeySession : EventTarget {

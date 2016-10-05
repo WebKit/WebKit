@@ -30,7 +30,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS WebCDMSessionAVFoundationObjCListener;

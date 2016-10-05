@@ -26,7 +26,7 @@
 #ifndef CDM_h
 #define CDM_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDMSession.h"
 #include <runtime/Uint8Array.h>
@@ -79,6 +79,6 @@ private:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // CDM_h

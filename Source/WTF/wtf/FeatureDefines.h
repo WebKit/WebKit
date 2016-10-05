@@ -177,8 +177,8 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
-#if !defined(ENABLE_ENCRYPTED_MEDIA_V2)
-#define ENABLE_ENCRYPTED_MEDIA_V2 1
+#if !defined(ENABLE_LEGACY_ENCRYPTED_MEDIA)
+#define ENABLE_LEGACY_ENCRYPTED_MEDIA 1
 #endif
 
 #if !defined(ENABLE_FULLSCREEN_API)
@@ -441,8 +441,8 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_DRAG_SUPPORT 1
 #endif
 
-#if !defined(ENABLE_ENCRYPTED_MEDIA_V2)
-#define ENABLE_ENCRYPTED_MEDIA_V2 0
+#if !defined(ENABLE_LEGACY_ENCRYPTED_MEDIA)
+#define ENABLE_LEGACY_ENCRYPTED_MEDIA 0
 #endif
 
 #if !defined(ENABLE_FETCH_API)

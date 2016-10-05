@@ -26,7 +26,7 @@
 #ifndef CDMPrivate_h
 #define CDMPrivate_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <wtf/text/WTFString.h>
 
@@ -47,6 +47,6 @@ public:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // CDMPrivate_h

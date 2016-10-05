@@ -143,7 +143,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, HashSet<AtomicString>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, ArrayValue& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<JSC::Uint8Array>& result);
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaKeyError>& result);
 #endif
 #if ENABLE(FETCH_API)

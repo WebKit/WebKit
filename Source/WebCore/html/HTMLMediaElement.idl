@@ -91,8 +91,8 @@
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
-    [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=keys] readonly attribute MediaKeys webkitKeys;
-    [Conditional=ENCRYPTED_MEDIA_V2, ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys? mediaKeys);
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, ImplementedAs=keys] readonly attribute MediaKeys webkitKeys;
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, ImplementedAs=setMediaKeys] void webkitSetMediaKeys(MediaKeys? mediaKeys);
 
     [Conditional=VIDEO_TRACK, MayThrowLegacyException] TextTrack addTextTrack(DOMString kind, optional DOMString label = "", optional DOMString language = "");
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;

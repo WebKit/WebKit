@@ -92,7 +92,7 @@ public:
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     bool hasStreamSession() { return m_streamSession; }
     AVStreamSession *streamSession();
     void setCDMSession(CDMSession*) override;

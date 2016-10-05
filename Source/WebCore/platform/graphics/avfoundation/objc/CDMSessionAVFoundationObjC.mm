@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CDMSessionAVFoundationObjC.h"
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #import "CDM.h"
 #import "CDMSession.h"

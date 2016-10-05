@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CDMSessionAVFoundationCF.h"
 
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDM.h"
 #include "CDMSession.h"

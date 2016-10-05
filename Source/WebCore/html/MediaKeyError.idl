@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=ENCRYPTED_MEDIA_V2,
+    Conditional=LEGACY_ENCRYPTED_MEDIA,
     ImplementationLacksVTable,
     InterfaceName=WebKitMediaKeyError
 ] interface MediaKeyError {
@@ -35,5 +35,5 @@
     const unsigned short MEDIA_KEYERR_HARDWARECHANGE = 5;
     const unsigned short MEDIA_KEYERR_DOMAIN = 6;
     readonly attribute unsigned short code;
-    [Conditional=ENCRYPTED_MEDIA_V2] readonly attribute unsigned long systemCode;
+    [Conditional=LEGACY_ENCRYPTED_MEDIA] readonly attribute unsigned long systemCode;
 };

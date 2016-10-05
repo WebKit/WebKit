@@ -1,3 +1,18 @@
+2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA
+        https://bugs.webkit.org/show_bug.cgi?id=162903
+
+        Reviewed by Alex Christensen.
+
+        Rename build guards for the remaining implementation of the legacy EME API
+        to ENABLE_LEGACY_ENCRYPTED_MEDIA. This will allow for the future implementation
+        of the near-finished API to be guarded with the simple ENABLE_ENCRYPTED_MEDIA guards.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Also remove the
+        ENABLE_IOS_TEXT_AUTOSIZING feature define that was renamed in r206395 and was
+        throwing up style checker errors.
+
 2016-10-04  Andy Estes  <aestes@apple.com>
 
         [iOS] Crash in WebResourceLoaderQuickLookDelegate when the client cancels the navigation to a QuickLook resource

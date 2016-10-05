@@ -26,7 +26,7 @@
 #ifndef MediaKeyNeededEvent_h
 #define MediaKeyNeededEvent_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "Event.h"
 #include "MediaKeyError.h"

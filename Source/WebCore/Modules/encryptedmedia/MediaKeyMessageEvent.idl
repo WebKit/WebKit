@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=ENCRYPTED_MEDIA_V2,
+    Conditional=LEGACY_ENCRYPTED_MEDIA,
     ConstructorTemplate=Event,
     InterfaceName=WebKitMediaKeyMessageEvent
 ] interface MediaKeyMessageEvent : Event {

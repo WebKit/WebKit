@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MockCDM.h"
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDM.h"
 #include "CDMSession.h"
@@ -141,4 +141,4 @@ bool MockCDMSession::update(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

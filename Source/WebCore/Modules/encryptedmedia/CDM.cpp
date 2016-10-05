@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDM.h"
 
@@ -149,4 +149,4 @@ MediaPlayer* CDM::mediaPlayer() const
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)

@@ -30,7 +30,7 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
-#if HAVE(AVFOUNDATION_LOADER_DELEGATE) || HAVE(ENCRYPTED_MEDIA_V2)
+#if HAVE(AVFOUNDATION_LOADER_DELEGATE) || HAVE(LEGACY_ENCRYPTED_MEDIA)
 typedef struct OpaqueAVCFAssetResourceLoadingRequest* AVCFAssetResourceLoadingRequestRef;
 #endif
 
@@ -52,7 +52,7 @@ public:
     void didCancelLoadingRequest(AVCFAssetResourceLoadingRequestRef);
     void didStopLoadingRequest(AVCFAssetResourceLoadingRequestRef);
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RetainPtr<AVCFAssetResourceLoadingRequestRef> takeRequestForKeyURI(const String&);
 #endif
 #endif
@@ -116,7 +116,7 @@ private:
 
     virtual void contentsNeedsDisplay();
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
 #endif
 

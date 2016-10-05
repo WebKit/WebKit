@@ -26,7 +26,7 @@
 #ifndef MediaKeys_h
 #define MediaKeys_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDM.h"
 #include "EventTarget.h"
@@ -74,6 +74,6 @@ protected:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // MediaKeys_h

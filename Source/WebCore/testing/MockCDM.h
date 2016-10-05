@@ -26,7 +26,7 @@
 #ifndef MockCDM_h
 #define MockCDM_h
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDMPrivate.h"
 
@@ -55,6 +55,6 @@ protected:
 
 }
 
-#endif // ENABLE(ENCRYPTED_MEDIA_V2)
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #endif // MockCDM_h

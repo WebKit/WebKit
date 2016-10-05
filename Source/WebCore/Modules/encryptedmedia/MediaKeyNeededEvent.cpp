@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "MediaKeyNeededEvent.h"
 

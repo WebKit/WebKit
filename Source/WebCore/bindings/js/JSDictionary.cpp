@@ -44,7 +44,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "JSMediaKeyError.h"
 #endif
 
@@ -256,7 +256,7 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint
     result = toUint8Array(value);
 }
 
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
 {
     result = JSMediaKeyError::toWrapped(value);

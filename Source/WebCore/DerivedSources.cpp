@@ -325,7 +325,7 @@
 #endif
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
-#if ENABLE(ENCRYPTED_MEDIA_V2)
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "JSMediaKeyError.cpp"
 #include "JSMediaKeyMessageEvent.cpp"
 #include "JSMediaKeyNeededEvent.cpp"
