@@ -1,3 +1,13 @@
+2016-10-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ARM EABI buildfix after r206778
+        https://bugs.webkit.org/show_bug.cgi?id=162964
+
+        Unreviewed trivial fix.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+
 2016-10-04  Saam Barati  <sbarati@apple.com>
 
         String.prototype.toLowerCase should be a DFG/FTL intrinsic
