@@ -1,3 +1,22 @@
+2016-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for running ES6SampleBench to run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=162890
+
+        Reviewed by Saam Barati.
+
+        Added the support for running ES6SampleBench as "es6bench".
+        e.g. ./Tools/Scripts/run-benchmark --platform osx --plan es6bench --browser safari
+
+        Instead of the default 10 iterations, run the test 4 iterations using 5 instances of browser
+        for the total of 20 iterations.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/ES6SampleBench.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/es6bench.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (start): Fixed the bug that the linter will complain about the presence of "debugOutput" by
+        removing it if it's present.
+
 2016-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Make it possible for a test to describe a user gesture as a stream of events in JSON format

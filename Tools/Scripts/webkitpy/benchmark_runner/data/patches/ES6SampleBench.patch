@@ -1,0 +1,48 @@
+diff --git a/driver.js b/driver.js
+index 609a562..afa4976 100644
+--- a/driver.js
++++ b/driver.js
+@@ -118,6 +118,31 @@ class Driver {
+         this._benchmark = this._iterator ? this._iterator.next().value : null;
+         if (!this._benchmark) {
+             if (!this._numIterations) {
++
++                let tests = {};
++                for (let [benchmark, results] of this._benchmarks) {
++                    let subtests = {};
++                    for (let subResultName of Results.subResults)
++                        subtests[subResultName] = {"metrics": {"Time": {"current": results[subResultName]._data}}};
++                    tests[benchmark.name] = {"metrics": {"Time" : ["Geometric"]}, "tests": subtests};
++                }
++
++                let xhr = new XMLHttpRequest();
++                xhr.open("POST", "/report");
++                let content = JSON.stringify({"ES6SampleBench": {"metrics" : {"Time" : ["Geometric"]}, "tests" : tests}});
++                xhr.setRequestHeader("Content-type", "application/json");
++                xhr.setRequestHeader("Content-length", content.length);
++                xhr.setRequestHeader("Connection", "close");
++
++                xhr.onreadystatechange = function() {
++                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
++                        closeRequest = new XMLHttpRequest();
++                        closeRequest.open("GET", "/shutdown");
++                        closeRequest.send();
++                    }
++                }
++                xhr.send(content);
++
+                 if (isInBrowser) {
+                     this._triggerCell.innerHTML =
+                         (this._hadErrors ? "Failures encountered!" : "Success!") +
+diff --git a/index.html b/index.html
+index 5860e02..1a27c0c 100644
+--- a/index.html
++++ b/index.html
+@@ -8,6 +8,7 @@ window.onerror = function(message, url, lineNumber)
+ {
+     document.getElementById("trigger").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+ }
++window.onload = function () { driver.start(4); }
+ 
+ const isInBrowser = true;
+ </script>

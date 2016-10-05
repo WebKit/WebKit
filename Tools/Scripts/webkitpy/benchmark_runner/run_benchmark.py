@@ -44,7 +44,10 @@ def parse_args():
 
 def start(args):
     if args.json_file:
-        BenchmarkRunner.show_results(json.load(open(args.json_file, 'r')), args.scale_unit)
+        results_json = json.load(open(args.json_file, 'r'))
+        if 'debugOutput' in results_json:
+            del results_json['debugOutput']
+        BenchmarkRunner.show_results(results_json, args.scale_unit)
         return
     if args.allplans:
         failed = []
