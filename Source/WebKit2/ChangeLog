@@ -1,3 +1,10 @@
+2016-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert a change erroneously committed in r206795.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-10-04  Anders Carlsson  <andersca@apple.com>
 
         Properly kill web processes in the launching state
