@@ -63,9 +63,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
-#include "BlobData.h"
-#include "BlobRegistryImpl.h"
-
 namespace WebCore {
 
 static const size_t gDefaultReadBufferSize = 8192;
@@ -614,96 +611,6 @@ static void continueAfterDidReceiveResponse(ResourceHandle* handle)
         G_PRIORITY_DEFAULT, d->m_cancellable.get(), readCallback, handle);
 }
 
-static bool addFileToSoupMessageBody(SoupMessage* message, const String& fileNameString, size_t offset, size_t lengthToSend, unsigned long& totalBodySize)
-{
-    GUniqueOutPtr<GError> error;
-    CString fileName = fileSystemRepresentation(fileNameString);
-    GMappedFile* fileMapping = g_mapped_file_new(fileName.data(), false, &error.outPtr());
-    if (error)
-        return false;
-
-    gsize bufferLength = lengthToSend;
-    if (!lengthToSend)
-        bufferLength = g_mapped_file_get_length(fileMapping);
-    totalBodySize += bufferLength;
-
-    SoupBuffer* soupBuffer = soup_buffer_new_with_owner(g_mapped_file_get_contents(fileMapping) + offset,
-                                                        bufferLength,
-                                                        fileMapping,
-                                                        reinterpret_cast<GDestroyNotify>(g_mapped_file_unref));
-    soup_message_body_append_buffer(message->request_body, soupBuffer);
-    soup_buffer_free(soupBuffer);
-    return true;
-}
-
-static bool blobIsOutOfDate(const BlobDataItem& blobItem)
-{
-    ASSERT(blobItem.type() == BlobDataItem::Type::File);
-    if (!isValidFileTime(blobItem.file()->expectedModificationTime()))
-        return false;
-
-    time_t fileModificationTime;
-    if (!getFileModificationTime(blobItem.file()->path(), fileModificationTime))
-        return true;
-
-    return fileModificationTime != static_cast<time_t>(blobItem.file()->expectedModificationTime());
-}
-
-static void addEncodedBlobItemToSoupMessageBody(SoupMessage* message, const BlobDataItem& blobItem, unsigned long& totalBodySize)
-{
-    if (blobItem.type() == BlobDataItem::Type::Data) {
-        totalBodySize += blobItem.length();
-        soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY, blobItem.data().data()->data() + blobItem.offset(), blobItem.length());
-        return;
-    }
-
-    ASSERT(blobItem.type() == BlobDataItem::Type::File);
-    if (blobIsOutOfDate(blobItem))
-        return;
-
-    addFileToSoupMessageBody(message, blobItem.file()->path(), blobItem.offset(), blobItem.length() == BlobDataItem::toEndOfFile ? 0 : blobItem.length(),  totalBodySize);
-}
-
-static void addEncodedBlobToSoupMessageBody(SoupMessage* message, const FormDataElement& element, unsigned long& totalBodySize)
-{
-    RefPtr<BlobData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(URL(ParsedURLString, element.m_url));
-    if (!blobData)
-        return;
-
-    for (size_t i = 0; i < blobData->items().size(); ++i)
-        addEncodedBlobItemToSoupMessageBody(message, blobData->items()[i], totalBodySize);
-}
-
-static bool addFormElementsToSoupMessage(SoupMessage* message, const char*, FormData* httpBody, unsigned long& totalBodySize)
-{
-    soup_message_body_set_accumulate(message->request_body, FALSE);
-    size_t numElements = httpBody->elements().size();
-    for (size_t i = 0; i < numElements; i++) {
-        const FormDataElement& element = httpBody->elements()[i];
-
-        if (element.m_type == FormDataElement::Type::Data) {
-            totalBodySize += element.m_data.size();
-            soup_message_body_append(message->request_body, SOUP_MEMORY_TEMPORARY,
-                                     element.m_data.data(), element.m_data.size());
-            continue;
-        }
-
-        if (element.m_type == FormDataElement::Type::EncodedFile) {
-            if (!addFileToSoupMessageBody(message ,
-                                         element.m_filename,
-                                         0 /* offset */,
-                                         0 /* lengthToSend */,
-                                         totalBodySize))
-                return false;
-            continue;
-        }
-
-        ASSERT(element.m_type == FormDataElement::Type::EncodedBlob);
-        addEncodedBlobToSoupMessageBody(message, element, totalBodySize);
-    }
-    return true;
-}
-
 #if ENABLE(WEB_TIMING)
 static double milisecondsSinceRequest(double requestTime)
 {
@@ -788,20 +695,13 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
 
     SoupMessage* soupMessage = d->m_soupMessage.get();
     request.updateSoupMessage(soupMessage);
+    d->m_bodySize = soupMessage->request_body->length;
 
     g_object_set_data(G_OBJECT(soupMessage), "handle", handle);
     if (!handle->shouldContentSniff())
         soup_message_disable_feature(soupMessage, SOUP_TYPE_CONTENT_SNIFFER);
     if (!d->m_useAuthenticationManager)
         soup_message_disable_feature(soupMessage, SOUP_TYPE_AUTH_MANAGER);
-
-    FormData* httpBody = request.httpBody();
-    CString contentType = request.httpContentType().utf8().data();
-    if (httpBody && !httpBody->isEmpty() && !addFormElementsToSoupMessage(soupMessage, contentType.data(), httpBody, d->m_bodySize)) {
-        // We failed to prepare the body data, so just fail this load.
-        d->m_soupMessage.clear();
-        return false;
-    }
 
     // Make sure we have an Accept header for subresources; some sites
     // want this to serve some of their subresources
@@ -812,8 +712,7 @@ static bool createSoupMessageForHandleAndRequest(ResourceHandle* handle, const R
     // for consistency with other backends (e.g. Chromium's) and other UA implementations like FF. It's done
     // in the backend here instead of in XHR code since in XHR CORS checking prevents us from this kind of
     // late header manipulation.
-    if ((request.httpMethod() == "POST" || request.httpMethod() == "PUT")
-        && (!request.httpBody() || request.httpBody()->isEmpty()))
+    if ((request.httpMethod() == "POST" || request.httpMethod() == "PUT") && !d->m_bodySize)
         soup_message_headers_set_content_length(soupMessage->request_headers, 0);
 
     g_signal_connect(d->m_soupMessage.get(), "notify::tls-errors", G_CALLBACK(tlsErrorsChangedCallback), handle);

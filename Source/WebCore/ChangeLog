@@ -1,3 +1,33 @@
+2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Move request HTTP body handling to ResourceRequestSoup and simplify it
+        https://bugs.webkit.org/show_bug.cgi?id=162891
+
+        Reviewed by Michael Catanzaro.
+
+        We are currently adding the HTTP body to the message in ResourceHandleSoup, but we could do it as part of the
+        ResourceRequest::updateSoupMessage() method, since the HTTP body is indeed part of the request. The code can be
+        also simplified, especially the handling of files, by using SharedBuffer that already mmaps the file when
+        possible, instead of using GMappedFile API.
+
+        * platform/SharedBuffer.h: Add createSoupBuffer() method.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::createSoupMessageForHandleAndRequest):
+        (WebCore::milisecondsSinceRequest): Deleted.
+        (WebCore::ResourceHandle::didStartRequest): Deleted.
+        (WebCore::startingCallback): Deleted.
+        (WebCore::networkEventCallback): Deleted.
+        (WebCore::ResourceHandle::start): Deleted.
+        (WebCore::ResourceHandle::releaseForDownload): Deleted.
+        (WebCore::ResourceHandle::timeoutFired): Deleted.
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::appendEncodedBlobItemToSoupMessageBody): Helper method to append the blob to the request message body.
+        (WebCore::ResourceRequest::updateSoupMessageBody): Add HTTPBody to the request message body.
+        (WebCore::ResourceRequest::updateSoupMessage): Call updateSoupMessageBody() to also update the body.
+        * platform/soup/SharedBufferSoup.cpp:
+        (WebCore::SharedBuffer::createSoupBuffer): Returns a new SoupBuffer for the SharedBuffer.
+
 2016-10-04  Chris Dumez  <cdumez@apple.com>
 
         Implement KeyboardEvent.code from the UI Event spec

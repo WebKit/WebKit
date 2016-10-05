@@ -38,6 +38,20 @@ Ref<SharedBuffer> SharedBuffer::wrapSoupBuffer(SoupBuffer* soupBuffer)
     return adoptRef(*new SharedBuffer(soupBuffer));
 }
 
+GUniquePtr<SoupBuffer> SharedBuffer::createSoupBuffer(unsigned offset, unsigned size)
+{
+    if (m_soupBuffer && !offset && !size) {
+        GUniquePtr<SoupBuffer> buffer(soup_buffer_copy(m_soupBuffer.get()));
+        return buffer;
+    }
+
+    ref();
+    GUniquePtr<SoupBuffer> buffer(soup_buffer_new_with_owner(data() + offset, size ? size : this->size(), this, [](void* data) {
+        static_cast<SharedBuffer*>(data)->deref();
+    }));
+    return buffer;
+}
+
 void SharedBuffer::clearPlatformData()
 {
     m_soupBuffer.reset();

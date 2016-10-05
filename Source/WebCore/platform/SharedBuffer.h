@@ -73,6 +73,7 @@ public:
 #endif
 
 #if USE(SOUP)
+    GUniquePtr<SoupBuffer> createSoupBuffer(unsigned offset = 0, unsigned size = 0);
     static Ref<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
 #endif
 

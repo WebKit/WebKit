@@ -114,6 +114,7 @@ namespace WebCore {
         uint64_t m_initiatingPageID;
 
         void updateSoupMessageMembers(SoupMessage*) const;
+        void updateSoupMessageBody(SoupMessage*) const;
         void doUpdatePlatformRequest() { }
         void doUpdateResourceRequest() { }
         void doUpdatePlatformHTTPBody() { }
