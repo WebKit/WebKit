@@ -94,8 +94,10 @@ static const String platformVersionForUAString()
     static NeverDestroyed<const String> uaOSVersion(String::format("%s %s", name.sysname, name.machine));
     return uaOSVersion;
 #else
-    // We will always claim to be Safari in Mac OS X, since Safari in Linux triggers the iOS path on some websites.
-    // And we always claim to be Intel since ARM triggers mobile versions of some websites.
+    // We will always claim to be Safari in Intel Mac OS X, since Safari without
+    // OS X or anything on ARM triggers mobile versions of some websites.
+    //
+    // FIXME: The final result should include OS version, e.g. "Intel Mac OS X 10_8_4".
     static NeverDestroyed<const String> uaOSVersion(ASCIILiteral("Intel Mac OS X"));
     return uaOSVersion;
 #endif
