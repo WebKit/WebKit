@@ -1,3 +1,38 @@
+2016-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make it possible for a test to describe a user gesture as a stream of events in JSON format
+        https://bugs.webkit.org/show_bug.cgi?id=162934
+
+        Reviewed by Dean Jackson.
+
+        With this change, a test can describe a user gesture in an "event stream", which is
+        some JSON describing an array of events with their underlying touches. The added
+        test describes a single tap.
+        
+        The implementation fires up an NSThread, and sleeps the thread between events to dispatch
+        them at close to real time.
+        
+        In future, HIDEventGenerator could use this internally for all of the "compound" interactions.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::sendEventStream):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::sendEventStream):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (transducerTypeFromString):
+        (phaseFromString):
+        (-[HIDEventGenerator eventMaskFromEventInfo:]):
+        (-[HIDEventGenerator touchFromEventInfo:]):
+        (-[HIDEventGenerator _createIOHIDEventWithInfo:]):
+        (-[HIDEventGenerator dispatchEventWithInfo:]):
+        (-[HIDEventGenerator eventDispatchThreadEntry:]):
+        (-[HIDEventGenerator sendEventStream:completionBlock:]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::sendEventStream):
+
 2016-10-04  Megan Gardner  <megan_gardner@apple.com>
 
         Add Megan to contributor's list

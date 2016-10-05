@@ -117,6 +117,8 @@ enum {
 };
 
 enum {
+    kIOHIDDigitizerTransducerTypeStylus  = 0,
+    kIOHIDDigitizerTransducerTypeFinger = 2,
     kIOHIDDigitizerTransducerTypeHand = 3
 };
 typedef uint32_t IOHIDDigitizerTransducerType;

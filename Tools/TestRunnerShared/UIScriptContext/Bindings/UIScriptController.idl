@@ -49,6 +49,40 @@ interface UIScriptController {
     void keyDownUsingHardwareKeyboard(DOMString character, object callback);
     void keyUpUsingHardwareKeyboard(DOMString character, object callback);
 
+    // eventsJSON describes a series of user events in JSON form. For the keys, see HIDEventGenerator.mm.
+    // For example, this JSON describes a touch down followed by a touch up (i.e. a single tap).
+    //  {
+    //      "events" : [
+    //          {
+    //              "inputType" : "hand",
+    //              "timeOffset" : 0,
+    //              "touches" : [
+    //                  {
+    //                      "inputType" : "finger",
+    //                      "phase" : "began",
+    //                      "id" : 1,
+    //                      "x" : 100,
+    //                      "y" : 120
+    //                  }
+    //              ]
+    //          },
+    //          {
+    //              "inputType" : "hand",
+    //              "timeOffset" : 0.002, // seconds relative to the first event
+    //              "touches" : [
+    //                  {
+    //                      "inputType" : "finger",
+    //                      "phase" : "ended",
+    //                      "id" : 1,
+    //                      "x" : 100,
+    //                      "y" : 120
+    //                  }
+    //              ]
+    //          },
+    //      ]
+    //  }
+    void sendEventStream(DOMString eventsJSON, object callback);
+
     // Equivalent of pressing the Done button in the form accessory bar.
     void dismissFormAccessoryView();
 

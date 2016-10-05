@@ -35,6 +35,7 @@
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JavaScriptCore.h>
+#import <JavaScriptCore/OpaqueJSString.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/FloatRect.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -169,6 +170,24 @@ void UIScriptController::stylusTapAtPoint(long x, long y, float azimuthAngle, fl
 
     auto location = globalToContentCoordinates(TestController::singleton().mainWebView()->platformView(), x, y);
     [[HIDEventGenerator sharedHIDEventGenerator] stylusTapAtPoint:location azimuthAngle:azimuthAngle altitudeAngle:altitudeAngle pressure:pressure completionBlock:^{
+        if (!m_context)
+            return;
+        m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
+void UIScriptController::sendEventStream(JSStringRef eventsJSON, JSValueRef callback)
+{
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+
+    String jsonString = eventsJSON->string();
+    auto eventInfo = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:[(NSString *)jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]);
+    if (!eventInfo || ![eventInfo isKindOfClass:[NSDictionary class]]) {
+        WTFLogAlways("JSON is not convertible to a dictionary");
+        return;
+    }
+    
+    [[HIDEventGenerator sharedHIDEventGenerator] sendEventStream:eventInfo completionBlock:^{
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

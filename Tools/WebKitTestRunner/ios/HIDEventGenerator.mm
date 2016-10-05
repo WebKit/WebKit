@@ -37,6 +37,28 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
 SOFT_LINK(BackBoardServices, BKSHIDEventSetDigitizerInfo, void, (IOHIDEventRef digitizerEvent, uint32_t contextID, uint8_t systemGestureisPossible, uint8_t isSystemGestureStateChangeEvent, CFStringRef displayUUID, CFTimeInterval initialTouchTimestamp, float maxForce), (digitizerEvent, contextID, systemGestureisPossible, isSystemGestureStateChangeEvent, displayUUID, initialTouchTimestamp, maxForce));
 
+NSString* const TopLevelEventInfoKey = @"events";
+NSString* const HIDEventInputType = @"inputType";
+NSString* const HIDEventTimeOffsetKey = @"timeOffset";
+NSString* const HIDEventTouchesKey = @"touches";
+NSString* const HIDEventPhaseKey = @"phase";
+NSString* const HIDEventTouchIDKey = @"id";
+NSString* const HIDEventPressureKey = @"pressure";
+NSString* const HIDEventXKey = @"x";
+NSString* const HIDEventYKey = @"y";
+NSString* const HIDEventTwistKey = @"twist";
+NSString* const HIDEventMajorRadiusKey = @"majorRadius";
+NSString* const HIDEventMinorRadiusKey = @"minorRadius";
+
+NSString* const HIDEventInputTypeHand = @"hand";
+NSString* const HIDEventInputTypeFinger = @"finger";
+NSString* const HIDEventInputTypeStylus = @"stylus";
+
+NSString* const HIDEventPhaseBegan = @"began";
+NSString* const HIDEventPhaseMoved = @"moved";
+NSString* const HIDEventPhaseEnded = @"ended";
+NSString* const HIDEventPhaseCanceled = @"canceled";
+
 static const NSTimeInterval fingerLiftDelay = 0.05;
 static const NSTimeInterval multiTapInterval = 0.15;
 static const NSTimeInterval fingerMoveInterval = 0.016;
@@ -144,6 +166,130 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         isKeyDown,
         kIOHIDEventOptionNone));
     [self _sendHIDEvent:eventRef.get()];
+}
+
+static IOHIDDigitizerTransducerType transducerTypeFromString(NSString * transducerTypeString)
+{
+    if ([transducerTypeString isEqualToString:HIDEventInputTypeHand])
+        return kIOHIDDigitizerTransducerTypeHand;
+
+    if ([transducerTypeString isEqualToString:HIDEventInputTypeFinger])
+        return kIOHIDDigitizerTransducerTypeFinger;
+
+    if ([transducerTypeString isEqualToString:HIDEventInputTypeStylus])
+        return kIOHIDDigitizerTransducerTypeStylus;
+    
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+static UITouchPhase phaseFromString(NSString *string)
+{
+    if ([string isEqualToString:HIDEventPhaseBegan])
+        return UITouchPhaseBegan;
+
+    if ([string isEqualToString:HIDEventPhaseMoved])
+        return UITouchPhaseMoved;
+
+    if ([string isEqualToString:HIDEventPhaseEnded])
+        return UITouchPhaseEnded;
+
+    if ([string isEqualToString:HIDEventPhaseCanceled])
+        return UITouchPhaseCancelled;
+
+    return UITouchPhaseStationary;
+}
+
+- (IOHIDDigitizerEventMask)eventMaskFromEventInfo:(NSDictionary *)info
+{
+    NSArray *childEvents = info[HIDEventTouchesKey];
+    for (NSDictionary *touchInfo in childEvents) {
+        UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
+        // If there are any new or ended events, mask includes touch.
+        if (phase == UITouchPhaseBegan || phase == UITouchPhaseEnded || phase == UITouchPhaseCancelled)
+            return kIOHIDDigitizerEventTouch;
+    }
+    
+    return 0;
+}
+
+// Returns 1 for all events where the fingers are on the glass (everything but enced and canceled).
+- (CFIndex)touchFromEventInfo:(NSDictionary *)info
+{
+    NSArray *childEvents = info[HIDEventTouchesKey];
+    for (NSDictionary *touchInfo in childEvents) {
+        UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
+        if (phase == UITouchPhaseBegan || phase == UITouchPhaseMoved || phase == UITouchPhaseStationary)
+            return 1;
+    }
+    
+    return 0;
+}
+
+// FIXME: callers of _createIOHIDEventType could switch to this.
+- (IOHIDEventRef)_createIOHIDEventWithInfo:(NSDictionary *)info
+{
+    uint64_t machTime = mach_absolute_time();
+
+    IOHIDDigitizerEventMask eventMask = [self eventMaskFromEventInfo:info];
+
+    CFIndex range = 0;
+    // touch is 1 if a finger is down.
+    CFIndex touch = [self touchFromEventInfo:info];
+
+    IOHIDEventRef eventRef = IOHIDEventCreateDigitizerEvent(kCFAllocatorDefault, machTime,
+        transducerTypeFromString(info[HIDEventInputType]),  // transducerType
+        0,                                                  // index
+        0,                                                  // identifier
+        eventMask,                                          // event mask
+        0,                                                  // button event
+        0,                                                  // x
+        0,                                                  // y
+        0,                                                  // z
+        0,                                                  // presure
+        0,                                                  // twist
+        range,                                              // range
+        touch,                                              // touch
+        kIOHIDEventOptionNone);
+
+    IOHIDEventSetIntegerValue(eventRef, kIOHIDEventFieldDigitizerIsDisplayIntegrated, 1);
+
+    NSArray *childEvents = info[HIDEventTouchesKey];
+    for (NSDictionary *touchInfo in childEvents) {
+
+        IOHIDDigitizerEventMask childEventMask = 0;
+
+        UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
+        if (phase != UITouchPhaseCancelled && phase != UITouchPhaseBegan && phase != UITouchPhaseEnded)
+            childEventMask |= kIOHIDDigitizerEventPosition;
+
+        if (phase == UITouchPhaseBegan || phase == UITouchPhaseEnded || phase == UITouchPhaseCancelled)
+            childEventMask |= (kIOHIDDigitizerEventTouch | kIOHIDDigitizerEventRange);
+
+        if (phase == UITouchPhaseCancelled)
+            childEventMask |= kIOHIDDigitizerEventCancel;
+
+        IOHIDEventRef subEvent = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
+            [touchInfo[HIDEventTouchIDKey] intValue],               // index
+            2,                                                      // identifier (which finger we think it is). FIXME: this should come from the data.
+            childEventMask,
+            [touchInfo[HIDEventXKey] floatValue],
+            [touchInfo[HIDEventYKey] floatValue],
+            0, // z
+            [touchInfo[HIDEventPressureKey] floatValue],
+            [touchInfo[HIDEventTwistKey] floatValue],
+            touch,                                                  // range
+            touch,                                                  // touch
+            kIOHIDEventOptionNone);
+
+        IOHIDEventSetFloatValue(subEvent, kIOHIDEventFieldDigitizerMajorRadius, [touchInfo[HIDEventMajorRadiusKey] floatValue]);
+        IOHIDEventSetFloatValue(subEvent, kIOHIDEventFieldDigitizerMinorRadius, [touchInfo[HIDEventMinorRadiusKey] floatValue]);
+
+        IOHIDEventAppendEvent(eventRef, subEvent, 0);
+        CFRelease(subEvent);
+    }
+
+    return eventRef;
 }
 
 - (IOHIDEventRef)_createIOHIDEventType:(HandEventType)eventType
@@ -764,6 +910,64 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
         [self _sendIOHIDKeyboardEvent:absoluteMachTime usage:kHIDUsage_KeyboardLeftShift isKeyDown:false];
 
     [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+}
+
+- (void)dispatchEventWithInfo:(NSDictionary *)eventInfo
+{
+    ASSERT([NSThread isMainThread]);
+
+    RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventWithInfo:eventInfo]);
+    [self _sendHIDEvent:eventRef.get()];
+}
+
+- (void)eventDispatchThreadEntry:(NSDictionary *)threadData
+{
+    NSDictionary *eventStream = threadData[@"eventInfo"];
+    void (^completionBlock)() = threadData[@"completionBlock"];
+
+    NSArray *events = eventStream[TopLevelEventInfoKey];
+    if (!events.count) {
+        NSLog(@"No events found in event stream");
+        return;
+    }
+
+    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
+    
+    for (NSDictionary *eventInfo in events) {
+        NSTimeInterval eventRelativeTime = [eventInfo[HIDEventTimeOffsetKey] doubleValue];
+        CFAbsoluteTime targetTime = startTime + eventRelativeTime;
+        
+        CFTimeInterval waitTime = targetTime - CFAbsoluteTimeGetCurrent();
+        if (waitTime > 0)
+            [NSThread sleepForTimeInterval:waitTime];
+
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            [self dispatchEventWithInfo:eventInfo];
+        });
+    }
+
+    dispatch_async(dispatch_get_main_queue(), ^ {
+        [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
+    });
+}
+
+- (void)sendEventStream:(NSDictionary *)eventInfo completionBlock:(void (^)(void))completionBlock
+{
+    if (!eventInfo) {
+        NSLog(@"eventInfo is nil");
+        if (completionBlock)
+            completionBlock();
+        return;
+    }
+    
+    NSDictionary* threadData = @{
+        @"eventInfo": [eventInfo copy],
+        @"completionBlock": [[completionBlock copy] autorelease]
+    };
+    
+    NSThread *eventDispatchThread = [[[NSThread alloc] initWithTarget:self selector:@selector(eventDispatchThreadEntry:) object:threadData] autorelease];
+    eventDispatchThread.qualityOfService = NSQualityOfServiceUserInteractive;
+    [eventDispatchThread start];
 }
 
 @end

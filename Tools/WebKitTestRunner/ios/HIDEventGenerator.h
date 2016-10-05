@@ -27,6 +27,32 @@
 
 #import <CoreGraphics/CGGeometry.h>
 
+// Keys for sendEventStream:completionBlock:.
+extern NSString* const TopLevelEventInfoKey;
+extern NSString* const HIDEventInputType;
+extern NSString* const HIDEventTimeOffsetKey;
+extern NSString* const HIDEventPhaseKey;
+extern NSString* const HIDEventTouchIDKey;
+extern NSString* const HIDEventPressureKey;
+extern NSString* const HIDEventXKey;
+extern NSString* const HIDEventYKey;
+extern NSString* const HIDEventTwistKey;
+extern NSString* const HIDEventMajorRadiusKey;
+extern NSString* const HIDEventMinorRadiusKey;
+extern NSString* const HIDEventTouchesKey;
+
+// Values for HIDEventInputType.
+extern NSString* const HIDEventInputTypeHand;
+extern NSString* const HIDEventInputTypeFinger;
+extern NSString* const HIDEventInputTypeStylus;
+
+// Values for HIDEventPhaseKey.
+extern NSString* const HIDEventPhaseBegan;
+extern NSString* const HIDEventPhaseMoved;
+extern NSString* const HIDEventPhaseEnded;
+extern NSString* const HIDEventPhaseCanceled;
+
+
 @interface HIDEventGenerator : NSObject
 
 + (HIDEventGenerator *)sharedHIDEventGenerator;
@@ -55,6 +81,9 @@
 // Pinches
 - (void)pinchCloseWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock;
 - (void)pinchOpenWithStartPoint:(CGPoint)startLocation endPoint:(CGPoint)endLocation duration:(double)seconds completionBlock:(void (^)(void))completionBlock;
+
+// Event stream
+- (void)sendEventStream:(NSDictionary *)eventInfo completionBlock:(void (^)(void))completionBlock;
 
 - (void)markerEventReceived:(IOHIDEventRef)event;
 
