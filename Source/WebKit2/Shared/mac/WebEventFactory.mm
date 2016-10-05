@@ -338,8 +338,19 @@ static inline bool isKeyUpEvent(NSEvent *event)
 static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
 {
     unsigned modifiers = 0;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if ([event modifierFlags] & NSEventModifierFlagCapsLock)
+        modifiers |= WebEvent::CapsLockKey;
+    if ([event modifierFlags] & NSEventModifierFlagShift)
+        modifiers |= WebEvent::ShiftKey;
+    if ([event modifierFlags] & NSEventModifierFlagControl)
+        modifiers |= WebEvent::ControlKey;
+    if ([event modifierFlags] & NSEventModifierFlagOption)
+        modifiers |= WebEvent::AltKey;
+    if ([event modifierFlags] & NSEventModifierFlagCommand)
+        modifiers |= WebEvent::MetaKey;
+#else
     if ([event modifierFlags] & NSAlphaShiftKeyMask)
         modifiers |= WebEvent::CapsLockKey;
     if ([event modifierFlags] & NSShiftKeyMask)
@@ -350,7 +361,8 @@ static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
         modifiers |= WebEvent::AltKey;
     if ([event modifierFlags] & NSCommandKeyMask)
         modifiers |= WebEvent::MetaKey;
-#pragma clang diagnostic pop
+#endif
+
     return (WebEvent::Modifiers)modifiers;
 }
 

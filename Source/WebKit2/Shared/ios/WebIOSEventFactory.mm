@@ -44,6 +44,8 @@ static WebKit::WebEvent::Modifiers modifiersForEvent(WebIOSEvent *event)
         modifiers |= WebKit::WebEvent::AltKey;
     if (eventModifierFlags & WebEventFlagMaskCommand)
         modifiers |= WebKit::WebEvent::MetaKey;
+    if (eventModifierFlags & WebEventFlagMaskAlphaShift)
+        modifiers |= WebKit::WebEvent::CapsLockKey;
 
     return static_cast<WebKit::WebEvent::Modifiers>(modifiers);
 }

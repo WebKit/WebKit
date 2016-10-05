@@ -1,3 +1,32 @@
+2016-10-05  Chris Dumez  <cdumez@apple.com>
+
+        KeyboardEvent.getModifierState() should support "CapsLock" modifier
+        https://bugs.webkit.org/show_bug.cgi?id=162861
+
+        Reviewed by Darin Adler.
+
+        Add support for CapsLock modifier on events.
+
+        * Shared/API/c/WKEvent.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::toWebEventModifiers):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (modifiersForEvent):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::modifiersForEvent):
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (toNSEventModifierFlags):
+        * UIProcess/Cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformSimulateMouseInteraction):
+
 2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA

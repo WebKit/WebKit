@@ -250,6 +250,8 @@ static int buildModifierFlags(WKEventModifiers modifiers)
         flags |= NSAlternateKeyMask;
     if (modifiers & kWKEventModifiersMetaKey)
         flags |= NSCommandKeyMask;
+    if (modifiers & kWKEventModifiersCapsLockKey)
+        flags |= NSAlphaShiftKeyMask;
     return flags;
 }
 

@@ -108,6 +108,7 @@ KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
     , m_location(keyLocationCode(key))
     , m_repeat(key.isAutoRepeat())
     , m_altGraphKey(false)
+    , m_capsLockKey(key.modifiers().contains(PlatformEvent::Modifier::CapsLockKey))
     , m_isComposing(view && view->frame() && view->frame()->editor().hasComposition())
 #if PLATFORM(COCOA)
 #if USE(APPKIT)
@@ -137,7 +138,8 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const KeyboardEventI
     , m_keyIdentifier(initializer.keyIdentifier)
     , m_location(initializer.location)
     , m_repeat(initializer.repeat)
-    , m_altGraphKey(false)
+    , m_altGraphKey(false) // FIXME: should be initialized from initializer.modifierAltGraph.
+    , m_capsLockKey(false) // FIXME: should be initialized from initializer.modifierCapsLock.
     , m_isComposing(initializer.isComposing)
 #if PLATFORM(COCOA)
     , m_handledByInputMethod(false)
@@ -179,7 +181,9 @@ bool KeyboardEvent::getModifierState(const String& keyIdentifier) const
         return metaKey();
     if (keyIdentifier == "AltGraph")
         return altGraphKey();
-    // FIXME: We should support CapsLock, Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
+    if (keyIdentifier == "CapsLock")
+        return m_capsLockKey;
+    // FIXME: The specification also has Fn, FnLock, Hyper, NumLock, Super, ScrollLock, Symbol, SymbolLock.
     return false;
 }
 

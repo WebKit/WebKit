@@ -47,6 +47,8 @@ static OptionSet<PlatformEvent::Modifier> modifiersForEvent(WebEvent *event)
         modifiers |= PlatformEvent::Modifier::AltKey;
     if (event.modifierFlags & WebEventFlagMaskCommand)
         modifiers |= PlatformEvent::Modifier::MetaKey;
+    if (event.modifierFlags & WebEventFlagMaskAlphaShift)
+        modifiers |= PlatformEvent::Modifier::CapsLockKey;
 
     return modifiers;
 }

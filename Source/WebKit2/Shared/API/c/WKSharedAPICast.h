@@ -294,6 +294,8 @@ inline WKEventModifiers toAPI(WebEvent::Modifiers modifiers)
         wkModifiers |= kWKEventModifiersAltKey;
     if (modifiers & WebEvent::MetaKey)
         wkModifiers |= kWKEventModifiersMetaKey;
+    if (modifiers & WebEvent::CapsLockKey)
+        wkModifiers |= kWKEventModifiersCapsLockKey;
     return wkModifiers;
 }
 

@@ -437,11 +437,13 @@ static int modifierFlags(const NSString* modifierName)
     const int shiftKeyMask = NSShiftKeyMask;
     const int alternateKeyMask = NSAlternateKeyMask;
     const int commandKeyMask = NSCommandKeyMask;
+    const int capsLockKeyMask = NSAlphaShiftKeyMask;
 #else
     const int controlKeyMask = WebEventFlagMaskControl;
     const int shiftKeyMask = WebEventFlagMaskShift;
     const int alternateKeyMask = WebEventFlagMaskAlternate;
     const int commandKeyMask = WebEventFlagMaskCommand;
+    const int capsLockKeyMask = WebEventFlagMaskAlphaShift;
 #endif
 
     int flags = 0;
@@ -453,6 +455,8 @@ static int modifierFlags(const NSString* modifierName)
         flags |= alternateKeyMask;
     else if ([modifierName isEqual:@"metaKey"] || [modifierName isEqual:@"addSelectionKey"])
         flags |= commandKeyMask;
+    else if ([modifierName isEqual:@"capsLockKey"])
+        flags |= capsLockKeyMask;
 
     return flags;
 }

@@ -76,6 +76,8 @@ public:
             m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
             m_modifiers |= Modifier::MetaKey;
+        if (webEvent.capsLockKey())
+            m_modifiers |= Modifier::CapsLockKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -127,6 +129,8 @@ public:
             m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
             m_modifiers |= Modifier::MetaKey;
+        if (webEvent.capsLockKey())
+            m_modifiers |= Modifier::CapsLockKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -185,6 +189,8 @@ public:
             m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
             m_modifiers |= Modifier::MetaKey;
+        if (webEvent.capsLockKey())
+            m_modifiers |= Modifier::CapsLockKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -324,6 +330,8 @@ public:
             m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
             m_modifiers |= Modifier::MetaKey;
+        if (webEvent.capsLockKey())
+            m_modifiers |= Modifier::CapsLockKey;
 
         m_timestamp = webEvent.timestamp();
 
@@ -381,6 +389,8 @@ public:
             m_modifiers |= Modifier::AltKey;
         if (webEvent.metaKey())
             m_modifiers |= Modifier::MetaKey;
+        if (webEvent.capsLockKey())
+            m_modifiers |= Modifier::CapsLockKey;
 
         m_timestamp = webEvent.timestamp();
 

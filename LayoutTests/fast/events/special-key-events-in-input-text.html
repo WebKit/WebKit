@@ -17,7 +17,7 @@ function logEvent(e) {
    if (type == "textInput") {
      info += e.data;
    } else if (type == "keydown" || type == "keypress" || type == "keyup") {
-     info += [e.ctrlKey, e.altKey, e.shiftKey, e.metaKey] +
+     info += [e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.getModifierState('CapsLock')] +
          ' - ' + e.key +
          ' - ' + e.code +
          ' - ' + e.keyIdentifier +
@@ -28,7 +28,7 @@ function logEvent(e) {
    log(info);
 }
 
-log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey"]
+log("target - type - " + ["ctrlKey", "altKey", "shiftKey", "metaKey", "capsLockKey"]
        + ' - ' + "key"
        + ' - ' + "code"
        + ' - ' + "keyIdentifier"
@@ -62,6 +62,8 @@ if (window.testRunner) {
    eventSender.keyDown("\x08", []);
    log("<br>Print screen:");
    eventSender.keyDown("printScreen", []);
+   log("<br>'a' key with Caps Lock:");
+   eventSender.keyDown("a", ["capsLockKey"]);
   }
 </script>
 </body></html>

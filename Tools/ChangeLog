@@ -1,3 +1,20 @@
+2016-10-05  Chris Dumez  <cdumez@apple.com>
+
+        KeyboardEvent.getModifierState() should support "CapsLock" modifier
+        https://bugs.webkit.org/show_bug.cgi?id=162861
+
+        Reviewed by Darin Adler.
+
+        Add support for 'capsLockKey' modifier for EventSender.keyDown() so
+        that we can test this new modifier support for layout tests.
+
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::modifierFlagsForWKModifiers):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::parseModifier):
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::buildModifierFlags):
+
 2016-10-05  Jeremy Jones  <jeremyj@apple.com>
 
         Add MobileMiniBrowser tests for control center and looping fullscreen.

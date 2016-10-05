@@ -690,9 +690,20 @@ static inline bool isKeyUpEvent(NSEvent *event)
 
 static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *event)
 {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     OptionSet<PlatformEvent::Modifier> modifiers;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+    if (event.modifierFlags & NSEventModifierFlagShift)
+        modifiers |= PlatformEvent::Modifier::ShiftKey;
+    if (event.modifierFlags & NSEventModifierFlagControl)
+        modifiers |= PlatformEvent::Modifier::CtrlKey;
+    if (event.modifierFlags & NSEventModifierFlagOption)
+        modifiers |= PlatformEvent::Modifier::AltKey;
+    if (event.modifierFlags & NSEventModifierFlagCommand)
+        modifiers |= PlatformEvent::Modifier::MetaKey;
+    if (event.modifierFlags & NSEventModifierFlagCapsLock)
+        modifiers |= PlatformEvent::Modifier::CapsLockKey;
+#else
     if (event.modifierFlags & NSShiftKeyMask)
         modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (event.modifierFlags & NSControlKeyMask)
@@ -701,7 +712,10 @@ static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *even
         modifiers |= PlatformEvent::Modifier::AltKey;
     if (event.modifierFlags & NSCommandKeyMask)
         modifiers |= PlatformEvent::Modifier::MetaKey;
-#pragma clang diagnostic pop
+    if (event.modifierFlags & NSAlphaShiftKeyMask)
+        modifiers |= PlatformEvent::Modifier::CapsLockKey;
+#endif
+
     return modifiers;
 }
 

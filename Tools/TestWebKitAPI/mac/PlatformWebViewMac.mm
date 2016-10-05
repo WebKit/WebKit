@@ -220,6 +220,8 @@ static NSEventModifierFlags modifierFlagsForWKModifiers(WKEventModifiers modifie
         returnVal |= NSAlternateKeyMask;
     if (modifiers & kWKEventModifiersMetaKey)
         returnVal |= NSCommandKeyMask;
+    if (modifiers & kWKEventModifiersCapsLockKey)
+        returnVal |= NSAlphaShiftKeyMask;
 
     return returnVal;
 }

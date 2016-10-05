@@ -136,6 +136,7 @@ private:
     unsigned m_location { DOM_KEY_LOCATION_STANDARD };
     bool m_repeat { false };
     bool m_altGraphKey { false };
+    bool m_capsLockKey { false };
     bool m_isComposing { false };
 
 #if PLATFORM(COCOA)

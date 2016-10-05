@@ -74,6 +74,7 @@ public:
         CtrlKey     = 1 << 1,
         MetaKey     = 1 << 2,
         ShiftKey    = 1 << 3,
+        CapsLockKey = 1 << 4,
     };
 
     Type type() const { return static_cast<Type>(m_type); }

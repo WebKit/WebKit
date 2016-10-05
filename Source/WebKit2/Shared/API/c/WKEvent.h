@@ -36,7 +36,8 @@ enum {
     kWKEventModifiersShiftKey = 1 << 0,
     kWKEventModifiersControlKey = 1 << 1,
     kWKEventModifiersAltKey = 1 << 2,
-    kWKEventModifiersMetaKey = 1 << 3
+    kWKEventModifiersMetaKey = 1 << 3,
+    kWKEventModifiersCapsLockKey = 1 << 4
 };
 typedef uint32_t WKEventModifiers;
 

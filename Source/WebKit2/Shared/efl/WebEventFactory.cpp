@@ -258,6 +258,8 @@ static inline WebEvent::Modifiers toWebEventModifiers(unsigned modifiers)
         result |= WebEvent::AltKey;
     if (modifiers & kWKEventModifiersMetaKey)
         result |= WebEvent::MetaKey;
+    if (modifiers & kWKEventModifiersCapsLockKey)
+        result |= WebEvent::CapsLockKey;
 
     return static_cast<WebEvent::Modifiers>(result);
 }

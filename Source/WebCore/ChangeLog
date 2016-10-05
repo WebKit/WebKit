@@ -1,3 +1,26 @@
+2016-10-05  Chris Dumez  <cdumez@apple.com>
+
+        KeyboardEvent.getModifierState() should support "CapsLock" modifier
+        https://bugs.webkit.org/show_bug.cgi?id=162861
+
+        Reviewed by Darin Adler.
+
+        Add support for "CapsLock" modifier on Mac / iOS for KeyboardEvent's
+        getModifierState() API, as per:
+        - https://w3c.github.io/uievents/#dom-keyboardevent-getmodifierstate
+
+        No new tests, updated existing test.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::getModifierState):
+        * dom/KeyboardEvent.h:
+        * platform/PlatformEvent.h:
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::modifiersForEvent):
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+
 2016-10-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Improve OS X UA quirk
