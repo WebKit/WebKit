@@ -68,9 +68,9 @@ function consumeStream(response, type)
             if (result.done)
                 return @Response.prototype.@finishConsumingStream.@call(response);
             @Response.prototype.@consumeChunk.@call(response, result.value);
-            return @Promise.prototype.@then.@call(@readFromReadableStreamDefaultReader(reader), pull);
+            return @Promise.prototype.@then.@call(@readableStreamDefaultReaderRead(reader), pull);
         }
-        return @Promise.prototype.@then.@call(@readFromReadableStreamDefaultReader(reader), pull);
+        return @Promise.prototype.@then.@call(@readableStreamDefaultReaderRead(reader), pull);
     } catch(e) {
         return @Promise.@reject(e);
     }

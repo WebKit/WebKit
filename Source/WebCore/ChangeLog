@@ -1,3 +1,42 @@
+2016-10-05  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Align function names with spec
+        https://bugs.webkit.org/show_bug.cgi?id=162967
+
+        Reviewed by Darin Adler.
+
+        Align function names with spec. Behaviour was already in line with spec, but previous function names had
+        sometimes been preserved to track the changes more easily. This led to some inconsistencies (for instance,
+        enqueueInReadableStream was still used even though it works on a controller instead of a stream) and it
+        also made it more difficult to compare spec and implementation.
+
+        No change in behaviour.
+
+        * Modules/fetch/FetchInternals.js:
+        (consumeStream): Updated with new function names.
+        * Modules/fetch/FetchResponse.js:
+        (clone): Updated with new function names.
+        * Modules/streams/ReadableStream.js:
+        (tee): Updated with new function names.
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (enqueue): Updated with new function names.
+        (error): Updated with new function names.
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (read): Updated with new function names.
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamDefaultController): Updated with new function names.
+        (readableStreamDefaultControllerError): Updated with new function names.
+        (readableStreamTee): Updated with new function names.
+        (readableStreamTeePullFunction): Updated with new function names.
+        (readableStreamTeeBranch2CancelFunction): Updated with new function names.
+        (readableStreamError): Updated with new function names.
+        (readableStreamCancel): Updated with new function names.
+        (readableStreamDefaultControllerPull): Updated with new function names.
+        (readableStreamDefaultControllerClose): Updated with new function names.
+        (readableStreamClose): Updated with new function names.
+        (readableStreamDefaultControllerEnqueue): Updated with new function names.
+        (readableStreamDefaultReaderRead): Updated with new function names.
+
 2016-10-05  Chris Dumez  <cdumez@apple.com>
 
         [Bindings] Declare dictionary / enumeration template specializations in the header

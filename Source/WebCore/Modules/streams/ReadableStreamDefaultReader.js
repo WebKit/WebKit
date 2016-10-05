@@ -47,7 +47,7 @@ function read()
     if (!this.@ownerReadableStream)
         return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
 
-    return @readFromReadableStreamDefaultReader(this);
+    return @readableStreamDefaultReaderRead(this);
 }
 
 function releaseLock()

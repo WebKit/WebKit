@@ -38,7 +38,7 @@ function enqueue(chunk)
     if (this.@controlledReadableStream.@state !== @streamReadable)
         throw new @TypeError("ReadableStream is not readable");
 
-    return @enqueueInReadableStream(this, chunk);
+    return @readableStreamDefaultControllerEnqueue(this, chunk);
 }
 
 function error(error)
@@ -52,7 +52,7 @@ function error(error)
     if (stream.@state !== @streamReadable)
         throw new @TypeError("ReadableStream is not readable");
 
-    @errorReadableStream(stream, error);
+    @readableStreamError(stream, error);
 }
 
 function close()

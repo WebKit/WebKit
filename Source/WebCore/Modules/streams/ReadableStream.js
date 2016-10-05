@@ -206,7 +206,7 @@ function tee()
     if (!@isReadableStream(this))
         throw @makeThisTypeError("ReadableStream", "tee");
 
-    return @teeReadableStream(this, false);
+    return @readableStreamTee(this, false);
 }
 
 function locked()
