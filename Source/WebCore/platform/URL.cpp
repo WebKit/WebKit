@@ -1310,6 +1310,12 @@ static inline bool cannotBeABaseURL(const URL& url)
 // Implementation of https://url.spec.whatwg.org/#url-serializing
 String URL::serialize(bool omitFragment) const
 {
+    if (URLParser::enabled()) {
+        if (omitFragment)
+            return m_string.left(m_queryEnd);
+        return m_string;
+    }
+
     if (isNull())
         return String();
 

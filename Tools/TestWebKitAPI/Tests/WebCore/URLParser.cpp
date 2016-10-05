@@ -784,6 +784,12 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://:",
         {"", "", "", "", 0, "", "", "", "http://:"},
         {"http", "", "", "", 0, "/", "", "", "http://:/"});
+    checkURLDifferences("http:##foo",
+        {"http", "", "", "", 0, "//", "", "#foo", "http://##foo"},
+        {"http", "", "", "", 0, "/", "", "#foo", "http:/##foo"});
+    checkURLDifferences("http:??bar",
+        {"http", "", "", "", 0, "//", "?bar", "", "http://??bar"},
+        {"http", "", "", "", 0, "/", "?bar", "", "http:/??bar"});
     checkRelativeURLDifferences("//C|/foo/bar", "file:///tmp/mock/path",
         {"file", "", "", "", 0, "/C:/foo/bar", "", "", "file:///C:/foo/bar"},
         {"", "", "", "", 0, "", "", "", "//C|/foo/bar"});

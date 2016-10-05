@@ -1,3 +1,15 @@
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to enable URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162974
+
+        Reviewed by Brady Eidson.
+
+        * platform/URL.cpp:
+        (WebCore::URL::serialize):
+        When we enable the URLParser, this attempt to make serialized URLs more spec compliant
+        won't be needed any more.
+
 2016-10-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add initial D2D Path and Gradient implementation

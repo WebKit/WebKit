@@ -1,3 +1,16 @@
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to enable URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=162974
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+        Added some tests that are unrelated to the code change, but these are
+        reflected in changed LayoutTest results when enabling the URLParser,
+        and they weren't in the URLParser tests yet.  They should be.
+
 2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA
