@@ -4,6 +4,20 @@
         https://bugs.webkit.org/show_bug.cgi?id=162580
         <rdar://problem/28631274>
 
+        Rename test anchor-ping-and-do-not-follow-redirect-when-sending-ping.html to anchor-ping-and-follow-redirect-when-sending-ping.html
+        to reflect what it is actually testing - that we follow a redirect when sending a ping for a <a ping>.
+
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping-expected.txt: Renamed from LayoutTests/http/tests/navigation/ping-attribute/anchor-ping-and-do-not-follow-redirect-when-sending-ping-expected.txt.
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html: Renamed from LayoutTests/http/tests/navigation/ping-attribute/anchor-ping-and-do-not-follow-redirect-when-sending-ping.html.
+        * http/tests/navigation/resources/save-ping-and-redirect-to-save-ping.php: Only append the query string
+        if we have a non-empty query string to avoid appending a superfluous "?" on redirect.
+
+2016-10-05  Daniel Bates  <dabates@apple.com>
+
+        [WK2][NetworkSession] Ping requests should follow redirects if applicable
+        https://bugs.webkit.org/show_bug.cgi?id=162580
+        <rdar://problem/28631274>
+
         Reviewed by Alex Christensen.
 
         Add tests to ensure that we follow redirects for ping requests that are initiated as part
