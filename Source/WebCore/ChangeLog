@@ -1,3 +1,41 @@
+2016-10-05  Daniel Bates  <dabates@apple.com>
+
+        Do not follow redirects when sending violation report
+        https://bugs.webkit.org/show_bug.cgi?id=162520
+        <rdar://problem/27957639>
+
+        Reviewed by Alex Christensen.
+
+        Do not follow redirects when sending a Content Security Policy or XSS Auditor violation report
+        as redirects can be used to forward report details to a third-party.
+
+        This changes makes WebKit more closely conform to the reporting requirements in section Reporting
+        of the Content Security Level 2 standard: <https://w3c.github.io/webappsec-csp/2/#violation-reports>
+        (Editor's Draft, 25 April 2016).
+
+        Tests: http/tests/security/contentSecurityPolicy/report-blocked-uri-and-do-not-follow-redirect-when-sending-report.php
+               http/tests/security/xssAuditor/report-script-tag-and-do-not-follow-redirect-when-sending-report.html
+               http/tests/security/xssAuditor/report-script-tag-full-block-and-do-not-follow-redirect-when-sending-report.html
+
+        * loader/LoaderStrategy.h: Modified createPingHandle() to take a boolean, shouldFollowRedirects,
+        whether to follow redirect responses for a ping request.
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage): Pass ShouldFollowRedirects::Yes to PingLoader::startPingLoad to
+        keep our current behavior.
+        (WebCore::PingLoader::sendPing): Ditto. Note our current behavior of following redirects matches
+        the behavior described in the section "Hyperlink auditing" of the HTML standard:
+        <https://html.spec.whatwg.org/multipage/semantics.html#hyperlink-auditing> (23 September 2016).
+        (WebCore::PingLoader::sendViolationReport): Pass ShouldFollowRedirects::No to PingLoader::startPingLoad
+        so that we do not follow redirects when sending a violation report.
+        (WebCore::PingLoader::startPingLoad): Modified to take argument shouldFollowRedirects whether to
+        follow redirect responses for a ping request.
+        * loader/PingLoader.h:
+        * platform/network/PingHandle.h: Add boolean m_shouldFollowRedirects. I grouped this boolean with
+        the existing boolean, m_shouldUseCredentialStorage, as opposed to appending to the end of the class
+        definition to avoid increasing object size as clang will coalesces the two bools into a single
+        machine word. Override ResourceHandleClient::willSendRequest() and ResourceHandleClient::willSendRequestAsync()
+        to follow a redirect, if applicable. 
+
 2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Move global TLS errors handling from ResourceHandle to SoupNetworkSession

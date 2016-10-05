@@ -19,6 +19,13 @@ if ($cgi->param('enable-report')) {
 if ($cgi->param('enable-full-block-report')) {
     print "X-XSS-Protection: 1; mode=block; report=/security/contentSecurityPolicy/resources/save-report.php?test=" . $cgi->param('test') . "\n";
 }
+if ($cgi->param('enable-report-with-redirect')) {
+    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/save-report-and-redirect-to-save-report.php?test=" . $cgi->param('test') . "\n";
+}
+if ($cgi->param('enable-full-block-report-with-redirect')) {
+    print "X-XSS-Protection: 1; mode=block; report=/security/contentSecurityPolicy/resources/save-report-and-redirect-to-save-report.php?test=" . $cgi->param('test') . "\n";
+}
+
 
 if ($cgi->param('valid-header')) {
     if ($cgi->param('valid-header') == 1) {
@@ -128,7 +135,7 @@ if ($cgi->param('notifyDone')) {
     print "    testRunner.notifyDone();\n";
     print "</script>\n";
 }
-if ($cgi->param('enable-full-block') || $cgi->param('enable-full-block-report')) {
+if ($cgi->param('enable-full-block') || $cgi->param('enable-full-block-report') || $cgi->param('enable-full-block-report-with-redirect')) {
     print "<p>If you see this message then the test FAILED.</p>\n";
 }
 if ($cgi->param('alert-cookie')) {

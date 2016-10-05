@@ -53,7 +53,8 @@ public:
     static void sendViolationReport(Frame&, const URL& reportURL, RefPtr<FormData>&& report, ViolationReportType);
 
 private:
-    static void startPingLoad(Frame&, ResourceRequest&);
+    enum class ShouldFollowRedirects { No, Yes };
+    static void startPingLoad(Frame&, ResourceRequest&, ShouldFollowRedirects);
 };
 
 }
