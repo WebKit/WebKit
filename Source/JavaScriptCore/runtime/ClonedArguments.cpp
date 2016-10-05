@@ -135,7 +135,6 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     for (unsigned i = length; i--;)
         result->initializeIndex(vm, i, argumentStart[i].jsValue());
 
-    ASSERT(exec->lexicalGlobalObject()->clonedArgumentsStructure() == result->structure());
     return result;
 }
 

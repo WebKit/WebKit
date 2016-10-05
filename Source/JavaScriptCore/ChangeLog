@@ -1,3 +1,15 @@
+2016-10-05  Michael Saboff  <msaboff@apple.com>
+
+        Bad ASSERT in ClonedArguments::createByCopyingFrom()
+        https://bugs.webkit.org/show_bug.cgi?id=162988
+
+        Reviewed by Keith Miller.
+
+        Removed bogus assert.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createByCopyingFrom):
+
 2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA
