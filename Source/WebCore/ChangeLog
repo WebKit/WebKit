@@ -1,5 +1,33 @@
 2016-10-05  Alex Christensen  <achristensen@webkit.org>
 
+        UTF-8 encode queries of nonspecial and websocket schemes
+        https://bugs.webkit.org/show_bug.cgi?id=162956
+
+        Reviewed by Geoffrey Garen and Brady Eidson.
+
+        The URL spec says in the query state:
+        'If url is not special or url's scheme is either "ws" or "wss", set encoding to UTF-8.'
+        This should be determined as soon as we are done parsing the scheme.
+        
+        Covered by new API tests.
+        This also fixes tests like fast/loader/javascript-url-encoding-2.html when URLParser is enabled.
+
+        * platform/URLParser.cpp:
+        (WebCore::isValidSchemeCharacter):
+        Renamed Scheme to ValidScheme so I can use Scheme as the name of an enum class in the same namespace.
+        (WebCore::isSpecial):
+        (WebCore::scheme):
+        Separate functionality so we can have different behavior for different sets of
+        ws and wss schemes, special, and non-special schemes.
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::parse):
+        Set isUTF8Encoding to true when we finish parsing the scheme if the scheme is ws, wss, or non-special,
+        according to spec.  This also matches existing behavior.  This way we will already know whether to go
+        into UTF8Query or NonUTF8Query state when we see a '?'.
+        (WebCore::isSpecialScheme): Deleted.
+
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
         Prepare to enable URLParser
         https://bugs.webkit.org/show_bug.cgi?id=162974
 

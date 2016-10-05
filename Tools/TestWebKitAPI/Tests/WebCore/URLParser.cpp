@@ -1051,6 +1051,8 @@ TEST_F(URLParserTest, AdditionalTests)
     checkURLDifferences(utf16String<13>({'h', 't', 't', 'p', ':', '/', '/', 'w', '/', '?', surrogateBegin, ' ', '\0'}),
         {"http", "", "", "w", 0, "/", "%EF%BF%BD", "", "http://w/?%EF%BF%BD"},
         {"http", "", "", "w", 0, "/", "%ED%A0%80", "", "http://w/?%ED%A0%80"});
+    
+    // FIXME: Write more invalid surrogate pair tests based on feedback from https://bugs.webkit.org/show_bug.cgi?id=162105
 }
 
 static void checkURL(const String& urlString, const TextEncoding& encoding, const ExpectedParts& parts, TestTabs testTabs = TestTabs::Yes)
@@ -1093,6 +1095,14 @@ TEST_F(URLParserTest, QueryEncoding)
     checkURL("http://host/?query", unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
     checkURL("http://host/?", unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});
 
+    TextEncoding iso88591(String("ISO-8859-1"));
+    String withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
+    checkURL(makeString("ws://host/path?", withUmlauts), iso88591, {"ws", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "ws://host/path?%C3%9C%D0%B0%D1%91"});
+    checkURL(makeString("wss://host/path?", withUmlauts), iso88591, {"wss", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "wss://host/path?%C3%9C%D0%B0%D1%91"});
+    checkURL(makeString("asdf://host/path?", withUmlauts), iso88591, {"asdf", "", "", "host", 0, "/path", "%C3%9C%D0%B0%D1%91", "", "asdf://host/path?%C3%9C%D0%B0%D1%91"});
+    checkURL(makeString("https://host/path?", withUmlauts), iso88591, {"https", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "https://host/path?%DC%26%231072%3B%26%231105%3B"});
+    checkURL(makeString("gopher://host/path?", withUmlauts), iso88591, {"gopher", "", "", "host", 0, "/path", "%DC%26%231072%3B%26%231105%3B", "", "gopher://host/path?%DC%26%231072%3B%26%231105%3B"});
+    
     // FIXME: Add more tests with other encodings and things like non-ascii characters, emoji and unmatched surrogate pairs.
 }
 

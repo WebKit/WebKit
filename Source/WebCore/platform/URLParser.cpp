@@ -140,7 +140,7 @@ enum URLCharacterClass {
     InvalidDomain = 0x4,
     QueryPercent = 0x8,
     SlashQuestionOrHash = 0x10,
-    Scheme = 0x20,
+    ValidScheme = 0x20,
 };
 
 static const uint8_t characterClassTable[256] = {
@@ -187,21 +187,21 @@ static const uint8_t characterClassTable[256] = {
     0, // '('
     0, // ')'
     0, // '*'
-    Scheme, // '+'
+    ValidScheme, // '+'
     0, // ','
-    Scheme, // '-'
-    Scheme, // '.'
+    ValidScheme, // '-'
+    ValidScheme, // '.'
     UserInfo | InvalidDomain | SlashQuestionOrHash, // '/'
-    Scheme, // '0'
-    Scheme, // '1'
-    Scheme, // '2'
-    Scheme, // '3'
-    Scheme, // '4'
-    Scheme, // '5'
-    Scheme, // '6'
-    Scheme, // '7'
-    Scheme, // '8'
-    Scheme, // '9'
+    ValidScheme, // '0'
+    ValidScheme, // '1'
+    ValidScheme, // '2'
+    ValidScheme, // '3'
+    ValidScheme, // '4'
+    ValidScheme, // '5'
+    ValidScheme, // '6'
+    ValidScheme, // '7'
+    ValidScheme, // '8'
+    ValidScheme, // '9'
     UserInfo | InvalidDomain, // ':'
     UserInfo, // ';'
     UserInfo | Default | QueryPercent, // '<'
@@ -209,64 +209,64 @@ static const uint8_t characterClassTable[256] = {
     UserInfo | Default | QueryPercent, // '>'
     UserInfo | Default | InvalidDomain | SlashQuestionOrHash, // '?'
     UserInfo | InvalidDomain, // '@'
-    Scheme, // 'A'
-    Scheme, // 'B'
-    Scheme, // 'C'
-    Scheme, // 'D'
-    Scheme, // 'E'
-    Scheme, // 'F'
-    Scheme, // 'G'
-    Scheme, // 'H'
-    Scheme, // 'I'
-    Scheme, // 'J'
-    Scheme, // 'K'
-    Scheme, // 'L'
-    Scheme, // 'M'
-    Scheme, // 'N'
-    Scheme, // 'O'
-    Scheme, // 'P'
-    Scheme, // 'Q'
-    Scheme, // 'R'
-    Scheme, // 'S'
-    Scheme, // 'T'
-    Scheme, // 'U'
-    Scheme, // 'V'
-    Scheme, // 'W'
-    Scheme, // 'X'
-    Scheme, // 'Y'
-    Scheme, // 'Z'
+    ValidScheme, // 'A'
+    ValidScheme, // 'B'
+    ValidScheme, // 'C'
+    ValidScheme, // 'D'
+    ValidScheme, // 'E'
+    ValidScheme, // 'F'
+    ValidScheme, // 'G'
+    ValidScheme, // 'H'
+    ValidScheme, // 'I'
+    ValidScheme, // 'J'
+    ValidScheme, // 'K'
+    ValidScheme, // 'L'
+    ValidScheme, // 'M'
+    ValidScheme, // 'N'
+    ValidScheme, // 'O'
+    ValidScheme, // 'P'
+    ValidScheme, // 'Q'
+    ValidScheme, // 'R'
+    ValidScheme, // 'S'
+    ValidScheme, // 'T'
+    ValidScheme, // 'U'
+    ValidScheme, // 'V'
+    ValidScheme, // 'W'
+    ValidScheme, // 'X'
+    ValidScheme, // 'Y'
+    ValidScheme, // 'Z'
     UserInfo | InvalidDomain, // '['
     UserInfo | InvalidDomain | SlashQuestionOrHash, // '\\'
     UserInfo | InvalidDomain, // ']'
     UserInfo, // '^'
     0, // '_'
     UserInfo | Default, // '`'
-    Scheme, // 'a'
-    Scheme, // 'b'
-    Scheme, // 'c'
-    Scheme, // 'd'
-    Scheme, // 'e'
-    Scheme, // 'f'
-    Scheme, // 'g'
-    Scheme, // 'h'
-    Scheme, // 'i'
-    Scheme, // 'j'
-    Scheme, // 'k'
-    Scheme, // 'l'
-    Scheme, // 'm'
-    Scheme, // 'n'
-    Scheme, // 'o'
-    Scheme, // 'p'
-    Scheme, // 'q'
-    Scheme, // 'r'
-    Scheme, // 's'
-    Scheme, // 't'
-    Scheme, // 'u'
-    Scheme, // 'v'
-    Scheme, // 'w'
-    Scheme, // 'x'
-    Scheme, // 'y'
-    Scheme, // 'z'
+    ValidScheme, // 'a'
+    ValidScheme, // 'b'
+    ValidScheme, // 'c'
+    ValidScheme, // 'd'
+    ValidScheme, // 'e'
+    ValidScheme, // 'f'
+    ValidScheme, // 'g'
+    ValidScheme, // 'h'
+    ValidScheme, // 'i'
+    ValidScheme, // 'j'
+    ValidScheme, // 'k'
+    ValidScheme, // 'l'
+    ValidScheme, // 'm'
+    ValidScheme, // 'n'
+    ValidScheme, // 'o'
+    ValidScheme, // 'p'
+    ValidScheme, // 'q'
+    ValidScheme, // 'r'
+    ValidScheme, // 's'
+    ValidScheme, // 't'
+    ValidScheme, // 'u'
+    ValidScheme, // 'v'
+    ValidScheme, // 'w'
+    ValidScheme, // 'x'
+    ValidScheme, // 'y'
+    ValidScheme, // 'z'
     UserInfo | Default, // '{'
     UserInfo, // '|'
     UserInfo | Default, // '}'
@@ -411,7 +411,7 @@ template<typename CharacterType> ALWAYS_INLINE static bool isInUserInfoEncodeSet
 template<typename CharacterType> ALWAYS_INLINE static bool isInvalidDomainCharacter(CharacterType character) { return character <= ']' && characterClassTable[character] & InvalidDomain; }
 template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(CharacterType character) { return !isASCII(character) || character == '%'; }
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
-template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & Scheme; }
+template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
 static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<typename CharacterType, URLParser::ReportSyntaxViolation reportSyntaxViolation>
@@ -675,57 +675,100 @@ ALWAYS_INLINE static bool isDefaultPort(StringView scheme, uint16_t port)
     }
 }
 
-ALWAYS_INLINE static bool isSpecialScheme(StringView scheme)
+enum class Scheme {
+    WS,
+    WSS,
+    File,
+    FTP,
+    Gopher,
+    HTTP,
+    HTTPS,
+    NonSpecial
+};
+
+ALWAYS_INLINE bool isSpecial(Scheme scheme)
+{
+    switch (scheme) {
+    case Scheme::WS:
+    case Scheme::WSS:
+    case Scheme::File:
+    case Scheme::FTP:
+    case Scheme::Gopher:
+    case Scheme::HTTP:
+    case Scheme::HTTPS:
+        return true;
+    case Scheme::NonSpecial:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+ALWAYS_INLINE static Scheme scheme(StringView scheme)
 {
     auto length = scheme.length();
     if (!length)
-        return false;
+        return Scheme::NonSpecial;
     switch (scheme[0]) {
     case 'f':
         switch (length) {
         case 3:
-            return scheme[1] == 't'
-                && scheme[2] == 'p';
+            if (scheme[1] == 't'
+                && scheme[2] == 'p')
+                return Scheme::FTP;
+            return Scheme::NonSpecial;
         case 4:
-            return scheme[1] == 'i'
+            if (scheme[1] == 'i'
                 && scheme[2] == 'l'
-                && scheme[3] == 'e';
+                && scheme[3] == 'e')
+                return Scheme::File;
+            return Scheme::NonSpecial;
         default:
-            return false;
+            return Scheme::NonSpecial;
         }
     case 'g':
-        return length == 6
+        if (length == 6
             && scheme[1] == 'o'
             && scheme[2] == 'p'
             && scheme[3] == 'h'
             && scheme[4] == 'e'
-            && scheme[5] == 'r';
+            && scheme[5] == 'r')
+            return Scheme::Gopher;
+        return Scheme::NonSpecial;
     case 'h':
         switch (length) {
         case 4:
-            return scheme[1] == 't'
+            if (scheme[1] == 't'
                 && scheme[2] == 't'
-                && scheme[3] == 'p';
+                && scheme[3] == 'p')
+                return Scheme::HTTP;
+            return Scheme::NonSpecial;
         case 5:
-            return scheme[1] == 't'
+            if (scheme[1] == 't'
                 && scheme[2] == 't'
                 && scheme[3] == 'p'
-                && scheme[4] == 's';
+                && scheme[4] == 's')
+                return Scheme::HTTPS;
+            return Scheme::NonSpecial;
         default:
-            return false;
+            return Scheme::NonSpecial;
         }
     case 'w':
         switch (length) {
         case 2:
-            return scheme[1] == 's';
+            if (scheme[1] == 's')
+                return Scheme::WS;
+            return Scheme::NonSpecial;
         case 3:
-            return scheme[1] == 's'
-                && scheme[2] == 's';
+            if (scheme[1] == 's'
+                && scheme[2] == 's')
+                return Scheme::WSS;
+            return Scheme::NonSpecial;
         default:
-            return false;
+            return Scheme::NonSpecial;
         }
     default:
-        return false;
+        return Scheme::NonSpecial;
     }
 }
 
@@ -828,7 +871,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
         m_url.m_protocolIsInHTTPFamily = base.m_protocolIsInHTTPFamily;
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
-    m_urlIsSpecial = isSpecialScheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd));
+    m_urlIsSpecial = isSpecial(scheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd)));
 }
 
 static const char* dotASCIICode = "2e";
@@ -1106,7 +1149,7 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
 template<typename CharacterType>
 void URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
 {
-    LOG(URLParser, "Parsing URL <%s> base <%s>", String(input, length).utf8().data(), base.string().utf8().data());
+    LOG(URLParser, "Parsing URL <%s> base <%s> encoding <%s>", String(input, length).utf8().data(), base.string().utf8().data(), encoding.name());
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
@@ -1188,22 +1231,38 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             } else if (*c == ':') {
                 m_url.m_schemeEnd = currentPosition(c);
                 StringView urlScheme = parsedDataView(0, m_url.m_schemeEnd);
-                m_url.m_protocolIsInHTTPFamily = urlScheme == "http" || urlScheme == "https";
                 appendToASCIIBuffer(':');
-                if (urlScheme == "file") {
+                switch (scheme(urlScheme)) {
+                case Scheme::File:
                     m_urlIsSpecial = true;
                     state = State::File;
                     ++c;
                     break;
-                }
-                if (isSpecialScheme(urlScheme)) {
+                case Scheme::WS:
+                case Scheme::WSS:
+                    isUTF8Encoding = true;
                     m_urlIsSpecial = true;
                     if (base.protocolIs(urlScheme))
                         state = State::SpecialRelativeOrAuthority;
                     else
                         state = State::SpecialAuthoritySlashes;
                     ++c;
-                } else {
+                    break;
+                case Scheme::HTTP:
+                case Scheme::HTTPS:
+                    m_url.m_protocolIsInHTTPFamily = true;
+                    FALLTHROUGH;
+                case Scheme::FTP:
+                case Scheme::Gopher:
+                    m_urlIsSpecial = true;
+                    if (base.protocolIs(urlScheme))
+                        state = State::SpecialRelativeOrAuthority;
+                    else
+                        state = State::SpecialAuthoritySlashes;
+                    ++c;
+                    break;
+                case Scheme::NonSpecial:
+                    isUTF8Encoding = true;
                     auto maybeSlash = c;
                     advance(maybeSlash);
                     if (!maybeSlash.atEnd() && *maybeSlash == '/') {
@@ -1224,6 +1283,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         m_url.m_cannotBeABaseURL = true;
                         state = State::CannotBeABaseURLPath;
                     }
+                    break;
                 }
                 break;
             } else {
