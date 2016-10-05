@@ -1,0 +1,46 @@
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    testRunner.waitUntilDone();
+}
+
+function clickOnLinkWithPing() {
+    if (window.eventSender) {
+        var a = document.getElementById("a");
+        var x = a.offsetLeft + 2;
+        var y = a.offsetTop + 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function showPingResult() {
+    function actualShowPingResult() {
+        var iframe = document.getElementById("result_frame");
+        iframe.onload = function() {
+            if (window.testRunner) { testRunner.notifyDone(); }
+        }
+        iframe.src = "resources/get-ping-data.php?test=contentextensions-hide-on-ping-with-ping-that-redirects";
+    }
+    // We assume that if redirects were followed when saving a ping that they will complete within one second.
+    // FIXME: Is there are better way to test that a redirect occurred?
+    window.setTimeout(actualShowPingResult, 1000);
+}
+</script>
+</head>
+
+<body>
+This test follows a link with a ping attribute where the redirected ping URL matches a 'css-display-none' rule.
+<div class="foo">This text should be hidden once the ping is sent.</div>
+<div class="bar">This text should remain visible.</div>
+<div>
+<img src="resources/delete-ping.php?test=contentextensions-hide-on-ping" onerror="clickOnLinkWithPing();">
+<a id="a" href="#a" ping="resources/save-ping-and-redirect-to-save-ping.php?test=contentextensions-hide-on-ping-with-ping-that-redirects" onclick="showPingResult();">Link with ping</a>
+</div>
+<iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>
+</body>
+

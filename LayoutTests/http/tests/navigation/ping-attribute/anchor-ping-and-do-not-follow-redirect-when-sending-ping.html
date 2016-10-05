@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/utilities.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    testRunner.waitUntilDone();
+}
+
+function test()
+{
+    clickElement(document.getElementById("a"));
+}
+
+function checkPing()
+{
+    function actualCheckPing()
+    {
+        window.location = "../resources/check-ping.php";
+    }
+    // We assume that if redirects were followed when saving a ping that they will complete within one second.
+    // FIXME: Is there are better way to test that a redirect occurred?
+    window.setTimeout(actualCheckPing, 1000);
+}
+
+window.onload = function ()
+{
+    clearLastPingResultAndRunTest(test);
+}
+</script>
+</head>
+<body>
+<p>This test PASSED if the filename of the REQUEST_URI in the dumped report is save-Ping.php. Otherwise, it FAIL.</p>
+<a id="a" href="javascript:checkPing()" ping="../resources/save-ping-and-redirect-to-save-ping.php">Navigate and send ping</a>
+</body>
+</html>

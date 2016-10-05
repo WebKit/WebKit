@@ -7,4 +7,6 @@ This test creates a CSP violation report, but the report URL matches a 'block-co
 Frame: 'result_frame'
 --------
 Ping received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /contentextensions/resources/save-ping.php?test=contentextensions-block-cookies-in-csp-report
 No cookies in ping.

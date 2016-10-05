@@ -7,4 +7,6 @@ This text should remain visible.
 Frame: 'result_frame'
 --------
 Ping received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /contentextensions/resources/save-ping.php?test=contentextensions-hide-on-ping
 No cookies in ping.
