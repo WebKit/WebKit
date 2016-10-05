@@ -41,6 +41,10 @@ typedef struct CGContext* CGContextRef;
 typedef struct CGGradient* CGGradientRef;
 typedef CGGradientRef PlatformGradient;
 
+#elif USE(DIRECT2D)
+interface ID2D1Brush;
+interface ID2D1RenderTarget;
+typedef ID2D1Brush* PlatformGradient;
 #elif USE(CAIRO)
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformGradient;
@@ -159,6 +163,8 @@ namespace WebCore {
 #if USE(CG)
         void paint(CGContextRef);
         void paint(GraphicsContext*);
+#elif USE(DIRECT2D)
+        PlatformGradient createPlatformGradientIfNecessary(ID2D1RenderTarget*);
 #elif USE(CAIRO)
         PlatformGradient platformGradient(float globalAlpha);
 #endif
@@ -167,10 +173,14 @@ namespace WebCore {
         WEBCORE_EXPORT Gradient(const FloatPoint& p0, const FloatPoint& p1);
         Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio);
 
-        void platformInit() { m_gradient = 0; }
+        void platformInit() { m_gradient = nullptr; }
         void platformDestroy();
 
         void sortStopsIfNecessary();
+
+#if USE(DIRECT2D)
+        void generateGradient(ID2D1RenderTarget*);
+#endif
 
         // Keep any parameters relevant to rendering in sync with the structure in Gradient::hash().
         bool m_radial;

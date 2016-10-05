@@ -158,7 +158,7 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
     closeSubpath();
 }
 
-#if !USE(CG)
+#if !USE(CG) && !USE(DIRECT2D)
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 {
     Path path;

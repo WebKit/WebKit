@@ -1,3 +1,21 @@
+2016-10-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add initial D2D Path and Gradient implementation
+        https://bugs.webkit.org/show_bug.cgi?id=162923
+
+        Reviewed by Alex Christensen.
+
+        This patch lands a set of new files that implements initial Path
+        and Gradient features on Windows using Direct2D.
+
+        No new tests until complete backend lands.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/Path.cpp:
+        * platform/graphics/Path.h:
+        * platform/graphics/win/GradientDirect2D.cpp: Added.
+        * platform/graphics/win/PathDirect2D.cpp: Added.
+
 2016-10-05  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Align function names with spec
