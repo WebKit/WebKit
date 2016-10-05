@@ -3175,9 +3175,11 @@ RefPtr<ViewSnapshot> WebViewImpl::takeViewSnapshot()
     auto surface = WebCore::IOSurface::createFromImage(croppedSnapshotImage.get());
     if (!surface)
         return nullptr;
-    surface->setIsVolatile(true);
 
-    return ViewSnapshot::create(WTFMove(surface));
+    RefPtr<ViewSnapshot> snapshot = ViewSnapshot::create(WTFMove(surface));
+    snapshot->setVolatile(true);
+
+    return snapshot;
 }
 
 void WebViewImpl::saveBackForwardSnapshotForCurrentItem()

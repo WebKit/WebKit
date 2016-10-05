@@ -4612,6 +4612,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     });
 }
 
+- (void)_disableBackForwardSnapshotVolatilityForTesting
+{
+    WebKit::ViewSnapshotStore::singleton().setDisableSnapshotVolatilityForTesting(true);
+}
+
 @end
 
 

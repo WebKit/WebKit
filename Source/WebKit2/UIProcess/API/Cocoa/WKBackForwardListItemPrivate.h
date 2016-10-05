@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKBackForwardListItemPrivate.h"
+#import <WebKit/WKBackForwardListItem.h>
 
 #if WK_API_ENABLED
 
-#import "WKObject.h"
-#import "WebBackForwardListItem.h"
+@interface WKBackForwardListItem (WKPrivate)
 
-namespace WebKit {
-inline WKBackForwardListItem *wrapper(WebBackForwardListItem& item) { ASSERT([item.wrapper() isKindOfClass:[WKBackForwardListItem class]]); return (WKBackForwardListItem *)item.wrapper(); }
-}
-
-@interface WKBackForwardListItem () <WKObject>
-
-@property (readonly) WebKit::WebBackForwardListItem& _item;
+// For testing only.
+- (CGImageRef)_copySnapshotForTesting WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 
-#endif // WK_API_ENABLED
+#endif
