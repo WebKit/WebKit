@@ -157,10 +157,12 @@ private:
     WebCore::IntPoint m_hudPosition;
     std::unique_ptr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
 
+#if USE(CA)
     class LayerClient;
     friend class LayerClient;
     std::unique_ptr<LayerClient> m_layerClient;
     RefPtr<WebCore::PlatformCALayer> m_rootChild;
+#endif
 
     HUDButton m_playPauseButton;
     HUDButton m_timeSliderButton;

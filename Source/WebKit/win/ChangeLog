@@ -1,3 +1,26 @@
+2016-10-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Connect WebCore/WebKit Drawing
+        https://bugs.webkit.org/show_bug.cgi?id=162924
+
+        Reviewed by Alex Christensen.
+
+        Update the Windows WebKit layer to optionally use the Direct2D
+        backend.
+
+        * FullscreenVideoController.cpp: Disable some CoreAnimation-based
+        accelerated compositing logic.
+        * FullscreenVideoController.h:
+        * WebFrame.cpp:
+        (WebFrame::spoolPages): Disable in Direct2D.
+        * WebView.cpp:
+        (WebView::ensureBackingStore): Add Direct2D logic.
+        (WebView::scrollBackingStore): Ditto.
+        (WebView::sizeChanged): Ditto.
+        (WebView::paintWithDirect2D): Added.
+        (WebView::WebViewWndProc): Call Direct2D paint routine.
+        * WebView.h:
+
 2016-10-02  Darin Adler  <darin@apple.com>
 
         Rename ExceptionCode-based exception handling to "legacy"

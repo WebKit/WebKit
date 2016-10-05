@@ -1838,11 +1838,13 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
 
     float headerHeight = 0, footerHeight = 0;
     headerAndFooterHeights(&headerHeight, &footerHeight);
+#if USE(CG) || USE(CAIRO)
     GraphicsContext spoolCtx(pctx);
     spoolCtx.setShouldIncludeChildWindows(true);
 
     for (UINT ii = startPage; ii < endPage; ii++)
         spoolPage(pctx, spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);
+#endif
 
 #if USE(CAIRO)
     cairo_surface_finish(printSurface);
