@@ -423,11 +423,11 @@ WebInspector.CSSStyleDeclarationSection = class CSSStyleDeclarationSection exten
         {
             let containsBraces = /[\{\}]/;
             if (!containsBraces.test(text))
-                return null;
+                return [];
 
-            let match = text.match(/([^{]+){(.*)}/);
+            let match = text.match(/([^{]+){([\s\S]*)}/);
             if (!match)
-                return null;
+                return [];
 
             // If the match "body" contains braces, parse that body as if it were a rule.
             // This will usually happen if the user includes a media query in the copied text.

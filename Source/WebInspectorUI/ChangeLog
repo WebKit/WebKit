@@ -1,3 +1,14 @@
+2016-10-06  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Inspector exception in `parseTextForRule()` when pasting into CSS rule selector
+        https://bugs.webkit.org/show_bug.cgi?id=162792
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleSelectorPaste.parseTextForRule):
+        Changed regular expression for matching CSS rules to allow newlines in pasted text.
+
 2016-10-02  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Clicking twice on the color swatch square should hide the color picker
