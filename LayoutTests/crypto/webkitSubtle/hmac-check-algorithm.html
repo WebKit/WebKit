@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test that HMAC operations only work when hash functions match between invocation and key.");
+
+jsTestIsAsync = true;
+
+var hmacKey = asciiToUint8Array('a');
+var extractable = true;
+
+debug("Importing a raw HMAC SHA-1 key from string literal...");
+crypto.webkitSubtle.importKey("raw", hmacKey, {name: 'hmac', hash: {name: 'sha-1'}}, extractable, ["sign", "verify"]).then(function(result) {
+    debug("Done");
+    key = result;
+
+    shouldNotThrow("crypto.webkitSubtle.sign({name: 'hmac', hash: {name: 'sha-1'}}, key, asciiToUint8Array('foo'))");
+    shouldThrow("crypto.webkitSubtle.sign({name: 'hmac', hash: {name: 'sha-256'}}, key, asciiToUint8Array('foo'))");
+
+    shouldNotThrow("crypto.webkitSubtle.verify({name: 'hmac', hash: {name: 'sha-1'}}, key, asciiToUint8Array('fake signature'), asciiToUint8Array('foo'))");
+    shouldThrow("crypto.webkitSubtle.verify({name: 'hmac', hash: {name: 'sha-256'}}, key, asciiToUint8Array('fake signature'), asciiToUint8Array('foo'))");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

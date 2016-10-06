@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test exporting an AES key.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+var nonExtractable = false;
+
+var jwkKey = {
+    kty: "oct",
+    k: "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
+};
+
+var jwkKeyAsArrayBuffer = asciiToUint8Array(JSON.stringify(jwkKey));
+
+shouldThrow('crypto.webkitSubtle.exportKey("raw")');
+shouldThrow('crypto.webkitSubtle.exportKey("raw", null)');
+shouldThrow('crypto.webkitSubtle.exportKey("raw", undefined)');
+shouldThrow('crypto.webkitSubtle.exportKey("raw", {})');
+shouldThrow('crypto.webkitSubtle.exportKey("raw", 1)');
+
+debug("\nImporting a JWK key...");
+crypto.webkitSubtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", extractable, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']).then(function(result) {
+    key = result;
+
+    shouldThrow('crypto.webkitSubtle.exportKey(null, key)');
+    shouldThrow('crypto.webkitSubtle.exportKey(undefined, key)');
+    shouldThrow('crypto.webkitSubtle.exportKey({}, key)');
+    shouldThrow('crypto.webkitSubtle.exportKey("", key)');
+    shouldThrow('crypto.webkitSubtle.exportKey("foobar", key)');
+
+    debug("\nExporting the key as raw data...");
+    return crypto.webkitSubtle.exportKey("raw", key);
+}).then(function(result) {
+    exportedData = result;
+    shouldBe("bytesToHexString(new Uint8Array(exportedData))", "'8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b'");
+
+    debug("Exporting the key as JWK...");
+    return crypto.webkitSubtle.exportKey("jwk", key);
+}).then(function(result) {
+    exportedJWK = JSON.parse(bytesToASCIIString(result));
+    shouldBe("exportedJWK.kty", "'oct'");
+    shouldBe("exportedJWK.k", "'jnOw99oOZFLIEPMrgJB55WL46tJSLGt7'");
+    shouldBe("exportedJWK.alg", "'A192CBC'");
+    shouldBe("exportedJWK.ext", "true");
+    shouldBe("exportedJWK.use", "undefined");
+    shouldBe("exportedJWK.key_ops", "['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']");
+
+    debug("\nImporting a key that's not extractable...");
+    return crypto.webkitSubtle.importKey("jwk", jwkKeyAsArrayBuffer, "AES-CBC", nonExtractable, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey'])
+}).then(function(result) {
+    key = result;
+
+    debug("\nTrying to export as raw...");
+    return crypto.webkitSubtle.exportKey("raw", key);
+}).then(function(result) {
+    testFailed("Promise wasn't rejected");
+    finishJSTest();
+}, function() {
+    testPassed("Rejected, as expected");
+
+    debug("Trying to export as jwk...");
+    return crypto.webkitSubtle.exportKey("jwk", key);
+}).then(function(result) {
+    testFailed("Promise wasn't rejected");
+    finishJSTest();
+}, function() {
+    testPassed("Rejected, as expected");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Verify that usage is respected in wrapKey operation.");
+
+jsTestIsAsync = true;
+
+var publicKeyJSON = {
+    kty: "RSA",
+    alg: "RSA-OAEP",
+    n: "rcCUCv7Oc1HVam1DIhCzqknThWawOp8QLk8Ziy2p10ByjQFCajoFiyuAWl-R1WXZaf4xitLRracT9agpzIzc-MbLSHIGgWQGO21lGiImy5ftZ-D8bHAqRz2y15pzD4c4CEou7XSSLDoRnR0QG5MsDhD6s2gV9mwHkrtkCxtMWdBi-77as8wGmlNRldcOSgZDLK8UnCSgA1OguZ989bFyc8tOOEIb0xUSfPSz3LPSCnyYz68aDjmKVeNH-ig857OScyWbGyEy3Biw64qun3juUlNWsJ3zngkOdteYWytx5Qr4XKNs6R-Myyq72KUp02mJDZiiyiglxML_i3-_CeecCw",
+    e: "AQAB"
+};
+
+var wrapAlgorithm = {name: "RSA-OAEP", hash: "sha-1"};
+var extractable = true;
+var nonExtractable = false;
+
+debug("Importing an RSA key...");
+crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(publicKeyJSON)), null, extractable, ["encrypt", "decrypt", "unwrapKey"]).then(function(result) {
+    publicKey = result;
+
+    debug("Importing an AES key...");
+    aesKeyData = hexStringToUint8Array("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4");
+    return crypto.webkitSubtle.importKey("raw", aesKeyData, "aes-cbc", extractable, ["encrypt", "decrypt", "wrapKey", "unwrapKey"])
+}).then(function(result) {
+    aesKey = result;
+
+    debug("Wrapping it...");
+    // publicKey lacks wrapKey usage.
+    shouldThrow('crypto.webkitSubtle.wrapKey("raw", aesKey, publicKey, wrapAlgorithm)');
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

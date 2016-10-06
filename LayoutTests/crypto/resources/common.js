@@ -80,6 +80,3 @@ var Base64URL = {
         return new Uint8Array(Array.prototype.map.call(atob(s), function (c) { return c.charCodeAt(0) }));
     }
 };
-
-if (!(typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) && !crypto.subtle)
-    crypto.subtle = crypto.webkitSubtle;

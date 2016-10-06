@@ -26,7 +26,6 @@
 [
     Conditional=SUBTLE_CRYPTO,
     ImplementationLacksVTable,
-    InterfaceName=KeyPair,
     JSCustomMarkFunction,
     NoInterfaceObject
 ] interface CryptoKeyPair {

@@ -8,11 +8,11 @@ PASS Crypto interface object length
 PASS Crypto interface object name 
 PASS Crypto interface: existence and properties of interface prototype object 
 PASS Crypto interface: existence and properties of interface prototype object's "constructor" property 
-FAIL Crypto interface: attribute subtle assert_true: The prototype object must have a property "subtle" expected true got false
+PASS Crypto interface: attribute subtle 
 PASS Crypto interface: operation getRandomValues(ArrayBufferView) 
 PASS Crypto must be primary interface of crypto 
 PASS Stringification of crypto 
-FAIL Crypto interface: crypto must inherit property "subtle" with the proper type (0) assert_inherits: property "subtle" not found in prototype chain
+PASS Crypto interface: crypto must inherit property "subtle" with the proper type (0) 
 PASS Crypto interface: crypto must inherit property "getRandomValues" with the proper type (1) 
 PASS Crypto interface: calling getRandomValues(ArrayBufferView) on crypto with too few arguments must throw TypeError 
 PASS CryptoKey interface: existence and properties of interface object 
@@ -41,30 +41,30 @@ FAIL SubtleCrypto interface: operation importKey(KeyFormat,[object Object],[obje
 FAIL SubtleCrypto interface: operation exportKey(KeyFormat,CryptoKey) assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 FAIL SubtleCrypto interface: operation wrapKey(KeyFormat,CryptoKey,CryptoKey,AlgorithmIdentifier) assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
 FAIL SubtleCrypto interface: operation unwrapKey(KeyFormat,BufferSource,CryptoKey,AlgorithmIdentifier,AlgorithmIdentifier,boolean,[object Object]) assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
-FAIL SubtleCrypto must be primary interface of crypto.subtle assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of crypto.subtle assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "encrypt" with the proper type (0) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling encrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "decrypt" with the proper type (1) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling decrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "sign" with the proper type (2) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling sign(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "verify" with the proper type (3) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling verify(AlgorithmIdentifier,CryptoKey,BufferSource,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "digest" with the proper type (4) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling digest(AlgorithmIdentifier,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "generateKey" with the proper type (5) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling generateKey(AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "deriveKey" with the proper type (6) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling deriveKey(AlgorithmIdentifier,CryptoKey,AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "deriveBits" with the proper type (7) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling deriveBits(AlgorithmIdentifier,CryptoKey,unsigned long) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "importKey" with the proper type (8) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling importKey(KeyFormat,[object Object],[object Object],AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "exportKey" with the proper type (9) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling exportKey(KeyFormat,CryptoKey) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "wrapKey" with the proper type (10) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling wrapKey(KeyFormat,CryptoKey,CryptoKey,AlgorithmIdentifier) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: crypto.subtle must inherit property "unwrapKey" with the proper type (11) assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL SubtleCrypto interface: calling unwrapKey(KeyFormat,BufferSource,CryptoKey,AlgorithmIdentifier,AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL SubtleCrypto must be primary interface of crypto.subtle assert_own_property: self does not have own property "SubtleCrypto" expected property "SubtleCrypto" missing
+PASS Stringification of crypto.subtle 
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "encrypt" with the proper type (0) assert_inherits: property "encrypt" not found in prototype chain
+FAIL SubtleCrypto interface: calling encrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "encrypt" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "decrypt" with the proper type (1) assert_inherits: property "decrypt" not found in prototype chain
+FAIL SubtleCrypto interface: calling decrypt(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "decrypt" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "sign" with the proper type (2) assert_inherits: property "sign" not found in prototype chain
+FAIL SubtleCrypto interface: calling sign(AlgorithmIdentifier,CryptoKey,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "sign" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "verify" with the proper type (3) assert_inherits: property "verify" not found in prototype chain
+FAIL SubtleCrypto interface: calling verify(AlgorithmIdentifier,CryptoKey,BufferSource,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "verify" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "digest" with the proper type (4) assert_inherits: property "digest" not found in prototype chain
+FAIL SubtleCrypto interface: calling digest(AlgorithmIdentifier,BufferSource) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "digest" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "generateKey" with the proper type (5) assert_inherits: property "generateKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling generateKey(AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "generateKey" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "deriveKey" with the proper type (6) assert_inherits: property "deriveKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling deriveKey(AlgorithmIdentifier,CryptoKey,AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "deriveKey" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "deriveBits" with the proper type (7) assert_inherits: property "deriveBits" not found in prototype chain
+FAIL SubtleCrypto interface: calling deriveBits(AlgorithmIdentifier,CryptoKey,unsigned long) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "deriveBits" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "importKey" with the proper type (8) assert_inherits: property "importKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling importKey(KeyFormat,[object Object],[object Object],AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "importKey" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "exportKey" with the proper type (9) assert_inherits: property "exportKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling exportKey(KeyFormat,CryptoKey) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "exportKey" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "wrapKey" with the proper type (10) assert_inherits: property "wrapKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling wrapKey(KeyFormat,CryptoKey,CryptoKey,AlgorithmIdentifier) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "wrapKey" not found in prototype chain
+FAIL SubtleCrypto interface: crypto.subtle must inherit property "unwrapKey" with the proper type (11) assert_inherits: property "unwrapKey" not found in prototype chain
+FAIL SubtleCrypto interface: calling unwrapKey(KeyFormat,BufferSource,CryptoKey,AlgorithmIdentifier,AlgorithmIdentifier,boolean,[object Object]) on crypto.subtle with too few arguments must throw TypeError assert_inherits: property "unwrapKey" not found in prototype chain
 

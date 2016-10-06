@@ -327,6 +327,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     crypto/CryptoKey.idl
     crypto/CryptoKeyPair.idl
+    crypto/SubtleCrypto.idl
     crypto/WebKitSubtleCrypto.idl
 
     css/CSSCharsetRule.idl

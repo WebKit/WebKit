@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test crypto.webkitSubtle.digest.");
+
+jsTestIsAsync = true;
+
+Promise.resolve(null).then(function() {
+    debug("SHA256 of []");
+    return crypto.webkitSubtle.digest('sha-256', new Uint8Array([]));
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'");
+
+    debug("SHA256 of [0x0]")
+    return crypto.webkitSubtle.digest({name: 'sha-256'}, new Uint8Array([0]));
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d'");
+
+    debug("SHA256 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+    var data = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    return crypto.webkitSubtle.digest({name: 'sha-256'}, data);
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'78a6273103d17c39a0b6126e226cec70e33337f4bc6a38067401b54a33e78ead'");
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

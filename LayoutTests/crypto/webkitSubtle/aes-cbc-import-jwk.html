@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test importing a JWK key for AES-CBC.");
+
+jsTestIsAsync = true;
+
+var extractable = true;
+
+var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+var plaintext = hexStringToUint8Array("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
+
+var jwkKey = {
+    "kty": "oct",
+    "alg": "A192CBC",
+    "use": "enc",
+    "ext": true,
+    "k": "jnOw99oOZFLIEPMrgJB55WL46tJSLGt7"
+};
+
+var jwkKeyAsArrayBuffer = asciiToUint8Array(JSON.stringify(jwkKey));
+
+debug("Importing a key...\n");
+crypto.webkitSubtle.importKey("jwk", jwkKeyAsArrayBuffer, null, false, ["encrypt"]).then(function(result) {
+    key = result;
+
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "false");
+    shouldBe("key.algorithm.name", "'AES-CBC'");
+    shouldBe("key.algorithm.length", "192");
+    shouldBe("key.usages", '["encrypt"]');
+
+    debug("\nUsing the key to encrypt plaintext...");
+    return crypto.webkitSubtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext);
+}).then(function(result) {
+    encryptionResult = result;
+    shouldBe("bytesToHexString(new Uint8Array(encryptionResult))", "'4f021db243bc633d7178183a9fa071e8b4d9ada9ad7dedf4e5e738763f69145a571b242012fb7ae07fa9baac3df102e008b0e27988598881d920a9e64f5615cd612ccd79224b350935d45dd6a98f8176'");
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

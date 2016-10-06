@@ -1,3 +1,14 @@
+2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a dummy SubtleCrypto interface
+        https://bugs.webkit.org/show_bug.cgi?id=162992
+        <rdar://problem/28643573>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCryptoAPI/digest/test_digest-expected.txt:
+        * WebCryptoAPI/idlharness-expected.txt:
+
 2016-10-06  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop bad tests that were included by mistake in r206874.

@@ -599,6 +599,7 @@
 #include "JSStyleMedia.cpp"
 #include "JSStyleSheet.cpp"
 #include "JSStyleSheetList.cpp"
+#include "JSSubtleCrypto.cpp"
 #include "JSText.cpp"
 #include "JSTextEvent.cpp"
 #include "JSTextMetrics.cpp"

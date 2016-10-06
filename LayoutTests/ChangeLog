@@ -1,3 +1,156 @@
+2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a dummy SubtleCrypto interface
+        https://bugs.webkit.org/show_bug.cgi?id=162992
+        <rdar://problem/28643573>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/resources/common.js:
+        * crypto/subtle/gc-2-expected.txt: Added.
+        * crypto/subtle/gc-2.html: Added.
+        * crypto/subtle/gc-3-expected.txt: Added.
+        * crypto/subtle/gc-3.html: Added.
+        * crypto/subtle/gc-expected.txt: Added.
+        * crypto/subtle/gc.html: Added.
+        * crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-192-encrypt-decrypt-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-192-encrypt-decrypt.html.
+        * crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-256-encrypt-decrypt-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-256-encrypt-decrypt.html.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-encrypt-decrypt-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-encrypt-decrypt-with-padding-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-encrypt-decrypt-with-padding.html.
+        * crypto/webkitSubtle/aes-cbc-encrypt-decrypt.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-encrypt-decrypt.html.
+        * crypto/webkitSubtle/aes-cbc-generate-key-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-generate-key-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-generate-key.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-generate-key.html.
+        * crypto/webkitSubtle/aes-cbc-import-jwk-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-import-jwk-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-import-jwk.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-import-jwk.html.
+        * crypto/webkitSubtle/aes-cbc-invalid-length-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-invalid-length-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-invalid-length.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-invalid-length.html.
+        * crypto/webkitSubtle/aes-cbc-unwrap-failure-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-unwrap-failure-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-unwrap-failure.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-unwrap-failure.html.
+        * crypto/webkitSubtle/aes-cbc-unwrap-rsa-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-unwrap-rsa-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-unwrap-rsa.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-unwrap-rsa.html.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrap-rsa-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrap-rsa-non-extractable-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrap-rsa-non-extractable.html.
+        * crypto/webkitSubtle/aes-cbc-wrap-rsa.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrap-rsa.html.
+        * crypto/webkitSubtle/aes-cbc-wrong-key-class-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrong-key-class-expected.txt.
+        * crypto/webkitSubtle/aes-cbc-wrong-key-class.html: Renamed from LayoutTests/crypto/subtle/aes-cbc-wrong-key-class.html.
+        * crypto/webkitSubtle/aes-export-key-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-export-key-expected.txt.
+        * crypto/webkitSubtle/aes-export-key.html: Renamed from LayoutTests/crypto/subtle/aes-export-key.html.
+        * crypto/webkitSubtle/aes-kw-key-manipulation-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-kw-key-manipulation-expected.txt.
+        * crypto/webkitSubtle/aes-kw-key-manipulation.html: Renamed from LayoutTests/crypto/subtle/aes-kw-key-manipulation.html.
+        * crypto/webkitSubtle/aes-kw-wrap-unwrap-aes-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-kw-wrap-unwrap-aes-expected.txt.
+        * crypto/webkitSubtle/aes-kw-wrap-unwrap-aes.html: Renamed from LayoutTests/crypto/subtle/aes-kw-wrap-unwrap-aes.html.
+        * crypto/webkitSubtle/aes-postMessage-expected.txt: Renamed from LayoutTests/crypto/subtle/aes-postMessage-expected.txt.
+        * crypto/webkitSubtle/aes-postMessage.html: Renamed from LayoutTests/crypto/subtle/aes-postMessage.html.
+        * crypto/webkitSubtle/argument-conversion-expected.txt: Renamed from LayoutTests/crypto/subtle/argument-conversion-expected.txt.
+        * crypto/webkitSubtle/argument-conversion.html: Renamed from LayoutTests/crypto/subtle/argument-conversion.html.
+        * crypto/webkitSubtle/array-buffer-view-offset-expected.txt: Renamed from LayoutTests/crypto/subtle/array-buffer-view-offset-expected.txt.
+        * crypto/webkitSubtle/array-buffer-view-offset.html: Renamed from LayoutTests/crypto/subtle/array-buffer-view-offset.html.
+        * crypto/webkitSubtle/crypto-key-algorithm-gc-expected.txt: Renamed from LayoutTests/crypto/subtle/crypto-key-algorithm-gc-expected.txt.
+        * crypto/webkitSubtle/crypto-key-algorithm-gc.html: Renamed from LayoutTests/crypto/subtle/crypto-key-algorithm-gc.html.
+        * crypto/webkitSubtle/crypto-key-usages-gc-expected.txt: Renamed from LayoutTests/crypto/subtle/crypto-key-usages-gc-expected.txt.
+        * crypto/webkitSubtle/crypto-key-usages-gc.html: Renamed from LayoutTests/crypto/subtle/crypto-key-usages-gc.html.
+        * crypto/webkitSubtle/hmac-check-algorithm-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-check-algorithm-expected.txt.
+        * crypto/webkitSubtle/hmac-check-algorithm.html: Renamed from LayoutTests/crypto/subtle/hmac-check-algorithm.html.
+        * crypto/webkitSubtle/hmac-export-key-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-export-key-expected.txt.
+        * crypto/webkitSubtle/hmac-export-key.html: Renamed from LayoutTests/crypto/subtle/hmac-export-key.html.
+        * crypto/webkitSubtle/hmac-generate-key-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-export-key.html.
+        * crypto/webkitSubtle/hmac-generate-key.html: Renamed from LayoutTests/crypto/subtle/hmac-generate-key.html.
+        * crypto/webkitSubtle/hmac-import-jwk-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-import-jwk-expected.txt.
+        * crypto/webkitSubtle/hmac-import-jwk.html: Renamed from LayoutTests/crypto/subtle/hmac-import-jwk.html.
+        * crypto/webkitSubtle/hmac-postMessage-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-postMessage-expected.txt.
+        * crypto/webkitSubtle/hmac-postMessage.html: Renamed from LayoutTests/crypto/subtle/hmac-postMessage.html.
+        * crypto/webkitSubtle/hmac-sign-verify-empty-key-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-sign-verify-empty-key-expected.txt.
+        * crypto/webkitSubtle/hmac-sign-verify-empty-key.html: Renamed from LayoutTests/crypto/subtle/hmac-sign-verify-empty-key.html.
+        * crypto/webkitSubtle/hmac-sign-verify-expected.txt: Renamed from LayoutTests/crypto/subtle/hmac-sign-verify-expected.txt.
+        * crypto/webkitSubtle/hmac-sign-verify.html: Renamed from LayoutTests/crypto/subtle/hmac-sign-verify.html.
+        * crypto/webkitSubtle/import-jwk-expected.txt: Renamed from LayoutTests/crypto/subtle/import-jwk-expected.txt.
+        * crypto/webkitSubtle/import-jwk.html: Renamed from LayoutTests/crypto/subtle/import-jwk-expected.html.
+        * crypto/webkitSubtle/jwk-export-use-values-expected.txt: Renamed from LayoutTests/crypto/subtle/jwk-export-use-values-expected.txt.
+        * crypto/webkitSubtle/jwk-export-use-values.html: Renamed from LayoutTests/crypto/subtle/jwk-export-use-values.html.
+        * crypto/webkitSubtle/jwk-import-use-values-expected.txt: Renamed from LayoutTests/crypto/subtle/jwk-import-use-values-expected.txt.
+        * crypto/webkitSubtle/jwk-import-use-values.html: Renamed from LayoutTests/crypto/subtle/jwk-import-use-values.html.
+        * crypto/webkitSubtle/resources/rsa-indexeddb-non-exportable.js: Renamed from LayoutTests/crypto/subtle/resources/rsa-indexeddb-non-exportable.js.
+        * crypto/webkitSubtle/resources/rsa-indexeddb.js: Renamed from LayoutTests/crypto/subtle/resources/rsa-indexeddb.js.
+        * crypto/webkitSubtle/rsa-export-generated-keys-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-export-generated-keys-expected.txt.
+        * crypto/webkitSubtle/rsa-export-generated-keys.html: Renamed from LayoutTests/crypto/subtle/rsa-export-generated-keys.html.
+        * crypto/webkitSubtle/rsa-export-key-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-export-key-expected.txt.
+        * crypto/webkitSubtle/rsa-export-key.html: Renamed from LayoutTests/crypto/subtle/rsa-export-key.html.
+        * crypto/webkitSubtle/rsa-export-private-key-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-export-private-key-expected.txt.
+        * crypto/webkitSubtle/rsa-export-private-key.html: Renamed from LayoutTests/crypto/subtle/rsa-export-private-key.html.
+        * crypto/webkitSubtle/rsa-indexeddb-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-expected.txt.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-non-exportable-expected.txt.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-private-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-non-exportable-private-expected.txt.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable-private.html: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-non-exportable-private.html.
+        * crypto/webkitSubtle/rsa-indexeddb-non-exportable.html: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-non-exportable.html.
+        * crypto/webkitSubtle/rsa-indexeddb-private-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-private-expected.txt.
+        * crypto/webkitSubtle/rsa-indexeddb-private.html: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb-private.html.
+        * crypto/webkitSubtle/rsa-indexeddb.html: Renamed from LayoutTests/crypto/subtle/rsa-indexeddb.html.
+        * crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-oaep-generate-non-extractable-key-expected.txt.
+        * crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key.html: Renamed from LayoutTests/crypto/subtle/rsa-oaep-generate-non-extractable-key.html.
+        * crypto/webkitSubtle/rsa-oaep-key-manipulation-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-oaep-key-manipulation-expected.txt.
+        * crypto/webkitSubtle/rsa-oaep-key-manipulation.html: Renamed from LayoutTests/crypto/subtle/rsa-oaep-key-manipulation.html.
+        * crypto/webkitSubtle/rsa-oaep-plaintext-length-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-oaep-plaintext-length-expected.txt.
+        * crypto/webkitSubtle/rsa-oaep-plaintext-length.html: Renamed from LayoutTests/crypto/subtle/rsa-oaep-plaintext-length.html.
+        * crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-oaep-wrap-unwrap-aes-expected.txt.
+        * crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes.html: Renamed from LayoutTests/crypto/subtle/rsa-oaep-wrap-unwrap-aes.html.
+        * crypto/webkitSubtle/rsa-postMessage-expected.txt: Renamed from LayoutTests/crypto/subtle/rsa-postMessage-expected.txt.
+        * crypto/webkitSubtle/rsa-postMessage.html: Renamed from LayoutTests/crypto/subtle/rsa-postMessage.html.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt-expected.txt: Renamed from LayoutTests/crypto/subtle/rsaes-pkcs1-v1_5-decrypt-expected.txt.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt.html: Renamed from LayoutTests/crypto/subtle/rsaes-pkcs1-v1_5-decrypt.html.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt: Renamed from LayoutTests/crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes-expected.txt.
+        * crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html: Renamed from LayoutTests/crypto/subtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-expected.txt: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-generate-key-expected.txt.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent-expected.txt.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key.html: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-expected.txt.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key-expected.txt: Added.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk.html: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-import-jwk.html.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify-expected.txt: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-sign-verify-expected.txt.
+        * crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify.html: Renamed from LayoutTests/crypto/subtle/rsassa-pkcs1-v1_5-sign-verify.html.
+        * crypto/webkitSubtle/sha-1-expected.txt: Renamed from LayoutTests/crypto/subtle/sha-1-expected.txt.
+        * crypto/webkitSubtle/sha-1.html: Renamed from LayoutTests/crypto/subtle/sha-1.html.
+        * crypto/webkitSubtle/sha-224-expected.txt: Renamed from LayoutTests/crypto/subtle/sha-224-expected.txt.
+        * crypto/webkitSubtle/sha-224.html: Renamed from LayoutTests/crypto/subtle/sha-224.html.
+        * crypto/webkitSubtle/sha-256-expected.txt: Renamed from LayoutTests/crypto/subtle/sha-256-expected.txt.
+        * crypto/webkitSubtle/sha-256.html: Renamed from LayoutTests/crypto/subtle/sha-256.html.
+        * crypto/webkitSubtle/sha-384-expected.txt: Renamed from LayoutTests/crypto/subtle/sha-384-expected.txt.
+        * crypto/webkitSubtle/sha-384.html: Renamed from LayoutTests/crypto/subtle/sha-384.html.
+        * crypto/webkitSubtle/sha-512-expected.txt: Renamed from LayoutTests/crypto/subtle/sha-512-expected.txt.
+        * crypto/webkitSubtle/sha-512.html: Renamed from LayoutTests/crypto/subtle/sha-512.html.
+        * crypto/webkitSubtle/unimplemented-unwrap-crash-expected.txt: Renamed from LayoutTests/crypto/subtle/unimplemented-unwrap-crash-expected.txt.
+        * crypto/webkitSubtle/unimplemented-unwrap-crash.html: Renamed from LayoutTests/crypto/subtle/unimplemented-unwrap-crash.html.
+        * crypto/webkitSubtle/unwrapKey-check-usage-expected.txt: Renamed from LayoutTests/crypto/subtle/unwrapKey-check-usage-expected.txt.
+        * crypto/webkitSubtle/unwrapKey-check-usage.html: Renamed from LayoutTests/crypto/subtle/unwrapKey-check-usage.html.
+        * crypto/webkitSubtle/wrapKey-check-usage-expected.txt: Renamed from LayoutTests/crypto/subtle/wrapKey-check-usage-expected.txt.
+        * crypto/webkitSubtle/wrapKey-check-usage.html: Renamed from LayoutTests/crypto/subtle/wrapKey-check-usage.html.
+        * crypto/workers/subtle/aes-postMessage-worker-expected.txt: Renamed from LayoutTests/crypto/workers/aes-postMessage-worker-expected.txt.
+        * crypto/workers/subtle/aes-postMessage-worker.html: Renamed from LayoutTests/crypto/workers/aes-postMessage-worker.html.
+        * crypto/workers/subtle/gc-worker-expected.txt: Added.
+        * crypto/workers/subtle/gc-worker.html: Added.
+        * crypto/workers/subtle/hmac-postMessage-worker-expected.txt: Renamed from LayoutTests/crypto/workers/hmac-postMessage-worker-expected.txt.
+        * crypto/workers/subtle/hmac-postMessage-worker.html: Renamed from LayoutTests/crypto/workers/hmac-postMessage-worker.html.
+        * crypto/workers/subtle/hrsa-postMessage-worker-expected.txt: Renamed from LayoutTests/crypto/workers/hrsa-postMessage-worker-expected.txt.
+        * crypto/workers/subtle/hrsa-postMessage-worker.html: Renamed from LayoutTests/crypto/workers/hrsa-postMessage-worker.html.
+        * crypto/workers/subtle/multiple-postMessage-worker-expected.txt: Renamed from LayoutTests/crypto/workers/multiple-postMessage-worker-expected.txt.
+        * crypto/workers/subtle/multiple-postMessage-worker.html: Renamed from LayoutTests/crypto/workers/multiple-postMessage-worker.html.
+        * crypto/workers/subtle/resources/aes-postMessage-worker.js: Renamed from LayoutTests/crypto/workers/resources/aes-postMessage-worker.js.
+        * crypto/workers/subtle/resources/gc-worker.js: Added.
+        * crypto/workers/subtle/resources/hmac-postMessage-worker.js: Renamed from LayoutTests/crypto/workers/resources/hmac-postMessage-worker.js.
+        * crypto/workers/subtle/resources/hrsa-postMessage-worker.js: Renamed from LayoutTests/crypto/workers/resources/hrsa-postMessage-worker.js.
+        * crypto/workers/subtle/resources/rsa-postMessage-worker.js: Renamed from LayoutTests/crypto/workers/resources/rsa-postMessage-worker.js.
+        * crypto/workers/subtle/rsa-postMessage-worker-expected.txt: Renamed from LayoutTests/crypto/workers/rsa-postMessage-worker-expected.txt.
+        * crypto/workers/subtle/rsa-postMessage-worker.html: Renamed from LayoutTests/crypto/workers/rsa-postMessage-worker.html.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2016-10-06  Antti Koivisto  <antti@apple.com>
 
         Mutating styleSheet in shadow tree doesn't update the style

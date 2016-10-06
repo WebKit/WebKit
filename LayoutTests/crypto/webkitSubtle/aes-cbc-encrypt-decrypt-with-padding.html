@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test AES-CBC encrypt and decrypt functions on a plaintext that is not a multiple of block size in length.");
+
+jsTestIsAsync = true;
+
+var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c");
+var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+var plaintext = asciiToUint8Array("test");
+var extractable = true;
+
+debug("Importing a raw AES key from string literal...");
+crypto.webkitSubtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "decrypt"]).then(function(result) {
+    key = result;
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'AES-CBC'");
+    shouldBe("key.algorithm.length", "128");
+    shouldBe("key.usages", "['decrypt', 'encrypt']");
+
+    debug("Using the key to encrypt plaintext...");
+    return crypto.webkitSubtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext);
+}).then(function(result) {
+    cyphertext = result;
+    shouldBe("bytesToHexString(new Uint8Array(cyphertext))", "'630199c5f202cc7167bb84c6c72b349d'");
+
+    debug("Decrypting it back...");
+    return crypto.webkitSubtle.decrypt({name: "aes-cbc", iv: iv}, key, result);
+}).then(function(result) {
+    decryptionResult = result;
+    shouldBe("new Uint8Array(decryptionResult)", "plaintext");
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

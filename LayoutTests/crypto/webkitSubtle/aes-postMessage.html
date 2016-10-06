@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<script>
+
+description("Test sending crypto keys via postMessage.");
+
+jsTestIsAsync = true;
+
+window.addEventListener("message", function(evt) {
+    key = evt.data;
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'AES-CBC'");
+    shouldBe("key.algorithm.length", "128");
+    shouldBe("key.usages", '["decrypt", "encrypt"]');
+
+    finishJSTest();
+}, false);
+
+crypto.webkitSubtle.importKey("raw", asciiToUint8Array("16 bytes of key!"), {name: "aes-cbc", length: 128}, true, ["encrypt", "decrypt"]).then(function(key) {
+    postMessage(key, "*");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

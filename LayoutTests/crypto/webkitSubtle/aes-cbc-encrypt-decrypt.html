@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test AES-CBC encrypt and decrypt functions.");
+
+jsTestIsAsync = true;
+
+var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c");
+var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");
+var plaintext = hexStringToUint8Array("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710");
+var extractable = true;
+
+debug("Importing a raw AES key from string literal...");
+crypto.webkitSubtle.importKey("raw", keyData, "aes-cbc", extractable, ["encrypt", "decrypt"]).then(function(result) {
+    key = result;
+    shouldBe("key.type", "'secret'");
+    shouldBe("key.extractable", "true");
+    shouldBe("key.algorithm.name", "'AES-CBC'");
+    shouldBe("key.algorithm.length", "128");
+    shouldBe("key.usages", "['decrypt', 'encrypt']");
+
+    debug("Using the key to encrypt plaintext...");
+    return crypto.webkitSubtle.encrypt({name: "aes-cbc", iv: iv}, key, plaintext);
+}).then(function(result) {
+    encryptionResult = result;
+    shouldBe("bytesToHexString(new Uint8Array(encryptionResult))", "'7649abac8119b246cee98e9b12e9197d5086cb9b507219ee95db113a917678b273bed6b8e3c1743b7116e69e222295163ff1caa1681fac09120eca307586e1a78cb82807230e1321d3fae00d18cc2012'");
+
+    debug("Decrypting it back...");
+    return crypto.webkitSubtle.decrypt({name: "aes-cbc", iv: iv}, key, result);
+}).then(function(result) {
+    decryptionResult = result;
+    shouldBe("new Uint8Array(decryptionResult)", "plaintext");
+
+    debug("Testing initialization vector bindings...");
+    shouldThrow("crypto.webkitSubtle.encrypt({name: 'AES-CBC', iv: null}, key, plaintext)");
+    shouldThrow("crypto.webkitSubtle.encrypt({name: 'AES-CBC'}, key, plaintext)");
+    shouldThrow("crypto.webkitSubtle.encrypt({name: 'AES-CBC', iv: 3}, key, plaintext)");
+    shouldThrow("crypto.webkitSubtle.encrypt({name: 'AES-CBC', iv: new Uint8Array([0])}, key, plaintext)");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

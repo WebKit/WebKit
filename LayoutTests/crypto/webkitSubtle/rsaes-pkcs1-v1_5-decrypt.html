@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test decrypting a known message with RSAES-PKCS1-v1_5.");
+
+jsTestIsAsync = true;
+
+var privateKeyJSON = {
+    kty: "RSA",
+    alg: "RSA1_5",
+    n: Base64URL.stringify(hexStringToUint8Array("dcfa10ffa74665aeef870974ea99b2ce54547c67f42aaa6dd01a2ed31fd2c242af5d960b1f896efba3543d6554b7b12687a5c688568f32e026c532d25993b97a7c2842ec2b8e1235eee2414d25806c6fbae438954eba9d2755dffeeb1b47700957815a8a233f97b1a2c714b3e2be2e42d8be30b1961582ea9948910e0c797c50fc4bb455f0fc45e5e34e6396ac5b2d46239365c7f3daaf0909400d61cf9e0ca8083eaf335a6fceb6863c1cc0cf5a171aff35d97ecb60ef251c7ec2c8a588361dc41266a4b7ed38b026ce0d53786449dbb11a06ea33ccf1eca575201ed1aa473ed1187ec1d8a744ea345bed7ea00ee4e81bba4648601dd537dc91015d31f0c2c1")),
+    e: Base64URL.stringify(hexStringToUint8Array("010001")),
+    d: Base64URL.stringify(hexStringToUint8Array("21950851cdf25320318b305afa0f371f07ae5a44b314ebd729f5dcb15da7fa3947acdd915daed574bd16df88bf85f61060b387172fae6e01262b3864c2d3c22f94e04a8159422b4ed279c48a4c9d767d4966071a5bbf5d043e16ff46ec1ba0716f00bbc97bff5d5693e214e99c9721f12b3ec6282ae2a485721b96ddcf7403fa037d0c57ab463c448de5cc12265add886d311ea8d8a5903fa56c5f1c9cf2eb11cb657a1a7d3e41352dc3e686898c4ce4305e8b638e1b08a2a86cc9eb9866f3499ac77b6136b81cb276d614cfeb7b6ed3f3bc775e46c00066ebeee2cff7166b57520598947ff6210320b288fb4f2c3f8fe97b279414ebf7203000a19fc0424875")),
+    p: Base64URL.stringify(hexStringToUint8Array("f123bfe53de97a569d91adcf556fa625ad30f3fd3d811f9e91e6af44b6e780cb0f327829fb21190ae2806646d728cd9b6531132b1ebfef1272993060f1ce70b124393091ee8593b727367edbba009ec5be17c4acee120c841267d47631a16c36a6d1c99973c1b0b5a835bf39feafe8f6421fd9c2a90bc27976659e67bc83124d")),
+    q: Base64URL.stringify(hexStringToUint8Array("ea9839b7e37ea89bbda27e4c93471cb4fd92189a0a96bcb4d75693f18a5c2f742af9e36fde679fbd9eae345fa269527b6965021c4bdf54d685bf08960cc976f68dca21cebf44f268a59dab8d1a25e519f5147e1f45fe287d74cf725bec1326d34212c56cf4fffa202f57b68ee8cca943f3c138c4cde33bdf2c9440df65322445")),
+    dp: Base64URL.stringify(hexStringToUint8Array("ca0c9b60b8e4a6066756c65d2088419df6253b7b688a85f4f6e964d85dad52a45262867f1e9618069fccd865e9289e46e39e2022944c5c4487d345cf252d460d977d77edfefedbcbae46a23af7fa470f077da0e50942044cb1a360497cc2760ac0f2ad4a2fcd0e84d7a1d94dfdd2658fd9ce18475c1fa75ee0cebad0cf0ac04d")),
+    dq: Base64URL.stringify(hexStringToUint8Array("528171233c4e4a6c63b86764f51338846afddbcb2958344c01c4004a1dd828145a1d02a1507def4f58247a64fc10c0a288c1ae895721d78b8f044db7c00d86da55a9b654292ecd768270be69e4bd5922d4effd1f70955f9627e3e19b749e93b40ef3dd1d61d93915e2b09d930b4b1768bfacc0136f39b0cfdfb4d050011e2e65")),
+    qi: Base64URL.stringify(hexStringToUint8Array("df2eb2322cc2daabf4d1465508f41521cda7ceff23ebe61d00d441ee728dda5d16c7bf920cd95f34beb4fe32ee817ef3362e0bcd1d1245f7b07793eaa190dc5a37fdaf4c68e2ca13972d7f5148b796b6fb6d7adda07bd2cd13be98cebed1edc6ca412e395350c59a1d842bc4aa2f3c0b243fde7dfd95356f2439251a1172c45e"))
+};
+
+var extractable = true;
+var nonExtractable = false;
+
+debug("Importing an RSA key...");
+crypto.webkitSubtle.importKey("jwk", asciiToUint8Array(JSON.stringify(privateKeyJSON)), null, extractable, ["decrypt"]).then(function(result) {
+    privateKey = result;
+
+    debug("Decrypting...");
+    encryptedMessage = hexStringToUint8Array("6042e745589af03af87520f93c45d8c35985ada1161a37d822e9f9460fc75fcf0179d8491b8f5d1e4de8ceb31e07c4865c5a3efdbbb69a8803b89ee65a430a5809c707569150b580bb686a94c5541c46adcd827960ce244ff688387d1616e85b4d1780c6483606cf924b54f080cf4154e66829bf6e532481048ec41fadc07d755bb34bb28145219cb30d47d0d618709180e90303ff9ef09018bed3da75761da794811f96bc9e8d7c4ba1b5946bda0bd313faec4c993ed2748eed8cce4bdb520ba7db165f9fe56aa8454d6ff33874feeebf29de2df5b7f00aa1d9fb073fc4067b58dc50624e127f711dde2cc2cfdab4919ccf28c83660dfc227b0f500ec1f904f");
+    return crypto.webkitSubtle.decrypt("RSAES-PKCS1-v1_5", privateKey, encryptedMessage);
+}).then(function(result) {
+    message = result;
+    shouldBe("bytesToHexString(new Uint8Array(message))", "'2aacec86f423dd925ec158822a748cbe6c31a0'");
+
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

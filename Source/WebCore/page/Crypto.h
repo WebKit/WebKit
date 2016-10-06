@@ -45,6 +45,7 @@ typedef int ExceptionCode;
 
 class Document;
 class WebKitSubtleCrypto;
+class SubtleCrypto;
 
 class Crypto : public ContextDestructionObserver, public RefCounted<Crypto> {
 public:
@@ -54,6 +55,9 @@ public:
     void getRandomValues(JSC::ArrayBufferView*, ExceptionCode&);
 
 #if ENABLE(SUBTLE_CRYPTO)
+    SubtleCrypto& subtle();
+
+    // Will be deprecated.
     WebKitSubtleCrypto* webkitSubtle(ExceptionCode&);
 #endif
 
@@ -61,6 +65,9 @@ private:
     Crypto(ScriptExecutionContext&);
 
 #if ENABLE(SUBTLE_CRYPTO)
+    Ref<SubtleCrypto> m_subtle;
+
+    // Will be deprecated.
     RefPtr<WebKitSubtleCrypto> m_webkitSubtle;
 #endif
 };

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test crypto.webkitSubtle.digest.");
+
+jsTestIsAsync = true;
+
+Promise.resolve(null).then(function() {
+    debug("SHA384 of []");
+    return crypto.webkitSubtle.digest('sha-384', new Uint8Array([]));
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b'");
+
+    debug("SHA384 of [0x0]")
+    return crypto.webkitSubtle.digest({name: 'sha-384'}, new Uint8Array([0]));
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'bec021b4f368e3069134e012c2b4307083d3a9bdd206e24e5f0d86e13d6636655933ec2b413465966817a9c208a11717'");
+
+    debug("SHA384 of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+    var data = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    return crypto.webkitSubtle.digest({name: 'sha-384'}, data);
+}).then(function(result) {
+    digest = result;
+    shouldBe("bytesToHexString(new Uint8Array(digest))", "'89bfcf569ae4af718510da78c67414109f5739bb5c40d51c9c8c50e2b2cee86f2f80c8b9d68f7c01201a0714572fe602'");
+    finishJSTest();
+});
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

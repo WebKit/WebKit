@@ -1,3 +1,99 @@
+2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a dummy SubtleCrypto interface
+        https://bugs.webkit.org/show_bug.cgi?id=162992
+        <rdar://problem/28643573>
+
+        Reviewed by Brent Fulgham.
+
+        Add a dummy SubtleCrypto interface and rename KeyPair to CryptoKeyPair.
+
+        Tests: crypto/subtle/gc-2.html
+               crypto/subtle/gc-3.html
+               crypto/subtle/gc.html
+               crypto/webkitSubtle/aes-cbc-192-encrypt-decrypt.html
+               crypto/webkitSubtle/aes-cbc-256-encrypt-decrypt.html
+               crypto/webkitSubtle/aes-cbc-encrypt-decrypt-with-padding.html
+               crypto/webkitSubtle/aes-cbc-encrypt-decrypt.html
+               crypto/webkitSubtle/aes-cbc-generate-key.html
+               crypto/webkitSubtle/aes-cbc-import-jwk.html
+               crypto/webkitSubtle/aes-cbc-invalid-length.html
+               crypto/webkitSubtle/aes-cbc-unwrap-failure.html
+               crypto/webkitSubtle/aes-cbc-unwrap-rsa.html
+               crypto/webkitSubtle/aes-cbc-wrap-rsa-non-extractable.html
+               crypto/webkitSubtle/aes-cbc-wrap-rsa.html
+               crypto/webkitSubtle/aes-cbc-wrong-key-class.html
+               crypto/webkitSubtle/aes-export-key.html
+               crypto/webkitSubtle/aes-kw-key-manipulation.html
+               crypto/webkitSubtle/aes-kw-wrap-unwrap-aes.html
+               crypto/webkitSubtle/aes-postMessage.html
+               crypto/webkitSubtle/argument-conversion.html
+               crypto/webkitSubtle/array-buffer-view-offset.html
+               crypto/webkitSubtle/crypto-key-algorithm-gc.html
+               crypto/webkitSubtle/crypto-key-usages-gc.html
+               crypto/webkitSubtle/hmac-check-algorithm.html
+               crypto/webkitSubtle/hmac-export-key.html
+               crypto/webkitSubtle/hmac-generate-key.html
+               crypto/webkitSubtle/hmac-import-jwk.html
+               crypto/webkitSubtle/hmac-postMessage.html
+               crypto/webkitSubtle/hmac-sign-verify-empty-key.html
+               crypto/webkitSubtle/hmac-sign-verify.html
+               crypto/webkitSubtle/import-jwk.html
+               crypto/webkitSubtle/jwk-export-use-values.html
+               crypto/webkitSubtle/jwk-import-use-values.html
+               crypto/webkitSubtle/rsa-export-generated-keys.html
+               crypto/webkitSubtle/rsa-export-key.html
+               crypto/webkitSubtle/rsa-export-private-key.html
+               crypto/webkitSubtle/rsa-indexeddb-non-exportable-private.html
+               crypto/webkitSubtle/rsa-indexeddb-non-exportable.html
+               crypto/webkitSubtle/rsa-indexeddb-private.html
+               crypto/webkitSubtle/rsa-indexeddb.html
+               crypto/webkitSubtle/rsa-oaep-generate-non-extractable-key.html
+               crypto/webkitSubtle/rsa-oaep-key-manipulation.html
+               crypto/webkitSubtle/rsa-oaep-plaintext-length.html
+               crypto/webkitSubtle/rsa-oaep-wrap-unwrap-aes.html
+               crypto/webkitSubtle/rsa-postMessage.html
+               crypto/webkitSubtle/rsaes-pkcs1-v1_5-decrypt.html
+               crypto/webkitSubtle/rsaes-pkcs1-v1_5-wrap-unwrap-aes.html
+               crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key-with-leading-zeroes-in-exponent.html
+               crypto/webkitSubtle/rsassa-pkcs1-v1_5-generate-key.html
+               crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk-small-key.html
+               crypto/webkitSubtle/rsassa-pkcs1-v1_5-import-jwk.html
+               crypto/webkitSubtle/rsassa-pkcs1-v1_5-sign-verify.html
+               crypto/webkitSubtle/sha-1.html
+               crypto/webkitSubtle/sha-224.html
+               crypto/webkitSubtle/sha-256.html
+               crypto/webkitSubtle/sha-384.html
+               crypto/webkitSubtle/sha-512.html
+               crypto/webkitSubtle/unimplemented-unwrap-crash.html
+               crypto/webkitSubtle/unwrapKey-check-usage.html
+               crypto/webkitSubtle/wrapKey-check-usage.html
+               crypto/workers/subtle/aes-postMessage-worker.html
+               crypto/workers/subtle/gc-worker.html
+               crypto/workers/subtle/hmac-postMessage-worker.html
+               crypto/workers/subtle/hrsa-postMessage-worker.html
+               crypto/workers/subtle/multiple-postMessage-worker.html
+               crypto/workers/subtle/rsa-postMessage-worker.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * crypto/CryptoKeyPair.idl:
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::SubtleCrypto):
+        * crypto/SubtleCrypto.h:
+        (WebCore::SubtleCrypto::create):
+        * crypto/SubtleCrypto.idl: Added.
+        * page/Crypto.cpp:
+        (WebCore::Crypto::Crypto):
+        (WebCore::Crypto::subtle):
+        * page/Crypto.h:
+        * page/Crypto.idl:
+
 2016-10-06  Anders Carlsson  <andersca@apple.com>
 
         Crash when ApplePaySession.completeMerchantValidation is not passed a dictionary
