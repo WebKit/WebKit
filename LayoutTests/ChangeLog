@@ -1,3 +1,25 @@
+2016-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import v1 custom elements tests from W3C
+        https://bugs.webkit.org/show_bug.cgi?id=162987
+
+        Reviewed by Chris Dumez.
+
+        Removed custom elements tests that have been upstreamed to and reimported from web-platform-tests.
+
+        * fast/custom-elements/CustomElementRegistry-expected.txt: Removed.
+        * fast/custom-elements/CustomElementRegistry.html: Removed.
+        * fast/custom-elements/HTMLElement-constructor-expected.txt: Removed.
+        * fast/custom-elements/HTMLElement-constructor.html: Removed.
+        * fast/custom-elements/adopted-callback-expected.txt: Removed.
+        * fast/custom-elements/adopted-callback.html: Removed.
+        * fast/custom-elements/attribute-changed-callback-expected.txt: Removed.
+        * fast/custom-elements/attribute-changed-callback.html: Removed.
+        * fast/custom-elements/connected-callbacks-expected.txt: Removed.
+        * fast/custom-elements/connected-callbacks.html: Removed.
+        * fast/custom-elements/disconnected-callbacks-expected.txt: Removed.
+        * fast/custom-elements/disconnected-callbacks.html: Removed.
+
 2016-10-05  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         [INTL] Implement Intl.getCanonicalLocales

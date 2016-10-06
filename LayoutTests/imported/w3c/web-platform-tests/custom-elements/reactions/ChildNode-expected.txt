@@ -1,0 +1,9 @@
+
+FAIL before on ChildNode must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL before on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+FAIL after on ChildNode must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL after on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+FAIL replaceWith on ChildNode must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL replaceWith on ChildNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+FAIL replaceWith on ChildNode must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
+

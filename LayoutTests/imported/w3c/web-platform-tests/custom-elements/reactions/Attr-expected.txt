@@ -1,0 +1,4 @@
+
+FAIL value on Attr must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 1 got 0
+PASS value on Attr must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
+

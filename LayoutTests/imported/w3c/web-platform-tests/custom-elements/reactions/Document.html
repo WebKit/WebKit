@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: CEReactions on ParentNode interface</title>
+<meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
+<meta name="assert" content="importNode and adoptNode of Document interface must have CEReactions">
+<meta name="help" content="https://dom.spec.whatwg.org/#document">
+<script src="../../../../../resources/testharness.js"></script>
+<script src="../../../../../resources/testharnessreport.js"></script>
+<script src="./resources/reactions.js"></script>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+test(function () {
+    var element = defineNewCustomElement();
+    var instance = document.createElement(element.name);
+    assert_array_equals(element.log().types(), ['constructed']);
+
+    var newDoc = document.implementation.createHTMLDocument();
+    newDoc.importNode(instance);
+
+    var logEntries = element.log();
+    assert_array_equals(logEntries.types(), ['constructed']);
+    assert_equals(logEntries.log().oldDocument, document);
+    assert_equals(logEntries.log().newDocument, newDoc);
+}, 'importNode on Document must construct a new custom element when importing a custom element');
+
+test(function () {
+    var element = defineNewCustomElement();
+    var instance = document.createElement(element.name);
+    assert_array_equals(element.log().types(), ['constructed']);
+
+    var newDoc = document.implementation.createHTMLDocument();
+    newDoc.adoptNode(instance);
+
+    var logEntries = element.log();
+    assert_array_equals(logEntries.types(), ['adopted']);
+    assert_equals(logEntries.log().oldDocument, document);
+    assert_equals(logEntries.log().newDocument, newDoc);
+}, 'adoptNode on Document must enqueue an adopted reaction when importing a custom element');
+
+</script>
+</body>
+</html>

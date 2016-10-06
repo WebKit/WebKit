@@ -1,0 +1,6 @@
+
+FAIL prepend on ParentNode must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL prepend on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+FAIL append on ParentNode must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL append on ParentNode must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+

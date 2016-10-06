@@ -1,3 +1,61 @@
+2016-10-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import v1 custom elements tests from W3C
+        https://bugs.webkit.org/show_bug.cgi?id=162987
+
+        Reviewed by Chris Dumez.
+
+        Import tests in https://github.com/w3c/web-platform-tests/tree/master/custom-elements except v1 tests
+        as of eae188126a21a593715ba2626cc059144d6f0978.
+
+        * web-platform-tests/custom-elements/CustomElementRegistry-expected.txt: Added.
+        * web-platform-tests/custom-elements/CustomElementRegistry.html: Added.
+        * web-platform-tests/custom-elements/HTMLElement-constructor-expected.txt: Added.
+        * web-platform-tests/custom-elements/HTMLElement-constructor.html: Added.
+        * web-platform-tests/custom-elements/OWNERS: Added.
+        * web-platform-tests/custom-elements/adopted-callback-expected.txt: Added.
+        * web-platform-tests/custom-elements/adopted-callback.html: Added.
+        * web-platform-tests/custom-elements/attribute-changed-callback-expected.txt: Added.
+        * web-platform-tests/custom-elements/attribute-changed-callback.html: Added.
+        * web-platform-tests/custom-elements/connected-callbacks-expected.txt: Added.
+        * web-platform-tests/custom-elements/connected-callbacks.html: Added.
+        * web-platform-tests/custom-elements/custom-element-registry/define-expected.txt: Added.
+        * web-platform-tests/custom-elements/custom-element-registry/define.html: Added.
+        * web-platform-tests/custom-elements/custom-element-registry/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/disconnected-callbacks-expected.txt: Added.
+        * web-platform-tests/custom-elements/disconnected-callbacks.html: Added.
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget-expected.txt: Added.
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget.html: Added.
+        * web-platform-tests/custom-elements/htmlconstructor/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/reaction-timing-expected.txt: Added.
+        * web-platform-tests/custom-elements/reaction-timing.html: Added.
+        * web-platform-tests/custom-elements/reactions/Attr-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Attr.html: Added.
+        * web-platform-tests/custom-elements/reactions/ChildNode-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/ChildNode.html: Added.
+        * web-platform-tests/custom-elements/reactions/DOMTokenList-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/DOMTokenList.html: Added.
+        * web-platform-tests/custom-elements/reactions/Document-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Document.html: Added.
+        * web-platform-tests/custom-elements/reactions/Element-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Element.html: Added.
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap.html: Added.
+        * web-platform-tests/custom-elements/reactions/Node-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Node.html: Added.
+        * web-platform-tests/custom-elements/reactions/ParentNode-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/ParentNode.html: Added.
+        * web-platform-tests/custom-elements/reactions/Range-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Range.html: Added.
+        * web-platform-tests/custom-elements/reactions/resources/reactions.js: Added.
+        * web-platform-tests/custom-elements/reactions/resources/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/reactions/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js: Added.
+        * web-platform-tests/custom-elements/resources/document-types.js: Added.
+        * web-platform-tests/custom-elements/resources/empty-html-document.html: Added.
+        * web-platform-tests/custom-elements/resources/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/w3c-import.log: Added.
+
 2016-10-04  Chris Dumez  <cdumez@apple.com>
 
         Implement KeyboardEvent.code from the UI Event spec
