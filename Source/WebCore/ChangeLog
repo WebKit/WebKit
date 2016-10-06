@@ -1,3 +1,82 @@
+2016-10-06  Antti Koivisto  <antti@apple.com>
+
+        Mutating styleSheet in shadow tree doesn't update the style
+        https://bugs.webkit.org/show_bug.cgi?id=162744
+        <rdar://problem/28550588>
+
+        Reviewed by Ryosuke Niwa.
+
+        We weren't always invalidating the right AuthorStyleSheets (to be renamed) instance
+        for the scope after mutations.
+
+        Test: fast/shadow-dom/mutating-stylesheet-in-shadow-tree.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::didMutate):
+        (WebCore::CSSStyleSheet::clearOwnerNode):
+        (WebCore::CSSStyleSheet::rootStyleSheet):
+        (WebCore::CSSStyleSheet::ownerDocument):
+        (WebCore::CSSStyleSheet::styleSheetScope):
+
+            Invalidate the right scope after stylesheet mutations.
+
+        * css/CSSStyleSheet.h:
+        * dom/AuthorStyleSheets.cpp:
+        (WebCore::AuthorStyleSheets::styleResolver):
+        (WebCore::AuthorStyleSheets::styleResolverIfExists):
+
+            Take care to update the right style resolver.
+
+        (WebCore::AuthorStyleSheets::forNode):
+        (WebCore::AuthorStyleSheets::removeStyleSheetCandidateNode):
+
+            Start the update timer so clients don't need to request update separately.
+
+        (WebCore::AuthorStyleSheets::analyzeStyleSheetChange):
+        (WebCore::AuthorStyleSheets::updateActiveStyleSheets):
+        (WebCore::AuthorStyleSheets::updateStyleResolver):
+        * dom/AuthorStyleSheets.h:
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::insertedIntoDocument):
+
+            Save the scope we were inserted into so removals can be done reliably.
+
+        (WebCore::InlineStyleSheetOwner::removedFromDocument):
+
+            Use and clear the saved scope.
+            Remove didChangeCandidatesForActiveSet() as it is now done by removeStyleSheetCandidateNode() call.
+
+        (WebCore::InlineStyleSheetOwner::clearDocumentData):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::sheetLoaded):
+        (WebCore::InlineStyleSheetOwner::startLoadingDynamicSheet):
+        (WebCore::authorStyleSheetsForElement): Deleted.
+        * dom/InlineStyleSheetOwner.h:
+        (WebCore::InlineStyleSheetOwner::styleSheetScope):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::styleResolverIfExists):
+        * dom/ShadowRoot.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::removedFrom):
+
+            Remove didChangeCandidatesForActiveSet() as it is now done by removeStyleSheetCandidateNode() call.
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::~HTMLStyleElement):
+        (WebCore::HTMLStyleElement::parseAttribute):
+
+            Fix a bug where we wouldn't create stylesheet if a style element was activated by removing a media attribute.
+
+        (WebCore::HTMLStyleElement::insertedInto):
+        (WebCore::HTMLStyleElement::removedFrom):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::~SVGStyleElement):
+        (WebCore::SVGStyleElement::insertedInto):
+        (WebCore::SVGStyleElement::removedFrom):
+
 2016-10-06  Alex Christensen  <achristensen@webkit.org>
 
         Skip tabs and newlines between end of query and beginning of fragment in non-UTF-8-encoded URLs

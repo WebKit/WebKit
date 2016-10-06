@@ -63,8 +63,9 @@ public:
     using TreeScope::rootNode;
 
     StyleResolver& styleResolver();
+    StyleResolver* styleResolverIfExists();
     AuthorStyleSheets& authorStyleSheets();
-    
+
     void updateStyle();
     void resetStyleResolver();
 

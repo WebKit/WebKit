@@ -94,6 +94,14 @@ StyleResolver& ShadowRoot::styleResolver()
     return *m_styleResolver;
 }
 
+StyleResolver* ShadowRoot::styleResolverIfExists()
+{
+    if (m_type == Mode::UserAgent)
+        return &document().userAgentShadowTreeStyleResolver();
+
+    return m_styleResolver.get();
+}
+
 void ShadowRoot::resetStyleResolver()
 {
     m_styleResolver = nullptr;

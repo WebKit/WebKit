@@ -49,41 +49,35 @@ InlineStyleSheetOwner::~InlineStyleSheetOwner()
         clearSheet();
 }
 
-static AuthorStyleSheets& authorStyleSheetsForElement(Element& element)
+void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 {
-    auto* shadowRoot = element.containingShadowRoot();
-    return shadowRoot ? shadowRoot->authorStyleSheets() : element.document().authorStyleSheets();
-}
-
-void InlineStyleSheetOwner::insertedIntoDocument(Document&, Element& element)
-{
-    authorStyleSheetsForElement(element).addStyleSheetCandidateNode(element, m_isParsingChildren);
+    m_styleSheetScope = &AuthorStyleSheets::forNode(element);
+    m_styleSheetScope->addStyleSheetCandidateNode(element, m_isParsingChildren);
 
     if (m_isParsingChildren)
         return;
     createSheetFromTextContents(element);
 }
 
-void InlineStyleSheetOwner::removedFromDocument(Document& document, Element& element)
+void InlineStyleSheetOwner::removedFromDocument(Element& element)
 {
-    authorStyleSheetsForElement(element).removeStyleSheetCandidateNode(element);
-
+    if (m_styleSheetScope) {
+        m_styleSheetScope->removeStyleSheetCandidateNode(element);
+        m_styleSheetScope = nullptr;
+    }
     if (m_sheet)
         clearSheet();
-
-    // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
-    if (document.hasLivingRenderTree())
-        document.authorStyleSheets().didChangeContentsOrInterpretation();
 }
 
-void InlineStyleSheetOwner::clearDocumentData(Document&, Element& element)
+void InlineStyleSheetOwner::clearDocumentData(Element& element)
 {
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
-    if (!element.inDocument())
-        return;
-    authorStyleSheetsForElement(element).removeStyleSheetCandidateNode(element);
+    if (m_styleSheetScope) {
+        m_styleSheetScope->removeStyleSheetCandidateNode(element);
+        m_styleSheetScope = nullptr;
+    }
 }
 
 void InlineStyleSheetOwner::childrenChanged(Element& element)
@@ -130,8 +124,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     ASSERT(element.inDocument());
     Document& document = element.document();
     if (m_sheet) {
-        if (m_sheet->isLoading())
-            document.authorStyleSheets().removePendingSheet();
+        if (m_sheet->isLoading() && m_styleSheetScope)
+            m_styleSheetScope->removePendingSheet();
         clearSheet();
     }
 
@@ -155,7 +149,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (!screenEval.evaluate(*mediaQueries) && !printEval.evaluate(*mediaQueries))
         return;
 
-    authorStyleSheetsForElement(element).addPendingSheet();
+    if (m_styleSheetScope)
+        m_styleSheetScope->addPendingSheet();
 
     m_loading = true;
 
@@ -177,18 +172,21 @@ bool InlineStyleSheetOwner::isLoading() const
     return m_sheet && m_sheet->isLoading();
 }
 
-bool InlineStyleSheetOwner::sheetLoaded(Element& element)
+bool InlineStyleSheetOwner::sheetLoaded(Element&)
 {
     if (isLoading())
         return false;
 
-    authorStyleSheetsForElement(element).removePendingSheet();
+    if (m_styleSheetScope)
+        m_styleSheetScope->removePendingSheet();
+
     return true;
 }
 
-void InlineStyleSheetOwner::startLoadingDynamicSheet(Element& element)
+void InlineStyleSheetOwner::startLoadingDynamicSheet(Element&)
 {
-    authorStyleSheetsForElement(element).addPendingSheet();
+    if (m_styleSheetScope)
+        m_styleSheetScope->addPendingSheet();
 }
 
 }

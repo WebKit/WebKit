@@ -42,6 +42,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class Document;
 class Node;
+class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
@@ -86,6 +87,11 @@ public:
 
     bool hasPendingUpdate() const { return !!m_pendingUpdateType; }
     void flushPendingUpdate();
+
+    StyleResolver& styleResolver();
+    StyleResolver* styleResolverIfExists();
+
+    static AuthorStyleSheets& forNode(Node&);
 
 private:
     enum class UpdateType { ActiveSet, ContentsOrInterpretation };

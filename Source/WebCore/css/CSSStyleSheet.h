@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class AuthorStyleSheets;
 class CSSCharsetRule;
 class CSSImportRule;
 class CSSParser;
@@ -82,7 +83,12 @@ public:
     bool isLoading() const final;
     
     void clearOwnerRule() { m_ownerRule = 0; }
+
     Document* ownerDocument() const;
+    CSSStyleSheet& rootStyleSheet();
+    const CSSStyleSheet& rootStyleSheet() const;
+    AuthorStyleSheets* styleSheetScope();
+
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
     void setMediaQueries(Ref<MediaQuerySet>&&);
     void setTitle(const String& title) { m_title = title; }

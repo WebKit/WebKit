@@ -41,6 +41,7 @@
 #include "SVGNames.h"
 #include "SVGStyleElement.h"
 #include "SecurityOrigin.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
@@ -169,40 +170,36 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
 
-    Document* owner = ownerDocument();
-    if (!owner)
+    auto* scope = styleSheetScope();
+    if (!scope)
         return;
 
-    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !owner->authorStyleSheets().activeStyleSheetsContains(this)) {
+    if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !scope->activeStyleSheetsContains(this)) {
         if (insertedKeyframesRule) {
-            if (StyleResolver* resolver = owner->styleResolverIfExists())
+            if (auto* resolver = scope->styleResolverIfExists())
                 resolver->addKeyframeStyle(*insertedKeyframesRule);
             return;
         }
-        owner->authorStyleSheets().scheduleActiveSetUpdate();
+        scope->scheduleActiveSetUpdate();
         return;
     }
 
-    owner->authorStyleSheets().didChangeContentsOrInterpretation();
+    scope->didChangeContentsOrInterpretation();
 
     m_mutatedRules = true;
 }
 
 void CSSStyleSheet::didMutate()
 {
-    Document* owner = ownerDocument();
-    if (!owner)
+    auto* scope = styleSheetScope();
+    if (!scope)
         return;
-    owner->authorStyleSheets().didChangeContentsOrInterpretation();
+    scope->didChangeContentsOrInterpretation();
 }
 
 void CSSStyleSheet::clearOwnerNode()
 {
-    Document* owner = ownerDocument();
-    m_ownerNode = 0;
-    if (!owner)
-        return;
-    owner->authorStyleSheets().didChangeCandidatesForActiveSet();
+    m_ownerNode = nullptr;
 }
 
 void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
@@ -399,12 +396,31 @@ CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : nullptr;
 }
 
-Document* CSSStyleSheet::ownerDocument() const
+CSSStyleSheet& CSSStyleSheet::rootStyleSheet()
 {
-    const CSSStyleSheet* root = this;
+    auto* root = this;
     while (root->parentStyleSheet())
         root = root->parentStyleSheet();
-    return root->ownerNode() ? &root->ownerNode()->document() : nullptr;
+    return *root;
+}
+
+const CSSStyleSheet& CSSStyleSheet::rootStyleSheet() const
+{
+    return const_cast<CSSStyleSheet&>(*this).rootStyleSheet();
+}
+
+Document* CSSStyleSheet::ownerDocument() const
+{
+    auto& root = rootStyleSheet();
+    return root.ownerNode() ? &root.ownerNode()->document() : nullptr;
+}
+
+AuthorStyleSheets* CSSStyleSheet::styleSheetScope()
+{
+    auto* ownerNode = rootStyleSheet().ownerNode();
+    if (!ownerNode)
+        return nullptr;
+    return &AuthorStyleSheets::forNode(*ownerNode);
 }
 
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()

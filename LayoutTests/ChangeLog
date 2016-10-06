@@ -1,3 +1,14 @@
+2016-10-06  Antti Koivisto  <antti@apple.com>
+
+        Mutating styleSheet in shadow tree doesn't update the style
+        https://bugs.webkit.org/show_bug.cgi?id=162744
+        <rdar://problem/28550588>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/shadow-dom/mutating-stylesheet-in-shadow-tree-expected.html: Added.
+        * fast/shadow-dom/mutating-stylesheet-in-shadow-tree.html: Added.
+
 2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for the iceconnectionstatechange event in MediaEndpointPeerConnection

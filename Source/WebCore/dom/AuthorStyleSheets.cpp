@@ -69,6 +69,31 @@ AuthorStyleSheets::AuthorStyleSheets(ShadowRoot& shadowRoot)
 {
 }
 
+StyleResolver& AuthorStyleSheets::styleResolver()
+{
+    if (m_shadowRoot)
+        return m_shadowRoot->styleResolver();
+
+    return m_document.ensureStyleResolver();
+}
+
+StyleResolver* AuthorStyleSheets::styleResolverIfExists()
+{
+    if (m_shadowRoot)
+        return m_shadowRoot->styleResolverIfExists();
+
+    return m_document.styleResolverIfExists();
+}
+
+AuthorStyleSheets& AuthorStyleSheets::forNode(Node& node)
+{
+    ASSERT(node.inDocument());
+    auto* shadowRoot = node.containingShadowRoot();
+    if (shadowRoot)
+        return shadowRoot->authorStyleSheets();
+    return node.document().authorStyleSheets();
+}
+
 // This method is called whenever a top-level stylesheet has finished loading.
 void AuthorStyleSheets::removePendingSheet(RemovePendingSheetNotificationType notification)
 {
@@ -133,7 +158,8 @@ void AuthorStyleSheets::addStyleSheetCandidateNode(Node& node, bool createdByPar
 
 void AuthorStyleSheets::removeStyleSheetCandidateNode(Node& node)
 {
-    m_styleSheetCandidateNodes.remove(&node);
+    if (m_styleSheetCandidateNodes.remove(&node))
+        scheduleActiveSetUpdate();
 }
 
 void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
@@ -220,10 +246,10 @@ AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetC
     
     unsigned newStylesheetCount = newStylesheets.size();
 
-    if (!m_document.styleResolverIfExists())
+    if (!styleResolverIfExists())
         return Reconstruct;
 
-    StyleResolver& styleResolver = *m_document.styleResolverIfExists();
+    StyleResolver& styleResolver = *styleResolverIfExists();
 
     // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_activeStyleSheets.size();
@@ -306,6 +332,10 @@ void AuthorStyleSheets::updateActiveStyleSheets(UpdateType updateType)
         return;
     }
 
+    // FIXME: Support optimized invalidation in shadow trees.
+    if (m_shadowRoot)
+        updateType = UpdateType::ContentsOrInterpretation;
+
     m_didUpdateActiveStyleSheets = true;
 
     Vector<RefPtr<StyleSheet>> activeStyleSheets;
@@ -352,8 +382,7 @@ void AuthorStyleSheets::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activ
             m_document.clearStyleResolver();
         return;
     }
-    auto& styleResolver = m_document.ensureStyleResolver();
-    auto& userAgentShadowTreeStyleResolver = m_document.userAgentShadowTreeStyleResolver();
+    auto& styleResolver = this->styleResolver();
 
     if (updateType == Reset) {
         styleResolver.ruleSets().resetAuthorStyle();
@@ -366,10 +395,13 @@ void AuthorStyleSheets::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activ
         styleResolver.appendAuthorStyleSheets(newStyleSheets);
     }
 
-    userAgentShadowTreeStyleResolver.ruleSets().resetAuthorStyle();
-    auto& authorRuleSet = styleResolver.ruleSets().authorStyle();
-    if (authorRuleSet.hasShadowPseudoElementRules())
-        userAgentShadowTreeStyleResolver.ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(authorRuleSet);
+    if (!m_shadowRoot) {
+        auto& userAgentShadowTreeStyleResolver = m_document.userAgentShadowTreeStyleResolver();
+        userAgentShadowTreeStyleResolver.ruleSets().resetAuthorStyle();
+        auto& authorRuleSet = styleResolver.ruleSets().authorStyle();
+        if (authorRuleSet.hasShadowPseudoElementRules())
+            userAgentShadowTreeStyleResolver.ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(authorRuleSet);
+    }
 }
 
 const Vector<RefPtr<CSSStyleSheet>> AuthorStyleSheets::activeStyleSheetsForInspector() const
@@ -422,6 +454,11 @@ void AuthorStyleSheets::clearPendingUpdate()
 
 void AuthorStyleSheets::scheduleActiveSetUpdate()
 {
+    if (m_shadowRoot) {
+        // FIXME: We need to flush updates recursively to support asynchronous updates in shadow trees.
+        didChangeCandidatesForActiveSet();
+        return;
+    }
     if (m_pendingUpdateTimer.isActive())
         return;
     if (!m_pendingUpdateType)

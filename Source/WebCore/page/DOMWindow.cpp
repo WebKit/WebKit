@@ -27,6 +27,7 @@
 #include "config.h"
 #include "DOMWindow.h"
 
+#include "AuthorStyleSheets.h"
 #include "BackForwardController.h"
 #include "BarProp.h"
 #include "BeforeUnloadEvent.h"
@@ -1430,6 +1431,8 @@ RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String
     CSSSelector::PseudoElementType pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substringSharingImpl(colonStart));
     if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
         return nullptr;
+
+    m_frame->document()->authorStyleSheets().flushPendingUpdate();
 
     unsigned rulesToInclude = StyleResolver::AuthorCSSRules;
     if (!authorOnly)
