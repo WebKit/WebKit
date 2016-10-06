@@ -1,3 +1,16 @@
+2016-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Crash when ApplePaySession.completeMerchantValidation is not passed a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=163074
+        rdar://problem/27824842
+
+        Reviewed by Tim Horton.
+
+        Raise a type error on a null initializer object.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::completeMerchantValidation):
+
 2016-10-06  Antti Koivisto  <antti@apple.com>
 
         Mutating styleSheet in shadow tree doesn't update the style

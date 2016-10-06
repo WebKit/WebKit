@@ -843,6 +843,11 @@ void ApplePaySession::completeMerchantValidation(const Dictionary& merchantSessi
         return;
     }
 
+    if (!merchantSessionDictionary.initializerObject()) {
+        ec = TypeError;
+        return;
+    }
+
     auto& document = *downcast<Document>(scriptExecutionContext());
     auto& window = *document.domWindow();
 
