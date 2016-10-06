@@ -48,7 +48,7 @@ public:
     void pull(Promise&&);
     void cancel(JSC::JSValue);
 
-    bool isStarting() const { return !!m_promise; }
+    bool isPulling() const { return !!m_promise; }
 
 protected:
     ReadableStreamDefaultController& controller() { return m_controller.value(); }

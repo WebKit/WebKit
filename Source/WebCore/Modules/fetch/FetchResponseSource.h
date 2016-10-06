@@ -51,6 +51,8 @@ public:
     bool isCancelling() const { return m_isCancelling; }
     bool isReadableStreamLocked() const;
 
+    void resolvePullPromise() { pullFinished(); }
+
 private:
     void doStart() final;
     void doPull() final;

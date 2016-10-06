@@ -1,3 +1,43 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Use ReadableStream pull to transfer binary data to stream when application needs it
+        https://bugs.webkit.org/show_bug.cgi?id=162892
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests.
+
+        Before this patch, FetchResponse was never resolving the start promise.
+        This way, it could enqueue data, error or close the stream whenever desired.
+
+        With this patch, FetchResponse will feed the stream when being asked to.
+        This allows keeping the data in WebCore until the application needs it.
+        This is only implemented for network data.
+        For other data owned by response (blob, text...), data will be enqueued like previously as fast as possible.
+
+        Note that FetchResponse can enqueue/error/close the stream at any time since JSFetchResponse has a reference to the stream.
+        And the stream has a reference to the controller.
+
+        In addition to transfer binary chunks to ReadableStream only when needed, WebCore is now aware of the data
+        stored in the response, which may allow applying backpressure to the network source in the future.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didReceiveData): Enqueuing only if stream is pulling.
+        Otherwise, storing in FetchBodyConsumer. If stream is pulling, we enqueue both buffered data and received chunk.
+        (WebCore::FetchResponse::consumeBodyAsStream): Resolving pull promise if we enqueued some buffered data.
+        (WebCore::FetchResponse::closeStream):
+        (WebCore::FetchResponse::feedStream): If we have some buffered data, we enqueue it. If there is no loader, the stream can be closed.
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponseSource.cpp:
+        (WebCore::FetchResponseSource::doPull):
+        (WebCore::FetchResponseSource::close):
+        (WebCore::FetchResponseSource::error):
+        * Modules/fetch/FetchResponseSource.h:
+        * Modules/streams/ReadableStreamSource.h:
+        (WebCore::ReadableStreamSource::isPulling): Renamed from isStarting.
+        (WebCore::ReadableStreamSource::isStarting): Deleted.
+
 2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for the icecandidate event in MediaEndpointPeerConnection

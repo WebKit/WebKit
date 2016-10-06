@@ -62,7 +62,7 @@ void FetchResponseSource::doStart()
 
 void FetchResponseSource::doPull()
 {
-    ASSERT_NOT_REACHED();
+    m_response.feedStream();
 }
 
 void FetchResponseSource::doCancel()
@@ -73,13 +73,11 @@ void FetchResponseSource::doCancel()
 
 void FetchResponseSource::close()
 {
-    ASSERT(isStarting());
     controller().close();
     clean();
 }
 void FetchResponseSource::error(const String& value)
 {
-    ASSERT(isStarting());
     controller().error(value);
     clean();
 }

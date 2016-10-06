@@ -82,6 +82,7 @@ public:
 #if ENABLE(READABLE_STREAM_API)
     ReadableStreamSource* createReadableStreamSource();
     void consumeBodyAsStream();
+    void feedStream();
     void cancel();
 #endif
     bool isLoading() const { return !!m_bodyLoader; }
@@ -95,6 +96,10 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
+
+#if ENABLE(READABLE_STREAM_API)
+    void closeStream();
+#endif
 
     class BodyLoader final : public FetchLoaderClient {
     public:
