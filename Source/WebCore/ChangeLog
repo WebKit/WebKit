@@ -1,5 +1,19 @@
 2016-10-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [SOUP] HostTLSCertificateSet should not use SHA-1 hashes to compare certificates
+        https://bugs.webkit.org/show_bug.cgi?id=162965
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use SHA-256 instead.
+
+        No new tests, covered by TestSSL.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::HostTLSCertificateSet::computeCertificateHash):
+
+2016-10-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Bump Chrome version in Chrome user agent quirk
         https://bugs.webkit.org/show_bug.cgi?id=162984
 

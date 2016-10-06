@@ -31,6 +31,7 @@
 
 #include "AuthenticationChallenge.h"
 #include "CookieJarSoup.h"
+#include "CryptoDigest.h"
 #include "FileSystem.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
@@ -39,7 +40,6 @@
 #include <libsoup/soup.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/SHA1.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -77,13 +77,11 @@ private:
         if (!certificateData)
             return String();
 
-        SHA1 sha1;
-        sha1.addBytes(certificateData->data, certificateData->len);
+        auto digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_256);
+        digest->addBytes(certificateData->data, certificateData->len);
 
-        SHA1::Digest digest;
-        sha1.computeHash(digest);
-
-        return base64Encode(reinterpret_cast<const char*>(digest.data()), SHA1::hashSize);
+        auto hash = digest->computeHash();
+        return base64Encode(reinterpret_cast<const char*>(hash.data()), hash.size());
     }
 
     HashSet<String> m_certificates;
