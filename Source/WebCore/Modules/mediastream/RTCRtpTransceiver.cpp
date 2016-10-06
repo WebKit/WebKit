@@ -64,6 +64,7 @@ RTCRtpTransceiver::RTCRtpTransceiver(RefPtr<RTCRtpSender>&& sender, RefPtr<RTCRt
     : m_direction(Direction::Sendrecv)
     , m_sender(sender)
     , m_receiver(receiver)
+    , m_iceTransport(RTCIceTransport::create())
 {
 }
 

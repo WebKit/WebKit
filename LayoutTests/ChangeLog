@@ -1,3 +1,18 @@
+2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for the icecandidate event in MediaEndpointPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=162957
+
+        Reviewed by Eric Carlson.
+
+        Dispatch fake ICE candidates from the WebRTC platform mock (MockMediaEndpoint) and
+        inspect the result.
+
+        * fast/mediastream/RTCPeerConnection-icecandidate-event-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-icecandidate-event.html: Added.
+        * platform/mac/TestExpectations:
+        Skip above test until the Mac port builds with WEB_RTC
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         [WK2] 304 revalidation on the network process does not update the validated response

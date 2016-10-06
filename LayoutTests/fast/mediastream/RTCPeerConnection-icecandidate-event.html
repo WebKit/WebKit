@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            let event;
+
+            description("Test RTCPeerConnection 'icecandidate' event and gathering done");
+
+            if (window.testRunner)
+                testRunner.setUserMediaPermission(true);
+            else {
+                debug("This test can not be run without the testRunner");
+                finishJSTest();
+            }
+
+            const pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+
+            pc.onicecandidate = function (evt) {
+                event = evt;
+                if (evt.candidate) {
+                    testPassed("Got candidate");
+                    shouldBeTrue("event.candidate instanceof RTCIceCandidate");
+                    shouldBe("event.candidate.sdpMLineIndex", "0");
+                    shouldBe("event.candidate.sdpMid", "pc.getTransceivers()[0].mid");
+                    testPassed(`event.candidate.candidate: ${event.candidate.candidate}`);
+                } else {
+                    testPassed("Got end of candidates");
+                    shouldBeNull("event.candidate");
+                    finishJSTest();
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia({ "video": true }).then(function (stream) {
+                pc.addTrack(stream.getTracks()[0], stream);
+                return pc.createOffer();
+            })
+            .then(function (offer) {
+                return pc.setLocalDescription(offer);
+            })
+            .then(function () {
+                testPassed("Local description set");
+                window.internals.emulateRTCPeerConnectionPlatformEvent(pc, "dispatch-fake-ice-candidates");
+                testPassed("End of test promise chain");
+            })
+            .catch(function (error) {
+                testFailed("Error in promise chain: " + error);
+                finishJSTest();
+            });
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

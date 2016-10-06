@@ -428,6 +428,11 @@ void RTCPeerConnection::close()
         sender->stop();
 }
 
+void RTCPeerConnection::emulatePlatformEvent(const String& action)
+{
+    m_backend->emulatePlatformEvent(action);
+}
+
 void RTCPeerConnection::stop()
 {
     close();

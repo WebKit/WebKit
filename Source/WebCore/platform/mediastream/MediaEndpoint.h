@@ -48,8 +48,8 @@ class RealtimeMediaSource;
 class MediaEndpointClient {
 public:
     virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
-    virtual void gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&&) = 0;
-    virtual void doneGatheringCandidates(unsigned mdescIndex) = 0;
+    virtual void gotIceCandidate(const String& mid, RefPtr<IceCandidate>&&) = 0;
+    virtual void doneGatheringCandidates(const String& mid) = 0;
 
     virtual ~MediaEndpointClient() { }
 };
@@ -85,6 +85,8 @@ public:
     virtual void replaceSendSource(RealtimeMediaSource&, const String& mid) = 0;
 
     virtual void stop() = 0;
+
+    virtual void emulatePlatformEvent(const String&) { };
 };
 
 } // namespace WebCore

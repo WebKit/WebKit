@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "MediaEndpoint.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -61,8 +62,17 @@ public:
 
     void stop() override;
 
+    void emulatePlatformEvent(const String& action) override;
+
 private:
+    void dispatchFakeIceCandidates();
+    void iceCandidateTimerFired();
+
     MediaEndpointClient& m_client;
+    Vector<String> m_mids;
+
+    Vector<RefPtr<IceCandidate>> m_fakeIceCandidates;
+    Timer m_iceCandidateTimer;
 };
 
 } // namespace WebCore

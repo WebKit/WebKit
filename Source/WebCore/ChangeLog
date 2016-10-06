@@ -1,3 +1,61 @@
+2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for the icecandidate event in MediaEndpointPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=162957
+
+        Reviewed by Eric Carlson.
+
+        Implement MediaEndpointPeerConnection's gotIceCandidate and doneGatheringCandidates
+        callbacks. These are used by the MediaEndpoint (WebRTC backend implementation) to
+        notify about ICE events.
+
+        Add API to Internals to emulate WebRTC platform events, such as dispatching a set of ICE
+        candidates followed by a gathering done indication. Initially, only a single action,
+        "dispatch-fake-ice-candidates", is supported, but the intention is to extend the set of
+        actions to support more test cases.
+
+        Test: fast/mediastream/RTCPeerConnection-icecandidate-event.html
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::emulatePlatformEvent):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        (WebCore::MediaEndpointPeerConnection::doneGatheringCandidates):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCIceTransport.h: Added.
+        RTCIceCandidate will eventually be part of the JS API, but right now it's
+        only used to keep track of the ICE states related to a RTCRtpTranscevier.
+        (WebCore::RTCIceTransport::create):
+        (WebCore::RTCIceTransport::~RTCIceTransport):
+        (WebCore::RTCIceTransport::transportState):
+        (WebCore::RTCIceTransport::setTransportState):
+        (WebCore::RTCIceTransport::gatheringState):
+        (WebCore::RTCIceTransport::setGatheringState):
+        (WebCore::RTCIceTransport::RTCIceTransport):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::emulatePlatformEvent):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        (WebCore::RTCRtpTransceiver::RTCRtpTransceiver):
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::iceTransport):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaEndpoint.h:
+        (WebCore::MediaEndpoint::emulatePlatformEvent):
+        * platform/mediastream/PeerConnectionStates.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::updateReceiveConfiguration):
+        (WebCore::MockMediaEndpoint::emulatePlatformEvent):
+        (WebCore::MockMediaEndpoint::dispatchFakeIceCandidates):
+        (WebCore::MockMediaEndpoint::iceCandidateTimerFired):
+        * platform/mock/MockMediaEndpoint.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::emulateRTCPeerConnectionPlatformEvent):
+        Generic API to signal down to the WebRTC platform mock.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-10-06  Nan Wang  <n_wang@apple.com>
 
         AX:[Mac] Unable to edit text input, textarea fields in iframe using VO naivgation

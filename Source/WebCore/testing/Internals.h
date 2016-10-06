@@ -63,6 +63,7 @@ class NodeList;
 class Page;
 class Range;
 class RenderedDocumentMarker;
+class RTCPeerConnection;
 class SerializedScriptValue;
 class SourceBuffer;
 class TimeRanges;
@@ -368,6 +369,7 @@ public:
 #if ENABLE(WEB_RTC)
     void enableMockMediaEndpoint();
     void enableMockRTCPeerConnectionHandler();
+    void emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection&, const String& action);
 #endif
 
     String getImageSourceURL(Element&);

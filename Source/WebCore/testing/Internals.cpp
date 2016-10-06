@@ -953,6 +953,11 @@ void Internals::enableMockRTCPeerConnectionHandler()
 {
     RTCPeerConnectionHandler::create = RTCPeerConnectionHandlerMock::create;
 }
+
+void Internals::emulateRTCPeerConnectionPlatformEvent(RTCPeerConnection& connection, const String& action)
+{
+    connection.emulatePlatformEvent(action);
+}
 #endif
 
 #if ENABLE(MEDIA_STREAM)

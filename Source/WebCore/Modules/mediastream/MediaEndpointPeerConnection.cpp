@@ -42,6 +42,7 @@
 #include "PeerMediaDescription.h"
 #include "RTCConfiguration.h"
 #include "RTCIceCandidate.h"
+#include "RTCIceCandidateEvent.h"
 #include "RTCOfferAnswerOptions.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCTrackEvent.h"
@@ -755,6 +756,11 @@ void MediaEndpointPeerConnection::markAsNeedingNegotiation()
         m_client->scheduleNegotiationNeededEvent();
 }
 
+void MediaEndpointPeerConnection::emulatePlatformEvent(const String& action)
+{
+    m_mediaEndpoint->emulatePlatformEvent(action);
+}
+
 bool MediaEndpointPeerConnection::localDescriptionTypeValidForState(RTCSessionDescription::SdpType type) const
 {
     switch (m_client->internalSignalingState()) {
@@ -818,23 +824,55 @@ void MediaEndpointPeerConnection::gotDtlsFingerprint(const String& fingerprint, 
     startRunningTasks();
 }
 
-void MediaEndpointPeerConnection::gotIceCandidate(unsigned mdescIndex, RefPtr<IceCandidate>&& candidate)
+void MediaEndpointPeerConnection::gotIceCandidate(const String& mid, RefPtr<IceCandidate>&& candidate)
 {
     ASSERT(isMainThread());
 
-    UNUSED_PARAM(mdescIndex);
-    UNUSED_PARAM(candidate);
+    const MediaDescriptionVector& mediaDescriptions = internalLocalDescription()->configuration()->mediaDescriptions();
+    size_t mediaDescriptionIndex = notFound;
 
-    notImplemented();
+    for (size_t i = 0; i < mediaDescriptions.size(); ++i) {
+        if (mediaDescriptions[i]->mid() == mid) {
+            mediaDescriptionIndex = i;
+            break;
+        }
+    }
+    ASSERT(mediaDescriptionIndex != notFound);
+
+    PeerMediaDescription& mediaDescription = *mediaDescriptions[mediaDescriptionIndex];
+    mediaDescription.addIceCandidate(candidate.copyRef());
+
+    String candidateLine;
+    SDPProcessor::Result result = m_sdpProcessor->generateCandidateLine(*candidate, candidateLine);
+    if (result != SDPProcessor::Result::Success) {
+        LOG_ERROR("SDPProcessor internal error");
+        return;
+    }
+
+    RefPtr<RTCIceCandidate> iceCandidate = RTCIceCandidate::create(candidateLine, mid, mediaDescriptionIndex);
+
+    m_client->fireEvent(RTCIceCandidateEvent::create(false, false, WTFMove(iceCandidate)));
 }
 
-void MediaEndpointPeerConnection::doneGatheringCandidates(unsigned mdescIndex)
+void MediaEndpointPeerConnection::doneGatheringCandidates(const String& mid)
 {
     ASSERT(isMainThread());
 
-    UNUSED_PARAM(mdescIndex);
+    RtpTransceiverVector transceivers = RtpTransceiverVector(m_client->getTransceivers());
+    RTCRtpTransceiver* notifyingTransceiver = matchTransceiverByMid(transceivers, mid);
+    ASSERT(notifyingTransceiver);
 
-    notImplemented();
+    notifyingTransceiver->iceTransport().setGatheringState(RTCIceTransport::GatheringState::Complete);
+
+    // Don't notify the script if there are transceivers still gathering.
+    RTCRtpTransceiver* stillGatheringTransceiver = matchTransceiver(transceivers, [] (RTCRtpTransceiver& current) {
+        return !current.stopped() && !current.mid().isNull()
+            && current.iceTransport().gatheringState() != RTCIceTransport::GatheringState::Complete;
+    });
+    if (!stillGatheringTransceiver) {
+        m_client->fireEvent(RTCIceCandidateEvent::create(false, false, nullptr));
+        m_client->updateIceGatheringState(IceGatheringState::Complete);
+    }
 }
 
 } // namespace WebCore

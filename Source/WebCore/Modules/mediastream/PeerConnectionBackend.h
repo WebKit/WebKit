@@ -117,6 +117,8 @@ public:
     virtual bool isNegotiationNeeded() const = 0;
     virtual void markAsNeedingNegotiation() = 0;
     virtual void clearNegotiationNeededState() = 0;
+
+    virtual void emulatePlatformEvent(const String& action) = 0;
 };
 
 } // namespace WebCore

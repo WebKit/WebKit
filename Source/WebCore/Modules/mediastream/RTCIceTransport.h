@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Ericsson AB. All rights reserved.
+ * Copyright (C) 2016 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,57 +32,37 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "PeerConnectionStates.h"
+#include "ScriptWrappable.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
-namespace PeerConnectionStates {
+class RTCIceTransport : public RefCounted<RTCIceTransport>, public ScriptWrappable {
+public:
 
-enum class SignalingState {
-    Stable = 1,
-    HaveLocalOffer = 2,
-    HaveRemoteOffer = 3,
-    HaveLocalPrAnswer = 4,
-    HaveRemotePrAnswer = 5,
-    Closed = 6
+    using TransportState = PeerConnectionStates::IceTransportState;
+    using GatheringState = PeerConnectionStates::IceGatheringState;
+
+    static Ref<RTCIceTransport> create()
+    {
+        return adoptRef(*new RTCIceTransport());
+    }
+    virtual ~RTCIceTransport() { }
+
+    TransportState transportState() const { return m_transportState; }
+    void setTransportState(TransportState state) { m_transportState = state; }
+
+    GatheringState gatheringState() const { return m_gatheringState; }
+    void setGatheringState(GatheringState state) { m_gatheringState = state; }
+
+private:
+    RTCIceTransport() { };
+
+    TransportState m_transportState { TransportState::New };
+    GatheringState m_gatheringState { GatheringState::New };
 };
-
-enum class IceConnectionState {
-    New = 1,
-    Checking = 2,
-    Connected = 3,
-    Completed = 4,
-    Failed = 5,
-    Disconnected = 6,
-    Closed = 7
-};
-
-enum class IceGatheringState {
-    New = 1,
-    Gathering = 2,
-    Complete = 3
-};
-
-enum class IceTransportState {
-    New = 1,
-    Checking = 2,
-    Connected = 3,
-    Completed = 4,
-    Failed = 5,
-    Disconnected = 6,
-    Closed = 7
-};
-
-enum class IceTransportPolicy {
-    Relay,
-    All
-};
-
-enum class BundlePolicy {
-    Balanced,
-    MaxCompat,
-    MaxBundle
-};
-
-}
 
 } // namespace WebCore
 

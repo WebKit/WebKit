@@ -119,6 +119,9 @@ public:
     using RefCounted<RTCPeerConnection>::ref;
     using RefCounted<RTCPeerConnection>::deref;
 
+    // Used for testing with a mock
+    void emulatePlatformEvent(const String& action);
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
