@@ -1,3 +1,33 @@
+2016-10-06  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Copying video textures to webgl should not depend on cairo-gl
+        https://bugs.webkit.org/show_bug.cgi?id=162904
+
+        Reviewed by Žan Doberšek.
+
+        Perform the texture copy without using cairo-gl.
+
+        Covered by existent tests.
+
+        * platform/GStreamer.cmake:
+        Add the new VideoTextureCopierGStreamer class to the build.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        Use VideoTextureCopierGStreamer to perform the copy.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Add a VideoTextureCopierGStreamer as a class attribute.
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp: Added.
+        (WebCore::VideoTextureCopierGStreamer::VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer):
+        (WebCore::VideoTextureCopierGStreamer::updateTextureSpaceMatrix):
+        Recalculates the matrix used as the texture coordinates transformation.
+        (WebCore::VideoTextureCopierGStreamer::updateTransformationMatrix):
+        Recalculates the matrices used as the vertices coordinates transformation.
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        Performs the texture copy by using a shader that applies the rotation needed to follow
+        the video orientation.
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h: Added.
+
 2016-10-06  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Build fix for X11 and GStreamerGL after r183731

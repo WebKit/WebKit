@@ -52,6 +52,7 @@ class GraphicsContext;
 class GraphicsContext3D;
 class IntSize;
 class IntRect;
+class VideoTextureCopierGStreamer;
 
 class MediaPlayerPrivateGStreamerBase : public MediaPlayerPrivateInterface
 #if USE(COORDINATED_GRAPHICS_THREADED) || (USE(TEXTURE_MAPPER_GL) && !USE(COORDINATED_GRAPHICS))
@@ -205,6 +206,10 @@ protected:
 #endif
 
     ImageOrientation m_videoSourceOrientation;
+
+#if USE(GSTREAMER_GL)
+    std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
+#endif
 };
 }
 

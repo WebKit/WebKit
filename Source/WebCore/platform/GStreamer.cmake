@@ -88,6 +88,9 @@ if (ENABLE_VIDEO)
         list(APPEND WebCore_LIBRARIES
             ${GSTREAMER_GL_LIBRARIES}
         )
+        list(APPEND WebCore_SOURCES
+            platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp
+        )
     endif ()
 endif ()
 
