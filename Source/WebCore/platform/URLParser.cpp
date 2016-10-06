@@ -688,24 +688,6 @@ enum class Scheme {
     NonSpecial
 };
 
-ALWAYS_INLINE bool isSpecial(Scheme scheme)
-{
-    switch (scheme) {
-    case Scheme::WS:
-    case Scheme::WSS:
-    case Scheme::File:
-    case Scheme::FTP:
-    case Scheme::Gopher:
-    case Scheme::HTTP:
-    case Scheme::HTTPS:
-        return true;
-    case Scheme::NonSpecial:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 ALWAYS_INLINE static Scheme scheme(StringView scheme)
 {
     auto length = scheme.length();
@@ -834,7 +816,7 @@ void URLParser::copyASCIIStringUntil(const String& string, size_t length)
 }
 
 template<typename CharacterType>
-void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePointIterator<CharacterType>& iterator)
+void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePointIterator<CharacterType>& iterator, bool& isUTF8Encoding)
 {
     syntaxViolation(iterator);
 
@@ -873,7 +855,24 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
         m_url.m_protocolIsInHTTPFamily = base.m_protocolIsInHTTPFamily;
         m_url.m_schemeEnd = base.m_schemeEnd;
     }
-    m_urlIsSpecial = isSpecial(scheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd)));
+    switch (scheme(StringView(m_asciiBuffer.data(), m_url.m_schemeEnd))) {
+    case Scheme::WS:
+    case Scheme::WSS:
+        isUTF8Encoding = true;
+        FALLTHROUGH;
+    case Scheme::File:
+    case Scheme::FTP:
+    case Scheme::Gopher:
+    case Scheme::HTTP:
+    case Scheme::HTTPS:
+        m_urlIsSpecial = true;
+        return;
+    case Scheme::NonSpecial:
+        m_urlIsSpecial = false;
+        isUTF8Encoding = true;
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 static const char* dotASCIICode = "2e";
@@ -1308,7 +1307,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 return;
             }
             if (base.m_cannotBeABaseURL && *c == '#') {
-                copyURLPartsUntil(base, URLPart::QueryEnd, c);
+                copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
                 state = State::Fragment;
                 appendToASCIIBuffer('#');
                 ++c;
@@ -1318,7 +1317,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 state = State::Relative;
                 break;
             }
-            copyURLPartsUntil(base, URLPart::SchemeEnd, c);
+            copyURLPartsUntil(base, URLPart::SchemeEnd, c, isUTF8Encoding);
             appendToASCIIBuffer(':');
             state = State::File;
             break;
@@ -1368,7 +1367,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 ++c;
                 break;
             case '?':
-                copyURLPartsUntil(base, URLPart::PathEnd, c);
+                copyURLPartsUntil(base, URLPart::PathEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer('?');
                 ++c;
                 if (isUTF8Encoding)
@@ -1379,13 +1378,13 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 }
                 break;
             case '#':
-                copyURLPartsUntil(base, URLPart::QueryEnd, c);
+                copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer('#');
                 state = State::Fragment;
                 ++c;
                 break;
             default:
-                copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c);
+                copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c, isUTF8Encoding);
                 state = State::Path;
                 break;
             }
@@ -1394,11 +1393,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             LOG_STATE("RelativeSlash");
             if (*c == '/' || *c == '\\') {
                 ++c;
-                copyURLPartsUntil(base, URLPart::SchemeEnd, c);
+                copyURLPartsUntil(base, URLPart::SchemeEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer("://", 3);
                 state = State::SpecialAuthorityIgnoreSlashes;
             } else {
-                copyURLPartsUntil(base, URLPart::PortEnd, c);
+                copyURLPartsUntil(base, URLPart::PortEnd, c, isUTF8Encoding);
                 appendToASCIIBuffer('/');
                 m_url.m_pathAfterLastSlash = base.m_portEnd + 1;
                 state = State::Path;
@@ -1531,7 +1530,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             case '?':
                 syntaxViolation(c);
                 if (base.isValid() && base.protocolIs("file")) {
-                    copyURLPartsUntil(base, URLPart::PathEnd, c);
+                    copyURLPartsUntil(base, URLPart::PathEnd, c, isUTF8Encoding);
                     appendToASCIIBuffer('?');
                     ++c;
                 } else {
@@ -1555,7 +1554,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             case '#':
                 syntaxViolation(c);
                 if (base.isValid() && base.protocolIs("file")) {
-                    copyURLPartsUntil(base, URLPart::QueryEnd, c);
+                    copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
                     appendToASCIIBuffer('#');
                 } else {
                     appendToASCIIBuffer("///#", 4);
@@ -1574,7 +1573,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             default:
                 syntaxViolation(c);
                 if (base.isValid() && base.protocolIs("file") && shouldCopyFileURL(c))
-                    copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c);
+                    copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c, isUTF8Encoding);
                 else {
                     appendToASCIIBuffer("///", 3);
                     m_url.m_userStart = currentPosition(c) - 1;
@@ -1847,7 +1846,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         RELEASE_ASSERT_NOT_REACHED();
     case State::SpecialRelativeOrAuthority:
         LOG_FINAL_STATE("SpecialRelativeOrAuthority");
-        copyURLPartsUntil(base, URLPart::QueryEnd, c);
+        copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
         m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;
     case State::PathOrAuthority:
@@ -1870,7 +1869,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         RELEASE_ASSERT_NOT_REACHED();
     case State::RelativeSlash:
         LOG_FINAL_STATE("RelativeSlash");
-        copyURLPartsUntil(base, URLPart::PortEnd, c);
+        copyURLPartsUntil(base, URLPart::PortEnd, c, isUTF8Encoding);
         appendToASCIIBuffer('/');
         m_url.m_pathAfterLastSlash = base.m_portEnd + 1;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
@@ -1935,7 +1934,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     case State::File:
         LOG_FINAL_STATE("File");
         if (base.isValid() && base.protocolIs("file")) {
-            copyURLPartsUntil(base, URLPart::QueryEnd, c);
+            copyURLPartsUntil(base, URLPart::QueryEnd, c, isUTF8Encoding);
             appendToASCIIBuffer(':');
         }
         syntaxViolation(c);

@@ -109,7 +109,7 @@ private:
     void serializeIPv6(IPv6Address);
 
     enum class URLPart;
-    template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&);
+    template<typename CharacterType> void copyURLPartsUntil(const URL& base, URLPart, const CodePointIterator<CharacterType>&, bool& isUTF8Encoding);
     static size_t urlLengthUntilPart(const URL&, URLPart);
     void popPath();
 };

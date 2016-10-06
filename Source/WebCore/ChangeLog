@@ -1,3 +1,25 @@
+2016-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser: Non-ASCII characters in Non-UTF-8 encoded queries of relative URLs with ws, wss, or nonspecial schemes should be UTF-8 encoded
+        https://bugs.webkit.org/show_bug.cgi?id=163089
+
+        Reviewed by Tim Horton.
+
+        This is a change similar to r206818 but with relative URLs.
+        This matches the spec, URL::parse, and other browsers' behavior.
+        Covered by new API tests for URLParser.
+        This also fixes tests like http/tests/misc/url-in-utf32le.html when URLParser is enabled.
+
+        * platform/URL.cpp:
+        (WebCore::URL::URL):
+        Use the same encoding for the URL constructor whether or not the URLParser is enabled.
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::parse):
+        (WebCore::isSpecial): Deleted.
+        * platform/URLParser.h:
+        Use UTF-8 for non-special, ws, or wss schemes.
+
 2016-10-06  Zalan Bujtas  <zalan@apple.com>
 
         Add back ASSERT(!needsLayout) to RenderTableSection which is now valid
