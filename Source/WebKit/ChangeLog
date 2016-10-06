@@ -1,3 +1,9 @@
+2016-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix when building with Direct2D.
+
+        * PlatformWin.cmake: Add missing library references.
+
 2016-10-05  Daniel Bates  <dabates@apple.com>
 
         Do not follow redirects when sending violation report
