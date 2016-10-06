@@ -1,3 +1,49 @@
+2016-10-06  John Wilander  <wilander@apple.com>
+
+        Update Resource Load Statistics
+        https://bugs.webkit.org/show_bug.cgi?id=162811
+
+        Reviewed by Alex Christensen.
+
+        No new tests. The counting is based on top privately owned domains
+        which currently is not supported by layout tests nor API tests.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+            Now captures statistics for web sockets too.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/ResourceLoadObserver.cpp:
+            Now captures statistics for synchronous XHR too.
+        (WebCore::is3xxRedirect):
+            Convenience function.
+        (WebCore::ResourceLoadObserver::shouldLog):
+            Convenience function.
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+            Updated to make use of new convenience functions.
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+            Updated to make use of new convenience functions.
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+            Added.
+        (WebCore::ResourceLoadObserver::logUserInteraction):
+            Updated to make use of new convenience functions.
+        (WebCore::ResourceLoadObserver::primaryDomain):
+            Now makes use of the Public Suffix list.
+            Removed old custom parsing of primary domain.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction):
+            Convenience function.
+        (WebCore::ResourceLoadStatisticsStore::processStatistics): Deleted.
+        * loader/ResourceLoadStatisticsStore.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+            Moved logging call higher up and added a check for whether we
+            are loading the main resource. The reason for moving it up is
+            to capture the request before some data may be cleared out in
+            redirect handling. We also want to capture failed CORS requests
+            since they are sent and then cancelled on the way back.
+
 2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for the iceconnectionstatechange event in MediaEndpointPeerConnection

@@ -47,6 +47,7 @@
 #include "Frame.h"
 #include "Logging.h"
 #include "MessageEvent.h"
+#include "ResourceLoadObserver.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -318,7 +319,8 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
             });
 #endif
             return;
-        }
+        } else
+            ResourceLoadObserver::sharedObserver().logWebSocketLoading(document.frame(), m_url);
     }
 
     String protocolString;

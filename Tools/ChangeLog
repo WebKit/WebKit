@@ -1,3 +1,13 @@
+2016-10-06  John Wilander  <wilander@apple.com>
+
+        Update Resource Load Statistics
+        https://bugs.webkit.org/show_bug.cgi?id=162811
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/mac/PublicSuffix.mm:
+            Change from USE(PUBLIC_SUFFIX_LIST) to ENABLE(PUBLIC_SUFFIX_LIST)
+
 2016-10-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][OWR] GL rendering support

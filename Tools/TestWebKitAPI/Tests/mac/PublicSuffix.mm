@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if USE(PUBLIC_SUFFIX_LIST)
+#if ENABLE(PUBLIC_SUFFIX_LIST)
 
 #include "WTFStringUtilities.h"
 #include <WebCore/PublicSuffix.h>

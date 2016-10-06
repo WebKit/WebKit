@@ -33,6 +33,7 @@
 #include "NetworkStorageSession.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include "PublicSuffix.h"
 #include "ResourceLoadStatistics.h"
 #include "ResourceLoadStatisticsStore.h"
 #include "ResourceRequest.h"
@@ -57,23 +58,31 @@ void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&
     m_store = WTFMove(store);
 }
 
+static inline bool is3xxRedirect(const ResourceResponse& response)
+{
+    return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
+}
+
+bool ResourceLoadObserver::shouldLog(Page* page)
+{
+    // FIXME: Err on the safe side until we have sorted out what to do in worker contexts
+    if (!page)
+        return false;
+    return Settings::resourceLoadStatisticsEnabled()
+        && !page->usesEphemeralSession()
+        && m_store;
+}
+
 void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    if (!Settings::resourceLoadStatisticsEnabled())
-        return;
-
-    if (!m_store)
-        return;
-
     ASSERT(frame.document());
     ASSERT(topFrame.document());
     ASSERT(topFrame.page());
-
-    bool needPrivacy = topFrame.page() ? topFrame.page()->usesEphemeralSession() : false;
-    if (needPrivacy)
+    
+    if (!shouldLog(topFrame.page()))
         return;
 
-    bool isRedirect = !redirectResponse.isNull();
+    bool isRedirect = is3xxRedirect(redirectResponse);
     bool isMainFrame = frame.isMainFrame();
     const URL& sourceURL = frame.document()->url();
     const URL& targetURL = newRequest.url();
@@ -148,17 +157,12 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
-    if (!Settings::resourceLoadStatisticsEnabled())
+    ASSERT(frame->page());
+
+    if (!shouldLog(frame->page()))
         return;
 
-    if (!m_store)
-        return;
-
-    bool needPrivacy = (frame && frame->page()) ? frame->page()->usesEphemeralSession() : false;
-    if (needPrivacy)
-        return;
-    
-    bool isRedirect = !redirectResponse.isNull();
+    bool isRedirect = is3xxRedirect(redirectResponse);
     const URL& sourceURL = redirectResponse.url();
     const URL& targetURL = newRequest.url();
     const URL& mainFrameURL = frame ? frame->mainFrame().document()->url() : URL();
@@ -166,14 +170,17 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto targetHost = targetURL.host();
     auto mainFrameHost = mainFrameURL.host();
 
-    if (targetHost.isEmpty() || mainFrameHost.isEmpty() || targetHost == mainFrameHost || targetHost == sourceURL.host())
+    if (targetHost.isEmpty()
+        || mainFrameHost.isEmpty()
+        || targetHost == mainFrameHost
+        || (isRedirect && targetHost == sourceURL.host()))
         return;
 
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
-    if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
+    if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
         return;
 
     auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
@@ -210,62 +217,82 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     
     m_store->fireDataModificationHandler();
 }
+
+void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& targetURL)
+{
+    // FIXME: Web sockets can run in detached frames. Decide how to count such connections.
+    // See LayoutTests/http/tests/websocket/construct-in-detached-frame.html
+    if (!frame)
+        return;
+
+    if (!shouldLog(frame->page()))
+        return;
+
+    const URL& mainFrameURL = frame->mainFrame().document()->url();
+
+    auto targetHost = targetURL.host();
+    auto mainFrameHost = mainFrameURL.host();
     
+    if (targetHost.isEmpty()
+        || mainFrameHost.isEmpty()
+        || targetHost == mainFrameHost)
+        return;
+    
+    auto targetPrimaryDomain = primaryDomain(targetURL);
+    auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
+    
+    if (targetPrimaryDomain == mainFramePrimaryDomain)
+        return;
+
+    auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    
+    auto mainFrameOrigin = SecurityOrigin::create(mainFrameURL);
+    targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    
+    ++targetStatistics.subresourceHasBeenSubresourceCount;
+    
+    auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
+    
+    targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
+
+    m_store->fireDataModificationHandler();
+}
+
 void ResourceLoadObserver::logUserInteraction(const Document& document)
 {
-    if (!Settings::resourceLoadStatisticsEnabled())
+    ASSERT(document.page());
+
+    if (!shouldLog(document.page()))
         return;
 
-    if (!m_store)
+    auto& url = document.url();
+
+    if (url.isBlankURL() || url.isEmpty())
         return;
 
-    bool needPrivacy = document.page() ? document.page()->usesEphemeralSession() : false;
-    if (needPrivacy)
-        return;
-
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(document.url()));
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
     statistics.hadUserInteraction = true;
     m_store->fireDataModificationHandler();
 }
     
 String ResourceLoadObserver::primaryDomain(const URL& url)
 {
-    String host = url.host();
-    Vector<String> hostSplitOnDot;
-    
-    host.split('.', false, hostSplitOnDot);
-
     String primaryDomain;
-    if (host.isNull())
+    String host = url.host();
+    if (host.isNull() || host.isEmpty())
         primaryDomain = "nullOrigin";
-    else if (hostSplitOnDot.size() < 3)
-        primaryDomain = host;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     else {
-        // Skip TLD and then up to two domains smaller than 4 characters
-        int primaryDomainCutOffIndex = hostSplitOnDot.size() - 2;
-
-        // Start with TLD as a given part
-        size_t numberOfParts = 1;
-        for (; primaryDomainCutOffIndex >= 0; --primaryDomainCutOffIndex) {
-            ++numberOfParts;
-
-            // We have either a domain part that's 4 chars or longer, or 3 domain parts including TLD
-            if (hostSplitOnDot.at(primaryDomainCutOffIndex).length() >= 4 || numberOfParts >= 3)
-                break;
-        }
-
-        if (primaryDomainCutOffIndex < 0)
+        primaryDomain = topPrivatelyControlledDomain(host);
+        // We will have an empty string here if there is no TLD.
+        // Use the host in such case.
+        if (primaryDomain.isEmpty())
             primaryDomain = host;
-        else {
-            StringBuilder builder;
-            builder.append(hostSplitOnDot.at(primaryDomainCutOffIndex));
-            for (size_t j = primaryDomainCutOffIndex + 1; j < hostSplitOnDot.size(); ++j) {
-                builder.append('.');
-                builder.append(hostSplitOnDot[j]);
-            }
-            primaryDomain = builder.toString();
-        }
     }
+#else
+    else
+        primaryDomain = host;
+#endif
 
     return primaryDomain;
 }

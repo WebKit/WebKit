@@ -173,6 +173,9 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
         return;
     }
 
+    if (newRequest.requester() != ResourceRequestBase::Requester::Main)
+        ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
+
     ASSERT(!newRequest.isNull());
     if (!redirectResponse.isNull()) {
         if (options().redirect != FetchOptions::Redirect::Follow) {
@@ -228,8 +231,6 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
     ResourceLoader::willSendRequestInternal(newRequest, redirectResponse);
     if (newRequest.isNull())
         cancel();
-
-    ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

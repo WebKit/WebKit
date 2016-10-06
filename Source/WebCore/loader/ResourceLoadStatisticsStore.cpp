@@ -154,4 +154,14 @@ void ResourceLoadStatisticsStore::processStatistics(std::function<void(ResourceL
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         processFunction(resourceStatistic);
 }
+
+Vector<String> ResourceLoadStatisticsStore::prevalentResourceDomainsWithoutUserInteraction()
+{
+    Vector<String> prevalentResources;
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
+        if (resourceStatistic.isPrevalentResource && !resourceStatistic.hadUserInteraction)
+            prevalentResources.append(resourceStatistic.highLevelDomain);
+    }
+    return prevalentResources;
+}
 }

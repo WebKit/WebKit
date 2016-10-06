@@ -97,6 +97,7 @@
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
+#include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"
 #include "SVGDocument.h"
 #include "SVGLocatable.h"
@@ -2774,6 +2775,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
             platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, clientCredentialPolicy, error, response, buffer);
             data = SharedBuffer::adoptVector(buffer);
             documentLoader()->applicationCacheHost()->maybeLoadFallbackSynchronously(newRequest, error, response, data);
+            ResourceLoadObserver::sharedObserver().logSubresourceLoading(&m_frame, newRequest, response);
         }
     }
     notifier().sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, response, data ? data->data() : nullptr, data ? data->size() : 0, -1, error);

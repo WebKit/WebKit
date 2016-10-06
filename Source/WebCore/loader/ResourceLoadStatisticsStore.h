@@ -63,6 +63,8 @@ public:
 
     WEBCORE_EXPORT bool hasEnoughDataForStatisticsProcessing();
     WEBCORE_EXPORT void processStatistics(std::function<void(ResourceLoadStatistics&)>&&);
+
+    WEBCORE_EXPORT Vector<String> prevalentResourceDomainsWithoutUserInteraction();
 private:
     ResourceLoadStatisticsStore() = default;
 

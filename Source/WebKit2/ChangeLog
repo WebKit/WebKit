@@ -1,3 +1,31 @@
+2016-10-06  John Wilander  <wilander@apple.com>
+
+        Update Resource Load Statistics
+        https://bugs.webkit.org/show_bug.cgi?id=162811
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasPrevalentResourceCharacteristics):
+            Switched to vector-based classification.
+        (WebKit::WebResourceLoadStatisticsStore::classifyResource):
+            Simplified logic and moved the split between has and has
+            no user interaction into ResourceLoadStatisticsStore.
+        (WebKit::WebResourceLoadStatisticsStore::clearDataRecords):
+            Added.
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+            Updated to make use of the new functions.
+        (WebKit::WebResourceLoadStatisticsStore::persistentStoragePath):
+            Removed stray whitespace.
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk):
+            Removed stray whitespace.
+        (WebKit::WebResourceLoadStatisticsStore::createDecoderFromDisk):
+            Removed stray whitespace.
+        (WebKit::hasPrevalentResourceCharacteristics): Deleted.
+        (WebKit::classifyPrevalentResources): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+            Added member variables for clearing of data records.
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         [WK2] 304 revalidation on the network process does not update the validated response

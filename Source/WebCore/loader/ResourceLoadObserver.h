@@ -34,6 +34,7 @@ namespace WebCore {
 
 class Document;
 class Frame;
+class Page;
 class ResourceRequest;
 class ResourceResponse;
 class URL;
@@ -47,6 +48,7 @@ public:
     
     void logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
+    void logWebSocketLoading(const Frame*, const URL&);
 
     void logUserInteraction(const Document&);
     
@@ -55,6 +57,7 @@ public:
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
 private:
+    bool shouldLog(Page*);
     static String primaryDomain(const URL&);
 
     RefPtr<ResourceLoadStatisticsStore> m_store;
