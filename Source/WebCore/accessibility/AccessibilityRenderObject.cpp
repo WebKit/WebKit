@@ -2034,11 +2034,35 @@ IntRect AccessibilityRenderObject::boundsForRange(const RefPtr<Range> range) con
     
     return boundsForRects(rect1, rect2, range);
 }
+
+bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange& range) const
+{
+    if (range.start.isNull() || range.end.isNull())
+        return false;
+    
+    VisibleSelection newSelection = VisibleSelection(range.start, range.end);
+    if (Document* newSelectionDocument = newSelection.base().document()) {
+        if (RefPtr<Frame> newSelectionFrame = newSelectionDocument->frame()) {
+            Frame* frame = this->frame();
+            if (!frame || (newSelectionFrame != frame && newSelectionDocument != frame->document()))
+                return true;
+        }
+    }
+    
+    return false;
+}
     
 void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePositionRange& range) const
 {
     if (range.start.isNull() || range.end.isNull())
         return;
+    
+    // In WebKit1, when the top web area sets the selection to be an input element in an iframe, the caret will disappear.
+    // FrameSelection::setSelectionWithoutUpdatingAppearance is setting the selection on the new frame in this case, and causing this behavior.
+    if (isWebArea() && parentObject() && parentObject()->isAttachment()) {
+        if (isVisiblePositionRangeInDifferentDocument(range))
+            return;
+    }
 
     // make selection and tell the document to use it. if it's zero length, then move to that position
     if (range.start == range.end) {

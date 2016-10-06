@@ -1,3 +1,13 @@
+2016-10-06  Nan Wang  <n_wang@apple.com>
+
+        AX:[Mac] Unable to edit text input, textarea fields in iframe using VO naivgation
+        https://bugs.webkit.org/show_bug.cgi?id=162999
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/wk1-set-selected-text-marker-range-input-element-expected.txt: Added.
+        * accessibility/mac/wk1-set-selected-text-marker-range-input-element.html: Added.
+
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add @throwXXXError bytecode intrinsic

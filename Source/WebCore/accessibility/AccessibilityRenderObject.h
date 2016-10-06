@@ -173,6 +173,7 @@ public:
     IntRect boundsForRange(const RefPtr<Range>) const override;
     IntRect boundsForRects(LayoutRect&, LayoutRect&, RefPtr<Range>) const;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
+    bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
     bool ariaHasPopup() const override;
 
     bool supportsARIADropping() const override;
