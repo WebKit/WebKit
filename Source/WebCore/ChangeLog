@@ -1,3 +1,13 @@
+2016-10-06  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Build fix for X11 and GStreamerGL after r183731
+        https://bugs.webkit.org/show_bug.cgi?id=163000
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        Include gstgldisplay_egl.h if platform uses EGL.
+
 2016-10-06  Mario Sanchez Prada  <mario@endlessm.com>
 
         [GStreamer] Can't play any video with GSTREAMER_GL enabled

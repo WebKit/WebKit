@@ -54,7 +54,9 @@
 #if USE(GLX)
 #include "GLContextGLX.h"
 #include <gst/gl/x11/gstgldisplay_x11.h>
-#elif USE(EGL)
+#endif
+
+#if USE(EGL)
 #include "GLContextEGL.h"
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
