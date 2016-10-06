@@ -12,6 +12,8 @@ CustomEvent
 ErrorEvent
 FocusEvent
 HashChangeEvent
+InputEvent
+InputEvents interfaceName=InputEvent
 KeyboardEvent
 KeyboardEvents interfaceName=KeyboardEvent
 MessageEvent

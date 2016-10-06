@@ -913,6 +913,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ImageData').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'InputEvent').value is InputEvent
+PASS Object.getOwnPropertyDescriptor(global, 'InputEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'InputEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'InputEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'InputEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Int16Array').value is Int16Array
 PASS Object.getOwnPropertyDescriptor(global, 'Int16Array').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Int16Array').hasOwnProperty('set') is false

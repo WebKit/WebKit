@@ -110,6 +110,7 @@ public:
 #if ENABLE(VARIATION_FONTS)
         bool m_variationFontsEnabled;
 #endif
+        bool m_inputEventsEnabled;
 
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;

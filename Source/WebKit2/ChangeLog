@@ -1,3 +1,16 @@
+2016-10-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce InputEvent bindings in preparation for the input events spec
+        https://bugs.webkit.org/show_bug.cgi?id=162954
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new runtime switch for enabling InputEvents.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2016-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Put variation fonts work behind a compile-time flag

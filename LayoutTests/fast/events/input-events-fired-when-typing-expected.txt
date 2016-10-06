@@ -1,0 +1,17 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS event.__lookupGetter__('inputType') is defined.
+PASS Object.getPrototypeOf(event) is InputEvent.prototype
+PASS event.target.id is expectedTargetID
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.composed is true
+PASS event.__lookupGetter__('inputType') is defined.
+PASS Object.getPrototypeOf(event) is InputEvent.prototype
+PASS event.target.id is expectedTargetID
+PASS event.bubbles is true
+PASS event.cancelable is false
+PASS event.composed is true
+a
+

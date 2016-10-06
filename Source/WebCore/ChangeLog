@@ -1,3 +1,56 @@
+2016-10-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce InputEvent bindings in preparation for the input events spec
+        https://bugs.webkit.org/show_bug.cgi?id=162954
+
+        Reviewed by Ryosuke Niwa.
+
+        Creates new bindings for InputEvent. Also introduces a runtime switch that allows Node to dispatch InputEvents
+        rather than generic events of type 'input'. Adds a new test verifying that when the switch is enabled, inputs
+        and contenteditable divs fire these new InputEvents on input. So far, only inputType is a part of the object
+        prototype, since we will be implementing this first. getTargetRanges() will follow once the finer details of
+        StaticRange are hashed out. See https://bugs.webkit.org/show_bug.cgi?id=162947 for more details.
+
+        Tests: fast/events/input-events-fired-when-typing.html
+               fast/events/ios/input-events-fired-when-typing-in-contenteditable.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Event.cpp:
+        (WebCore::Event::composed):
+        (WebCore::Event::isInputEvent):
+        * dom/Event.h:
+        * dom/EventNames.in:
+        * dom/InputEvent.cpp: Added.
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h: Added.
+        * dom/InputEvent.idl: Added.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchInputEvent):
+        (WebCore::Node::defaultEventHandler):
+        * dom/Node.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setEditingValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::dispatchChangeEventForMenuList):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+        * page/Settings.in:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2016-10-05  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should parse IPv4 addresses as the last two pieces of an IPv6 address

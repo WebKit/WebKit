@@ -111,6 +111,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(VARIATION_FONTS)
     , m_variationFontsEnabled(settings.variationFontsEnabled())
 #endif
+    , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
     , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
@@ -189,6 +190,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(VARIATION_FONTS)
     settings.setVariationFontsEnabled(m_variationFontsEnabled);
 #endif
+    settings.setInputEventsEnabled(m_inputEventsEnabled);
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
     settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);

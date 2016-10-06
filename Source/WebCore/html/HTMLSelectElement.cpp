@@ -669,7 +669,7 @@ void HTMLSelectElement::listBoxOnChange()
     }
 
     if (fireOnChange) {
-        dispatchInputEvent();
+        dispatchInputEvent(emptyString());
         dispatchFormControlChangeEvent();
     }
 }
@@ -682,7 +682,7 @@ void HTMLSelectElement::dispatchChangeEventForMenuList()
     if (m_lastOnChangeIndex != selected && m_isProcessingUserDrivenChange) {
         m_lastOnChangeIndex = selected;
         m_isProcessingUserDrivenChange = false;
-        dispatchInputEvent();
+        dispatchInputEvent(emptyString());
         dispatchFormControlChangeEvent();
     }
 }

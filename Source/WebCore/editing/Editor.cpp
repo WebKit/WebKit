@@ -1660,7 +1660,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         if (direction == NaturalWritingDirection)
             return;
         downcast<HTMLTextFormControlElement>(*focusedElement).setAttributeWithoutSynchronization(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
-        focusedElement->dispatchInputEvent();
+        focusedElement->dispatchInputEvent(emptyString());
         document().updateStyleIfNeeded();
         return;
     }

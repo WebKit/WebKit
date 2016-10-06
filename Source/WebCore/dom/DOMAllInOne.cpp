@@ -91,6 +91,7 @@
 #include "IdTargetObserver.cpp"
 #include "IdTargetObserverRegistry.cpp"
 #include "InlineStyleSheetOwner.cpp"
+#include "InputEvent.cpp"
 #include "KeyboardEvent.cpp"
 #include "CustomElementReactionQueue.cpp"
 #include "LiveNodeList.cpp"

@@ -309,6 +309,7 @@
 #include "JSIDBVersionChangeEvent.cpp"
 #endif
 #include "JSImageData.cpp"
+#include "JSInputEvent.cpp"
 #include "JSInspectorFrontendHost.cpp"
 #include "JSKeyboardEvent.cpp"
 #include "JSLocation.cpp"

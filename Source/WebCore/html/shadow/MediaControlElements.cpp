@@ -863,7 +863,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event& event)
         return;
 
     double time = value().toDouble();
-    if (event.type() == eventNames().inputEvent && time != mediaController()->currentTime())
+    if ((event.isInputEvent() || event.type() == eventNames().inputEvent) && time != mediaController()->currentTime())
         mediaController()->setCurrentTime(time);
 
     RenderSlider& slider = downcast<RenderSlider>(*renderer());

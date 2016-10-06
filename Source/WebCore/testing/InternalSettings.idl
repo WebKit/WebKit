@@ -88,5 +88,7 @@
 
     [MayThrowLegacyException] boolean variationFontsEnabled();
     [MayThrowLegacyException] void setVariationFontsEnabled(boolean enabled);
+
+    void setInputEventsEnabled(boolean enabled);
 };
 

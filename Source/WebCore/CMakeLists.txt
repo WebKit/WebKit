@@ -400,6 +400,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/FocusEvent.idl
     dom/GlobalEventHandlers.idl
     dom/HashChangeEvent.idl
+    dom/InputEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
@@ -1445,6 +1446,7 @@ set(WebCore_SOURCES
     dom/IdTargetObserver.cpp
     dom/IdTargetObserverRegistry.cpp
     dom/InlineStyleSheetOwner.cpp
+    dom/InputEvent.cpp
     dom/KeyboardEvent.cpp
     dom/LiveNodeList.cpp
     dom/LoadableClassicScript.cpp

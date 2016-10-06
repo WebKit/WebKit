@@ -1,3 +1,23 @@
+2016-10-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce InputEvent bindings in preparation for the input events spec
+        https://bugs.webkit.org/show_bug.cgi?id=162954
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new test verifying that InputEvents are fired when the runtime switch for input events is enabled.
+
+        * fast/events/input-events-fired-when-typing-expected.txt: Added.
+        * fast/events/input-events-fired-when-typing.html: Added.
+        * fast/events/ios/input-events-fired-when-typing-in-contenteditable-expected.txt: Added.
+        * fast/events/ios/input-events-fired-when-typing-in-contenteditable.html: Added.
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2016-10-05  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Mark timeout tests to *Timeout*
