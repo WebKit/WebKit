@@ -1,3 +1,12 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to c875b42
+        https://bugs.webkit.org/show_bug.cgi?id=159712
+
+        Unreviewed.
+
+        * TestExpectations: Removed flakiness expectations for tests introduced in bug 159712.
+
 2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Add support for the icecandidate event in MediaEndpointPeerConnection
