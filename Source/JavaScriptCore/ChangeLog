@@ -1,3 +1,19 @@
+2016-10-05  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.getCanonicalLocales
+        https://bugs.webkit.org/show_bug.cgi?id=162768
+
+        Reviewed by Benjamin Poulain.
+
+        Implement Intl.getCanonicalLocales from ECMA 402 (3rd edition)
+        http://ecma-international.org/ecma-402/3.0/index.html#sec-intl.getcanonicallocales
+
+        Reuse canonicalizeLocaleList and copy the results into a new JSArray.
+
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        (JSC::intlObjectFuncGetCanonicalLocales):
+
 2016-10-05  Michael Saboff  <msaboff@apple.com>
 
         Bad ASSERT in ClonedArguments::createByCopyingFrom()

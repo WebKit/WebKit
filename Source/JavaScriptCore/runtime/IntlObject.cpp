@@ -56,6 +56,8 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(IntlObject);
 
+static EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState*);
+
 }
 
 namespace JSC {
@@ -110,6 +112,10 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->Collator, collatorConstructor, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->NumberFormat, numberFormatConstructor, DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->DateTimeFormat, dateTimeFormatConstructor, DontEnum);
+
+    // 8.2 Function Properties of the Intl Object
+    // https://tc39.github.io/ecma402/#sec-function-properties-of-the-intl-object
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "getCanonicalLocales"), 1, intlObjectFuncGetCanonicalLocales, NoIntrinsic, DontEnum);
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -1008,6 +1014,33 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     Vector<String> numberingSystems({ defaultSystemName });
     numberingSystems.appendVector(availableNumberingSystems);
     return numberingSystems;
+}
+
+EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    // https://tc39.github.io/ecma402/#sec-intl.getcanonicallocales
+    // 8.2.1 Intl.getCanonicalLocales(locales) (ECMA-402 4.0)
+
+    // 1. Let ll be ? CanonicalizeLocaleList(locales).
+    Vector<String> localeList = canonicalizeLocaleList(*state, state->argument(0));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    // 2. Return CreateArrayFromList(ll).
+    JSGlobalObject* globalObject = state->callee()->globalObject();
+    JSArray* localeArray = JSArray::tryCreateUninitialized(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), localeList.size());
+    if (!localeArray) {
+        throwOutOfMemoryError(state, scope);
+        return encodedJSValue();
+    }
+
+    auto length = localeList.size();
+    for (size_t i = 0; i < length; ++i) {
+        localeArray->initializeIndex(vm, i, jsString(state, localeList[i]));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+    return JSValue::encode(localeArray);
 }
 
 } // namespace JSC

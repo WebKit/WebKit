@@ -1,3 +1,13 @@
+2016-10-05  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        [INTL] Implement Intl.getCanonicalLocales
+        https://bugs.webkit.org/show_bug.cgi?id=162768
+
+        Reviewed by Benjamin Poulain.
+
+        * js/intl-expected.txt: Added tests for Intl.getCanonicalLocales
+        * js/script-tests/intl.js: Added test for Intl.getCanonicalLocales
+
 2016-10-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/formatting/formatting-javascript.html as a flaky crash on mac-wk1.
