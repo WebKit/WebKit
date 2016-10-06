@@ -1,3 +1,26 @@
+2016-10-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add Direct2D CMake rules
+        https://bugs.webkit.org/show_bug.cgi?id=162925
+
+        Reviewed by Brent Fulgham.
+
+        Modify PlatformAppleWin.cmake to conditionally build the CoreGraphics
+        and CoreAnimation implementation, or the Direct2D files, depending
+        on whether the USE_DIRECT2D macro is set in the CMake build options.
+        By default it builds the normal CA/CG way.
+
+        Add a stub GraphicsLayer implementation for Direct2D.
+
+        No new tests because there is no change in our active ports.
+
+        * PlatformAppleWin.cmake: Conditionalize the build for CA/CG or
+        Direct2D.
+        * config.h: Make sure CA is turned of for Direct2D builds.
+        * page/win/FrameWinDirect2D.cpp: Add missing include file.
+        * platform/graphics/win/GraphicsLayerDirect2D.cpp: Added.
+        * platform/graphics/win/GraphicsLayerDirect2D.h: Added.
+
 2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebCore][JSC] Use new @throwTypeError and @throwRangeError intrinsics

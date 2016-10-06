@@ -23,54 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FrameWin.h"
+#pragma once
 
-#if USE(DIRECT2D)
 
-#include "BitmapInfo.h"
-#include "Frame.h"
-#include "FrameSelection.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "NotImplemented.h"
-#include "RenderObject.h"
-#include "Settings.h"
-#include <d2d1.h>
-#include <windows.h>
-#include <wtf/win/GDIObject.h>
+#include "GraphicsLayer.h"
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-GDIObject<HBITMAP> imageFromRect(const Frame* frame, IntRect& ir)
-{
-    if (!frame)
-        return nullptr;
-
-    PaintBehavior oldPaintBehavior = frame->view()->paintBehavior();
-    frame->view()->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
-
-    void* bits = nullptr;
-    auto hdc = adoptGDIObject(::CreateCompatibleDC(0));
-    int w = ir.width();
-    int h = ir.height();
-    BitmapInfo bmp = BitmapInfo::create(IntSize(w, h));
-
-    GDIObject<HBITMAP> hbmp = adoptGDIObject(::CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0));
-    if (!hbmp)
-        return hbmp;
-
-    HGDIOBJ hbmpOld = SelectObject(hdc.get(), hbmp.get());
-
-    notImplemented();
-
-    SelectObject(hdc.get(), hbmpOld);
-
-    frame->view()->setPaintBehavior(oldPaintBehavior);
-
-    return hbmp;
+namespace DisplayList {
+class DisplayList;
 }
+
+class FloatRoundedRect;
+class Image;
+class TransformState;
+
+class GraphicsLayerDirect2D : public GraphicsLayer {
+public:
+
+    WEBCORE_EXPORT explicit GraphicsLayerDirect2D(Type, GraphicsLayerClient&);
+    WEBCORE_EXPORT virtual ~GraphicsLayerDirect2D();
+
+private:
+    WEBCORE_EXPORT void initialize(Type) override;
+
+    WEBCORE_EXPORT void setNeedsDisplay() override;
+    WEBCORE_EXPORT void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
+
+    bool isGraphicsLayerCA() const override { return false; }
+};
 
 } // namespace WebCore
 
-#endif
+SPECIALIZE_TYPE_TRAITS_GRAPHICSLAYER(WebCore::GraphicsLayerDirect2D, isGraphicsLayerCA())
