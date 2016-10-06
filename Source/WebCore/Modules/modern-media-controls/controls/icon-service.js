@@ -23,28 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const LayoutTraits = {
-    Unknown     : 0,
-    macOS       : 1 << 0,
-    iOS         : 1 << 1,
-    Fullscreen  : 1 << 2
+const Icons = {
+    Pause   : "pause",
+    Start   : "start"
 };
 
-class LayoutItem extends LayoutNode
-{
+const IconsWithFullScreenVariants = [Icons.Pause];
 
-    constructor({ element = null, layoutDelegate = null } = {})
+const iconService = new class IconService {
+
+    constructor()
     {
-        super(element);
-
-        this.layoutDelegate = layoutDelegate;
+        this.images = {};
     }
 
-    // Public
-
-    get layoutTraits()
+    imageForIconNameAndLayoutTraits(iconName, layoutTraits)
     {
-        return (this.layoutDelegate && this.layoutDelegate.layoutTraits) || LayoutTraits.Unknown;
+        const path = this.urlForIconNameAndLayoutTraits(iconName, layoutTraits);
+        
+        let image = this.images[path];
+        if (image)
+            return image;
+
+        image = this.images[path] = new Image;
+        image.src = path;
+        return image;
     }
 
-}
+    urlForIconNameAndLayoutTraits(iconName, layoutTraits)
+    {
+        let platform;
+        if (layoutTraits & LayoutTraits.macOS)
+            platform = "macOS";
+        else if (layoutTraits & LayoutTraits.iOS)
+            platform = "iOS";
+        else
+            throw "Could not identify icon's platform from layout traits.";
+
+        if (layoutTraits & LayoutTraits.Fullscreen && IconsWithFullScreenVariants.includes(iconName))
+            iconName += "-fullscreen";
+
+        return `${this.directoryPath}/${platform}/${iconName}@${window.devicePixelRatio}x.png`;
+    }
+
+};

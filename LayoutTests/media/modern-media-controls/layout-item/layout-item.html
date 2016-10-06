@@ -10,7 +10,7 @@ const layoutDelegate = new class
 {
     get layoutTraits()
     {
-        return LayoutTraits.Mac | LayoutTraits.Fullscreen;
+        return LayoutTraits.macOS | LayoutTraits.Fullscreen;
     }
 };
 
@@ -19,13 +19,13 @@ const itemWithNoParameter = new LayoutItem;
 shouldBeTrue("itemWithNoParameter.layoutTraits === LayoutTraits.Unknown");
 
 itemWithNoParameter.layoutDelegate = layoutDelegate;
-shouldBeTrue("!!(itemWithNoParameter.layoutTraits | LayoutTraits.Mac)");
+shouldBeTrue("!!(itemWithNoParameter.layoutTraits | LayoutTraits.macOS)");
 shouldBeTrue("!!(itemWithNoParameter.layoutTraits | LayoutTraits.Fullscreen)");
 
 debug("");
 debug("Creating a LayoutItem with a layout delegate set at construction.");
 const itemWithLayoutDelegate = new LayoutItem({ layoutDelegate });
-shouldBeTrue("!!(itemWithLayoutDelegate.layoutTraits | LayoutTraits.Mac)");
+shouldBeTrue("!!(itemWithLayoutDelegate.layoutTraits | LayoutTraits.macOS)");
 shouldBeTrue("!!(itemWithLayoutDelegate.layoutTraits | LayoutTraits.Fullscreen)");
 
 </script>

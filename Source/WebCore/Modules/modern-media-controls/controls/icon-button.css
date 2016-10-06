@@ -23,28 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const LayoutTraits = {
-    Unknown     : 0,
-    macOS       : 1 << 0,
-    iOS         : 1 << 1,
-    Fullscreen  : 1 << 2
-};
+button.icon {
+    -webkit-mask-repeat: no-repeat;
+}
 
-class LayoutItem extends LayoutNode
-{
-
-    constructor({ element = null, layoutDelegate = null } = {})
-    {
-        super(element);
-
-        this.layoutDelegate = layoutDelegate;
-    }
-
-    // Public
-
-    get layoutTraits()
-    {
-        return (this.layoutDelegate && this.layoutDelegate.layoutTraits) || LayoutTraits.Unknown;
-    }
-
+button.icon:active {
+    background-color: white;
 }

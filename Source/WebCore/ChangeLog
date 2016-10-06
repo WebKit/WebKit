@@ -1,3 +1,54 @@
+2016-10-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Icon service and the IconButton class
+        https://bugs.webkit.org/show_bug.cgi?id=162970
+        <rdar://problem/28631803>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the new IconButton class to display buttons that show an icon
+        in modern media controls. An IconButton uses a CSS mask-image to display the icon
+        such that we may set the actual button color to any value by setting the element's
+        background-color property.
+
+        Icons are obtained through the `iconService` singleton which knows how to load the
+        right icon for the current layout traits and resolution. Icons loaded through the
+        icon service are cached. In a later patch, we will be introducing functionality,
+        through the MediaControlsHost, to load the icon from the WebCore bundle.
+
+        Tests: media/modern-media-controls/icon-button/icon-button-active-state.html
+               media/modern-media-controls/icon-button/icon-button.html
+               media/modern-media-controls/icon-service/icon-service.html
+
+        * Modules/modern-media-controls/controls/button.css:
+        (button):
+        * Modules/modern-media-controls/controls/icon-button.css: Copied from Source/WebCore/Modules/modern-media-controls/controls/button.css.
+        (button.icon):
+        (button.icon:active):
+        * Modules/modern-media-controls/controls/icon-button.js: Added.
+        (IconButton):
+        (IconButton.prototype.get iconName):
+        (IconButton.prototype.set iconName):
+        (IconButton.prototype.handleEvent):
+        (IconButton.prototype.layout):
+        (IconButton.prototype._imageDidLoad):
+        (IconButton.prototype._updateImage):
+        * Modules/modern-media-controls/controls/icon-service.js: Copied from Source/WebCore/Modules/modern-media-controls/controls/layout-item.js.
+        (const.iconService.new.IconService):
+        (const.iconService.new.IconService.prototype.imageForIconNameAndLayoutTraits):
+        (const.iconService.new.IconService.prototype.urlForIconNameAndLayoutTraits):
+        * Modules/modern-media-controls/controls/layout-item.js:
+        * Modules/modern-media-controls/images/iOS/pause@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pause@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/start@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/start@3x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pause@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/start@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/start@2x.png: Added.
+
 2016-10-06  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Fix build with GSTREAMER_GL enabled and ACCELERATED_2D_CANVAS disabled
