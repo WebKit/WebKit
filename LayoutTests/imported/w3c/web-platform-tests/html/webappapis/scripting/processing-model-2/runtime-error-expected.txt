@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 25: ReferenceError: Can't find variable: undefined_variable
+
+PASS window.onerror - runtime error in <script> 
+PASS window.onerror - runtime error in <script> (column) 
+

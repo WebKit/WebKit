@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token ')'
+
+FAIL window.onerror - compile error in <script src=data:...> assert_equals: second arg expected "data:text/javascript,for(;){}" but got ""
+PASS window.onerror - compile error in <script src=data:...> (column) 
+

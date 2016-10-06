@@ -1,0 +1,9 @@
+
+FAIL mouseover listener returning true cancels event assert_equals: expected true but got false
+FAIL mouseover listener returning false doesn't cancel event assert_equals: expected false but got true
+FAIL beforeunload listener returning null cancels event assert_equals: expected true but got false
+PASS beforeunload listener returning non-null doesn't cancel event 
+PASS click listener returning false cancels event 
+PASS blur listener returning false cancels event 
+PASS dblclick listener returning false cancels event 
+

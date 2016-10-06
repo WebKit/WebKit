@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: undefined_variable
+
+FAIL window.onerror - runtime error in <script src=data:...> assert_equals: second arg expected "data:text/javascript,undefined_variable;" but got ""
+PASS window.onerror - runtime error in <script src=data:...> (column) 
+

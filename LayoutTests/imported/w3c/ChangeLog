@@ -1,3 +1,177 @@
+2016-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Import html/webappapis web platform tests
+        https://bugs.webkit.org/show_bug.cgi?id=163018
+
+        Reviewed by Youenn Fablet.
+
+        Import html/webappapis web platform tests from upstream to extend test
+        coverage.
+
+        * resources/resource-files.json:
+        * web-platform-tests/html/webappapis/animation-frames/callback-exception-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/callback-exception.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/callback-invoked-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/callback-invoked.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/callback-multicalls-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/callback-multicalls.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/cancel-invoked-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/cancel-invoked.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/idlharness-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/idlharness.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/same-dispatch-time-expected.txt: Added.
+        * web-platform-tests/html/webappapis/animation-frames/same-dispatch-time.html: Added.
+        * web-platform-tests/html/webappapis/animation-frames/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/atob/base64-expected.txt: Added.
+        * web-platform-tests/html/webappapis/atob/base64.html: Added.
+        * web-platform-tests/html/webappapis/atob/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/contains.json: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_script-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_script.html: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/resources/common.js: Added.
+        (log_test):
+        * web-platform-tests/html/webappapis/scripting/event-loops/resources/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/task_microtask_ordering-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/task_microtask_ordering.html: Added.
+        * web-platform-tests/html/webappapis/scripting/event-loops/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/events/body-onload-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/body-onload.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/contains.json: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-javascript-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-javascript.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-onresize-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-onresize.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-late.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/invalid-uncompiled-raw-handler-compiled-once.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/onerroreventhandler.html: Added.
+        * web-platform-tests/html/webappapis/scripting/events/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/addEventListener-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/addEventListener.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error-data-url-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error-data-url.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-compile-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-runtime-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/body-onerror-runtime-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-attribute-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-attribute.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-body-onerror-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-body-onerror.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setInterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setInterval.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setTimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-in-setTimeout.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-same-origin-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-same-origin.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/contains.json: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-data-url-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-data-url.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-attribute-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-attribute.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-body-onerror-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-body-onerror.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setInterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setInterval.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setTimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-setTimeout.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-window-onerror-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-in-window-onerror.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-same-origin-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-same-origin.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/syntax-error-in-setInterval.js: Added.
+        (setTimeout):
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/syntax-error-in-setTimeout.js: Added.
+        (setTimeout):
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/syntax-error.js: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/undefined-variable-in-setInterval.js: Added.
+        (setTimeout):
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/undefined-variable-in-setTimeout.js: Added.
+        (setTimeout):
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/undefined-variable.js: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/support/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-parse-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error-throw.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-runtime-error.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-1-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-1.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-2-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-2.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-3-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-3.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-4-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/window-onerror-with-cross-frame-event-listeners-4.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.js: Added.
+        (run_test.):
+        (run_test):
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.js: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/contains.json: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/001-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/001.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/002.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/003-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/003.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/004.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/005-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/005.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/006.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/content/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-indexed-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-indexed.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorlanguage-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigatorlanguage.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol.html: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/001-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/001.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/002-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/002.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/003-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/003.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/004-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/004.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/005-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/005.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/006-expected.txt: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/006.xhtml: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/protocol/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/w3c-import.log: Added.
+        * web-platform-tests/html/webappapis/timers/evil-spec-example-expected.txt: Added.
+        * web-platform-tests/html/webappapis/timers/evil-spec-example.html: Added.
+        * web-platform-tests/html/webappapis/timers/w3c-import.log: Added.
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Forbid redirection to non-HTTP(s) URL in non-navigation mode.

@@ -1,0 +1,3 @@
+
+FAIL Blacklisted content type and isContentHandlerRegistered navigator.registerContentHandler is not a function. (In 'navigator.registerContentHandler(ctype, url, 'test')', 'navigator.registerContentHandler' is undefined)
+

@@ -226,6 +226,7 @@
         "web-platform-tests/html/syntax/parsing/foreign_content_010.html",
         "web-platform-tests/html/syntax/parsing/foreign_content_011.html",
         "web-platform-tests/html/syntax/parsing/foreign_content_013.html",
+        "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html"
     ]
 }

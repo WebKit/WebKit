@@ -1,0 +1,5 @@
+
+PASS body.onresize should set the window.onload handler 
+PASS document.onresize should set the document.onresize handler 
+PASS meta.onresize should set the meta.onresize handler 
+

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 32: bar
+
+PASS correct number of calls to window.onerror 
+

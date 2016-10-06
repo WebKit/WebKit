@@ -1,0 +1,11 @@
+
+PASS appCodeName 
+PASS appName 
+PASS appVersion 
+PASS platform 
+PASS product 
+PASS taintEnabled 
+PASS userAgent type 
+PASS vendorSub 
+PASS userAgent value 
+

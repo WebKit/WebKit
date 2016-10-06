@@ -1,0 +1,3 @@
+
+FAIL isProtocolHandlerRegistered for new protocol navigator.isProtocolHandlerRegistered is not a function. (In 'navigator.isProtocolHandlerRegistered('web+CustomProtocolOne', dir_uri + '/%s')', 'navigator.isProtocolHandlerRegistered' is undefined)
+
