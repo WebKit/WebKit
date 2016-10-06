@@ -232,6 +232,8 @@ webkit.org/b/124476 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 # uiElementForSearchPredicate() is not returning an undefined object when the search returns no results
 webkit.org/b/125996 accessibility/mac/search-when-element-starts-in-table.html [ Failure ]
 
+webkit.org/b/162999 accessibility/mac/wk1-set-selected-text-marker-range-input-element.html [ Skip ]
+
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Pass Failure ]
 
 # testRunner.setUseDeferredFrameLoading is not implemented.
