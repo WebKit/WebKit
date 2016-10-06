@@ -353,6 +353,12 @@ SpeculatedType speculationFromTypedArrayType(TypedArrayType type)
 
 SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 {
+    if (classInfo == JSString::info())
+        return SpecString;
+
+    if (classInfo == Symbol::info())
+        return SpecSymbol;
+
     if (classInfo == JSFinalObject::info())
         return SpecFinalObject;
     
@@ -385,6 +391,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     
     if (isTypedView(classInfo->typedArrayStorageType))
         return speculationFromTypedArrayType(classInfo->typedArrayStorageType);
+
+    if (classInfo->isSubClassOf(JSArray::info()))
+        return SpecDerivedArray;
     
     if (classInfo->isSubClassOf(JSObject::info()))
         return SpecObjectOther;

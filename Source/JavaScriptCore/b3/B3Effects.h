@@ -78,6 +78,15 @@ struct Effects {
         return result;
     }
 
+    static Effects forCheck()
+    {
+        Effects result;
+        result.exitsSideways = true;
+        // The program could read anything after exiting, and it's on us to declare this.
+        result.reads = HeapRange::top();
+        return result;
+    }
+
     bool mustExecute() const
     {
         return terminal || exitsSideways || writesLocalState || writes;

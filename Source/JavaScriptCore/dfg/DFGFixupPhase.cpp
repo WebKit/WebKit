@@ -1699,6 +1699,15 @@ private:
             break;
         }
 
+        case CheckDOM:
+            fixEdge<CellUse>(node->child1());
+            break;
+
+        case CallDOM:
+            fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0)); // GlobalObject.
+            fixEdge<CellUse>(m_graph.varArgChild(node, 1)); // DOM.
+            break;
+
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
         case SetArgument:

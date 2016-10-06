@@ -1209,9 +1209,9 @@ public:
     
     enum ExceptionCheckKind { NormalExceptionCheck, InvertedExceptionCheck };
     enum ExceptionJumpWidth { NormalJumpWidth, FarJumpWidth };
-    Jump emitExceptionCheck(
+    JS_EXPORT_PRIVATE Jump emitExceptionCheck(
         ExceptionCheckKind = NormalExceptionCheck, ExceptionJumpWidth = NormalJumpWidth);
-    Jump emitNonPatchableExceptionCheck();
+    JS_EXPORT_PRIVATE Jump emitNonPatchableExceptionCheck();
 
 #if ENABLE(SAMPLING_COUNTERS)
     static void emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, int32_t increment = 1)

@@ -20,33 +20,45 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include <wtf/StdLibExtras.h>
+#if ENABLE(JIT)
 
-#if ENABLE(DFG_JIT)
+#include "CCallHelpers.h"
+#include "DOMJITReg.h"
+#include "RegisterSet.h"
 
-namespace JSC { namespace DFG {
+namespace JSC { namespace DOMJIT {
 
-// This type used in passing an immediate argument to Node constructor;
-// distinguishes an immediate value (typically an index into a CodeBlock data structure - 
-// a constant index, argument, or identifier) from a Node*.
-struct OpInfo {
-    OpInfo() : m_value(0) { }
-    explicit OpInfo(int32_t value) : m_value(static_cast<uint64_t>(value)) { }
-    explicit OpInfo(uint32_t value) : m_value(static_cast<uint64_t>(value)) { }
-    explicit OpInfo(uint64_t value) : m_value(static_cast<uint64_t>(value)) { }
-#if OS(DARWIN)
-    explicit OpInfo(uintptr_t value) : m_value(static_cast<uint64_t>(value)) { }
-#endif
-    explicit OpInfo(void* value) : m_value(static_cast<uint64_t>(reinterpret_cast<uintptr_t>(value))) { }
-    explicit OpInfo(const void* value) : m_value(static_cast<uint64_t>(reinterpret_cast<uintptr_t>(value))) { }
-    uint64_t m_value;
+class PatchpointParams {
+WTF_MAKE_NONCOPYABLE(PatchpointParams);
+public:
+    virtual ~PatchpointParams() { }
+
+    unsigned size() const { return m_regs.size(); }
+    const Reg& at(unsigned index) const { return m_regs[index]; }
+    const Reg& operator[](unsigned index) const { return at(index); }
+
+    GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
+    FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
+
+    PatchpointParams(Vector<Reg>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : m_regs(WTFMove(regs))
+        , m_gpScratch(WTFMove(gpScratch))
+        , m_fpScratch(WTFMove(fpScratch))
+    {
+    }
+
+private:
+
+    Vector<Reg> m_regs;
+    Vector<GPRReg> m_gpScratch;
+    Vector<FPRReg> m_fpScratch;
 };
 
-} } // namespace JSC::DFG
+} }
 
-#endif // ENABLE(DFG_JIT)
+#endif

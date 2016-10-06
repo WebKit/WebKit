@@ -246,6 +246,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
                     domJIT = access.domJIT();
                     if (!domJIT)
                         return GetByIdStatus(slowPathState, true);
+                    result.m_state = Custom;
                     break;
                 }
                 default: {
@@ -263,6 +264,16 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
 
                 if (!result.appendVariant(variant))
                     return GetByIdStatus(slowPathState, true);
+
+                if (domJIT) {
+                    // Give up when cutom accesses are not merged into one.
+                    if (result.numVariants() != 1)
+                        return GetByIdStatus(slowPathState, true);
+                } else {
+                    // Give up when custom access and simple access are mixed.
+                    if (result.m_state == Custom)
+                        return GetByIdStatus(slowPathState, true);
+                }
                 break;
             } }
         }
@@ -362,6 +373,7 @@ bool GetByIdStatus::makesCalls() const
     switch (m_state) {
     case NoInformation:
     case TakesSlowPath:
+    case Custom:
         return false;
     case Simple:
         for (unsigned i = m_variants.size(); i--;) {
@@ -402,6 +414,9 @@ void GetByIdStatus::dump(PrintStream& out) const
         break;
     case Simple:
         out.print("Simple");
+        break;
+    case Custom:
+        out.print("Custom");
         break;
     case TakesSlowPath:
         out.print("TakesSlowPath");

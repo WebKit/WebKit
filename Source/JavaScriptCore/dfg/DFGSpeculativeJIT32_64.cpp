@@ -5435,6 +5435,14 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case CallDOM:
+        compileCallDOM(node);
+        break;
+
+    case CheckDOM:
+        compileCheckDOM(node);
+        break;
+
     case Unreachable:
         unreachable(node);
         break;

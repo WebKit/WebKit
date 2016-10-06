@@ -38,6 +38,8 @@
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
+#include "DOMJITPatchpoint.h"
+#include "DOMJITPatchpointParams.h"
 #include "DirectArguments.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"
@@ -7109,6 +7111,74 @@ void SpeculativeJIT::compileGetButterfly(Node* node)
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::butterflyOffset()), resultGPR);
 
     storageResult(resultGPR, node);
+}
+
+static void allocateTemporaryRegistersForPatchpoint(SpeculativeJIT* jit, Vector<GPRTemporary>& gpHolders, Vector<FPRTemporary>& fpHolders, Vector<GPRReg>& gpScratch, Vector<FPRReg>& fpScratch, DOMJIT::Patchpoint& patchpoint)
+{
+    for (unsigned i = 0; i < patchpoint.numGPScratchRegisters; ++i) {
+        GPRTemporary temporary(jit);
+        gpScratch.append(temporary.gpr());
+        gpHolders.append(WTFMove(temporary));
+    }
+
+    for (unsigned i = 0; i < patchpoint.numFPScratchRegisters; ++i) {
+        FPRTemporary temporary(jit);
+        fpScratch.append(temporary.fpr());
+        fpHolders.append(WTFMove(temporary));
+    }
+}
+
+void SpeculativeJIT::compileCallDOM(Node* node)
+{
+    Ref<DOMJIT::Patchpoint> patchpoint = node->domJIT()->callDOM();
+
+    Vector<GPRReg> gpScratch;
+    Vector<FPRReg> fpScratch;
+    Vector<DOMJIT::Reg> regs;
+
+    // FIXME: patchpoint should have a way to tell this can reuse "base" register.
+    // Teaching DFG about DOMJIT::Patchpoint clobber information is nice.
+    SpeculateCellOperand globalObject(this, m_jit.graph().varArgChild(node, 0));
+    SpeculateCellOperand base(this, m_jit.graph().varArgChild(node, 1));
+    JSValueRegsTemporary result(this);
+
+    regs.append(result.regs());
+    regs.append(globalObject.gpr());
+    regs.append(base.gpr());
+#if USE(JSVALUE64)
+    regs.append(static_cast<GPRReg>(GPRInfo::tagMaskRegister));
+    regs.append(static_cast<GPRReg>(GPRInfo::tagTypeNumberRegister));
+#endif
+
+    Vector<GPRTemporary> gpTempraries;
+    Vector<FPRTemporary> fpTempraries;
+    allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, patchpoint.get());
+    DOMJIT::PatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    patchpoint->generator()->run(m_jit, params);
+    jsValueResult(result.regs(), node);
+}
+
+void SpeculativeJIT::compileCheckDOM(Node* node)
+{
+    // FIXME: We can add the fallback implementation that inlines jsDynamicCast things here.
+    Ref<DOMJIT::Patchpoint> patchpoint = node->domJIT()->checkDOM();
+
+    Vector<GPRReg> gpScratch;
+    Vector<FPRReg> fpScratch;
+    Vector<DOMJIT::Reg> regs;
+
+    SpeculateCellOperand base(this, node->child1());
+    GPRReg baseGPR = base.gpr();
+    regs.append(baseGPR);
+
+    Vector<GPRTemporary> gpTempraries;
+    Vector<FPRTemporary> fpTempraries;
+    allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, patchpoint.get());
+
+    DOMJIT::PatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    CCallHelpers::JumpList failureCases = patchpoint->generator()->run(m_jit, params);
+    speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
+    noResult(node);
 }
 
 GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, ArrayMode arrayMode)

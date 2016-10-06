@@ -158,6 +158,28 @@ private:
                 }
                 break;
             }
+
+            case CheckDOM: {
+                JSValue constant = m_state.forNode(node->child1()).value();
+                if (constant) {
+                    if (constant.isCell() && constant.asCell()->inherits(node->classInfo())) {
+                        m_interpreter.execute(indexInBlock);
+                        node->remove();
+                        eliminated = true;
+                        break;
+                    }
+                }
+
+                AbstractValue& value = m_state.forNode(node->child1());
+
+                if (value.m_structure.isSubClassOf(node->classInfo())) {
+                    m_interpreter.execute(indexInBlock);
+                    node->remove();
+                    eliminated = true;
+                    break;
+                }
+                break;
+            }
                 
             case GetIndexedPropertyStorage: {
                 JSArrayBufferView* view = m_graph.tryGetFoldableView(

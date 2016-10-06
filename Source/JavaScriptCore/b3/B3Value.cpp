@@ -614,9 +614,7 @@ Effects Value::effects() const
     case CheckSub:
     case CheckMul:
     case Check:
-        result.exitsSideways = true;
-        // The program could read anything after exiting, and it's on us to declare this.
-        result.reads = HeapRange::top();
+        result = Effects::forCheck();
         break;
     case Upsilon:
     case Set:

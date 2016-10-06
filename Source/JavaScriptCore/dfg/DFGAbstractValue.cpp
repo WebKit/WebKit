@@ -306,6 +306,23 @@ FiltrationResult AbstractValue::filterArrayModes(ArrayModes arrayModes)
     return normalizeClarity();
 }
 
+FiltrationResult AbstractValue::filterClassInfo(Graph& graph, const ClassInfo* classInfo)
+{
+    // FIXME: AI should track ClassInfo to leverage hierarchical class information.
+    // https://bugs.webkit.org/show_bug.cgi?id=162989
+    if (isClear())
+        return FiltrationOK;
+
+    m_type &= speculationFromClassInfo(classInfo);
+    m_structure.filterClassInfo(classInfo);
+
+    m_structure.filter(m_type);
+
+    filterArrayModesByType();
+    filterValueByType();
+    return normalizeClarity(graph);
+}
+
 FiltrationResult AbstractValue::filter(SpeculatedType type)
 {
     if ((m_type & type) == m_type)

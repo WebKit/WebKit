@@ -885,6 +885,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(ButterflyLoc, JSObject_butterfly, node->child1()), LazyNode(node));
         return;
 
+    case CheckDOM:
+        def(PureValue(node, node->classInfo()));
+        return;
+
+    case CallDOM:
+        read(World);
+        write(Heap);
+        return;
+
     case Arrayify:
     case ArrayifyToStructure:
         read(JSCell_structureID);

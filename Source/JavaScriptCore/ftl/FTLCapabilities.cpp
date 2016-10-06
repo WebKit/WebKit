@@ -266,6 +266,8 @@ inline CapabilityLevel canCompile(Node* node)
     case DefineDataProperty:
     case DefineAccessorProperty:
     case ToLowerCase:
+    case CheckDOM:
+    case CallDOM:
         // These are OK.
         break;
 

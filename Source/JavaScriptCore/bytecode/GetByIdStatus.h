@@ -44,6 +44,7 @@ public:
         NoInformation,  // It's uncached so we have no information.
         Simple,         // It's cached for a simple access to a known object property with
                         // a possible structure chain and a possible specific value.
+        Custom,         // It's cached for a custom accessor with a possible structure chain.
         TakesSlowPath,  // It's known to often take slow path.
         MakesCalls      // It's known to take paths that make calls.
     };
@@ -64,7 +65,7 @@ public:
         : m_state(state)
         , m_wasSeenInJIT(wasSeenInJIT)
     {
-        ASSERT((state == Simple) == variant.isSet());
+        ASSERT((state == Simple || state == Custom) == variant.isSet());
         m_variants.append(variant);
     }
     
@@ -82,13 +83,14 @@ public:
     bool isSet() const { return m_state != NoInformation; }
     bool operator!() const { return !isSet(); }
     bool isSimple() const { return m_state == Simple; }
+    bool isCustom() const { return m_state == Custom; }
 
     size_t numVariants() const { return m_variants.size(); }
     const Vector<GetByIdVariant, 1>& variants() const { return m_variants; }
     const GetByIdVariant& at(size_t index) const { return m_variants[index]; }
     const GetByIdVariant& operator[](size_t index) const { return at(index); }
 
-    bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls; }
+    bool takesSlowPath() const { return m_state == TakesSlowPath || m_state == MakesCalls || m_state == Custom; }
     bool makesCalls() const;
     
     bool wasSeenInJIT() const { return m_wasSeenInJIT; }

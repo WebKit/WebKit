@@ -218,6 +218,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:
+    case CallDOM:
+    case CheckDOM:
     case CheckArray:
     case Arrayify:
     case ArrayifyToStructure:

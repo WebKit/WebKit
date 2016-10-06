@@ -40,6 +40,10 @@ public:
     {
     }
 
+    Box(std::nullptr_t)
+    {
+    }
+
     template<typename... Arguments>
     static Box create(Arguments&&... arguments)
     {

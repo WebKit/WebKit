@@ -1,5 +1,150 @@
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DOMJIT] Add initial CheckDOM and CallDOM implementations
+        https://bugs.webkit.org/show_bug.cgi?id=162941
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements a prototype of DOMJIT accelerated getter.
+        We add two new DFG nodes, CheckDOM and CallDOM.
+
+        CheckDOM is used to filter inappropriate |this| object for DOM getter. Its functionality
+        is equivalent to jsDynamicCast's Check. You can use like "CheckDOM, @1, JSNode::info()",
+        and this CheckDOM incurs a BadType exit if the class of the given @1 is not a subclass of
+        JSNode::info().
+
+        CallDOM is used to emit actual DOM operations. It takes GlobalObject and checked DOM
+        object. And it returns JSValue as its result.
+
+        Both CheckDOM and CallDOM can take a DOMJIT::Patchpoint. This is somewhat code snippet
+        generator, and is injectable to DFG and FTL. DFG and FTL set up registers correctly
+        according to DOMJIT::Patchpoint's requirement and invoke this patchpoint generator to emit code.
+        While CallDOM always requires a patchpoint, ideally CheckDOM does not require it since
+        isSubclassOf check can be implemented in DFG / FTL side. However, some classes have a
+        faster way to query isSubclassOf. For example, JSNode in WebCore introduces a special
+        JSType to optimize this query. CheckDOM's patchpoint gives us a chance to emit special
+        faster code for such a case.
+
+        By leveraging above nodes, we can construct DOMJIT accelerated getter. When DFG recognizes the
+        given getter call is CustomGetter and it has DOMJIT::GetterSetter information, DFG emits the above nodes.
+        We implemented a prototype in jsc.cpp shell as DOMJITGetter to test the functionality.
+
+        Notes about the future extensions.
+
+        1. Currently, we do not allow CallDOM to emit any function calls. This will be extended by
+           adding `addSlowPathCall` functionality to DOMJIT::Patchpoint later. Interesting thing is that
+           we need to create an abstraction over DFG slow path call and FTL slow path call!
+
+        2. CheckDOM is not handled in DFGTypeCheckHoistingPhase yet. And we have a chance to merge several CheckDOM into one.
+           For example, given CheckDOM A and CheckDOM B to the same target. If A is subclass of B, we can merge them to CheckDOM A.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::forCheck):
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::makesCalls):
+        (JSC::GetByIdStatus::dump):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (JSC::GetByIdStatus::isCustom):
+        (JSC::GetByIdStatus::takesSlowPath):
+        (JSC::GetByIdStatus::isSimple): Deleted.
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfo):
+        * dfg/DFGAbstractInterpreter.h:
+        (JSC::DFG::AbstractInterpreter::filterClassInfo):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterClassInfo):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterClassInfo):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasDOMJIT):
+        (JSC::DFG::Node::domJIT):
+        (JSC::DFG::Node::hasClassInfo):
+        (JSC::DFG::Node::classInfo):
+        (JSC::DFG::Node::OpInfoWrapper::OpInfoWrapper):
+        (JSC::DFG::Node::OpInfoWrapper::operator=):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOpInfo.h:
+        (JSC::DFG::OpInfo::OpInfo):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::allocateTemporaryRegistersForPatchpoint):
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        (JSC::DFG::SpeculativeJIT::compileCheckDOM):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::filterClassInfoSlow):
+        (JSC::DFG::StructureAbstractValue::isSubClassOf):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::filterClassInfo):
+        (JSC::DFG::StructureAbstractValue::filter): Deleted.
+        * domjit/DOMJITPatchpointParams.h: Copied from Source/JavaScriptCore/dfg/DFGOpInfo.h.
+        (JSC::DOMJIT::PatchpointParams::~PatchpointParams):
+        (JSC::DOMJIT::PatchpointParams::size):
+        (JSC::DOMJIT::PatchpointParams::at):
+        (JSC::DOMJIT::PatchpointParams::operator[]):
+        (JSC::DOMJIT::PatchpointParams::gpScratch):
+        (JSC::DOMJIT::PatchpointParams::fpScratch):
+        (JSC::DOMJIT::PatchpointParams::PatchpointParams):
+        * domjit/DOMJITReg.h: Added.
+        (JSC::DOMJIT::Reg::Reg):
+        (JSC::DOMJIT::Reg::isGPR):
+        (JSC::DOMJIT::Reg::isFPR):
+        (JSC::DOMJIT::Reg::isJSValueRegs):
+        (JSC::DOMJIT::Reg::gpr):
+        (JSC::DOMJIT::Reg::fpr):
+        (JSC::DOMJIT::Reg::jsValueRegs):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnreachable): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jsc.cpp:
+        (WTF::DOMJITNode::DOMJITNode):
+        (WTF::DOMJITNode::createStructure):
+        (WTF::DOMJITNode::create):
+        (WTF::DOMJITNode::value):
+        (WTF::DOMJITNode::offsetOfValue):
+        (WTF::DOMJITGetter::DOMJITGetter):
+        (WTF::DOMJITGetter::createStructure):
+        (WTF::DOMJITGetter::create):
+        (WTF::DOMJITGetter::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT):
+        (WTF::DOMJITGetter::domJITNodeGetterSetter):
+        (WTF::DOMJITGetter::finishCreation):
+        (WTF::DOMJITGetter::customGetter):
+        (GlobalObject::finishCreation):
+        (functionCreateDOMJITNodeObject):
+        (functionCreateDOMJITGetterObject):
+
+2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Do not construct Simple GetByIdStatus against self-custom-accessor case
         https://bugs.webkit.org/show_bug.cgi?id=162993
 

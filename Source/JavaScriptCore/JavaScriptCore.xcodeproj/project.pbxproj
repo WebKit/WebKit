@@ -2098,6 +2098,8 @@
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E37AD83C1DA4928600F3D412 /* DOMJITPatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E37AD83D1DA4928600F3D412 /* DOMJITReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E37AD83B1DA4928000F3D412 /* DOMJITReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3963CEE1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */; };
@@ -4397,6 +4399,8 @@
 		E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorInstrumentationObject.js; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
+		E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITPatchpointParams.h; sourceTree = "<group>"; };
+		E37AD83B1DA4928000F3D412 /* DOMJITReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITReg.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39D9D841D39000600667282 /* InterpreterInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterpreterInlines.h; sourceTree = "<group>"; };
 		E39DA4A41B7E8B7C0084F33A /* JSModuleRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleRecord.cpp; sourceTree = "<group>"; };
@@ -7183,6 +7187,8 @@
 			children = (
 				E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */,
 				E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */,
+				E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */,
+				E37AD83B1DA4928000F3D412 /* DOMJITReg.h */,
 			);
 			path = domjit;
 			sourceTree = "<group>";
@@ -7600,6 +7606,7 @@
 				E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
 				0FC0977114693AF500CF2442 /* DFGOSRExitCompiler.h in Headers */,
+				E37AD83D1DA4928600F3D412 /* DOMJITReg.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
 				0F392C8A1B46188400844728 /* DFGOSRExitFuzz.h in Headers */,
 				0FEFC9AB1681A3B600567F53 /* DFGOSRExitJumpPlaceholder.h in Headers */,
@@ -8428,6 +8435,7 @@
 				9959E92E1BD17FA4001AA413 /* xxd.pl in Headers */,
 				79B1788E1D399B8000B1A567 /* JITMathICForwards.h in Headers */,
 				451539B912DC994500EF7AC4 /* Yarr.h in Headers */,
+				E37AD83C1DA4928600F3D412 /* DOMJITPatchpointParams.h in Headers */,
 				86704B8512DBA33700A9FE7B /* YarrInterpreter.h in Headers */,
 				86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */,
 				0FB4767F1D99AEAD008EA6CB /* GCDeferralContextInlines.h in Headers */,

@@ -307,6 +307,7 @@ struct AbstractValue {
     FiltrationResult filter(SpeculatedType);
     FiltrationResult filterByValue(const FrozenValue& value);
     FiltrationResult filter(const AbstractValue&);
+    FiltrationResult filterClassInfo(Graph&, const ClassInfo*);
 
     FiltrationResult filter(Graph&, const InferredType::Descriptor&);
     

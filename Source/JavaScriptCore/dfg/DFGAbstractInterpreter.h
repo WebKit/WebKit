@@ -134,10 +134,17 @@ public:
         return filterByValue(forNode(node), value);
     }
     
+    template<typename T>
+    FiltrationResult filterClassInfo(T node, const ClassInfo* classInfo)
+    {
+        return filterClassInfo(forNode(node), classInfo);
+    }
+
     FiltrationResult filter(AbstractValue&, const StructureSet&, SpeculatedType admittedTypes = SpecNone);
     FiltrationResult filterArrayModes(AbstractValue&, ArrayModes);
     FiltrationResult filter(AbstractValue&, SpeculatedType);
     FiltrationResult filterByValue(AbstractValue&, FrozenValue);
+    FiltrationResult filterClassInfo(AbstractValue&, const ClassInfo*);
     
     PhiChildren* phiChildren() { return m_phiChildren.get(); }
     

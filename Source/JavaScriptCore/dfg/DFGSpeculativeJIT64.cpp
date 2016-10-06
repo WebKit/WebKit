@@ -5566,6 +5566,14 @@ void SpeculativeJIT::compile(Node* node)
         compileMaterializeNewObject(node);
         break;
 
+    case CallDOM:
+        compileCallDOM(node);
+        break;
+
+    case CheckDOM:
+        compileCheckDOM(node);
+        break;
+
 #if ENABLE(FTL_JIT)        
     case CheckTierUpInLoop: {
         MacroAssembler::Jump callTierUp = m_jit.branchAdd32(

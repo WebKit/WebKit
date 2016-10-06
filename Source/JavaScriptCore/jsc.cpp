@@ -28,6 +28,9 @@
 #include "ButterflyInlines.h"
 #include "CodeBlock.h"
 #include "Completion.h"
+#include "DOMJITGetterSetter.h"
+#include "DOMJITPatchpoint.h"
+#include "DOMJITPatchpointParams.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
@@ -72,6 +75,7 @@
 #include <type_traits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -537,12 +541,133 @@ private:
     WriteBarrier<JSC::Unknown> m_hiddenValue;
 };
 
+class DOMJITNode : public JSNonFinalObject {
+public:
+    DOMJITNode(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    DECLARE_INFO;
+    typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
+    }
+
+    static DOMJITNode* create(VM& vm, Structure* structure)
+    {
+        DOMJITNode* getter = new (NotNull, allocateCell<DOMJITNode>(vm.heap, sizeof(DOMJITNode))) DOMJITNode(vm, structure);
+        getter->finishCreation(vm);
+        return getter;
+    }
+
+    int32_t value() const
+    {
+        return m_value;
+    }
+
+    static ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(DOMJITNode, m_value); }
+
+private:
+    int32_t m_value { 42 };
+};
+
+class DOMJITGetter : public DOMJITNode {
+public:
+    DOMJITGetter(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    {
+    }
+
+    DECLARE_INFO;
+    typedef DOMJITNode Base;
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSC::JSType(LastJSCObjectType + 1), StructureFlags), info());
+    }
+
+    static DOMJITGetter* create(VM& vm, Structure* structure)
+    {
+        DOMJITGetter* getter = new (NotNull, allocateCell<DOMJITGetter>(vm.heap, sizeof(DOMJITGetter))) DOMJITGetter(vm, structure);
+        getter->finishCreation(vm);
+        return getter;
+    }
+
+    class DOMJITNodeDOMJIT : public DOMJIT::GetterSetter {
+    public:
+        DOMJITNodeDOMJIT()
+            : DOMJIT::GetterSetter(DOMJITGetter::customGetter, nullptr, DOMJITNode::info())
+        {
+        }
+
+        Ref<DOMJIT::Patchpoint> checkDOM() override
+        {
+            Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
+            patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+                CCallHelpers::JumpList failureCases;
+                failureCases.append(jit.branch8(
+                    CCallHelpers::NotEqual,
+                    CCallHelpers::Address(params[0].gpr(), JSCell::typeInfoTypeOffset()),
+                    CCallHelpers::TrustedImm32(JSC::JSType(LastJSCObjectType + 1))));
+                return failureCases;
+            });
+            return patchpoint;
+        }
+
+        Ref<DOMJIT::Patchpoint> callDOM() override
+        {
+            Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
+            patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+                JSValueRegs results = params[0].jsValueRegs();
+                GPRReg dom = params[2].gpr();
+
+                jit.load32(CCallHelpers::Address(dom, DOMJITNode::offsetOfValue()), results.payloadGPR());
+                jit.boxInt32(results.payloadGPR(), results);
+                return CCallHelpers::JumpList();
+            });
+            return patchpoint;
+        }
+    };
+
+    static DOMJIT::GetterSetter* domJITNodeGetterSetter()
+    {
+        static NeverDestroyed<DOMJITNodeDOMJIT> graph;
+        return &graph.get();
+    }
+
+private:
+    void finishCreation(VM& vm)
+    {
+        Base::finishCreation(vm);
+        DOMJIT::GetterSetter* domJIT = domJITNodeGetterSetter();
+        CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, domJIT->getter(), domJIT->setter(), domJIT);
+        putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customGetter"), customGetterSetter, ReadOnly | CustomAccessor);
+    }
+
+    static EncodedJSValue customGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName)
+    {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(JSValue::decode(thisValue));
+        if (!thisObject)
+            return throwVMTypeError(exec, scope);
+        return JSValue::encode(jsNumber(thisObject->value()));
+    }
+};
 
 const ClassInfo Element::s_info = { "Element", &Base::s_info, 0, CREATE_METHOD_TABLE(Element) };
 const ClassInfo Masquerader::s_info = { "Masquerader", &Base::s_info, 0, CREATE_METHOD_TABLE(Masquerader) };
 const ClassInfo Root::s_info = { "Root", &Base::s_info, 0, CREATE_METHOD_TABLE(Root) };
 const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(ImpureGetter) };
 const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(CustomGetter) };
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, 0, CREATE_METHOD_TABLE(DOMJITNode) };
+const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, 0, CREATE_METHOD_TABLE(DOMJITGetter) };
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, 0, CREATE_METHOD_TABLE(RuntimeArray) };
 const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, 0, CREATE_METHOD_TABLE(SimpleObject) };
 static bool test262AsyncPassed { false };
@@ -571,6 +696,8 @@ static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRuntimeArray(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITNodeObject(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateBuiltin(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateGlobalObject(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionSetImpureGetterDelegate(ExecState*);
@@ -855,6 +982,8 @@ protected:
 
         addFunction(vm, "createImpureGetter", functionCreateImpureGetter, 1);
         addFunction(vm, "createCustomGetterObject", functionCreateCustomGetterObject, 0);
+        addFunction(vm, "createDOMJITNodeObject", functionCreateDOMJITNodeObject, 0);
+        addFunction(vm, "createDOMJITGetterObject", functionCreateDOMJITGetterObject, 0);
         addFunction(vm, "createBuiltin", functionCreateBuiltin, 2);
         addFunction(vm, "createGlobalObject", functionCreateGlobalObject, 0);
         addFunction(vm, "setImpureGetterDelegate", functionSetImpureGetterDelegate, 2);
@@ -1356,6 +1485,22 @@ EncodedJSValue JSC_HOST_CALL functionCreateCustomGetterObject(ExecState* exec)
     JSLockHolder lock(exec);
     Structure* structure = CustomGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
     CustomGetter* result = CustomGetter::create(exec->vm(), structure);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateDOMJITNodeObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Structure* structure = DOMJITNode::createStructure(exec->vm(), exec->lexicalGlobalObject(), DOMJITGetter::create(exec->vm(), DOMJITGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull())));
+    DOMJITNode* result = DOMJITNode::create(exec->vm(), structure);
+    return JSValue::encode(result);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateDOMJITGetterObject(ExecState* exec)
+{
+    JSLockHolder lock(exec);
+    Structure* structure = DOMJITGetter::createStructure(exec->vm(), exec->lexicalGlobalObject(), jsNull());
+    DOMJITGetter* result = DOMJITGetter::create(exec->vm(), structure);
     return JSValue::encode(result);
 }
 

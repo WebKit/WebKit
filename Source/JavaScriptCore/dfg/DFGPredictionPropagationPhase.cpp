@@ -699,7 +699,8 @@ private:
         case GetClosureVar:
         case GetFromArguments:
         case LoadFromJSMapBucket:
-        case ToNumber: {
+        case ToNumber:
+        case CallDOM: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }
@@ -823,6 +824,9 @@ private:
             setPrediction(SpecOther);
             break;
         }
+
+        case CheckDOM:
+            break;
 
         case CallObjectConstructor: {
             setPrediction(SpecObject);

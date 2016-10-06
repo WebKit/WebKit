@@ -1,3 +1,13 @@
+2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add initial CheckDOM and CallDOM implementations
+        https://bugs.webkit.org/show_bug.cgi?id=162941
+
+        Reviewed by Filip Pizlo.
+
+        * wtf/Box.h:
+        (WTF::Box::Box):
+
 2016-10-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Rename ENABLE_ENCRYPTED_MEDIA_V2 to ENABLE_LEGACY_ENCRYPTED_MEDIA

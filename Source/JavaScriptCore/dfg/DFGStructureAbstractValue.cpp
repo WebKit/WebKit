@@ -258,6 +258,15 @@ void StructureAbstractValue::filterSlow(SpeculatedType type)
         });
 }
 
+void StructureAbstractValue::filterClassInfoSlow(const ClassInfo* classInfo)
+{
+    ASSERT(!isTop());
+    m_set.genericFilter(
+        [&] (Structure* structure) {
+            return structure->classInfo()->isSubClassOf(classInfo);
+        });
+}
+
 bool StructureAbstractValue::contains(Structure* structure) const
 {
     if (isInfinite())
@@ -317,6 +326,19 @@ bool StructureAbstractValue::overlaps(const StructureAbstractValue& other) const
         return true;
     
     return overlaps(other.m_set);
+}
+
+bool StructureAbstractValue::isSubClassOf(const ClassInfo* classInfo) const
+{
+    if (isInfinite())
+        return false;
+
+    // Note taht this function returns true if the structure set is empty.
+    for (const Structure* structure : m_set) {
+        if (!structure->classInfo()->isSubClassOf(classInfo))
+            return false;
+    }
+    return true;
 }
 
 bool StructureAbstractValue::equalsSlow(const StructureAbstractValue& other) const

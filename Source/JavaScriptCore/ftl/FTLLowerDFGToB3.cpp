@@ -44,6 +44,8 @@
 #include "DFGInPlaceAbstractState.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSRExitFuzz.h"
+#include "DOMJITPatchpoint.h"
+#include "DOMJITPatchpointParams.h"
 #include "DirectArguments.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
@@ -1045,6 +1047,12 @@ private:
             break;
         case ToLowerCase:
             compileToLowerCase();
+            break;
+        case CheckDOM:
+            compileCheckDOM();
+            break;
+        case CallDOM:
+            compileCallDOM();
             break;
 
         case PhantomLocal:
@@ -8711,6 +8719,94 @@ private:
         // cases where you said Unreachable but you lied.
         
         crash();
+    }
+
+    void compileCheckDOM()
+    {
+        LValue cell = lowCell(m_node->child1());
+
+        RefPtr<DOMJIT::Patchpoint> domJIT = m_node->domJIT()->checkDOM();
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->appendSomeRegister(cell);
+        patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
+        patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
+
+        State* state = &m_ftlState;
+        NodeOrigin origin = m_origin;
+        unsigned osrExitArgumentOffset = patchpoint->numChildren();
+        OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(jsValueValue(cell), m_node->child1().node());
+        patchpoint->appendColdAnys(buildExitArguments(exitDescriptor, origin.forExit, jsValueValue(cell)));
+
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                Vector<GPRReg> gpScratch;
+                Vector<FPRReg> fpScratch;
+                Vector<DOMJIT::Reg> regs;
+
+                regs.append(params[0].gpr());
+
+                for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
+                    gpScratch.append(params.gpScratch(i));
+
+                for (unsigned i = 0; i < domJIT->numFPScratchRegisters; ++i)
+                    fpScratch.append(params.fpScratch(i));
+
+                RefPtr<OSRExitHandle> handle = exitDescriptor->emitOSRExitLater(*state, BadType, origin, params, osrExitArgumentOffset);
+
+                DOMJIT::PatchpointParams domJITParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                CCallHelpers::JumpList failureCases = domJIT->generator()->run(jit, domJITParams);
+
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    linkBuffer.link(failureCases, linkBuffer.locationOf(handle->label));
+                });
+            });
+        patchpoint->effects = Effects::forCheck();
+    }
+
+    void compileCallDOM()
+    {
+        LValue globalObject = lowCell(m_graph.varArgChild(m_node, 0));
+        LValue cell = lowCell(m_graph.varArgChild(m_node, 1));
+
+        RefPtr<DOMJIT::Patchpoint> domJIT = m_node->domJIT()->callDOM();
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(globalObject);
+        patchpoint->appendSomeRegister(cell);
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->numGPScratchRegisters = domJIT->numGPScratchRegisters;
+        patchpoint->numFPScratchRegisters = domJIT->numFPScratchRegisters;
+
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                Vector<GPRReg> gpScratch;
+                Vector<FPRReg> fpScratch;
+                Vector<DOMJIT::Reg> regs;
+
+                // FIXME: patchpoint should have a way to tell this can reuse "base" register.
+                // Teaching DFG about DOMJIT::Patchpoint clobber information is nice.
+                regs.append(JSValueRegs(params[0].gpr()));
+                regs.append(params[1].gpr());
+                regs.append(params[2].gpr());
+                regs.append(params[3].gpr());
+                regs.append(params[4].gpr());
+
+                for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
+                    gpScratch.append(params.gpScratch(i));
+
+                for (unsigned i = 0; i < domJIT->numFPScratchRegisters; ++i)
+                    fpScratch.append(params.fpScratch(i));
+
+                Box<CCallHelpers::JumpList> exceptions = exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+                DOMJIT::PatchpointParams domJITParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+                domJIT->generator()->run(jit, domJITParams);
+            });
+        patchpoint->effects = Effects::forCall();
+        setJSValue(patchpoint);
     }
     
     void compareEqObjectOrOtherToObject(Edge leftChild, Edge rightChild)
