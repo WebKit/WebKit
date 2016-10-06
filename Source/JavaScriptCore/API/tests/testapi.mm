@@ -1182,6 +1182,22 @@ static void testObjectiveCAPIMain()
     }
 
     @autoreleasepool {
+        static const unsigned count = 100;
+        NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
+        JSContext *context = [[JSContext alloc] init];
+        @autoreleasepool {
+            for (unsigned i = 0; i < count; ++i) {
+                JSValue *object = [JSValue valueWithNewObjectInContext:context];
+                JSManagedValue *managedObject = [JSManagedValue managedValueWithValue:object];
+                [array addObject:managedObject];
+            }
+        }
+        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+        for (unsigned i = 0; i < count; ++i)
+            [context.virtualMachine addManagedReference:array[i] withOwner:array];
+    }
+
+    @autoreleasepool {
         TestObject *testObject = [TestObject testObject];
         JSManagedValue *managedTestObject;
         @autoreleasepool {

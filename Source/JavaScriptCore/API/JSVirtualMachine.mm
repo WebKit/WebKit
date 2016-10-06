@@ -132,6 +132,8 @@ static id getInternalObjcObject(id object)
 {
     if ([object isKindOfClass:[JSManagedValue class]]) {
         JSValue* value = [static_cast<JSManagedValue *>(object) value];
+        if (!value)
+            return nil;
         id temp = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
         if (temp)
             return temp;

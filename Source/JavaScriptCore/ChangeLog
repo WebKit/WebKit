@@ -1,3 +1,18 @@
+2016-10-06  Keith Miller  <keith_miller@apple.com>
+
+        getInternalObjcObject should validate the JSManagedObject's value.
+        https://bugs.webkit.org/show_bug.cgi?id=162985
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, if, for instance, the JSManagedObject's weak value had been
+        cleared we would call tryUnwrapObjcObject with a nil context and value.
+        This triggered assertions failures as those functions expect their inputs
+        to be valid.
+
+        * API/JSVirtualMachine.mm:
+        (getInternalObjcObject):
+
 2016-10-06  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RemoteInspector should cache client capabilities for off-main thread usage
