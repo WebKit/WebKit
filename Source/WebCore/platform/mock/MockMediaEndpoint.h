@@ -68,11 +68,17 @@ private:
     void dispatchFakeIceCandidates();
     void iceCandidateTimerFired();
 
+    void stepIceTransportStates();
+    void iceTransportTimerFired();
+
     MediaEndpointClient& m_client;
     Vector<String> m_mids;
 
     Vector<RefPtr<IceCandidate>> m_fakeIceCandidates;
     Timer m_iceCandidateTimer;
+
+    Vector<std::pair<String, MediaEndpoint::IceTransportState>> m_iceTransportStateChanges;
+    Timer m_iceTransportTimer;
 };
 
 } // namespace WebCore

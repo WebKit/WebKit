@@ -1,3 +1,18 @@
+2016-10-06  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Add support for the iceconnectionstatechange event in MediaEndpointPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=162961
+
+        Reviewed by Eric Carlson.
+
+        Emulate changing the ICE transport sates of three transceivers and observe the resulting
+        changes to the aggregated iceConnectionState.
+
+        * fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html: Added.
+        * platform/mac/TestExpectations:
+        Skip above test until the Mac port builds with WEB_RTC.
+
 2016-10-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip accessibility/mac/wk1-set-selected-text-marker-range-input-element.html on mac-wk2.

@@ -52,6 +52,7 @@ std::unique_ptr<MediaEndpoint> MockMediaEndpoint::create(MediaEndpointClient& cl
 MockMediaEndpoint::MockMediaEndpoint(MediaEndpointClient& client)
     : m_client(client)
     , m_iceCandidateTimer(*this, &MockMediaEndpoint::iceCandidateTimerFired)
+    , m_iceTransportTimer(*this, &MockMediaEndpoint::iceTransportTimerFired)
 {
 }
 
@@ -210,6 +211,8 @@ void MockMediaEndpoint::emulatePlatformEvent(const String& action)
 {
     if (action == "dispatch-fake-ice-candidates")
         dispatchFakeIceCandidates();
+    else if (action == "step-ice-transport-states")
+        stepIceTransportStates();
 }
 
 void MockMediaEndpoint::dispatchFakeIceCandidates()
@@ -263,6 +266,54 @@ void MockMediaEndpoint::iceCandidateTimerFired()
         m_iceCandidateTimer.startOneShot(0);
     } else
         m_client.doneGatheringCandidates(m_mids[0]);
+}
+
+void MockMediaEndpoint::stepIceTransportStates()
+{
+    if (m_mids.size() != 3) {
+        LOG_ERROR("The 'step-ice-transport-states' action requires 3 transceivers");
+        return;
+    }
+
+    // Should go to:
+    // 'checking'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Checking));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Checking));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], MediaEndpoint::IceTransportState::Checking));
+
+    // 'connected'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Connected));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Completed));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[2], MediaEndpoint::IceTransportState::Closed));
+
+    // 'completed'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Completed));
+
+    // 'failed'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Failed));
+
+    // 'disconnected'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Disconnected));
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[0], MediaEndpoint::IceTransportState::Closed));
+
+    // 'new'
+    m_iceTransportStateChanges.append(std::make_pair(m_mids[1], MediaEndpoint::IceTransportState::Closed));
+
+    // Reverse order to use takeLast() while keeping the above order
+    m_iceTransportStateChanges.reverse();
+
+    m_iceTransportTimer.startOneShot(0);
+}
+
+void MockMediaEndpoint::iceTransportTimerFired()
+{
+    if (m_iceTransportStateChanges.isEmpty() || m_mids.size() != 3)
+        return;
+
+    auto stateChange = m_iceTransportStateChanges.takeLast();
+    m_client.iceTransportStateChanged(stateChange.first, stateChange.second);
+
+    m_iceTransportTimer.startOneShot(0);
 }
 
 } // namespace WebCore

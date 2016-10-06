@@ -41,18 +41,10 @@ namespace WebCore {
 
 class IceCandidate;
 class MediaEndpoint;
+class MediaEndpointClient;
 class MediaEndpointSessionConfiguration;
 class MediaPayload;
 class RealtimeMediaSource;
-
-class MediaEndpointClient {
-public:
-    virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
-    virtual void gotIceCandidate(const String& mid, RefPtr<IceCandidate>&&) = 0;
-    virtual void doneGatheringCandidates(const String& mid) = 0;
-
-    virtual ~MediaEndpointClient() { }
-};
 
 typedef std::unique_ptr<MediaEndpoint> (*CreateMediaEndpoint)(MediaEndpointClient&);
 typedef Vector<RefPtr<MediaPayload>> MediaPayloadVector;
@@ -68,6 +60,8 @@ public:
         SuccessWithIceRestart,
         Failed
     };
+
+    using IceTransportState = PeerConnectionStates::IceTransportState;
 
     virtual void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) = 0;
 
@@ -87,6 +81,16 @@ public:
     virtual void stop() = 0;
 
     virtual void emulatePlatformEvent(const String&) { };
+};
+
+class MediaEndpointClient {
+public:
+    virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
+    virtual void gotIceCandidate(const String& mid, RefPtr<IceCandidate>&&) = 0;
+    virtual void doneGatheringCandidates(const String& mid) = 0;
+    virtual void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) = 0;
+
+    virtual ~MediaEndpointClient() { }
 };
 
 } // namespace WebCore
