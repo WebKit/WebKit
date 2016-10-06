@@ -1,3 +1,20 @@
+2016-10-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][OWR] GL rendering support
+        https://bugs.webkit.org/show_bug.cgi?id=162972
+
+        Reviewed by Žan Doberšek.
+
+        When GStreamer-GL is enabled the GL context needs to be properly passed
+        to the GStreamer pipeline running within the OpenWebRTC video renderer.
+        This is now supported using a new OpenWebRTC API that allows the
+        renderer to request the context from the application using a callback
+        registered within the renderer.
+
+        * gtk/jhbuild.modules: Bump to latest OpenWebRTC for the new
+        owr_video_renderer_set_request_context_callback API added
+        recently.
+
 2016-10-05  Youenn Fablet  <youenn@apple.com>
 
         Reuse CodeGenerator::UpdateFile in Tools CodeGenerator

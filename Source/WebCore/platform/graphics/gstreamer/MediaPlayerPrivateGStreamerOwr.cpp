@@ -355,8 +355,11 @@ GstElement* MediaPlayerPrivateGStreamerOwr::createVideoSink()
     GRefPtr<GstPad> pad = gst_element_get_static_pad(gldownload, "sink");
     gst_element_add_pad(sink, gst_ghost_pad_new("sink", pad.get()));
 #endif
-    m_videoRenderer = adoptGRef(owr_gst_video_renderer_new(sink));
 
+    m_videoRenderer = adoptGRef(owr_gst_video_renderer_new(sink));
+#if USE(GSTREAMER_GL)
+    owr_video_renderer_set_request_context_callback(OWR_VIDEO_RENDERER(m_videoRenderer.get()), (OwrVideoRendererRequestContextCallback) MediaPlayerPrivateGStreamerBase::requestGLContext, this, nullptr);
+#endif
     return sink;
 }
 
