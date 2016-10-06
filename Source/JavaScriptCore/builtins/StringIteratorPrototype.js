@@ -28,11 +28,11 @@ function next()
     "use strict";
 
     if (this == null)
-        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| not be null or undefined");
+        @throwTypeError("%StringIteratorPrototype%.next requires that |this| not be null or undefined");
 
     var position = this.@stringIteratorNextIndex;
     if (position === @undefined)
-        throw new @TypeError("%StringIteratorPrototype%.next requires that |this| be a String Iterator instance");
+        @throwTypeError("%StringIteratorPrototype%.next requires that |this| be a String Iterator instance");
 
     var done = true;
     var value = @undefined;

@@ -1,5 +1,172 @@
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Add @throwXXXError bytecode intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=162995
+
+        Reviewed by Saam Barati.
+
+        Builtin JS code need to check arguments carefully since it is somewhat standard library for JS.
+        So bunch of `throw new @TypeError("...")` exists while usual code does not have so many.
+        However the above code bloats 32 instructions per site, enlarges the size of bytecodes of builtins,
+        and prevent us from inlining. We should have a way to reduce this size.
+
+        Fortunately, we already have such a opcode: op_throw_static_error. In this patch,
+        1. We extends op_throw_static_error to throw arbitrary errors. Previously, only TypeError and ReferenceError are allowed.
+           We can embed ErrorType enum in op_throw_static_error to throw any types of errors.
+        2. We introduce several new bytecode intrinsics, `@throwTypeError("...")`, `@throwRangeError("...")`,
+           and `@throwOutOfMemoryError()`. And use it inside builtin JS instead of `throw new @TypeError("...")` thingy.
+        3. DFG Node for throw_static_error is incorrectly named as "ThrowReferenceError". This patch renames it to "ThrowStaticError".
+
+        * builtins/ArrayConstructor.js:
+        * builtins/ArrayIteratorPrototype.js:
+        (next):
+        * builtins/ArrayPrototype.js:
+        (values):
+        (keys):
+        (entries):
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (sort):
+        (concatSlowPath):
+        (copyWithin):
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (toLocaleDateString.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        (toLocaleTimeString.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        * builtins/FunctionPrototype.js:
+        (bind):
+        * builtins/GeneratorPrototype.js:
+        (globalPrivate.generatorResume):
+        * builtins/GlobalOperations.js:
+        (globalPrivate.speciesConstructor):
+        * builtins/MapPrototype.js:
+        (forEach):
+        * builtins/ModuleLoaderPrototype.js:
+        (provide):
+        * builtins/ObjectConstructor.js:
+        (values):
+        (entries):
+        (assign):
+        * builtins/PromiseConstructor.js:
+        (race):
+        (reject):
+        (resolve):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseCapability.executor):
+        (globalPrivate.newPromiseCapability):
+        (globalPrivate.initializePromise):
+        * builtins/PromisePrototype.js:
+        * builtins/ReflectObject.js:
+        (apply):
+        (deleteProperty):
+        (has):
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.regExpExec):
+        (match):
+        (replace):
+        (search):
+        (split):
+        (intrinsic.RegExpTestIntrinsic.test):
+        * builtins/SetPrototype.js:
+        (forEach):
+        * builtins/StringConstructor.js:
+        (raw):
+        * builtins/StringIteratorPrototype.js:
+        (next):
+        * builtins/StringPrototype.js:
+        (match):
+        (globalPrivate.repeatSlowPath):
+        (repeat):
+        (padStart):
+        (padEnd):
+        (intrinsic.StringPrototypeReplaceIntrinsic.replace):
+        (localeCompare):
+        (search):
+        (split):
+        * builtins/TypedArrayConstructor.js:
+        (of):
+        (from):
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArraySpeciesConstructor):
+        (every):
+        (find):
+        (findIndex):
+        (forEach):
+        (some):
+        (subarray):
+        (reduce):
+        (reduceRight):
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitThrowStaticError):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitThrowTypeError):
+        (JSC::BytecodeGenerator::emitThrowRangeError):
+        (JSC::BytecodeGenerator::emitThrowOutOfMemoryError):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwTypeError):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwRangeError):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwOutOfMemoryError):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_throw_static_error):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_throw_static_error): Deleted.
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL): Deleted.
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (WTF::printInternal):
+        * runtime/Error.h:
+
+2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, attempt to fix CLoop build after r206846
         https://bugs.webkit.org/show_bug.cgi?id=162941
 

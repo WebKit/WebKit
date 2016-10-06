@@ -6,9 +6,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS Object.assign.length is 2
 PASS Object.assign.name is 'assign'
 check TypeError on null/undefined
-PASS Object.assign() threw exception TypeError: can't convert undefined to object.
-PASS Object.assign(undefined) threw exception TypeError: can't convert undefined to object.
-PASS Object.assign(null) threw exception TypeError: can't convert null to object.
+PASS Object.assign() threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
+PASS Object.assign(undefined) threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
+PASS Object.assign(null) threw exception TypeError: Object.assign requires that input parameter not be null or undefined.
 PASS var target = {}, ret = Object.assign(target); target === ret is true
 multiple sources are copied
 PASS var target = {}, ret = Object.assign(target, {a: 1}); target === ret is true

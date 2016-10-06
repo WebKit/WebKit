@@ -51,7 +51,7 @@ function newPromiseCapability(constructor)
     "use strict";
 
     if (!@isConstructor(constructor))
-        throw new @TypeError("promise capability requires a constructor function");
+        @throwTypeError("promise capability requires a constructor function");
 
     var promiseCapability = {
         @promise: @undefined,
@@ -62,9 +62,9 @@ function newPromiseCapability(constructor)
     function executor(resolve, reject)
     {
         if (promiseCapability.@resolve !== @undefined)
-            throw new @TypeError("resolve function is already set");
+            @throwTypeError("resolve function is already set");
         if (promiseCapability.@reject !== @undefined)
-            throw new @TypeError("reject function is already set");
+            @throwTypeError("reject function is already set");
 
         promiseCapability.@resolve = resolve;
         promiseCapability.@reject = reject;
@@ -73,10 +73,10 @@ function newPromiseCapability(constructor)
     var promise = new constructor(executor);
 
     if (typeof promiseCapability.@resolve !== "function")
-        throw new @TypeError("executor did not take a resolve function");
+        @throwTypeError("executor did not take a resolve function");
 
     if (typeof promiseCapability.@reject !== "function")
-        throw new @TypeError("executor did not take a reject function");
+        @throwTypeError("executor did not take a reject function");
 
     promiseCapability.@promise = promise;
 
@@ -208,7 +208,7 @@ function initializePromise(executor)
     "use strict";
 
     if (typeof executor !== 'function')
-        throw new @TypeError("Promise constructor takes a function argument");
+        @throwTypeError("Promise constructor takes a function argument");
 
     this.@promiseState = @promiseStatePending;
     this.@promiseFulfillReactions = [];

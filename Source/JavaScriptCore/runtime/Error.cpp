@@ -98,6 +98,28 @@ JSObject* createURIError(ExecState* exec, const String& message, ErrorInstance::
     return ErrorInstance::create(exec, globalObject->vm(), globalObject->URIErrorConstructor()->errorStructure(), message, appender, TypeNothing, true);
 }
 
+JSObject* createError(ExecState* exec, ErrorType errorType, const String& message)
+{
+    switch (errorType) {
+    case ErrorType::Error:
+        return createError(exec, message);
+    case ErrorType::EvalError:
+        return createEvalError(exec, message);
+    case ErrorType::RangeError:
+        return createRangeError(exec, message);
+    case ErrorType::ReferenceError:
+        return createReferenceError(exec, message);
+    case ErrorType::SyntaxError:
+        return createSyntaxError(exec, message);
+    case ErrorType::TypeError:
+        return createTypeError(exec, message);
+    case ErrorType::URIError:
+        return createURIError(exec, message);
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 class FindFirstCallerFrameWithCodeblockFunctor {
 public:
     FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
@@ -282,3 +304,36 @@ void StrictModeTypeErrorFunction::destroy(JSCell* cell)
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+using namespace JSC;
+
+void printInternal(PrintStream& out, JSC::ErrorType errorType)
+{
+    switch (errorType) {
+    case JSC::ErrorType::Error:
+        out.print("Error");
+        break;
+    case JSC::ErrorType::EvalError:
+        out.print("EvalError");
+        break;
+    case JSC::ErrorType::RangeError:
+        out.print("RangeError");
+        break;
+    case JSC::ErrorType::ReferenceError:
+        out.print("ReferenceError");
+        break;
+    case JSC::ErrorType::SyntaxError:
+        out.print("SyntaxError");
+        break;
+    case JSC::ErrorType::TypeError:
+        out.print("TypeError");
+        break;
+    case JSC::ErrorType::URIError:
+        out.print("URIError");
+        break;
+    }
+}
+
+} // namespace WTF

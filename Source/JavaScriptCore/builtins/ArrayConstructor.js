@@ -47,19 +47,19 @@ function from(items /*, mapFn, thisArg */)
 
     if (mapFn !== @undefined) {
         if (typeof mapFn !== "function")
-            throw new @TypeError("Array.from requires that the second argument, when provided, be a function");
+            @throwTypeError("Array.from requires that the second argument, when provided, be a function");
 
         if (arguments.length > 2)
             thisArg = arguments[2];
     }
 
     if (items == null)
-        throw new @TypeError("Array.from requires an array-like object - not null or undefined");
+        @throwTypeError("Array.from requires an array-like object - not null or undefined");
 
     var iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
         if (typeof iteratorMethod !== "function")
-            throw new @TypeError("Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
+            @throwTypeError("Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 
         var result = @isConstructor(thisObj) ? new thisObj() : [];
 

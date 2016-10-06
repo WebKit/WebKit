@@ -53,7 +53,7 @@ function values(object)
     "use strict";
     
     if (object == null)
-        throw new @TypeError("Object.values requires that input parameter not be null or undefined");
+        @throwTypeError("Object.values requires that input parameter not be null or undefined");
 
     return @enumerableOwnProperties(object, @iterationKindValue);
 }
@@ -63,7 +63,7 @@ function entries(object)
     "use strict";
     
     if (object == null)
-        throw new @TypeError("Object.entries requires that input parameter not be null or undefined");
+        @throwTypeError("Object.entries requires that input parameter not be null or undefined");
     
     return @enumerableOwnProperties(object, @iterationKindKeyValue);
 }
@@ -73,7 +73,7 @@ function assign(target/*[*/, /*...*/sources/*] */)
     "use strict";
 
     if (target == null)
-        throw new @TypeError("can't convert " + target + " to object");
+        @throwTypeError("Object.assign requires that input parameter not be null or undefined");
 
     let objTarget = @Object(target);
     for (let s = 1, argumentsLength = arguments.length; s < argumentsLength; ++s) {

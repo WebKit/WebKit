@@ -63,7 +63,7 @@ function bind(thisValue)
 
     let target = this;
     if (typeof target !== "function")
-        throw new @TypeError("|this| is not a function inside Function.prototype.bind");
+        @throwTypeError("|this| is not a function inside Function.prototype.bind");
 
     let argumentCount = arguments.length;
     let boundArgs = null;

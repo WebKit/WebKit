@@ -919,12 +919,6 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
     jump(returnValueGPR);
 }
 
-void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
-{
-    emitLoad(m_codeBlock->getConstant(currentInstruction[1].u.operand), regT1, regT0);
-    callOperation(operationThrowStaticError, regT1, regT0, currentInstruction[2].u.operand);
-}
-
 void JIT::emit_op_debug(Instruction* currentInstruction)
 {
     load32(codeBlock()->debuggerRequestsAddress(), regT0);

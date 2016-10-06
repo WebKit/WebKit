@@ -481,14 +481,14 @@ function provide(key, stage, value)
 
     if (stage === @ModuleFetch) {
         if (entry.state > @ModuleFetch)
-            throw new @TypeError("Requested module is already fetched.");
+            @throwTypeError("Requested module is already fetched.");
         this.fulfillFetch(entry, value);
         return;
     }
 
     if (stage === @ModuleTranslate) {
         if (entry.state > @ModuleTranslate)
-            throw new @TypeError("Requested module is already translated.");
+            @throwTypeError("Requested module is already translated.");
         this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
         return;
@@ -496,7 +496,7 @@ function provide(key, stage, value)
 
     if (stage === @ModuleInstantiate) {
         if (entry.state > @ModuleInstantiate)
-            throw new @TypeError("Requested module is already instantiated.");
+            @throwTypeError("Requested module is already instantiated.");
         this.fulfillFetch(entry, @undefined);
         this.fulfillTranslate(entry, value);
         entry.translate.then((source) => {
@@ -505,7 +505,7 @@ function provide(key, stage, value)
         return;
     }
 
-    throw new @TypeError("Requested module is already ready to be executed.");
+    @throwTypeError("Requested module is already ready to be executed.");
 }
 
 function loadAndEvaluateModule(moduleName, referrer, initiator)
@@ -542,7 +542,7 @@ function linkAndEvaluateModule(key, initiator)
 
     var entry = this.ensureRegistered(key);
     if (entry.state < @ModuleLink)
-        throw new @TypeError("Requested module is not instantiated yet.");
+        @throwTypeError("Requested module is not instantiated yet.");
 
     this.link(entry, initiator);
     return this.moduleEvaluation(entry.module, initiator);

@@ -898,6 +898,36 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(Bytec
     return generator.emitCallForwardArgumentsInTailPosition(finalDst.get(), function.get(), thisRegister.get(), generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::No);
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwTypeError(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    ASSERT(node->m_expr->isString());
+    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
+    ASSERT(!node->m_next);
+
+    generator.emitThrowTypeError(ident);
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwRangeError(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ArgumentListNode* node = m_args->m_listNode;
+    ASSERT(node->m_expr->isString());
+    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
+    ASSERT(!node->m_next);
+
+    generator.emitThrowRangeError(ident);
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwOutOfMemoryError(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ASSERT(!m_args->m_listNode);
+
+    generator.emitThrowOutOfMemoryError();
+    return dst;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tryGetById(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

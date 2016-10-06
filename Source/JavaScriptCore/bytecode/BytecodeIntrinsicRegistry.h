@@ -48,6 +48,9 @@ class Identifier;
     macro(isMap) \
     macro(isSet) \
     macro(tailCallForwardArguments) \
+    macro(throwTypeError) \
+    macro(throwRangeError) \
+    macro(throwOutOfMemoryError) \
     macro(tryGetById) \
     macro(putByValDirect) \
     macro(toNumber) \

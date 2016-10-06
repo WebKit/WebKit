@@ -36,10 +36,10 @@ function generatorResume(generator, sentValue, resumeMode)
     let value = @undefined;
 
     if (typeof state !== 'number')
-        throw new @TypeError("|this| should be a generator");
+        @throwTypeError("|this| should be a generator");
 
     if (state === @GeneratorStateExecuting)
-        throw new @TypeError("Generator is executing");
+        @throwTypeError("Generator is executing");
 
     if (state === @GeneratorStateCompleted) {
         if (resumeMode === @GeneratorResumeModeThrow)

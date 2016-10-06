@@ -1164,21 +1164,6 @@ UnusedPtr JIT_OPERATION operationHandleWatchdogTimer(ExecState* exec)
     return nullptr;
 }
 
-void JIT_OPERATION operationThrowStaticError(ExecState* exec, EncodedJSValue encodedValue, int32_t referenceErrorFlag)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue errorMessageValue = JSValue::decode(encodedValue);
-    RELEASE_ASSERT(errorMessageValue.isString());
-    String errorMessage = asString(errorMessageValue)->value(exec);
-    if (referenceErrorFlag)
-        throwException(exec, scope, createReferenceError(exec, errorMessage));
-    else
-        throwTypeError(exec, scope, errorMessage);
-}
-
 void JIT_OPERATION operationDebug(ExecState* exec, int32_t debugHookType)
 {
     VM& vm = exec->vm();

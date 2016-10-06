@@ -3905,18 +3905,36 @@ int BytecodeGenerator::labelScopeDepth() const
     return localScopeDepth() + m_finallyDepth;
 }
 
-void BytecodeGenerator::emitThrowReferenceError(const String& message)
+void BytecodeGenerator::emitThrowStaticError(ErrorType errorType, const Identifier& message)
 {
     emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, message)))->index());
-    instructions().append(true);
+    instructions().append(addConstantValue(addStringConstant(message))->index());
+    instructions().append(static_cast<unsigned>(errorType));
+}
+
+void BytecodeGenerator::emitThrowReferenceError(const String& message)
+{
+    emitThrowStaticError(ErrorType::ReferenceError, Identifier::fromString(m_vm, message));
 }
 
 void BytecodeGenerator::emitThrowTypeError(const String& message)
 {
-    emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, message)))->index());
-    instructions().append(false);
+    emitThrowStaticError(ErrorType::TypeError, Identifier::fromString(m_vm, message));
+}
+
+void BytecodeGenerator::emitThrowTypeError(const Identifier& message)
+{
+    emitThrowStaticError(ErrorType::TypeError, message);
+}
+
+void BytecodeGenerator::emitThrowRangeError(const Identifier& message)
+{
+    emitThrowStaticError(ErrorType::RangeError, message);
+}
+
+void BytecodeGenerator::emitThrowOutOfMemoryError()
+{
+    emitThrowStaticError(ErrorType::Error, Identifier::fromString(m_vm, "Out of memory"));
 }
 
 void BytecodeGenerator::emitPushFunctionNameScope(const Identifier& property, RegisterID* callee, bool isCaptured)
@@ -4104,9 +4122,7 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
     // If we're in strict mode, we always throw.
     // If we're not in strict mode, we throw for "const" variables but not the function callee.
     if (isStrictMode() || variable.isConst()) {
-        emitOpcode(op_throw_static_error);
-        instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
-        instructions().append(false);
+        emitThrowTypeError(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError));
         return true;
     }
     return false;

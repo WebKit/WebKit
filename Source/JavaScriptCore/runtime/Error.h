@@ -38,6 +38,16 @@ class JSObject;
 class SourceCode;
 class Structure;
 
+enum class ErrorType : uint8_t {
+    Error,
+    EvalError,
+    RangeError,
+    ReferenceError,
+    SyntaxError,
+    TypeError,
+    URIError,
+};
+
 // ExecState wrappers.
 JSObject* createError(ExecState*, const String&, ErrorInstance::SourceAppender);
 JSObject* createEvalError(ExecState*, const String&, ErrorInstance::SourceAppender);
@@ -59,6 +69,8 @@ JS_EXPORT_PRIVATE JSObject* createTypeError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createNotEnoughArgumentsError(ExecState*);
 JS_EXPORT_PRIVATE JSObject* createURIError(ExecState*, const String&);
 JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(ExecState*);
+
+JS_EXPORT_PRIVATE JSObject* createError(ExecState*, ErrorType, const String&);
 
 
 bool addErrorInfoAndGetBytecodeOffset(ExecState*, VM&, JSObject*, bool, CallFrame*&, unsigned* = nullptr);
@@ -146,3 +158,11 @@ private:
 };
 
 } // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+
+void printInternal(PrintStream&, JSC::ErrorType);
+
+} // namespace WTF

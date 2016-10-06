@@ -1741,7 +1741,7 @@ _llint_op_throw:
 
 _llint_op_throw_static_error:
     traceExecution()
-    callOpcodeSlowPath(_llint_slow_path_throw_static_error)
+    callOpcodeSlowPath(_slow_path_throw_static_error)
     dispatch(3)
 
 

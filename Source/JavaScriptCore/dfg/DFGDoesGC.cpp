@@ -282,7 +282,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewFunction:
     case NewGeneratorFunction:
     case NewTypedArray:
-    case ThrowReferenceError:
+    case ThrowStaticError:
     case GetPropertyEnumerator:
     case GetEnumeratorStructurePname:
     case GetEnumeratorGenericPname:

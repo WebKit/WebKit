@@ -3479,7 +3479,7 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case Throw:
-    case ThrowReferenceError: {
+    case ThrowStaticError: {
         // We expect that throw statements are rare and are intended to exit the code block
         // anyway, so we just OSR back to the old JIT for now.
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);

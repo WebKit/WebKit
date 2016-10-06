@@ -35,7 +35,7 @@ function then(onFulfilled, onRejected)
     "use strict";
 
     if (!@isPromise(this))
-        throw new @TypeError("|this| is not a object");
+        @throwTypeError("|this| is not a object");
 
     var constructor = @speciesConstructor(this, @Promise);
 

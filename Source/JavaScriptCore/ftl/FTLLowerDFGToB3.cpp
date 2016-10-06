@@ -890,7 +890,7 @@ private:
             compileForceOSRExit();
             break;
         case Throw:
-        case ThrowReferenceError:
+        case ThrowStaticError:
             compileThrow();
             break;
         case InvalidationPoint:

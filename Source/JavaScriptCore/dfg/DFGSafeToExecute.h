@@ -304,7 +304,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case TailCallVarargs:
     case TailCallForwardVarargs:
     case Throw:
-    case ThrowReferenceError:
+    case ThrowStaticError:
     case CountExecution:
     case ForceOSRExit:
     case CheckWatchdogTimer:

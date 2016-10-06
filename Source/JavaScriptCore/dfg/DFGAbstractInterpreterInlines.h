@@ -1785,7 +1785,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
         
     case Throw:
-    case ThrowReferenceError:
+    case ThrowStaticError:
         m_state.setIsValid(false);
         break;
             

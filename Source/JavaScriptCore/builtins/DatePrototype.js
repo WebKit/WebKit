@@ -38,7 +38,7 @@ function toLocaleString(/* locales, options */)
         if (opts === @undefined)
             options = null;
         else if (opts === null)
-            throw new @TypeError("null is not an object");
+            @throwTypeError("null is not an object");
         else
             options = @Object(opts);
 
@@ -95,7 +95,7 @@ function toLocaleDateString(/* locales, options */)
         if (opts === @undefined)
             options = null;
         else if (opts === null)
-            throw new @TypeError("null is not an object");
+            @throwTypeError("null is not an object");
         else
             options = @Object(opts);
 
@@ -145,7 +145,7 @@ function toLocaleTimeString(/* locales, options */)
         if (opts === @undefined)
             options = null;
         else if (opts === null)
-            throw new @TypeError("null is not an object");
+            @throwTypeError("null is not an object");
         else
             options = @Object(opts);
 

@@ -34,7 +34,7 @@ function of(/* items... */)
     let len = arguments.length;
     let constructFunction = this.@allocateTypedArray;
     if (constructFunction === @undefined)
-        throw new @TypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
+        @throwTypeError("TypedArray.of requires its this argument to subclass a TypedArray constructor");
 
     let result = constructFunction(len);
 
@@ -54,19 +54,19 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     if (mapFn !== @undefined) {
         if (typeof mapFn !== "function")
-            throw new @TypeError("TypedArray.from requires that the second argument, when provided, be a function");
+            @throwTypeError("TypedArray.from requires that the second argument, when provided, be a function");
 
         if (arguments.length > 2)
             thisArg = arguments[2];
     }
 
     if (items == null)
-        throw new @TypeError("TypedArray.from requires an array-like object - not null or undefined");
+        @throwTypeError("TypedArray.from requires an array-like object - not null or undefined");
 
     let iteratorMethod = items.@iteratorSymbol;
     if (iteratorMethod != null) {
         if (typeof iteratorMethod !== "function")
-            throw new @TypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
+            @throwTypeError("TypedArray.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 
         let accumulator = [];
 
@@ -89,7 +89,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
         let constructFunction = this.@allocateTypedArray;
         if (constructFunction === @undefined)
-            throw new @TypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
+            @throwTypeError("TypedArray.from requires its this argument subclass a TypedArray constructor");
 
         let result = constructFunction(k);
 
@@ -105,7 +105,7 @@ function from(items /* [ , mapfn [ , thisArg ] ] */)
 
     let constructFunction = this.@allocateTypedArray;
     if (constructFunction === @undefined)
-        throw new @TypeError("this does not subclass a TypedArray constructor");
+        @throwTypeError("this does not subclass a TypedArray constructor");
 
     let result = constructFunction(arrayLikeLength);
 

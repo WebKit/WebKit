@@ -4660,7 +4660,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_throw);
             
         case op_throw_static_error:
-            addToGraph(ThrowReferenceError);
+            addToGraph(ThrowStaticError);
             flushForTerminal();
             addToGraph(Unreachable);
             LAST_OPCODE(op_throw_static_error);

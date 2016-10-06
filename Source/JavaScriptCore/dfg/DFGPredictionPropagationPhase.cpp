@@ -1057,7 +1057,7 @@ private:
         case Switch:
         case ProfileType:
         case ProfileControlFlow:
-        case ThrowReferenceError:
+        case ThrowStaticError:
         case ForceOSRExit:
         case SetArgument:
         case SetFunctionName:

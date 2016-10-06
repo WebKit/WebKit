@@ -350,7 +350,7 @@ namespace JSC { namespace DFG {
     \
     /* These aren't terminals but always exit */ \
     macro(Throw, NodeMustGenerate) \
-    macro(ThrowReferenceError, NodeMustGenerate) \
+    macro(ThrowStaticError, NodeMustGenerate) \
     \
     /* Block terminals. */\
     macro(Jump, NodeMustGenerate) \

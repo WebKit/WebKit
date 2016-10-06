@@ -966,4 +966,14 @@ SLOW_PATH_DECL(slow_path_define_accessor_property)
     END();
 }
 
+SLOW_PATH_DECL(slow_path_throw_static_error)
+{
+    BEGIN();
+    JSValue errorMessageValue = OP_C(1).jsValue();
+    RELEASE_ASSERT(errorMessageValue.isString());
+    String errorMessage = asString(errorMessageValue)->value(exec);
+    ErrorType errorType = static_cast<ErrorType>(pc[2].u.unsignedValue);
+    THROW(createError(exec, errorType, errorMessage));
+}
+
 } // namespace JSC

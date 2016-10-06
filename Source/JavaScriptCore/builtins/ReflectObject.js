@@ -29,10 +29,10 @@ function apply(target, thisArgument, argumentsList)
     "use strict";
 
     if (typeof target !== "function")
-        throw new @TypeError("Reflect.apply requires the first argument be a function");
+        @throwTypeError("Reflect.apply requires the first argument be a function");
 
     if (!@isObject(argumentsList))
-        throw new @TypeError("Reflect.apply requires the third argument be an object");
+        @throwTypeError("Reflect.apply requires the third argument be an object");
 
     return target.@apply(thisArgument, argumentsList);
 }
@@ -44,7 +44,7 @@ function deleteProperty(target, propertyKey)
     // raised by the delete operator under the strict mode.
 
     if (!@isObject(target))
-        throw new @TypeError("Reflect.deleteProperty requires the first argument be an object");
+        @throwTypeError("Reflect.deleteProperty requires the first argument be an object");
 
     return delete target[propertyKey];
 }
@@ -55,7 +55,7 @@ function has(target, propertyKey)
     "use strict";
 
     if (!@isObject(target))
-        throw new @TypeError("Reflect.has requires the first argument be an object");
+        @throwTypeError("Reflect.has requires the first argument be an object");
 
     return propertyKey in target;
 }

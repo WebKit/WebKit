@@ -56,7 +56,7 @@ function regExpExec(regexp, str)
     if (exec !== builtinExec && typeof exec === "function") {
         let result = exec.@call(regexp, str);
         if (result !== null && !@isObject(result))
-            throw new @TypeError("The result of a RegExp exec must be null or an object");
+            @throwTypeError("The result of a RegExp exec must be null or an object");
         return result;
     }
     return builtinExec.@call(regexp, str);
@@ -84,7 +84,7 @@ function match(strArg)
     "use strict";
 
     if (!@isObject(this))
-        throw new @TypeError("RegExp.prototype.@@match requires that |this| be an Object");
+        @throwTypeError("RegExp.prototype.@@match requires that |this| be an Object");
 
     let regexp = this;
 
@@ -116,10 +116,10 @@ function match(strArg)
         }
 
         if (resultList.length > maximumReasonableMatchSize)
-            throw new @Error("Out of memory");
+            @throwOutOfMemoryError();
 
         if (!@isObject(result))
-            throw new @TypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
+            @throwTypeError("RegExp.prototype.@@match call to RegExp.exec didn't return null or an object");
 
         let resultString = @toString(result[0]);
 
@@ -208,7 +208,7 @@ function replace(strArg, replace)
     }
 
     if (!@isObject(this))
-        throw new @TypeError("RegExp.prototype.@@replace requires that |this| be an Object");
+        @throwTypeError("RegExp.prototype.@@replace requires that |this| be an Object");
 
     let regexp = this;
 
@@ -309,7 +309,7 @@ function search(strArg)
     // 1. Let rx be the this value.
     // 2. If Type(rx) is not Object, throw a TypeError exception.
     if (!@isObject(this))
-        throw new @TypeError("RegExp.prototype.@@search requires that |this| be an Object");
+        @throwTypeError("RegExp.prototype.@@search requires that |this| be an Object");
 
     // 3. Let S be ? ToString(string).
     let str = @toString(strArg)
@@ -374,7 +374,7 @@ function split(string, limit)
     // 1. Let rx be the this value.
     // 2. If Type(rx) is not Object, throw a TypeError exception.
     if (!@isObject(this))
-        throw new @TypeError("RegExp.prototype.@@split requires that |this| be an Object");
+        @throwTypeError("RegExp.prototype.@@split requires that |this| be an Object");
     let regexp = this;
 
     // 3. Let S be ? ToString(string).
@@ -514,7 +514,7 @@ function test(strArg)
     // 1. Let R be the this value.
     // 2. If Type(R) is not Object, throw a TypeError exception.
     if (!@isObject(regexp))
-        throw new @TypeError("RegExp.prototype.test requires that |this| be an Object");
+        @throwTypeError("RegExp.prototype.test requires that |this| be an Object");
 
     // 3. Let string be ? ToString(S).
     let str = @toString(strArg);

@@ -662,8 +662,12 @@ namespace JSC {
             emitUnaryNoDstOp(op_throw, exc);
         }
 
+        void emitThrowStaticError(ErrorType, const Identifier& message);
         void emitThrowReferenceError(const String& message);
         void emitThrowTypeError(const String& message);
+        void emitThrowTypeError(const Identifier& message);
+        void emitThrowRangeError(const Identifier& message);
+        void emitThrowOutOfMemoryError();
 
         void emitPushCatchScope(VariableEnvironment&);
         void emitPopCatchScope(VariableEnvironment&);

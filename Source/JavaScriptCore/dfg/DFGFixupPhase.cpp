@@ -1757,7 +1757,7 @@ private:
         case TailCall:
         case TailCallVarargs:
         case Throw:
-        case ThrowReferenceError:
+        case ThrowStaticError:
         case CountExecution:
         case ForceOSRExit:
         case CheckBadCell:
