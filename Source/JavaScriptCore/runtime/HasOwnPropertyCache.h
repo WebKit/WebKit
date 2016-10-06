@@ -94,9 +94,9 @@ public:
             && structure->propertyAccessesAreCacheable()
             && (!slot.isUnset() || structure->propertyAccessesAreCacheableForAbsence())) {
             if (structure->isDictionary()) {
-                if (structure->hasBeenFlattenedBefore())
-                    return;
-                object->flattenDictionaryObject(vm);
+                // FIXME: We should be able to flatten a dictionary object again.
+                // https://bugs.webkit.org/show_bug.cgi?id=163092
+                return;
             }
 
             ASSERT(!result == slot.isUnset());

@@ -1,3 +1,17 @@
+2016-10-06  Saam Barati  <sbarati@apple.com>
+
+        HasOwnPropertyCache flattening dictionaries is causing insane memory usage with the uBlock Safari extension
+        https://bugs.webkit.org/show_bug.cgi?id=163091
+
+        Reviewed by Mark Lam.
+
+        I'm investigating a real fix for this in:
+        https://bugs.webkit.org/show_bug.cgi?id=163092
+        However, it's best to get this out of trunk for now.
+
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::tryAdd):
+
 2016-10-06  Keith Miller  <keith_miller@apple.com>
 
         getInternalObjcObject should validate the JSManagedObject's value.
