@@ -104,7 +104,9 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     bool useNewParser { false };
+#if ENABLE(VARIATION_FONTS)
     bool variationFontsEnabled { false };
+#endif
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);

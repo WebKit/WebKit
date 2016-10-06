@@ -1,3 +1,68 @@
+2016-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Put variation fonts work behind a compile-time flag
+        https://bugs.webkit.org/show_bug.cgi?id=162949
+
+        Reviewed by Simon Fraser.
+
+        No new tests because there is no behavior change.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSFontVariationValue.cpp:
+        * css/CSSFontVariationValue.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontFeatureValue): Deleted.
+        (WebCore::CSSValue::isFontVariationValue): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertFontVariationSettings): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritFontFeatureSettings): Deleted.
+        (WebCore::StyleBuilderCustom::applyInheritFontVariationSettings): Deleted.
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontVariationSettings): Deleted.
+        * css/parser/CSSParserMode.h:
+        * page/Settings.in:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        (WebCore::blendFunc): Deleted.
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator==):
+        (WebCore::FontDescriptionKey::computeHash):
+        * platform/graphics/FontDescription.cpp:
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::operator==):
+        (WebCore::FontDescription::setFeatureSettings): Deleted.
+        (WebCore::FontDescription::setVariationSettings): Deleted.
+        * platform/graphics/FontTaggedSettings.cpp:
+        (WebCore::operator<<): Deleted.
+        * platform/graphics/FontTaggedSettings.h:
+        (WebCore::FontVariationSettings::isEmpty):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::preparePlatformFont):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::cascadeToLastResortAndVariationsFontDescriptor):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontVariationSettings): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontVariationSettings): Deleted.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::variationFontsEnabled):
+        (WebCore::InternalSettings::setVariationFontsEnabled):
+        * testing/InternalSettings.h:
+
 2016-10-05  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r206830

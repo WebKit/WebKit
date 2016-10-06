@@ -105,7 +105,9 @@ font-style [Inherited, FontProperty, NameForMethods=Italic]
 font-weight [Inherited, Custom=All]
 text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 font-feature-settings [Inherited, FontProperty, Custom=Initial|Inherit, Converter=FontFeatureSettings, NameForMethods=FeatureSettings]
+#if defined(ENABLE_VARIATION_FONTS) && ENABLE_VARIATION_FONTS
 font-variation-settings [Inherited, FontProperty, Custom=Initial|Inherit, Converter=FontVariationSettings, NameForMethods=VariationSettings]
+#endif
 -webkit-font-kerning [Inherited, FontProperty, NameForMethods=Kerning]
 font-kerning = -webkit-font-kerning
 -webkit-font-smoothing [Inherited, FontProperty]

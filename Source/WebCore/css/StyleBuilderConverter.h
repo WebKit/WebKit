@@ -121,7 +121,9 @@ public:
     static bool convertOverflowScrolling(StyleResolver&, CSSValue&);
 #endif
     static FontFeatureSettings convertFontFeatureSettings(StyleResolver&, CSSValue&);
+#if ENABLE(VARIATION_FONTS)
     static FontVariationSettings convertFontVariationSettings(StyleResolver&, CSSValue&);
+#endif
     static SVGLength convertSVGLength(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertSVGLengthVector(StyleResolver&, CSSValue&);
     static Vector<SVGLength> convertStrokeDashArray(StyleResolver&, CSSValue&);
@@ -1133,6 +1135,7 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
     return settings;
 }
 
+#if ENABLE(VARIATION_FONTS)
 inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
@@ -1147,6 +1150,7 @@ inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings
     }
     return settings;
 }
+#endif
 
 #if PLATFORM(IOS)
 inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, CSSValue& value)

@@ -136,8 +136,18 @@ void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 
 typedef FontTaggedSetting<int> FontFeature;
 typedef FontTaggedSettings<int> FontFeatureSettings;
-typedef FontTaggedSettings<float> FontVariationSettings;
 
+#if ENABLE(VARIATION_FONTS)
+
+typedef FontTaggedSettings<float> FontVariationSettings;
 TextStream& operator<<(TextStream&, const FontVariationSettings&);
+
+#else
+
+struct FontVariationSettings {
+    bool isEmpty() const { return true; }
+};
+
+#endif
 
 }

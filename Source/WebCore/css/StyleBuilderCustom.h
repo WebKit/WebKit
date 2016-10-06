@@ -112,8 +112,10 @@ public:
     static void applyInheritWebkitMaskImage(StyleResolver&) { }
     static void applyInitialFontFeatureSettings(StyleResolver&) { }
     static void applyInheritFontFeatureSettings(StyleResolver&) { }
+#if ENABLE(VARIATION_FONTS)
     static void applyInitialFontVariationSettings(StyleResolver&) { }
     static void applyInheritFontVariationSettings(StyleResolver&) { }
+#endif
 
     // Custom handling of inherit + value setting only.
     static void applyInheritDisplay(StyleResolver&);

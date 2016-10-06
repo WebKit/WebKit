@@ -107,7 +107,9 @@ public:
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
         bool m_indexedDBWorkersEnabled;
 #endif
+#if ENABLE(VARIATION_FONTS)
         bool m_variationFontsEnabled;
+#endif
 
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;

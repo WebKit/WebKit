@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(VARIATION_FONTS)
+
 #include "CSSValue.h"
 #include "FontTaggedSettings.h"
 
@@ -53,3 +55,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSFontVariationValue, isFontVariationValue())
+
+#endif // ENABLE(VARIATION_FONTS)

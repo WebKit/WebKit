@@ -2881,6 +2881,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 list->append(CSSFontFeatureValue::create(FontTag(feature.tag()), feature.value()));
             return list;
         }
+#if ENABLE(VARIATION_FONTS)
         case CSSPropertyFontVariationSettings: {
             if (styledNode->document().settings() && styledNode->document().settings()->variationFontsEnabled()) {
                 const FontVariationSettings& variationSettings = style->fontDescription().variationSettings();
@@ -2893,6 +2894,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             }
             break;
         }
+#endif
 #if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyGridAutoFlow: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();

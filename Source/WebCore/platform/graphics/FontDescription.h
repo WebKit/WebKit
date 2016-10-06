@@ -106,7 +106,9 @@ public:
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setLocale(const AtomicString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
+#if ENABLE(VARIATION_FONTS)
     void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
+#endif
     void setFontSynthesis(FontSynthesis fontSynthesis) { m_fontSynthesis = fontSynthesis; }
     void setVariantCommonLigatures(FontVariantLigatures variant) { m_variantCommonLigatures = static_cast<unsigned>(variant); }
     void setVariantDiscretionaryLigatures(FontVariantLigatures variant) { m_variantDiscretionaryLigatures = static_cast<unsigned>(variant); }
@@ -171,7 +173,9 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_widthVariant == other.m_widthVariant
         && m_locale == other.m_locale
         && m_featureSettings == other.m_featureSettings
+#if ENABLE(VARIATION_FONTS)
         && m_variationSettings == other.m_variationSettings
+#endif
         && m_fontSynthesis == other.m_fontSynthesis
         && m_variantCommonLigatures == other.m_variantCommonLigatures
         && m_variantDiscretionaryLigatures == other.m_variantDiscretionaryLigatures

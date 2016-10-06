@@ -373,6 +373,7 @@ static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePiec
     return NinePieceImage(newContentImage, from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
+#if ENABLE(VARIATION_FONTS)
 static inline FontVariationSettings blendFunc(const AnimationBase* anim, const FontVariationSettings& from, const FontVariationSettings& to, double progress)
 {
     if (from.size() != to.size())
@@ -389,6 +390,7 @@ static inline FontVariationSettings blendFunc(const AnimationBase* anim, const F
     }
     return result;
 }
+#endif
 
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
@@ -536,6 +538,7 @@ public:
     }
 };
 
+#if ENABLE(VARIATION_FONTS)
 class PropertyWrapperFontVariationSettings : public PropertyWrapper<FontVariationSettings> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -558,6 +561,7 @@ public:
         return variationSettingsA == variationSettingsB;
     }
 };
+#endif
 
 #if ENABLE(CSS_SHAPES)
 class PropertyWrapperShape : public RefCountedPropertyWrapper<ShapeValue> {
@@ -1600,7 +1604,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapper<SVGLength>(CSSPropertyBaselineShift, &RenderStyle::baselineShiftValue, &RenderStyle::setBaselineShiftValue),
         new PropertyWrapper<SVGLength>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
+#if ENABLE(VARIATION_FONTS)
         new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
+#endif
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

@@ -3224,7 +3224,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setVisualViewportEnabled(store.getBoolValueForKey(WebPreferencesKey::visualViewportEnabledKey()));
 
+#if ENABLE(VARIATION_FONTS)
     settings.setVariationFontsEnabled(store.getBoolValueForKey(WebPreferencesKey::variationFontsEnabledKey()));
+#endif
 
     RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled(store.getBoolValueForKey(WebPreferencesKey::modernMediaControlsEnabledKey()));
 

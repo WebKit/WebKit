@@ -83,7 +83,9 @@ public:
     bool isVariableValue() const { return m_classType == VariableClass; }
     bool isFunctionValue() const { return m_classType == FunctionClass; }
     bool isFontFeatureValue() const { return m_classType == FontFeatureClass; }
+#if ENABLE(VARIATION_FONTS)
     bool isFontVariationValue() const { return m_classType == FontVariationClass; }
+#endif
     bool isFontFaceSrcValue() const { return m_classType == FontFaceSrcClass; }
     bool isFontValue() const { return m_classType == FontClass; }
     bool isImageGeneratorValue() const { return m_classType >= CanvasClass && m_classType <= RadialGradientClass; }
@@ -170,7 +172,9 @@ protected:
         AspectRatioClass,
         BorderImageSliceClass,
         FontFeatureClass,
+#if ENABLE(VARIATION_FONTS)
         FontVariationClass,
+#endif
         FontClass,
         FontFaceSrcClass,
         FunctionClass,

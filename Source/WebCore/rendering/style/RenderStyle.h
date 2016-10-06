@@ -719,7 +719,9 @@ public:
     float specifiedFontSize() const;
     float computedFontSize() const;
     int fontSize() const;
+#if ENABLE(VARIATION_FONTS)
     FontVariationSettings fontVariationSettings() const { return fontDescription().variationSettings(); }
+#endif
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
     const Length& textIndent() const { return rareInheritedData->indent; }
@@ -1368,7 +1370,9 @@ public:
     bool setFontDescription(const FontCascadeDescription&);
     // Only used for blending font sizes when animating, for MathML anonymous blocks, and for text autosizing.
     void setFontSize(float);
+#if ENABLE(VARIATION_FONTS)
     void setFontVariationSettings(FontVariationSettings);
+#endif
 
     void setColor(const Color&);
     void setTextIndent(Length length) { SET_VAR(rareInheritedData, indent, WTFMove(length)); }

@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(VARIATION_FONTS)
+
 #include "CSSFontVariationValue.h"
 
 #include <wtf/text/StringBuilder.h>
@@ -54,3 +57,5 @@ bool CSSFontVariationValue::equals(const CSSFontVariationValue& other) const
 }
 
 }
+
+#endif // ENABLE(VARIATION_FONTS)

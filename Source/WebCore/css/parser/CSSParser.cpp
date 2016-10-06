@@ -272,7 +272,10 @@ CSSParserContext::CSSParserContext(Document& document, const URL& baseURL, const
 #endif
         springTimingFunctionEnabled = settings->springTimingFunctionEnabled();
         useNewParser = settings->newCSSParserEnabled();
+
+#if ENABLE(VARIATION_FONTS)
         variationFontsEnabled = settings->variationFontsEnabled();
+#endif
     }
 
 #if PLATFORM(IOS)
@@ -295,8 +298,10 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior
-        && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled
-        && a.variationFontsEnabled == b.variationFontsEnabled;
+#if ENABLE(VARIATION_FONTS)
+        && a.variationFontsEnabled == b.variationFontsEnabled
+#endif
+        && a.springTimingFunctionEnabled == b.springTimingFunctionEnabled;
 }
 
 CSSParser::CSSParser(const CSSParserContext& context)
@@ -2962,6 +2967,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else
             return parseFontFeatureSettings(important);
         break;
+#if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontVariationSettings:
         if (m_context.variationFontsEnabled) {
             if (id == CSSValueNormal)
@@ -2970,6 +2976,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 return parseFontVariationSettings(important);
         }
         break;
+#endif
     case CSSPropertyFontVariantLigatures:
         if (id == CSSValueNormal || id == CSSValueNone)
             validPrimitive = true;
@@ -10624,6 +10631,7 @@ bool CSSParser::parseFontFeatureSettings(bool important)
     return false;
 }
 
+#if ENABLE(VARIATION_FONTS)
 bool CSSParser::parseFontVariationTag(CSSValueList& settings)
 {
     CSSParserValue* value = m_valueList->current();
@@ -10677,6 +10685,7 @@ bool CSSParser::parseFontVariationSettings(bool important)
     }
     return false;
 }
+#endif // ENABLE(VARIATION_FONTS)
 
 bool CSSParser::parseFontVariantLigatures(bool important, bool unknownIsFailure, bool implicit)
 {

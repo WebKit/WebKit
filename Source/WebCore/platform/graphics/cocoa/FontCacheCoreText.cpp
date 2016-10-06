@@ -143,7 +143,9 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
 }
 
 typedef HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits> FeaturesMap;
+#if ENABLE(VARIATION_FONTS)
 typedef HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits> VariationsMap;
+#endif
 
 static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& variantSettings)
 {
@@ -399,9 +401,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
     for (auto& newFeature : features)
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
+#if ENABLE(VARIATION_FONTS)
     VariationsMap variationsToBeApplied;
     for (auto& newVariation : variations)
         variationsToBeApplied.set(newVariation.tag(), newVariation.value());
+#endif
 
     RetainPtr<CFMutableDictionaryRef> attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!featuresToBeApplied.isEmpty()) {
@@ -414,6 +418,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
 
+#if ENABLE(VARIATION_FONTS)
     if (!variationsToBeApplied.isEmpty()) {
         auto variationDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         for (auto& p : variationsToBeApplied) {
@@ -424,6 +429,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, TextRenderingMo
         }
         CFDictionaryAddValue(attributes.get(), kCTFontVariationAttribute, variationDictionary.get());
     }
+#endif
 
     if (textRenderingMode == OptimizeLegibility) {
         CGFloat size = CTFontGetSize(originalFont);
