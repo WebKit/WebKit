@@ -880,6 +880,81 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences(utf16String(u"notspecial://H😍ßt"),
         {"notspecial", "", "", "xn--hsst-qc83c", 0, "/", "", "", "notspecial://xn--hsst-qc83c/"},
         {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
+    checkURLDifferences("http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/",
+        {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]/"},
+        {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/"}, TestTabs::No);
+    checkURLDifferences("http://[::123.234.12.210]/",
+        {"http", "", "", "[::7bea:cd2]", 0, "/", "", "", "http://[::7bea:cd2]/"},
+        {"http", "", "", "[::123.234.12.210]", 0, "/", "", "", "http://[::123.234.12.210]/"});
+    checkURLDifferences("http://[::a:255.255.255.255]/",
+        {"http", "", "", "[::a:ffff:ffff]", 0, "/", "", "", "http://[::a:ffff:ffff]/"},
+        {"http", "", "", "[::a:255.255.255.255]", 0, "/", "", "", "http://[::a:255.255.255.255]/"});
+    checkURLDifferences("http://[::0.00.255.255]/",
+        {"", "", "", "", 0, "", "", "", "http://[::0.00.255.255]/"},
+        {"http", "", "", "[::0.00.255.255]", 0, "/", "", "", "http://[::0.00.255.255]/"});
+    checkURLDifferences("http://[::0.0.255.255]/",
+        {"http", "", "", "[::ffff]", 0, "/", "", "", "http://[::ffff]/"},
+        {"http", "", "", "[::0.0.255.255]", 0, "/", "", "", "http://[::0.0.255.255]/"});
+    checkURLDifferences("http://[::0:1.0.255.255]/",
+        {"http", "", "", "[::100:ffff]", 0, "/", "", "", "http://[::100:ffff]/"},
+        {"http", "", "", "[::0:1.0.255.255]", 0, "/", "", "", "http://[::0:1.0.255.255]/"});
+    checkURLDifferences("http://[::A:1.0.255.255]/",
+        {"http", "", "", "[::a:100:ffff]", 0, "/", "", "", "http://[::a:100:ffff]/"},
+        {"http", "", "", "[::a:1.0.255.255]", 0, "/", "", "", "http://[::a:1.0.255.255]/"});
+    checkURLDifferences("http://[:127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[:127.0.0.1]"},
+        {"http", "", "", "[:127.0.0.1]", 0, "/", "", "", "http://[:127.0.0.1]/"});
+    checkURLDifferences("http://[127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[127.0.0.1]"},
+        {"http", "", "", "[127.0.0.1]", 0, "/", "", "", "http://[127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.1]",
+        {"http", "", "", "[a:b:c:d:e:f:7f00:1]", 0, "/", "", "", "http://[a:b:c:d:e:f:7f00:1]/"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.0.1]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.101]",
+        {"http", "", "", "[a:b:c:d:e:f:7f00:65]", 0, "/", "", "", "http://[a:b:c:d:e:f:7f00:65]/"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.0.101]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.0.101]/"});
+    checkURLDifferences("http://[::a:b:c:d:e:f:127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[::a:b:c:d:e:f:127.0.0.1]"},
+        {"http", "", "", "[::a:b:c:d:e:f:127.0.0.1]", 0, "/", "", "", "http://[::a:b:c:d:e:f:127.0.0.1]/"});
+    checkURLDifferences("http://[a:b::c:d:e:f:127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b::c:d:e:f:127.0.0.1]"},
+        {"http", "", "", "[a:b::c:d:e:f:127.0.0.1]", 0, "/", "", "", "http://[a:b::c:d:e:f:127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:127.0.0.1]"},
+        {"http", "", "", "[a:b:c:d:e:127.0.0.1]", 0, "/", "", "", "http://[a:b:c:d:e:127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0.0.0.1]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.0.0.1]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0.1]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.1]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.011]", // Chrome treats this as octal, Firefox and the spec fail
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0.0.011]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.0.011]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.0.011]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.00.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0.00.1]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.00.1]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.00.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0.0.1.]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0.0.1.]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0.0.1.]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0.0.1.]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f:127.0..0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f:127.0..0.1]"},
+        {"http", "", "", "[a:b:c:d:e:f:127.0..0.1]", 0, "/", "", "", "http://[a:b:c:d:e:f:127.0..0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.1]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f::127.0.0.1]"},
+        {"http", "", "", "[a:b:c:d:e:f::127.0.0.1]", 0, "/", "", "", "http://[a:b:c:d:e:f::127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e::127.0.0.1]",
+        {"http", "", "", "[a:b:c:d:e:0:7f00:1]", 0, "/", "", "", "http://[a:b:c:d:e:0:7f00:1]/"},
+        {"http", "", "", "[a:b:c:d:e::127.0.0.1]", 0, "/", "", "", "http://[a:b:c:d:e::127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d::e:127.0.0.1]",
+        {"http", "", "", "[a:b:c:d:0:e:7f00:1]", 0, "/", "", "", "http://[a:b:c:d:0:e:7f00:1]/"},
+        {"http", "", "", "[a:b:c:d::e:127.0.0.1]", 0, "/", "", "", "http://[a:b:c:d::e:127.0.0.1]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f::127.0.0.]"},
+        {"http", "", "", "[a:b:c:d:e:f::127.0.0.]", 0, "/", "", "", "http://[a:b:c:d:e:f::127.0.0.]/"});
+    checkURLDifferences("http://[a:b:c:d:e:f::127.0.0.256]",
+        {"", "", "", "", 0, "", "", "", "http://[a:b:c:d:e:f::127.0.0.256]"},
+        {"http", "", "", "[a:b:c:d:e:f::127.0.0.256]", 0, "/", "", "", "http://[a:b:c:d:e:f::127.0.0.256]/"});
 }
 
 TEST_F(URLParserTest, DefaultPort)
@@ -1028,6 +1103,10 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[1234::ab~]");
     shouldFail("http://[2001::1");
     shouldFail("http://[1:2:3:4:5:6:7:8~]/");
+    shouldFail("http://[a:b:c:d:e:f:g:127.0.0.1]");
+    shouldFail("http://[a:b:c:d:e:f:g:h:127.0.0.1]");
+    shouldFail("http://[a:b:c:d:e:f:127.0.0.0x11]"); // Chrome treats this as hex, Firefox and the spec fail
+    shouldFail("http://[a:b:c:d:e:f:127.0.-0.1]");
 }
 
 // These are in the spec but not in the web platform tests.

@@ -1,3 +1,26 @@
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse IPv4 addresses as the last two pieces of an IPv6 address
+        https://bugs.webkit.org/show_bug.cgi?id=162991
+
+        Reviewed by Saam Barati.
+
+        The last 32 bits of an IPv6 address can be written in the form of an IPv4 address,
+        but the syntax is stricter than if it were just an IPv4 address.  There must be 4 pieces,
+        and each piece must be decimal (no octal or hex allowed).  These should serialize to
+        regular hex IPv6 addresses.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parseIPv4Piece):
+        (WebCore::URLParser::parseIPv4Host):
+        (WebCore::URLParser::parseIPv4PieceInsideIPv6):
+        (WebCore::URLParser::parseIPv4AddressInsideIPv6):
+        (WebCore::URLParser::parseIPv6Host):
+        (WebCore::URLParser::parseIPv4Number): Deleted.
+        * platform/URLParser.h:
+
 2016-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Put variation fonts work behind a compile-time flag

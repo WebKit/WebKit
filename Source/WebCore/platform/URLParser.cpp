@@ -2185,7 +2185,7 @@ void URLParser::serializeIPv6(URLParser::IPv6Address address)
 }
 
 template<typename CharacterType>
-Optional<uint32_t> URLParser::parseIPv4Number(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
+Optional<uint32_t> URLParser::parseIPv4Piece(CodePointIterator<CharacterType>& iterator, bool& didSeeSyntaxViolation)
 {
     enum class State : uint8_t {
         UnknownBase,
@@ -2284,7 +2284,7 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
         }
         if (items.size() >= 4)
             return Nullopt;
-        if (auto item = parseIPv4Number(iterator, didSeeSyntaxViolation))
+        if (auto item = parseIPv4Piece(iterator, didSeeSyntaxViolation))
             items.append(item.value());
         else
             return Nullopt;
@@ -2323,7 +2323,62 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4Host(CodePointIterator<Char
         ipv4 += items[counter] * pow256(3 - counter);
     return ipv4;
 }
-    
+
+template<typename CharacterType>
+Optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>& iterator)
+{
+    if (iterator.atEnd())
+        return Nullopt;
+    uint32_t piece = 0;
+    bool leadingZeros = false;
+    size_t digitCount = 0;
+    while (!iterator.atEnd()) {
+        if (!isASCIIDigit(*iterator))
+            return Nullopt;
+        ++digitCount;
+        if (!piece && *iterator == '0') {
+            if (leadingZeros)
+                return Nullopt;
+            leadingZeros = true;
+        }
+        if (!piece && *iterator == '0')
+            leadingZeros = true;
+        piece = piece * 10 + *iterator - '0';
+        if (piece > 255)
+            return Nullopt;
+        advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+        if (iterator.atEnd())
+            break;
+        if (*iterator == '.')
+            break;
+    }
+    if (piece && leadingZeros)
+        return Nullopt;
+    return piece;
+}
+
+template<typename CharacterType>
+Optional<URLParser::IPv4Address> URLParser::parseIPv4AddressInsideIPv6(CodePointIterator<CharacterType> iterator)
+{
+    IPv4Address address = 0;
+    for (size_t i = 0; i < 4; ++i) {
+        if (Optional<uint32_t> piece = parseIPv4PieceInsideIPv6(iterator))
+            address = (address << 8) + piece.value();
+        else
+            return Nullopt;
+        if (i < 3) {
+            if (iterator.atEnd())
+                return Nullopt;
+            if (*iterator != '.')
+                return Nullopt;
+            advance<CharacterType, ReportSyntaxViolation::No>(iterator);
+        } else if (!iterator.atEnd())
+            return Nullopt;
+    }
+    ASSERT(iterator.atEnd());
+    return address;
+}
+
 template<typename CharacterType>
 Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<CharacterType> c)
 {
@@ -2359,6 +2414,17 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
             compressPointer = piecePointer;
             continue;
         }
+        if (piecePointer == 6 || (compressPointer && piecePointer < 6)) {
+            if (Optional<IPv4Address> ipv4Address = parseIPv4AddressInsideIPv6(c)) {
+                if (compressPointer && piecePointer == 5)
+                    return Nullopt;
+                syntaxViolation(hostBegin);
+                address[piecePointer++] = ipv4Address.value() >> 16;
+                address[piecePointer++] = ipv4Address.value() & 0xFFFF;
+                c = { };
+                break;
+            }
+        }
         uint16_t value = 0;
         size_t length = 0;
         bool leadingZeros = false;
@@ -2386,40 +2452,9 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         advance(c, hostBegin);
     }
     
-    if (!c.atEnd()) {
-        if (piecePointer > 6)
-            return Nullopt;
-        size_t dotsSeen = 0;
-        while (!c.atEnd()) {
-            Optional<uint16_t> value;
-            if (!isASCIIDigit(*c))
-                return Nullopt;
-            while (isASCIIDigit(*c)) {
-                auto number = *c - '0';
-                if (!value)
-                    value = number;
-                else if (!value.value())
-                    return Nullopt;
-                else
-                    value = value.value() * 10 + number;
-                advance(c, hostBegin);
-                if (c.atEnd())
-                    return Nullopt;
-                if (value.value() > 255)
-                    return Nullopt;
-            }
-            if (dotsSeen < 3 && *c != '.')
-                return Nullopt;
-            address[piecePointer] = address[piecePointer] * 0x100 + value.valueOr(0);
-            if (dotsSeen == 1 || dotsSeen == 3)
-                piecePointer++;
-            if (!c.atEnd())
-                advance(c, hostBegin);
-            if (dotsSeen == 3 && !c.atEnd())
-                return Nullopt;
-            dotsSeen++;
-        }
-    }
+    if (!c.atEnd())
+        return Nullopt;
+    
     if (compressPointer) {
         size_t swaps = piecePointer - compressPointer.value();
         piecePointer = 7;

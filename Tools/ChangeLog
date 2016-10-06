@@ -1,3 +1,13 @@
+2016-10-05  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse IPv4 addresses as the last two pieces of an IPv6 address
+        https://bugs.webkit.org/show_bug.cgi?id=162991
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-10-05  Tim Horton  <timothy_horton@apple.com>
 
         Avoid automatically re-taking snapshots for back-forward items that were never loaded into the view

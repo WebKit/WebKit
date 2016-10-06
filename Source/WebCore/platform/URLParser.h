@@ -100,9 +100,11 @@ private:
     using IPv4Address = uint32_t;
     void serializeIPv4(IPv4Address);
     template<typename CharacterType> Optional<IPv4Address> parseIPv4Host(CodePointIterator<CharacterType>);
-    template<typename CharacterType> Optional<uint32_t> parseIPv4Number(CodePointIterator<CharacterType>&, bool& syntaxViolation);
+    template<typename CharacterType> Optional<uint32_t> parseIPv4Piece(CodePointIterator<CharacterType>&, bool& syntaxViolation);
     using IPv6Address = std::array<uint16_t, 8>;
     template<typename CharacterType> Optional<IPv6Address> parseIPv6Host(CodePointIterator<CharacterType>);
+    template<typename CharacterType> Optional<uint32_t> parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>&);
+    template<typename CharacterType> Optional<IPv4Address> parseIPv4AddressInsideIPv6(CodePointIterator<CharacterType>);
     void serializeIPv6Piece(uint16_t piece);
     void serializeIPv6(IPv6Address);
 
