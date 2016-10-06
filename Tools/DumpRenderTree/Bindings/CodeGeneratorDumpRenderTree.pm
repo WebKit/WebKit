@@ -49,9 +49,7 @@ sub WriteData
     my ($self, $interface, $outputDir) = @_;
 
     foreach my $file ($self->_generateHeaderFile($interface), $self->_generateImplementationFile($interface)) {
-        open(FILE, ">", File::Spec->catfile($outputDir, $$file{name})) or die "Failed to open $$file{name} for writing: $!";
-        print FILE @{$$file{contents}};
-        close(FILE) or die "Failed to close $$file{name} after writing: $!";
+        $$self{codeGenerator}->UpdateFile(File::Spec->catfile($outputDir, $$file{name}), join("", @{$$file{contents}}));
     }
 }
 

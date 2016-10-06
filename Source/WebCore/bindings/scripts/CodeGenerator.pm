@@ -219,6 +219,8 @@ sub UpdateFile
     my $fileName = shift;
     my $contents = shift;
 
+    # FIXME: We should only write content if it is different from what is in the file.
+    # But that would mean running more often the binding generator, see https://bugs.webkit.org/show_bug.cgi?id=131756
     open FH, ">", $fileName or die "Couldn't open $fileName: $!\n";
     print FH $contents;
     close FH;
