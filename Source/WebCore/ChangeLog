@@ -1,3 +1,18 @@
+2016-10-06  Zalan Bujtas  <zalan@apple.com>
+
+        Add back ASSERT(!needsLayout) to RenderTableSection which is now valid
+        https://bugs.webkit.org/show_bug.cgi?id=92954
+        <rdar://problem/12147973>
+
+        Reviewed by Dan Bernstein.
+
+        LayoutTests pass fine now with this assert on.
+
+        Covered by existing tests.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+
 2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a dummy SubtleCrypto interface
