@@ -1,3 +1,13 @@
+2016-10-05  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Bump Chrome version in Chrome user agent quirk
+        https://bugs.webkit.org/show_bug.cgi?id=162984
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+
 2016-10-05  Dean Jackson  <dino@apple.com>
 
         Add Display P3 ColorSpace
