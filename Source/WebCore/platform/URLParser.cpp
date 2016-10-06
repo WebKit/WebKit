@@ -1991,7 +1991,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             m_url.m_portEnd = m_url.m_hostEnd;
         }
         appendToASCIIBuffer('/');
-        m_url.m_pathAfterLastSlash = m_url.m_hostEnd + 1;
+        m_url.m_pathAfterLastSlash = m_url.m_portEnd + 1;
         m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
         m_url.m_queryEnd = m_url.m_pathAfterLastSlash;
         m_url.m_fragmentEnd = m_url.m_pathAfterLastSlash;

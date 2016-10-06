@@ -1044,6 +1044,16 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("unknown://host:81",
         {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"},
         {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
+
+    checkURL("file://host:0", {"file", "", "", "host", 0, "/", "", "", "file://host:0/"});
+    checkURL("file://host:80", {"file", "", "", "host", 80, "/", "", "", "file://host:80/"});
+    checkURL("file://host:80/path", {"file", "", "", "host", 80, "/path", "", "", "file://host:80/path"});
+    checkURLDifferences("file://:80/path",
+        {"", "", "", "", 0, "", "", "", "file://:80/path"},
+        {"file", "", "", "", 80, "/path", "", "", "file://:80/path"});
+    checkURLDifferences("file://:0/path",
+        {"", "", "", "", 0, "", "", "", "file://:0/path"},
+        {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
 }
     
 static void shouldFail(const String& urlString)

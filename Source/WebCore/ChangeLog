@@ -1,3 +1,15 @@
+2016-10-06  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should parse file URLs with ports consistently
+        https://bugs.webkit.org/show_bug.cgi?id=163075
+
+        Reviewed by Brady Eidson.
+
+        Covered by API tests.  We used to assert when parsing the newly tested URLs.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+
 2016-10-06  Chris Dumez  <cdumez@apple.com>
 
         [WebIDL] Add support for having dictionaries in their own IDL file
