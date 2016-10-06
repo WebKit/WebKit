@@ -120,6 +120,15 @@ sub new
     return $reference;
 }
 
+sub GenerateDictionary
+{
+    my ($object, $dictionary) = @_;
+
+    my $className = GetDictionaryClassName($dictionary->name);
+    $object->GenerateDictionaryHeader($dictionary, $className);
+    $object->GenerateDictionaryImplementation($dictionary, $className);
+}
+
 sub GenerateInterface
 {
     my ($object, $interface, $defines, $enumerations, $dictionaries) = @_;
@@ -783,12 +792,13 @@ sub GetNestedClassName
 
 sub GetEnumerationClassName
 {
-    my ($interface, $name) = @_;
+    my ($name, $interface) = @_;
 
     if ($codeGenerator->HasEnumImplementationNameOverride($name)) {
         return $codeGenerator->GetEnumImplementationNameOverride($name);
     }
 
+    return $name unless defined($interface);
     return GetNestedClassName($interface, $name);
 }
 
@@ -802,7 +812,7 @@ sub GetEnumerationValueName
     return $name;
 }
 
-sub GenerateEnumerationImplementationContent
+sub GenerateEnumerationsImplementationContent
 {
     my ($interface, $enumerations) = @_;
 
@@ -812,7 +822,7 @@ sub GenerateEnumerationImplementationContent
     foreach my $enumeration (@$enumerations) {
         my $name = $enumeration->name;
 
-        my $className = GetEnumerationClassName($interface, $name);
+        my $className = GetEnumerationClassName($name, $interface);
 
         # FIXME: A little ugly to have this be a side effect instead of a return value.
         AddToImplIncludes("<runtime/JSString.h>");
@@ -888,7 +898,7 @@ sub GenerateEnumerationImplementationContent
     return $result;
 }
 
-sub GenerateEnumerationHeaderContent
+sub GenerateEnumerationsHeaderContent
 {
     my ($interface, $enumerations) = @_;
 
@@ -904,7 +914,7 @@ sub GenerateEnumerationHeaderContent
     foreach my $enumeration (@$enumerations) {
         my $name = $enumeration->name;
 
-        my $className = GetEnumerationClassName($interface, $name);
+        my $className = GetEnumerationClassName($name, $interface);
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
         $result .= "#if ${conditionalString}\n\n" if $conditionalString;
@@ -926,12 +936,14 @@ sub GenerateEnumerationHeaderContent
 
 sub GetDictionaryClassName
 {
-    my ($interface, $name) = @_;
+    my ($name, $interface) = @_;
 
     if ($codeGenerator->HasDictionaryImplementationNameOverride($name)) {
         return $codeGenerator->GetDictionaryImplementationNameOverride($name);
     }
 
+    return $name if $codeGenerator->IsExternalDictionaryType($name);
+    return $name unless defined($interface);
     return GetNestedClassName($interface, $name);
 }
 
@@ -944,7 +956,7 @@ sub GenerateDefaultValue
     if ($codeGenerator->IsEnumType($member->type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
         # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
-        my $className = GetEnumerationClassName($interface, $member->type);
+        my $className = GetEnumerationClassName($member->type, $interface);
         my $enumerationValueName = GetEnumerationValueName(substr($value, 1, -1));
         $value = $className . "::" . $enumerationValueName;
     }
@@ -975,6 +987,18 @@ sub GenerateConversionRuleWithLeadingComma
 
 sub GenerateDictionaryHeaderContent
 {
+    my ($dictionary, $className) = @_;
+
+    my $result = "";
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+    $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+    $result .= "template<> Optional<$className> convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
+    $result .= "#endif\n\n" if $conditionalString;
+    return $result;
+}
+
+sub GenerateDictionariesHeaderContent
+{
     my ($interface, $allDictionaries) = @_;
 
     return "" unless @$allDictionaries;
@@ -983,143 +1007,145 @@ sub GenerateDictionaryHeaderContent
 
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
-        my $name = $dictionary->name;
-
-        my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
-        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-
         $headerIncludes{$interface->name . ".h"} = 1;
-
-        my $className = GetDictionaryClassName($interface, $name);
-        $result .= "template<> Optional<$className> convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
-
-        $result .= "#endif\n\n" if $conditionalString;
+        my $className = GetDictionaryClassName($dictionary->name, $interface);
+        $result .= GenerateDictionaryHeaderContent($dictionary, $className);
     }
     return $result;
 }
 
 sub GenerateDictionaryImplementationContent
 {
+    my ($dictionary, $className, $interface) = @_;
+
+    my $result = "";
+
+    my $name = $dictionary->name;
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+    $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+
+    # FIXME: A little ugly to have this be a side effect instead of a return value.
+    AddToImplIncludes("JSDOMConvert.h");
+
+    # https://heycam.github.io/webidl/#es-dictionary
+    $result .= "template<> Optional<$className> convertDictionary<$className>(ExecState& state, JSValue value)\n";
+    $result .= "{\n";
+    $result .= "    VM& vm = state.vm();\n";
+    $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
+    $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
+    $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
+    # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
+    $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
+    $result .= "        throwTypeError(&state, throwScope);\n";
+    $result .= "        return Nullopt;\n";
+    $result .= "    }\n";
+
+    # 2. If V is a native RegExp object, then throw a TypeError.
+    # FIXME: This RegExp special handling is likely to go away in the specification.
+    $result .= "    if (UNLIKELY(object && object->type() == RegExpObjectType)) {\n";
+    $result .= "        throwTypeError(&state, throwScope);\n";
+    $result .= "        return Nullopt;\n";
+    $result .= "    }\n";
+
+    # 3. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
+
+    # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
+    my @dictionaries;
+    push(@dictionaries, $dictionary);
+    my $parentDictionary = $codeGenerator->GetDictionaryByName($dictionary->parent);
+    while (defined($parentDictionary)) {
+        unshift(@dictionaries, $parentDictionary);
+        $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary->parent);
+    }
+
+    my $arguments = "";
+    my $comma = "";
+
+    # 5. For each dictionary dictionary in dictionaries, in order:
+    foreach my $dictionary (@dictionaries) {
+        # For each dictionary member member declared on dictionary, in lexicographical order:
+        my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
+        foreach my $member (@sortedMembers) {
+            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
+
+            my $type = $member->type;
+
+            # 5.1. Let key be the identifier of member.
+            my $key = $member->name;
+
+            # 5.2. Let value be an ECMAScript value, depending on Type(V):
+            $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
+
+            my $nativeType = GetNativeTypeFromSignature($interface, $member);
+            if ($member->isOptional && !defined $member->default) {
+                $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
+            } else {
+                $result .= "    $nativeType $key;\n";
+            }
+
+            # 5.3. If value is not undefined, then:
+            $result .= "    if (!${key}Value.isUndefined()) {\n";
+            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
+            if ($codeGenerator->IsWrapperType($type)) {
+                AddToImplIncludes("JS${type}.h");
+                die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
+                my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
+                $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
+            } elsif ($codeGenerator->IsDictionaryType($type)) {
+                my $nativeType = GetNativeType($interface, $type);
+                $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
+            } else {
+                my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
+                $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+            }
+            $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
+            # Value is undefined.
+            # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
+            if ($member->isOptional && defined $member->default) {
+                $result .= "    } else\n";
+                $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
+            } elsif (!$member->isOptional) {
+                # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
+                $result .= "    } else {\n";
+                $result .= "        throwTypeError(&state, throwScope);\n";
+                $result .= "        return Nullopt;\n";
+                $result .= "    }\n";
+            } else {
+                $result .= "    }\n";
+            }
+        }
+
+        # 6. Return dict.
+        foreach my $member (@{$dictionary->members}) {
+            my $value;
+            if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
+                $value = "*" . $member->name;
+            } elsif ($codeGenerator->IsDictionaryType($member->type)) {
+                $value = $member->name . ".value()";
+            } else {
+                $value = "WTFMove(" . $member->name . ")";
+            }
+            $arguments .= $comma . $value;
+            $comma = ", ";
+        }
+    }
+
+    $result .= "    return $className { " . $arguments . " };\n";
+    $result .= "}\n\n";
+    $result .= "#endif\n\n" if $conditionalString;
+
+    return $result;
+}
+
+sub GenerateDictionariesImplementationContent
+{
     my ($interface, $allDictionaries) = @_;
 
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
-        my $name = $dictionary->name;
-
-        my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
-        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-
-        my $className = GetDictionaryClassName($interface, $name);
-
-        # FIXME: A little ugly to have this be a side effect instead of a return value.
-        AddToImplIncludes("JSDOMConvert.h");
-
-        # https://heycam.github.io/webidl/#es-dictionary
-        $result .= "template<> Optional<$className> convertDictionary<$className>(ExecState& state, JSValue value)\n";
-        $result .= "{\n";
-        $result .= "    VM& vm = state.vm();\n";
-        $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-        $result .= "    bool isNullOrUndefined = value.isUndefinedOrNull();\n";
-        $result .= "    auto* object = isNullOrUndefined ? nullptr : value.getObject();\n";
-        # 1. If Type(V) is not Undefined, Null or Object, then throw a TypeError.
-        $result .= "    if (UNLIKELY(!isNullOrUndefined && !object)) {\n";
-        $result .= "        throwTypeError(&state, throwScope);\n";
-        $result .= "        return Nullopt;\n";
-        $result .= "    }\n";
-
-        # 2. If V is a native RegExp object, then throw a TypeError.
-        # FIXME: This RegExp special handling is likely to go away in the specification.
-        $result .= "    if (UNLIKELY(object && object->type() == RegExpObjectType)) {\n";
-        $result .= "        throwTypeError(&state, throwScope);\n";
-        $result .= "        return Nullopt;\n";
-        $result .= "    }\n";
-
-        # 3. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
-
-        # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
-        my @dictionaries;
-        push(@dictionaries, $dictionary);
-        my $parentDictionary = $codeGenerator->GetDictionaryByName($dictionary->parent);
-        while (defined($parentDictionary)) {
-            unshift(@dictionaries, $parentDictionary);
-            $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary->parent);
-        }
-
-        my $arguments = "";
-        my $comma = "";
-
-        # 5. For each dictionary dictionary in dictionaries, in order:
-        foreach my $dictionary (@dictionaries) {
-            # For each dictionary member member declared on dictionary, in lexicographical order:
-            my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
-            foreach my $member (@sortedMembers) {
-                $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
-
-                my $type = $member->type;
-
-                # 5.1. Let key be the identifier of member.
-                my $key = $member->name;
-
-                # 5.2. Let value be an ECMAScript value, depending on Type(V):
-                $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
-
-                my $nativeType = GetNativeTypeFromSignature($interface, $member);
-                if ($member->isOptional && !defined $member->default) {
-                    $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
-                } else {
-                    $result .= "    $nativeType $key;\n";
-                }
-
-                # 5.3. If value is not undefined, then:
-                $result .= "    if (!${key}Value.isUndefined()) {\n";
-                # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
-                if ($codeGenerator->IsWrapperType($type)) {
-                    AddToImplIncludes("JS${type}.h");
-                    die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
-                    my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
-                    $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
-                } elsif ($codeGenerator->IsDictionaryType($type)) {
-                    my $nativeType = GetNativeType($interface, $type);
-                    $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
-                } else {
-                    my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
-                    $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
-                }
-                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
-                # Value is undefined.
-                # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
-                if ($member->isOptional && defined $member->default) {
-                    $result .= "    } else\n";
-                    $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
-                } elsif (!$member->isOptional) {
-                    # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
-                    $result .= "    } else {\n";
-                    $result .= "        throwTypeError(&state, throwScope);\n";
-                    $result .= "        return Nullopt;\n";
-                    $result .= "    }\n";
-                } else {
-                    $result .= "    }\n";
-                }
-            }
-
-            # 6. Return dict.
-            foreach my $member (@{$dictionary->members}) {
-                my $value;
-                if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
-                    $value = "*" . $member->name;
-                } elsif ($codeGenerator->IsDictionaryType($member->type)) {
-                    $value = $member->name . ".value()";
-                } else {
-                    $value = "WTFMove(" . $member->name . ")";
-                }
-                $arguments .= $comma . $value;
-                $comma = ", ";
-            }
-        }
-
-        $result .= "    return $className { " . $arguments . " };\n";
-        $result .= "}\n\n";
-        $result .= "#endif\n\n" if $conditionalString;
+        my $className = GetDictionaryClassName($dictionary->name, $interface);
+        $result .= GenerateDictionaryImplementationContent($dictionary, $className, $interface);
     }
     return $result;
 }
@@ -1618,8 +1644,8 @@ sub GenerateHeader
         push(@headerContent, "};\n");
     }
 
-    push(@headerContent, GenerateEnumerationHeaderContent($interface, $enumerations));
-    push(@headerContent, GenerateDictionaryHeaderContent($interface, $dictionaries));
+    push(@headerContent, GenerateEnumerationsHeaderContent($interface, $enumerations));
+    push(@headerContent, GenerateDictionariesHeaderContent($interface, $dictionaries));
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "\n} // namespace WebCore\n");
@@ -2339,8 +2365,8 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    push(@implContent, GenerateEnumerationImplementationContent($interface, $enumerations));
-    push(@implContent, GenerateDictionaryImplementationContent($interface, $dictionaries));
+    push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
+    push(@implContent, GenerateDictionariesImplementationContent($interface, $dictionaries));
 
     my @functions = @{$interface->functions};
     push(@functions, @{$interface->iterable->functions}) if IsKeyValueIterableInterface($interface);
@@ -4040,7 +4066,7 @@ sub GenerateParametersCheck
             $value = "WTFMove($name.arguments.value())";
 
         } elsif ($codeGenerator->IsEnumType($type)) {
-            my $className = GetEnumerationClassName($interface, $type);
+            my $className = GetEnumerationClassName($type, $interface);
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
@@ -4174,6 +4200,36 @@ sub GenerateReturnParameters
     return @arguments;
 }
 
+sub GenerateDictionaryHeader
+{
+    my ($object, $dictionary, $className) = @_;
+
+    my $dictionaryName = $dictionary->name;
+
+    # - Add default header template and header protection.
+    push(@headerContentHeader, GenerateHeaderContentHeader($dictionary));
+
+    $headerIncludes{"$dictionaryName.h"} = 1;
+    $headerIncludes{"JSDOMConvert.h"} = 1;
+
+    push(@headerContent, "\nnamespace WebCore {\n\n");
+    push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
+    push(@headerContent, "} // namespace WebCore\n");
+}
+
+sub GenerateDictionaryImplementation
+{
+    my ($object, $dictionary, $className) = @_;
+
+    # - Add default header template
+    push(@implContentHeader, GenerateImplementationContentHeader($dictionary));
+
+    push(@implContent, "\nusing namespace JSC;\n\n");
+    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
+    push(@implContent, "} // namespace WebCore\n");
+}
+
 sub GenerateCallbackHeader
 {
     my ($object, $interface, $enumerations, $dictionaries) = @_;
@@ -4235,8 +4291,8 @@ sub GenerateCallbackHeader
     push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $interfaceName&);\n");
     push(@headerContent, "inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $interfaceName* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }\n\n");
 
-    push(@headerContent, GenerateEnumerationHeaderContent($interface, $enumerations));
-    push(@headerContent, GenerateDictionaryHeaderContent($interface, $dictionaries));
+    push(@headerContent, GenerateEnumerationsHeaderContent($interface, $enumerations));
+    push(@headerContent, GenerateDictionariesHeaderContent($interface, $dictionaries));
 
     push(@headerContent, "} // namespace WebCore\n");
 
@@ -4263,8 +4319,8 @@ sub GenerateCallbackImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    push(@implContent, GenerateEnumerationImplementationContent($interface, $enumerations));
-    push(@implContent, GenerateDictionaryImplementationContent($interface, $dictionaries));
+    push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
+    push(@implContent, GenerateDictionariesImplementationContent($interface, $dictionaries));
 
     # Constructor
     push(@implContent, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");
@@ -4650,8 +4706,8 @@ sub GetNativeType
 
     return $nativeType{$type} if exists $nativeType{$type};
 
-    return GetEnumerationClassName($interface, $type) if $codeGenerator->IsEnumType($type);
-    return GetDictionaryClassName($interface, $type) if $codeGenerator->IsDictionaryType($type);
+    return GetEnumerationClassName($type, $interface) if $codeGenerator->IsEnumType($type);
+    return GetDictionaryClassName($type, $interface) if $codeGenerator->IsDictionaryType($type);
 
     my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
     return "${tearOffType}*" if $tearOffType;
@@ -4811,8 +4867,12 @@ sub JSValueToNative
     return ("valueToDate(state, $value)", 1) if $type eq "Date";
 
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);
-    return ("parse<" . GetEnumerationClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsEnumType($type);
-    return ("convertDictionary<" . GetDictionaryClassName($interface, $type) . ">(*state, $value)", 1) if $codeGenerator->IsDictionaryType($type);
+    return ("parse<" . GetEnumerationClassName($type, $interface) . ">(*state, $value)", 1) if $codeGenerator->IsEnumType($type);
+    if ($codeGenerator->IsDictionaryType($type)) {
+        my $dictionary = $codeGenerator->GetDictionaryByName($type);
+        AddToImplIncludes("JS$type.h", $conditional) if $codeGenerator->IsExternalDictionaryType($type);
+        return ("convertDictionary<" . GetDictionaryClassName($type, $interface) . ">(*state, $value)", 1);
+    }
 
     AddToImplIncludes("JS$type.h", $conditional);
 

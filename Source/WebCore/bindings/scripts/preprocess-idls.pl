@@ -94,6 +94,13 @@ foreach my $idlFile (sort keys %idlFileHash) {
         $supplementalDependencies{$fullPath} = [$partialInterfaceName];
         next;
     }
+
+    $supplementals{$fullPath} = [];
+
+    # Skip if the IDL file does not contain an interface, a callback interface or an exception.
+    # The IDL may contain a dictionary.
+    next unless containsInterfaceOrExceptionFromIDL($idlFileContents);
+
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     # Handle implements statements.
     my $implementedInterfaces = getImplementedInterfacesFromIDL($idlFileContents, $interfaceName);
@@ -132,7 +139,6 @@ foreach my $idlFile (sort keys %idlFileHash) {
             }
         }
     }
-    $supplementals{$fullPath} = [];
 }
 
 # Generate partial interfaces for Constructors.
@@ -303,6 +309,16 @@ sub isCallbackInterfaceFromIDL
 {
     my $fileContents = shift;
     return ($fileContents =~ /callback\s+interface\s+\w+/gs);
+}
+
+sub containsInterfaceOrExceptionFromIDL
+{
+    my $fileContents = shift;
+
+    return 1 if $fileContents =~ /\bcallback\s+interface\s+\w+/gs;
+    return 1 if $fileContents =~ /\binterface\s+\w+/gs;
+    return 1 if $fileContents =~ /\bexception\s+\w+/gs;
+    return 0;
 }
 
 sub trim

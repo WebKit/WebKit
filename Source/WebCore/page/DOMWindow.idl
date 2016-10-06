@@ -211,12 +211,6 @@
     [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;
 };
 
-// FIXME: Support ScrollBehavior.
-dictionary ScrollToOptions {
-    unrestricted double left;
-    unrestricted double top;
-};
-
 DOMWindow implements GlobalCrypto;
 DOMWindow implements GlobalEventHandlers;
 DOMWindow implements WindowEventHandlers;

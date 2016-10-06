@@ -419,6 +419,7 @@
 #include "JSRTCTrackEvent.cpp"
 #include "JSScreen.cpp"
 #include "JSScriptProcessorNode.cpp"
+#include "JSScrollToOptions.cpp"
 #include "JSSecurityPolicyViolationEvent.cpp"
 #include "JSSourceBuffer.cpp"
 #include "JSSourceBufferList.cpp"

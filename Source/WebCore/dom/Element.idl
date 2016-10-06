@@ -185,12 +185,6 @@ dictionary ShadowRootInit {
     required ShadowRootMode mode;
 };
 
-// FIXME: Support ScrollBehavior.
-dictionary ScrollToOptions {
-    unrestricted double left;
-    unrestricted double top;
-};
-
 Element implements Animatable;
 Element implements ChildNode;
 Element implements NonDocumentTypeChildNode;

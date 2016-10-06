@@ -409,6 +409,7 @@ enum TestConfidence { "high", "kinda-low" };
 #endif
 
     void attachShadowRoot(TestDictionary init);
+    void operationWithExternalDictionaryParameter(TestStandaloneDictionary dict);
 
     stringifier attribute USVString stringifierAttribute;
 
