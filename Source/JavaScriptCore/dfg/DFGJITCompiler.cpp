@@ -366,7 +366,7 @@ void JITCompiler::compile()
 
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
-    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
+    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
     compileExceptionHandlers();
     linkOSRExits();
@@ -459,7 +459,7 @@ void JITCompiler::compileFunction()
     
     // Generate slow path code.
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
-    m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
+    m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
     compileExceptionHandlers();
     linkOSRExits();

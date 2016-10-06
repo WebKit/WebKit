@@ -385,14 +385,14 @@ void SpeculativeJIT::addSlowPathGenerator(std::function<void()> lambda)
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
 {
     for (auto& slowPathGenerator : m_slowPathGenerators) {
-        pcToCodeOriginMapBuilder.appendItem(m_jit.label(), slowPathGenerator->origin().semantic);
+        pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), slowPathGenerator->origin().semantic);
         slowPathGenerator->generate(this);
     }
     for (auto& slowPathLambda : m_slowPathLambdas) {
         Node* currentNode = slowPathLambda.currentNode;
         m_currentNode = currentNode;
         m_outOfLineStreamIndex = slowPathLambda.streamIndex;
-        pcToCodeOriginMapBuilder.appendItem(m_jit.label(), currentNode->origin.semantic);
+        pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), currentNode->origin.semantic);
         slowPathLambda.generator();
         m_outOfLineStreamIndex = Nullopt;
     }
@@ -1740,7 +1740,7 @@ void SpeculativeJIT::compileCurrentBlock()
         if (Options::validateDFGExceptionHandling() && (mayExit(m_jit.graph(), m_currentNode) != DoesNotExit || m_currentNode->isTerminal()))
             m_jit.jitReleaseAssertNoException();
 
-        m_jit.pcToCodeOriginMapBuilder().appendItem(m_jit.label(), m_origin.semantic);
+        m_jit.pcToCodeOriginMapBuilder().appendItem(m_jit.labelIgnoringWatchpoints(), m_origin.semantic);
 
         compile(m_currentNode);
         

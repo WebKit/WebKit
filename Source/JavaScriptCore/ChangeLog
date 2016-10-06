@@ -1,3 +1,24 @@
+2016-10-05  Saam Barati  <sbarati@apple.com>
+
+        PCToCodeOriginMap builder should use labelIgnoringWatchpoints() inside the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=162936
+
+        Reviewed by Michael Saboff.
+
+        label() may insert nops because of an InvalidationPoint. It does that
+        because we don't want code that comes after an InvalidationPoint that isn't
+        effected by the invalidation point to be overwritten if we fire the
+        InvalidationPoint. PCToCodeOriginMap just grabs labels to build
+        a mapping, it never emits code that actually jumps to those labels.
+        Therefore, it should never cause us to emit nops.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+
 2016-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Put variation fonts work behind a compile-time flag
