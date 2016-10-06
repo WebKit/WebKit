@@ -31,7 +31,8 @@ namespace WebCore {
 enum ColorSpace {
     ColorSpaceDeviceRGB,
     ColorSpaceSRGB,
-    ColorSpaceLinearRGB
+    ColorSpaceLinearRGB,
+    ColorSpaceDisplayP3
 };
     
 } // namespace WebCore

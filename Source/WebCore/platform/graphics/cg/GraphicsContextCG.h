@@ -34,6 +34,7 @@ namespace WebCore {
 
 CGColorSpaceRef deviceRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 CGColorSpaceRef linearRGBColorSpaceRef();
 
 inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
@@ -50,6 +51,8 @@ static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
         return sRGBColorSpaceRef();
     case ColorSpaceLinearRGB:
         return linearRGBColorSpaceRef();
+    case ColorSpaceDisplayP3:
+        return displayP3ColorSpaceRef();
     }
     ASSERT_NOT_REACHED();
     return deviceRGBColorSpaceRef();
