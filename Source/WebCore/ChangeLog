@@ -1,5 +1,12 @@
 2016-10-06  Brent Fulgham  <bfulgham@apple.com>
 
+        Unreviewed build fix.
+
+        * platform/graphics/Image.cpp: Add missing include
+        for 'NotImplemented' when building under Direct2D.
+
+2016-10-06  Brent Fulgham  <bfulgham@apple.com>
+
         [Win][Direct2D] Add Direct2D CMake rules
         https://bugs.webkit.org/show_bug.cgi?id=162925
 
