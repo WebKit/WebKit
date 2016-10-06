@@ -94,16 +94,6 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBSpace;
 }
 
-CGColorSpaceRef displayP3ColorSpaceRef()
-{
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-    static CGColorSpaceRef displayP3Space = CGColorSpaceCreateWithName(kCGColorSpaceDisplayP3);
-#else
-    static CGColorSpaceRef displayP3Space = sRGBColorSpaceRef();
-#endif
-    return displayP3Space;
-}
-
 #if PLATFORM(WIN)
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
