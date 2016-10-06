@@ -262,13 +262,13 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
             m_glDisplay = GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
 #elif USE(EGL)
         if (is<PlatformDisplayX11>(sharedDisplay))
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
+            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
 #endif
 #endif
 
 #if PLATFORM(WAYLAND)
         if (is<PlatformDisplayWayland>(sharedDisplay))
-            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).native()));
+            m_glDisplay = GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
 #endif
 
         ASSERT(m_glDisplay);
