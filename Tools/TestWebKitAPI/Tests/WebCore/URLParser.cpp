@@ -1194,6 +1194,7 @@ TEST_F(URLParserTest, QueryEncoding)
     checkURL("http://host/?\tquery", latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
     checkURL("http://host/?q\tuery", latin1, {"http", "", "", "host", 0, "/", "query", "", "http://host/?query"});
     checkURL("http://host/?query with SpAcEs#fragment", latin1, {"http", "", "", "host", 0, "/", "query%20with%20SpAcEs", "fragment", "http://host/?query%20with%20SpAcEs#fragment"});
+    checkURL("http://host/?que\rry\t\r\n#fragment", latin1, {"http", "", "", "host", 0, "/", "query", "fragment", "http://host/?query#fragment"});
 
     TextEncoding unrecognized(String("unrecognized invalid encoding name"));
     checkURL("http://host/?query", unrecognized, {"http", "", "", "host", 0, "/", "", "", "http://host/?"});

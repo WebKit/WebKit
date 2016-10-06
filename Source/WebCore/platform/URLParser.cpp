@@ -604,6 +604,8 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
         appendToASCIIBuffer(byte);
         ++iterator;
     }
+    while (!iterator.atEnd() && isTabOrNewline(*iterator))
+        ++iterator;
     ASSERT((i == length) == iterator.atEnd());
     for (; i < length; ++i) {
         ASSERT(m_didSeeSyntaxViolation);

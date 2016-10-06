@@ -1,5 +1,15 @@
 2016-10-06  Alex Christensen  <achristensen@webkit.org>
 
+        Skip tabs and newlines between end of query and beginning of fragment in non-UTF-8-encoded URLs
+        https://bugs.webkit.org/show_bug.cgi?id=163071
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2016-10-06  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should parse file URLs with ports consistently
         https://bugs.webkit.org/show_bug.cgi?id=163075
 
