@@ -1,5 +1,14 @@
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix after r206846
+        https://bugs.webkit.org/show_bug.cgi?id=162941
+
+        DOMJIT::Patchpoint part should be guarded by ENABLE(JIT).
+
+        * jsc.cpp:
+
+2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DOMJIT] Add initial CheckDOM and CallDOM implementations
         https://bugs.webkit.org/show_bug.cgi?id=162941
 

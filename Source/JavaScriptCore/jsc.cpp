@@ -605,6 +605,7 @@ public:
         {
         }
 
+#if ENABLE(JIT)
         Ref<DOMJIT::Patchpoint> checkDOM() override
         {
             Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
@@ -633,6 +634,7 @@ public:
             return patchpoint;
         }
     };
+#endif
 
     static DOMJIT::GetterSetter* domJITNodeGetterSetter()
     {
