@@ -1,3 +1,28 @@
+2016-10-06  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: RemoteInspector should cache client capabilities for off-main thread usage
+        https://bugs.webkit.org/show_bug.cgi?id=163039
+        <rdar://problem/28571460>
+
+        Reviewed by Timothy Hatcher.
+
+        The fix in r206797 was incorrect because listings are always pushed out on the XPC connection queue.
+        Instead of delaying the listing needlessly, RemoteInspector should cache the capabilities of its
+        client while on the main thread, then use the cached struct data on the XPC connection queue rather
+        than directly accessing m_client. This is similar to how RemoteConnectionToTarget marshalls listing
+        information from arbitrary queues into m_targetListingMap, which can then be read from any queue.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/RemoteInspector.mm:
+        (Inspector::RemoteInspector::updateClientCapabilities): Cache the capabilities.
+        (Inspector::RemoteInspector::setRemoteInspectorClient):
+        Re-cache the capabilities. Scope the lock to avoid reentrant locking.
+
+        (Inspector::RemoteInspector::clientCapabilitiesDidChange): Cache the capabilities.
+        (Inspector::RemoteInspector::pushListingsNow): Use cached client capabilities.
+        (Inspector::RemoteInspector::receivedGetListingMessage): Revert the change in r206797.
+        (Inspector::RemoteInspector::receivedAutomationSessionRequestMessage):
+
 2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WebCore][JSC] Use new @throwTypeError and @throwRangeError intrinsics

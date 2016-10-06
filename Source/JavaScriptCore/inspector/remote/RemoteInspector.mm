@@ -249,15 +249,35 @@ void RemoteInspector::updateAutomaticInspectionCandidate(RemoteInspectionTarget*
     }
 }
 
+void RemoteInspector::updateClientCapabilities()
+{
+    ASSERT(isMainThread());
+
+    std::lock_guard<Lock> lock(m_mutex);
+
+    if (!m_client)
+        m_clientCapabilities = Nullopt;
+    else {
+        RemoteInspector::Client::Capabilities updatedCapabilities = {
+            m_client->remoteAutomationAllowed() // remoteAutomationAllowed
+        };
+
+        m_clientCapabilities = updatedCapabilities;
+    }
+}
+
 void RemoteInspector::setRemoteInspectorClient(RemoteInspector::Client* client)
 {
     ASSERT_ARG(client, client);
     ASSERT(!m_client);
 
-    std::lock_guard<Lock> lock(m_mutex);
-    m_client = client;
+    {
+        std::lock_guard<Lock> lock(m_mutex);
+        m_client = client;
+    }
 
     // Send an updated listing that includes whether the client allows remote automation.
+    updateClientCapabilities();
     pushListingsSoon();
 }
 
@@ -319,6 +339,12 @@ bool RemoteInspector::waitingForAutomaticInspection(unsigned)
 {
     // We don't take the lock to check this because we assume it will be checked repeatedly.
     return m_automaticInspectionPaused;
+}
+
+void RemoteInspector::clientCapabilitiesDidChange()
+{
+    updateClientCapabilities();
+    pushListingsSoon();
 }
 
 void RemoteInspector::start()
@@ -567,7 +593,7 @@ void RemoteInspector::pushListingsNow()
     RetainPtr<NSMutableDictionary> message = adoptNS([[NSMutableDictionary alloc] init]);
     [message setObject:listings.get() forKey:WIRListingKey];
 
-    BOOL isAllowed = m_client && m_client->remoteAutomationAllowed();
+    BOOL isAllowed = m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed;
     [message setObject:@(isAllowed) forKey:WIRRemoteAutomationEnabledKey];
 
     m_relayConnection->sendMessage(WIRListingMessage, message.get());
@@ -696,7 +722,7 @@ void RemoteInspector::receivedDidCloseMessage(NSDictionary *userInfo)
 
 void RemoteInspector::receivedGetListingMessage(NSDictionary *)
 {
-    pushListingsSoon();
+    pushListingsNow();
 }
 
 void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
@@ -794,7 +820,7 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
     if (!m_client)
         return;
 
-    if (!m_client->remoteAutomationAllowed())
+    if (!m_clientCapabilities || !m_clientCapabilities->remoteAutomationAllowed)
         return;
 
     NSString *suggestedSessionIdentifier = [userInfo objectForKey:WIRSessionIdentifierKey];
