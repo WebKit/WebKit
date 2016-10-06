@@ -36,10 +36,10 @@ function initializeReadableStream(underlyingSource, strategy)
          strategy = { highWaterMark: 1, size: function() { return 1; } };
 
     if (!@isObject(underlyingSource))
-        throw new @TypeError("ReadableStream constructor takes an object as first argument");
+        @throwTypeError("ReadableStream constructor takes an object as first argument");
 
     if (strategy !== @undefined && !@isObject(strategy))
-        throw new @TypeError("ReadableStream constructor takes an object as second argument, if any");
+        @throwTypeError("ReadableStream constructor takes an object as second argument, if any");
 
     this.@state = @streamReadable;
     this.@reader = @undefined;
@@ -53,13 +53,13 @@ function initializeReadableStream(underlyingSource, strategy)
 
     if (typeString === "bytes") {
          // FIXME: Implement support of ReadableByteStreamController.
-        throw new @TypeError("ReadableByteStreamController is not implemented");
+        @throwTypeError("ReadableByteStreamController is not implemented");
     } else if (type === @undefined) {
         if (strategy.highWaterMark === @undefined)
             strategy.highWaterMark = 1;
         this.@readableStreamController = new @ReadableStreamDefaultController(this, underlyingSource, strategy.size, strategy.highWaterMark);
     } else
-        throw new @RangeError("Invalid type for underlying source");
+        @throwRangeError("Invalid type for underlying source");
 
     return this;
 }
@@ -89,13 +89,13 @@ function getReader(options)
 
     if (options.mode === 'byob') {
         // FIXME: Update once ReadableByteStreamContoller and ReadableStreamBYOBReader are implemented.
-        throw new @TypeError("ReadableStreamBYOBReader is not implemented");
+        @throwTypeError("ReadableStreamBYOBReader is not implemented");
     }
 
     if (options.mode === @undefined)
         return new @ReadableStreamDefaultReader(this);
 
-    throw new @RangeError("Invalid mode is specified");
+    @throwRangeError("Invalid mode is specified");
 }
 
 function pipeThrough(streams, options)

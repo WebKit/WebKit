@@ -1,3 +1,25 @@
+2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore][JSC] Use new @throwTypeError and @throwRangeError intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=163001
+
+        Reviewed by Keith Miller.
+
+        Previously, the argument of @throwXXXError intrinsics must be string literal.
+        But it is error-prone restriction. This patch relaxes the restriction to accept
+        arbitrary values. To keep emitted bytecode small, if the argument is string literal,
+        we generate the same bytecode as before. If the argument is not string literal,
+        we evaluate it and perform to_string before passing to throw_static_error.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitThrowStaticError):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwTypeError):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_throwRangeError):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add @throwXXXError bytecode intrinsic

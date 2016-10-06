@@ -33,10 +33,10 @@ function enqueue(chunk)
         throw @makeThisTypeError("ReadableStreamDefaultController", "enqueue");
 
     if (this.@closeRequested)
-        throw new @TypeError("ReadableStreamDefaultController is requested to close");
+        @throwTypeError("ReadableStreamDefaultController is requested to close");
 
     if (this.@controlledReadableStream.@state !== @streamReadable)
-        throw new @TypeError("ReadableStream is not readable");
+        @throwTypeError("ReadableStream is not readable");
 
     return @readableStreamDefaultControllerEnqueue(this, chunk);
 }
@@ -50,7 +50,7 @@ function error(error)
 
     const stream = this.@controlledReadableStream;
     if (stream.@state !== @streamReadable)
-        throw new @TypeError("ReadableStream is not readable");
+        @throwTypeError("ReadableStream is not readable");
 
     @readableStreamError(stream, error);
 }
@@ -63,10 +63,10 @@ function close()
         throw @makeThisTypeError("ReadableStreamDefaultController", "close");
 
     if (this.@closeRequested)
-        throw new @TypeError("ReadableStreamDefaultController is already requested to close");
+        @throwTypeError("ReadableStreamDefaultController is already requested to close");
 
     if (this.@controlledReadableStream.@state !== @streamReadable)
-        throw new @TypeError("ReadableStream is not readable");
+        @throwTypeError("ReadableStream is not readable");
 
     @readableStreamDefaultControllerClose(this);
 }

@@ -662,6 +662,7 @@ namespace JSC {
             emitUnaryNoDstOp(op_throw, exc);
         }
 
+        void emitThrowStaticError(ErrorType, RegisterID*);
         void emitThrowStaticError(ErrorType, const Identifier& message);
         void emitThrowReferenceError(const String& message);
         void emitThrowTypeError(const String& message);

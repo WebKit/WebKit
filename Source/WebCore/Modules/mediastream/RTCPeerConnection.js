@@ -35,10 +35,10 @@ function initializeRTCPeerConnection(configuration)
     "use strict";
 
     if (arguments.length < 1)
-        throw new @TypeError("Not enough arguments");
+        @throwTypeError("Not enough arguments");
 
     if (!@isObject(configuration))
-        throw new @TypeError("RTCPeerConnection argument must be a valid Dictionary");
+        @throwTypeError("RTCPeerConnection argument must be a valid Dictionary");
 
     // FIXME: Handle errors in a better way than catching and re-throwing (http://webkit.org/b/158936)
     try {
@@ -46,7 +46,7 @@ function initializeRTCPeerConnection(configuration)
     } catch (e) {
         const message = e.name === "TypeMismatchError" ? "Invalid RTCPeerConnection constructor arguments"
             : "Error creating RTCPeerConnection";
-        throw new @TypeError(message);
+        @throwTypeError(message);
     }
 
     this.@operations = [];
@@ -60,7 +60,7 @@ function getLocalStreams()
     "use strict";
 
     if (!@isRTCPeerConnection(this))
-        throw new @TypeError("Function should be called on an RTCPeerConnection");
+        @throwTypeError("Function should be called on an RTCPeerConnection");
 
     return this.@localStreams.slice();
 }
@@ -70,10 +70,10 @@ function getStreamById(streamIdArg)
     "use strict";
 
     if (!@isRTCPeerConnection(this))
-        throw new @TypeError("Function should be called on an RTCPeerConnection");
+        @throwTypeError("Function should be called on an RTCPeerConnection");
 
     if (arguments.length < 1)
-        throw new @TypeError("Not enough arguments");
+        @throwTypeError("Not enough arguments");
 
     const streamId = @String(streamIdArg);
 
@@ -87,13 +87,13 @@ function addStream(stream)
     "use strict";
 
     if (!@isRTCPeerConnection(this))
-        throw new @TypeError("Function should be called on an RTCPeerConnection");
+        @throwTypeError("Function should be called on an RTCPeerConnection");
 
     if (arguments.length < 1)
-        throw new @TypeError("Not enough arguments");
+        @throwTypeError("Not enough arguments");
 
     if (!(stream instanceof @MediaStream))
-        throw new @TypeError("Argument 1 ('stream') to RTCPeerConnection.addStream must be an instance of MediaStream");
+        @throwTypeError("Argument 1 ('stream') to RTCPeerConnection.addStream must be an instance of MediaStream");
 
     if (this.@localStreams.find(localStream => localStream.id === stream.id))
         return;
@@ -107,13 +107,13 @@ function removeStream(stream)
     "use strict";
 
     if (!@isRTCPeerConnection(this))
-        throw new @TypeError("Function should be called on an RTCPeerConnection");
+        @throwTypeError("Function should be called on an RTCPeerConnection");
 
     if (arguments.length < 1)
-        throw new @TypeError("Not enough arguments");
+        @throwTypeError("Not enough arguments");
 
     if (!(stream instanceof @MediaStream))
-        throw new @TypeError("Argument 1 ('stream') to RTCPeerConnection.removeStream must be an instance of MediaStream");
+        @throwTypeError("Argument 1 ('stream') to RTCPeerConnection.removeStream must be an instance of MediaStream");
 
     const indexOfStreamToRemove = this.@localStreams.findIndex(localStream => localStream.id === stream.id);
     if (indexOfStreamToRemove === -1)

@@ -3905,6 +3905,15 @@ int BytecodeGenerator::labelScopeDepth() const
     return localScopeDepth() + m_finallyDepth;
 }
 
+void BytecodeGenerator::emitThrowStaticError(ErrorType errorType, RegisterID* raw)
+{
+    RefPtr<RegisterID> message = newTemporary();
+    emitToString(message.get(), raw);
+    emitOpcode(op_throw_static_error);
+    instructions().append(message->index());
+    instructions().append(static_cast<unsigned>(errorType));
+}
+
 void BytecodeGenerator::emitThrowStaticError(ErrorType errorType, const Identifier& message)
 {
     emitOpcode(op_throw_static_error);

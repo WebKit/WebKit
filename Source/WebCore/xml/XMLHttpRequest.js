@@ -29,7 +29,7 @@ function response()
 
     // FIXME: Add a helper routine for that kind of checks.
     if (!(this instanceof @XMLHttpRequest))
-        throw new @TypeError("The XMLHttpRequest.response getter can only be used on instances of XMLHttpRequest");
+        @throwTypeError("The XMLHttpRequest.response getter can only be used on instances of XMLHttpRequest");
 
     if (@XMLHttpRequest.prototype.@responseCacheIsValid.@call(this))
         return this.@response;

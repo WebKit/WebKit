@@ -32,7 +32,7 @@ function initializeFetchRequest(input, init)
     if (init === @undefined)
         init = { };
     else if (!@isObject(init))
-        throw new @TypeError("Request init must be an object");
+        @throwTypeError("Request init must be an object");
 
     let headers = this.@initializeWith(input, init);
     @assert(headers instanceof @Headers);

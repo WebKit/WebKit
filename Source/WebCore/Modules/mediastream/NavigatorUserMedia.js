@@ -34,15 +34,15 @@ function webkitGetUserMedia(options, successCallback, errorCallback)
         throw @makeThisTypeError("Navigator", "webkitGetUserMedia");
 
     if (arguments.length < 3)
-        throw new @TypeError("Not enough arguments");
+        @throwTypeError("Not enough arguments");
 
     if (options !== @Object(options))
-        throw new @TypeError("Argument 1 (options) to Navigator.webkitGetUserMedia must be an object");
+        @throwTypeError("Argument 1 (options) to Navigator.webkitGetUserMedia must be an object");
 
     if (typeof successCallback !== "function")
-        throw new @TypeError("Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function");
+        @throwTypeError("Argument 2 ('successCallback') to Navigator.webkitGetUserMedia must be a function");
     if (typeof errorCallback !== "function")
-        throw new @TypeError("Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function");
+        @throwTypeError("Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function");
 
     this.mediaDevices.@getUserMedia(options).@then(successCallback, errorCallback);
 }

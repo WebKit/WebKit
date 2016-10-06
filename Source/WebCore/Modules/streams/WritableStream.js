@@ -36,10 +36,10 @@ function initializeWritableStream(underlyingSink, strategy)
         strategy = { highWaterMark: 0, size: function() { return 1; } };
 
     if (!@isObject(underlyingSink))
-        throw new @TypeError("WritableStream constructor takes an object as first argument");
+        @throwTypeError("WritableStream constructor takes an object as first argument");
 
     if (!@isObject(strategy))
-        throw new @TypeError("WritableStream constructor takes an object as second argument, if any");
+        @throwTypeError("WritableStream constructor takes an object as second argument, if any");
 
     this.@underlyingSink = underlyingSink;
     this.@closedPromiseCapability = @newPromiseCapability(@Promise);
@@ -170,7 +170,7 @@ function state()
     "use strict";
 
     if (!@isWritableStream(this))
-        throw new @TypeError("The WritableStream.state getter can only be used on instances of WritableStream");
+        @throwTypeError("The WritableStream.state getter can only be used on instances of WritableStream");
 
     switch(this.@state) {
     case @streamClosed:

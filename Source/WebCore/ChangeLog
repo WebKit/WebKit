@@ -1,3 +1,54 @@
+2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WebCore][JSC] Use new @throwTypeError and @throwRangeError intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=163001
+
+        Reviewed by Keith Miller.
+
+        Replace `throw new @XXXError(...)` to @throwXXXError intrinsic.
+        It reduces the size of bytecode sequence and facilitate inlining.
+
+        No behavior change.
+
+        * Modules/fetch/FetchHeaders.js:
+        (initializeFetchHeaders):
+        * Modules/fetch/FetchInternals.js:
+        (fillFetchHeaders):
+        * Modules/fetch/FetchRequest.js:
+        (initializeFetchRequest):
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        (clone):
+        * Modules/mediastream/NavigatorUserMedia.js:
+        (webkitGetUserMedia):
+        * Modules/mediastream/RTCPeerConnection.js:
+        (initializeRTCPeerConnection):
+        (getLocalStreams):
+        (getStreamById):
+        (addStream):
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream):
+        (getReader):
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (enqueue):
+        (error):
+        (close):
+        * Modules/streams/ReadableStreamDefaultReader.js:
+        (releaseLock):
+        * Modules/streams/ReadableStreamInternals.js:
+        (privateInitializeReadableStreamDefaultReader):
+        (privateInitializeReadableStreamDefaultController):
+        (doStructuredClone):
+        (readableStreamError):
+        * Modules/streams/StreamInternals.js:
+        (validateAndNormalizeQueuingStrategy):
+        (enqueueValueWithSize):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        (state):
+        * xml/XMLHttpRequest.js:
+        (response):
+
 2016-10-06  John Wilander  <wilander@apple.com>
 
         Update Resource Load Statistics

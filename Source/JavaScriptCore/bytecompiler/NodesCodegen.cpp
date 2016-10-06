@@ -901,22 +901,29 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(Bytec
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwTypeError(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
-    ASSERT(node->m_expr->isString());
-    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
     ASSERT(!node->m_next);
-
-    generator.emitThrowTypeError(ident);
+    if (node->m_expr->isString()) {
+        const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
+        generator.emitThrowTypeError(ident);
+    } else {
+        RefPtr<RegisterID> message = generator.emitNode(node);
+        generator.emitThrowStaticError(ErrorType::TypeError, message.get());
+    }
     return dst;
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_throwRangeError(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;
-    ASSERT(node->m_expr->isString());
-    const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
     ASSERT(!node->m_next);
+    if (node->m_expr->isString()) {
+        const Identifier& ident = static_cast<StringNode*>(node->m_expr)->value();
+        generator.emitThrowRangeError(ident);
+    } else {
+        RefPtr<RegisterID> message = generator.emitNode(node);
+        generator.emitThrowStaticError(ErrorType::RangeError, message.get());
+    }
 
-    generator.emitThrowRangeError(ident);
     return dst;
 }
 

@@ -33,7 +33,7 @@ function initializeFetchHeaders(headersInit)
         return this;
 
     if (!@isObject(headersInit))
-        throw new @TypeError("headersInit must be an object");
+        @throwTypeError("headersInit must be an object");
 
     @fillFetchHeaders(this, headersInit);
 

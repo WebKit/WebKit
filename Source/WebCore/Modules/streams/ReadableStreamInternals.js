@@ -32,9 +32,9 @@ function privateInitializeReadableStreamDefaultReader(stream)
     "use strict";
 
     if (!@isReadableStream(stream))
-       throw new @TypeError("ReadableStreamDefaultReader needs a ReadableStream");
+       @throwTypeError("ReadableStreamDefaultReader needs a ReadableStream");
     if (@isReadableStreamLocked(stream))
-       throw new @TypeError("ReadableStream is locked");
+       @throwTypeError("ReadableStream is locked");
 
     this.@readRequests = [];
     this.@ownerReadableStream = stream;
@@ -58,11 +58,11 @@ function privateInitializeReadableStreamDefaultController(stream, underlyingSour
     "use strict";
 
     if (!@isReadableStream(stream))
-        throw new @TypeError("ReadableStreamDefaultController needs a ReadableStream");
+        @throwTypeError("ReadableStreamDefaultController needs a ReadableStream");
 
     // readableStreamController is initialized with null value.
     if (stream.@readableStreamController !== null)
-        throw new @TypeError("ReadableStream already has a controller");
+        @throwTypeError("ReadableStream already has a controller");
 
     this.@controlledReadableStream = stream;
     this.@underlyingSource = underlyingSource;
@@ -157,7 +157,7 @@ function doStructuredClone(object)
     if (@ArrayBuffer.@isView(object))
         return @structuredCloneArrayBufferView(object);
 
-    throw new @TypeError("structuredClone not implemented for: " + object);
+    @throwTypeError("structuredClone not implemented for: " + object);
 }
 
 function readableStreamTeePullFunction(teeState, reader, shouldClone)
@@ -269,7 +269,7 @@ function readableStreamError(stream, error)
         reader.@readRequests = [];
     } else
         // FIXME: Implement ReadableStreamBYOBReader.
-        throw new @TypeError("Only ReadableStreamDefaultReader is currently supported");
+        @throwTypeError("Only ReadableStreamDefaultReader is currently supported");
 
     reader.@closedPromiseCapability.@reject.@call(@undefined, error);
 }
