@@ -633,8 +633,8 @@ public:
             });
             return patchpoint;
         }
-    };
 #endif
+    };
 
     static DOMJIT::GetterSetter* domJITNodeGetterSetter()
     {
