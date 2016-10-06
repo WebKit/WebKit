@@ -5795,7 +5795,7 @@
 		CE2849871CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h in Headers */ = {isa = PBXBuildFile; fileRef = CE2849861CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h */; };
 		CE2849891CA3614600B4A57F /* ContentSecurityPolicyDirectiveNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2849881CA3614600B4A57F /* ContentSecurityPolicyDirectiveNames.cpp */; };
 		CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6DADF71C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp */; };
-		CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */; };
+		CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6DADF81C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE799F971C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799F951C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp */; };
 		CE799F981C6A46BC0097B518 /* ContentSecurityPolicySourceList.h in Headers */ = {isa = PBXBuildFile; fileRef = CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */; };
 		CE799F9B1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE799F991C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.cpp */; };

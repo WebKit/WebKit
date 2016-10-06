@@ -1,5 +1,38 @@
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Forbid redirection to non-HTTP(s) URL in non-navigation mode.
+        https://bugs.webkit.org/show_bug.cgi?id=162785
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased and existing tests.
+
+        Ensuring non-HTTP redirection URLs are not followed at DocumentThreadableLoader level for fetch API only.
+        This should be applied to all clients at some point, but there is still some uncertainty for data URLs.
+
+        Did some refactoring to better separate the case of security checks in case of regular request or redirected request.
+        This allows in particular to handle more clearly the case of data URLs which are allowed in all modes for regular requests.
+        But they are not allowed for same-origin redirected requests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::reportRedirectionWithBadScheme): Reporting bad scheme redirection error.
+        (WebCore::DocumentThreadableLoader::redirectReceived): Checking that redirection URLs are HTTP(s) in case of Fetch API.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy):
+        (WebCore::isSameOriginDataURL):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection):
+        (WebCore::CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceLoader.h:
+
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Use ReadableStream pull to transfer binary data to stream when application needs it
         https://bugs.webkit.org/show_bug.cgi?id=162892
 

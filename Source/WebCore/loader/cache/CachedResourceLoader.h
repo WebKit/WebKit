@@ -30,6 +30,7 @@
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
+#include "ContentSecurityPolicy.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
@@ -122,7 +123,7 @@ public:
     void loadDone(CachedResource*, bool shouldPerformPostLoadActions = true);
 
     WEBCORE_EXPORT void garbageCollectDocumentResources();
-    
+
     void incrementRequestCount(const CachedResource&);
     void decrementRequestCount(const CachedResource&);
     int requestCount() const { return m_requestCount; }
@@ -135,7 +136,8 @@ public:
     void checkForPendingPreloads();
     void printPreloadStats();
 
-    bool canRequest(CachedResource::Type, const URL&, const ResourceLoaderOptions&, bool forPreload = false, bool didReceiveRedirectResponse = false);
+    bool canRequest(CachedResource::Type, const URL&, const CachedResourceRequest&);
+    bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&);
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
@@ -164,7 +166,7 @@ private:
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
-    bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, bool);
+    bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived);
 
     void performPostLoadActions();
 
