@@ -1,3 +1,139 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        CachedResource client handling methods should take reference
+        https://bugs.webkit.org/show_bug.cgi?id=163014
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::~CachedScriptSourceProvider):
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::~CSSCrossfadeValue):
+        (WebCore::CSSCrossfadeValue::loadSubimages):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::~CSSFilterImageValue):
+        (WebCore::CSSFilterImageValue::loadSubimages):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::~StyleRuleImport):
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * dom/DataTransfer.cpp:
+        (WebCore::DragImageLoader::startLoading):
+        (WebCore::DragImageLoader::stopLoading):
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::create):
+        (WebCore::LoadableClassicScript::~LoadableClassicScript):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::~ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::parseStyleSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::process):
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::~CrossOriginPreflightChecker):
+        (WebCore::CrossOriginPreflightChecker::startPreflight):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::clearMainResource):
+        (WebCore::DocumentLoader::becomeMainResourceClient):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::~DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::clearResource):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::clearImageWithoutConsideringPendingLoadEvent):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::~LinkLoader):
+        (WebCore::LinkLoader::notifyFinished):
+        (WebCore::LinkLoader::loadLink):
+        * loader/LinkPreloadResourceClients.h:
+        (WebCore::LinkPreloadResourceClient::addResource):
+        (WebCore::LinkPreloadResourceClient::clearResource):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::MediaResource):
+        (WebCore::MediaResource::stop):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::~TextTrackLoader):
+        (WebCore::TextTrackLoader::cancelLoad):
+        (WebCore::TextTrackLoader::load):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::didAddClient):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::didRemoveClient):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::addClient):
+        (WebCore::CachedResource::didAddClient):
+        (WebCore::CachedResource::addClientToSet):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::switchClientsToRevalidatedResource):
+        (WebCore::CachedResource::Callback::timerFired):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::hasClient):
+        (WebCore::CachedResource::didRemoveClient):
+        * loader/cache/CachedSVGDocumentReference.cpp:
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::load):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::addImageToCache):
+        (WebCore::MemoryCache::removeImageFromCache):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::stopLoading):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+        (WebCore::WebCoreAVCFResourceLoader::stopLoading):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+        (WebCore::WebCoreAVFResourceLoader::stopLoading):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::shutdown):
+        (WebCore::RenderImageResource::setCachedImage):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::updateReferenceFilterClients):
+        (WebCore::RenderLayer::FilterInfo::removeReferenceFilterClients):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::addClient):
+        (WebCore::StyleCachedImage::removeClient):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::clearResourceReferences):
+        (WebCore::SVGFEImageElement::requestImageResource):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::~SVGFontFaceUriElement):
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::~SVGUseElement):
+        (WebCore::SVGUseElement::updateExternalDocument):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::~XSLImportRule):
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        (WebCore::XSLImportRule::loadSheet):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::notifyFinished):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::~XMLDocumentParser):
+        (WebCore::XMLDocumentParser::endElementNs):
+
 2016-10-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][OWR] GL rendering support

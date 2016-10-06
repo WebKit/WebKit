@@ -118,7 +118,7 @@ void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned 
         c->dataReceived(this, data, length);
 }
 
-void CachedRawResource::didAddClient(CachedResourceClient* c)
+void CachedRawResource::didAddClient(CachedResourceClient& c)
 {
     if (!hasClient(c))
         return;
@@ -126,12 +126,12 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
     // this resource to be evicted from the cache and all clients to be removed,
     // so a protector is necessary.
     CachedResourceHandle<CachedRawResource> protectedThis(this);
-    CachedRawResourceClient* client = static_cast<CachedRawResourceClient*>(c);
+    CachedRawResourceClient& client = static_cast<CachedRawResourceClient&>(c);
     size_t redirectCount = m_redirectChain.size();
     for (size_t i = 0; i < redirectCount; i++) {
         RedirectPair redirect = m_redirectChain[i];
         ResourceRequest request(redirect.m_request);
-        client->redirectReceived(this, request, redirect.m_redirectResponse);
+        client.redirectReceived(this, request, redirect.m_redirectResponse);
         if (!hasClient(c))
             return;
     }
@@ -145,12 +145,12 @@ void CachedRawResource::didAddClient(CachedResourceClient* c)
             ASSERT(!validationInProgress());
             response.setSource(ResourceResponse::Source::MemoryCache);
         }
-        client->responseReceived(this, response);
+        client.responseReceived(this, response);
     }
     if (!hasClient(c))
         return;
     if (m_data)
-        client->dataReceived(this, m_data->data(), m_data->size());
+        client.dataReceived(this, m_data->data(), m_data->size());
     if (!hasClient(c))
        return;
     CachedResource::didAddClient(client);

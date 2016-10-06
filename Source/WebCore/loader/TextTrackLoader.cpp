@@ -56,7 +56,7 @@ TextTrackLoader::TextTrackLoader(TextTrackLoaderClient& client, ScriptExecutionC
 TextTrackLoader::~TextTrackLoader()
 {
     if (m_resource)
-        m_resource->removeClient(this);
+        m_resource->removeClient(*this);
 }
 
 void TextTrackLoader::cueLoadTimerFired()
@@ -73,7 +73,7 @@ void TextTrackLoader::cueLoadTimerFired()
 void TextTrackLoader::cancelLoad()
 {
     if (m_resource) {
-        m_resource->removeClient(this);
+        m_resource->removeClient(*this);
         m_resource = nullptr;
     }
 }
@@ -161,7 +161,7 @@ bool TextTrackLoader::load(const URL& url, const String& crossOriginMode, bool i
     if (!m_resource)
         return false;
 
-    m_resource->addClient(this);
+    m_resource->addClient(*this);
 
     return true;
 }

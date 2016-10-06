@@ -666,7 +666,7 @@ XMLDocumentParser::~XMLDocumentParser()
 
     // FIXME: m_pendingScript handling should be moved into XMLDocumentParser.cpp!
     if (m_pendingScript)
-        m_pendingScript->removeClient(this);
+        m_pendingScript->removeClient(*this);
 }
 
 void XMLDocumentParser::doWrite(const String& parseString)
@@ -927,7 +927,7 @@ void XMLDocumentParser::endElementNs()
             // https://bugs.webkit.org/show_bug.cgi?id=161651
             m_pendingScript = &downcast<LoadableClassicScript>(*scriptElement->loadableScript()).cachedScript();
             m_scriptElement = &element;
-            m_pendingScript->addClient(this);
+            m_pendingScript->addClient(*this);
 
             // m_pendingScript will be 0 if script was already loaded and addClient() executed it.
             if (m_pendingScript)

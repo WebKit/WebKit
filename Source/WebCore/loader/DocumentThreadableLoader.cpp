@@ -167,7 +167,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(Resourc
 DocumentThreadableLoader::~DocumentThreadableLoader()
 {
     if (m_resource)
-        m_resource->removeClient(this);
+        m_resource->removeClient(*this);
 }
 
 void DocumentThreadableLoader::cancel()
@@ -200,7 +200,7 @@ void DocumentThreadableLoader::clearResource()
     // prevent the reentrancy.
     if (CachedResourceHandle<CachedRawResource> resource = m_resource) {
         m_resource = nullptr;
-        resource->removeClient(this);
+        resource->removeClient(*this);
     }
     if (m_preflightChecker)
         m_preflightChecker = Nullopt;
@@ -391,7 +391,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         URL requestUrl = newRequest.resourceRequest().url();
         m_resource = m_document.cachedResourceLoader().requestRawResource(WTFMove(newRequest));
         if (m_resource)
-            m_resource->addClient(this);
+            m_resource->addClient(*this);
         else {
             // FIXME: Since we receive a synchronous error, this is probably due to some AccessControl checks. We should try to retrieve the actual error.
             m_client->didFail(ResourceError(String(), 0, requestUrl, String(), ResourceError::Type::AccessControl));

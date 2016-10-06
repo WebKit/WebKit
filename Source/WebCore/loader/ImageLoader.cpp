@@ -104,7 +104,7 @@ ImageLoader::ImageLoader(Element& element)
 ImageLoader::~ImageLoader()
 {
     if (m_image)
-        m_image->removeClient(this);
+        m_image->removeClient(*this);
 
     ASSERT(m_hasPendingBeforeLoadEvent || !beforeLoadEventSender().hasPendingEvents(*this));
     if (m_hasPendingBeforeLoadEvent)
@@ -148,7 +148,7 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
         }
         m_imageComplete = true;
         if (oldImage)
-            oldImage->removeClient(this);
+            oldImage->removeClient(*this);
     }
 
     if (RenderImageResource* imageResource = renderImageResource())
@@ -248,10 +248,10 @@ void ImageLoader::updateFromElement()
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire. Ensure this happens after beforeload is
             // dispatched.
-            newImage->addClient(this);
+            newImage->addClient(*this);
         }
         if (oldImage) {
-            oldImage->removeClient(this);
+            oldImage->removeClient(*this);
             updateRenderer();
         }
     }
@@ -400,7 +400,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         return;
     }
     if (m_image) {
-        m_image->removeClient(this);
+        m_image->removeClient(*this);
         m_image = nullptr;
     }
 

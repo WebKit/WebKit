@@ -45,7 +45,7 @@ namespace WebCore {
 CSSFilterImageValue::~CSSFilterImageValue()
 {
     if (m_cachedImage)
-        m_cachedImage->removeClient(&m_filterSubimageObserver);
+        m_cachedImage->removeClient(m_filterSubimageObserver);
 }
 
 String CSSFilterImageValue::customCSSText() const
@@ -92,9 +92,9 @@ void CSSFilterImageValue::loadSubimages(CachedResourceLoader& cachedResourceLoad
 
     if (m_cachedImage != oldCachedImage) {
         if (oldCachedImage)
-            oldCachedImage->removeClient(&m_filterSubimageObserver);
+            oldCachedImage->removeClient(m_filterSubimageObserver);
         if (m_cachedImage)
-            m_cachedImage->addClient(&m_filterSubimageObserver);
+            m_cachedImage->addClient(m_filterSubimageObserver);
     }
 
     for (auto& filterOperation : m_filterOperations.operations()) {

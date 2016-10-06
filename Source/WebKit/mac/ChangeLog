@@ -1,3 +1,13 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        CachedResource client handling methods should take reference
+        https://bugs.webkit.org/show_bug.cgi?id=163014
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebHTMLView.mm:
+        (promisedDataClient):
+
 2016-10-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Put variation fonts work behind a compile-time flag

@@ -76,7 +76,7 @@ bool SVGFEImageElement::hasSingleSecurityOrigin() const
 void SVGFEImageElement::clearResourceReferences()
 {
     if (m_cachedImage) {
-        m_cachedImage->removeClient(this);
+        m_cachedImage->removeClient(*this);
         m_cachedImage = nullptr;
     }
 
@@ -93,7 +93,7 @@ void SVGFEImageElement::requestImageResource()
     m_cachedImage = document().cachedResourceLoader().requestImage(WTFMove(request));
 
     if (m_cachedImage)
-        m_cachedImage->addClient(this);
+        m_cachedImage->addClient(*this);
 }
 
 void SVGFEImageElement::buildPendingResource()

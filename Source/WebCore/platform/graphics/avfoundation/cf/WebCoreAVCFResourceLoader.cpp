@@ -77,7 +77,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
     m_resource = loader ? loader->requestRawResource(WTFMove(request)) : 0;
     if (m_resource)
-        m_resource->addClient(this);
+        m_resource->addClient(*this);
     else {
         LOG_ERROR("Failed to start load for media at url %s", URL(CFURLRequestGetURL(urlRequest.get())).string().ascii().data());
         RetainPtr<CFErrorRef> error = adoptCF(CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorUnknown, nullptr));
@@ -90,7 +90,7 @@ void WebCoreAVCFResourceLoader::stopLoading()
     if (!m_resource)
         return;
 
-    m_resource->removeClient(this);
+    m_resource->removeClient(*this);
     m_resource = 0;
 
     if (m_parent)

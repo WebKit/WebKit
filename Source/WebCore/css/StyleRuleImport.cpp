@@ -58,7 +58,7 @@ StyleRuleImport::~StyleRuleImport()
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(&m_styleSheetClient);
+        m_cachedSheet->removeClient(m_styleSheetClient);
 }
 
 void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, const String& charset, const CachedCSSStyleSheet* cachedStyleSheet)
@@ -118,7 +118,7 @@ void StyleRuleImport::requestStyleSheet()
     CachedResourceRequest request(ResourceRequest(absURL), m_parentStyleSheet->charset());
     request.setInitiator(cachedResourceRequestInitiators().css);
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(&m_styleSheetClient);
+        m_cachedSheet->removeClient(m_styleSheetClient);
     if (m_parentStyleSheet->isUserStyleSheet()) {
         request.setOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
         m_cachedSheet = document->cachedResourceLoader().requestUserCSSStyleSheet(WTFMove(request));
@@ -131,7 +131,7 @@ void StyleRuleImport::requestStyleSheet()
         if (m_parentStyleSheet && m_parentStyleSheet->loadCompleted() && rootSheet == m_parentStyleSheet)
             m_parentStyleSheet->startLoadingDynamicSheet();
         m_loading = true;
-        m_cachedSheet->addClient(&m_styleSheetClient);
+        m_cachedSheet->addClient(m_styleSheetClient);
     }
 }
 

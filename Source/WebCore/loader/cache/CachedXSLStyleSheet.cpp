@@ -46,11 +46,11 @@ CachedXSLStyleSheet::~CachedXSLStyleSheet()
 {
 }
 
-void CachedXSLStyleSheet::didAddClient(CachedResourceClient* c)
+void CachedXSLStyleSheet::didAddClient(CachedResourceClient& client)
 {
-    ASSERT(c->resourceClientType() == CachedStyleSheetClient::expectedType());
+    ASSERT(client.resourceClientType() == CachedStyleSheetClient::expectedType());
     if (!isLoading())
-        static_cast<CachedStyleSheetClient*>(c)->setXSLStyleSheet(m_resourceRequest.url(), m_response.url(), m_sheet);
+        static_cast<CachedStyleSheetClient&>(client).setXSLStyleSheet(m_resourceRequest.url(), m_response.url(), m_sheet);
 }
 
 void CachedXSLStyleSheet::setEncoding(const String& chs)

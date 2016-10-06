@@ -51,10 +51,10 @@ public:
     bool wasRedirected() const { return !m_redirectChain.isEmpty(); };
 
 private:
-    void didAddClient(CachedResourceClient*) override;
-    void addDataBuffer(SharedBuffer&) override;
-    void addData(const char* data, unsigned length) override;
-    void finishLoading(SharedBuffer*) override;
+    void didAddClient(CachedResourceClient&) final;
+    void addDataBuffer(SharedBuffer&) final;
+    void addData(const char* data, unsigned length) final;
+    void finishLoading(SharedBuffer*) final;
 
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
     void allClientsRemoved() override;

@@ -60,7 +60,7 @@ LinkLoader::LinkLoader(LinkLoaderClient& client)
 LinkLoader::~LinkLoader()
 {
     if (m_cachedLinkResource)
-        m_cachedLinkResource->removeClient(this);
+        m_cachedLinkResource->removeClient(*this);
     if (m_preloadResourceClient)
         m_preloadResourceClient->clear();
 }
@@ -79,7 +79,7 @@ void LinkLoader::notifyFinished(CachedResource* resource)
 
     triggerEvents(m_cachedLinkResource.get());
 
-    m_cachedLinkResource->removeClient(this);
+    m_cachedLinkResource->removeClient(*this);
     m_cachedLinkResource = nullptr;
 }
 
@@ -197,14 +197,14 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
         }
 
         if (m_cachedLinkResource) {
-            m_cachedLinkResource->removeClient(this);
+            m_cachedLinkResource->removeClient(*this);
             m_cachedLinkResource = nullptr;
         }
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
         m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest(document.completeURL(href)), options, priority));
         if (m_cachedLinkResource)
-            m_cachedLinkResource->addClient(this);
+            m_cachedLinkResource->addClient(*this);
     }
 #endif
 

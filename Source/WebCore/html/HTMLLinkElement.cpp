@@ -99,7 +99,7 @@ HTMLLinkElement::~HTMLLinkElement()
         m_sheet->clearOwnerNode();
 
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(this);
+        m_cachedSheet->removeClient(*this);
 
     if (inDocument())
         document().authorStyleSheets().removeStyleSheetCandidateNode(*this);
@@ -231,10 +231,10 @@ void HTMLLinkElement::process()
         AtomicString charset = attributeWithoutSynchronization(charsetAttr);
         if (charset.isEmpty() && document().frame())
             charset = document().charset();
-        
+
         if (m_cachedSheet) {
             removePendingSheet();
-            m_cachedSheet->removeClient(this);
+            m_cachedSheet->removeClient(*this);
             m_cachedSheet = nullptr;
         }
 
@@ -274,7 +274,7 @@ void HTMLLinkElement::process()
         m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
 
         if (m_cachedSheet)
-            m_cachedSheet->addClient(this);
+            m_cachedSheet->addClient(*this);
         else {
             // The request may have been denied if (for example) the stylesheet is local and the document is remote.
             m_loading = false;

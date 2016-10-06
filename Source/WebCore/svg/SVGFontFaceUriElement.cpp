@@ -50,7 +50,7 @@ Ref<SVGFontFaceUriElement> SVGFontFaceUriElement::create(const QualifiedName& ta
 SVGFontFaceUriElement::~SVGFontFaceUriElement()
 {
     if (m_cachedFont)
-        m_cachedFont->removeClient(this);
+        m_cachedFont->removeClient(*this);
 }
 
 Ref<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
@@ -96,7 +96,7 @@ static bool isSVGFontTarget(const SVGFontFaceUriElement& element)
 void SVGFontFaceUriElement::loadFont()
 {
     if (m_cachedFont)
-        m_cachedFont->removeClient(this);
+        m_cachedFont->removeClient(*this);
 
     const AtomicString& href = getAttribute(XLinkNames::hrefAttr);
     if (!href.isNull()) {
@@ -108,7 +108,7 @@ void SVGFontFaceUriElement::loadFont()
         request.setInitiator(this);
         m_cachedFont = cachedResourceLoader.requestFont(WTFMove(request), isSVGFontTarget(*this));
         if (m_cachedFont) {
-            m_cachedFont->addClient(this);
+            m_cachedFont->addClient(*this);
             m_cachedFont->beginLoadIfNeeded(cachedResourceLoader);
         }
     } else

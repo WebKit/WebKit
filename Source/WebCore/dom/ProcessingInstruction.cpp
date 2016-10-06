@@ -56,7 +56,7 @@ ProcessingInstruction::~ProcessingInstruction()
         m_sheet->clearOwnerNode();
 
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(this);
+        m_cachedSheet->removeClient(*this);
 
     if (inDocument())
         document().authorStyleSheets().removeStyleSheetCandidateNode(*this);
@@ -126,7 +126,7 @@ void ProcessingInstruction::checkStyleSheet()
 #endif
         } else {
             if (m_cachedSheet) {
-                m_cachedSheet->removeClient(this);
+                m_cachedSheet->removeClient(*this);
                 m_cachedSheet = nullptr;
             }
 
@@ -154,7 +154,7 @@ void ProcessingInstruction::checkStyleSheet()
                 m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
             }
             if (m_cachedSheet)
-                m_cachedSheet->addClient(this);
+                m_cachedSheet->addClient(*this);
             else {
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
@@ -225,7 +225,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
 #endif
 
     if (m_cachedSheet)
-        m_cachedSheet->removeClient(this);
+        m_cachedSheet->removeClient(*this);
     m_cachedSheet = nullptr;
 
     m_loading = false;

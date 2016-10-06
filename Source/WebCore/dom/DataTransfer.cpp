@@ -311,12 +311,12 @@ DragImageLoader::DragImageLoader(DataTransfer* dataTransfer)
 void DragImageLoader::startLoading(CachedResourceHandle<WebCore::CachedImage>& image)
 {
     // FIXME: Does this really trigger a load? Does it need to?
-    image->addClient(this);
+    image->addClient(*this);
 }
 
 void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& image)
 {
-    image->removeClient(this);
+    image->removeClient(*this);
 }
 
 void DragImageLoader::imageChanged(CachedImage*, const IntRect*)

@@ -23,8 +23,7 @@
     pages from the web. It has a memory cache for these objects.
 */
 
-#ifndef CachedXSLStyleSheet_h
-#define CachedXSLStyleSheet_h
+#pragma once
 
 #if ENABLE(XSLT)
 
@@ -42,13 +41,13 @@ public:
     const String& sheet() const { return m_sheet; }
 
 private:
-    void checkNotify() override;
-    bool mayTryReplaceEncodedData() const override { return true; }
-    void didAddClient(CachedResourceClient*) override;
-    void setEncoding(const String&) override;
-    String encoding() const override;
-    const TextResourceDecoder* textResourceDecoder() const override { return m_decoder.get(); }
-    void finishLoading(SharedBuffer*) override;
+    void checkNotify() final;
+    bool mayTryReplaceEncodedData() const final { return true; }
+    void didAddClient(CachedResourceClient&) final;
+    void setEncoding(const String&) final;
+    String encoding() const final;
+    const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.get(); }
+    void finishLoading(SharedBuffer*) final;
 
     String m_sheet;
     RefPtr<TextResourceDecoder> m_decoder;
@@ -59,5 +58,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedXSLStyleSheet, CachedResource::XSLStyleSheet)
 
 #endif // ENABLE(XSLT)
-
-#endif // CachedXSLStyleSheet_h

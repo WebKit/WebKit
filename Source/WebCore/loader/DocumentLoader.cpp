@@ -1020,8 +1020,8 @@ void DocumentLoader::detachFromFrame()
     // It never makes sense to have a document loader that is detached from its
     // frame have any loads active, so kill all the loads.
     stopLoading();
-    if (m_mainResource && m_mainResource->hasClient(this))
-        m_mainResource->removeClient(this);
+    if (m_mainResource && m_mainResource->hasClient(*this))
+        m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
@@ -1595,8 +1595,8 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 
 void DocumentLoader::clearMainResource()
 {
-    if (m_mainResource && m_mainResource->hasClient(this))
-        m_mainResource->removeClient(this);
+    if (m_mainResource && m_mainResource->hasClient(*this))
+        m_mainResource->removeClient(*this);
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
@@ -1699,7 +1699,7 @@ void DocumentLoader::becomeMainResourceClient()
     if (m_contentFilter)
         m_contentFilter->startFilteringMainResource(*m_mainResource);
 #endif
-    m_mainResource->addClient(this);
+    m_mainResource->addClient(*this);
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

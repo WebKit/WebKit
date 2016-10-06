@@ -176,7 +176,8 @@ void StyleCachedImage::addClient(RenderElement* renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->addClient(renderer);
+    ASSERT(renderer);
+    m_cachedImage->addClient(*renderer);
 }
 
 void StyleCachedImage::removeClient(RenderElement* renderer)
@@ -184,7 +185,8 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
     ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
-    m_cachedImage->removeClient(renderer);
+    ASSERT(renderer);
+    m_cachedImage->removeClient(*renderer);
 }
 
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const

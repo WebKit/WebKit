@@ -789,10 +789,10 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = PrintContext::maximumShrin
 
 #if !PLATFORM(IOS)
 // We need this to be able to safely reference the CachedImage for the promised drag data
-static CachedImageClient* promisedDataClient()
+static CachedImageClient& promisedDataClient()
 {
     static CachedImageClient* staticCachedResourceClient = new CachedImageClient;
-    return staticCachedResourceClient;
+    return *staticCachedResourceClient;
 }
 #endif
 

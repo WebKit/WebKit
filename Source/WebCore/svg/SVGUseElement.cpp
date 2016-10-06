@@ -79,7 +79,7 @@ Ref<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Document&
 SVGUseElement::~SVGUseElement()
 {
     if (m_externalDocument)
-        m_externalDocument->removeClient(this);
+        m_externalDocument->removeClient(*this);
 }
 
 void SVGUseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -563,7 +563,7 @@ void SVGUseElement::updateExternalDocument()
         return;
 
     if (m_externalDocument)
-        m_externalDocument->removeClient(this);
+        m_externalDocument->removeClient(*this);
 
     if (externalDocumentURL.isNull())
         m_externalDocument = nullptr;
@@ -575,7 +575,7 @@ void SVGUseElement::updateExternalDocument()
         request.setInitiator(this);
         m_externalDocument = document().cachedResourceLoader().requestSVGDocument(WTFMove(request));
         if (m_externalDocument)
-            m_externalDocument->addClient(this);
+            m_externalDocument->addClient(*this);
     }
 
     invalidateShadowTree();

@@ -66,7 +66,7 @@ void IconLoader::startLoading()
 
     m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(WTFMove(request));
     if (m_resource)
-        m_resource->addClient(this);
+        m_resource->addClient(*this);
     else
         LOG_ERROR("Failed to start load for icon at url %s", m_frame.loader().icon().url().string().ascii().data());
 }
@@ -74,7 +74,7 @@ void IconLoader::startLoading()
 void IconLoader::stopLoading()
 {
     if (m_resource) {
-        m_resource->removeClient(this);
+        m_resource->removeClient(*this);
         m_resource = nullptr;
     }
 }

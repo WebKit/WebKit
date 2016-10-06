@@ -237,7 +237,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     bool errorOccurred = m_pendingScript->errorOccurred();
     bool wasCanceled = m_pendingScript->wasCanceled();
 
-    m_pendingScript->removeClient(this);
+    m_pendingScript->removeClient(*this);
     m_pendingScript = nullptr;
 
     RefPtr<Element> e = m_scriptElement;

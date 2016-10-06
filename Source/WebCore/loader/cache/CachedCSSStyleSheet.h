@@ -50,7 +50,7 @@ namespace WebCore {
         bool canUseSheet(MIMETypeCheck, bool* hasValidMIMEType) const;
         bool mayTryReplaceEncodedData() const final { return true; }
 
-        void didAddClient(CachedResourceClient*) final;
+        void didAddClient(CachedResourceClient&) final;
 
         void setEncoding(const String&) final;
         String encoding() const final;

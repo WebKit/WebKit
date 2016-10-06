@@ -44,7 +44,7 @@ CachedSVGDocumentReference::CachedSVGDocumentReference(const String& url)
 CachedSVGDocumentReference::~CachedSVGDocumentReference()
 {
     if (m_document)
-        m_document->removeClient(this);
+        m_document->removeClient(*this);
 }
 
 void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
@@ -58,7 +58,7 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
     request.setInitiator(cachedResourceRequestInitiators().css);
     m_document = loader.requestSVGDocument(WTFMove(request));
     if (m_document)
-        m_document->addClient(this);
+        m_document->addClient(*this);
 
     m_loadRequested = true;
 }

@@ -105,7 +105,7 @@ MediaResource::MediaResource(MediaResourceLoader& loader, CachedResourceHandle<C
     , m_resource(resource)
 {
     ASSERT(resource);
-    resource->addClient(this);
+    resource->addClient(*this);
 }
 
 MediaResource::~MediaResource()
@@ -119,7 +119,7 @@ void MediaResource::stop()
     if (!m_resource)
         return;
 
-    m_resource->removeClient(this);
+    m_resource->removeClient(*this);
     m_resource = nullptr;
 }
 

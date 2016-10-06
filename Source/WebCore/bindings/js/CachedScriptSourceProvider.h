@@ -41,7 +41,7 @@ public:
 
     virtual ~CachedScriptSourceProvider()
     {
-        m_cachedScript->removeClient(this);
+        m_cachedScript->removeClient(*this);
     }
 
     unsigned hash() const override { return m_cachedScript->scriptHash(); }
@@ -52,7 +52,7 @@ private:
         : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), JSC::SourceProviderSourceType::Program)
         , m_cachedScript(cachedScript)
     {
-        m_cachedScript->addClient(this);
+        m_cachedScript->addClient(*this);
     }
 
     CachedResourceHandle<CachedScript> m_cachedScript;

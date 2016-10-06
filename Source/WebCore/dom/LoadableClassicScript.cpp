@@ -37,13 +37,13 @@ Ref<LoadableClassicScript> LoadableClassicScript::create(CachedResourceHandle<Ca
 {
     ASSERT(cachedScript);
     auto script = adoptRef(*new LoadableClassicScript(WTFMove(cachedScript)));
-    cachedScript->addClient(script.ptr());
+    cachedScript->addClient(script.get());
     return script;
 }
 
 LoadableClassicScript::~LoadableClassicScript()
 {
-    m_cachedScript->removeClient(this);
+    m_cachedScript->removeClient(*this);
 }
 
 bool LoadableClassicScript::isLoaded() const

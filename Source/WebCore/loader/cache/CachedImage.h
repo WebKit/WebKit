@@ -99,11 +99,11 @@ private:
     void notifyObservers(const IntRect* changeRect = nullptr);
     void checkShouldPaintBrokenImage();
 
-    void switchClientsToRevalidatedResource() override;
-    bool mayTryReplaceEncodedData() const override { return true; }
+    void switchClientsToRevalidatedResource() final;
+    bool mayTryReplaceEncodedData() const final { return true; }
 
-    void didAddClient(CachedResourceClient*) override;
-    void didRemoveClient(CachedResourceClient*) override;
+    void didAddClient(CachedResourceClient&) final;
+    void didRemoveClient(CachedResourceClient&) final;
 
     void allClientsRemoved() override;
     void destroyDecodedData() override;

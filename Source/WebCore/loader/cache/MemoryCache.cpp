@@ -223,7 +223,7 @@ bool MemoryCache::addImageToCache(NativeImagePtr&& image, const URL& url, const 
 
     auto cachedImage = std::make_unique<CachedImage>(url, bitmapImage.get(), sessionID);
 
-    cachedImage->addClient(&dummyCachedImageClient());
+    cachedImage->addClient(dummyCachedImageClient());
     cachedImage->setDecodedSize(bitmapImage->decodedSize());
 #if ENABLE(CACHE_PARTITIONING)
     cachedImage->resourceRequest().setDomainForCachePartition(domainForCachePartition);
@@ -258,7 +258,7 @@ void MemoryCache::removeImageFromCache(const URL& url, const String& domainForCa
     // dead resources are pruned. That might be immediately since
     // removing the last client triggers a MemoryCache::prune, so the
     // resource may be deleted after this call.
-    downcast<CachedImage>(*resource).removeClient(&dummyCachedImageClient());
+    downcast<CachedImage>(*resource).removeClient(dummyCachedImageClient());
 }
 
 void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)

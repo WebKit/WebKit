@@ -61,9 +61,9 @@ static bool subimageKnownToBeOpaque(const CSSValue& value, const RenderElement* 
 CSSCrossfadeValue::~CSSCrossfadeValue()
 {
     if (m_cachedFromImage)
-        m_cachedFromImage->removeClient(&m_crossfadeSubimageObserver);
+        m_cachedFromImage->removeClient(m_crossfadeSubimageObserver);
     if (m_cachedToImage)
-        m_cachedToImage->removeClient(&m_crossfadeSubimageObserver);
+        m_cachedToImage->removeClient(m_crossfadeSubimageObserver);
 }
 
 String CSSCrossfadeValue::customCSSText() const
@@ -131,16 +131,16 @@ void CSSCrossfadeValue::loadSubimages(CachedResourceLoader& cachedResourceLoader
 
     if (m_cachedFromImage != oldCachedFromImage) {
         if (oldCachedFromImage)
-            oldCachedFromImage->removeClient(&m_crossfadeSubimageObserver);
+            oldCachedFromImage->removeClient(m_crossfadeSubimageObserver);
         if (m_cachedFromImage)
-            m_cachedFromImage->addClient(&m_crossfadeSubimageObserver);
+            m_cachedFromImage->addClient(m_crossfadeSubimageObserver);
     }
 
     if (m_cachedToImage != oldCachedToImage) {
         if (oldCachedToImage)
-            oldCachedToImage->removeClient(&m_crossfadeSubimageObserver);
+            oldCachedToImage->removeClient(m_crossfadeSubimageObserver);
         if (m_cachedToImage)
-            m_cachedToImage->addClient(&m_crossfadeSubimageObserver);
+            m_cachedToImage->addClient(m_crossfadeSubimageObserver);
     }
 
     m_crossfadeSubimageObserver.setReady(true);

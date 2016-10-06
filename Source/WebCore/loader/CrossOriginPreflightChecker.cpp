@@ -53,7 +53,7 @@ CrossOriginPreflightChecker::CrossOriginPreflightChecker(DocumentThreadableLoade
 CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
 {
     if (m_resource)
-        m_resource->removeClient(this);
+        m_resource->removeClient(*this);
 }
 
 void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
@@ -119,7 +119,7 @@ void CrossOriginPreflightChecker::startPreflight()
     ASSERT(!m_resource);
     m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest));
     if (m_resource)
-        m_resource->addClient(this);
+        m_resource->addClient(*this);
 }
 
 void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, ResourceRequest&& request)

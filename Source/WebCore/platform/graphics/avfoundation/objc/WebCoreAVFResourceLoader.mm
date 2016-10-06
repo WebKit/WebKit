@@ -75,7 +75,7 @@ void WebCoreAVFResourceLoader::startLoading()
         m_resource = loader->requestMedia(WTFMove(request));
 
     if (m_resource)
-        m_resource->addClient(this);
+        m_resource->addClient(*this);
     else {
         LOG_ERROR("Failed to start load for media at url %s", [[[nsRequest URL] absoluteString] UTF8String]);
         [m_avRequest.get() finishLoadingWithError:0];
@@ -87,7 +87,7 @@ void WebCoreAVFResourceLoader::stopLoading()
     if (!m_resource)
         return;
 
-    m_resource->removeClient(this);
+    m_resource->removeClient(*this);
     m_resource = 0;
 
     if (m_parent && m_avRequest)

@@ -63,11 +63,11 @@ void CachedFont::load(CachedResourceLoader&)
     setLoading(true);
 }
 
-void CachedFont::didAddClient(CachedResourceClient* client)
+void CachedFont::didAddClient(CachedResourceClient& client)
 {
-    ASSERT(client->resourceClientType() == CachedFontClient::expectedType());
+    ASSERT(client.resourceClientType() == CachedFontClient::expectedType());
     if (!isLoading())
-        static_cast<CachedFontClient*>(client)->fontLoaded(*this);
+        static_cast<CachedFontClient&>(client).fontLoaded(*this);
 }
 
 void CachedFont::finishLoading(SharedBuffer* data)
