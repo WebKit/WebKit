@@ -1,3 +1,24 @@
+2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not construct Simple GetByIdStatus against self-custom-accessor case
+        https://bugs.webkit.org/show_bug.cgi?id=162993
+
+        Reviewed by Filip Pizlo.
+
+        We accidentally created a Simple GetByIdStatus against self-custom-accessor case: the object has own custom accessor property and get_by_id hits.
+        If we returned such a result, the GetById will be turned to GetByOffset and it looks up incorrect thing like CustomGetterSetter object.
+        We do not hit this bug before since maybe there is no object that has own custom-accessor and this custom-accessor does not raise an error.
+        For example, "Node.prototype" has "firstChild" custom accessor. But since "Node.prototype" itself does not have Node::info(), "Node.prototype.firstChild"
+        access always raises an error. I guess all the custom accessors follow this pattern. This bug is uncovered when testing DOMJIT (This bug causes crash and
+        it can occur even if we disabled DOMJIT).
+
+        But such a assumption is not guaranteed. In this patch, we fix this by not returning Simple GetById.
+
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::computeFor):
+
 2016-10-05  Saam Barati  <sbarati@apple.com>
 
         PCToCodeOriginMap builder should use labelIgnoringWatchpoints() inside the DFG

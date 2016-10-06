@@ -97,9 +97,11 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     if (structure->takesSlowPathInDFGForImpureProperty())
         return GetByIdStatus(NoInformation, false);
 
-    unsigned attributesIgnored;
-    PropertyOffset offset = structure->getConcurrently(uid, attributesIgnored);
+    unsigned attributes;
+    PropertyOffset offset = structure->getConcurrently(uid, attributes);
     if (!isValidOffset(offset))
+        return GetByIdStatus(NoInformation, false);
+    if (attributes & CustomAccessor)
         return GetByIdStatus(NoInformation, false);
     
     return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
@@ -176,10 +178,12 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
             return GetByIdStatus(slowPathState, true);
-        unsigned attributesIgnored;
+        unsigned attributes;
         GetByIdVariant variant;
-        variant.m_offset = structure->getConcurrently(uid, attributesIgnored);
+        variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
+            return GetByIdStatus(slowPathState, true);
+        if (attributes & CustomAccessor)
             return GetByIdStatus(slowPathState, true);
         
         variant.m_structureSet.add(structure);
@@ -343,6 +347,8 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringIm
             return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
         if (attributes & Accessor)
             return GetByIdStatus(MakesCalls); // We could be smarter here, like strength-reducing this to a Call.
+        if (attributes & CustomAccessor)
+            return GetByIdStatus(TakesSlowPath);
         
         if (!result.appendVariant(GetByIdVariant(structure, offset)))
             return GetByIdStatus(TakesSlowPath);
