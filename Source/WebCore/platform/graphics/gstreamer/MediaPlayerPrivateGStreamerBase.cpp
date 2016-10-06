@@ -713,6 +713,7 @@ void MediaPlayerPrivateGStreamerBase::paintToTextureMapper(TextureMapper& textur
 #endif
 
 #if USE(GSTREAMER_GL)
+#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 // This should be called with the sample mutex locked.
 GLContext* MediaPlayerPrivateGStreamerBase::prepareContextForCairoPaint(GstVideoInfo& videoInfo, IntSize& size, IntSize& rotatedSize)
 {
@@ -779,6 +780,7 @@ bool MediaPlayerPrivateGStreamerBase::paintToCairoSurface(cairo_surface_t* outpu
 
     return true;
 }
+#endif // USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
 
 bool MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
 {

@@ -133,8 +133,10 @@ protected:
     static GstFlowReturn newPrerollCallback(GstElement*, MediaPlayerPrivateGStreamerBase*);
     GstElement* createGLAppSink();
     GstElement* createVideoSinkGL();
+#if USE(CAIRO) && ENABLE(ACCELERATED_2D_CANVAS)
     GLContext* prepareContextForCairoPaint(GstVideoInfo&, IntSize&, IntSize&);
     bool paintToCairoSurface(cairo_surface_t*, cairo_device_t*, GstVideoInfo&, const IntSize&, const IntSize&, bool);
+#endif
 #endif
 
     void setStreamVolumeElement(GstStreamVolume*);
