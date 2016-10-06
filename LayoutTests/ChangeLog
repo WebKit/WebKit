@@ -1,3 +1,13 @@
+2016-10-05  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [EFL] Mark timeout tests to *Timeout*
+
+        Unreviewed EFL gardening.
+
+        Timeout has been happened on some tests.
+
+        * platform/efl/TestExpectations:
+
 2016-10-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import v1 custom elements tests from W3C

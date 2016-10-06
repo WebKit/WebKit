@@ -116,6 +116,13 @@ http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-play-waiting.html
 http/tests/security/feed-urls-from-remote.html
+http/tests/media/clearkey/clear-key-hls-aes128.html [ Timeout ]
+http/tests/media/video-buffered-range-contains-currentTime.html [ Timeout ]
+http/tests/media/video-redirect.html [ Timeout ]
+media/airplay-autoplay.html [ Timeout ]
+media/media-controls-drag-timeline-set-controls-property.html [ Timeout ]
+media/media-fullscreen-return-to-inline.html [ Timeout ]
+media/media-source/media-source-duplicate-seeked.html [ Timeout ]
 
 # ------------------------------
 # Tests which need investigation
@@ -1596,6 +1603,28 @@ webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.setAttribute.plus.html [ Skip ]
 webkit.org/b/161839 imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.https.html [ Skip ]
 webkit.org/b/161839 imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.https.html [ Skip ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/IndexedDB/idbcursor_delete_index5.htm [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/IndexedDB/idbdatabase_close2.htm [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_index.htm [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/XMLHttpRequest/open-method-case-sensitive.htm [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/dom/events/Event-constructors.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hostname.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/reload_document_open_write.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/browsers/windows/nested-browsing-contexts/window-top-001.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-base-element/base_srcdoc.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/context.emptystring.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/size.attributes.setAttribute.space.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toBlob.jpeg.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zeroheight.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/forms/the-textarea-element/cloning-steps.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/node-document-changes.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_main-element.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_tests26.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/html/syntax/parsing/template/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/shadow-dom/Element-interface-attachShadow.html [ Timeout ]
+webkit.org/b/161839 imported/w3c/web-platform-tests/url/historical.html [ Timeout ]
+
 
 # Requires ENCRYPTED_MEDIA support.
 webkit.org/b/95297 media/encrypted-media [ Pass ]
@@ -2785,3 +2814,9 @@ webkit.org/b/161527 fast/forms/search-rtl.html [ Failure ]
 webkit.org/b/161527 fast/forms/select-non-native-rendering-direction.html [ Failure ]
 webkit.org/b/161527 fast/forms/select-writing-direction-natural.html [ Failure ]
 webkit.org/b/161527 fast/forms/validity-assertion-inserting-into-datalist.html [ Failure ]
+
+Bug(EFL) crypto/workers/aes-postMessage-worker.html [ Timeout ]
+Bug(EFL) crypto/workers/hmac-postMessage-worker.html [ Timeout ]
+Bug(EFL) crypto/workers/hrsa-postMessage-worker.html [ Timeout ]
+Bug(EFL) crypto/workers/multiple-postMessage-worker.html [ Timeout ]
+Bug(EFL) crypto/workers/rsa-postMessage-worker.html [ Timeout ]
