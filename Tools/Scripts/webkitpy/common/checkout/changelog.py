@@ -430,14 +430,17 @@ class ChangeLog(object):
             self._filesystem.write_text_file(self.path, newdata)
 
     def set_short_description_and_bug_url(self, short_description, bug_url):
-        message = "%s\n%s%s" % (short_description, self._changelog_indent, bug_url)
-        bug_boilerplate = "%sNeed the bug URL (OOPS!).\n" % self._changelog_indent
         result = StringIO()
         with self._filesystem.open_text_file_for_reading(self.path) as file:
+            short_description_placeholder = "Need a short description (OOPS!)."
+            bug_url_placeholder = "Need the bug URL (OOPS!)."
             for line in file:
-                line = line.replace("Need a short description (OOPS!).", message)
-                if line != bug_boilerplate:
-                    result.write(line)
+                stripped = line.strip()
+                if stripped == short_description_placeholder:
+                    line = self._changelog_indent + short_description + "\n"
+                if stripped == bug_url_placeholder:
+                    line = self._changelog_indent + bug_url + "\n"
+                result.write(line)
         self._filesystem.write_text_file(self.path, result.getvalue())
 
     def delete_entries(self, num_entries):

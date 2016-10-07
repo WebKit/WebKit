@@ -1,3 +1,26 @@
+2016-10-07  Emanuele Aina  <emanuele.aina@collabora.com>
+
+        Replace bug URL placeholders independently of the short desc one
+        https://bugs.webkit.org/show_bug.cgi?id=161684
+
+        Reviewed by Darin Adler.
+
+        Instead of adding the bug URL when replacing the short description
+        placeholder and then ignoring the bug URL placeholder, use the former
+        to set the short description and the latter for the bug URL.
+        This means that developers can fully prepare the changelog with short
+        and long description before submission leaving the bug placeholder in
+        place, and the changelog machinery will make sure to replace the
+        latter with the URL of the newly created bug while submitting.
+
+        Note that this also means that the short description placeholder alone
+        no longer causes the bug URL to be added.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLog.set_short_description_and_bug_url):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_set_short_description_and_bug_url):
+
 2016-10-07  Jonathan Bedard  <jbedard@apple.com>
 
         Style Checking Error when Objective C Blocks passed as Argument
