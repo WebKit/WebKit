@@ -373,14 +373,14 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
-void DocumentLoader::notifyFinished(CachedResource* resource)
+void DocumentLoader::notifyFinished(CachedResource& resource)
 {
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
 
-    ASSERT_UNUSED(resource, m_mainResource == resource);
+    ASSERT_UNUSED(resource, m_mainResource == &resource);
     ASSERT(m_mainResource);
     if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
         finishedLoading(m_mainResource->loadFinishTime());
@@ -471,7 +471,7 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     if (response.url().isEmpty())
         response = ResourceResponse(m_request.url(), m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding());
 
-    responseReceived(0, response);
+    responseReceived(response);
 }
 
 void DocumentLoader::startDataLoadTimer()
@@ -492,9 +492,9 @@ void DocumentLoader::handleSubstituteDataLoadSoon()
         startDataLoadTimer();
 }
 
-void DocumentLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    ASSERT_UNUSED(resource, resource == m_mainResource);
+    ASSERT_UNUSED(resource, &resource == m_mainResource);
     willSendRequest(request, redirectResponse);
 }
 
@@ -632,14 +632,19 @@ void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(
         cancelMainResourceLoad(frameLoader->cancelledError(m_request));
 }
 
-void DocumentLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void DocumentLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
+{
+    ASSERT_UNUSED(resource, m_mainResource == &resource);
+    responseReceived(response);
+}
+
+void DocumentLoader::responseReceived(const ResourceResponse& response)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(resource, response))
+    if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
 
-    ASSERT_UNUSED(resource, m_mainResource == resource);
     Ref<DocumentLoader> protectedThis(*this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
 
@@ -821,7 +826,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (!isStopping() && m_substituteData.isValid() && isLoadingMainResource()) {
         auto content = m_substituteData.content();
         if (content && content->size())
-            dataReceived(nullptr, content->data(), content->size());
+            dataReceived(content->data(), content->size());
         if (isLoadingMainResource())
             finishedLoading(0);
     }
@@ -929,16 +934,21 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     m_writer.addData(bytes, length);
 }
 
-void DocumentLoader::dataReceived(CachedResource* resource, const char* data, int length)
+void DocumentLoader::dataReceived(CachedResource& resource, const char* data, int length)
+{
+    ASSERT_UNUSED(resource, &resource == m_mainResource);
+    dataReceived(data, length);
+}
+
+void DocumentLoader::dataReceived(const char* data, int length)
 {
 #if ENABLE(CONTENT_FILTERING)
-    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(resource, data, length))
+    if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(data, length))
         return;
 #endif
 
     ASSERT(data);
     ASSERT(length);
-    ASSERT_UNUSED(resource, resource == m_mainResource);
     ASSERT(!m_response.isNull());
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.

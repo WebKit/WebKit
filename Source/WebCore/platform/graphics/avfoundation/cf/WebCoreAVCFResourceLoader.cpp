@@ -109,10 +109,9 @@ void WebCoreAVCFResourceLoader::invalidate()
     });
 }
 
-void WebCoreAVCFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void WebCoreAVCFResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
 {
-    ASSERT(resource == m_resource);
-    UNUSED_PARAM(resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
@@ -124,14 +123,14 @@ void WebCoreAVCFResourceLoader::responseReceived(CachedResource* resource, const
     notImplemented();
 }
 
-void WebCoreAVCFResourceLoader::dataReceived(CachedResource* resource, const char*, int)
+void WebCoreAVCFResourceLoader::dataReceived(CachedResource& resource, const char*, int)
 {
     fulfillRequestWithResource(resource);
 }
 
-void WebCoreAVCFResourceLoader::notifyFinished(CachedResource* resource)
+void WebCoreAVCFResourceLoader::notifyFinished(CachedResource& resource)
 {
-    if (resource->loadFailedOrCanceled()) {
+    if (resource.loadFailedOrCanceled()) {
         // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty
         // string to trigger AVAsset's playable value to complete loading.
         // FIXME: if ([m_avRequest.get() contentInformationRequest] && ![[m_avRequest.get() contentInformationRequest] contentType])
@@ -148,9 +147,9 @@ void WebCoreAVCFResourceLoader::notifyFinished(CachedResource* resource)
     stopLoading();
 }
 
-void WebCoreAVCFResourceLoader::fulfillRequestWithResource(CachedResource* resource)
+void WebCoreAVCFResourceLoader::fulfillRequestWithResource(CachedResource& resource)
 {
-    ASSERT(resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     notImplemented();
 }
 

@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGFEImageElement_h
-#define SVGFEImageElement_h
+#pragma once
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
@@ -51,7 +50,7 @@ private:
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
@@ -73,5 +72,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

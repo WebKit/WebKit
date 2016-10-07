@@ -108,7 +108,7 @@ class Text;
         bool shouldAssociateConsoleMessagesWithTextPosition() const override;
 
         // from CachedResourceClient
-        void notifyFinished(CachedResource*) override;
+        void notifyFinished(CachedResource&) final;
 
         void end();
 

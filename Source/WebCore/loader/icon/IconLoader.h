@@ -20,11 +20,10 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IconLoader_h
-#define IconLoader_h
+#pragma once
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
@@ -46,12 +45,10 @@ public:
     void stopLoading();
 
 private:
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 
     Frame& m_frame;
     CachedResourceHandle<CachedRawResource> m_resource;
 };
 
 } // namespace WebCore
-
-#endif

@@ -129,15 +129,15 @@ void MediaResource::setDefersLoading(bool defersLoading)
         m_resource->setDefersLoading(defersLoading);
 }
 
-void MediaResource::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void MediaResource::responseReceived(CachedResource& resource, const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     if (!m_loader->document())
         return;
 
     RefPtr<MediaResource> protectedThis(this);
-    if (!m_loader->crossOriginMode().isNull() && !resource->passesSameOriginPolicyCheck(*m_loader->document()->securityOrigin())) {
+    if (!m_loader->crossOriginMode().isNull() && !m_resource->passesSameOriginPolicyCheck(*m_loader->document()->securityOrigin())) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
         m_loader->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck = false;
@@ -152,9 +152,9 @@ void MediaResource::responseReceived(CachedResource* resource, const ResourceRes
         m_client->responseReceived(*this, response);
 }
 
-bool MediaResource::shouldCacheResponse(CachedResource* resource, const ResourceResponse& response)
+bool MediaResource::shouldCacheResponse(CachedResource& resource, const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
@@ -162,41 +162,41 @@ bool MediaResource::shouldCacheResponse(CachedResource* resource, const Resource
     return true;
 }
 
-void MediaResource::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& response)
+void MediaResource::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->redirectReceived(*this, request, response);
 }
 
-void MediaResource::dataSent(CachedResource* resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void MediaResource::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
-void MediaResource::dataReceived(CachedResource* resource, const char* data, int dataLength)
+void MediaResource::dataReceived(CachedResource& resource, const char* data, int dataLength)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client)
         m_client->dataReceived(*this, data, dataLength);
 }
 
-void MediaResource::notifyFinished(CachedResource* resource)
+void MediaResource::notifyFinished(CachedResource& resource)
 {
-    ASSERT(resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     RefPtr<MediaResource> protectedThis(this);
     if (m_client) {
-        if (resource->loadFailedOrCanceled())
-            m_client->loadFailed(*this, resource->resourceError());
+        if (m_resource->loadFailedOrCanceled())
+            m_client->loadFailed(*this, m_resource->resourceError());
         else
             m_client->loadFinished(*this);
     }
@@ -204,9 +204,9 @@ void MediaResource::notifyFinished(CachedResource* resource)
 }
 
 #if USE(SOUP)
-char* MediaResource::getOrCreateReadBuffer(CachedResource* resource, size_t requestedSize, size_t& actualSize)
+char* MediaResource::getOrCreateReadBuffer(CachedResource& resource, size_t requestedSize, size_t& actualSize)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     return m_client ? m_client->getOrCreateReadBuffer(*this, requestedSize, actualSize) : nullptr;
 }
 #endif

@@ -1,3 +1,128 @@
+2016-10-07  Youenn Fablet  <youenn@apple.com>
+
+        Refactor CachedResourceClient::notifyFinished
+        https://bugs.webkit.org/show_bug.cgi?id=162060
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        Making CachedResourceClient and CachedRawResourceClient callbacks take CachedResource references and not pointers.
+        In most cases, the CachedResource parameter is only used for assertions.
+        Removing that parameter might be contemplated in the future.
+        The only real case is in RenderImage.
+
+        Removed the CachedResource parameter from ContentFilter methods as code was calling these methods with null values.
+
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished):
+        * dom/LoadableClassicScript.h:
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::continueAfterResponseReceived):
+        (WebCore::ContentFilter::continueAfterDataReceived):
+        (WebCore::ContentFilter::continueAfterNotifyFinished):
+        (WebCore::ContentFilter::deliverResourceData):
+        * loader/ContentFilter.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::notifyFinished):
+        * loader/CrossOriginPreflightChecker.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::handleSubstituteDataLoadNow):
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::dataReceived):
+        * loader/DocumentLoader.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        (WebCore::DocumentThreadableLoader::dataSent):
+        (WebCore::DocumentThreadableLoader::responseReceived):
+        (WebCore::DocumentThreadableLoader::dataReceived):
+        (WebCore::DocumentThreadableLoader::notifyFinished):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        * loader/ImageLoader.h:
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::triggerEvents):
+        (WebCore::LinkLoader::notifyFinished):
+        * loader/LinkLoader.h:
+        * loader/LinkPreloadResourceClients.cpp:
+        (WebCore::LinkPreloadResourceClient::triggerEvents):
+        * loader/LinkPreloadResourceClients.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived):
+        (WebCore::MediaResource::shouldCacheResponse):
+        (WebCore::MediaResource::redirectReceived):
+        (WebCore::MediaResource::dataSent):
+        (WebCore::MediaResource::dataReceived):
+        (WebCore::MediaResource::notifyFinished):
+        (WebCore::MediaResource::getOrCreateReadBuffer):
+        * loader/MediaResourceLoader.h:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        (WebCore::TextTrackLoader::deprecatedDidReceiveCachedResource):
+        (WebCore::TextTrackLoader::notifyFinished):
+        * loader/TextTrackLoader.h:
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::notifyClientsDataWasReceived):
+        (WebCore::CachedRawResource::didAddClient):
+        (WebCore::CachedRawResource::redirectReceived):
+        (WebCore::CachedRawResource::responseReceived):
+        (WebCore::CachedRawResource::shouldCacheResponse):
+        (WebCore::CachedRawResource::didSendData):
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::dataSent):
+        (WebCore::CachedRawResourceClient::responseReceived):
+        (WebCore::CachedRawResourceClient::shouldCacheResponse):
+        (WebCore::CachedRawResourceClient::dataReceived):
+        (WebCore::CachedRawResourceClient::redirectReceived):
+        (WebCore::CachedRawResourceClient::getOrCreateReadBuffer):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::checkNotify):
+        (WebCore::CachedResource::didAddClient):
+        * loader/cache/CachedResourceClient.h:
+        (WebCore::CachedResourceClient::notifyFinished):
+        (WebCore::CachedResourceClient::deprecatedDidReceiveCachedResource):
+        * loader/cache/CachedTextTrack.cpp:
+        (WebCore::CachedTextTrack::updateData):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+        * loader/icon/IconLoader.h:
+        * loader/soup/CachedRawResourceSoup.cpp:
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::responseReceived):
+        (WebCore::WebCoreAVCFResourceLoader::dataReceived):
+        (WebCore::WebCoreAVCFResourceLoader::notifyFinished):
+        (WebCore::WebCoreAVCFResourceLoader::fulfillRequestWithResource):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+        (WebCore::WebCoreAVFResourceLoader::dataReceived):
+        (WebCore::WebCoreAVFResourceLoader::notifyFinished):
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::notifyFinished):
+        * rendering/RenderImage.h:
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayer::FilterInfo::setRenderer):
+        (WebCore::RenderLayer::FilterInfo::notifyFinished):
+        * rendering/RenderLayerFilterInfo.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::notifyFinished):
+        * svg/SVGUseElement.h:
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::notifyFinished):
+        * xml/parser/XMLDocumentParser.h:
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         CachedXSLStylesheet does not need to be updated according Origin/Fetch mode

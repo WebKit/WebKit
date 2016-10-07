@@ -373,7 +373,7 @@ void CachedResource::checkNotify()
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
     while (CachedResourceClient* client = walker.next())
-        client->notifyFinished(this);
+        client->notifyFinished(*this);
 }
 
 void CachedResource::addDataBuffer(SharedBuffer&)
@@ -550,7 +550,7 @@ void CachedResource::didAddClient(CachedResourceClient& client)
     if (m_clientsAwaitingCallback.remove(&client))
         m_clients.add(&client);
     if (!isLoading() && !stillNeedsLoad())
-        client.notifyFinished(this);
+        client.notifyFinished(*this);
 }
 
 bool CachedResource::addClientToSet(CachedResourceClient& client)

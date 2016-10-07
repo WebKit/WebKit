@@ -83,11 +83,11 @@ RenderLayer::FilterInfo::~FilterInfo()
 }
 
 void RenderLayer::FilterInfo::setRenderer(RefPtr<FilterEffectRenderer>&& renderer)
-{ 
-    m_renderer = renderer; 
+{
+    m_renderer = renderer;
 }
 
-void RenderLayer::FilterInfo::notifyFinished(CachedResource*)
+void RenderLayer::FilterInfo::notifyFinished(CachedResource&)
 {
     m_layer.filterNeedsRepaint();
 }

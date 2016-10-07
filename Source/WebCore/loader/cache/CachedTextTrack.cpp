@@ -50,7 +50,7 @@ void CachedTextTrack::updateData(SharedBuffer* data)
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
     while (CachedResourceClient* client = walker.next())
-        client->deprecatedDidReceiveCachedResource(this);
+        client->deprecatedDidReceiveCachedResource(*this);
 }
 
 void CachedTextTrack::addDataBuffer(SharedBuffer& data)

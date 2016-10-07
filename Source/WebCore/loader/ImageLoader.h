@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef ImageLoader_h
-#define ImageLoader_h
+#pragma once
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
@@ -73,7 +72,7 @@ public:
 
 protected:
     explicit ImageLoader(Element&);
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) override;
 
 private:
     virtual void dispatchLoadEvent() = 0;
@@ -107,5 +106,3 @@ private:
 };
 
 }
-
-#endif

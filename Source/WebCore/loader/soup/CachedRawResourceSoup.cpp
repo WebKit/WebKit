@@ -31,7 +31,7 @@ char* CachedRawResource::getOrCreateReadBuffer(size_t requestedSize, size_t& act
 {
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next()) {
-        if (char* bufferPtr = c->getOrCreateReadBuffer(this, requestedSize, actualSize))
+        if (char* bufferPtr = c->getOrCreateReadBuffer(*this, requestedSize, actualSize))
             return bufferPtr;
     }
 

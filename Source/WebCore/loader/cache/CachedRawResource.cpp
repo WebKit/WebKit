@@ -115,7 +115,7 @@ void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned 
     CachedResourceHandle<CachedRawResource> protectedThis(this);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->dataReceived(this, data, length);
+        c->dataReceived(*this, data, length);
 }
 
 void CachedRawResource::didAddClient(CachedResourceClient& c)
@@ -131,7 +131,7 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
     for (size_t i = 0; i < redirectCount; i++) {
         RedirectPair redirect = m_redirectChain[i];
         ResourceRequest request(redirect.m_request);
-        client.redirectReceived(this, request, redirect.m_redirectResponse);
+        client.redirectReceived(*this, request, redirect.m_redirectResponse);
         if (!hasClient(c))
             return;
     }
@@ -145,12 +145,12 @@ void CachedRawResource::didAddClient(CachedResourceClient& c)
             ASSERT(!validationInProgress());
             response.setSource(ResourceResponse::Source::MemoryCache);
         }
-        client.responseReceived(this, response);
+        client.responseReceived(*this, response);
     }
     if (!hasClient(c))
         return;
     if (m_data)
-        client.dataReceived(this, m_data->data(), m_data->size());
+        client.dataReceived(*this, m_data->data(), m_data->size());
     if (!hasClient(c))
        return;
     CachedResource::didAddClient(client);
@@ -168,7 +168,7 @@ void CachedRawResource::redirectReceived(ResourceRequest& request, const Resourc
     if (!response.isNull()) {
         CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
         while (CachedRawResourceClient* c = w.next())
-            c->redirectReceived(this, request, response);
+            c->redirectReceived(*this, request, response);
         m_redirectChain.append(RedirectPair(request, response));
     }
     CachedResource::redirectReceived(request, response);
@@ -182,14 +182,14 @@ void CachedRawResource::responseReceived(const ResourceResponse& response)
     CachedResource::responseReceived(response);
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->responseReceived(this, m_response);
+        c->responseReceived(*this, m_response);
 }
 
 bool CachedRawResource::shouldCacheResponse(const ResourceResponse& response)
 {
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next()) {
-        if (!c->shouldCacheResponse(this, response))
+        if (!c->shouldCacheResponse(*this, response))
             return false;
     }
     return true;
@@ -199,7 +199,7 @@ void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long 
 {
     CachedResourceClientWalker<CachedRawResourceClient> w(m_clients);
     while (CachedRawResourceClient* c = w.next())
-        c->dataSent(this, bytesSent, totalBytesToBeSent);
+        c->dataSent(*this, bytesSent, totalBytesToBeSent);
 }
 
 void CachedRawResource::switchClientsToRevalidatedResource()

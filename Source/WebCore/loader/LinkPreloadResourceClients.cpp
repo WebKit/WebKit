@@ -37,7 +37,7 @@ LinkPreloadResourceClient::LinkPreloadResourceClient(LinkLoader& loader, CachedR
     m_resource = &resource;
 }
 
-void LinkPreloadResourceClient::triggerEvents(const CachedResource* resource)
+void LinkPreloadResourceClient::triggerEvents(const CachedResource& resource)
 {
     if (m_loader)
         m_loader->triggerEvents(resource);

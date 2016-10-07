@@ -133,9 +133,8 @@ void ContentFilter::stopFilteringMainResource()
     m_mainResource = nullptr;
 }
 
-bool ContentFilter::continueAfterResponseReceived(CachedResource* resource, const ResourceResponse& response)
+bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, resource == m_mainResource);
     Ref<DocumentLoader> protectedDocumentLoader { m_documentLoader };
 
     if (m_state == State::Filtering) {
@@ -148,42 +147,41 @@ bool ContentFilter::continueAfterResponseReceived(CachedResource* resource, cons
     return m_state != State::Blocked;
 }
 
-bool ContentFilter::continueAfterDataReceived(CachedResource* resource, const char* data, int length)
+bool ContentFilter::continueAfterDataReceived(const char* data, int length)
 {
-    ASSERT(resource == m_mainResource);
     Ref<DocumentLoader> protectedDocumentLoader { m_documentLoader };
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter received %d bytes of data from <%s>.\n", length, resource->url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter received %d bytes of data from <%s>.\n", length, m_mainResource->url().string().ascii().data());
         forEachContentFilterUntilBlocked([data, length](PlatformContentFilter& contentFilter) {
             contentFilter.addData(data, length);
         });
 
         if (m_state == State::Allowed)
-            deliverResourceData(*resource);
+            deliverResourceData(*m_mainResource);
         return false;
     }
 
     return m_state != State::Blocked;
 }
 
-bool ContentFilter::continueAfterNotifyFinished(CachedResource* resource)
+bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 {
-    ASSERT(resource == m_mainResource);
+    ASSERT_UNUSED(resource, &resource == m_mainResource);
     Ref<DocumentLoader> protectedDocumentLoader { m_documentLoader };
 
-    if (resource->errorOccurred())
+    if (m_mainResource->errorOccurred())
         return true;
 
     if (m_state == State::Filtering) {
-        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%s>.\n", resource->url().string().ascii().data());
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%s>.\n", m_mainResource->url().string().ascii().data());
         forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
             contentFilter.finishedAddingData();
         });
 
         if (m_state != State::Blocked) {
             m_state = State::Allowed;
-            deliverResourceData(*resource);
+            deliverResourceData(*m_mainResource);
         }
 
         if (m_state == State::Stopped)
@@ -250,7 +248,7 @@ void ContentFilter::deliverResourceData(CachedResource& resource)
     ASSERT(m_state == State::Allowed);
     ASSERT(resource.dataBufferingPolicy() == BufferData);
     if (auto* resourceBuffer = resource.resourceBuffer())
-        m_documentLoader.dataReceived(&resource, resourceBuffer->data(), resourceBuffer->size());
+        m_documentLoader.dataReceived(resource, resourceBuffer->data(), resourceBuffer->size());
 }
 
 static const URL& blockedPageURL()

@@ -22,8 +22,7 @@
  *
  */
 
-#ifndef RenderImage_h
-#define RenderImage_h
+#pragma once
 
 #include "RenderImageResource.h"
 #include "RenderReplaced.h"
@@ -105,7 +104,7 @@ private:
 
     LayoutUnit minimumReplacedHeight() const override;
 
-    void notifyFinished(CachedResource*) final;
+    void notifyFinished(CachedResource&) final;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
     bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, InlineFlowBox*) const final;
@@ -137,5 +136,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderImage, isRenderImage())
-
-#endif // RenderImage_h

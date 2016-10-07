@@ -53,7 +53,7 @@ public:
     void setDefersLoading(bool);
 
 private:
-    void notifyFinished(CachedResource*) final;
+    void notifyFinished(CachedResource&) final;
 
     static void handleLoadingFailure(DocumentThreadableLoader&, unsigned long, const ResourceError&);
     static void validatePreflightResponse(DocumentThreadableLoader&, ResourceRequest&&, unsigned long, const ResourceResponse&);

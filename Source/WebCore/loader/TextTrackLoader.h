@@ -64,20 +64,20 @@ public:
 private:
 
     // CachedResourceClient
-    void notifyFinished(CachedResource*) override;
-    void deprecatedDidReceiveCachedResource(CachedResource*) override;
-    
+    void notifyFinished(CachedResource&) override;
+    void deprecatedDidReceiveCachedResource(CachedResource&) override;
+
     // WebVTTParserClient
     void newCuesParsed() override;
     void newRegionsParsed() override;
     void fileFailedToParse() override;
-    
-    void processNewCueData(CachedResource*);
+
+    void processNewCueData(CachedResource&);
     void cueLoadTimerFired();
     void corsPolicyPreventedLoad();
 
     enum State { Idle, Loading, Finished, Failed };
-    
+
     TextTrackLoaderClient& m_client;
     std::unique_ptr<WebVTTParser> m_cueParser;
     CachedResourceHandle<CachedTextTrack> m_resource;

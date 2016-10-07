@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGUseElement_h
-#define SVGUseElement_h
+#pragma once
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
@@ -72,7 +71,7 @@ private:
     void setHaveFiredLoadEvent(bool) override;
     bool haveFiredLoadEvent() const override;
     Timer* svgLoadEventTimer() override;
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 
     Document* externalDocument() const;
     void updateExternalDocument();
@@ -98,5 +97,3 @@ private:
 };
 
 }
-
-#endif

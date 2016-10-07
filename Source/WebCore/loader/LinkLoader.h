@@ -29,8 +29,7 @@
  *
  */
 
-#ifndef LinkLoader_h
-#define LinkLoader_h
+#pragma once
 
 #include "CachedResource.h"
 #include "CachedResourceClient.h"
@@ -56,10 +55,10 @@ public:
     static Optional<CachedResource::Type> resourceTypeFromAsAttribute(const String& as);
 
     WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-    void triggerEvents(const CachedResource*);
+    void triggerEvents(const CachedResource&);
 
 private:
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) override;
     void preloadIfNeeded(const LinkRelAttribute&, const URL& href, Document&, const String& as, const String& crossOriginMode);
 
     LinkLoaderClient& m_client;
@@ -67,7 +66,5 @@ private:
     std::unique_ptr<LinkPreloadResourceClient> m_preloadResourceClient;
     WeakPtrFactory<LinkLoader> m_weakPtrFactory;
 };
-    
-}
 
-#endif
+}

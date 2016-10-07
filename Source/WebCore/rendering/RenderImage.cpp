@@ -338,14 +338,14 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     contentChanged(ImageChanged);
 }
 
-void RenderImage::notifyFinished(CachedResource* newImage)
+void RenderImage::notifyFinished(CachedResource& newImage)
 {
     if (documentBeingDestroyed())
         return;
 
     invalidateBackgroundObscurationStatus();
 
-    if (newImage == imageResource().cachedImage()) {
+    if (&newImage == imageResource().cachedImage()) {
         // tell any potential compositing layers
         // that the image is done and they can reference it directly.
         contentChanged(ImageChanged);

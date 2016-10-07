@@ -55,7 +55,7 @@ public:
 private:
     LoadableClassicScript(CachedResourceHandle<CachedScript>&& cachedScript) : m_cachedScript(WTFMove(cachedScript)) { }
 
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 
     CachedResourceHandle<CachedScript> m_cachedScript;
     Optional<Error> m_error { Nullopt };

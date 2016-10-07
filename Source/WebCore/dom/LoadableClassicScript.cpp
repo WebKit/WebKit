@@ -67,10 +67,9 @@ bool LoadableClassicScript::wasCanceled() const
     return m_cachedScript->wasCanceled();
 }
 
-void LoadableClassicScript::notifyFinished(CachedResource* resource)
+void LoadableClassicScript::notifyFinished(CachedResource& resource)
 {
-    ASSERT(resource);
-    if (resource->resourceError().isAccessControl()) {
+    if (resource.resourceError().isAccessControl()) {
         static NeverDestroyed<String> consoleMessage(ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy."));
         m_error = Error {
             ErrorType::CrossOriginLoad,

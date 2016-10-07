@@ -270,10 +270,10 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
     updateFromElement();
 }
 
-void ImageLoader::notifyFinished(CachedResource* resource)
+void ImageLoader::notifyFinished(CachedResource& resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
-    ASSERT(resource == m_image.get());
+    ASSERT_UNUSED(resource, &resource == m_image.get());
 
     m_imageComplete = true;
     if (!hasPendingBeforeLoadEvent())
@@ -282,7 +282,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
     if (!m_hasPendingLoadEvent)
         return;
 
-    if (resource->resourceError().isAccessControl()) {
+    if (m_image->resourceError().isAccessControl()) {
         clearImageWithoutConsideringPendingLoadEvent();
 
         m_hasPendingErrorEvent = true;
@@ -299,7 +299,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         return;
     }
 
-    if (resource->wasCanceled()) {
+    if (m_image->wasCanceled()) {
         m_hasPendingLoadEvent = false;
         // Only consider updating the protection ref-count of the Element immediately before returning
         // from this function as doing so might result in the destruction of this ImageLoader.

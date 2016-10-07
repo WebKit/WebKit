@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreAVFResourceLoader_h
-#define WebCoreAVFResourceLoader_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_LOADER_DELEGATE)
 
@@ -57,11 +56,11 @@ public:
 
 private:
     // CachedResourceClient
-    void responseReceived(CachedResource*, const ResourceResponse&) override;
-    void dataReceived(CachedResource*, const char*, int) override;
-    void notifyFinished(CachedResource*) override;
+    void responseReceived(CachedResource&, const ResourceResponse&) override;
+    void dataReceived(CachedResource&, const char*, int) override;
+    void notifyFinished(CachedResource&) override;
 
-    void fulfillRequestWithResource(CachedResource*);
+    void fulfillRequestWithResource(CachedResource&);
 
     WebCoreAVFResourceLoader(MediaPlayerPrivateAVFoundationObjC* parent, AVAssetResourceLoadingRequest *);
     MediaPlayerPrivateAVFoundationObjC* m_parent;
@@ -71,6 +70,4 @@ private:
 
 }
 
-#endif // ENABLE(VIDEO) && USE(AVFOUNDATION) 
-
-#endif // WebCoreAVFResourceLoader_h
+#endif // ENABLE(VIDEO) && USE(AVFOUNDATION)

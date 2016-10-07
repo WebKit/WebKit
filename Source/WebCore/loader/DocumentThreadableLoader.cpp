@@ -221,10 +221,10 @@ static inline void reportRedirectionWithBadScheme(ThreadableLoaderClient& client
     client.didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Redirection to URL with a scheme that is not HTTP(S).", ResourceError::Type::AccessControl));
 }
 
-void DocumentThreadableLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void DocumentThreadableLoader::redirectReceived(CachedResource& resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     Ref<DocumentThreadableLoader> protectedThis(*this);
 
@@ -276,16 +276,16 @@ void DocumentThreadableLoader::redirectReceived(CachedResource* resource, Resour
     makeCrossOriginAccessRequest(ResourceRequest(request));
 }
 
-void DocumentThreadableLoader::dataSent(CachedResource* resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+void DocumentThreadableLoader::dataSent(CachedResource& resource, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     m_client->didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void DocumentThreadableLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void DocumentThreadableLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     didReceiveResponse(m_resource->identifier(), response, m_resource->responseTainting());
 }
 
@@ -307,9 +307,9 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     }
 }
 
-void DocumentThreadableLoader::dataReceived(CachedResource* resource, const char* data, int dataLength)
+void DocumentThreadableLoader::dataReceived(CachedResource& resource, const char* data, int dataLength)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     didReceiveData(m_resource->identifier(), data, dataLength);
 }
 
@@ -320,10 +320,10 @@ void DocumentThreadableLoader::didReceiveData(unsigned long, const char* data, i
     m_client->didReceiveData(data, dataLength);
 }
 
-void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
+void DocumentThreadableLoader::notifyFinished(CachedResource& resource)
 {
     ASSERT(m_client);
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     if (m_resource->errorOccurred())
         didFail(m_resource->identifier(), m_resource->resourceError());

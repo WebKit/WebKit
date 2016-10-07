@@ -28,8 +28,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef RenderLayerFilterInfo_h
-#define RenderLayerFilterInfo_h
+#pragma once
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
@@ -55,15 +54,15 @@ public:
     const LayoutRect& dirtySourceRect() const { return m_dirtySourceRect; }
     void expandDirtySourceRect(const LayoutRect& rect) { m_dirtySourceRect.unite(rect); }
     void resetDirtySourceRect() { m_dirtySourceRect = LayoutRect(); }
-    
+
     FilterEffectRenderer* renderer() const { return m_renderer.get(); }
     void setRenderer(RefPtr<FilterEffectRenderer>&&);
-    
+
     void updateReferenceFilterClients(const FilterOperations&);
     void removeReferenceFilterClients();
 
 private:
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 
     static HashMap<const RenderLayer*, std::unique_ptr<FilterInfo>>& map();
 
@@ -77,5 +76,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // RenderLayerFilterInfo_h

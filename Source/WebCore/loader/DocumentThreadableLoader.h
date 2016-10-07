@@ -77,11 +77,11 @@ namespace WebCore {
         void clearResource();
 
         // CachedRawResourceClient
-        void dataSent(CachedResource*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
-        void responseReceived(CachedResource*, const ResourceResponse&) override;
-        void dataReceived(CachedResource*, const char* data, int dataLength) override;
-        void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
-        void notifyFinished(CachedResource*) override;
+        void dataSent(CachedResource&, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
+        void responseReceived(CachedResource&, const ResourceResponse&) override;
+        void dataReceived(CachedResource&, const char* data, int dataLength) override;
+        void redirectReceived(CachedResource&, ResourceRequest&, const ResourceResponse&) override;
+        void notifyFinished(CachedResource&) override;
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&, ResourceResponse::Tainting);
         void didReceiveData(unsigned long identifier, const char* data, int dataLength);

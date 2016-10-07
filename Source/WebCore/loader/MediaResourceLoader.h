@@ -70,15 +70,15 @@ public:
     void setDefersLoading(bool) override;
     bool didPassAccessControlCheck() const override { return m_didPassAccessControlCheck; }
 
-    // CachedResourceClient
-    void responseReceived(CachedResource*, const ResourceResponse&) override;
-    void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) override;
-    bool shouldCacheResponse(CachedResource*, const ResourceResponse&) override;
-    void dataSent(CachedResource*, unsigned long long, unsigned long long) override;
-    void dataReceived(CachedResource*, const char*, int) override;
-    void notifyFinished(CachedResource*) override;
+    // CachedRawResourceClient
+    void responseReceived(CachedResource&, const ResourceResponse&) override;
+    void redirectReceived(CachedResource&, ResourceRequest&, const ResourceResponse&) override;
+    bool shouldCacheResponse(CachedResource&, const ResourceResponse&) override;
+    void dataSent(CachedResource&, unsigned long long, unsigned long long) override;
+    void dataReceived(CachedResource&, const char*, int) override;
+    void notifyFinished(CachedResource&) override;
 #if USE(SOUP)
-    char* getOrCreateReadBuffer(CachedResource*, size_t /*requestedSize*/, size_t& /*actualSize*/) override;
+    char* getOrCreateReadBuffer(CachedResource&, size_t /*requestedSize*/, size_t& /*actualSize*/) override;
 #endif
 
 private:

@@ -535,12 +535,12 @@ bool SVGUseElement::selfHasRelativeLengths() const
     return targetClone && targetClone->hasRelativeLengths();
 }
 
-void SVGUseElement::notifyFinished(CachedResource* resource)
+void SVGUseElement::notifyFinished(CachedResource& resource)
 {
     invalidateShadowTree();
-    if (resource->errorOccurred())
+    if (resource.errorOccurred())
         dispatchEvent(Event::create(eventNames().errorEvent, false, false));
-    else if (!resource->wasCanceled())
+    else if (!resource.wasCanceled())
         SVGExternalResourcesRequired::dispatchLoadEvent(this);
 }
 

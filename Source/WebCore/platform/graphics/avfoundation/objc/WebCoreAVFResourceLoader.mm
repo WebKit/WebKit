@@ -106,10 +106,9 @@ void WebCoreAVFResourceLoader::invalidate()
     });
 }
 
-void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void WebCoreAVFResourceLoader::responseReceived(CachedResource& resource, const ResourceResponse& response)
 {
-    ASSERT(resource);
-    ASSERT(resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
 
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
@@ -122,7 +121,7 @@ void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const 
 
         [contentInfo setContentType:uti];
 
-        ParsedContentRange& contentRange = resource->response().contentRange();
+        ParsedContentRange& contentRange = m_resource->response().contentRange();
         [contentInfo setContentLength:contentRange.isValid() ? contentRange.instanceLength() : response.expectedContentLength()];
         [contentInfo setByteRangeAccessSupported:YES];
 
@@ -133,20 +132,20 @@ void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const 
     }
 }
 
-void WebCoreAVFResourceLoader::dataReceived(CachedResource* resource, const char*, int)
+void WebCoreAVFResourceLoader::dataReceived(CachedResource& resource, const char*, int)
 {
     fulfillRequestWithResource(resource);
 }
 
-void WebCoreAVFResourceLoader::notifyFinished(CachedResource* resource)
+void WebCoreAVFResourceLoader::notifyFinished(CachedResource& resource)
 {
-    if (resource->loadFailedOrCanceled()) {
+    if (resource.loadFailedOrCanceled()) {
         // <rdar://problem/13987417> Set the contentType of the contentInformationRequest to an empty
         // string to trigger AVAsset's playable value to complete loading.
         if ([m_avRequest.get() contentInformationRequest] && ![[m_avRequest.get() contentInformationRequest] contentType])
             [[m_avRequest.get() contentInformationRequest] setContentType:@""];
 
-        NSError* error = resource->errorOccurred() ? resource->resourceError().nsError() : nil;
+        NSError* error = resource.errorOccurred() ? resource.resourceError().nsError() : nil;
         [m_avRequest.get() finishLoadingWithError:error];
     } else {
         fulfillRequestWithResource(resource);
@@ -155,20 +154,19 @@ void WebCoreAVFResourceLoader::notifyFinished(CachedResource* resource)
     stopLoading();
 }
 
-void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource* resource)
+void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource& resource)
 {
-    ASSERT(resource);
-    ASSERT(resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     AVAssetResourceLoadingDataRequest* dataRequest = [m_avRequest dataRequest];
     if (!dataRequest)
         return;
 
-    SharedBuffer* data = resource->resourceBuffer();
+    SharedBuffer* data = m_resource->resourceBuffer();
     if (!data)
         return;
 
     NSUInteger responseOffset = 0;
-    ParsedContentRange contentRange = resource->response().contentRange();
+    ParsedContentRange contentRange = m_resource->response().contentRange();
     if (contentRange.isValid())
         responseOffset = static_cast<NSUInteger>(contentRange.firstBytePosition());
 

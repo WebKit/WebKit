@@ -86,9 +86,9 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     loader.preflightSuccess(WTFMove(request));
 }
 
-void CrossOriginPreflightChecker::notifyFinished(CachedResource* resource)
+void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource)
 {
-    ASSERT_UNUSED(resource, resource == m_resource);
+    ASSERT_UNUSED(resource, &resource == m_resource);
     if (m_resource->loadFailedOrCanceled()) {
         ResourceError preflightError = m_resource->resourceError();
         // If the preflight was cancelled by underlying code, it probably means the request was blocked due to some access control policy.

@@ -57,9 +57,9 @@ public:
     void stopFilteringMainResource();
 
     bool continueAfterWillSendRequest(ResourceRequest&, const ResourceResponse&);
-    bool continueAfterResponseReceived(CachedResource*, const ResourceResponse&);
-    bool continueAfterDataReceived(CachedResource*, const char* data, int length);
-    bool continueAfterNotifyFinished(CachedResource*);
+    bool continueAfterResponseReceived(const ResourceResponse&);
+    bool continueAfterDataReceived(const char* data, int length);
+    bool continueAfterNotifyFinished(CachedResource&);
 
     static bool continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData&);
     void handleProvisionalLoadFailure(const ResourceError&);

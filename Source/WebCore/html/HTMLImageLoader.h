@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef HTMLImageLoader_h
-#define HTMLImageLoader_h
+#pragma once
 
 #include "ImageLoader.h"
 
@@ -35,9 +34,7 @@ public:
     void dispatchLoadEvent() override;
     String sourceURI(const AtomicString&) const override;
 
-    void notifyFinished(CachedResource*) override;
+    void notifyFinished(CachedResource&) final;
 };
 
 }
-
-#endif
