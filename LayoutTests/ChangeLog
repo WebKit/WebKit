@@ -1,3 +1,14 @@
+2016-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        js/function-apply-aliased.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=127860
+
+        Reviewed by Darin Adler.
+
+        This test no longer times out.  Reintegrating into test suites.
+
+        * TestExpectations: Stopped skipping js/function-apply-aliased.html.
+
 2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/console/addInspectedNode.html as flaky on mac-debug.
