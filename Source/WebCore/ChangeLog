@@ -1,5 +1,28 @@
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
+        CachedXSLStylesheet does not need to be updated according Origin/Fetch mode
+        https://bugs.webkit.org/show_bug.cgi?id=162389
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        Making clear that there is no reason to update cached XSLT resources according the origin, given that CORS is never checked and loading is always same-origin.
+
+        Renaming CachedResource::isClean to CachedResource::isCORSSameOrigin to better match spec terminology.
+        Updating HTMLLinkElement accordingly.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::isCORSSameOrigin): Ensuring that this method is not called for resource types for which CORS is not to be used.
+        (WebCore::CachedResource::isClean): Deleted.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
         Add a place for common HTTP Header values
         https://bugs.webkit.org/show_bug.cgi?id=163002
 

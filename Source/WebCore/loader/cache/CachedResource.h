@@ -208,7 +208,7 @@ public:
 
     void setCrossOrigin();
     bool isCrossOrigin() const;
-    bool isClean() const;
+    bool isCORSSameOrigin() const;
     ResourceResponse::Tainting responseTainting() const { return m_responseTainting; }
 
     void loadFrom(const CachedResource&);

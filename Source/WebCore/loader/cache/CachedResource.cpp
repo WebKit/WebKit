@@ -442,8 +442,13 @@ bool CachedResource::isCrossOrigin() const
     return m_responseTainting != ResourceResponse::Tainting::Basic;
 }
 
-bool CachedResource::isClean() const
+bool CachedResource::isCORSSameOrigin() const
 {
+    // Following resource types do not use CORS
+    ASSERT(type() != CachedResource::Type::FontResource);
+    ASSERT(type() != CachedResource::Type::SVGFontResource);
+    ASSERT(type() != CachedResource::XSLStyleSheet);
+
     // https://html.spec.whatwg.org/multipage/infrastructure.html#cors-same-origin
     return !loadFailedOrCanceled() && m_responseTainting != ResourceResponse::Tainting::Opaque;
 }

@@ -549,6 +549,12 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         return false;
     }
 
+#if ENABLE(XSLT)
+    // Load is same-origin, we do not check for CORS.
+    if (resource.type() == CachedResource::XSLStyleSheet)
+        return false;
+#endif
+
     // FIXME: We should enable resource reuse for these resource types
     switch (resource.type()) {
     case CachedResource::SVGDocumentResource:
@@ -559,10 +565,6 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         return false;
     case CachedResource::MainResource:
         return false;
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-        return false;
-#endif
 #if ENABLE(LINK_PREFETCH)
     case CachedResource::LinkPrefetch:
         return false;
