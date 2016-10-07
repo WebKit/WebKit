@@ -1,3 +1,17 @@
+2016-10-07  Gwang Yoon Hwang  <yoon@igalia.com>
+
+        [GTK] Remove unneeded creation of TextureMapperPlatformLayerProxy
+        https://bugs.webkit.org/show_bug.cgi?id=163101
+
+        Reviewed by Žan Doberšek.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBufferData::ImageBufferData): Modified not to create
+        TextureMapperPlatformLayerProxy if it is not created for the
+        accelerated 2d canvas.
+
 2016-10-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Use 'use lib $FindBin::Bin' to append Perl module include path
