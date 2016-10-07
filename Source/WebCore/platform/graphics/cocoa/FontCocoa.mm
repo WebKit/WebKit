@@ -624,8 +624,8 @@ float Font::platformWidthForGlyph(Glyph glyph) const
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
     if (platformData().size()) {
         CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
-        // FIXME: Remove this special-casing when <rdar://problem/28197291> is fixed.
-        if (CTFontIsAppleColorEmoji(m_platformData.ctFont()))
+        // FIXME: Remove this special-casing when <rdar://problem/28197291> and <rdar://problem/28662086> are fixed.
+        if (CTFontIsAppleColorEmoji(m_platformData.ctFont()) || m_platformData.hasVariations())
             CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), orientation, &glyph, &advance, 1);
         else
             CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);

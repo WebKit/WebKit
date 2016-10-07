@@ -1,3 +1,15 @@
+2016-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Variation fonts don't affect glyph advances
+        https://bugs.webkit.org/show_bug.cgi?id=163093
+
+        Reviewed by Darin Adler.
+
+        * platform/ios-simulator/TestExpectations: Mark the test
+        as failing on iOS because that OS doesn't have Skia.
+        * fast/text/variations/advances-expected.txt: Added.
+        * fast/text/variations/advances.html: Added.
+
 2016-10-06  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Skip to test imported/w3c/web-platform-tests/

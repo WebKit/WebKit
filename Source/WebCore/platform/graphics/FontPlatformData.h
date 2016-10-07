@@ -138,6 +138,8 @@ public:
     bool isSystemFont() const { return m_isSystemFont; }
 #endif
 
+    bool hasVariations() const { return m_hasVariations; }
+
 #if USE(CG) && (PLATFORM(WIN) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000))
     CGFontRef cgFont() const { return m_cgFont.get(); }
 #endif
@@ -277,6 +279,7 @@ private:
     bool m_isColorBitmapFont { false };
     bool m_isHashTableDeletedValue { false };
     bool m_isSystemFont { false };
+    bool m_hasVariations { false };
     // The values above are common to all ports
 
 #if PLATFORM(IOS)

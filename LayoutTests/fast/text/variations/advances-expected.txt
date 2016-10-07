@@ -1,0 +1,11 @@
+PASS regular.offsetWidth is not wide.offsetWidth
+PASS regular.offsetWidth is not narrow.offsetWidth
+PASS narrow.offsetWidth is not wide.offsetWidth
+PASS regular.offsetWidth is specifiedregular.offsetWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ham
+ham
+ham
+ham

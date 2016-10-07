@@ -1,3 +1,23 @@
+2016-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Variation fonts don't affect glyph advances
+        https://bugs.webkit.org/show_bug.cgi?id=163093
+
+        Reviewed by Darin Adler.
+
+        Work around known bug <rdar://problem/28662086>. For variation fonts,
+        CTFontGetAdvancesForGlyphs() gives correct answers but
+        CTFontGetUnsummedAdvancesForGlyphsAndStyle() doesn't.
+
+        Test: fast/text/variations/advances.html
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hasVariations):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformWidthForGlyph):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2016-10-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206713.

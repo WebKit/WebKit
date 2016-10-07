@@ -50,6 +50,8 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
     m_font = font;
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font) & kCTFontTraitColorGlyphs;
     m_isSystemFont = CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(m_font.get())).get());
+    auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font, kCTFontVariationAttribute)));
+    m_hasVariations = variations && CFDictionaryGetCount(variations.get());
 
 #if PLATFORM(IOS)
     m_isEmoji = CTFontIsAppleColorEmoji(m_font.get());
