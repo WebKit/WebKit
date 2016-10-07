@@ -34,22 +34,23 @@ import re
 
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.port.apple import ApplePort
+from webkitpy.port.darwin import DarwinPort
 
 _log = logging.getLogger(__name__)
 
 
-class MacPort(ApplePort):
+class MacPort(DarwinPort):
     port_name = "mac"
 
     VERSION_FALLBACK_ORDER = ['mac-snowleopard', 'mac-lion', 'mac-mountainlion', 'mac-mavericks', 'mac-yosemite', 'mac-elcapitan', 'mac-sierra']
+    SDK = 'macosx'
 
     ARCHITECTURES = ['x86_64', 'x86']
 
     DEFAULT_ARCHITECTURE = 'x86_64'
 
     def __init__(self, host, port_name, **kwargs):
-        super(MacPort, self).__init__(host, port_name, **kwargs)
+        DarwinPort.__init__(self, host, port_name, **kwargs)
 
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
@@ -65,9 +66,6 @@ class MacPort(ApplePort):
         if self.get_option('webkit_test_runner'):
             fallback_names = [self._wk2_port_name(), 'wk2'] + fallback_names
         return map(self._webkit_baseline_path, fallback_names)
-
-    def _port_specific_expectations_files(self):
-        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
     def configuration_specifier_macros(self):
         return {
@@ -152,9 +150,6 @@ class MacPort(ApplePort):
             supportable_instances = default_count
         return min(supportable_instances, default_count)
 
-    def make_command(self):
-        return self.xcrun_find('make', '/usr/bin/make')
-
     def _build_java_test_support(self):
         # FIXME: This is unused. Remove.
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
@@ -166,31 +161,6 @@ class MacPort(ApplePort):
 
     def _check_port_build(self):
         return not self.get_option('java') or self._build_java_test_support()
-
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
-        # Note that we do slow-spin here and wait, since it appears the time
-        # ReportCrash takes to actually write and flush the file varies when there are
-        # lots of simultaneous crashes going on.
-        # FIXME: Should most of this be moved into CrashLogs()?
-        time_fn = time_fn or time.time
-        sleep_fn = sleep_fn or time.sleep
-        crash_log = ''
-        crash_logs = CrashLogs(self.host)
-        now = time_fn()
-        # FIXME: delete this after we're sure this code is working ...
-        _log.debug('looking for crash log for %s:%s' % (name, str(pid)))
-        deadline = now + 5 * int(self.get_option('child_processes', 1))
-        while not crash_log and now <= deadline:
-            crash_log = crash_logs.find_newest_log(name, pid, include_errors=True, newer_than=newer_than)
-            if not wait_for_log:
-                break
-            if not crash_log or not [line for line in crash_log.splitlines() if not line.startswith('ERROR')]:
-                sleep_fn(0.1)
-                now = time_fn()
-
-        if not crash_log:
-            return (stderr, None)
-        return (stderr, crash_log)
 
     def start_helper(self, pixel_tests=False):
         helper_path = self._path_to_helper()
@@ -228,16 +198,6 @@ class MacPort(ApplePort):
             except IOError, e:
                 _log.debug("IOError raised while stopping helper: %s" % str(e))
             self._helper = None
-
-    def nm_command(self):
-        return self.xcrun_find('nm', 'nm')
-
-    def xcrun_find(self, command, fallback):
-        try:
-            return self._executive.run_command(['xcrun', '-find', command]).rstrip()
-        except ScriptError:
-            _log.warn("xcrun failed; falling back to '%s'." % fallback)
-            return fallback
 
     def logging_patterns_to_strip(self):
         # FIXME: Remove this after <rdar://problem/15605007> is fixed

@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,8 +27,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
+
 from webkitpy.port.mac import MacPort
-from webkitpy.port import port_testcase
+from webkitpy.port import darwin_testcase
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
@@ -35,24 +38,11 @@ from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2,
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 
-class MacTest(port_testcase.PortTestCase):
+class MacTest(darwin_testcase.DarwinTest):
     os_name = 'mac'
     os_version = 'lion'
     port_name = 'mac-lion'
     port_maker = MacPort
-
-    def assert_skipped_file_search_paths(self, port_name, expected_paths, use_webkit2=False):
-        port = self.make_port(port_name=port_name, options=MockOptions(webkit_test_runner=use_webkit2))
-        self.assertEqual(port._skipped_file_search_paths(), expected_paths)
-
-    def test_default_timeout_ms(self):
-        super(MacTest, self).test_default_timeout_ms()
-        self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
-
-    def assert_name(self, port_name, os_version_string, expected):
-        host = MockSystemHost(os_name='mac', os_version=os_version_string)
-        port = self.make_port(host=host, port_name=port_name)
-        self.assertEqual(expected, port.name())
 
     def test_tests_for_other_platforms(self):
         platforms = ['mac', 'mac-snowleopard']
@@ -157,78 +147,7 @@ class MacTest(port_testcase.PortTestCase):
             times = [0, 20, 40]
             return lambda: times.pop(0)
         port = self.make_port(port_name='mac-snowleopard')
-        port._get_crash_log('DumpRenderTree', 1234, '', '', 0,
-            time_fn=fake_time_cb(), sleep_fn=lambda delay: None)
-
-    def test_helper_starts(self):
-        host = MockSystemHost(MockExecutive())
-        port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        host.executive._proc = MockProcess('ready\n')
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
-
-        # make sure trying to stop the helper twice is safe.
-        port.stop_helper()
-
-    def test_helper_fails_to_start(self):
-        host = MockSystemHost(MockExecutive())
-        port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
-
-    def test_helper_fails_to_stop(self):
-        host = MockSystemHost(MockExecutive())
-        host.executive._proc = MockProcess()
-
-        def bad_waiter():
-            raise IOError('failed to wait')
-        host.executive._proc.wait = bad_waiter
-
-        port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
-
-    def test_spindump(self):
-
-        def logging_run_command(args):
-            print args
-
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sudo', '-n', '/usr/sbin/spindump', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-spindump.txt']\n"
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
-
-    def test_sample_process(self):
-
-        def logging_run_command(args):
-            if args[0] == '/usr/bin/sudo':
-                return 1
-            print args
-            return 0
-
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/mock-build/layout-test-results/test-42-sample.txt']\n"
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
-
-    def test_sample_process_exception(self):
-        def throwing_run_command(args):
-            if args[0] == '/usr/bin/sudo':
-                return 1
-            raise ScriptError("MOCK script error")
-
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+        port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
 
     def test_32bit(self):
         port = self.make_port(options=MockOptions(architecture='x86'))
@@ -252,3 +171,17 @@ class MacTest(port_testcase.PortTestCase):
         port._run_script = run_script
         port._build_driver()
         self.assertEqual(self.args, [])
+
+    def test_sdk_name(self):
+        port = self.make_port()
+        self.assertEqual(port.SDK, 'macosx')
+
+    def test_xcrun(self):
+        def throwing_run_command(args):
+            print args
+            raise ScriptError("MOCK script error")
+
+        port = self.make_port()
+        port._executive = MockExecutive2(run_command_fn=throwing_run_command)
+        expected_stdout = "['xcrun', '--sdk', 'macosx', '-find', 'test']\n"
+        OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)

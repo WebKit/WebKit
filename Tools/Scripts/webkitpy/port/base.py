@@ -153,9 +153,7 @@ class Port(object):
         return []
 
     def supports_per_test_timeout(self):
-        # FIXME: Make per-test timeouts unconditional once all ports' DumpRenderTrees support that.
-        # Windows DumpRenderTree may be the only one remaining to be fixed at this time.
-        return False
+        return True
 
     def default_pixel_tests(self):
         # FIXME: Disable until they are run by default on build.webkit.org.

@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -81,6 +82,7 @@ class PortTestCase(unittest.TestCase):
     os_version = None
     port_maker = TestWebKitPort
     port_name = None
+    is_simulator = False
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
         host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
@@ -250,6 +252,10 @@ class PortTestCase(unittest.TestCase):
             self.proc = MockServerProcess(port, nm, cmd, env, lines=['diff: 100% failed\n', 'diff: 100% failed\n'])
             return self.proc
 
+        # FIXME: Can't pretend to run a simulator's setup, so just skip this test.
+        if self.is_simulator:
+            return
+
         port._server_process_constructor = make_proc
         port.setup_test_run()
         self.assertEqual(port.diff_image('foo', 'bar'), ('', 100.0, None))
@@ -272,6 +278,10 @@ class PortTestCase(unittest.TestCase):
         def make_proc(port, nm, cmd, env):
             self.proc = MockServerProcess(port, nm, cmd, env, crashed=True)
             return self.proc
+
+        # FIXME: Can't pretend to run a simulator's setup, so just skip this test.
+        if self.is_simulator:
+            return
 
         port._server_process_constructor = make_proc
         port.setup_test_run()

@@ -1,3 +1,83 @@
+2016-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        Move functionality common to Darwin ports into a base class
+        https://bugs.webkit.org/show_bug.cgi?id=160709
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/port/apple.py:
+        (ApplePort.determine_full_port_name): Specific iOS port check.
+        (ApplePort.__init__): Move leak detector to DarwinPort.
+        (ApplePort._make_leak_detector): Moved to DarwinPort.
+        (ApplePort.supports_per_test_timeout): Moved to Port.
+        (ApplePort.check_for_leaks): Moved to DarwinPort.
+        (ApplePort.print_leaks_summary): Moved to DarwinPort.
+        (ApplePort._path_to_webcore_library): Moved to DarwinPort.
+        (ApplePort.show_results_html_file): Moved to DarwinPort.
+        (ApplePort._merge_crash_logs): Moved to DarwinPort.
+        (ApplePort._look_for_all_crash_logs_in_log_dir): Moved to DarwinPort.
+        (ApplePort._get_crash_log): Moved to DarwinPort.
+        (ApplePort.look_for_new_crash_logs): Moved to DarwinPort.
+        (ApplePort.sample_process): Moved to DarwinPort.
+        (ApplePort.sample_file_path): Moved to DarwinPort.
+        (ApplePort.look_for_new_samples): Moved to DarwinPort.
+        * Scripts/webkitpy/port/base.py:
+        (Port.supports_per_test_timeout): Return true for all ports.
+        * Scripts/webkitpy/port/darwin.py: Added.
+        (DarwinPort): Shared iOS and Mac functions.
+        * Scripts/webkitpy/port/darwin_testcase.py: Added.
+        (DarwinTest): Shared iOS and Mac testing.
+        * Scripts/webkitpy/port/efl.py:
+        (EflPort):
+        (EflPort.supports_per_test_timeout): Moved to Port.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort._driver_class):
+        (GtkPort):
+        (GtkPort.supports_per_test_timeout): Moved to Port.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        (IOSPort.operating_system):
+        (IOSSimulatorPort):
+        (IOSSimulatorPort.__init__): Inherits from DarwinPort.
+        (IOSSimulatorPort._port_specific_expectations_files): Moved to DarwinPort.
+        (IOSSimulatorPort._get_crash_log): Deleted.
+        (IOSSimulatorPort.xcrun_find): Deleted.
+        * Scripts/webkitpy/port/ios_unittest.py: Added.
+        (iosTest): Unit tests for the iOS port.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.__init__): Inherits from DarwinPort.
+        (MacPort._port_specific_expectations_files): Moved to DarwinPort.
+        (MacPort.make_command): Moved to DarwinPort.
+        (MacPort._get_crash_log): Moved to DarwinPort.
+        (MacPort.nm_command): Moved to DarwinPort.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest):
+        (MacTest.test_sdk_name): Added test.
+        (MacTest.test_xcrun): Added test.
+        (MacTest.assert_skipped_file_search_paths): Moved to DarwinTest.
+        (MacTest.test_default_timeout_ms): Moved to DarwinTest.
+        (MacTest.assert_name): Moved to DarwinTest.
+        (MacTest.test_helper_starts): Moved to DarwinTest.
+        (MacTest.test_helper_fails_to_start): Moved to DarwinTest.
+        (MacTest.test_helper_fails_to_stop): Moved to DarwinTest.
+        (MacTest.test_spindump): Moved to DarwinTest.
+        (MacTest.test_sample_process): Moved to DarwinTest.
+        (MacTest.test_sample_process_exception): Moved to DarwinTest.
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.test_diff_image): Added is_simulator flag.
+        (PortTestCase.test_diff_image): Skip test if on a simulator.
+        (PortTestCase.test_diff_image_crashed): Skip test if on a simulator.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort):
+        (WinPort.look_for_new_samples): Used default, ApplePort no longer implements.
+        (WinPort.sample_process): Ditto.
+        (WinPort._make_leak_detector): Ditto.
+        (WinPort.check_for_leaks): Ditto.
+        (WinPort.print_leaks_summary): Ditto.
+        (WinPort._path_to_webcore_library): Ditto.
+
 2016-10-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WKPageSetSession

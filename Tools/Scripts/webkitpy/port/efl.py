@@ -80,9 +80,6 @@ class EflPort(Port):
 
         return env
 
-    def supports_per_test_timeout(self):
-        return True
-
     def default_timeout_ms(self):
         # Tests run considerably slower under gdb
         # or valgrind.
