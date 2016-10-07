@@ -1905,6 +1905,11 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('        ^{', 'No space between ^ and block definition.  [whitespace/brackets] [4]', 'foo.m')
         self.assert_lint('        ^ (arg1, arg2) {', 'Extra space between ^ and block arguments.  [whitespace/brackets] [4]', 'foo.m')
 
+    def test_objective_c_block_as_argument(self):
+        self.assert_lint('        withLambda:^(var, var_ref) {', '', 'foo.mm')
+        self.assert_lint('        withLambda:^ {', '', 'foo.m')
+        self.assert_lint('        withLambda:^{', 'No space between ^ and block definition.  [whitespace/brackets] [4]', 'foo.m')
+
     def test_spacing_around_else(self):
         self.assert_lint('}else {', 'Missing space before else'
                          '  [whitespace/braces] [5]')

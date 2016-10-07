@@ -1,3 +1,15 @@
+2016-10-07  Jonathan Bedard  <jbedard@apple.com>
+
+        Style Checking Error when Objective C Blocks passed as Argument
+        https://bugs.webkit.org/show_bug.cgi?id=162463
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (regex_for_lambdas_and_blocks): Consider case where block is passed as a function argument.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_objective_c_block_as_argument): Test case where block is passed as a function argument. 
+
 2016-10-07  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Docs build failure
