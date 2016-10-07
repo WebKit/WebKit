@@ -1467,3 +1467,5 @@ webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pa
 # rdar://problem/28586837
 fast/text/variations/order.html [ Crash ]
 animations/font-variation-settings-order.html [ Crash ]
+
+[ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Skip ]

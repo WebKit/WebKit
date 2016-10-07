@@ -115,6 +115,8 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Element& searchEleme
         shareElement = findSibling(context, cousinList, count);
         if (shareElement)
             break;
+        if (count >= cStyleSearchThreshold)
+            break;
         cousinList = locateCousinList(cousinList->parentElement());
     }
 
@@ -144,7 +146,7 @@ StyledElement* SharingResolver::findSibling(const Context& context, Node* node, 
             continue;
         if (canShareStyleWithElement(context, downcast<StyledElement>(*node)))
             break;
-        if (count++ == cStyleSearchThreshold)
+        if (count++ >= cStyleSearchThreshold)
             return nullptr;
     }
     return downcast<StyledElement>(node);
@@ -152,8 +154,7 @@ StyledElement* SharingResolver::findSibling(const Context& context, Node* node, 
 
 Node* SharingResolver::locateCousinList(const Element* parent) const
 {
-    const unsigned maximumSearchCount = 10;
-    for (unsigned count = 0; count < maximumSearchCount; ++count) {
+    for (unsigned count = 0; count < cStyleSearchThreshold; ++count) {
         auto* elementSharingParentStyle = m_elementsSharingStyle.get(parent);
         if (!elementSharingParentStyle)
             return nullptr;

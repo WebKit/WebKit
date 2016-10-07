@@ -1,3 +1,23 @@
+2016-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        https://vuldb.com/?cvssv3.2012 takes long time to load.
+        https://bugs.webkit.org/show_bug.cgi?id=162994
+        <rdar://problem/28593746>
+
+        Reviewed by Darin Adler.
+
+        Stop visiting cousins when we hit the style sharing search threshold.
+
+        In addition to mistakenly ignoring the threshold at SharingResolver::findSibling(), we
+        continued on searching for cousin elements. 
+
+        Test: fast/selectors/slow-style-sharing-with-long-cousin-list.html
+
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::resolve):
+        (WebCore::Style::SharingResolver::findSibling):
+        (WebCore::Style::SharingResolver::locateCousinList):
+
 2016-10-07  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Implement generic reader functions
