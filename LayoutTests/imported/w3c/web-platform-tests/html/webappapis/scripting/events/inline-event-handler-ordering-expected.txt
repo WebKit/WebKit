@@ -3,7 +3,7 @@ CONSOLE MESSAGE: line 51: SyntaxError: Unexpected token '}'
 
 Harness Error (FAIL), message = SyntaxError: Unexpected token '}'
 
-FAIL Inline event handlers retain their ordering when invalid and force-compiled assert_array_equals: property 1, expected "TWO" but got "THREE"
-FAIL Inline event handlers retain their ordering when invalid and force-compiled via dispatch assert_array_equals: property 3, expected "TWO" but got "THREE"
-FAIL Inline event handlers retain their ordering when invalid and lazy-compiled assert_array_equals: property 1, expected "TWO" but got "THREE"
+PASS Inline event handlers retain their ordering when invalid and force-compiled 
+PASS Inline event handlers retain their ordering when invalid and force-compiled via dispatch 
+PASS Inline event handlers retain their ordering when invalid and lazy-compiled 
 

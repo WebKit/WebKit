@@ -1,3 +1,26 @@
+2016-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Overwriting an attribute event listener can lead to wrong event listener firing order
+        https://bugs.webkit.org/show_bug.cgi?id=163083
+
+        Reviewed by Darin Adler.
+
+        Overwriting an attribute event listener could lead to wrong event listener
+        firing order in WebKit. This is because we were removing the old event
+        listener and then appending the new one instead of actually *replacing*
+        the old one.
+
+        No new tests, rebaselined existing tests.
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::EventListenerMap::replace):
+        * dom/EventListenerMap.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::setAttributeEventListener):
+        (WebCore::EventTarget::hasActiveEventListeners): Deleted.
+        (WebCore::EventTarget::dispatchEventForBindings): Deleted.
+        * dom/EventTarget.h:
+
 2016-10-06  Alex Christensen  <achristensen@webkit.org>
 
         URLParser: Non-ASCII characters in Non-UTF-8 encoded queries of relative URLs with ws, wss, or nonspecial schemes should be UTF-8 encoded

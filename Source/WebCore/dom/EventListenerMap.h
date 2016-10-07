@@ -55,6 +55,7 @@ public:
 
     void clear();
 
+    void replace(const AtomicString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options&);
     bool add(const AtomicString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomicString& eventType, EventListener&, bool useCapture);
     WEBCORE_EXPORT EventListenerVector* find(const AtomicString& eventType) const;

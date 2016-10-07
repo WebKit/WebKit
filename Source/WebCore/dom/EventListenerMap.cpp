@@ -108,6 +108,19 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
     return notFound;
 }
 
+void EventListenerMap::replace(const AtomicString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options& options)
+{
+    assertNoActiveIterators();
+
+    auto* listeners = find(eventType);
+    ASSERT(listeners);
+    size_t index = findListener(*listeners, oldListener, options.capture);
+    ASSERT(index != notFound);
+    auto& registeredListener = listeners->at(index);
+    registeredListener->markAsRemoved();
+    registeredListener = RegisteredEventListener::create(WTFMove(newListener), options);
+}
+
 bool EventListenerMap::add(const AtomicString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     assertNoActiveIterators();

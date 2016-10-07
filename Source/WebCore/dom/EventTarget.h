@@ -151,7 +151,6 @@ public:
 
     // Used for legacy "onEvent" attribute APIs.
     bool setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&&);
-    bool clearAttributeEventListener(const AtomicString& eventType);
     EventListener* getAttributeEventListener(const AtomicString& eventType);
 
     bool hasEventListeners() const;

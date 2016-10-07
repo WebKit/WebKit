@@ -107,11 +107,17 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
 
 bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPtr<EventListener>&& listener)
 {
-    clearAttributeEventListener(eventType);
-    if (!listener)
+    EventListener* existingListener = getAttributeEventListener(eventType);
+    if (!listener) {
+        if (existingListener)
+            removeEventListener(eventType, *existingListener, false);
         return false;
-    return addEventListener(eventType, listener.releaseNonNull());
-}
+    }
+    if (existingListener) {
+        eventTargetData()->eventListenerMap.replace(eventType, *existingListener, listener.releaseNonNull(), { });
+        return true;
+    }
+    return addEventListener(eventType, listener.releaseNonNull());}
 
 EventListener* EventTarget::getAttributeEventListener(const AtomicString& eventType)
 {
@@ -128,14 +134,6 @@ bool EventTarget::hasActiveEventListeners(const AtomicString& eventType) const
     if (!eventTargetData)
         return false;
     return eventTargetData->eventListenerMap.containsActive(eventType);
-}
-
-bool EventTarget::clearAttributeEventListener(const AtomicString& eventType)
-{
-    EventListener* listener = getAttributeEventListener(eventType);
-    if (!listener)
-        return false;
-    return removeEventListener(eventType, *listener, false);
 }
 
 bool EventTarget::dispatchEventForBindings(Event& event, ExceptionCode& ec)

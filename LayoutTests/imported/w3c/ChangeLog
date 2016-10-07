@@ -1,3 +1,15 @@
+2016-10-06  Chris Dumez  <cdumez@apple.com>
+
+        Overwriting an attribute event listener can lead to wrong event listener firing order
+        https://bugs.webkit.org/show_bug.cgi?id=163083
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a couple of W3C tests now that more checks are passing.
+
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-spec-example-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/inline-event-handler-ordering-expected.txt:
+
 2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a dummy SubtleCrypto interface

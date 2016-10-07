@@ -1,11 +1,11 @@
 
-FAIL Event handler listeners should be registered when they are first set to an object value (object "[object Object]"). assert_equals: expected 2 but got 1
-FAIL Event handler listeners should be registered when they are first set to an object value (function "function () {}"). assert_equals: expected 2 but got 1
-FAIL Event handler listeners should be registered when they are first set to an object value (object "42"). assert_equals: expected 2 but got 1
-FAIL Event handler listeners should be registered when they are first set to an object value (object ""). assert_equals: expected 2 but got 1
-FAIL Event handler listeners should be registered when they are first set to an object value (42). assert_equals: expected 3 but got 2
-FAIL Event handler listeners should be registered when they are first set to an object value (null). assert_equals: expected 3 but got 2
-FAIL Event handler listeners should be registered when they are first set to an object value (undefined). assert_equals: expected 3 but got 2
-FAIL Event handler listeners should be registered when they are first set to an object value (""). assert_equals: expected 3 but got 2
-FAIL Event handler listeners should be registered when they are first set to an object value. assert_equals: expected 3 but got 2
+PASS Event handler listeners should be registered when they are first set to an object value (object "[object Object]"). 
+PASS Event handler listeners should be registered when they are first set to an object value (function "function () {}"). 
+PASS Event handler listeners should be registered when they are first set to an object value (object "42"). 
+PASS Event handler listeners should be registered when they are first set to an object value (object ""). 
+PASS Event handler listeners should be registered when they are first set to an object value (42). 
+PASS Event handler listeners should be registered when they are first set to an object value (null). 
+PASS Event handler listeners should be registered when they are first set to an object value (undefined). 
+PASS Event handler listeners should be registered when they are first set to an object value (""). 
+PASS Event handler listeners should be registered when they are first set to an object value. 
 
