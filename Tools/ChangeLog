@@ -1,3 +1,12 @@
+2016-10-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Docs build failure
+        https://bugs.webkit.org/show_bug.cgi?id=163102
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtk/jhbuild.modules: Bump to gtk-doc 1.25 to fix build errors on Debian Testing.
+
 2016-10-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         check-webkit-style: Enable the legal/copyright rule for cpp/h files
