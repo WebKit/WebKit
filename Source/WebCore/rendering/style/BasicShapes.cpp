@@ -52,13 +52,15 @@ void BasicShapeCenterCoordinate::updateComputedLength()
         m_computedLength = m_length.isUndefined() ? Length(0, Fixed) : m_length;
         return;
     }
-
     if (m_length.isUndefined()) {
         m_computedLength = Length(100, Percent);
         return;
     }
-    
-    m_computedLength = convertTo100PercentMinusLength(m_length);
+
+    auto lhs = std::make_unique<CalcExpressionLength>(Length(100, Percent));
+    auto rhs = std::make_unique<CalcExpressionLength>(m_length);
+    auto op = std::make_unique<CalcExpressionBinaryOperation>(WTFMove(lhs), WTFMove(rhs), CalcSubtract);
+    m_computedLength = Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 
 struct SVGPathTranslatedByteStream {
