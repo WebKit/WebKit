@@ -37,6 +37,7 @@
 #include "FetchHeaders.h"
 #include "FetchResponseSource.h"
 #include "FormData.h"
+#include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
@@ -62,11 +63,11 @@ Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::Exe
         return FetchBody(WTFMove(formData));
     }
     if (value.isString()) {
-        contentType = ASCIILiteral("text/plain;charset=UTF-8");
+        contentType = HTTPHeaderValues::TextPlainContentType();
         return FetchBody(value.toWTFString(&state));
     }
     if (value.inherits(JSURLSearchParams::info())) {
-        contentType = ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8");
+        contentType = HTTPHeaderValues::FormURLEncodedContentType();
         return FetchBody(*JSURLSearchParams::toWrapped(value));
     }
     if (value.inherits(JSReadableStream::info()))

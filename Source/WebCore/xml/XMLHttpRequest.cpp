@@ -34,6 +34,7 @@
 #include "File.h"
 #include "HTMLDocument.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMBinding.h"
@@ -566,7 +567,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
                 m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("application/x-www-form-urlencoded"));
             else
 #endif
-                m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("text/plain;charset=UTF-8"));
+                m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::TextPlainContentType());
         } else {
             replaceCharsetInMediaType(contentType, "UTF-8");
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);

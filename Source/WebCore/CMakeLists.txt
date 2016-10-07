@@ -2343,6 +2343,7 @@ set(WebCore_SOURCES
     platform/network/FormData.cpp
     platform/network/FormDataBuilder.cpp
     platform/network/HTTPHeaderMap.cpp
+    platform/network/HTTPHeaderValues.cpp
     platform/network/HTTPParsers.cpp
     platform/network/MIMEHeader.cpp
     platform/network/NetworkStateNotifier.cpp

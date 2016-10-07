@@ -1,5 +1,27 @@
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
+        Add a place for common HTTP Header values
+        https://bugs.webkit.org/show_bug.cgi?id=163002
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Introducing HTTPHeaderValues with two Content-Type values.
+
+        * CMakeLists.txt:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/HTTPHeaderValues.cpp: Added.
+        (WebCore::HTTPHeaderValues::TextPlainContentType):
+        (WebCore::HTTPHeaderValues::FormURLEncodedContentType):
+        * platform/network/HTTPHeaderValues.h: Added.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
         CachedResourceRequest should not need to store defer and preload options
         https://bugs.webkit.org/show_bug.cgi?id=163004
 
