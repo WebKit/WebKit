@@ -1,3 +1,26 @@
+2016-10-07  Andreas Kling  <akling@apple.com>
+
+        [WK2] didRemoveFrameFromHierarchy callback doesn't fire for subframes when evicting from PageCache.
+        <https://webkit.org/b/163098>
+        <rdar://problem/28663488>
+
+        Reviewed by Antti Koivisto.
+
+        Fix a bug where WK2 didRemoveFrameFromHierarchy callbacks wouldn't fire for subframes that were getting
+        kicked out of PageCache. The problem was happening because CachedFrame would disconnect the Frame from
+        its Page just before calling FrameLoader::detachViewsAndDocumentLoader() where the callbacks are fired.
+        Without a Page, the WebFrame on WK2 side can't find its WebPage, and so it can't fire its callbacks.
+
+        The fix is just to switch the order of those two lines.
+
+        This bug was causing frequent DOM and window object leaks in some clients *cough* Safari *cough* that
+        were relying on didRemoveFrameFromHierarchy to release their isolated worlds.
+
+        Test: WebKit2.DidRemoveFrameFromHiearchyInPageCache
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::destroy):
+
 2016-10-07  Nan Wang  <n_wang@apple.com>
 
         AX: AXRoleDescription for details and summary elements
