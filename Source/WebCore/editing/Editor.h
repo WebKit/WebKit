@@ -198,6 +198,11 @@ public:
     WEBCORE_EXPORT void applyStyleToSelection(Ref<EditingStyle>&&, EditAction);
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
+    // Returns whether or not we should proceed with editing.
+    bool willApplyEditing(CompositeEditCommand&) const;
+    bool willUnapplyEditing(const EditCommandComposition&) const;
+    bool willReapplyEditing(const EditCommandComposition&) const;
+
     void appliedEditing(PassRefPtr<CompositeEditCommand>);
     void unappliedEditing(PassRefPtr<EditCommandComposition>);
     void reappliedEditing(PassRefPtr<EditCommandComposition>);

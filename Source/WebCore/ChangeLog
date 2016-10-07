@@ -1,3 +1,92 @@
+2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support onbeforeinput event handling for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163021
+        <rdar://problem/28658073>
+
+        Reviewed by Darin Adler.
+
+        Adds support for parsing the onbeforeinput attribute, and for sending default-preventable
+        `beforeinput` InputEvents to the page. To do this, we introduce two new virtual methods:
+        willApplyCommand and didApplyCommand on the CompositeEditCommand that are called before and
+        after CompositeEditCommand::doApply, respectively. willApplyCommand indicates whether or not
+        the composite editor command should proceed with applying the command.
+
+        Tweaks existing layout tests and adds new tests.
+
+        Tests: fast/events/before-input-events-different-start-end-elements.html
+               fast/events/before-input-events-prevent-default-in-textfield.html
+               fast/events/before-input-events-prevent-default.html
+
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/EventNames.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchInputEvent):
+        (WebCore::Node::defaultEventHandler):
+
+        Currently, we fire input events in Node in response to dispatching a webkitEditableContentChangedEvent. After
+        some discussion, Ryosuke and I believe that it will be ok to instead directly dispatch the input event where we
+        would normally dispatch a webkitEditableContentChangedEvent.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::unapply):
+        (WebCore::EditCommandComposition::reapply):
+
+        Added calls to Editor::willUnapplyEditing and Editor::willReapplyEditing.
+
+        (WebCore::CompositeEditCommand::willApplyCommand):
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::didApplyCommand):
+
+        Added new virtual functions, willApplyCommand and didApplyCommand, that surround a call to
+        CompositeEditCommand::doApply. By default, they call willApplyEditing and appliedEditing on the editor, but may
+        be overridden in special cases, such as in TypingCommand, where we invoke appliedEditing after adding a new
+        typing command to the last open command.
+
+        If willApplyCommand returns false, CompositeEditCommand::apply will bail and not proceed with the command.
+
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+        (WebCore::dispatchInputEvents):
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::willUnapplyEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::willReapplyEditing):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        (WebCore::dispatchEditableContentChangedEvents): Deleted.
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::willApplyCommand):
+        (WebCore::TypingCommand::didApplyCommand):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::deleteSelection):
+
+        These now invoke willAddTypingToOpenCommand before proceeding with creating the command and applying it. The
+        flow is now:
+            - willAddTypingToOpenCommand
+            - create and apply a new command
+            - typingAddedToOpenCommand
+
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::preservesTypingStyle): Deleted.
+        (WebCore::TypingCommand::shouldRetainAutocorrectionIndicator): Deleted.
+        (WebCore::TypingCommand::setShouldRetainAutocorrectionIndicator): Deleted.
+        (WebCore::TypingCommand::shouldStopCaretBlinking): Deleted.
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::createEventHandlerNameMap):
+
 2016-10-07  Nan Wang  <n_wang@apple.com>
 
         AX: <figcaption> should be AXTitleUIElement for other content inside the <figure>

@@ -2204,7 +2204,8 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
 
 void Node::dispatchInputEvent(const AtomicString& inputType)
 {
-    if (document().settings()->inputEventsEnabled())
+    auto* settings = document().settings();
+    if (settings && settings->inputEventsEnabled())
         dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, document().defaultView(), 0));
     else
         dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));
@@ -2272,8 +2273,6 @@ void Node::defaultEventHandler(Event& event)
                 frame->eventHandler().defaultTouchEventHandler(renderer->node(), &downcast<TouchEvent>(event));
         }
 #endif
-    } else if (event.type() == eventNames().webkitEditableContentChangedEvent) {
-        dispatchInputEvent(emptyString());
     }
 }
 

@@ -1,3 +1,27 @@
+2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support onbeforeinput event handling for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163021
+        <rdar://problem/28658073>
+
+        Reviewed by Darin Adler.
+
+        Tweak an existing test to hook into the 'input' event instead of 'webkitEditableContentChanged', as well as
+        tests added in r206843 to verify that `onbeforeinput` handlers are invoked with InputEvents. Also introduces
+        new unit tests verifying that calling preventDefault on InputEvents fired by `onbeforeinput` correctly prevent
+        text from being inserted or deleted.
+
+        * editing/undo/undo-after-event-edited.html:
+        * fast/events/before-input-events-different-start-end-elements-expected.txt: Added.
+        * fast/events/before-input-events-different-start-end-elements.html: Added.
+        * fast/events/before-input-events-prevent-default-expected.txt: Added.
+        * fast/events/before-input-events-prevent-default-in-textfield-expected.txt: Added.
+        * fast/events/before-input-events-prevent-default-in-textfield.html: Added.
+        * fast/events/before-input-events-prevent-default.html: Added.
+        * fast/events/input-events-fired-when-typing-expected.txt:
+        * fast/events/input-events-fired-when-typing.html:
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-07  Nan Wang  <n_wang@apple.com>
 
         AX: <figcaption> should be AXTitleUIElement for other content inside the <figure>

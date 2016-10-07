@@ -117,6 +117,10 @@ public:
 protected:
     explicit CompositeEditCommand(Document&, EditAction = EditActionUnspecified);
 
+    // If willApplyCommand returns false, we won't proceed with applying the command.
+    virtual bool willApplyCommand();
+    virtual void didApplyCommand();
+
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //

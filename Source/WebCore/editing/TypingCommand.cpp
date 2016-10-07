@@ -262,6 +262,16 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
     composition()->setRangeDeletedByUnapply(range);
 }
 
+bool TypingCommand::willApplyCommand()
+{
+    if (!m_isHandlingInitialTypingCommand) {
+        // The TypingCommand will handle the willApplyCommand logic separately in TypingCommand::willAddTypingToOpenCommand.
+        return true;
+    }
+
+    return CompositeEditCommand::willApplyCommand();
+}
+
 void TypingCommand::doApply()
 {
     if (endingSelection().isNoneOrOrphaned())
@@ -296,6 +306,12 @@ void TypingCommand::doApply()
     }
 
     ASSERT_NOT_REACHED();
+}
+
+void TypingCommand::didApplyCommand()
+{
+    // TypingCommands handle applied editing separately (see TypingCommand::typingAddedToOpenCommand).
+    m_isHandlingInitialTypingCommand = false;
 }
 
 void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
@@ -352,6 +368,16 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     }
 }
 
+bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand, TextGranularity)
+{
+    if (m_isHandlingInitialTypingCommand)
+        return true;
+
+    // FIXME: Use the newly added typing command and granularity to ensure that an InputEvent with the
+    // correct inputType is dispatched.
+    return frame().editor().willApplyEditing(*this);
+}
+
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
 {
     Frame& frame = this->frame();
@@ -393,6 +419,9 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool se
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
+    if (!willAddTypingToOpenCommand(InsertText, CharacterGranularity))
+        return;
+
     RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,
         m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces, EditActionTyping);
 
@@ -404,6 +433,9 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
 void TypingCommand::insertLineBreak()
 {
     if (!canAppendNewLineFeedToSelection(endingSelection()))
+        return;
+
+    if (!willAddTypingToOpenCommand(InsertLineBreak, LineGranularity))
         return;
 
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
@@ -423,6 +455,9 @@ void TypingCommand::insertParagraphSeparator()
     if (!canAppendNewLineFeedToSelection(endingSelection()))
         return;
 
+    if (!willAddTypingToOpenCommand(InsertParagraphSeparator, ParagraphGranularity))
+        return;
+
     applyCommandToComposite(InsertParagraphSeparatorCommand::create(document(), false, false, EditActionTyping));
     typingAddedToOpenCommand(InsertParagraphSeparator);
 }
@@ -437,6 +472,9 @@ void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
 
 void TypingCommand::insertParagraphSeparatorInQuotedContent()
 {
+    if (!willAddTypingToOpenCommand(InsertParagraphSeparatorInQuotedContent, ParagraphGranularity))
+        return;
+
     // If the selection starts inside a table, just insert the paragraph separator normally
     // Breaking the blockquote would also break apart the table, which is unecessary when inserting a newline
     if (enclosingNodeOfType(endingSelection().start(), &isTableStructureNode)) {
@@ -479,6 +517,9 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
+    if (!willAddTypingToOpenCommand(DeleteKey, granularity))
+        return;
+
     Frame& frame = this->frame();
 
     frame.editor().updateMarkersForWordsAffectedByEditing(false);
@@ -592,6 +633,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
+    if (!willAddTypingToOpenCommand(ForwardDeleteKey, granularity))
+        return;
+
     Frame& frame = this->frame();
 
     frame.editor().updateMarkersForWordsAffectedByEditing(false);
@@ -690,6 +734,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
 
 void TypingCommand::deleteSelection(bool smartDelete)
 {
+    if (!willAddTypingToOpenCommand(DeleteSelection, CharacterGranularity))
+        return;
+
     CompositeEditCommand::deleteSelection(smartDelete);
     typingAddedToOpenCommand(DeleteSelection);
 }

@@ -1,0 +1,6 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Fired `onbeforeinput`: preventing default!
+The final value is: abc
+

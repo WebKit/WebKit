@@ -188,6 +188,7 @@ onautocomplete
 onautocompleteerror
 onbeforecopy
 onbeforecut
+onbeforeinput
 onbeforeload
 onbeforepaste
 onbeforeunload

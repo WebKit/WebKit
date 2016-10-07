@@ -192,6 +192,7 @@
     // FIXME: Should these be exposed on Window as well (and therefore moved to GlobalEventHandlers.idl)?
     [NotEnumerable] attribute EventHandler onbeforecopy;
     [NotEnumerable] attribute EventHandler onbeforecut;
+    [NotEnumerable] attribute EventHandler onbeforeinput;
     [NotEnumerable] attribute EventHandler onbeforepaste;
     [NotEnumerable] attribute EventHandler oncopy;
     [NotEnumerable] attribute EventHandler oncut;

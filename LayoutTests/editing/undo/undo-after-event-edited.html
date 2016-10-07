@@ -17,7 +17,7 @@ var scriptElements = document.getElementsByTagName("script");
 scriptElements[0].parentNode.removeChild(scriptElements[0]);
 var eventHandlerActive = false;
 
-document.addEventListener("webkitEditableContentChanged", function () {
+document.addEventListener("input", function () {
     if (eventHandlerActive)
         return;
     eventHandlerActive = true;

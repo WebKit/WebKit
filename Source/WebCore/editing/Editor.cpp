@@ -59,7 +59,9 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "IndentOutdentCommand.h"
+#include "InputEvent.h"
 #include "InsertListCommand.h"
+#include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
 #include "KillRing.h"
 #include "Logging.h"
@@ -108,6 +110,18 @@
 #endif
 
 namespace WebCore {
+
+static bool dispatchBeforeInputEvent(Element& element, const AtomicString& inputType)
+{
+    auto* settings = element.document().settings();
+    if (!settings || !settings->inputEventsEnabled())
+        return true;
+
+    auto event = InputEvent::create(eventNames().beforeinputEvent, inputType, true, true, element.document().defaultView(), 0);
+    element.dispatchScopedEvent(event);
+
+    return !event->defaultPrevented();
+}
 
 class ClearTextCommand : public DeleteSelectionCommand {
 public:
@@ -1025,14 +1039,31 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
-static void dispatchEditableContentChangedEvents(PassRefPtr<Element> prpStartRoot, PassRefPtr<Element> prpEndRoot)
+static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName)
 {
-    RefPtr<Element> startRoot = prpStartRoot;
-    RefPtr<Element> endRoot = prpEndRoot;
+    bool continueWithDefaultBehavior = true;
     if (startRoot)
-        startRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false));
+        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*startRoot, inputTypeName);
     if (endRoot && endRoot != startRoot)
-        endRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false));
+        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*endRoot, inputTypeName);
+    return continueWithDefaultBehavior;
+}
+
+static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName)
+{
+    if (startRoot)
+        startRoot->dispatchInputEvent(inputTypeName);
+    if (endRoot && endRoot != startRoot)
+        endRoot->dispatchInputEvent(inputTypeName);
+}
+
+bool Editor::willApplyEditing(CompositeEditCommand& command) const
+{
+    auto* composition = command.composition();
+    if (!composition)
+        return true;
+
+    return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), emptyString());
 }
 
 void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
@@ -1051,7 +1082,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
     
     changeSelectionAfterCommand(newSelection, options);
-    dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
+    dispatchInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), emptyString());
 
     updateEditorUINowIfScheduled();
     
@@ -1074,6 +1105,11 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     respondToChangedContents(newSelection);
 }
 
+bool Editor::willUnapplyEditing(const EditCommandComposition& composition) const
+{
+    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), emptyString());
+}
+
 void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     document().updateLayout();
@@ -1082,7 +1118,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), emptyString());
 
     updateEditorUINowIfScheduled();
 
@@ -1094,6 +1130,11 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     respondToChangedContents(newSelection);
 }
 
+bool Editor::willReapplyEditing(const EditCommandComposition& composition) const
+{
+    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), emptyString());
+}
+
 void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     document().updateLayout();
@@ -1102,7 +1143,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
+    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), emptyString());
     
     updateEditorUINowIfScheduled();
 
@@ -3052,6 +3093,10 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         return;
     }
 
+    auto* element = m_frame.selection().selection().rootEditableElement();
+    if (element && !dispatchBeforeInputEvent(*element, emptyString()))
+        return;
+
     // Calculate the current typing style.
     RefPtr<EditingStyle> typingStyle;
     if (auto existingTypingStyle = m_frame.selection().typingStyle())
@@ -3064,6 +3109,9 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
     RefPtr<EditingStyle> blockStyle = typingStyle->extractAndRemoveBlockProperties();
     if (!blockStyle->isEmpty())
         applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
+
+    if (element)
+        element->dispatchInputEvent(emptyString());
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(typingStyle);
