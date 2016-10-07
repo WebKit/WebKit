@@ -35,7 +35,6 @@
 
 #include "MediaEndpoint.h"
 #include "MediaEndpointSessionDescription.h"
-#include "NotImplemented.h"
 #include "PeerConnectionBackend.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>

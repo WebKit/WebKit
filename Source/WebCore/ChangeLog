@@ -1,3 +1,31 @@
+2016-10-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Misc gardening: Use typedefs consistently and remove unused code
+        https://bugs.webkit.org/show_bug.cgi?id=163104
+
+        Reviewed by Philippe Normand.
+
+        Miscellaneous WebRTC gardening. See file list below for details.
+
+        Testing: No change in behavior.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        Move NotImplemented include to cpp-file.
+        * platform/mediastream/MediaEndpoint.h:
+        Use MediaPayloadVector typedef (instead of Vector<RefPtr<MediaPayload>>).
+        * platform/mediastream/PeerMediaDescription.h:
+        (WebCore::PeerMediaDescription::source): Deleted.
+        (WebCore::PeerMediaDescription::setSource): Deleted.
+        Sources are passed to updateSendConfiguration() via a source map and not added to each
+        PeerMediaDescription anymore. Remove unused code.
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::getDefaultAudioPayloads):
+        (WebCore::MockMediaEndpoint::getDefaultVideoPayloads):
+        Use MediaPayloadVector typedef.
+        * platform/mock/MockMediaEndpoint.h:
+        Use MediaPayloadVector typedef.
+
 2016-10-07  Gwang Yoon Hwang  <yoon@igalia.com>
 
         [GTK] Remove unneeded creation of TextureMapperPlatformLayerProxy

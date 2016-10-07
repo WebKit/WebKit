@@ -48,8 +48,8 @@ public:
     void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override;
 
     void generateDtlsInfo() override;
-    Vector<RefPtr<MediaPayload>> getDefaultAudioPayloads() override;
-    Vector<RefPtr<MediaPayload>> getDefaultVideoPayloads() override;
+    MediaPayloadVector getDefaultAudioPayloads() override;
+    MediaPayloadVector getDefaultVideoPayloads() override;
     MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) override;
 
     UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) override;

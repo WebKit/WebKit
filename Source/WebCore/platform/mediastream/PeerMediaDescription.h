@@ -109,9 +109,6 @@ public:
     const Vector<RefPtr<IceCandidate>>& iceCandidates() const { return m_iceCandidates; }
     void addIceCandidate(RefPtr<IceCandidate>&& candidate) { m_iceCandidates.append(WTFMove(candidate)); }
 
-    RealtimeMediaSource* source() const { return m_source.get(); }
-    void setSource(RefPtr<RealtimeMediaSource>&& source) { m_source = source; }
-
     RefPtr<PeerMediaDescription> clone() const
     {
         RefPtr<PeerMediaDescription> copy = create();
@@ -178,8 +175,6 @@ private:
     String m_iceUfrag;
     String m_icePassword;
     Vector<RefPtr<IceCandidate>> m_iceCandidates;
-
-    RefPtr<RealtimeMediaSource> m_source { nullptr };
 };
 
 } // namespace WebCore
