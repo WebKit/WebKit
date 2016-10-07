@@ -32,6 +32,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <chrono>
+#include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 
@@ -100,7 +101,7 @@ public:
     void setCustomSwipeViews(Vector<RetainPtr<NSView>> views) { m_customSwipeViews = WTFMove(views); }
     void setCustomSwipeViewsTopContentInset(float topContentInset) { m_customSwipeViewsTopContentInset = topContentInset; }
     WebCore::FloatRect windowRelativeBoundsForCustomSwipeViews() const;
-    void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
+    void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&& callback) { m_didMoveSwipeSnapshotCallback = WTFMove(callback); }
 
     bool shouldIgnorePinnedState() { return m_pendingSwipeTracker.shouldIgnorePinnedState(); }
     void setShouldIgnorePinnedState(bool ignore) { m_pendingSwipeTracker.setShouldIgnorePinnedState(ignore); }
@@ -265,7 +266,7 @@ private:
 
     PendingSwipeTracker m_pendingSwipeTracker;
 
-    void (^m_didMoveSwipeSnapshotCallback)(CGRect) { nullptr };
+    BlockPtr<void (CGRect)> m_didMoveSwipeSnapshotCallback;
 
     bool m_hasOutstandingRepaintRequest { false };
 #else    

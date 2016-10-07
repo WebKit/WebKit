@@ -1,3 +1,22 @@
+2016-10-07  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt BlockPtr in ViewGestureController
+        https://bugs.webkit.org/show_bug.cgi?id=163132
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setDidMoveSwipeSnapshotCallback):
+        * UIProcess/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent):
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::setDidMoveSwipeSnapshotCallback):
+        (WebKit::ViewGestureController::m_didMoveSwipeSnapshotCallback): Deleted.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::platformTeardown):
+        (WebKit::ViewGestureController::setDidMoveSwipeSnapshotCallback): Deleted.
+
 2016-10-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of WKPageSetSession

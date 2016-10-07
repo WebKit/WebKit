@@ -91,11 +91,6 @@ void ViewGestureController::platformTeardown()
 
     if (m_activeGestureType == ViewGestureType::Swipe)
         removeSwipeSnapshot();
-
-    if (m_didMoveSwipeSnapshotCallback) {
-        Block_release(m_didMoveSwipeSnapshotCallback);
-        m_didMoveSwipeSnapshotCallback = nullptr;
-    }
 }
 
 static double resistanceForDelta(double deltaScale, double currentScale)
@@ -720,13 +715,6 @@ void ViewGestureController::handleSwipeGesture(WebBackForwardListItem* targetIte
         [m_swipeLayer setTransform:CATransform3DMakeTranslation(width + swipingLayerOffset, 0, 0)];
         didMoveSwipeSnapshotLayer();
     }
-}
-
-void ViewGestureController::setDidMoveSwipeSnapshotCallback(void(^callback)(CGRect))
-{
-    if (m_didMoveSwipeSnapshotCallback)
-        Block_release(m_didMoveSwipeSnapshotCallback);
-    m_didMoveSwipeSnapshotCallback = Block_copy(callback);
 }
 
 void ViewGestureController::didMoveSwipeSnapshotLayer()

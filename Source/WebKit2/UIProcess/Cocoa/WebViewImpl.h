@@ -35,6 +35,7 @@
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <functional>
+#include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -418,7 +419,7 @@ public:
     void setCustomSwipeViews(NSArray *);
     void setCustomSwipeViewsTopContentInset(float);
     bool tryToSwipeWithEvent(NSEvent *, bool ignoringPinnedState);
-    void setDidMoveSwipeSnapshotCallback(void(^)(CGRect));
+    void setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&&);
 
     void scrollWheel(NSEvent *);
     void swipeWithEvent(NSEvent *);

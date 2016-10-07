@@ -232,7 +232,7 @@ bool ViewGestureController::SnapshotRemovalTracker::stopWaitingForEvent(Events e
 #if LOG_DISABLED
     UNUSED_PARAM(logReason);
 #endif
-    log(logReason +  eventsDescription(event));
+    log(logReason + eventsDescription(event));
 
     m_outstandingEvents &= ~event;
 

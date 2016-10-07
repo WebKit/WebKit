@@ -3276,12 +3276,12 @@ bool WebViewImpl::tryToSwipeWithEvent(NSEvent *event, bool ignoringPinnedState)
     return handledEvent;
 }
 
-void WebViewImpl::setDidMoveSwipeSnapshotCallback(void(^callback)(CGRect))
+void WebViewImpl::setDidMoveSwipeSnapshotCallback(BlockPtr<void (CGRect)>&& callback)
 {
     if (!m_allowsBackForwardNavigationGestures)
         return;
 
-    ensureGestureController().setDidMoveSwipeSnapshotCallback(callback);
+    ensureGestureController().setDidMoveSwipeSnapshotCallback(WTFMove(callback));
 }
 
 void WebViewImpl::scrollWheel(NSEvent *event)
