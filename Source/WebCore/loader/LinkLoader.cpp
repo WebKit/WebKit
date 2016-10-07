@@ -162,7 +162,6 @@ void LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL
     linkRequest.setInitiator("link");
 
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
-    linkRequest.setForPreload(true);
     CachedResourceHandle<CachedResource> cachedLinkResource = document.cachedResourceLoader().preload(type.value(), WTFMove(linkRequest), CachedResourceLoader::ExplicitPreload);
 
     if (cachedLinkResource)

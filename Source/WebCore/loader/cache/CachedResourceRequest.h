@@ -40,8 +40,6 @@ class Document;
 
 class CachedResourceRequest {
 public:
-    enum DeferOption { NoDefer, DeferredByClient };
-
     explicit CachedResourceRequest(const ResourceRequest&, const String& charset = String(), Optional<ResourceLoadPriority> = Nullopt);
     CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = Nullopt);
 
@@ -52,10 +50,6 @@ public:
     const ResourceLoaderOptions& options() const { return m_options; }
     void setOptions(const ResourceLoaderOptions& options) { m_options = options; }
     const Optional<ResourceLoadPriority>& priority() const { return m_priority; }
-    bool forPreload() const { return m_forPreload; }
-    void setForPreload(bool forPreload) { m_forPreload = forPreload; }
-    DeferOption defer() const { return m_defer; }
-    void setDefer(DeferOption defer) { m_defer = defer; }
     void setInitiator(PassRefPtr<Element>);
     void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
@@ -72,8 +66,6 @@ private:
     String m_charset;
     ResourceLoaderOptions m_options;
     Optional<ResourceLoadPriority> m_priority;
-    bool m_forPreload;
-    DeferOption m_defer;
     RefPtr<Element> m_initiatorElement;
     AtomicString m_initiatorName;
     RefPtr<SecurityOrigin> m_origin;

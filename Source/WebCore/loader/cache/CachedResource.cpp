@@ -125,6 +125,8 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_type(type)
 {
     ASSERT(sessionID.isValid());
+
+    setLoadPriority(request.priority());
     finishRequestInitialization();
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.

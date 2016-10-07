@@ -1,3 +1,39 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        CachedResourceRequest should not need to store defer and preload options
+        https://bugs.webkit.org/show_bug.cgi?id=163004
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Removing CachedResourceRequest defer and preload fields.
+        These fields are computed inside CachedResourceLoader instead.
+
+        Updated setting of priority from CachedResourceRequest to CachedResource.
+        Priority is set for any new resource (this covers all cases where no cached resource can be reused from the memory cache).
+        Priority is set for a cached resource if the request is not a preload request.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore::CachedResourceLoader::requestPreload):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::priority):
+        (WebCore::CachedResourceRequest::forPreload): Deleted.
+        (WebCore::CachedResourceRequest::setForPreload): Deleted.
+        (WebCore::CachedResourceRequest::defer): Deleted.
+        (WebCore::CachedResourceRequest::setDefer): Deleted.
+
 2016-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Variation fonts don't affect glyph advances

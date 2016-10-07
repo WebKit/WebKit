@@ -136,7 +136,6 @@ public:
     void checkForPendingPreloads();
     void printPreloadStats();
 
-    bool canRequest(CachedResource::Type, const URL&, const CachedResourceRequest&);
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&);
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
@@ -152,14 +151,19 @@ public:
 private:
     explicit CachedResourceLoader(DocumentLoader*);
 
-    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&);
+    enum class ForPreload { Yes, No };
+    enum class DeferOption { NoDefer, DeferredByClient };
+
+    CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, DeferOption = DeferOption::NoDefer);
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&&);
     CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&&);
 
+    bool canRequest(CachedResource::Type, const URL&, const CachedResourceRequest&, ForPreload);
+
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
-    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource) const;
+    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, CachedResourceRequest&, CachedResource* existingResource, ForPreload, DeferOption) const;
 
     bool shouldUpdateCachedResourceWithCurrentRequest(const CachedResource&, const CachedResourceRequest&);
     CachedResourceHandle<CachedResource> updateCachedResourceWithCurrentRequest(const CachedResource&, CachedResourceRequest&&);

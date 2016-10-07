@@ -39,8 +39,6 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
     , m_charset(charset)
     , m_options(CachedResourceLoader::defaultCachedResourceOptions())
     , m_priority(priority)
-    , m_forPreload(false)
-    , m_defer(NoDefer)
 {
 }
 
@@ -48,8 +46,6 @@ CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, 
     : m_resourceRequest(WTFMove(resourceRequest))
     , m_options(options)
     , m_priority(priority)
-    , m_forPreload(false)
-    , m_defer(NoDefer)
 {
 }
 
