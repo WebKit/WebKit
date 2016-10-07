@@ -2478,6 +2478,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (ariaLandmarkRoleDescription)
             return ariaLandmarkRoleDescription;
         
+        if (m_object->isFigure())
+            return AXFigureText();
+        
         switch (m_object->roleValue()) {
         case AudioRole:
             return localizedMediaControlElementString("AudioElement");

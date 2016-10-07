@@ -560,6 +560,7 @@ public:
     bool isStyleFormatGroup() const;
     bool isSubscriptStyleGroup() const;
     bool isSuperscriptStyleGroup() const;
+    bool isFigure() const;
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }

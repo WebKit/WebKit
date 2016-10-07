@@ -408,6 +408,11 @@ String AXSummaryText()
     return String::fromUTF8("summary");
 }
 
+String AXFigureText()
+{
+    return String::fromUTF8("figure");
+}
+
 String AXFooterRoleDescriptionText()
 {
     return String::fromUTF8("footer");

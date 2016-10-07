@@ -1045,7 +1045,7 @@ void AccessibilityRenderObject::determineARIADropEffects(Vector<String>& effects
     
 bool AccessibilityRenderObject::exposesTitleUIElement() const
 {
-    if (!isControl())
+    if (!isControl() && !isFigure())
         return false;
 
     // If this control is ignored (because it's invisible), 
@@ -1081,6 +1081,9 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
         return axObjectCache()->getOrCreate(downcast<RenderFieldset>(*m_renderer).findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
+    
+    if (isFigure())
+        return captionForFigure();
     
     Node* node = m_renderer->node();
     if (!is<Element>(node))
@@ -1244,6 +1247,9 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 
     // all controls are accessible
     if (isControl())
+        return false;
+    
+    if (isFigure())
         return false;
 
     switch (roleValue()) {

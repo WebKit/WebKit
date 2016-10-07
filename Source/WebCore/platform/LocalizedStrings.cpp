@@ -635,6 +635,11 @@ String AXSearchFieldCancelButtonText()
     return WEB_UI_STRING("cancel", "accessibility description for a search field cancel button");
 }
 
+String AXFigureText()
+{
+    return WEB_UI_STRING("figure", "accessibility role description for a figure element.");
+}
+
 String AXButtonActionVerb()
 {
     return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");

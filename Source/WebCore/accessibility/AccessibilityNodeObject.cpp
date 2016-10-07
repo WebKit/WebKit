@@ -1226,6 +1226,23 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
     return nullptr;
 }
 
+AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
+{
+    if (!isFigure())
+        return nullptr;
+    
+    AXObjectCache* cache = axObjectCache();
+    if (!cache)
+        return nullptr;
+    
+    Node* node = this->node();
+    for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(figcaptionTag))
+            return cache->getOrCreate(child);
+    }
+    return nullptr;
+}
+
 bool AccessibilityNodeObject::usesAltTagForTextComputation() const
 {
     return isImage() || isInputImage() || isNativeImage() || isCanvas() || (node() && node()->hasTagName(imgTag));
@@ -1322,6 +1339,13 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
         AccessibilityObject* object = axObjectCache()->getOrCreate(downcast<HTMLFieldSetElement>(*node).legend());
         if (object && !object->isHidden())
             textOrder.append(AccessibilityText(accessibleNameForNode(object->node()), AlternativeText));
+    }
+    
+    // The figure element derives its alternative text from the first associated figcaption element if one is available.
+    if (isFigure()) {
+        AccessibilityObject* captionForFigure = this->captionForFigure();
+        if (captionForFigure && !captionForFigure->isHidden())
+            textOrder.append(AccessibilityText(accessibleNameForNode(captionForFigure->node()), AlternativeText));
     }
     
 #if ENABLE(MATHML)

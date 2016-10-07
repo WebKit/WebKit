@@ -259,6 +259,9 @@
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
 
+/* accessibility role description for a figure element */
+"figure" = "figure";
+
 /* Default application name for Open With context menu */
 "Finder" = "Finder";
 

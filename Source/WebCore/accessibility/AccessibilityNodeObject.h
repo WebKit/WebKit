@@ -195,6 +195,7 @@ protected:
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;
     AccessibilityObject* menuButtonForMenu() const;
+    AccessibilityObject* captionForFigure() const;
 
 private:
     bool isAccessibilityNodeObject() const final { return true; }

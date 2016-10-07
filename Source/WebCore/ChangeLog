@@ -1,3 +1,41 @@
+2016-10-07  Nan Wang  <n_wang@apple.com>
+
+        AX: <figcaption> should be AXTitleUIElement for other content inside the <figure>
+        https://bugs.webkit.org/show_bug.cgi?id=108996
+
+        Reviewed by Chris Fleizach.
+
+        Exposed the figcaption element to be the AXTitleUIElement for the figure element. And used
+        the figcaption's content as the accessible name of the figure. Also, updated the figure element's
+        role description on Mac.
+        Accessible name and description calculation for figure elements: 
+        https://w3c.github.io/html-aam/#figure-and-figcaption-elements
+
+        Test: accessibility/mac/figure-element.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::captionForFigure):
+        (WebCore::AccessibilityNodeObject::alternativeText):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isFigure):
+        (WebCore::AccessibilityObject::isSuperscriptStyleGroup): Deleted.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXFigureText):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXFigureText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXFigureText):
+
 2016-10-07  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URL fragments should percent-encode non-ASCII characters
