@@ -1,5 +1,14 @@
 2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking http/tests/xmlhttprequest/auth-reject-protection-space.html as flaky on mac-wk2.
+        https://bugs.webkit.org/show_bug.cgi?id=163136
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking storage/indexeddb/key-type-array.html as flaky on mac-debug.
         https://bugs.webkit.org/show_bug.cgi?id=161720
 

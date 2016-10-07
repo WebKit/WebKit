@@ -568,3 +568,5 @@ webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
 webkit.org/b/162685 http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Pass Failure ]
 
 webkit.org/b/161649 http/tests/cache/disk-cache/resource-becomes-uncacheable.html [ Pass Failure ]
+
+webkit.org/b/163136 [ Release ] http/tests/xmlhttprequest/auth-reject-protection-space.html [ Pass Failure ]
