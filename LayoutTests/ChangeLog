@@ -1,3 +1,16 @@
+2016-10-07  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=163106
+
+        Reviewed by Philippe Normand.
+
+        * fast/mediastream/RTCPeerConnection-add-removeTrack-expected.txt:
+        Update expected results to include webkit prefix on RTCPeerConnection name. (Not GTK+
+        specific.)
+        * platform/gtk/TestExpectations:
+        Skip some tests since the GTK+ MediaPlayer, used with MediaStreams, isn't capable enough.
+
 2016-10-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Variation fonts don't affect glyph advances

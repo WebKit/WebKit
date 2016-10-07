@@ -5,16 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test bad addTrack() arguments
 PASS pc.addTrack() threw exception TypeError: Not enough arguments.
-PASS pc.addTrack(null) threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
-PASS pc.addTrack({}) threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
-PASS pc.addTrack(track, null) threw exception TypeError: Argument 2 ('streams') to RTCPeerConnection.addTrack must be an instance of MediaStream.
-PASS pc.addTrack(track, {}) threw exception TypeError: Argument 2 ('streams') to RTCPeerConnection.addTrack must be an instance of MediaStream.
-PASS pc.addTrack(track, stream, null) threw exception TypeError: Argument 3 ('streams') to RTCPeerConnection.addTrack must be an instance of MediaStream.
+PASS pc.addTrack(null) threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.addTrack({}) threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.addTrack(track, null) threw exception TypeError: Argument 2 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
+PASS pc.addTrack(track, {}) threw exception TypeError: Argument 2 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
+PASS pc.addTrack(track, stream, null) threw exception TypeError: Argument 3 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
 
 Test bad removeTrack() arguments
 PASS pc.removeTrack() threw exception TypeError: Not enough arguments.
-PASS pc.removeTrack(null) threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
-PASS pc.removeTrack({}) threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
+PASS pc.removeTrack(null) threw exception TypeError: Argument 1 ('sender') to webkitRTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
+PASS pc.removeTrack({}) threw exception TypeError: Argument 1 ('sender') to webkitRTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
 
 PASS pc.getSenders().length is 0
 PASS sender = pc.addTrack(track, stream) did not throw exception.
@@ -43,10 +43,10 @@ PASS pc.getSenders().length is 2
 PASS senderFromPc2 = pc2.addTrack(track, stream) did not throw exception.
 removeTrack() with 'foreign' sender must be ignored (not throw)
 PASS pc.removeTrack(senderFromPc2) did not throw exception.
-PASS pc.addTrack(null); threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
-PASS pc.addTrack(undefined); threw exception TypeError: Argument 1 ('track') to RTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
-PASS pc.removeTrack(null); threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
-PASS pc.removeTrack(undefined); threw exception TypeError: Argument 1 ('sender') to RTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
+PASS pc.addTrack(null); threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.addTrack(undefined); threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
+PASS pc.removeTrack(null); threw exception TypeError: Argument 1 ('sender') to webkitRTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
+PASS pc.removeTrack(undefined); threw exception TypeError: Argument 1 ('sender') to webkitRTCPeerConnection.removeTrack must be an instance of RTCRtpSender.
 PASS successfullyParsed is true
 
 TEST COMPLETE
