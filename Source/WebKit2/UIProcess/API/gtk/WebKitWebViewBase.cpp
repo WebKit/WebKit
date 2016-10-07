@@ -674,17 +674,17 @@ static gboolean webkitWebViewBaseFocusOutEvent(GtkWidget* widget, GdkEventFocus*
     return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->focus_out_event(widget, event);
 }
 
-static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* keyEvent)
+static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* event)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
 
 #if ENABLE(FULLSCREEN_API)
     if (priv->fullScreenModeActive) {
-        switch (keyEvent->keyval) {
+        switch (event->keyval) {
         case GDK_KEY_Escape:
         case GDK_KEY_f:
         case GDK_KEY_F:
@@ -702,33 +702,29 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
     // using gtk_main_do_event().
     if (priv->shouldForwardNextKeyEvent) {
         priv->shouldForwardNextKeyEvent = FALSE;
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, keyEvent);
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
     }
 
-    // We need to copy the event as otherwise it could be destroyed before we reach the lambda body.
-    GUniquePtr<GdkEvent> event(gdk_event_copy(reinterpret_cast<GdkEvent*>(keyEvent)));
-    priv->inputMethodFilter.filterKeyEvent(&event->key, [priv, event = WTFMove(event)](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), compositionResults, faked,
-            !compositionResults.compositionUpdated() ? priv->keyBindingTranslator.commandsForKeyEvent(&event->key) : Vector<String>()));
+    priv->inputMethodFilter.filterKeyEvent(event, [priv, event](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), compositionResults, faked,
+            !compositionResults.compositionUpdated() ? priv->keyBindingTranslator.commandsForKeyEvent(event) : Vector<String>()));
     });
 
     return TRUE;
 }
 
-static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey* keyEvent)
+static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->shouldForwardNextKeyEvent) {
         priv->shouldForwardNextKeyEvent = FALSE;
-        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, keyEvent);
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
     }
 
-    // We need to copy the event as otherwise it could be destroyed before we reach the lambda body.
-    GUniquePtr<GdkEvent> event(gdk_event_copy(reinterpret_cast<GdkEvent*>(keyEvent)));
-    priv->inputMethodFilter.filterKeyEvent(&event->key, [priv, event = WTFMove(event)](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
-        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), compositionResults, faked, { }));
+    priv->inputMethodFilter.filterKeyEvent(event, [priv, event](const WebCore::CompositionResults& compositionResults, InputMethodFilter::EventFakedForComposition faked) {
+        priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event), compositionResults, faked, { }));
     });
 
     return TRUE;

@@ -21,7 +21,7 @@
 #define InputMethodFilter_h
 
 #include <WebCore/IntPoint.h>
-#include <wtf/Function.h>
+#include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +56,7 @@ public:
     void setEnabled(bool);
     void setCursorRect(const WebCore::IntRect&);
 
-    using FilterKeyEventCompletionHandler = Function<void(const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition)>;
+    using FilterKeyEventCompletionHandler = std::function<void (const WebCore::CompositionResults&, InputMethodFilter::EventFakedForComposition)>;
     void filterKeyEvent(GdkEventKey*, FilterKeyEventCompletionHandler&& = nullptr);
     void notifyFocusedIn();
     void notifyFocusedOut();
