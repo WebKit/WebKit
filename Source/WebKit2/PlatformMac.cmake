@@ -154,7 +154,6 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/WebHitTestResultData.mm
     Shared/mac/WebMemorySampler.mac.mm
 
-    UIProcess/ViewGestureController.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
 
     UIProcess/Automation/WebAutomationSession.cpp
@@ -233,6 +232,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/SessionStateCoding.mm
     UIProcess/Cocoa/UIDelegate.mm
     UIProcess/Cocoa/VersionChecks.mm
+    UIProcess/Cocoa/ViewGestureController.cpp
     UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm
     UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
     UIProcess/Cocoa/WebAutomationSessionCocoa.mm
@@ -469,11 +469,11 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 list(APPEND WebKit2_MESSAGES_IN_FILES
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
+    UIProcess/Cocoa/ViewGestureController.messages.in
     UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in
 
     UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
     UIProcess/mac/SecItemShimProxy.messages.in
-    UIProcess/mac/ViewGestureController.messages.in
 
     WebProcess/Scrolling/RemoteScrollingCoordinator.messages.in
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
