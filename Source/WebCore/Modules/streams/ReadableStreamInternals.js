@@ -36,21 +36,26 @@ function privateInitializeReadableStreamDefaultReader(stream)
     if (@isReadableStreamLocked(stream))
        @throwTypeError("ReadableStream is locked");
 
+    @readableStreamReaderGenericInitialize(this, stream);
     this.@readRequests = [];
-    this.@ownerReadableStream = stream;
-    stream.@reader = this;
-    if (stream.@state === @streamReadable) {
-        this.@closedPromiseCapability = @newPromiseCapability(@Promise);
-        return this;
-    }
-    if (stream.@state === @streamClosed) {
-        this.@closedPromiseCapability = { @promise: @Promise.@resolve() };
-        return this;
-    }
-    @assert(stream.@state === @streamErrored);
-    this.@closedPromiseCapability = { @promise: @Promise.@reject(stream.@storedError) };
 
     return this;
+}
+
+function readableStreamReaderGenericInitialize(reader, stream)
+{
+    "use strict";
+
+    reader.@ownerReadableStream = stream;
+    stream.@reader = reader;
+    if (stream.@state === @streamReadable)
+        reader.@closedPromiseCapability = @newPromiseCapability(@Promise);
+    else if (stream.@state === @streamClosed)
+        reader.@closedPromiseCapability = { @promise: @Promise.@resolve() };
+    else {
+        @assert(stream.@state === @streamErrored);
+        reader.@closedPromiseCapability = { @promise: @Promise.@reject(stream.@storedError) };
+    }
 }
 
 function privateInitializeReadableStreamDefaultController(stream, underlyingSource, size, highWaterMark)
@@ -323,6 +328,16 @@ function readableStreamDefaultControllerGetDesiredSize(controller)
    return controller.@strategy.highWaterMark - controller.@queue.size;
 }
 
+
+function readableStreamReaderGenericCancel(reader, reason)
+{
+    "use strict";
+
+    const stream = reader.@ownerReadableStream;
+    @assert(!!stream);
+    return @readableStreamCancel(stream, reason);
+}
+
 function readableStreamCancel(stream, reason)
 {
     "use strict";
@@ -459,4 +474,20 @@ function isReadableStreamDisturbed(stream)
 
     @assert(@isReadableStream(stream));
     return stream.@disturbed;
+}
+
+function readableStreamReaderGenericRelease(reader)
+{
+    "use strict";
+
+    @assert(!!reader.@ownerReadableStream);
+    @assert(reader.@ownerReadableStream.@reader === reader);
+
+    if (reader.@ownerReadableStream.@state === @streamReadable)
+        reader.@closedPromiseCapability.@reject.@call(@undefined, new @TypeError("releasing lock of reader whose stream is still in readable state"));
+    else
+        reader.@closedPromiseCapability = { @promise: @Promise.@reject(new @TypeError("reader released lock")) };
+
+    reader.@ownerReadableStream.@reader = @undefined;
+    reader.@ownerReadableStream = null;
 }
