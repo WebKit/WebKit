@@ -1,3 +1,38 @@
+2016-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Upgrading and constructing element should always report exception instead of rethrowing
+        https://bugs.webkit.org/show_bug.cgi?id=162996
+
+        Reviewed by Darin Adler.
+
+        The latest HTML specification specifies that we must report exceptions thrown during element upgrades:
+        https://html.spec.whatwg.org/#upgrades
+
+        In addition, F2F during 2016 TPAC had a consensus that we should do the same for document.createElement:
+        https://github.com/w3c/webcomponents/issues/569
+
+        Since the HTML parser already reports the exception thrown during custom element construction as it does
+        not have any JS stack, these changes make exceptions thrown during upgrades and constructions.
+
+        In our implementation, this only reduces the code complexity as now we can push the logic to fallback
+        to HTMLUnknownElement into JSCustomElementInterface's constructElement, which has been renamed
+        to constructElementWithFallback, and eliminate ShouldClearException enum class entirely. Moreover,
+        constructElementWithFallback can now return Ref instead of RefPtr.
+
+        No new tests. Existing tests have been updated.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElementWithFallback): Create a HTMLUnknownElement if
+        an attempt to construct a custom element had failed in lieu of returning nullptr.
+        (WebCore::JSCustomElementInterface::tryToConstructCustomElement): Renamed from constructElement.
+        Always report exceptions (the same behavior as ShouldClearException::Clear).
+        (WebCore::JSCustomElementInterface::upgradeElement): Report exceptions instead of rethrowing.
+        * bindings/js/JSCustomElementInterface.h:
+        * dom/Document.cpp:
+        (WebCore::createHTMLElementWithNameValidation):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::runScriptsForPausedTreeBuilder):
+
 2016-10-06  Chris Dumez  <cdumez@apple.com>
 
         Overwriting an attribute event listener can lead to wrong event listener firing order

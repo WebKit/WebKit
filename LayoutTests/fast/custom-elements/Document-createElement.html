@@ -12,6 +12,7 @@
 <body>
 <div id="log"></div>
 <script>
+setup({allow_uncaught_exception:true});
 
 test(function () {
     class MyCustomElement extends HTMLElement {};
@@ -27,6 +28,23 @@ test(function () {
 
 }, 'document.createElement must create an instance of custom elements');
 
+function assert_reports(expected, testFunction, message) {
+    var uncaughtError = null;
+    window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+    testFunction();
+    if (typeof(expected) == 'string')
+        assert_equals(uncaughtError, expected, message);
+    else if (expected && 'name' in expected)
+        assert_equals(uncaughtError.name, expected.name, message);
+    else
+      assert_equals(uncaughtError, expected, message);
+    window.onerror = null;
+}
+
+function assert_not_reports(testFunction, message) {
+    assert_reports(null, testFunction, message);
+}
+
 test(function () {
     class ObjectCustomElement extends HTMLElement {
         constructor()
@@ -40,8 +58,11 @@ test(function () {
     assert_true(instance instanceof Object);
     assert_equals(instance.foo, 'bar');
 
-    assert_throws({name: 'TypeError'}, function () { document.createElement('object-custom-element'); });
-}, 'document.createElement must throw a TypeError when the result of Construct is not a DOM node');
+    var instance;
+    assert_reports({name: 'TypeError'}, function () { instance = document.createElement('object-custom-element'); });
+    assert_equals(instance.localName, 'object-custom-element');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a TypeError when the result of Construct is not a DOM node');
 
 test(function () {
     class TextCustomElement extends HTMLElement {
@@ -52,8 +73,11 @@ test(function () {
     };
     customElements.define('text-custom-element', TextCustomElement);
     assert_true(new TextCustomElement instanceof Text);
-    assert_throws({name: 'TypeError'}, function () { document.createElement('text-custom-element'); });
-}, 'document.createElement must throw a TypeError when the result of Construct is a TextNode');
+    var instance;
+    assert_reports({name: 'TypeError'}, function () { instance = document.createElement('text-custom-element'); });
+    assert_equals(instance.localName, 'text-custom-element');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a TypeError when the result of Construct is a TextNode');
 
 test(function () {
     class ElementWithAttribute extends HTMLElement {
@@ -65,8 +89,11 @@ test(function () {
     };
     customElements.define('element-with-attribute', ElementWithAttribute);
     assert_true(new ElementWithAttribute instanceof ElementWithAttribute);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-attribute'); });
-}, 'document.createElement must throw a NotSupportedError when attribute is added by setAttribute during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-attribute'); });
+    assert_equals(instance.localName, 'element-with-attribute');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when attribute is added by setAttribute during construction');
 
 test(function () {
     class ElementWithAttrNode extends HTMLElement {
@@ -78,8 +105,11 @@ test(function () {
     };
     customElements.define('element-with-attr-node', ElementWithAttrNode);
     assert_true(new ElementWithAttrNode instanceof ElementWithAttrNode);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-attr-node'); });
-}, 'document.createElement must throw a NotSupportedError when attribute is added by attributes.setNamedItem during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-attr-node'); });
+    assert_equals(instance.localName, 'element-with-attr-node');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when attribute is added by attributes.setNamedItem during construction');
 
 test(function () {
     class ElementWithNoAttributes extends HTMLElement {
@@ -92,8 +122,10 @@ test(function () {
     };
     customElements.define('element-with-no-attiributes', ElementWithNoAttributes);
     assert_true(new ElementWithNoAttributes instanceof ElementWithNoAttributes);
-    assert_true(document.createElement('element-with-no-attiributes') instanceof ElementWithNoAttributes);
-}, 'document.createElement must not throw a NotSupportedError when attribute is added and removed during construction');
+    var instance;
+    assert_not_reports(function () { instance = document.createElement('element-with-no-attiributes'); });
+    assert_true(instance instanceof ElementWithNoAttributes);
+}, 'document.createElement must not report a NotSupportedError when attribute is added and removed during construction');
 
 test(function () {
     class ElementWithChildText extends HTMLElement {
@@ -105,8 +137,11 @@ test(function () {
     };
     customElements.define('element-with-child-text', ElementWithChildText);
     assert_true(new ElementWithChildText instanceof ElementWithChildText);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-child-text'); });
-}, 'document.createElement must throw a NotSupportedError when a Text child is added during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-child-text'); });
+    assert_equals(instance.localName, 'element-with-child-text');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when a Text child is added during construction');
 
 test(function () {
     class ElementWithChildComment extends HTMLElement {
@@ -118,8 +153,11 @@ test(function () {
     };
     customElements.define('element-with-child-comment', ElementWithChildComment);
     assert_true(new ElementWithChildComment instanceof ElementWithChildComment);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-child-comment'); });
-}, 'document.createElement must throw a NotSupportedError when a Comment child is added during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-child-comment'); });
+    assert_equals(instance.localName, 'element-with-child-comment');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when a Comment child is added during construction');
 
 test(function () {
     class ElementWithChildElement extends HTMLElement {
@@ -131,8 +169,11 @@ test(function () {
     };
     customElements.define('element-with-child-element', ElementWithChildElement);
     assert_true(new ElementWithChildElement instanceof ElementWithChildElement);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-child-element'); });
-}, 'document.createElement must throw a NotSupportedError when an element child is added during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-child-element'); });
+    assert_equals(instance.localName, 'element-with-child-element');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when an element child is added during construction');
 
 test(function () {
     class ElementWithNoChildElements extends HTMLElement {
@@ -144,8 +185,10 @@ test(function () {
         }
     };
     customElements.define('element-with-no-child-elements', ElementWithNoChildElements);
-    assert_true(document.createElement('element-with-no-child-elements') instanceof ElementWithNoChildElements);
-}, 'document.createElement must not throw a NotSupportedError when an element child is added and removed during construction');
+    var instance;
+    assert_not_reports(function () { instance = document.createElement('element-with-no-child-elements'); });
+    assert_true(instance instanceof ElementWithNoChildElements);
+}, 'document.createElement must not report a NotSupportedError when an element child is added and removed during construction');
 
 test(function () {
     class ElementWithParent extends HTMLElement {
@@ -157,8 +200,11 @@ test(function () {
     };
     customElements.define('element-with-parent', ElementWithParent);
     assert_true(new ElementWithParent instanceof ElementWithParent);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('element-with-parent'); });
-}, 'document.createElement must throw a NotSupportedError when the element gets inserted into another element during construction');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('element-with-parent'); });
+    assert_equals(instance.localName, 'element-with-parent');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when the element gets inserted into another element during construction');
 
 test(function () {
     class ElementWithNoParent extends HTMLElement {
@@ -170,8 +216,10 @@ test(function () {
         }
     };
     customElements.define('element-with-no-parent', ElementWithNoParent);
-    assert_true(document.createElement('element-with-no-parent') instanceof ElementWithNoParent);
-}, 'document.createElement must not throw a NotSupportedError when the element is inserted and removed from another element during construction');
+    var instance;
+    assert_not_reports(function () { instance = document.createElement('element-with-no-parent'); });
+    assert_true(instance instanceof ElementWithNoParent);
+}, 'document.createElement must not report a NotSupportedError when the element is inserted and removed from another element during construction');
 
 DocumentTypes.forEach(function (entry, testNumber) {
     if (entry.isOwner)
@@ -192,9 +240,12 @@ DocumentTypes.forEach(function (entry, testNumber) {
             var name = 'element-with-adopt-call-' + testNumber;
             customElements.define(name, ElementWithAdoptCall);
             assert_true(new ElementWithAdoptCall instanceof ElementWithAdoptCall);
-            assert_throws({name: 'NotSupportedError'}, function () { document.createElement(name); });
+            var instance;
+            assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement(name); });
+            assert_equals(instance.localName, name);
+            assert_true(instance instanceof HTMLUnknownElement);
         });
-    }, 'document.createElement must throw a NotSupportedError when the element is adopted into a ' + docuemntName + ' during construction');
+    }, 'document.createElement must report a NotSupportedError when the element is adopted into a ' + docuemntName + ' during construction');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -208,9 +259,12 @@ DocumentTypes.forEach(function (entry, testNumber) {
             var name = 'element-inserted-into-another-document-' + testNumber;
             customElements.define(name, ElementInsertedIntoAnotherDocument);
             assert_true(new ElementInsertedIntoAnotherDocument instanceof ElementInsertedIntoAnotherDocument);
-            assert_throws({name: 'NotSupportedError'}, function () { document.createElement(name); });
+            var instance;
+            assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement(name); });
+            assert_equals(instance.localName, name);
+            assert_true(instance instanceof HTMLUnknownElement);
         });
-    }, 'document.createElement must throw a NotSupportedError when the element is inserted into a ' + docuemntName + ' during construction');
+    }, 'document.createElement must report a NotSupportedError when the element is inserted into a ' + docuemntName + ' during construction');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -224,9 +278,11 @@ DocumentTypes.forEach(function (entry, testNumber) {
             };
             var name = 'element-that-get-adopted-back' + testNumber;
             customElements.define(name, ElementThatGetAdoptedBack);
-            assert_true(document.createElement(name) instanceof ElementThatGetAdoptedBack);
+            var instance;
+            assert_not_reports(function () { instance = document.createElement(name); });
+            assert_true(instance instanceof ElementThatGetAdoptedBack);
         });
-    }, 'document.createElement must not throw a NotSupportedError when the element is adopted back from a ' + docuemntName + ' during construction');
+    }, 'document.createElement must not report a NotSupportedError when the element is adopted back from a ' + docuemntName + ' during construction');
 });
 
 test(function () {
@@ -239,11 +295,14 @@ test(function () {
     };
     customElements.define('div-custom-element', DivCustomElement);
     assert_true(new DivCustomElement instanceof HTMLDivElement);
-    assert_throws({name: 'NotSupportedError'}, function () { document.createElement('div-custom-element'); });
-}, 'document.createElement must throw a NotSupportedError when the local name of the element does not match that of the custom element');
+    var instance;
+    assert_reports({name: 'NotSupportedError'}, function () { instance = document.createElement('div-custom-element'); });
+    assert_equals(instance.localName, 'div-custom-element');
+    assert_true(instance instanceof HTMLUnknownElement);
+}, 'document.createElement must report a NotSupportedError when the local name of the element does not match that of the custom element');
 
 test(function () {
-    var exceptionToThrow = {message: 'exception thrown by a custom constructor'};
+    var exceptionToThrow = {name: 'exception thrown by a custom constructor'};
     class ThrowCustomElement extends HTMLElement {
         constructor()
         {
@@ -254,21 +313,18 @@ test(function () {
     };
     customElements.define('throw-custom-element', ThrowCustomElement);
 
-    assert_throws(null, function () { new ThrowCustomElement; });
-
-    try {
-        document.createElement('throw-custom-element');
-        assert(false, 'document.createElement must throw when a custom element constructor throws');
-    } catch (exception) {
-        assert_equals(exception, exceptionToThrow, 'document.createElement must throw the same exception custom element constructor throws');
-    }
+    assert_throws(exceptionToThrow, function () { new ThrowCustomElement; });
+    var instance;
+    assert_reports(exceptionToThrow, function () { instance = document.createElement('throw-custom-element'); });
+    assert_equals(instance.localName, 'throw-custom-element');
+    assert_true(instance instanceof HTMLUnknownElement);
 
     exceptionToThrow = false;
     var instance = document.createElement('throw-custom-element');
     assert_true(instance instanceof ThrowCustomElement);
     assert_equals(instance.localName, 'throw-custom-element');
 
-}, 'document.createElement must re-throw an exception thrown by a custom element constructor');
+}, 'document.createElement must report an exception thrown by a custom element constructor');
 
 </script>
 </body>

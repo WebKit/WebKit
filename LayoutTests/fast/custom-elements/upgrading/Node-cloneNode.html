@@ -123,8 +123,11 @@ test(function () {
         }
         contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
-        var instance = contentDocument.createElement('my-custom-element');
-        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+        var instance = new MyCustomElement(false);
+        var uncaughtError;
+        contentWindow.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+        instance.cloneNode(false);
+        assert_equals(uncaughtError.name, 'InvalidStateError');
     });
 }, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
     + ' due to a custom element constructor constructing itself after super() call');
@@ -140,27 +143,33 @@ test(function () {
         }
         contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
-        var instance = contentDocument.createElement('my-custom-element');
-        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+        var instance = new MyCustomElement(false);
+        var uncaughtError;
+        contentWindow.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+        instance.cloneNode(false);
+        assert_equals(uncaughtError.name, 'InvalidStateError');
     });
 }, 'HTMLElement constructor must throw an InvalidStateError when the top of the construction stack is marked AlreadyConstructed'
     + ' due to a custom element constructor constructing itself before super() call');
 
 test(function () {
     withNewDocumentWithABrowsingContext(function (contentWindow, contentDocument) {
-        var cloning = false;
+        var returnSpan = false;
         class MyCustomElement extends contentWindow.HTMLElement {
             constructor() {
                 super();
-                if (cloning)
+                if (returnSpan)
                     return contentDocument.createElement('span');
             }
         }
         contentWindow.customElements.define('my-custom-element', MyCustomElement);
 
-        var instance = contentDocument.createElement('my-custom-element');
-        cloning = true;
-        assert_throws({'name': 'InvalidStateError'}, function () { instance.cloneNode(false); });
+        var instance = new MyCustomElement(false);
+        returnSpan = true;
+        var uncaughtError;
+        contentWindow.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+        instance.cloneNode(false);
+        assert_equals(uncaughtError.name, 'InvalidStateError');
     });
 }, 'Upgrading a custom element must throw InvalidStateError when the custom element\'s constructor returns another element');
 
@@ -179,9 +188,10 @@ test(function () {
             }
         }
 
-        try {
-            contentWindow.customElements.define('my-custom-element', MyCustomElement);
-        } catch (e) { }
+        var uncaughtError;
+        contentWindow.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+        contentWindow.customElements.define('my-custom-element', MyCustomElement);
+        assert_equals(uncaughtError, 'bad');
 
         assert_array_equals(calls, [instance]);
         contentDocument.body.removeChild(instance);

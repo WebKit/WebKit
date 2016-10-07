@@ -893,7 +893,7 @@ static RefPtr<Element> createHTMLElementWithNameValidation(Document& document, c
         auto* registry = window->customElementRegistry();
         if (UNLIKELY(registry)) {
             if (auto* elementInterface = registry->findInterface(localName))
-                return elementInterface->constructElement(localName, JSCustomElementInterface::ShouldClearException::DoNotClear);
+                return elementInterface->constructElementWithFallback(document, localName);
         }
     }
 #endif

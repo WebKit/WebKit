@@ -63,8 +63,7 @@ public:
         return adoptRef(*new JSCustomElementInterface(name, callback, globalObject));
     }
 
-    enum class ShouldClearException { Clear, DoNotClear };
-    RefPtr<Element> constructElement(const AtomicString&, ShouldClearException);
+    Ref<Element> constructElementWithFallback(Document&, const AtomicString&);
 
     void upgradeElement(Element&);
 
@@ -97,6 +96,8 @@ public:
 
 private:
     JSCustomElementInterface(const QualifiedName&, JSC::JSObject* callback, JSDOMGlobalObject*);
+
+    RefPtr<Element> tryToConstructCustomElement(Document&, const AtomicString&);
 
     void invokeCallback(Element&, JSC::JSObject* callback, const WTF::Function<void(JSC::ExecState*, JSDOMGlobalObject*, JSC::MarkedArgumentBuffer&)>& addArguments = { });
 

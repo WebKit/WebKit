@@ -1,3 +1,19 @@
+2016-10-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Upgrading and constructing element should always report exception instead of rethrowing
+        https://bugs.webkit.org/show_bug.cgi?id=162996
+
+        Reviewed by Darin Adler.
+
+        Updated the tests to expect exceptions thrown during custom element constructions are always reported.
+
+        * fast/custom-elements/Document-createElement-expected.txt:
+        * fast/custom-elements/Document-createElement.html:
+        * fast/custom-elements/defined-pseudo-class-expected.txt:
+        * fast/custom-elements/defined-pseudo-class.html:
+        * fast/custom-elements/upgrading/Node-cloneNode.html:
+        * fast/custom-elements/upgrading/upgrading-parser-created-element.html:
+
 2016-10-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a dummy SubtleCrypto interface

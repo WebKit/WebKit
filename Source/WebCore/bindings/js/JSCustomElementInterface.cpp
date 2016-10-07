@@ -31,6 +31,7 @@
 #if ENABLE(CUSTOM_ELEMENTS)
 
 #include "DOMWrapperWorld.h"
+#include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "JSElement.h"
@@ -59,7 +60,19 @@ JSCustomElementInterface::~JSCustomElementInterface()
 
 static RefPtr<Element> constructCustomElementSynchronously(Document&, VM&, ExecState&, JSObject* constructor, const AtomicString& localName);
 
-RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& localName, ShouldClearException shouldClearException)
+Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const AtomicString& localName)
+{
+    if (auto element = tryToConstructCustomElement(document, localName))
+        return element.releaseNonNull();
+
+    auto element = HTMLUnknownElement::create(QualifiedName(nullAtom, localName, HTMLNames::xhtmlNamespaceURI), document);
+    element->setIsCustomElementUpgradeCandidate();
+    element->setIsFailedCustomElement(*this);
+
+    return element.get();
+}
+
+RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& document, const AtomicString& localName)
 {
     if (!canInvokeCallback())
         return nullptr;
@@ -73,20 +86,14 @@ RefPtr<Element> JSCustomElementInterface::constructElement(const AtomicString& l
     if (!m_constructor)
         return nullptr;
 
-    ScriptExecutionContext* context = scriptExecutionContext();
-    if (!context)
-        return nullptr;
-    ASSERT(context->isDocument());
-
-    auto& state = *context->execState();
-    RefPtr<Element> element = constructCustomElementSynchronously(downcast<Document>(*context), vm, state, m_constructor.get(), localName);
+    ASSERT(&document == scriptExecutionContext());
+    auto& state = *document.execState();
+    auto element = constructCustomElementSynchronously(document, vm, state, m_constructor.get(), localName);
     ASSERT(!!scope.exception() == !element);
     if (!element) {
-        if (shouldClearException == ShouldClearException::Clear) {
-            auto* exception = scope.exception();
-            scope.clearException();
-            reportException(&state, exception);
-        }
+        auto* exception = scope.exception();
+        scope.clearException();
+        reportException(&state, exception);
         return nullptr;
     }
 
@@ -186,13 +193,14 @@ void JSCustomElementInterface::upgradeElement(Element& element)
 
     if (UNLIKELY(scope.exception())) {
         element.setIsFailedCustomElement(*this);
+        reportException(state, scope.exception());
         return;
     }
 
     Element* wrappedElement = JSElement::toWrapped(returnedElement);
     if (!wrappedElement || wrappedElement != &element) {
         element.setIsFailedCustomElement(*this);
-        throwInvalidStateError(*state, scope, "Custom element constructor failed to upgrade an element");
+        reportException(state, createDOMException(state, INVALID_STATE_ERR, "Custom element constructor failed to upgrade an element"));
         return;
     }
     element.setIsDefinedCustomElement(*this);

@@ -11,6 +11,7 @@
 <body>
 <div id="log"></div>
 <script>
+setup({allow_uncaught_exception:true});
 
 var upgradeCandidate = document.createElement('my-element');
 
@@ -76,10 +77,14 @@ class ReturnsAnotherNode extends HTMLElement {
 }
 customElements.define('returns-another-node', ReturnsAnotherNode);
 
+var uncaughtError;
+window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
 document.write('<returns-another-node></returns-another-node>');
+window.onerror = null;
 
 test(function () {
     var instance = document.querySelector('returns-another-node');
+    assert_equals(uncaughtError.name, 'TypeError', 'The HTML parser must report a TypeError when a custom element returns a non-Element node.');
     assert_not_equals(instance, ReturnsAnotherNode.lastInstance, 'The element inserted by HTML parser must not be the one returned by super() call');
     assert_true(instance instanceof HTMLElement, 'The element inserted by HTML parser must be a HTMLElement');
     assert_false(instance instanceof ReturnsAnotherNode, 'The element inserted by HTML parser must be a custom element');
@@ -100,15 +105,16 @@ test(function () {
 
 test(function () {
     var matchInsideConstructor = false;
-    customElements.define('throws-exception', class extends HTMLElement {
+    class ThrowsException extends HTMLElement {
         constructor() {
             super();
             matchInsideConstructor = this.matches(':defined');
             throw {name: 'bad'};
         }
-    });
+    };
+    customElements.define('throws-exception', ThrowsException);
     var instance;
-    assert_throws({name: 'bad'}, function () { instance = document.createElement('throws-exception'); });
+    assert_throws({name: 'bad'}, function () { instance = new ThrowsException; });
     assert_true(matchInsideConstructor);
 }, 'The defined flag of a custom element must be set inside a constructor when constructing a custom element synchronously'
     + ' even if the constructor threw an exception later');
@@ -116,13 +122,14 @@ test(function () {
 test(function () {
     var instance = document.createElement('throws-exception-2');
     document.body.appendChild(instance);
-    assert_throws({name: 'bad'}, function () {
-        customElements.define('throws-exception-2', class extends HTMLElement {
-            constructor() {
-                throw {name: 'bad'};
-            }
-        });
+    var uncaughtError;
+    window.onerror = function (message, url, lineNumber, columnNumber, error) { uncaughtError = error; return true; }
+    customElements.define('throws-exception-2', class extends HTMLElement {
+        constructor() {
+            throw {name: 'bad'};
+        }
     });
+    assert_equals(uncaughtError.name, 'bad');
     assert_false(instance.matches(':defined'));
 }, 'The defined flag of a custom element must not be set when an upgrade of a custom element fails');
 
