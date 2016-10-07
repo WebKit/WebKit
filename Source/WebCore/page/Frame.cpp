@@ -32,7 +32,6 @@
 
 #include "AnimationController.h"
 #include "ApplyStyleCommand.h"
-#include "AuthorStyleSheets.h"
 #include "BackForwardController.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
@@ -93,6 +92,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleProperties.h"
+#include "StyleScope.h"
 #include "TextNodeTraversal.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
@@ -644,7 +644,7 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, const FloatSiz
     m_doc->setPrinting(printing);
     view()->adjustMediaTypeForPrinting(printing);
 
-    m_doc->authorStyleSheets().didChangeContentsOrInterpretation();
+    m_doc->styleScope().didChangeContentsOrInterpretation();
     if (shouldUsePrintingLayout()) {
         view()->forceLayoutForPagination(pageSize, originalPageSize, maximumShrinkRatio, shouldAdjustViewSize);
     } else {

@@ -1384,7 +1384,6 @@ set(WebCore_SOURCES
     dom/ActiveDOMObject.cpp
     dom/AnimationEvent.cpp
     dom/Attr.cpp
-    dom/AuthorStyleSheets.cpp
     dom/BeforeTextInsertedEvent.cpp
     dom/BeforeUnloadEvent.cpp
     dom/CDATASection.cpp
@@ -2650,6 +2649,7 @@ set(WebCore_SOURCES
     style/StylePendingResources.cpp
     style/StyleRelations.cpp
     style/StyleResolveForDocument.cpp
+    style/StyleScope.cpp
     style/StyleSharingResolver.cpp
     style/StyleTreeResolver.cpp
     style/StyleUpdate.cpp

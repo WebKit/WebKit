@@ -24,7 +24,6 @@
 #include "config.h"
 #include "HTMLStyleElement.h"
 
-#include "AuthorStyleSheets.h"
 #include "CachedResource.h"
 #include "Document.h"
 #include "Event.h"
@@ -35,6 +34,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 
 namespace WebCore {
@@ -76,7 +76,7 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_styleSheetOwner.setMedia(value);
         if (sheet()) {
             sheet()->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
-            if (auto* scope = m_styleSheetOwner.styleSheetScope())
+            if (auto* scope = m_styleSheetOwner.styleScope())
                 scope->didChangeContentsOrInterpretation();
         } else
             m_styleSheetOwner.childrenChanged(*this);

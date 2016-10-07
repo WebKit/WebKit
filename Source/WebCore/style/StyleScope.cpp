@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2009, 2011-2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2009, 2011-2012, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "AuthorStyleSheets.h"
+#include "StyleScope.h"
 
 #include "CSSStyleSheet.h"
 #include "Element.h"
@@ -56,20 +56,22 @@ namespace WebCore {
 using namespace ContentExtensions;
 using namespace HTMLNames;
 
-AuthorStyleSheets::AuthorStyleSheets(Document& document)
+namespace Style {
+
+Scope::Scope(Document& document)
     : m_document(document)
-    , m_pendingUpdateTimer(*this, &AuthorStyleSheets::pendingUpdateTimerFired)
+    , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
 {
 }
 
-AuthorStyleSheets::AuthorStyleSheets(ShadowRoot& shadowRoot)
+Scope::Scope(ShadowRoot& shadowRoot)
     : m_document(shadowRoot.documentScope())
     , m_shadowRoot(&shadowRoot)
-    , m_pendingUpdateTimer(*this, &AuthorStyleSheets::pendingUpdateTimerFired)
+    , m_pendingUpdateTimer(*this, &Scope::pendingUpdateTimerFired)
 {
 }
 
-StyleResolver& AuthorStyleSheets::styleResolver()
+StyleResolver& Scope::styleResolver()
 {
     if (m_shadowRoot)
         return m_shadowRoot->styleResolver();
@@ -77,7 +79,7 @@ StyleResolver& AuthorStyleSheets::styleResolver()
     return m_document.ensureStyleResolver();
 }
 
-StyleResolver* AuthorStyleSheets::styleResolverIfExists()
+StyleResolver* Scope::styleResolverIfExists()
 {
     if (m_shadowRoot)
         return m_shadowRoot->styleResolverIfExists();
@@ -85,17 +87,17 @@ StyleResolver* AuthorStyleSheets::styleResolverIfExists()
     return m_document.styleResolverIfExists();
 }
 
-AuthorStyleSheets& AuthorStyleSheets::forNode(Node& node)
+Scope& Scope::forNode(Node& node)
 {
     ASSERT(node.inDocument());
     auto* shadowRoot = node.containingShadowRoot();
     if (shadowRoot)
-        return shadowRoot->authorStyleSheets();
-    return node.document().authorStyleSheets();
+        return shadowRoot->styleScope();
+    return node.document().styleScope();
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.
-void AuthorStyleSheets::removePendingSheet(RemovePendingSheetNotificationType notification)
+void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
 {
     // Make sure we knew this sheet was pending, and that our count isn't out of sync.
     ASSERT(m_pendingStyleSheetCount > 0);
@@ -123,7 +125,7 @@ void AuthorStyleSheets::removePendingSheet(RemovePendingSheetNotificationType no
     m_document.didRemoveAllPendingStylesheet();
 }
 
-void AuthorStyleSheets::addStyleSheetCandidateNode(Node& node, bool createdByParser)
+void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
 {
     if (!node.inDocument())
         return;
@@ -156,13 +158,13 @@ void AuthorStyleSheets::addStyleSheetCandidateNode(Node& node, bool createdByPar
     m_styleSheetCandidateNodes.insertBefore(followingNode, &node);
 }
 
-void AuthorStyleSheets::removeStyleSheetCandidateNode(Node& node)
+void Scope::removeStyleSheetCandidateNode(Node& node)
 {
     if (m_styleSheetCandidateNodes.remove(&node))
         scheduleActiveSetUpdate();
 }
 
-void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
+void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
 {
     if (m_document.settings() && !m_document.settings()->authorAndUserStylesEnabled())
         return;
@@ -240,7 +242,7 @@ void AuthorStyleSheets::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& she
     }
 }
 
-AuthorStyleSheets::StyleResolverUpdateType AuthorStyleSheets::analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc)
+Scope::StyleResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSStyleSheet>>& newStylesheets, bool& requiresFullStyleRecalc)
 {
     requiresFullStyleRecalc = true;
     
@@ -307,7 +309,7 @@ static void filterEnabledNonemptyCSSStyleSheets(Vector<RefPtr<CSSStyleSheet>>& r
     }
 }
 
-void AuthorStyleSheets::updateActiveStyleSheets(UpdateType updateType)
+void Scope::updateActiveStyleSheets(UpdateType updateType)
 {
     ASSERT(!m_pendingUpdateType);
 
@@ -373,7 +375,7 @@ void AuthorStyleSheets::updateActiveStyleSheets(UpdateType updateType)
     }
 }
 
-void AuthorStyleSheets::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, StyleResolverUpdateType updateType)
+void Scope::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, StyleResolverUpdateType updateType)
 {
     if (updateType == Reconstruct) {
         if (m_shadowRoot)
@@ -404,7 +406,7 @@ void AuthorStyleSheets::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activ
     }
 }
 
-const Vector<RefPtr<CSSStyleSheet>> AuthorStyleSheets::activeStyleSheetsForInspector() const
+const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector() const
 {
     Vector<RefPtr<CSSStyleSheet>> result;
 
@@ -425,7 +427,7 @@ const Vector<RefPtr<CSSStyleSheet>> AuthorStyleSheets::activeStyleSheetsForInspe
     return result;
 }
 
-bool AuthorStyleSheets::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
+bool Scope::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
 {
     if (!m_weakCopyOfActiveStyleSheetListForFastLookup) {
         m_weakCopyOfActiveStyleSheetListForFastLookup = std::make_unique<HashSet<const CSSStyleSheet*>>();
@@ -435,7 +437,7 @@ bool AuthorStyleSheets::activeStyleSheetsContains(const CSSStyleSheet* sheet) co
     return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
 }
 
-void AuthorStyleSheets::flushPendingUpdate()
+void Scope::flushPendingUpdate()
 {
     if (!m_pendingUpdateType)
         return;
@@ -446,13 +448,13 @@ void AuthorStyleSheets::flushPendingUpdate()
     updateActiveStyleSheets(updateType);
 }
 
-void AuthorStyleSheets::clearPendingUpdate()
+void Scope::clearPendingUpdate()
 {
     m_pendingUpdateTimer.stop();
     m_pendingUpdateType = { };
 }
 
-void AuthorStyleSheets::scheduleActiveSetUpdate()
+void Scope::scheduleActiveSetUpdate()
 {
     if (m_shadowRoot) {
         // FIXME: We need to flush updates recursively to support asynchronous updates in shadow trees.
@@ -466,22 +468,23 @@ void AuthorStyleSheets::scheduleActiveSetUpdate()
     m_pendingUpdateTimer.startOneShot(0);
 }
 
-void AuthorStyleSheets::didChangeCandidatesForActiveSet()
+void Scope::didChangeCandidatesForActiveSet()
 {
     auto updateType = m_pendingUpdateType.valueOr(UpdateType::ActiveSet);
     clearPendingUpdate();
     updateActiveStyleSheets(updateType);
 }
 
-void AuthorStyleSheets::didChangeContentsOrInterpretation()
+void Scope::didChangeContentsOrInterpretation()
 {
     clearPendingUpdate();
     updateActiveStyleSheets(UpdateType::ContentsOrInterpretation);
 }
 
-void AuthorStyleSheets::pendingUpdateTimerFired()
+void Scope::pendingUpdateTimerFired()
 {
     flushPendingUpdate();
 }
 
+}
 }

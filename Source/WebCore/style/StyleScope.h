@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2010, 2012-2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2010, 2012-2013, 2015-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -25,8 +25,7 @@
  *
  */
 
-#ifndef AuthorStyleSheets_h
-#define AuthorStyleSheets_h
+#pragma once
 
 #include "Timer.h"
 #include <memory>
@@ -49,11 +48,13 @@ class StyleSheetList;
 class ShadowRoot;
 class TreeScope;
 
-class AuthorStyleSheets {
+namespace Style {
+
+class Scope {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AuthorStyleSheets(Document&);
-    explicit AuthorStyleSheets(ShadowRoot&);
+    explicit Scope(Document&);
+    explicit Scope(ShadowRoot&);
 
     const Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets() const { return m_activeStyleSheets; }
 
@@ -91,7 +92,7 @@ public:
     StyleResolver& styleResolver();
     StyleResolver* styleResolverIfExists();
 
-    static AuthorStyleSheets& forNode(Node&);
+    static Scope& forNode(Node&);
 
 private:
     enum class UpdateType { ActiveSet, ContentsOrInterpretation };
@@ -118,7 +119,6 @@ private:
 
     Timer m_pendingUpdateTimer;
 
-    // This is a mirror of m_activeAuthorStyleSheets that gets populated on demand for activeStyleSheetsContains().
     mutable std::unique_ptr<HashSet<const CSSStyleSheet*>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the number of currently loading top-level stylesheets needed for rendering.
@@ -139,6 +139,4 @@ private:
 };
 
 }
-
-#endif
-
+}

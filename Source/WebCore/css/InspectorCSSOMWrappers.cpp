@@ -29,7 +29,6 @@
 #include "config.h"
 #include "InspectorCSSOMWrappers.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSDefaultStyleSheets.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
@@ -38,6 +37,7 @@
 #include "CSSStyleSheet.h"
 #include "CSSSupportsRule.h"
 #include "ExtensionStyleSheets.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "WebKitCSSRegionRule.h"
 
@@ -96,7 +96,7 @@ void InspectorCSSOMWrappers::collectFromStyleSheets(const Vector<RefPtr<CSSStyle
         collect(sheets[i].get());
 }
 
-CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, AuthorStyleSheets& authorStyleSheets, ExtensionStyleSheets& extensionStyleSheets)
+CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule, Style::Scope& styleScope, ExtensionStyleSheets& extensionStyleSheets)
 {
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
         collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::simpleDefaultStyleSheet);
@@ -108,7 +108,7 @@ CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(StyleRule* rule,
         collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::fullscreenStyleSheet);
         collectFromStyleSheetContents(m_styleSheetCSSOMWrapperSet, CSSDefaultStyleSheets::plugInsStyleSheet);
 
-        collectFromStyleSheets(authorStyleSheets.activeStyleSheets());
+        collectFromStyleSheets(styleScope.activeStyleSheets());
         collect(extensionStyleSheets.pageUserSheet());
         collectFromStyleSheets(extensionStyleSheets.injectedUserStyleSheets());
         collectFromStyleSheets(extensionStyleSheets.documentUserStyleSheets());

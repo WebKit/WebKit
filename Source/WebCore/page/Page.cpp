@@ -23,7 +23,6 @@
 #include "AlternativeTextClient.h"
 #include "AnimationController.h"
 #include "ApplicationCacheStorage.h"
-#include "AuthorStyleSheets.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "Chrome.h"
@@ -90,6 +89,7 @@
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "SubframeLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
@@ -424,7 +424,7 @@ void Page::setViewMode(ViewMode viewMode)
         m_mainFrame->view()->forceLayout();
 
     if (m_mainFrame->document())
-        m_mainFrame->document()->authorStyleSheets().didChangeContentsOrInterpretation();
+        m_mainFrame->document()->styleScope().didChangeContentsOrInterpretation();
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
@@ -502,7 +502,7 @@ void Page::setNeedsRecalcStyleInAllFrames()
 {
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
-            document->authorStyleSheets().didChangeContentsOrInterpretation();
+            document->styleScope().didChangeContentsOrInterpretation();
     }
 }
 
@@ -1163,7 +1163,7 @@ void Page::invalidateInjectedStyleSheetCacheInAllFrames()
         if (!document)
             continue;
         document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
-        document->authorStyleSheets().didChangeContentsOrInterpretation();
+        document->styleScope().didChangeContentsOrInterpretation();
     }
 }
 

@@ -28,7 +28,6 @@
 #include "config.h"
 #include "XMLDocumentParser.h"
 
-#include "AuthorStyleSheets.h"
 #include "CDATASection.h"
 #include "CachedScript.h"
 #include "Comment.h"
@@ -56,6 +55,7 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "StyleScope.h"
 #include "TextResourceDecoder.h"
 #include "TransformSource.h"
 #include "XMLNSNames.h"
@@ -1387,7 +1387,7 @@ void XMLDocumentParser::doEnd()
         document()->setTransformSource(std::make_unique<TransformSource>(doc));
 
         document()->setParsing(false); // Make the document think it's done, so it will apply XSL stylesheets.
-        document()->authorStyleSheets().didChangeContentsOrInterpretation();
+        document()->styleScope().didChangeContentsOrInterpretation();
 
         // styleResolverChanged() call can detach the parser and null out its document.
         // In that case, we just bail out.

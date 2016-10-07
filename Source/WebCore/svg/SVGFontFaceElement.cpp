@@ -24,7 +24,6 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontFaceElement.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
@@ -42,6 +41,7 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "StyleScope.h"
 #include <math.h>
 
 namespace WebCore {
@@ -267,7 +267,7 @@ void SVGFontFaceElement::rebuildFontFace()
         }
     }
 
-    document().authorStyleSheets().didChangeContentsOrInterpretation();
+    document().styleScope().didChangeContentsOrInterpretation();
 }
 
 Node::InsertionNotificationRequest SVGFontFaceElement::insertedInto(ContainerNode& rootParent)
@@ -292,7 +292,7 @@ void SVGFontFaceElement::removedFrom(ContainerNode& rootParent)
         document().accessSVGExtensions().unregisterSVGFontFaceElement(this);
         m_fontFaceRule->mutableProperties().clear();
 
-        document().authorStyleSheets().didChangeContentsOrInterpretation();
+        document().styleScope().didChangeContentsOrInterpretation();
     } else
         ASSERT(!m_fontElement);
 }

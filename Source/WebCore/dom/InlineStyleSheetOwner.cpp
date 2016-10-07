@@ -21,13 +21,13 @@
 #include "config.h"
 #include "InlineStyleSheetOwner.h"
 
-#include "AuthorStyleSheets.h"
 #include "ContentSecurityPolicy.h"
 #include "Element.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "ScriptableDocumentParser.h"
 #include "ShadowRoot.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
 #include <wtf/NeverDestroyed.h>
@@ -51,8 +51,8 @@ InlineStyleSheetOwner::~InlineStyleSheetOwner()
 
 void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 {
-    m_styleSheetScope = &AuthorStyleSheets::forNode(element);
-    m_styleSheetScope->addStyleSheetCandidateNode(element, m_isParsingChildren);
+    m_styleScope = &Style::Scope::forNode(element);
+    m_styleScope->addStyleSheetCandidateNode(element, m_isParsingChildren);
 
     if (m_isParsingChildren)
         return;
@@ -61,9 +61,9 @@ void InlineStyleSheetOwner::insertedIntoDocument(Element& element)
 
 void InlineStyleSheetOwner::removedFromDocument(Element& element)
 {
-    if (m_styleSheetScope) {
-        m_styleSheetScope->removeStyleSheetCandidateNode(element);
-        m_styleSheetScope = nullptr;
+    if (m_styleScope) {
+        m_styleScope->removeStyleSheetCandidateNode(element);
+        m_styleScope = nullptr;
     }
     if (m_sheet)
         clearSheet();
@@ -74,9 +74,9 @@ void InlineStyleSheetOwner::clearDocumentData(Element& element)
     if (m_sheet)
         m_sheet->clearOwnerNode();
 
-    if (m_styleSheetScope) {
-        m_styleSheetScope->removeStyleSheetCandidateNode(element);
-        m_styleSheetScope = nullptr;
+    if (m_styleScope) {
+        m_styleScope->removeStyleSheetCandidateNode(element);
+        m_styleScope = nullptr;
     }
 }
 
@@ -124,8 +124,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     ASSERT(element.inDocument());
     Document& document = element.document();
     if (m_sheet) {
-        if (m_sheet->isLoading() && m_styleSheetScope)
-            m_styleSheetScope->removePendingSheet();
+        if (m_sheet->isLoading() && m_styleScope)
+            m_styleScope->removePendingSheet();
         clearSheet();
     }
 
@@ -149,8 +149,8 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (!screenEval.evaluate(*mediaQueries) && !printEval.evaluate(*mediaQueries))
         return;
 
-    if (m_styleSheetScope)
-        m_styleSheetScope->addPendingSheet();
+    if (m_styleScope)
+        m_styleScope->addPendingSheet();
 
     m_loading = true;
 
@@ -177,16 +177,16 @@ bool InlineStyleSheetOwner::sheetLoaded(Element&)
     if (isLoading())
         return false;
 
-    if (m_styleSheetScope)
-        m_styleSheetScope->removePendingSheet();
+    if (m_styleScope)
+        m_styleScope->removePendingSheet();
 
     return true;
 }
 
 void InlineStyleSheetOwner::startLoadingDynamicSheet(Element&)
 {
-    if (m_styleSheetScope)
-        m_styleSheetScope->addPendingSheet();
+    if (m_styleScope)
+        m_styleScope->addPendingSheet();
 }
 
 }

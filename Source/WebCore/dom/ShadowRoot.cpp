@@ -28,13 +28,13 @@
 #include "config.h"
 #include "ShadowRoot.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SlotAssignment.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -42,7 +42,7 @@ namespace WebCore {
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
     void* styleResolver;
-    void* authorStyleSheets;
+    void* styleScope;
     void* host;
     void* slotAssignment;
 };
@@ -88,8 +88,8 @@ StyleResolver& ShadowRoot::styleResolver()
     if (!m_styleResolver) {
         // FIXME: We could share style resolver with shadow roots that have identical style.
         m_styleResolver = std::make_unique<StyleResolver>(document());
-        if (m_authorStyleSheets)
-            m_styleResolver->appendAuthorStyleSheets(m_authorStyleSheets->activeStyleSheets());
+        if (m_styleScope)
+            m_styleResolver->appendAuthorStyleSheets(m_styleScope->activeStyleSheets());
     }
     return *m_styleResolver;
 }
@@ -107,19 +107,19 @@ void ShadowRoot::resetStyleResolver()
     m_styleResolver = nullptr;
 }
 
-AuthorStyleSheets& ShadowRoot::authorStyleSheets()
+Style::Scope& ShadowRoot::styleScope()
 {
-    if (!m_authorStyleSheets)
-        m_authorStyleSheets = std::make_unique<AuthorStyleSheets>(*this);
-    return *m_authorStyleSheets;
+    if (!m_styleScope)
+        m_styleScope = std::make_unique<Style::Scope>(*this);
+    return *m_styleScope;
 }
 
 void ShadowRoot::updateStyle()
 {
-    if (!m_authorStyleSheets)
+    if (!m_styleScope)
         return;
     // FIXME: Make optimized updated work.
-    m_authorStyleSheets->didChangeContentsOrInterpretation();
+    m_styleScope->didChangeContentsOrInterpretation();
 }
 
 String ShadowRoot::innerHTML() const

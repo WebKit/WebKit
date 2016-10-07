@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class AuthorStyleSheets;
 class CSSCharsetRule;
 class CSSImportRule;
 class CSSParser;
@@ -44,6 +43,10 @@ class MediaQuerySet;
 class SecurityOrigin;
 class StyleRuleKeyframes;
 class StyleSheetContents;
+
+namespace Style {
+class Scope;
+}
 
 typedef int ExceptionCode;
 
@@ -87,7 +90,7 @@ public:
     Document* ownerDocument() const;
     CSSStyleSheet& rootStyleSheet();
     const CSSStyleSheet& rootStyleSheet() const;
-    AuthorStyleSheets* styleSheetScope();
+    Style::Scope* styleScope();
 
     MediaQuerySet* mediaQueries() const { return m_mediaQueries.get(); }
     void setMediaQueries(Ref<MediaQuerySet>&&);

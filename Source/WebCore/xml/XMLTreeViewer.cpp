@@ -32,7 +32,6 @@
 
 #if ENABLE(XSLT)
 
-#include "AuthorStyleSheets.h"
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionCodePlaceholder.h"
@@ -41,6 +40,7 @@
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
+#include "StyleScope.h"
 #include "Text.h"
 #include "XMLViewerCSS.h"
 #include "XMLViewerJS.h"
@@ -64,7 +64,7 @@ void XMLTreeViewer::transformDocumentToTreeView()
     String cssString = StringImpl::createWithoutCopying(XMLViewer_css, sizeof(XMLViewer_css));
     auto text = m_document.createTextNode(cssString);
     m_document.getElementById(String(ASCIILiteral("xml-viewer-style")))->appendChild(text, IGNORE_EXCEPTION);
-    m_document.authorStyleSheets().didChangeContentsOrInterpretation();
+    m_document.styleScope().didChangeContentsOrInterpretation();
 }
 
 } // namespace WebCore

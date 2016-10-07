@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StyleTreeResolver.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
@@ -45,6 +44,7 @@
 #include "ShadowRoot.h"
 #include "StyleFontSizeFunctions.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "Text.h"
 
 namespace WebCore {

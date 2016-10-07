@@ -50,7 +50,7 @@ public:
     void childrenChanged(Element&);
     void finishParsingChildren(Element&);
 
-    AuthorStyleSheets* styleSheetScope() { return m_styleSheetScope; }
+    Style::Scope* styleScope() { return m_styleScope; }
 
 private:
     void createSheet(Element&, const String& text);
@@ -63,7 +63,7 @@ private:
     AtomicString m_contentType;
     AtomicString m_media;
     RefPtr<CSSStyleSheet> m_sheet;
-    AuthorStyleSheets* m_styleSheetScope { nullptr };
+    Style::Scope* m_styleScope { nullptr };
 };
 
 }

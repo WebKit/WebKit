@@ -31,7 +31,6 @@
 #include "AXObjectCache.h"
 #include "AnimationController.h"
 #include "Attr.h"
-#include "AuthorStyleSheets.h"
 #include "CDATASection.h"
 #include "CSSFontSelector.h"
 #include "CSSStyleDeclaration.h"
@@ -168,6 +167,7 @@
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
 #include "StyleTreeResolver.h"
@@ -451,7 +451,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_listenerTypes(0)
     , m_mutationObserverTypes(0)
-    , m_authorStyleSheets(std::make_unique<AuthorStyleSheets>(*this))
+    , m_styleScope(std::make_unique<Style::Scope>(*this))
     , m_extensionStyleSheets(std::make_unique<ExtensionStyleSheets>(*this))
     , m_visitedLinkState(std::make_unique<VisitedLinkState>(*this))
     , m_visuallyOrdered(false)
@@ -1354,7 +1354,7 @@ void Document::setContentLanguage(const String& language)
     m_contentLanguage = language;
 
     // Recalculate style so language is used when selecting the initial font.
-    m_authorStyleSheets->didChangeContentsOrInterpretation();
+    m_styleScope->didChangeContentsOrInterpretation();
 }
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
@@ -1812,7 +1812,7 @@ void Document::recalcStyle(Style::Change change)
     // re-attaching our containing iframe, which when asked HTMLFrameElementBase::isURLAllowed
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
-    authorStyleSheets().flushPendingUpdate();
+    styleScope().flushPendingUpdate();
 
     frameView.willRecalcStyle();
 
@@ -1895,7 +1895,7 @@ bool Document::needsStyleRecalc() const
     if (pageCacheState() != NotInPageCache)
         return false;
 
-    return m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || authorStyleSheets().hasPendingUpdate();
+    return m_pendingStyleRecalcShouldForce || childNeedsStyleRecalc() || styleScope().hasPendingUpdate();
 }
 
 void Document::updateStyleIfNeeded()
@@ -1906,7 +1906,7 @@ void Document::updateStyleIfNeeded()
     if (!view() || view()->isInRenderTreeLayout())
         return;
 
-    authorStyleSheets().flushPendingUpdate();
+    styleScope().flushPendingUpdate();
 
     if (!needsStyleRecalc())
         return;
@@ -1960,7 +1960,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         HTMLElement* bodyElement = bodyOrFrameset();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            authorStyleSheets().didChangeContentsOrInterpretation();
+            styleScope().didChangeContentsOrInterpretation();
             recalcStyle(Style::Force);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
@@ -2142,7 +2142,7 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 void Document::createStyleResolver()
 {
     m_styleResolver = std::make_unique<StyleResolver>(*this);
-    m_styleResolver->appendAuthorStyleSheets(authorStyleSheets().activeStyleSheets());
+    m_styleResolver->appendAuthorStyleSheets(styleScope().activeStyleSheets());
 }
 
 StyleResolver& Document::userAgentShadowTreeStyleResolver()
@@ -3085,7 +3085,7 @@ void Document::didRemoveAllPendingStylesheet()
 {
     m_needsNotifyRemoveAllPendingStylesheet = false;
 
-    authorStyleSheets().didChangeCandidatesForActiveSet();
+    styleScope().didChangeCandidatesForActiveSet();
 
     if (m_pendingSheetLayout == DidLayoutWithPendingSheets) {
         m_pendingSheetLayout = IgnoreLayoutWithPendingSheets;
@@ -3108,9 +3108,9 @@ bool Document::usesStyleBasedEditability() const
     ASSERT(!m_renderView || !m_renderView->frameView().isPainting());
     ASSERT(!m_inStyleRecalc);
 
-    auto& authorSheets = const_cast<AuthorStyleSheets&>(authorStyleSheets());
-    authorSheets.flushPendingUpdate();
-    return authorSheets.usesStyleBasedEditability();
+    auto& styleScope = const_cast<Style::Scope&>(this->styleScope());
+    styleScope.flushPendingUpdate();
+    return styleScope.usesStyleBasedEditability();
 }
 
 void Document::setHasElementUsingStyleBasedEditability()
@@ -3156,9 +3156,9 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         // For more info, see the test at:
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
-        authorStyleSheets().setSelectedStylesheetSetName(content);
-        authorStyleSheets().setPreferredStylesheetSetName(content);
-        authorStyleSheets().didChangeContentsOrInterpretation();
+        styleScope().setSelectedStylesheetSetName(content);
+        styleScope().setPreferredStylesheetSetName(content);
+        styleScope().didChangeContentsOrInterpretation();
         break;
 
     case HTTPHeaderName::Refresh: {
@@ -3452,18 +3452,18 @@ StyleSheetList& Document::styleSheets()
 
 String Document::preferredStylesheetSet() const
 {
-    return authorStyleSheets().preferredStylesheetSetName();
+    return styleScope().preferredStylesheetSetName();
 }
 
 String Document::selectedStylesheetSet() const
 {
-    return authorStyleSheets().selectedStylesheetSetName();
+    return styleScope().selectedStylesheetSetName();
 }
 
 void Document::setSelectedStylesheetSet(const String& aString)
 {
-    authorStyleSheets().setSelectedStylesheetSetName(aString);
-    authorStyleSheets().didChangeContentsOrInterpretation();
+    styleScope().setSelectedStylesheetSetName(aString);
+    styleScope().didChangeContentsOrInterpretation();
 }
 
 void Document::evaluateMediaQueryList()
@@ -6665,7 +6665,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
 
 bool Document::haveStylesheetsLoaded() const
 {
-    return !authorStyleSheets().hasPendingSheets() || m_ignorePendingStylesheets;
+    return !styleScope().hasPendingSheets() || m_ignorePendingStylesheets;
 }
 
 Locale& Document::getCachedLocale(const AtomicString& locale)

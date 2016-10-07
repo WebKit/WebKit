@@ -72,7 +72,6 @@
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
-#import <WebCore/AuthorStyleSheets.h>
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
@@ -119,6 +118,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/StyleScope.h>
 #import <WebCore/Text.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
@@ -3612,7 +3612,7 @@ WEBCORE_COMMAND(toggleUnderline)
 #endif
 
     if (Frame* coreFrame = core([self _frame])) {
-        coreFrame->document()->authorStyleSheets().didChangeContentsOrInterpretation();
+        coreFrame->document()->styleScope().didChangeContentsOrInterpretation();
         coreFrame->document()->updateStyleIfNeeded();
     }
 
@@ -5007,7 +5007,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
             document->setPaginatedForScreen(_private->paginateScreenContent);
             document->setPrinting(_private->printing);
-            document->authorStyleSheets().didChangeContentsOrInterpretation();
+            document->styleScope().didChangeContentsOrInterpretation();
         }
     }
 

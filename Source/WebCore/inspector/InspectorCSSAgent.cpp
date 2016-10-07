@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InspectorCSSAgent.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
 #include "CSSPropertyNames.h"
@@ -56,6 +55,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "StyleScope.h"
 #include "StyleSheetList.h"
 #include "WebKitNamedFlow.h"
 #include <inspector/InspectorProtocolObjects.h>
@@ -670,7 +670,7 @@ void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& resu
 
 void InspectorCSSAgent::collectAllDocumentStyleSheets(Document& document, Vector<CSSStyleSheet*>& result)
 {
-    auto cssStyleSheets = document.authorStyleSheets().activeStyleSheetsForInspector();
+    auto cssStyleSheets = document.styleScope().activeStyleSheetsForInspector();
     for (auto& cssStyleSheet : cssStyleSheets)
         collectStyleSheets(cssStyleSheet.get(), result);
 }
@@ -889,7 +889,7 @@ void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, c
         m_nodeIdToForcedPseudoState.set(nodeId, forcedPseudoState);
     else
         m_nodeIdToForcedPseudoState.remove(nodeId);
-    element->document().authorStyleSheets().didChangeContentsOrInterpretation();
+    element->document().styleScope().didChangeContentsOrInterpretation();
 }
 
 void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int documentNodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>& result)
@@ -1015,7 +1015,7 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
 
     // StyleRules returned by StyleResolver::styleRulesForElement lack parent pointers since that infomation is not cheaply available.
     // Since the inspector wants to walk the parent chain, we construct the full wrappers here.
-    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().authorStyleSheets(), styleResolver.document().extensionStyleSheets());
+    CSSStyleRule* cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule, styleResolver.document().styleScope(), styleResolver.document().extensionStyleSheets());
     if (!cssomWrapper)
         return nullptr;
     InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(cssomWrapper->parentStyleSheet());
@@ -1189,7 +1189,7 @@ void InspectorCSSAgent::resetPseudoStates()
 
     m_nodeIdToForcedPseudoState.clear();
     for (auto& document : documentsToChange)
-        document->authorStyleSheets().didChangeContentsOrInterpretation();
+        document->styleScope().didChangeContentsOrInterpretation();
 }
 
 } // namespace WebCore

@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class AuthorStyleSheets;
 class HTMLSlotElement;
 class SlotAssignment;
 
@@ -64,7 +63,7 @@ public:
 
     StyleResolver& styleResolver();
     StyleResolver* styleResolverIfExists();
-    AuthorStyleSheets& authorStyleSheets();
+    Style::Scope& styleScope();
 
     void updateStyle();
     void resetStyleResolver();
@@ -116,7 +115,7 @@ private:
     Element* m_host { nullptr };
 
     std::unique_ptr<StyleResolver> m_styleResolver;
-    std::unique_ptr<AuthorStyleSheets> m_authorStyleSheets;
+    std::unique_ptr<Style::Scope> m_styleScope;
 
     std::unique_ptr<SlotAssignment> m_slotAssignment;
 };

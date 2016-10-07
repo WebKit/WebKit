@@ -29,7 +29,6 @@
 
 #include "AXObjectCache.h"
 #include "AnimationController.h"
-#include "AuthorStyleSheets.h"
 #include "BackForwardController.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -92,6 +91,7 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "TextResourceDecoder.h"
 #include "TextStream.h"
 #include "TiledBacking.h"
@@ -1335,7 +1335,7 @@ void FrameView::layout(bool allowSubtree)
         StyleResolver* styleResolver = document.styleResolverIfExists();
         if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
             LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
-            document.authorStyleSheets().didChangeContentsOrInterpretation();
+            document.styleScope().didChangeContentsOrInterpretation();
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
         } else
@@ -3532,7 +3532,7 @@ void FrameView::setPagination(const Pagination& pagination)
 
     m_pagination = pagination;
 
-    frame().document()->authorStyleSheets().didChangeContentsOrInterpretation();
+    frame().document()->styleScope().didChangeContentsOrInterpretation();
 }
 
 IntRect FrameView::windowClipRect() const
@@ -5001,7 +5001,7 @@ void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
     if (Document* document = frame().document()) {
         // FIXME: this should probably be updateViewportUnitsOnResize(), but synchronously
         // dirtying style here causes assertions on iOS (rdar://problem/19998166).
-        document->authorStyleSheets().didChangeContentsOrInterpretation();
+        document->styleScope().didChangeContentsOrInterpretation();
     }
 }
     

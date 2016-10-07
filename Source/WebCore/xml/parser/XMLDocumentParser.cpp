@@ -26,7 +26,6 @@
 #include "config.h"
 #include "XMLDocumentParser.h"
 
-#include "AuthorStyleSheets.h"
 #include "CDATASection.h"
 #include "CachedScript.h"
 #include "Comment.h"
@@ -49,6 +48,7 @@
 #include "SVGStyleElement.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
+#include "StyleScope.h"
 #include "TextResourceDecoder.h"
 #include "TreeDepthLimit.h"
 #include <wtf/Ref.h>
@@ -200,7 +200,7 @@ void XMLDocumentParser::end()
         insertErrorMessageBlock();
     else {
         updateLeafTextNode();
-        document()->authorStyleSheets().didChangeContentsOrInterpretation();
+        document()->styleScope().didChangeContentsOrInterpretation();
     }
 
     if (isParsing())

@@ -21,11 +21,11 @@
 #include "config.h"
 #include "StyleSheetList.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "StyleScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,12 +45,12 @@ inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
 {
     if (!m_document)
         return m_detachedStyleSheets;
-    return m_document->authorStyleSheets().styleSheetsForStyleSheetList();
+    return m_document->styleScope().styleSheetsForStyleSheetList();
 }
 
 void StyleSheetList::detachFromDocument()
 {
-    m_detachedStyleSheets = m_document->authorStyleSheets().styleSheetsForStyleSheetList();
+    m_detachedStyleSheets = m_document->styleScope().styleSheetsForStyleSheetList();
     m_document = nullptr;
 }
 

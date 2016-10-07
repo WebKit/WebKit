@@ -1,3 +1,153 @@
+2016-10-07  Antti Koivisto  <antti@apple.com>
+
+        Rename AuthorStyleSheets to Style::Scope
+        https://bugs.webkit.org/show_bug.cgi?id=163108
+
+        Reviewed by Andreas Kling.
+
+        It represents the style scope in DOM.
+        Also move the file under style/.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::styleSheetScope):
+        * css/CSSStyleSheet.h:
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::getWrapperForRuleInSheets):
+        * css/InspectorCSSOMWrappers.h:
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::styleSheets):
+        (WebCore::StyleSheetList::detachFromDocument):
+        * dom/AuthorStyleSheets.cpp: Removed.
+        * dom/AuthorStyleSheets.h: Removed.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setContentLanguage):
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::needsStyleRecalc):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::createStyleResolver):
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        (WebCore::Document::usesStyleBasedEditability):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::preferredStylesheetSet):
+        (WebCore::Document::selectedStylesheetSet):
+        (WebCore::Document::setSelectedStylesheetSet):
+        (WebCore::Document::haveStylesheetsLoaded):
+        * dom/Document.h:
+        (WebCore::Document::styleScope):
+        (WebCore::Document::authorStyleSheets): Deleted.
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::clearPageUserSheet):
+        (WebCore::ExtensionStyleSheets::updatePageUserSheet):
+        (WebCore::ExtensionStyleSheets::invalidateInjectedStyleSheetCache):
+        (WebCore::ExtensionStyleSheets::addUserStyleSheet):
+        (WebCore::ExtensionStyleSheets::addAuthorStyleSheetForTesting):
+        (WebCore::ExtensionStyleSheets::styleResolverChangedTimerFired):
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::InlineStyleSheetOwner::insertedIntoDocument):
+        (WebCore::InlineStyleSheetOwner::removedFromDocument):
+        (WebCore::InlineStyleSheetOwner::clearDocumentData):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::sheetLoaded):
+        (WebCore::InlineStyleSheetOwner::startLoadingDynamicSheet):
+        * dom/InlineStyleSheetOwner.h:
+        (WebCore::InlineStyleSheetOwner::styleScope):
+        (WebCore::InlineStyleSheetOwner::styleSheetScope): Deleted.
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::~ProcessingInstruction):
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        (WebCore::ProcessingInstruction::insertedInto):
+        (WebCore::ProcessingInstruction::removedFrom):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::styleResolver):
+        (WebCore::ShadowRoot::styleScope):
+        (WebCore::ShadowRoot::updateStyle):
+        (WebCore::ShadowRoot::authorStyleSheets): Deleted.
+        * dom/ShadowRoot.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::parseAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::insertedInto):
+        (WebCore::HTMLLinkElement::removedFrom):
+        (WebCore::HTMLLinkElement::addPendingSheet):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+        * html/HTMLStyleElement.cpp:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::collectAllDocumentStyleSheets):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore::InspectorCSSAgent::buildObjectForRule):
+        (WebCore::InspectorCSSAgent::resetPseudoStates):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::setPagination):
+        (WebCore::FrameView::setViewportSizeForCSSViewportUnits):
+        * page/Page.cpp:
+        (WebCore::Page::setViewMode):
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames):
+        (WebCore::Page::invalidateInjectedStyleSheetCacheInAllFrames):
+        * style/StyleScope.cpp: Copied from dom/AuthorStyleSheets.cpp.
+        (WebCore::Style::Scope::Scope):
+        (WebCore::Style::Scope::styleResolver):
+        (WebCore::Style::Scope::styleResolverIfExists):
+        (WebCore::Style::Scope::forNode):
+        (WebCore::Style::Scope::removePendingSheet):
+        (WebCore::Style::Scope::addStyleSheetCandidateNode):
+        (WebCore::Style::Scope::removeStyleSheetCandidateNode):
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        (WebCore::Style::Scope::updateStyleResolver):
+        (WebCore::Style::Scope::activeStyleSheetsForInspector):
+        (WebCore::Style::Scope::activeStyleSheetsContains):
+        (WebCore::Style::Scope::flushPendingUpdate):
+        (WebCore::Style::Scope::clearPendingUpdate):
+        (WebCore::Style::Scope::scheduleActiveSetUpdate):
+        (WebCore::Style::Scope::didChangeCandidatesForActiveSet):
+        (WebCore::Style::Scope::didChangeContentsOrInterpretation):
+        (WebCore::Style::Scope::pendingUpdateTimerFired):
+        (WebCore::AuthorStyleSheets::AuthorStyleSheets): Deleted.
+        (WebCore::AuthorStyleSheets::styleResolver): Deleted.
+        (WebCore::AuthorStyleSheets::styleResolverIfExists): Deleted.
+        (WebCore::AuthorStyleSheets::forNode): Deleted.
+        (WebCore::AuthorStyleSheets::removePendingSheet): Deleted.
+        (WebCore::AuthorStyleSheets::addStyleSheetCandidateNode): Deleted.
+        (WebCore::AuthorStyleSheets::removeStyleSheetCandidateNode): Deleted.
+        (WebCore::AuthorStyleSheets::collectActiveStyleSheets): Deleted.
+        (WebCore::AuthorStyleSheets::analyzeStyleSheetChange): Deleted.
+        (WebCore::AuthorStyleSheets::updateActiveStyleSheets): Deleted.
+        (WebCore::AuthorStyleSheets::updateStyleResolver): Deleted.
+        (WebCore::AuthorStyleSheets::activeStyleSheetsForInspector): Deleted.
+        (WebCore::AuthorStyleSheets::activeStyleSheetsContains): Deleted.
+        (WebCore::AuthorStyleSheets::flushPendingUpdate): Deleted.
+        (WebCore::AuthorStyleSheets::clearPendingUpdate): Deleted.
+        (WebCore::AuthorStyleSheets::scheduleActiveSetUpdate): Deleted.
+        (WebCore::AuthorStyleSheets::didChangeCandidatesForActiveSet): Deleted.
+        (WebCore::AuthorStyleSheets::didChangeContentsOrInterpretation): Deleted.
+        (WebCore::AuthorStyleSheets::pendingUpdateTimerFired): Deleted.
+        * style/StyleScope.h: Copied from dom/AuthorStyleSheets.h.
+        * style/StyleTreeResolver.cpp:
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::removedFrom):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+
 2016-10-07  Zalan Bujtas  <zalan@apple.com>
 
         https://vuldb.com/?cvssv3.2012 takes long time to load.

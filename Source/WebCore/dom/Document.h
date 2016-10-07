@@ -74,7 +74,6 @@ namespace WebCore {
 
 class AXObjectCache;
 class Attr;
-class AuthorStyleSheets;
 class CDATASection;
 class CSSFontSelector;
 class CSSStyleDeclaration;
@@ -223,6 +222,10 @@ struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
 #if ENABLE(MEDIA_SESSION)
 class MediaSession;
 #endif
+
+namespace Style {
+class Scope;
+};
 
 const uint64_t HTMLMediaElementInvalidID = 0;
 
@@ -504,8 +507,8 @@ public:
 
     WEBCORE_EXPORT StyleSheetList& styleSheets();
 
-    AuthorStyleSheets& authorStyleSheets() { return *m_authorStyleSheets; }
-    const AuthorStyleSheets& authorStyleSheets() const { return *m_authorStyleSheets; }
+    Style::Scope& styleScope() { return *m_styleScope; }
+    const Style::Scope& styleScope() const { return *m_styleScope; }
     ExtensionStyleSheets& extensionStyleSheets() { return *m_extensionStyleSheets; }
     const ExtensionStyleSheets& extensionStyleSheets() const { return *m_extensionStyleSheets; }
 
@@ -1469,7 +1472,7 @@ private:
 
     MutationObserverOptions m_mutationObserverTypes;
 
-    std::unique_ptr<AuthorStyleSheets> m_authorStyleSheets;
+    std::unique_ptr<Style::Scope> m_styleScope;
     std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
     RefPtr<StyleSheetList> m_styleSheetList;
 

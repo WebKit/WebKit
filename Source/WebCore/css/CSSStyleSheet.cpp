@@ -21,7 +21,6 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
-#include "AuthorStyleSheets.h"
 #include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
@@ -44,7 +43,9 @@
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -170,7 +171,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
     ASSERT(m_contents->isMutable());
     ASSERT(m_contents->hasOneClient());
 
-    auto* scope = styleSheetScope();
+    auto* scope = styleScope();
     if (!scope)
         return;
 
@@ -191,7 +192,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
 
 void CSSStyleSheet::didMutate()
 {
-    auto* scope = styleSheetScope();
+    auto* scope = styleScope();
     if (!scope)
         return;
     scope->didChangeContentsOrInterpretation();
@@ -415,12 +416,12 @@ Document* CSSStyleSheet::ownerDocument() const
     return root.ownerNode() ? &root.ownerNode()->document() : nullptr;
 }
 
-AuthorStyleSheets* CSSStyleSheet::styleSheetScope()
+Style::Scope* CSSStyleSheet::styleScope()
 {
     auto* ownerNode = rootStyleSheet().ownerNode();
     if (!ownerNode)
         return nullptr;
-    return &AuthorStyleSheets::forNode(*ownerNode);
+    return &Style::Scope::forNode(*ownerNode);
 }
 
 void CSSStyleSheet::clearChildRuleCSSOMWrappers()
