@@ -29,7 +29,7 @@
 #include "ActiveDOMObject.cpp"
 #include "AnimationEvent.cpp"
 #include "Attr.cpp"
-#include "AuthorStyleSheets.cpp"
+#include "StyleScope.cpp"
 #include "BeforeTextInsertedEvent.cpp"
 #include "BeforeUnloadEvent.cpp"
 #include "CDATASection.cpp"

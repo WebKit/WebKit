@@ -1,3 +1,11 @@
+2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Fix the Windows build after r206917.
+
+        Unreviewed build fix.
+
+        * dom/DOMAllInOne.cpp:
+
 2016-10-07  Antti Koivisto  <antti@apple.com>
 
         Rename AuthorStyleSheets to Style::Scope
