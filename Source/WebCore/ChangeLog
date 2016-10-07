@@ -1,3 +1,29 @@
+2016-10-07  Nan Wang  <n_wang@apple.com>
+
+        AX: AXRoleDescription for details and summary elements
+        https://bugs.webkit.org/show_bug.cgi?id=163094
+
+        Reviewed by Chris Fleizach.
+
+        details and summary elements should have AXRoleDescription that is consistent with other
+        elements that have custom AXSubRole.
+
+        Test: accessibility/mac/details-summary-role-description.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXDetailsText):
+        (WebCore::AXSummaryText):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXDetailsText):
+        (WebCore::AXSummaryText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXDetailsText):
+        (WebCore::AXSummaryText):
+
 2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix the Windows build after r206917.

@@ -2487,8 +2487,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return AXDescriptionListTermText();
         case DescriptionListDetailRole:
             return AXDescriptionListDetailText();
+        case DetailsRole:
+            return AXDetailsText();
         case FooterRole:
             return AXFooterRoleDescriptionText();
+        case SummaryRole:
+            return AXSummaryText();
         case VideoRole:
             return localizedMediaControlElementString("VideoElement");
         default:

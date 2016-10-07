@@ -605,6 +605,16 @@ String AXDescriptionListDetailText()
     return WEB_UI_STRING("description", "description detail");
 }
 
+String AXDetailsText()
+{
+    return WEB_UI_STRING("details", "accessibility role description for a details element");
+}
+
+String AXSummaryText()
+{
+    return WEB_UI_STRING("summary", "accessibility role description for a summary element");
+}
+
 String AXFooterRoleDescriptionText()
 {
     return WEB_UI_STRING("footer", "accessibility role description for a footer");
