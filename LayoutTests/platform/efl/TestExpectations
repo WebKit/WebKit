@@ -1513,6 +1513,10 @@ Bug(EFL) fast/images/webp-color-profile-lossless.html [ Skip ]
 Bug(EFL) fast/images/webp-color-profile-lossy-alpha.html [ Skip ]
 Bug(EFL) fast/images/webp-color-profile-lossy.html [ Skip ]
 
+# Too many tests are failure, timeout, and crash. So it would be good to
+# skip these tests until we find solution to fix.
+webkit.org/b/161839 imported/w3c/web-platform-tests/ [ Skip ]
+
 # Though MEDIA_SOURCE is enabled, below tests are still failing.
 webkit.org/b/134974 http/tests/media/media-source [ Skip ]
 webkit.org/b/134974 media/media-source/media-source-stpp-crash.html [ Skip ]
