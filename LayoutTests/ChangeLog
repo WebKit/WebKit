@@ -1,5 +1,15 @@
 2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking inspector/console/addInspectedNode.html as flaky on mac-debug.
+        https://bugs.webkit.org/show_bug.cgi?id=155138
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html as flaky on mac-wk2 debug.
         https://bugs.webkit.org/show_bug.cgi?id=162975
 
