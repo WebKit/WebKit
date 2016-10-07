@@ -87,7 +87,6 @@ _BASE_FILTER_RULES = [
     '-build/endif_comment',
     '-build/include_what_you_use',  # <string> for std::string
     '-build/storage_class',  # const static
-    '-legal/copyright',
     '-readability/multiline_comment',
     '-readability/braces',  # int foo() {};
     '-readability/fn_size',
