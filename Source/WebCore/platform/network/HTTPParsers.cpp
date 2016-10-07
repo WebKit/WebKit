@@ -152,36 +152,6 @@ static String trimInputSample(const char* p, size_t length)
     return s;
 }
 
-ContentDispositionType contentDispositionType(const String& contentDisposition)
-{
-    if (contentDisposition.isEmpty())
-        return ContentDispositionNone;
-
-    Vector<String> parameters;
-    contentDisposition.split(';', parameters);
-
-    String dispositionType = parameters[0];
-    dispositionType.stripWhiteSpace();
-
-    if (equalLettersIgnoringASCIICase(dispositionType, "inline"))
-        return ContentDispositionInline;
-
-    // Some broken sites just send bogus headers like
-    //
-    //   Content-Disposition: ; filename="file"
-    //   Content-Disposition: filename="file"
-    //   Content-Disposition: name="file"
-    //
-    // without a disposition token... screen those out.
-    if (!isValidHTTPToken(dispositionType))
-        return ContentDispositionNone;
-
-    // We have a content-disposition of "attachment" or unknown.
-    // RFC 2183, section 2.8 says that an unknown disposition
-    // value should be treated as "attachment"
-    return ContentDispositionAttachment;  
-}
-
 bool parseHTTPRefresh(const String& refresh, double& delay, String& url)
 {
     unsigned len = refresh.length();

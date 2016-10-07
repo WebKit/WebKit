@@ -1,3 +1,18 @@
+2016-10-06  Daniel Bates  <dabates@apple.com>
+
+        Remove unused WebCore::contentDispositionType()
+        https://bugs.webkit.org/show_bug.cgi?id=163095
+
+        Reviewed by Alex Christensen.
+
+        The function WebCore::contentDispositionType() was only used by the Chromium and Qt ports
+        to parse the Content-Disposition HTTP header. Both of these ports have long since been
+        removed from the repository. We should remove WebCore::contentDispositionType().
+
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::contentDispositionType): Deleted.
+        * platform/network/HTTPParsers.h:
+
 2016-10-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Upgrading and constructing element should always report exception instead of rethrowing
