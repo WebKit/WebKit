@@ -33,6 +33,14 @@
 
 namespace WebCore {
 
+#define URL_PARSER_DEBUGGING 0
+    
+#if URL_PARSER_DEBUGGING
+#define URL_PARSER_LOG(...) LOG(URLParser, __VA_ARGS__)
+#else
+#define URL_PARSER_LOG(...)
+#endif
+    
 template<typename CharacterType>
 class CodePointIterator {
 public:
@@ -1150,7 +1158,7 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
 template<typename CharacterType>
 void URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
 {
-    LOG(URLParser, "Parsing URL <%s> base <%s> encoding <%s>", String(input, length).utf8().data(), base.string().utf8().data(), encoding.name());
+    URL_PARSER_LOG("Parsing URL <%s> base <%s> encoding <%s>", String(input, length).utf8().data(), base.string().utf8().data(), encoding.name());
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
@@ -1195,8 +1203,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         Fragment,
     };
 
-#define LOG_STATE(x) LOG(URLParser, "State %s, code point %c, parsed data <%s> size %zu", x, *c, parsedDataView(0, currentPosition(c)).utf8().data(), currentPosition(c))
-#define LOG_FINAL_STATE(x) LOG(URLParser, "Final State: %s", x)
+#define LOG_STATE(x) URL_PARSER_LOG("State %s, code point %c, parsed data <%s> size %zu", x, *c, parsedDataView(0, currentPosition(c)).utf8().data(), currentPosition(c))
+#define LOG_FINAL_STATE(x) URL_PARSER_LOG("Final State: %s", x)
 
     State state = State::SchemeStart;
     while (!c.atEnd()) {
@@ -1443,7 +1451,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     auto lastAt = c;
                     auto findLastAt = c;
                     while (!findLastAt.atEnd()) {
-                        LOG(URLParser, "Finding last @: %c", *findLastAt);
+                        URL_PARSER_LOG("Finding last @: %c", *findLastAt);
                         if (*findLastAt == '@')
                             lastAt = findLastAt;
                         bool isSlash = *findLastAt == '/' || (m_urlIsSpecial && *findLastAt == '\\');
@@ -1805,7 +1813,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             break;
         case State::Fragment:
             do {
-                LOG(URLParser, "State Fragment");
+                URL_PARSER_LOG("State Fragment");
                 if (!m_didSeeUnicodeFragmentCodePoint && isASCII(*c))
                     appendToASCIIBuffer(*c);
                 else {
@@ -2049,7 +2057,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_string = String::adopt(WTFMove(buffer));
     }
     m_url.m_isValid = true;
-    LOG(URLParser, "Parsed URL <%s>", m_url.m_string.utf8().data());
+    URL_PARSER_LOG("Parsed URL <%s>", m_url.m_string.utf8().data());
 }
 
 template<typename CharacterType>
@@ -2779,7 +2787,7 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
 {
     // FIXME: m_cannotBeABaseURL is not compared because the old URL::parse did not use it,
     // but once we get rid of URL::parse its value should be tested.
-    LOG(URLParser, "%d %d %d %d %d %d %d %d %d %d %d %d %s\n%d %d %d %d %d %d %d %d %d %d %d %d %s",
+    URL_PARSER_LOG("%d %d %d %d %d %d %d %d %d %d %d %d %s\n%d %d %d %d %d %d %d %d %d %d %d %d %s",
         a.m_isValid,
         a.m_protocolIsInHTTPFamily,
         a.m_schemeEnd,

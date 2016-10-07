@@ -1,3 +1,21 @@
+2016-10-07  Alex Christensen  <achristensen@webkit.org>
+
+        Disable URLParser logs by default in all builds
+        https://bugs.webkit.org/show_bug.cgi?id=163135
+
+        Reviewed by Brady Eidson.
+
+        In debug builds with the URLParser enabled, some tests time out because
+        parameters to generate log strings are being evaluated for each character of each URL
+        and then not being used if URLParser logs are disabled.  Generating these unused parameters
+        is too slow even for debug builds.  Let's only generate them if they are to be used.
+
+        No change in behaviour.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::allValuesEqual):
+
 2016-10-07  Andreas Kling  <akling@apple.com>
 
         [WK2] didRemoveFrameFromHierarchy callback doesn't fire for subframes when evicting from PageCache.
