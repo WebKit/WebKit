@@ -36,6 +36,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
 #import <WebCore/CFNetworkSPI.h>
+#import <WebCore/FileSystem.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/ResourceRequest.h>
 #import <wtf/MainThread.h>
@@ -268,7 +269,7 @@ void NetworkDataTask::failureTimerFired()
     ASSERT_NOT_REACHED();
 }
 
-void NetworkDataTask::setPendingDownloadLocation(const WTF::String& filename, const SandboxExtension::Handle& sandboxExtensionHandle)
+void NetworkDataTask::setPendingDownloadLocation(const WTF::String& filename, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
     ASSERT(!m_sandboxExtension);
     m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
@@ -277,6 +278,9 @@ void NetworkDataTask::setPendingDownloadLocation(const WTF::String& filename, co
 
     m_pendingDownloadLocation = filename;
     m_task.get()._pathToDownloadTaskFile = filename;
+
+    if (allowOverwrite && WebCore::fileExists(filename))
+        WebCore::deleteFile(filename);
 }
 
 bool NetworkDataTask::tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge& challenge, const ChallengeCompletionHandler& completionHandler)

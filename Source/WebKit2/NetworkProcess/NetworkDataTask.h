@@ -121,7 +121,7 @@ public:
         ASSERT(!m_pendingDownload);
         m_pendingDownload = &pendingDownload;
     }
-    void setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle&);
+    void setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle&, bool allowOverwrite);
     const String& pendingDownloadLocation() { return m_pendingDownloadLocation; }
 
     const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }

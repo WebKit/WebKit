@@ -1,3 +1,21 @@
+2016-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network Session: Allow NetworkDataTask decide what to do when override is allowed for a download
+        https://bugs.webkit.org/show_bug.cgi?id=163010
+
+        Reviewed by Alex Christensen.
+
+        Current code always deletes the file before starting a download when allow override is True. In soup backend we
+        use glib API that takes care of it and tries to ensure that the original file is not deleted if the new file
+        creation fails for whatever reason.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination): Pass allowOverride to setPendingDownloadLocation().
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::setPendingDownloadLocation): Delete the destination file if exists and allowOverride
+        is True.
+
 2016-10-07  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] UIProcess crashes when using Japanese IM

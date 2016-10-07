@@ -128,11 +128,7 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
         if (!networkDataTask || !completionHandler)
             return;
 
-        networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle);
-
-        if (allowOverwrite && fileExists(destination))
-            deleteFile(destination);
-
+        networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle, allowOverwrite);
         completionHandler(PolicyDownload);
 
         ASSERT(!m_downloadsAfterDestinationDecided.contains(downloadID));
