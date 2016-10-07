@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "APISession.h"
 #include "APIUserInitiatedAction.h"
 #include "ChildProcessProxy.h"
 #include "CustomProtocolManagerProxy.h"
