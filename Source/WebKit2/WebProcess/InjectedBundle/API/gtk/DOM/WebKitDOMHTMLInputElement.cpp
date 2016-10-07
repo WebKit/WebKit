@@ -989,3 +989,25 @@ gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* inpu
 
     return WebKit::core(input)->lastChangeWasUserEdit();
 }
+
+gboolean webkit_dom_html_input_element_get_auto_filled(WebKitDOMHTMLInputElement* self)
+{
+  g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
+
+  return WebKit::core(self)->isAutoFilled();
+}
+
+void webkit_dom_html_input_element_set_auto_filled(WebKitDOMHTMLInputElement* self, gboolean value)
+{
+  g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
+
+  WebKit::core(self)->setAutoFilled(value);
+}
+
+void webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* self, const gchar* value)
+{
+  g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
+  g_return_if_fail(value);
+
+  WebKit::core(self)->setEditingValue(WTF::String::fromUTF8(value));
+}

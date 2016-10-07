@@ -487,6 +487,37 @@ webkit_dom_html_input_element_set_capture_type(WebKitDOMHTMLInputElement* self, 
  */
 WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement* input);
 
+/**
+ * webkit_dom_html_input_element_get_auto_filled:
+ * @self: A #WebKitDOMHTMLInputElement
+ *
+ * Returns: A #gboolean
+ *
+ * Since: 2.16
+ */
+WEBKIT_API gboolean
+webkit_dom_html_input_element_get_auto_filled(WebKitDOMHTMLInputElement* self);
+
+/**
+ * webkit_dom_html_input_element_set_auto_filled:
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gboolean
+ *
+ * Since: 2.16
+ */
+WEBKIT_API void
+webkit_dom_html_input_element_set_auto_filled(WebKitDOMHTMLInputElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_input_element_set_editing_value:
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gchar
+ *
+ * Since: 2.16
+ */
+WEBKIT_API void
+webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WebKitDOMHTMLInputElement_h */
