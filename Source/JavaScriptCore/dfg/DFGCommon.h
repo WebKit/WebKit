@@ -98,8 +98,6 @@ inline bool enableInt52()
 #endif
 }
 
-enum NoResultTag { NoResult };
-
 // The prediction propagator effectively does four passes, with the last pass
 // being done by the separate FixuPhase.
 enum PredictionPass {

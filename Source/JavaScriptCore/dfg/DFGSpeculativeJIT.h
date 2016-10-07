@@ -58,14 +58,6 @@ class SpeculateBooleanOperand;
 
 enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandJSValue};
 
-inline GPRReg extractResult(GPRReg result) { return result; }
-#if USE(JSVALUE64)
-inline GPRReg extractResult(JSValueRegs result) { return result.gpr(); }
-#else
-inline JSValueRegs extractResult(JSValueRegs result) { return result; }
-#endif
-inline NoResultTag extractResult(NoResultTag) { return NoResult; }
-
 // === SpeculativeJIT ===
 //
 // The SpeculativeJIT is used to generate a fast, but potentially

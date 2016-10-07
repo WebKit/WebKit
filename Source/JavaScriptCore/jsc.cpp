@@ -627,9 +627,11 @@ public:
                 JSValueRegs results = params[0].jsValueRegs();
                 GPRReg dom = params[2].gpr();
 
-                jit.load32(CCallHelpers::Address(dom, DOMJITNode::offsetOfValue()), results.payloadGPR());
-                jit.boxInt32(results.payloadGPR(), results);
+                params.addSlowPathCall(jit.jump(), jit, static_cast<EncodedJSValue(*)(ExecState*, void*)>([](ExecState*, void* pointer) {
+                    return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
+                }), results, dom);
                 return CCallHelpers::JumpList();
+
             });
             return patchpoint;
         }

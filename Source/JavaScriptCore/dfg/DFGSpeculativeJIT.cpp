@@ -34,12 +34,12 @@
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGCallCreateDirectArgumentsSlowPathGenerator.h"
 #include "DFGCapabilities.h"
+#include "DFGDOMJITPatchpointParams.h"
 #include "DFGMayExit.h"
 #include "DFGOSRExitFuzz.h"
 #include "DFGSaneStringGetByValSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "DOMJITPatchpoint.h"
-#include "DOMJITPatchpointParams.h"
 #include "DirectArguments.h"
 #include "JITAddGenerator.h"
 #include "JITBitAndGenerator.h"
@@ -7153,7 +7153,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
     Vector<GPRTemporary> gpTempraries;
     Vector<FPRTemporary> fpTempraries;
     allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, patchpoint.get());
-    DOMJIT::PatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    DOMJITPatchpointParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     patchpoint->generator()->run(m_jit, params);
     jsValueResult(result.regs(), node);
 }
@@ -7175,7 +7175,7 @@ void SpeculativeJIT::compileCheckDOM(Node* node)
     Vector<FPRTemporary> fpTempraries;
     allocateTemporaryRegistersForPatchpoint(this, gpTempraries, fpTempraries, gpScratch, fpScratch, patchpoint.get());
 
-    DOMJIT::PatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    DOMJITPatchpointParams params(this, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     CCallHelpers::JumpList failureCases = patchpoint->generator()->run(m_jit, params);
     speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node->child1(), failureCases);
     noResult(node);

@@ -286,6 +286,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGConstantHoistingPhase.cpp
     dfg/DFGCriticalEdgeBreakingPhase.cpp
     dfg/DFGDCEPhase.cpp
+    dfg/DFGDOMJITPatchpointParams.cpp
     dfg/DFGDesiredIdentifiers.cpp
     dfg/DFGDesiredTransitions.cpp
     dfg/DFGDesiredWatchpoints.cpp
@@ -415,6 +416,7 @@ set(JavaScriptCore_SOURCES
     ftl/FTLCapabilities.cpp
     ftl/FTLCommonValues.cpp
     ftl/FTLCompile.cpp
+    ftl/FTLDOMJITPatchpointParams.cpp
     ftl/FTLExceptionTarget.cpp
     ftl/FTLExitArgument.cpp
     ftl/FTLExitArgumentForOperand.cpp

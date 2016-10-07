@@ -25,49 +25,28 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#if ENABLE(DFG_JIT)
 
-#include "CCallHelpers.h"
-#include "DOMJITReg.h"
-#include "DOMJITSlowPathCalls.h"
-#include "JITOperations.h"
-#include "RegisterSet.h"
+#include "DOMJITPatchpointParams.h"
 
-namespace JSC { namespace DOMJIT {
+namespace JSC { namespace DFG {
+    
+class SpeculativeJIT;
 
-class PatchpointParams {
-WTF_MAKE_NONCOPYABLE(PatchpointParams);
+class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
 public:
-    virtual ~PatchpointParams() { }
-
-    unsigned size() const { return m_regs.size(); }
-    const Reg& at(unsigned index) const { return m_regs[index]; }
-    const Reg& operator[](unsigned index) const { return at(index); }
-
-    GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
-    FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
-
-    PatchpointParams(Vector<Reg>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : m_regs(WTFMove(regs))
-        , m_gpScratch(WTFMove(gpScratch))
-        , m_fpScratch(WTFMove(fpScratch))
+    DOMJITPatchpointParams(SpeculativeJIT* jit, Vector<DOMJIT::Reg>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+        : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
+        , m_jit(jit)
     {
-    }
-
-    template<typename FunctionType, typename ResultType, typename... Arguments>
-    void addSlowPathCall(CCallHelpers::JumpList from, CCallHelpers& jit, FunctionType function, ResultType result, Arguments... arguments) const
-    {
-        addSlowPathCallImpl(from, jit, function, result, std::make_tuple(arguments...));
     }
 
 private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) JS_EXPORT_PRIVATE virtual void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) const = 0;
+#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) const override;
     DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-    Vector<Reg> m_regs;
-    Vector<GPRReg> m_gpScratch;
-    Vector<FPRReg> m_fpScratch;
+    SpeculativeJIT* m_jit;
 };
 
 } }

@@ -1,3 +1,53 @@
+2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Support slow path call
+        https://bugs.webkit.org/show_bug.cgi?id=162978
+
+        Reviewed by Saam Barati.
+
+        One of the most important features required in DOMJIT::Patchpoint is slow path calls.
+        DOM operation typically returns DOMWrapper object. At that time, if wrapper cache hits, we can go
+        to the fast path. However, if we cannot use the cache, we need to go to the slow path to call toJS function.
+        At that time, slow path call functionality is necessary.
+
+        This patch expose DOMJIT::PatchpointParams::addSlowPathCall. We can request slow path call code generation
+        through this interface. DOMJIT::PatchpointParams automatically leverages appropriate slow path call systems
+        in each tier. In DFG, we use slow path call system. In FTL, we implement slow path call by using addLatePath
+        to construct slow path call. But these details are completely hidden by DOMJIT::PatchpointParams. Users can
+        just use addSlowPathCall.
+
+        Since DFG and FTL slow path call systems are implemented in variadic templates, directly using this means
+        that we need to expose core part of DFG and FTL. For example, DFG::SpeculativeJIT need to be exposed in
+        such a design. That is too bad. Instead, we use magical macro in DOMJITSlowPathCalls.h. We can list up the
+        call signatures in DOMJIT_SLOW_PATH_CALLS. DOMJIT uses these signatures to generate an interface to request
+        slow path calls inside DFG and FTL instead of exposing everything.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGCommon.h:
+        * dfg/DFGDOMJITPatchpointParams.cpp: Copied from Source/JavaScriptCore/domjit/DOMJITPatchpointParams.h.
+        (JSC::DFG::dispatch):
+        * dfg/DFGDOMJITPatchpointParams.h: Copied from Source/JavaScriptCore/domjit/DOMJITPatchpointParams.h.
+        (JSC::DFG::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        (JSC::DFG::SpeculativeJIT::compileCheckDOM):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::extractResult): Deleted.
+        * domjit/DOMJITPatchpointParams.h:
+        (JSC::DOMJIT::PatchpointParams::addSlowPathCall):
+        * domjit/DOMJITSlowPathCalls.h: Copied from Source/JavaScriptCore/domjit/DOMJITPatchpointParams.h.
+        * ftl/FTLDOMJITPatchpointParams.cpp: Added.
+        (JSC::FTL::dispatch):
+        * ftl/FTLDOMJITPatchpointParams.h: Copied from Source/JavaScriptCore/domjit/DOMJITPatchpointParams.h.
+        (JSC::FTL::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * jit/GPRInfo.h:
+        (JSC::extractResult):
+        * jsc.cpp:
+
 2016-10-06  Saam Barati  <sbarati@apple.com>
 
         HasOwnPropertyCache flattening dictionaries is causing insane memory usage with the uBlock Safari extension
