@@ -29,6 +29,8 @@
 # <rdar://problems/4251781&4251785>
 
 use strict;
+use FindBin;
+use lib '.', $FindBin::Bin;
 
 use File::Path;
 use File::Basename;

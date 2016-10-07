@@ -80,7 +80,7 @@ function(GENERATE_BINDINGS)
         add_custom_command(
             OUTPUT ${arg_SUPPLEMENTAL_DEPFILE} ${arg_PP_EXTRA_OUTPUT}
             DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${arg_INPUT_FILES}
-            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines ${arg_FEATURES} --idlFilesList ${idl_files_list} --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE} ${arg_PP_EXTRA_ARGS}
+            COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines ${arg_FEATURES} --idlFilesList ${idl_files_list} --supplementalDependencyFile ${arg_SUPPLEMENTAL_DEPFILE} ${arg_PP_EXTRA_ARGS}
             VERBATIM)
     endif ()
 
@@ -117,7 +117,7 @@ function(GENERATE_BINDINGS)
             OUTPUT ${arg_DESTINATION}/JS${_name}.cpp ${arg_DESTINATION}/JS${_name}.h
             MAIN_DEPENDENCY ${_file}
             DEPENDS ${common_generator_dependencies}
-            COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${arg_BASE_DIR} ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
+            COMMAND ${PERL_EXECUTABLE} ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
             WORKING_DIRECTORY ${arg_BASE_DIR}
             VERBATIM)
         list(APPEND gen_sources ${arg_DESTINATION}/JS${_name}.cpp)
@@ -134,7 +134,7 @@ macro(GENERATE_FONT_NAMES _infile)
         OUTPUT  ${_outputfiles}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
         VERBATIM)
 endmacro()
 
@@ -146,7 +146,7 @@ macro(GENERATE_EVENT_FACTORY _infile _outfile)
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 endmacro()
 
@@ -158,7 +158,7 @@ macro(GENERATE_EXCEPTION_CODE_DESCRIPTION _infile _outfile)
         OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 endmacro()
 
@@ -170,7 +170,7 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile} ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.h ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM)
 endmacro()
 
@@ -202,7 +202,7 @@ macro(GENERATE_DOM_NAMES _namespace _attrs)
     add_custom_command(
         OUTPUT  ${_outputfiles}
         DEPENDS ${MAKE_NAMES_DEPENDENCIES} ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_attrs} ${_tags}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS}" --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments} ${_additionArguments}
+        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS}" --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments} ${_additionArguments}
         VERBATIM)
 endmacro()
 
@@ -216,7 +216,7 @@ macro(GENERATE_GRAMMAR _prefix _input _output_header _output_source _features)
         OUTPUT ${_output_header} ${_output_source}
         MAIN_DEPENDENCY ${_input}
         DEPENDS ${_input}
-        COMMAND ${PERL_EXECUTABLE} -I ${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/css/makegrammar.pl --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} --extraDefines "${_features}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --bison "${BISON_EXECUTABLE}" --symbolsPrefix ${_prefix} ${_input}
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/makegrammar.pl --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} --extraDefines "${_features}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --bison "${BISON_EXECUTABLE}" --symbolsPrefix ${_prefix} ${_input}
         WORKING_DIRECTORY ${_working_directory}
         VERBATIM)
 endmacro()

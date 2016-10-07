@@ -31,6 +31,8 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 use strict;
+use FindBin;
+use lib "$FindBin::Bin/../bindings/scripts";
 
 use InFilesCompiler;
 

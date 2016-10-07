@@ -20,6 +20,8 @@
 #   Boston, MA 02110-1301, USA.
 use strict;
 use warnings;
+use FindBin;
+use lib "$FindBin::Bin/../bindings/scripts";
 
 use File::Basename;
 use File::Spec;

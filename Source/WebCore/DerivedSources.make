@@ -899,13 +899,13 @@ CSSPropertyNames.h CSSPropertyNames.cpp StyleBuilder.cpp StylePropertyShorthandF
 .INTERMEDIATE : makeprop.intermediate
 makeprop.intermediate : $(WEBCORE_CSS_PROPERTY_NAMES) css/makeprop.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
-	$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
+	$(PERL) "$(WebCore)/css/makeprop.pl" --defines "$(FEATURE_DEFINES)"
 
 CSSValueKeywords.h CSSValueKeywords.cpp : makevalues.intermediate
 .INTERMEDIATE : makevalues.intermediate
 makevalues.intermediate : $(WEBCORE_CSS_VALUE_KEYWORDS) css/makevalues.pl bindings/scripts/preprocessor.pm $(PLATFORM_FEATURE_DEFINES)
 	$(PERL) -pe '' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
-	$(PERL) -I$(WebCore)/bindings/scripts "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
+	$(PERL) "$(WebCore)/css/makevalues.pl" --defines "$(FEATURE_DEFINES)"
 
 # --------
 
@@ -974,7 +974,7 @@ endif
 
 # CSS grammar
 CSSGrammar.cpp : css/CSSGrammar.y.in $(PLATFORM_FEATURE_DEFINES)
-	$(PERL) -I $(WebCore)/bindings/scripts $(WebCore)/css/makegrammar.pl --extraDefines "$(FEATURE_DEFINES)" --outputDir . --bison "$(BISON)" --symbolsPrefix cssyy $<
+	$(PERL) $(WebCore)/css/makegrammar.pl --extraDefines "$(FEATURE_DEFINES)" --outputDir . --bison "$(BISON)" --symbolsPrefix cssyy $<
 
 # --------
 
@@ -1014,7 +1014,7 @@ ifeq ($(OS), Windows_NT)
 endif
 
 UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS) $(PLATFORM_FEATURE_DEFINES)
-	$(PERL) -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+	$(PERL) $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # --------
 
@@ -1040,14 +1040,14 @@ endif
 PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
 
 PlugInsResources.h : css/make-css-file-arrays.pl bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(PLATFORM_FEATURE_DEFINES)
-	$(PERL) -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
+	$(PERL) $< --defines "$(FEATURE_DEFINES)" $@ PlugInsResourcesData.cpp $(PLUG_INS_RESOURCES)
 
 # --------
 
 WebKitFontFamilyNames.cpp WebKitFontFamilyNames.h: WebKitFontFamilyMakeNames.intermediate
 .INTERMEDIATE : WebKitFontFamilyMakeNames.intermediate
 WebKitFontFamilyMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm css/WebKitFontFamilyNames.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
+	$(PERL) $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
 
 # HTML tag and attribute names
 
@@ -1089,20 +1089,20 @@ JSHTMLElementWrapperFactory.cpp JSHTMLElementWrapperFactory.h HTMLElementFactory
 ifdef HTML_FLAGS
 
 htmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(HTML_FLAGS)"
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory --extraDefines "$(HTML_FLAGS)"
 
 else
 
 htmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm html/HTMLTagNames.in html/HTMLAttributeNames.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
+	$(PERL) $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 endif
 
 XMLNSNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlnsattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in
+	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
 
 XMLNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm xml/xmlattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in
+	$(PERL) $< --attrs $(WebCore)/xml/xmlattrs.in
 
 # --------
 
@@ -1119,16 +1119,16 @@ JSSVGElementWrapperFactory.cpp JSSVGElementWrapperFactory.h SVGElementFactory.cp
 
 ifdef SVG_FLAGS
 svgMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" --factory --wrapperFactory
 else
 
 svgMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/svgtags.in svg/svgattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
+	$(PERL) $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 endif
 
 XLinkNames.cpp : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm svg/xlinkattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in
+	$(PERL) $< --attrs $(WebCore)/svg/xlinkattrs.in
 
 # --------
 
@@ -1139,19 +1139,19 @@ EVENT_NAMES = EventNames.in $(ADDITIONAL_EVENT_NAMES)
 EventFactory.cpp EventHeaders.h EventInterfaces.h : EventFactory.intermediate
 .INTERMEDIATE : EventFactory.intermediate
 EventFactory.intermediate : dom/make_event_factory.pl $(EVENT_NAMES)
-	$(PERL) -I $(WebCore)/bindings/scripts $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
+	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 
 EventTargetHeaders.h EventTargetInterfaces.h : EventTargetFactory.intermediate
 .INTERMEDIATE : EventTargetFactory.intermediate
 EventTargetFactory.intermediate : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
-	$(PERL) -I $(WebCore)/bindings/scripts $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
+	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
 
 ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h : MakeDOMExceptions.intermediate
 .INTERMEDIATE : MakeDOMExceptions.intermediate
 MakeDOMExceptions.intermediate : dom/make_dom_exceptions.pl dom/DOMExceptions.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --input $(WebCore)/dom/DOMExceptions.in
+	$(PERL) $< --input $(WebCore)/dom/DOMExceptions.in
 
 # --------
 
@@ -1160,7 +1160,7 @@ MakeDOMExceptions.intermediate : dom/make_dom_exceptions.pl dom/DOMExceptions.in
 JSMathMLElementWrapperFactory.cpp JSMathMLElementWrapperFactory.h MathMLElementFactory.cpp MathMLElementFactory.h MathMLElementTypeHelpers.h MathMLNames.cpp MathMLNames.h : mathmlMakeNames.intermediate
 .INTERMEDIATE : mathmlMakeNames.intermediate
 mathmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bindings/scripts/StaticString.pm mathml/mathtags.in mathml/mathattrs.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
+	$(PERL) $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory
 
 # --------
 
@@ -1169,7 +1169,7 @@ mathmlMakeNames.intermediate : dom/make_names.pl bindings/scripts/Hasher.pm bind
 InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h SettingsMacros.h : MakeSettings.intermediate
 .INTERMEDIATE : MakeSettings.intermediate
 MakeSettings.intermediate : page/make_settings.pl page/Settings.in
-	$(PERL) -I $(WebCore)/bindings/scripts $< --input $(WebCore)/page/Settings.in
+	$(PERL) $< --input $(WebCore)/page/Settings.in
 
 # --------
 
@@ -1183,10 +1183,6 @@ COMMON_BINDINGS_SCRIPTS = \
 
 PREPROCESS_IDLS_SCRIPTS = \
     bindings/scripts/preprocess-idls.pl
-
-generator_script = $(PERL) $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $(WebCore)/bindings/scripts/generate-bindings.pl
-
-preprocess_idls_script = $(PERL) $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $(WebCore)/bindings/scripts/preprocess-idls.pl
 
 # JS bindings generator
 
@@ -1230,11 +1226,11 @@ endef
 
 $(SUPPLEMENTAL_MAKEFILE_DEPS) : $(PREPROCESS_IDLS_SCRIPTS) $(JS_BINDING_IDLS) $(PLATFORM_FEATURE_DEFINES) DerivedSources.make
 	$(foreach f,$(JS_BINDING_IDLS),@echo $(f)>>$(IDL_FILES_TMP)$(NL))
-	$(call preprocess_idls_script, $(PREPROCESS_IDLS_SCRIPTS)) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
+	$(PERL) $(WebCore)/bindings/scripts/preprocess-idls.pl --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) --windowConstructorsFile $(WINDOW_CONSTRUCTORS_FILE) --workerGlobalScopeConstructorsFile $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --dedicatedWorkerGlobalScopeConstructorsFile $(DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE) --supplementalMakefileDeps $@
 	$(DELETE) $(IDL_FILES_TMP)
 
 JS%.h : %.idl $(JS_BINDINGS_SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(WINDOW_CONSTRUCTORS_FILE) $(WORKERGLOBALSCOPE_CONSTRUCTORS_FILE) $(PLATFORM_FEATURE_DEFINES)
-	$(call generator_script, $(JS_BINDINGS_SCRIPTS)) $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
+	$(PERL) $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_COMMON_ARGS) --defines "$(FEATURE_DEFINES) $(ADDITIONAL_IDL_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --idlAttributesFile $(IDL_ATTRIBUTES_FILE) --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 -include $(SUPPLEMENTAL_MAKEFILE_DEPS)
 

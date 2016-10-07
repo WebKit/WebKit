@@ -21,6 +21,9 @@
 # Usage: make-css-file-arrays.pl <header> <output> <input> ...
 
 use strict;
+use FindBin;
+use lib "$FindBin::Bin/../bindings/scripts";
+
 use Getopt::Long;
 
 my $defines;
