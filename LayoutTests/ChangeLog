@@ -1,3 +1,15 @@
+2016-10-07  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r201970): productSub / vendor / vendorSub should not be exposed on WorkerNavigator
+        https://bugs.webkit.org/show_bug.cgi?id=163124
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing test to reflect behavior change.
+
+        * fast/workers/resources/worker-navigator.js:
+        * fast/workers/worker-navigator-expected.txt:
+
 2016-10-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/xmlhttprequest/auth-reject-protection-space.html as flaky on mac-wk2.

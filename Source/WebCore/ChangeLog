@@ -1,3 +1,27 @@
+2016-10-07  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r201970): productSub / vendor / vendorSub should not be exposed on WorkerNavigator
+        https://bugs.webkit.org/show_bug.cgi?id=163124
+
+        Reviewed by Ryosuke Niwa.
+
+        productSub / vendor / vendorSub should not be exposed on WorkerNavigator:
+        - https://html.spec.whatwg.org/#navigatorid
+
+        Test case:
+        - http://w3c-test.org/submissions/3881/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker
+
+        Note that the specification also restricts NavigatorID's appCodeName and
+        product attributes to Window. However, it seems the HTML specification is
+        about to get updated so that these get exposed to workers:
+        - https://github.com/whatwg/html/pull/1870
+
+        No new tests, updated existing test.
+
+        * bindings/scripts/generate-bindings.pl:
+        (shouldPropertyBeExposed):
+        * page/NavigatorID.idl:
+
 2016-10-07  Alex Christensen  <achristensen@webkit.org>
 
         Disable URLParser logs by default in all builds

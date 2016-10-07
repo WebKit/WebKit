@@ -34,8 +34,8 @@
     [Nondeterministic] readonly attribute DOMString appVersion;
     [Nondeterministic] readonly attribute DOMString platform;
     [Nondeterministic] readonly attribute DOMString product;
-    [Nondeterministic] readonly attribute DOMString productSub;
+    [Nondeterministic, Exposed=Window] readonly attribute DOMString productSub;
     [Nondeterministic] readonly attribute DOMString userAgent;
-    [Nondeterministic] readonly attribute DOMString vendor;
-    [Nondeterministic] readonly attribute DOMString vendorSub;
+    [Nondeterministic, Exposed=Window] readonly attribute DOMString vendor;
+    [Nondeterministic, Exposed=Window] readonly attribute DOMString vendorSub;
 };

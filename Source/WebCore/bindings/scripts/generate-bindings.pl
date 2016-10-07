@@ -143,9 +143,13 @@ foreach my $idlFile (@supplementedIdlFiles) {
     foreach my $interface (@{$document->interfaces}) {
         if (!$interface->isPartial || $interface->name eq $targetInterfaceName) {
             my $targetDataNode;
+            my @targetGlobalContexts;
             foreach my $interface (@{$targetDocument->interfaces}) {
                 if ($interface->name eq $targetInterfaceName) {
                     $targetDataNode = $interface;
+                    my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
+                    $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
+                    @targetGlobalContexts = split(",", $exposedAttribute);
                     last;
                 }
             }
@@ -153,6 +157,8 @@ foreach my $idlFile (@supplementedIdlFiles) {
 
             # Support for attributes of partial interfaces.
             foreach my $attribute (@{$interface->attributes}) {
+                next unless shouldPropertyBeExposed($attribute->signature, \@targetGlobalContexts);
+
                 # Record that this attribute is implemented by $interfaceName.
                 $attribute->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
@@ -165,6 +171,8 @@ foreach my $idlFile (@supplementedIdlFiles) {
 
             # Support for methods of partial interfaces.
             foreach my $function (@{$interface->functions}) {
+                next unless shouldPropertyBeExposed($function->signature, \@targetGlobalContexts);
+
                 # Record that this method is implemented by $interfaceName.
                 $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
@@ -177,6 +185,8 @@ foreach my $idlFile (@supplementedIdlFiles) {
 
             # Support for constants of partial interfaces.
             foreach my $constant (@{$interface->constants}) {
+                next unless shouldPropertyBeExposed($constant, \@targetGlobalContexts);
+
                 # Record that this constant is implemented by $interfaceName.
                 $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
 
@@ -195,6 +205,25 @@ foreach my $idlFile (@supplementedIdlFiles) {
 # Generate desired output for the target IDL file.
 my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, $preprocessor, $writeDependencies, $verbose, $targetIdlFile);
 $codeGen->ProcessDocument($targetDocument, $defines);
+
+# Attributes / Operations / Constants of supplemental interfaces can have an [Exposed=XX] attribute which restricts
+# on which global contexts they should be exposed.
+sub shouldPropertyBeExposed
+{
+    my ($signature, $targetGlobalContexts) = @_;
+
+    my $exposed = $signature->extendedAttributes->{Exposed};
+
+    return 1 unless $exposed;
+
+    $exposed = substr($exposed, 1, -1) if substr($exposed, 0, 1) eq "(";
+    my @sourceGlobalContexts = split(",", $exposed);
+
+    for my $targetGlobalContext (@$targetGlobalContexts) {
+        return 1 if grep(/^$targetGlobalContext$/, @sourceGlobalContexts);
+    }
+    return 0;
+}
 
 sub generateEmptyHeaderAndCpp
 {

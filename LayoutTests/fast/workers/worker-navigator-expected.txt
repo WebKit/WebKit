@@ -8,10 +8,10 @@ navigator.appName === 'Netscape': true
 navigator.appVersion.indexOf('WebKit') != 0: true
 typeof navigator.platform == 'string': true
 navigator.product === 'Gecko': true
-navigator.productSub === '20030107': true
+navigator.productSub === undefined: true
 navigator.userAgent.indexOf('WebKit') != 0: true
-navigator.vendor === 'Apple Computer, Inc.': true
-navigator.vendorSub === '': true
+navigator.vendor === undefined: true
+navigator.vendorSub === undefined: true
 typeof navigator.language == 'string': true
 typeof navigator.onLine == 'boolean': true
 DONE
