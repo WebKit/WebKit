@@ -1,3 +1,56 @@
+2016-10-07  Brent Fulgham  <bfulgham@apple.com>
+
+        EventHandler functions that need to guarantee event handler lifetime need to use Ref<Frame>
+        https://bugs.webkit.org/show_bug.cgi?id=98617
+        <rdar://problem/12778649>
+
+        Reviewed by Daniel Bates.
+
+        Improve stability by ensuring that the Frame holding an active EventHandler is kept
+        alive while in the process of handling events and executing JavaScript.
+
+        No new tests since there is no change in behavior.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Protect the Frame with a Ref<>.
+        (WebCore::EventHandler::handleMousePressEvent): Ditto.
+        (WebCore::EventHandler::handleMouseDraggedEvent): Ditto.
+        (WebCore::EventHandler::eventMayStartDrag): Ditto.
+        (WebCore::EventHandler::handleMouseReleaseEvent): Ditto.
+        (WebCore::EventHandler::hitTestResultAtPoint): Ditto.
+        (WebCore::EventHandler::scrollRecursively): Ditto.
+        (WebCore::EventHandler::logicalScrollRecursively): Ditto.
+        (WebCore::EventHandler::selectCursor): Ditto.
+        (WebCore::EventHandler::handleMouseDoubleClickEvent): Ditto.
+        (WebCore::EventHandler::mouseMoved): Ditto.
+        (WebCore::EventHandler::handleMouseMoveEvent): Ditto.
+        (WebCore::EventHandler::handleMouseForceEvent): Ditto.
+        (WebCore::EventHandler::dispatchDragEvent): Ditto.
+        (WebCore::EventHandler::updateDragAndDrop): Ditto.
+        (WebCore::EventHandler::cancelDragAndDrop): Ditto.
+        (WebCore::EventHandler::performDragAndDrop): Ditto.
+        (WebCore::EventHandler::prepareMouseEvent): Ditto.
+        (WebCore::EventHandler::updateMouseEventTargetNode): Ditto.
+        (WebCore::EventHandler::dispatchMouseEvent): Ditto.
+        (WebCore::EventHandler::platformCompleteWheelEvent): Ditto.
+        (WebCore::EventHandler::handleWheelEvent): Ditto.
+        (WebCore::EventHandler::defaultWheelEventHandler): Ditto.
+        (WebCore::EventHandler::sendContextMenuEvent): Ditto.
+        (WebCore::EventHandler::sendContextMenuEventForKey): Ditto.
+        (WebCore::EventHandler::hoverTimerFired): Ditto.
+        (WebCore::EventHandler::keyEvent): Ditto.
+        (WebCore::EventHandler::defaultKeyboardEventHandler): Ditto.
+        (WebCore::EventHandler::handleDrag): Ditto.
+        (WebCore::EventHandler::handleTextInputEvent): Ditto.
+        (WebCore::EventHandler::defaultSpaceEventHandler): Ditto.
+        (WebCore::EventHandler::defaultTabEventHandler): Ditto.
+        (WebCore::EventHandler::sendScrollEvent): Ditto.
+        (WebCore::EventHandler::handleTouchEvent): Ditto.
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::focusDocumentView): Ditto.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::platformCompleteWheelEvent): Ditto.
+
 2016-10-07  Chris Dumez  <cdumez@apple.com>
 
         Regression(r201970): productSub / vendor / vendorSub should not be exposed on WorkerNavigator

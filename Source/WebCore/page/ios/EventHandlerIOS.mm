@@ -166,6 +166,8 @@ void EventHandler::focusDocumentView()
     if (!page)
         return;
 
+    Ref<Frame> protectedFrame(m_frame);
+
     if (FrameView* frameView = m_frame.view()) {
         if (NSView *documentView = frameView->documentView())
             page->chrome().focusNSView(documentView);

@@ -1038,6 +1038,8 @@ static FrameView* frameViewForLatchingState(Frame& frame, ScrollLatchingState* l
 
 bool EventHandler::platformCompleteWheelEvent(const PlatformWheelEvent& wheelEvent, ContainerNode* scrollableContainer, const WeakPtr<ScrollableArea>& scrollableArea)
 {
+    Ref<Frame> protectedFrame(m_frame);
+
     FrameView* view = m_frame.view();
     // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     if (!view)
