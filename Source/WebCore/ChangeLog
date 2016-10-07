@@ -1,3 +1,23 @@
+2016-10-07  Alex Christensen  <achristensen@webkit.org>
+
+        Non-special URL fragments should percent-encode non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=163153
+
+        Reviewed by Tim Horton.
+
+        This is needed to keep compatibility with data URLs with non-ASCII characters after a '#'
+        which works in Chrome, Firefox, and Safari, while maintaining compatibility with Chrome, IE, and Edge
+        which keep non-ASCII characters in the fragments of special URLs.
+        This was proposed to the spec in https://github.com/whatwg/url/issues/150
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::syntaxViolation):
+        Removed assertion because we now have fragments that need percent encoding but are all ASCII.
+        (WebCore::URLParser::fragmentSyntaxViolation):
+        (WebCore::URLParser::parse):
+
 2016-10-07  Brent Fulgham  <bfulgham@apple.com>
 
         EventHandler functions that need to guarantee event handler lifetime need to use Ref<Frame>

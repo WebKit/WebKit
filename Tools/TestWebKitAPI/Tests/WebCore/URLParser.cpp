@@ -329,6 +329,8 @@ TEST_F(URLParserTest, Basic)
     checkURL("foo:#", {"foo", "", "", "", 0, "", "", "", "foo:#"});
     checkURL("A://", {"a", "", "", "", 0, "//", "", "", "a://"});
     checkURL("aA://", {"aa", "", "", "", 0, "//", "", "", "aa://"});
+    checkURL(utf16String(u"foo://host/#ПП\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "foo://host/#%D0%9F%D0%9F%07 a</"});
+    checkURL(utf16String(u"foo://host/#\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%07 a</", "foo://host/#%07 a</"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -1058,6 +1060,12 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("file://:0/path",
         {"", "", "", "", 0, "", "", "", "file://:0/path"},
         {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
+    checkURLDifferences(utf16String(u"http://host/#ПП\u0007 a</"),
+        {"http", "", "", "host", 0, "/", "", utf16String(u"ПП\u0007 a</"), utf16String(u"http://host/#ПП\u0007 a</")},
+        {"http", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "http://host/#%D0%9F%D0%9F%07 a</"});
+    checkURLDifferences(utf16String(u"http://host/#\u0007 a</"),
+        {"http", "", "", "host", 0, "/", "", "\a a</", "http://host/#\a a</"},
+        {"http", "", "", "host", 0, "/", "", "%07 a</", "http://host/#%07 a</"});
 }
     
 static void shouldFail(const String& urlString)

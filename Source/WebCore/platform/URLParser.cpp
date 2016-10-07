@@ -1019,7 +1019,6 @@ void URLParser::syntaxViolation(const CodePointIterator<CharacterType>& iterator
     
     ASSERT(m_asciiBuffer.isEmpty());
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
-    ASSERT_WITH_MESSAGE(!m_url.m_queryEnd, "syntaxViolation should not be used in the fragment, which might contain non-ASCII code points when serialized");
     size_t codeUnitsToCopy = iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
     RELEASE_ASSERT(codeUnitsToCopy <= m_inputString.length());
     m_asciiBuffer.reserveCapacity(m_inputString.length());
@@ -1032,10 +1031,10 @@ void URLParser::syntaxViolation(const CodePointIterator<CharacterType>& iterator
 template<typename CharacterType>
 void URLParser::fragmentSyntaxViolation(const CodePointIterator<CharacterType>& iterator)
 {
+    ASSERT(m_didSeeUnicodeFragmentCodePoint);
     if (m_didSeeSyntaxViolation)
         return;
     m_didSeeSyntaxViolation = true;
-    m_didSeeUnicodeFragmentCodePoint = true;
 
     ASSERT(m_asciiBuffer.isEmpty());
     ASSERT(m_unicodeFragmentBuffer.isEmpty());
@@ -1814,22 +1813,32 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         case State::Fragment:
             do {
                 URL_PARSER_LOG("State Fragment");
-                if (!m_didSeeUnicodeFragmentCodePoint && isASCII(*c))
-                    appendToASCIIBuffer(*c);
-                else {
-                    m_didSeeUnicodeFragmentCodePoint = true;
-                    if (UNLIKELY(m_didSeeSyntaxViolation))
-                        appendCodePoint(m_unicodeFragmentBuffer, *c);
-                    else {
-                        ASSERT(m_asciiBuffer.isEmpty());
-                        ASSERT(m_unicodeFragmentBuffer.isEmpty());
-                    }
+                if (!c.atEnd() && isTabOrNewline(*c)) {
+                    if (m_didSeeUnicodeFragmentCodePoint)
+                        fragmentSyntaxViolation(c);
+                    else
+                        syntaxViolation(c);
+                    ++c;
+                    continue;
+                }
+                if (!m_didSeeUnicodeFragmentCodePoint && isASCII(*c)) {
+                    if (m_urlIsSpecial)
+                        appendToASCIIBuffer(*c);
+                    else
+                        utf8PercentEncode<isInSimpleEncodeSet>(c);
+                } else {
+                    if (m_urlIsSpecial) {
+                        m_didSeeUnicodeFragmentCodePoint = true;
+                        if (UNLIKELY(m_didSeeSyntaxViolation))
+                            appendCodePoint(m_unicodeFragmentBuffer, *c);
+                        else {
+                            ASSERT(m_asciiBuffer.isEmpty());
+                            ASSERT(m_unicodeFragmentBuffer.isEmpty());
+                        }
+                    } else
+                        utf8PercentEncode<isInSimpleEncodeSet>(c);
                 }
                 ++c;
-                while (UNLIKELY(!c.atEnd() && isTabOrNewline(*c))) {
-                    fragmentSyntaxViolation(c);
-                    ++c;
-                }
             } while (!c.atEnd());
             break;
         }
