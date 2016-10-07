@@ -31,6 +31,7 @@
 #include "PlatformWebView.h"
 #include "Test.h"
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKWebsiteDataStoreRef.h>
 
 namespace TestWebKitAPI {
 
@@ -49,7 +50,13 @@ static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, 
 
 TEST(WebKit2, EphemeralSessionPushStateNoHistoryCallback)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    auto configuration = adoptWK(WKPageConfigurationCreate());
+
+    auto context = adoptWK(WKContextCreate());
+    WKPageConfigurationSetContext(configuration.get(), context.get());
+
+    auto websiteDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
+    WKPageConfigurationSetWebsiteDataStore(configuration.get(), websiteDataStore.get());
 
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));
@@ -59,7 +66,7 @@ TEST(WebKit2, EphemeralSessionPushStateNoHistoryCallback)
 
     WKContextSetHistoryClient(context.get(), &historyClient.base);
 
-    PlatformWebView webView(context.get());
+    PlatformWebView webView(configuration.get());
 
     WKPageLoaderClientV0 pageLoaderClient;
     memset(&pageLoaderClient, 0, sizeof(pageLoaderClient));
@@ -68,9 +75,6 @@ TEST(WebKit2, EphemeralSessionPushStateNoHistoryCallback)
     pageLoaderClient.didSameDocumentNavigationForFrame = didSameDocumentNavigationForFrame;
 
     WKPageSetPageLoaderClient(webView.page(), &pageLoaderClient.base);
-
-    WKSessionRef session = WKSessionCreate(true);
-    WKPageSetSession(webView.page(), session);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("push-state", "html"));
     WKPageLoadURL(webView.page(), url.get());

@@ -1,3 +1,15 @@
+2016-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WKPageSetSession
+        https://bugs.webkit.org/show_bug.cgi?id=163129
+
+        Reviewed by Tim Horton.
+
+        Rewrite this test to use WKPageConfigurationRef and WKWebsiteDataStoreRef.
+
+        * TestWebKitAPI/Tests/WebKit2/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-10-07  Andreas Kling  <akling@apple.com>
 
         [WK2] didRemoveFrameFromHierarchy callback doesn't fire for subframes when evicting from PageCache.

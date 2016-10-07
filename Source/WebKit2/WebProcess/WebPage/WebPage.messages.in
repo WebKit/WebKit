@@ -25,8 +25,6 @@ messages -> WebPage LegacyReceiver {
     SetViewState(unsigned viewState, bool wantsDidUpdateViewState, Vector<uint64_t> callbackIDs)
     SetLayerHostingMode(enum WebKit::LayerHostingMode layerHostingMode)
 
-    SetSessionID(WebCore::SessionID sessionID)
-
     SetDrawsBackground(bool drawsBackground)
 
 #if PLATFORM(COCOA)

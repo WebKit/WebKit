@@ -1,3 +1,21 @@
+2016-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of WKPageSetSession
+        https://bugs.webkit.org/show_bug.cgi?id=163129
+
+        Reviewed by Tim Horton.
+
+        This function is no longer used.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetSession): Deleted.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setSessionID): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sessionID):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-10-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206909.

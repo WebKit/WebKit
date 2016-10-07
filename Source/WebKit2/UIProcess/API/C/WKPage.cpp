@@ -2388,11 +2388,6 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
     webPageProxy->setNavigationClient(WTFMove(navigationClient));
 }
 
-void WKPageSetSession(WKPageRef pageRef, WKSessionRef session)
-{
-    toImpl(pageRef)->setSessionID(toImpl(session)->getID());
-}
-
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
     toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), [context, callback](API::SerializedScriptValue* returnValue, bool, const WebCore::ExceptionDetails&, CallbackBase::Error error) {
