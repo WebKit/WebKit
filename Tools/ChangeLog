@@ -1,3 +1,9 @@
+2016-10-07  Chelsea Pugh  <cpugh@apple.com>
+
+        Unreviewed. Added myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2016-10-07  Jonathan Bedard  <jbedard@apple.com>
 
         Move functionality common to Darwin ports into a base class
