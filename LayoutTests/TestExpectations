@@ -135,7 +135,7 @@ webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]
 
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend:
 webkit.org/b/161951 [ Debug ] inspector/debugger/stepping [ Skip ]
-webkit.org/b/161951 [ Release ] inspector/debugger/stepping [ Slow ]
+webkit.org/b/161951 [ Release ] inspector/debugger/stepping [ Slow Pass Failure ]
 
 [ Debug ] inspector/debugger/breakpoints [ Skip ]
 [ Release ] inspector/debugger/breakpoints [ Slow ]
