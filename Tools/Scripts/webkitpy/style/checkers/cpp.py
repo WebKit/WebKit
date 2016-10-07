@@ -896,72 +896,33 @@ def check_for_copyright(lines, error):
               'You should have a line: "Copyright [year] <Copyright Owner>"')
 
 
-def get_header_guard_cpp_variable(filename):
-    """Returns the CPP variable that should be used as a header guard.
-
-    Args:
-      filename: The name of a C++ header file.
-
-    Returns:
-      The CPP variable that should be used as a header guard in the
-      named file.
-
-    """
-
-    # Restores original filename in case that style checker is invoked from Emacs's
-    # flymake.
-    filename = re.sub(r'_flymake\.h$', '.h', filename)
-
-    standard_name = sub(r'[-.\s]', '_', os.path.basename(filename))
-
-    # Files under WTF typically have header guards that start with WTF_.
-    if '/wtf/' in filename:
-        special_name = "WTF_" + standard_name
-    else:
-        special_name = standard_name
-    return (special_name, standard_name)
-
-
-def check_for_header_guard(filename, lines, error):
+def check_for_header_guard(lines, error):
     """Checks that the file contains a header guard.
 
-    Logs an error if no #ifndef header guard is present.  For other
-    headers, checks that the full pathname is used.
+    Logs an error if no #pragma once header guard is present
+    of if there was an #ifndef guard that was modified.
 
     Args:
-      filename: The name of the C++ header file.
       lines: An array of strings, each representing a line of the file.
       error: The function to call with any errors found.
     """
 
-    cppvar = get_header_guard_cpp_variable(filename)
+    for line_number, line in enumerate(lines):
+        if line.startswith('#pragma once'):
+            return
 
-    ifndef = None
+    # If there is no #pragma once, but there is an #ifndef, warn only if it was modified.
     ifndef_line_number = 0
-    define = None
     for line_number, line in enumerate(lines):
         line_split = line.split()
         if len(line_split) >= 2:
-            # find the first occurrence of #ifndef and #define, save arg
-            if not ifndef and line_split[0] == '#ifndef':
-                # set ifndef to the header guard presented on the #ifndef line.
-                ifndef = line_split[1]
-                ifndef_line_number = line_number
-            if not define and line_split[0] == '#define':
-                define = line_split[1]
-            if define and ifndef:
-                break
+            if line_split[0] == '#ifndef' and line_split[1].endswith('_h'):
+                error(line_number, 'build/header_guard', 5,
+                    'Use #pragma once instead of #ifndef for header guard.')
+                return
 
-    if not ifndef or not define or ifndef != define:
-        error(0, 'build/header_guard', 5,
-              'No #ifndef header guard found, suggested CPP variable is: %s' %
-              cppvar[0])
-        return
-
-    # The guard should be File_h.
-    if ifndef not in cppvar:
-        error(ifndef_line_number, 'build/header_guard', 5,
-              '#ifndef header guard has wrong style, please use: %s' % cppvar[0])
+    error(0, 'build/header_guard', 5,
+        'Use #pragma once header guard.')
 
 
 def check_for_unicode_replacement_characters(lines, error):
@@ -3855,7 +3816,7 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     check_for_copyright(lines, error)
 
     if file_extension == 'h':
-        check_for_header_guard(filename, lines, error)
+        check_for_header_guard(lines, error)
         if filename == 'Source/WTF/wtf/Platform.h':
             check_platformh_comments(lines, error)
 

@@ -288,28 +288,29 @@ class CppStyleTestBase(unittest.TestCase):
 
     # Only keep function length errors.
     def perform_function_lengths_check(self, code):
-        basic_error_rules = ('-',
-                             '+readability/fn_size')
+        basic_error_rules = ('-', '+readability/fn_size')
         return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
     # Only keep pass ptr errors.
     def perform_pass_ptr_check(self, code):
-        basic_error_rules = ('-',
-                             '+readability/pass_ptr')
+        basic_error_rules = ('-', '+readability/pass_ptr')
         return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
     # Only keep leaky pattern errors.
     def perform_leaky_pattern_check(self, code):
-        basic_error_rules = ('-',
-                             '+runtime/leaky_pattern')
+        basic_error_rules = ('-', '+runtime/leaky_pattern')
         return self.perform_lint(code, 'test.cpp', basic_error_rules)
 
     # Only include what you use errors.
     def perform_include_what_you_use(self, code, filename='foo.h', io=codecs):
-        basic_error_rules = ('-',
-                             '+build/include_what_you_use')
+        basic_error_rules = ('-', '+build/include_what_you_use')
         unit_test_config = {cpp_style.INCLUDE_IO_INJECTION_KEY: io}
         return self.perform_lint(code, filename, basic_error_rules, unit_test_config)
+
+    # Only include header guard errors.
+    def perform_header_guard_check(self, code, filename='foo.h'):
+        basic_error_rules = ('-', '+build/header_guard')
+        return self.perform_lint(code, filename, basic_error_rules)
 
     # Perform lint and compare the error message with "expected_message".
     def assert_lint(self, code, expected_message, file_name='foo.cpp'):
@@ -340,6 +341,10 @@ class CppStyleTestBase(unittest.TestCase):
     def assert_include_what_you_use(self, code, expected_message):
         self.assertEqual(expected_message,
                           self.perform_include_what_you_use(code))
+
+    def assert_header_guard(self, code, expected_message):
+        self.assertEqual(expected_message,
+                          self.perform_header_guard_check(code))
 
     def assert_blank_lines_check(self, lines, start_errors, end_errors):
         error_collector = ErrorCollector(self.assertTrue)
@@ -2415,137 +2420,20 @@ class CppStyleTest(CppStyleTestBase):
                          '  [build/forward_decl] [5]')
 
     def test_build_header_guard(self):
-        file_path = 'mydir/Foo.h'
+        rules = ('-', '+build/header_guard')
 
-        # We can't rely on our internal stuff to get a sane path on the open source
-        # side of things, so just parse out the suggested header guard. This
-        # doesn't allow us to test the suggested header guard, but it does let us
-        # test all the other header tests.
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h', [], error_collector)
-        expected_guard = ''
-        matcher = re.compile(
-            'No \#ifndef header guard found\, suggested CPP variable is\: ([A-Za-z_0-9]+) ')
-        for error in error_collector.result_list():
-            matches = matcher.match(error)
-            if matches:
-                expected_guard = matches.group(1)
-                break
+        # No header guard.
+        self.assert_header_guard('',
+            'Use #pragma once header guard.'
+            '  [build/header_guard] [5]')
 
-        # Make sure we extracted something for our header guard.
-        self.assertNotEqual(expected_guard, '')
+        # Old header guard.
+        self.assert_header_guard('#ifndef Foo_h',
+            'Use #pragma once instead of #ifndef for header guard.'
+            '  [build/header_guard] [5]')
 
-        # Wrong guard
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h',
-                               ['#ifndef FOO_H', '#define FOO_H'], error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                '#ifndef header guard has wrong style, please use: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # No define
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h',
-                               ['#ifndef %s' % expected_guard], error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                'No #ifndef header guard found, suggested CPP variable is: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # Mismatched define
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h',
-                               ['#ifndef %s' % expected_guard,
-                                '#define FOO_H'],
-                               error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                'No #ifndef header guard found, suggested CPP variable is: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # No header guard errors
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h',
-                               ['#ifndef %s' % expected_guard,
-                                '#define %s' % expected_guard,
-                                '#endif // %s' % expected_guard],
-                               error_collector)
-        for line in error_collector.result_list():
-            if line.find('build/header_guard') != -1:
-                self.fail('Unexpected error: %s' % line)
-
-        # Completely incorrect header guard
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data(file_path, 'h',
-                               ['#ifndef FOO',
-                                '#define FOO',
-                                '#endif  // FOO'],
-                               error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                '#ifndef header guard has wrong style, please use: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # Special case for flymake
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data('mydir/Foo_flymake.h', 'h',
-                               ['#ifndef %s' % expected_guard,
-                                '#define %s' % expected_guard,
-                                '#endif // %s' % expected_guard],
-                               error_collector)
-        for line in error_collector.result_list():
-            if line.find('build/header_guard') != -1:
-                self.fail('Unexpected error: %s' % line)
-
-        error_collector = ErrorCollector(self.assertTrue)
-        self.process_file_data('mydir/Foo_flymake.h', 'h', [], error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                'No #ifndef header guard found, suggested CPP variable is: %s'
-                '  [build/header_guard] [5]' % expected_guard),
-            error_collector.result_list())
-
-        # Verify that we don't blindly suggest the WTF prefix for all headers.
-        self.assertFalse(expected_guard.startswith('WTF_'))
-
-        # Allow the WTF_ prefix for files in that directory.
-        header_guard_filter = FilterConfiguration(('-', '+build/header_guard'))
-        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
-        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
-                               ['#ifndef WTF_TestName_h', '#define WTF_TestName_h'],
-                               error_collector)
-        self.assertEqual(0, len(error_collector.result_list()),
-                          error_collector.result_list())
-
-        # Also allow the non WTF_ prefix for files in that directory.
-        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
-        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
-                               ['#ifndef TestName_h', '#define TestName_h'],
-                               error_collector)
-        self.assertEqual(0, len(error_collector.result_list()),
-                          error_collector.result_list())
-
-        # Verify that we suggest the WTF prefix version.
-        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
-        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
-                               ['#ifndef BAD_TestName_h', '#define BAD_TestName_h'],
-                               error_collector)
-        self.assertEqual(
-            1,
-            error_collector.result_list().count(
-                '#ifndef header guard has wrong style, please use: WTF_TestName_h'
-                '  [build/header_guard] [5]'),
-            error_collector.result_list())
+        # Valid header guard.
+        self.assert_header_guard('#pragma once', '')
 
     def test_build_printf_format(self):
         self.assert_lint(

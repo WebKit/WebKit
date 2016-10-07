@@ -130,7 +130,7 @@ class DefaultStyleErrorHandler(object):
     def should_line_be_checked(self, line_number):
         "Returns if a particular line should be checked"
         # Was the line that was modified?
-        return self._line_numbers is None or line_number in self._line_numbers
+        return self._line_numbers is None or line_number in self._line_numbers or line_number == 0
 
     def turn_off_line_filtering(self):
         self._line_numbers = None
