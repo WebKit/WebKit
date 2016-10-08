@@ -26,6 +26,7 @@
 #ifndef MediaDescription_h
 #define MediaDescription_h
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
