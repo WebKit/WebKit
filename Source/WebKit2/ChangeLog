@@ -1,3 +1,36 @@
+2016-10-08  Tim Horton  <timothy_horton@apple.com>
+
+        Share more code between iOS and macOS ViewGestureController
+        https://bugs.webkit.org/show_bug.cgi?id=163158
+
+        Reviewed by Simon Fraser.
+
+        Share canSwipeInDirection() and the (unused on Mac) alternate back-forward list mechanism.
+        Make ViewGestureController operate in terms of WebPageProxy, not WKWebView,
+        because it shouldn't know anything about WKWebView.
+        Refactor scrollEventCanBecomeSwipe a bit to be less repetitive.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setAllowsBackForwardNavigationGestures:]):
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::ViewGestureController):
+        (WebKit::ViewGestureController::setAlternateBackForwardListSourcePage):
+        (WebKit::ViewGestureController::canSwipeInDirection):
+        (WebKit::ViewGestureController::gestureControllerForPage): Deleted.
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::createWeakPtr):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::setAlternateBackForwardListSourceView): Deleted.
+        (WebKit::ViewGestureController::canSwipeInDirection): Deleted.
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::PendingSwipeTracker::PendingSwipeTracker):
+        (WebKit::ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe):
+        (WebKit::ViewGestureController::PendingSwipeTracker::tryToStartSwipe):
+
 2016-10-07  Anders Carlsson  <andersca@apple.com>
 
         Get rid of API::Session and WKSessionRef

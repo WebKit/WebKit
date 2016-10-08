@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "ViewGestureControllerMessages.h"
+#import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <wtf/MathExtras.h>
@@ -59,7 +60,7 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     : m_webPageProxy(webPageProxy)
     , m_swipeActiveLoadMonitoringTimer(RunLoop::main(), this, &ViewGestureController::checkForActiveLoads)
 #if PLATFORM(MAC)
-    , m_pendingSwipeTracker(webPageProxy, std::bind(&ViewGestureController::trackSwipeGesture, this, std::placeholders::_1, std::placeholders::_2))
+    , m_pendingSwipeTracker(webPageProxy, *this)
 #endif
 {
     m_webPageProxy.process().addMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID(), *this);
@@ -83,6 +84,24 @@ ViewGestureController* ViewGestureController::gestureControllerForPage(uint64_t 
         return nullptr;
     return gestureControllerIter->value;
 }
+    
+void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)
+{
+    if (page)
+        m_alternateBackForwardListSourcePage = page->createWeakPtr();
+    else
+        m_alternateBackForwardListSourcePage.clear();
+}
+    
+bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
+{
+    RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
+    auto& backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : m_webPageProxy.backForwardList();
+    if (direction == SwipeDirection::Back)
+        return !!backForwardList.backItem();
+    return !!backForwardList.forwardItem();
+}
+
 
 void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {

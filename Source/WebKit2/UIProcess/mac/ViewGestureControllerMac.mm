@@ -272,8 +272,8 @@ static bool deltaShouldCancelSwipe(float x, float y)
     return std::abs(y) >= std::abs(x) * minimumScrollEventRatioForSwipe;
 }
 
-ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, std::function<void(NSEvent *, SwipeDirection)> trackSwipeCallback)
-    : m_trackSwipeCallback(WTFMove(trackSwipeCallback))
+ViewGestureController::PendingSwipeTracker::PendingSwipeTracker(WebPageProxy& webPageProxy, ViewGestureController& viewGestureController)
+    : m_viewGestureController(viewGestureController)
     , m_webPageProxy(webPageProxy)
 {
 }
@@ -292,21 +292,16 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(NSEve
     bool isPinnedToLeft = m_shouldIgnorePinnedState || m_webPageProxy.isPinnedToLeftSide();
     bool isPinnedToRight = m_shouldIgnorePinnedState || m_webPageProxy.isPinnedToRightSide();
 
-    bool willSwipeBack = false;
-    bool willSwipeForward = false;
-    if (m_webPageProxy.userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::LTR) {
-        willSwipeBack = event.scrollingDeltaX > 0 && isPinnedToLeft && m_webPageProxy.backForwardList().backItem();
-        willSwipeForward = event.scrollingDeltaX < 0 && isPinnedToRight && m_webPageProxy.backForwardList().forwardItem();
-    } else {
-        willSwipeBack = event.scrollingDeltaX < 0 && isPinnedToRight && m_webPageProxy.backForwardList().backItem();
-        willSwipeForward = event.scrollingDeltaX > 0 && isPinnedToLeft && m_webPageProxy.backForwardList().forwardItem();
-    }
-    if (!willSwipeBack && !willSwipeForward)
+    bool tryingToSwipeBack = event.scrollingDeltaX > 0 && isPinnedToLeft;
+    bool tryingToSwipeForward = event.scrollingDeltaX < 0 && isPinnedToRight;
+    if (m_webPageProxy.userInterfaceLayoutDirection() != WebCore::UserInterfaceLayoutDirection::LTR)
+        std::swap(tryingToSwipeBack, tryingToSwipeForward);
+    
+    if (!tryingToSwipeBack && !tryingToSwipeForward)
         return false;
 
-    potentialSwipeDirection = willSwipeBack ? ViewGestureController::SwipeDirection::Back : ViewGestureController::SwipeDirection::Forward;
-
-    return true;
+    potentialSwipeDirection = tryingToSwipeBack ? SwipeDirection::Back : SwipeDirection::Forward;
+    return m_viewGestureController.canSwipeInDirection(potentialSwipeDirection);
 }
 
 bool ViewGestureController::handleScrollWheelEvent(NSEvent *event)
@@ -372,7 +367,7 @@ bool ViewGestureController::PendingSwipeTracker::tryToStartSwipe(NSEvent *event)
     }
 
     if (std::abs(m_cumulativeDelta.width()) >= minimumHorizontalSwipeDistance)
-        m_trackSwipeCallback(event, m_direction);
+        m_viewGestureController.trackSwipeGesture(event, m_direction);
     else
         m_state = State::InsufficientMagnitude;
 
