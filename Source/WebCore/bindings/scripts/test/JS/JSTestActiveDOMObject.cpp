@@ -140,24 +140,28 @@ void JSTestActiveDOMObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestActiveDOMObject::~JSTestActiveDOMObject();
 }
 
-EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+inline JSTestActiveDOMObject* JSTestActiveDOMObject::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestActiveDOMObject*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestActiveDOMObject", "excitingAttr");
-    }
-    if (!BindingSecurity::shouldAllowAccessToFrame(state, castedThis->wrapped().frame(), ThrowSecurityError))
-        return JSValue::encode(jsUndefined());
-    auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.excitingAttr());
-    return JSValue::encode(result);
+    return jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
 }
 
+static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState*, JSTestActiveDOMObject*, ThrowScope& throwScope);
+
+EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return BindingCaller<JSTestActiveDOMObject>::attribute<jsTestActiveDOMObjectExcitingAttrGetter>(state, thisValue, "excitingAttr");
+}
+
+static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState* state, JSTestActiveDOMObject* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    if (!BindingSecurity::shouldAllowAccessToFrame(state, thisObject->wrapped().frame(), ThrowSecurityError))
+        return jsUndefined();
+    auto& impl = thisObject->wrapped();
+    JSValue result = jsNumber(impl.excitingAttr());
+    return result;
+}
 
 EncodedJSValue jsTestActiveDOMObjectConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {

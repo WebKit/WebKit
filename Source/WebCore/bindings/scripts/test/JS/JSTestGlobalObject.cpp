@@ -177,74 +177,77 @@ void JSTestGlobalObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestGlobalObject::~JSTestGlobalObject();
 }
 
-EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+inline JSTestGlobalObject* JSTestGlobalObject::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestGlobalObject", "regularAttribute");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.regularAttribute());
-    return JSValue::encode(result);
+    return jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
 }
 
+static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState*, JSTestGlobalObject*, ThrowScope& throwScope);
+
+EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return BindingCaller<JSTestGlobalObject>::attribute<jsTestGlobalObjectRegularAttributeGetter>(state, thisValue, "regularAttribute");
+}
+
+static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState* state, JSTestGlobalObject* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
+    JSValue result = jsStringWithCache(state, impl.regularAttribute());
+    return result;
+}
+
+static inline JSValue jsTestGlobalObjectPublicAndPrivateAttributeGetter(ExecState*, JSTestGlobalObject*, ThrowScope& throwScope);
 
 EncodedJSValue jsTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestGlobalObject", "publicAndPrivateAttribute");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.publicAndPrivateAttribute());
-    return JSValue::encode(result);
+    return BindingCaller<JSTestGlobalObject>::attribute<jsTestGlobalObjectPublicAndPrivateAttributeGetter>(state, thisValue, "publicAndPrivateAttribute");
 }
 
+static inline JSValue jsTestGlobalObjectPublicAndPrivateAttributeGetter(ExecState* state, JSTestGlobalObject* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
+    JSValue result = jsStringWithCache(state, impl.publicAndPrivateAttribute());
+    return result;
+}
 
 #if ENABLE(TEST_FEATURE)
+static inline JSValue jsTestGlobalObjectPublicAndPrivateConditionalAttributeGetter(ExecState*, JSTestGlobalObject*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::attribute<jsTestGlobalObjectPublicAndPrivateConditionalAttributeGetter>(state, thisValue, "publicAndPrivateConditionalAttribute");
+}
+
+static inline JSValue jsTestGlobalObjectPublicAndPrivateConditionalAttributeGetter(ExecState* state, JSTestGlobalObject* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestGlobalObject", "publicAndPrivateConditionalAttribute");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, impl.publicAndPrivateConditionalAttribute());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(TEST_FEATURE)
+static inline JSValue jsTestGlobalObjectEnabledAtRuntimeAttributeGetter(ExecState*, JSTestGlobalObject*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::attribute<jsTestGlobalObjectEnabledAtRuntimeAttributeGetter>(state, thisValue, "enabledAtRuntimeAttribute");
+}
+
+static inline JSValue jsTestGlobalObjectEnabledAtRuntimeAttributeGetter(ExecState* state, JSTestGlobalObject* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestGlobalObject*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestGlobalObject", "enabledAtRuntimeAttribute");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, impl.enabledAtRuntimeAttribute());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif

@@ -382,6 +382,28 @@ struct VariadicHelper : public VariadicHelperBase<JSClass, DOMClass> {
 
 template<typename VariadicHelper> typename VariadicHelper::Result toArguments(JSC::ExecState&, size_t startIndex = 0);
 
+enum class CastedThisErrorBehavior { Throw, ReturnEarly };
+
+template<typename JSClass>
+struct BindingCaller {
+    using AttributeGetterFunction = JSC::JSValue(JSC::ExecState*, JSClass*, JSC::ThrowScope&);
+
+    template<AttributeGetterFunction getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue attribute(JSC::ExecState* state, JSC::EncodedJSValue thisValue, const char* attributeName)
+    {
+        ASSERT(state);
+        auto throwScope = DECLARE_THROW_SCOPE(state->vm());
+        auto* thisObject = JSClass::castForAttribute(state, thisValue);
+        if (UNLIKELY(!thisObject)) {
+            ASSERT(JSClass::info());
+            return shouldThrow == CastedThisErrorBehavior::Throw ?
+                throwGetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : JSC::JSValue::encode(JSC::jsUndefined());
+        }
+        // FIXME: We should refactor the binding generated code to use references for state and thisObject.
+        return JSC::JSValue::encode(getter(state, thisObject, throwScope));
+    }
+};
+
 // Inline functions and template definitions.
 
 inline JSC::Structure* DOMConstructorObject::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

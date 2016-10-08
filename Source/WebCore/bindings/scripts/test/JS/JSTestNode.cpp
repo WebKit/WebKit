@@ -168,22 +168,26 @@ JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName)
+inline JSTestNode* JSTestNode::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestNode*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestNode", "name");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.name());
-    return JSValue::encode(result);
+    return jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
 }
 
+static inline JSValue jsTestNodeNameGetter(ExecState*, JSTestNode*, ThrowScope& throwScope);
+
+EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return BindingCaller<JSTestNode>::attribute<jsTestNodeNameGetter>(state, thisValue, "name");
+}
+
+static inline JSValue jsTestNodeNameGetter(ExecState* state, JSTestNode* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
+    JSValue result = jsStringWithCache(state, impl.name());
+    return result;
+}
 
 EncodedJSValue jsTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {

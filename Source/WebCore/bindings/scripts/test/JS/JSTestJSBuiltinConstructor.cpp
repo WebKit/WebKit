@@ -132,35 +132,38 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
-EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, EncodedJSValue thisValue, PropertyName)
+inline JSTestJSBuiltinConstructor* JSTestJSBuiltinConstructor::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestJSBuiltinConstructor", "testAttributeCustom");
-    }
-    return JSValue::encode(castedThis->testAttributeCustom(*state));
+    return jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
 }
 
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState*, JSTestJSBuiltinConstructor*, ThrowScope& throwScope);
+
+EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return BindingCaller<JSTestJSBuiltinConstructor>::attribute<jsTestJSBuiltinConstructorTestAttributeCustomGetter>(state, thisValue, "testAttributeCustom");
+}
+
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState* state, JSTestJSBuiltinConstructor* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    return thisObject->testAttributeCustom(*state);
+}
+
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState*, JSTestJSBuiltinConstructor*, ThrowScope& throwScope);
 
 EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestJSBuiltinConstructor", "testAttributeRWCustom");
-    }
-    return JSValue::encode(castedThis->testAttributeRWCustom(*state));
+    return BindingCaller<JSTestJSBuiltinConstructor>::attribute<jsTestJSBuiltinConstructorTestAttributeRWCustomGetter>(state, thisValue, "testAttributeRWCustom");
 }
 
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState* state, JSTestJSBuiltinConstructor* thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    return thisObject->testAttributeRWCustom(*state);
+}
 
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {

@@ -51,6 +51,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
+    static JSTestGlobalObject* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
 public:
     static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 protected:

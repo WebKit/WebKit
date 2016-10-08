@@ -51,6 +51,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
+    static JSTestEventConstructor* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&);
 

@@ -1,3 +1,51 @@
+2016-10-08  Youenn Fablet  <youenn@apple.com>
+
+        Refactor binding generated casted-this checks
+        https://bugs.webkit.org/show_bug.cgi?id=162677
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        Split the attribute getter function in two, one with the signature expected by JSCore and one used after casted-this checks.
+
+        The second function takes directly a JSXX object and returns a JSValue instead of an EncodedJSValue.
+        In the future, the second function should only take references.
+
+        Introducing BindingCaller as a way to templatize binding code used to cast thisValue with the desired JSXX value.
+        This allows implementing the first function using the second function as template parameter.
+
+        Introducing JSClass::castForAttribute as a way to encapsulate differences in the way to handle thisValue access.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::BindingCaller::attribute):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestException.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        * bindings/scripts/test/JS/JSattribute.h:
+
 2016-10-08  Enrique Ocaña González  <eocanha@igalia.com>
 
         Missing include in MediaDescription

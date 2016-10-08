@@ -410,202 +410,223 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterface::~JSTestInterface();
 }
 
-#if ENABLE(Condition22) || ENABLE(Condition23)
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+inline JSTestInterface* JSTestInterface::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
+    return jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+}
+
+#if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState*);
+
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState* state, EncodedJSValue, PropertyName)
+{
+    return JSValue::encode(jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(state));
+}
+
+static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState* state)
+{
+    UNUSED_PARAM(state);
     JSValue result = jsNumber(TestInterface::implementsStaticReadOnlyAttr());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState*);
+
+EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
+    return JSValue::encode(jsTestInterfaceConstructorImplementsStaticAttrGetter(state));
+}
+
+static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState* state)
+{
+    UNUSED_PARAM(state);
     JSValue result = jsStringWithCache(state, TestInterface::implementsStaticAttr());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceImplementsStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceImplementsStr1Getter>(state, thisValue, "implementsStr1");
+}
+
+static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "implementsStr1");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr1());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceImplementsStr2Getter>(state, thisValue, "implementsStr2");
+}
+
+static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "implementsStr2");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, impl.implementsStr2());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSValue jsTestInterfaceImplementsStr3Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceImplementsStr3Getter>(state, thisValue, "implementsStr3");
+}
+
+static inline JSValue jsTestInterfaceImplementsStr3Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "implementsStr3");
-    }
-    return JSValue::encode(castedThis->implementsStr3(*state));
+    UNUSED_PARAM(state);
+    return thisObject->implementsStr3(*state);
 }
 
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSValue jsTestInterfaceImplementsNodeGetter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceImplementsNodeGetter>(state, thisValue, "implementsNode");
+}
+
+static inline JSValue jsTestInterfaceImplementsNodeGetter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "implementsNode");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), impl.implementsNode());
-    return JSValue::encode(result);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
+    JSValue result = toJS(state, thisObject->globalObject(), impl.implementsNode());
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState*);
+
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* state, EncodedJSValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
+    return JSValue::encode(jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(state));
+}
+
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState* state)
+{
+    UNUSED_PARAM(state);
     JSValue result = jsNumber(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState*);
+
+EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
+    return JSValue::encode(jsTestInterfaceConstructorSupplementalStaticAttrGetter(state));
+}
+
+static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState* state)
+{
+    UNUSED_PARAM(state);
     JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStaticAttr());
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceSupplementalStr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceSupplementalStr1Getter>(state, thisValue, "supplementalStr1");
+}
+
+static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "supplementalStr1");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr1(impl));
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceSupplementalStr2Getter>(state, thisValue, "supplementalStr2");
+}
+
+static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "supplementalStr2");
-    }
-    auto& impl = castedThis->wrapped();
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
     JSValue result = jsStringWithCache(state, WebCore::TestSupplemental::supplementalStr2(impl));
-    return JSValue::encode(result);
+    return result;
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSValue jsTestInterfaceSupplementalStr3Getter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceSupplementalStr3Getter>(state, thisValue, "supplementalStr3");
+}
+
+static inline JSValue jsTestInterfaceSupplementalStr3Getter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "supplementalStr3");
-    }
-    return JSValue::encode(castedThis->supplementalStr3(*state));
+    UNUSED_PARAM(state);
+    return thisObject->supplementalStr3(*state);
 }
 
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSValue jsTestInterfaceSupplementalNodeGetter(ExecState*, JSTestInterface*, ThrowScope& throwScope);
+
 EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::attribute<jsTestInterfaceSupplementalNodeGetter>(state, thisValue, "supplementalNode");
+}
+
+static inline JSValue jsTestInterfaceSupplementalNodeGetter(ExecState* state, JSTestInterface* thisObject, ThrowScope& throwScope)
+{
     UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(thisValue);
-    JSValue decodedThisValue = JSValue::decode(thisValue);
-    auto* castedThis = jsDynamicCast<JSTestInterface*>(decodedThisValue);
-    if (UNLIKELY(!castedThis)) {
-        return throwGetterTypeError(*state, throwScope, "TestInterface", "supplementalNode");
-    }
-    auto& impl = castedThis->wrapped();
-    JSValue result = toJS(state, castedThis->globalObject(), WebCore::TestSupplemental::supplementalNode(impl));
-    return JSValue::encode(result);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject->wrapped();
+    JSValue result = toJS(state, thisObject->globalObject(), WebCore::TestSupplemental::supplementalNode(impl));
+    return result;
 }
 
 #endif
