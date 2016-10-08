@@ -36,6 +36,7 @@
 #include "MediaQueryEvaluator.h"
 #include "RenderView.h"
 #include "SizesCalcParser.h"
+#include "StyleScope.h"
 
 namespace WebCore {
 
@@ -110,7 +111,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondi
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, m_document.styleResolverIfExists());
+    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, const_cast<Style::Scope&>(m_document.styleScope()).resolverIfExists());
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)

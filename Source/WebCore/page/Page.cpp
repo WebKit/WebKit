@@ -491,7 +491,7 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
             // the properties cache.
             if (!frame->document())
                 continue;
-            if (StyleResolver* styleResolver = frame->document()->styleResolverIfExists())
+            if (StyleResolver* styleResolver = frame->document()->styleScope().resolverIfExists())
                 styleResolver->invalidateMatchedPropertiesCache();
             frame->document()->scheduleForcedStyleRecalc();
         }

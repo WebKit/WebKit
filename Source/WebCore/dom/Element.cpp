@@ -97,6 +97,7 @@
 #include "SlotAssignment.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"
@@ -1429,9 +1430,9 @@ bool Element::allowsDoubleTapGesture() const
 StyleResolver& Element::styleResolver()
 {
     if (auto* shadowRoot = containingShadowRoot())
-        return shadowRoot->styleResolver();
+        return shadowRoot->styleScope().resolver();
 
-    return document().ensureStyleResolver();
+    return document().styleScope().resolver();
 }
 
 ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)

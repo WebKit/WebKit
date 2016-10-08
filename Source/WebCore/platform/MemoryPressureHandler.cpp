@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "ScrollingThread.h"
+#include "StyleScope.h"
 #include "StyledElement.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IncrementalSweeper.h>
@@ -128,7 +129,7 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
         Vector<RefPtr<Document>> documents;
         copyToVector(Document::allDocuments(), documents);
         for (auto& document : documents)
-            document->clearStyleResolver();
+            document->styleScope().clearResolver();
     }
 
     {

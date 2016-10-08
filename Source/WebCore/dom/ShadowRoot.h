@@ -61,12 +61,7 @@ public:
 
     using TreeScope::rootNode;
 
-    StyleResolver& styleResolver();
-    StyleResolver* styleResolverIfExists();
     Style::Scope& styleScope();
-
-    void updateStyle();
-    void resetStyleResolver();
 
     bool resetStyleInheritance() const { return m_resetStyleInheritance; }
     void setResetStyleInheritance(bool);
@@ -114,7 +109,6 @@ private:
 
     Element* m_host { nullptr };
 
-    std::unique_ptr<StyleResolver> m_styleResolver;
     std::unique_ptr<Style::Scope> m_styleScope;
 
     std::unique_ptr<SlotAssignment> m_slotAssignment;

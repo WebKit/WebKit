@@ -631,7 +631,7 @@ Document::~Document()
 
     extensionStyleSheets().detachFromDocument();
 
-    clearStyleResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
+    styleScope().clearResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
     m_fontSelector->clearDocument();
     m_fontSelector->unregisterForInvalidationCallbacks(*this);
 
@@ -863,7 +863,7 @@ void Document::childrenChanged(const ChildChange& change)
         return;
     m_documentElement = newDocumentElement;
     // The root style used for media query matching depends on the document element.
-    clearStyleResolver();
+    styleScope().clearResolver();
 }
 
 #if ENABLE(CUSTOM_ELEMENTS)
@@ -2097,13 +2097,13 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
 
 bool Document::isPageBoxVisible(int pageIndex)
 {
-    std::unique_ptr<RenderStyle> pageStyle(ensureStyleResolver().styleForPage(pageIndex));
+    std::unique_ptr<RenderStyle> pageStyle(styleScope().resolver().styleForPage(pageIndex));
     return pageStyle->visibility() != HIDDEN; // display property doesn't apply to @page.
 }
 
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
-    std::unique_ptr<RenderStyle> style = ensureStyleResolver().styleForPage(pageIndex);
+    std::unique_ptr<RenderStyle> style = styleScope().resolver().styleForPage(pageIndex);
 
     int width = pageSize.width();
     int height = pageSize.height();
@@ -2139,19 +2139,13 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width);
 }
 
-void Document::createStyleResolver()
-{
-    m_styleResolver = std::make_unique<StyleResolver>(*this);
-    m_styleResolver->appendAuthorStyleSheets(styleScope().activeStyleSheets());
-}
-
 StyleResolver& Document::userAgentShadowTreeStyleResolver()
 {
     if (!m_userAgentShadowTreeStyleResolver) {
         m_userAgentShadowTreeStyleResolver = std::make_unique<StyleResolver>(*this);
 
         // FIXME: Filter out shadow pseudo elements we don't want to expose to authors.
-        auto& documentAuthorStyle = ensureStyleResolver().ruleSets().authorStyle();
+        auto& documentAuthorStyle = styleScope().resolver().ruleSets().authorStyle();
         if (documentAuthorStyle.hasShadowPseudoElementRules())
             m_userAgentShadowTreeStyleResolver->ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(documentAuthorStyle);
     }
@@ -2161,16 +2155,15 @@ StyleResolver& Document::userAgentShadowTreeStyleResolver()
 
 void Document::fontsNeedUpdate(FontSelector&)
 {
-    if (m_styleResolver)
-        m_styleResolver->invalidateMatchedPropertiesCache();
+    if (auto* resolver = styleScope().resolverIfExists())
+        resolver->invalidateMatchedPropertiesCache();
     if (pageCacheState() != NotInPageCache || !renderView())
         return;
     scheduleForcedStyleRecalc();
 }
 
-void Document::clearStyleResolver()
+void Document::didClearStyleResolver()
 {
-    m_styleResolver = nullptr;
     m_userAgentShadowTreeStyleResolver = nullptr;
 
     m_fontSelector->buildStarted();
@@ -3491,7 +3484,7 @@ void Document::updateViewportUnitsOnResize()
     if (!hasStyleWithViewportUnits())
         return;
 
-    ensureStyleResolver().clearCachedPropertiesAffectedByViewportUnits();
+    styleScope().resolver().clearCachedPropertiesAffectedByViewportUnits();
 
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {

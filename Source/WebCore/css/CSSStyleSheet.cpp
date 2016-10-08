@@ -177,7 +177,7 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
 
     if (mutationType == RuleInsertion && !contentsWereClonedForMutation && !scope->activeStyleSheetsContains(this)) {
         if (insertedKeyframesRule) {
-            if (auto* resolver = scope->styleResolverIfExists())
+            if (auto* resolver = scope->resolverIfExists())
                 resolver->addKeyframeStyle(*insertedKeyframesRule);
             return;
         }

@@ -1332,7 +1332,7 @@ void FrameView::layout(bool allowSubtree)
         m_layoutPhase = InPreLayoutStyleUpdate;
 
         // Viewport-dependent media queries may cause us to need completely different style information.
-        StyleResolver* styleResolver = document.styleResolverIfExists();
+        auto* styleResolver = document.styleScope().resolverIfExists();
         if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
             LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
             document.styleScope().didChangeContentsOrInterpretation();

@@ -89,8 +89,9 @@ public:
     bool hasPendingUpdate() const { return !!m_pendingUpdateType; }
     void flushPendingUpdate();
 
-    StyleResolver& styleResolver();
-    StyleResolver* styleResolverIfExists();
+    StyleResolver& resolver();
+    StyleResolver* resolverIfExists();
+    void clearResolver();
 
     static Scope& forNode(Node&);
 
@@ -113,6 +114,8 @@ private:
 
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
+
+    std::unique_ptr<StyleResolver> m_resolver;
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;

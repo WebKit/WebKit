@@ -41,7 +41,6 @@ namespace WebCore {
 
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     unsigned countersAndFlags[1];
-    void* styleResolver;
     void* styleScope;
     void* host;
     void* slotAssignment;
@@ -80,46 +79,11 @@ ShadowRoot::~ShadowRoot()
     removeDetachedChildren();
 }
 
-StyleResolver& ShadowRoot::styleResolver()
-{
-    if (m_type == Mode::UserAgent)
-        return document().userAgentShadowTreeStyleResolver();
-
-    if (!m_styleResolver) {
-        // FIXME: We could share style resolver with shadow roots that have identical style.
-        m_styleResolver = std::make_unique<StyleResolver>(document());
-        if (m_styleScope)
-            m_styleResolver->appendAuthorStyleSheets(m_styleScope->activeStyleSheets());
-    }
-    return *m_styleResolver;
-}
-
-StyleResolver* ShadowRoot::styleResolverIfExists()
-{
-    if (m_type == Mode::UserAgent)
-        return &document().userAgentShadowTreeStyleResolver();
-
-    return m_styleResolver.get();
-}
-
-void ShadowRoot::resetStyleResolver()
-{
-    m_styleResolver = nullptr;
-}
-
 Style::Scope& ShadowRoot::styleScope()
 {
     if (!m_styleScope)
         m_styleScope = std::make_unique<Style::Scope>(*this);
     return *m_styleScope;
-}
-
-void ShadowRoot::updateStyle()
-{
-    if (!m_styleScope)
-        return;
-    // FIXME: Make optimized updated work.
-    m_styleScope->didChangeContentsOrInterpretation();
 }
 
 String ShadowRoot::innerHTML() const

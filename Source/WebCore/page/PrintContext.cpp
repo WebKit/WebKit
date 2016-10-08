@@ -27,6 +27,7 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -251,7 +252,7 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     PrintContext printContext(frame);
     printContext.begin(800); // Any width is OK here.
     document->updateLayout();
-    std::unique_ptr<RenderStyle> style = document->ensureStyleResolver().styleForPage(pageNumber);
+    std::unique_ptr<RenderStyle> style = document->styleScope().resolver().styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
     if (!strcmp(propertyName, "margin-left")) {

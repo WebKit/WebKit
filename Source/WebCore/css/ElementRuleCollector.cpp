@@ -45,6 +45,7 @@
 #include "SelectorFilter.h"
 #include "ShadowRoot.h"
 #include "StyleProperties.h"
+#include "StyleScope.h"
 #include "StyledElement.h"
 
 #include <wtf/TemporaryChange.h>
@@ -234,7 +235,7 @@ void ElementRuleCollector::matchHostPseudoClassRules(MatchRequest& matchRequest,
 
     matchRequest.treeContextOrdinal++;
 
-    auto& shadowAuthorStyle = m_element.shadowRoot()->styleResolver().ruleSets().authorStyle();
+    auto& shadowAuthorStyle = m_element.shadowRoot()->styleScope().resolver().ruleSets().authorStyle();
     auto& shadowHostRules = shadowAuthorStyle.hostPseudoClassRules();
     if (shadowHostRules.isEmpty())
         return;
@@ -265,11 +266,11 @@ void ElementRuleCollector::matchSlottedPseudoElementRules(MatchRequest& matchReq
 
         // In nested case the slot may itself be assigned to a slot. Collect ::slotted rules from all the nested trees.
         maybeSlotted = slot;
-        if (!hostShadowRoot->styleResolver().ruleSets().isAuthorStyleDefined())
+        if (!hostShadowRoot->styleScope().resolver().ruleSets().isAuthorStyleDefined())
             continue;
         // Find out if there are any ::slotted rules in the shadow tree matching the current slot.
         // FIXME: This is really part of the slot style and could be cached when resolving it.
-        ElementRuleCollector collector(*slot, hostShadowRoot->styleResolver().ruleSets().authorStyle(), nullptr);
+        ElementRuleCollector collector(*slot, hostShadowRoot->styleScope().resolver().ruleSets().authorStyle(), nullptr);
         auto slottedPseudoElementRules = collector.collectSlottedPseudoElementRulesForSlot(matchRequest.includeEmptyRules);
         if (!slottedPseudoElementRules)
             continue;

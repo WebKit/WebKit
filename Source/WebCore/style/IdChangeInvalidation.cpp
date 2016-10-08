@@ -30,13 +30,14 @@
 #include "ElementChildIterator.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 
 namespace WebCore {
 namespace Style {
 
 static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, const AtomicString& changedId)
 {
-    auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
+    auto& shadowRuleSets = shadowRoot.styleScope().resolver().ruleSets();
     if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 

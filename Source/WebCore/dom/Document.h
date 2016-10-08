@@ -487,16 +487,8 @@ public:
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
 
-    StyleResolver* styleResolverIfExists() const { return m_styleResolver.get(); }
-
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
-    StyleResolver& ensureStyleResolver()
-    { 
-        if (!m_styleResolver)
-            createStyleResolver();
-        return *m_styleResolver;
-    }
     StyleResolver& userAgentShadowTreeStyleResolver();
 
     CSSFontSelector& fontSelector() { return m_fontSelector; }
@@ -1230,7 +1222,7 @@ public:
 
     void didRemoveAllPendingStylesheet();
     void setNeedsNotifyRemoveAllPendingStylesheet() { m_needsNotifyRemoveAllPendingStylesheet = true; }
-    void clearStyleResolver();
+    void didClearStyleResolver();
 
     bool inStyleRecalc() const { return m_inStyleRecalc; }
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
@@ -1352,8 +1344,6 @@ private:
 
     void buildAccessKeyMap(TreeScope* root);
 
-    void createStyleResolver();
-
     void loadEventDelayTimerFired();
 
     void pendingTasksTimerFired();
@@ -1397,7 +1387,6 @@ private:
 
     unsigned m_referencingNodeCount;
 
-    std::unique_ptr<StyleResolver> m_styleResolver;
     std::unique_ptr<StyleResolver> m_userAgentShadowTreeStyleResolver;
     bool m_hasNodesWithPlaceholderStyle;
     bool m_needsNotifyRemoveAllPendingStylesheet;

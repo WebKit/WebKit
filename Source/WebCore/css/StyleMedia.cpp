@@ -34,6 +34,7 @@
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 
 namespace WebCore {
 
@@ -62,7 +63,7 @@ bool StyleMedia::matchMedium(const String& query) const
     if (!documentElement)
         return false;
 
-    auto rootStyle = document->ensureStyleResolver().styleForElement(*documentElement, document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
+    auto rootStyle = document->styleScope().resolver().styleForElement(*documentElement, document->renderStyle(), MatchOnlyUserAgentRules).renderStyle;
 
     auto media = MediaQuerySet::create();
     if (!media->parse(query))

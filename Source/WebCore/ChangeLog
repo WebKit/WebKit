@@ -1,3 +1,79 @@
+2016-10-08  Antti Koivisto  <antti@apple.com>
+
+        Move StyleResolver ownership from Document/ShadowRoot to Style::Scope
+        https://bugs.webkit.org/show_bug.cgi?id=163148
+
+        Reviewed by Andreas Kling.
+
+        Reduce duplication between Document and ShadowRoot.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchHostPseudoClassRules):
+        (WebCore::ElementRuleCollector::matchSlottedPseudoElementRules):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::documentElementUserAgentStyle):
+        * css/StyleMedia.cpp:
+        (WebCore::StyleMedia::matchMedium):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::mediaConditionMatches):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::isPageBoxVisible):
+        (WebCore::Document::pageSizeAndMarginsInPixels):
+        (WebCore::Document::userAgentShadowTreeStyleResolver):
+        (WebCore::Document::fontsNeedUpdate):
+        (WebCore::Document::didClearStyleResolver):
+        (WebCore::Document::updateViewportUnitsOnResize):
+        (WebCore::Document::createStyleResolver): Deleted.
+        (WebCore::Document::clearStyleResolver): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::styleResolverIfExists): Deleted.
+        (WebCore::Document::ensureStyleResolver): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::styleResolver):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::styleResolver): Deleted.
+        (WebCore::ShadowRoot::styleResolverIfExists): Deleted.
+        (WebCore::ShadowRoot::resetStyleResolver): Deleted.
+        * dom/ShadowRoot.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * page/Page.cpp:
+        (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseCriticalMemory):
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostStyle):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostStyle):
+        * style/IdChangeInvalidation.cpp:
+        (WebCore::Style::mayBeAffectedByHostStyle):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+        (WebCore::Style::Scope::resolverIfExists):
+        (WebCore::Style::Scope::clearResolver):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        (WebCore::Style::Scope::updateStyleResolver):
+        (WebCore::Style::Scope::styleResolver): Deleted.
+        (WebCore::Style::Scope::styleResolverIfExists): Deleted.
+        * style/StyleScope.h:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::resolve):
+        (WebCore::Style::SharingResolver::canShareStyleWithElement):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Scope::Scope):
+        (WebCore::Style::TreeResolver::resolve):
+
 2016-10-07  Chris Dumez  <cdumez@apple.com>
 
         window.navigator.language incorrectly returns all lowercase string

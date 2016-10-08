@@ -31,13 +31,14 @@
 #include "ShadowRoot.h"
 #include "StyleInvalidationAnalysis.h"
 #include "StyleResolver.h"
+#include "StyleScope.h"
 
 namespace WebCore {
 namespace Style {
 
 static bool mayBeAffectedByHostStyle(ShadowRoot& shadowRoot, bool isHTML, const QualifiedName& attributeName)
 {
-    auto& shadowRuleSets = shadowRoot.styleResolver().ruleSets();
+    auto& shadowRuleSets = shadowRoot.styleScope().resolver().ruleSets();
     if (shadowRuleSets.authorStyle().hostPseudoClassRules().isEmpty())
         return false;
 

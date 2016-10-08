@@ -71,20 +71,32 @@ Scope::Scope(ShadowRoot& shadowRoot)
 {
 }
 
-StyleResolver& Scope::styleResolver()
+StyleResolver& Scope::resolver()
 {
-    if (m_shadowRoot)
-        return m_shadowRoot->styleResolver();
+    if (m_shadowRoot && m_shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+        return m_document.userAgentShadowTreeStyleResolver();
 
-    return m_document.ensureStyleResolver();
+    if (!m_resolver) {
+        m_resolver = std::make_unique<StyleResolver>(m_document);
+        m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
+    }
+    return *m_resolver;
 }
 
-StyleResolver* Scope::styleResolverIfExists()
+StyleResolver* Scope::resolverIfExists()
 {
-    if (m_shadowRoot)
-        return m_shadowRoot->styleResolverIfExists();
+    if (m_shadowRoot && m_shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+        return &m_document.userAgentShadowTreeStyleResolver();
 
-    return m_document.styleResolverIfExists();
+    return m_resolver.get();
+}
+
+void Scope::clearResolver()
+{
+    m_resolver = nullptr;
+
+    if (!m_shadowRoot)
+        m_document.didClearStyleResolver();
 }
 
 Scope& Scope::forNode(Node& node)
@@ -118,7 +130,8 @@ void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
     }
 
     if (m_shadowRoot) {
-        m_shadowRoot->updateStyle();
+        // FIXME: Make optimized updates work.
+        didChangeContentsOrInterpretation();
         return;
     }
 
@@ -248,10 +261,10 @@ Scope::StyleResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPt
     
     unsigned newStylesheetCount = newStylesheets.size();
 
-    if (!styleResolverIfExists())
+    if (!resolverIfExists())
         return Reconstruct;
 
-    StyleResolver& styleResolver = *styleResolverIfExists();
+    auto& styleResolver = *resolverIfExists();
 
     // Find out which stylesheets are new.
     unsigned oldStylesheetCount = m_activeStyleSheets.size();
@@ -323,14 +336,14 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
     }
 
     if (!m_document.hasLivingRenderTree()) {
-        m_document.clearStyleResolver();
+        clearResolver();
         return;
     }
 
     // Don't bother updating, since we haven't loaded all our style info yet
     // and haven't calculated the style resolver for the first time.
     if (!m_shadowRoot && !m_didUpdateActiveStyleSheets && m_pendingStyleSheetCount) {
-        m_document.clearStyleResolver();
+        clearResolver();
         return;
     }
 
@@ -378,13 +391,10 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
 void Scope::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, StyleResolverUpdateType updateType)
 {
     if (updateType == Reconstruct) {
-        if (m_shadowRoot)
-            m_shadowRoot->resetStyleResolver();
-        else
-            m_document.clearStyleResolver();
+        clearResolver();
         return;
     }
-    auto& styleResolver = this->styleResolver();
+    auto& styleResolver = resolver();
 
     if (updateType == Reset) {
         styleResolver.ruleSets().resetAuthorStyle();
