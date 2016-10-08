@@ -1170,8 +1170,7 @@ webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
-# <rdar://problem/19588632>
-[ ElCapitan+ ] http/tests/media/track-in-band-hls-metadata.html [ Timeout ]
+webkit.org/b/140022 http/tests/media/track-in-band-hls-metadata.html [ Pass Timeout ]
 
 # <rdar://problem/19893462>
 [ ElCapitan+ ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
