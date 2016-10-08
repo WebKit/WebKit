@@ -1,3 +1,16 @@
+2016-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        REGRESSION (r206853?): LayoutTest js/regress-141098.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=163046
+
+        Reviewed by Saam Barati.
+
+        This is attempt-to-fix patch since I cannot reproduce this flakiness.
+        We reduce the number of frames to back off from the stack overflow to
+        catch the closer frame limit to the actual stack limit.
+
+        * js/script-tests/regress-141098.js:
+
 2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, mark a test as failing on iOS simulator
