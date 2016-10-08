@@ -4110,9 +4110,19 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
 }
 #endif
 
+static BOOL currentScrollIsBlit(NSView *clipView)
+{
+#if PLATFORM(MAC)
+    return [clipView isKindOfClass:[WebClipView class]] && [(WebClipView *)clipView currentScrollIsBlit];
+#else
+    return NO;
+#endif
+}
+
+// FIXME: this entire function could be #ifdeffed out on iOS. The below workaround is AppKit-specific.
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect
 {
-    if (_private->inScrollPositionChanged) {
+    if (_private->inScrollPositionChanged && currentScrollIsBlit([self superview])) {
         // When scrolling, the dirty regions are adjusted for the scroll only
         // after NSViewBoundsDidChangeNotification is sent. Translate the invalid
         // rect to pre-scrolled coordinates in order to get the right dirty region
@@ -4227,7 +4237,7 @@ static RetainPtr<NSArray> customMenuFromDefaultItems(WebView *webView, const Con
     const int cRectThreshold = 10; 
     const float cWastedSpaceThreshold = 0.75f; 
     BOOL useUnionedRect = (count <= 1) || (count > cRectThreshold); 
-    if (!useUnionedRect) { 
+    if (!useUnionedRect) {
         // Attempt to guess whether or not we should use the unioned rect or the individual rects. 
         // We do this by computing the percentage of "wasted space" in the union.  If that wasted space 
         // is too large, then we will do individual rect painting instead. 

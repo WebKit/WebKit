@@ -1,3 +1,30 @@
+2016-10-07  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK1 Mac] Fix repaints of fixed-background elements in layer-backed WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=163154
+        rdar://problem/28674216
+
+        Reviewed by Tim Horton.
+        
+        r55159 added code to counteract AppKit's adjustment of dirty regions during scrolling,
+        by offsetting the dirty rect in -setNeedsDisplayInRect: if the call happens during
+        the NSViewBoundsDidChangeNotification handling.
+        
+        However, AppKit only does dirty region adjustment in the code path that blits ("copy
+        on scroll"), so r55159 produces incorrect behavior in, for example, layer-backed views.
+        
+        Fix by overriding -[NSClipView _canCopyOnScrollForDeltaX:deltaY:] to know if a single
+        scroll is going to blit, and only do adjustments in -setNeedsDisplayInRect: if it is.
+
+        * WebView/WebClipView.h:
+        * WebView/WebClipView.mm:
+        (-[WebClipView _immediateScrollToPoint:]):
+        (-[WebClipView _canCopyOnScrollForDeltaX:deltaY:]):
+        (-[WebClipView currentScrollIsBlit]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView setNeedsDisplayInRect:]):
+        (-[WebHTMLView drawRect:]):
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         CachedResource client handling methods should take reference

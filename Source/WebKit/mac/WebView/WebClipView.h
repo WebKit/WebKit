@@ -34,9 +34,11 @@
 {
     BOOL _haveAdditionalClip;
     BOOL _isScrolling;
+    BOOL _currentScrollIsBlit;
     NSRect _additionalClip;
 }
 
+- (BOOL)currentScrollIsBlit;
 - (void)setAdditionalClip:(NSRect)additionalClip;
 - (void)resetAdditionalClip;
 - (BOOL)hasAdditionalClip;

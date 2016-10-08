@@ -50,6 +50,7 @@ using namespace WebCore;
 
 @interface NSClipView (WebNSClipViewDetails)
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin;
+- (BOOL)_canCopyOnScrollForDeltaX:(CGFloat)deltaX deltaY:(CGFloat)deltaY;
 @end
 
 @interface NSWindow (WebNSWindowDetails)
@@ -104,6 +105,7 @@ using namespace WebCore;
 - (void)_immediateScrollToPoint:(NSPoint)newOrigin
 {
     _isScrolling = YES;
+    _currentScrollIsBlit = NO;
 
     [[self window] _disableDelayedWindowDisplay];
 
@@ -124,6 +126,17 @@ using namespace WebCore;
     }
 
     _isScrolling = NO;
+}
+
+- (BOOL)_canCopyOnScrollForDeltaX:(CGFloat)deltaX deltaY:(CGFloat)deltaY
+{
+    _currentScrollIsBlit = [super _canCopyOnScrollForDeltaX:deltaX deltaY:deltaY];
+    return _currentScrollIsBlit;
+}
+
+- (BOOL)currentScrollIsBlit
+{
+    return _currentScrollIsBlit;
 }
 
 - (void)resetAdditionalClip
