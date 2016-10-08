@@ -1,3 +1,18 @@
+2016-10-08  Saam Barati  <sbarati@apple.com>
+
+        HasIndexedProperty clobberize rule is wrong for Array::ForceOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=159942
+        <rdar://problem/27328836>
+
+        Reviewed by Filip Pizlo.
+
+        When HasIndexedProperty has a ForceOSRExit array mode, it should
+        report to write to side state, like the ForceOSRExit node, and the
+        other nodes with ForceOSRExit array mode.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2016-10-07  Mark Lam  <mark.lam@apple.com>
 
         Object.freeze() and seal() should throw if [[PreventExtensions]]() fails.
