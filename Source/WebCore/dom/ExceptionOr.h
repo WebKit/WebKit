@@ -38,6 +38,7 @@ public:
 
     bool hasException() const;
     ExceptionCode exceptionCode() const;
+    const String& exceptionMessage() const;
     ReturnType&& takeReturnValue();
 
 private:
@@ -62,6 +63,11 @@ template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException(
 template<typename ReturnType> inline ExceptionCode ExceptionOr<ReturnType>::exceptionCode() const
 {
     return std::experimental::get<Exception>(m_value).code();
+}
+
+template<typename ReturnType> inline const String& ExceptionOr<ReturnType>::exceptionMessage() const
+{
+    return std::experimental::get<Exception>(m_value).message();
 }
 
 template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::takeReturnValue()

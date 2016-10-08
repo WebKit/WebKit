@@ -62,8 +62,8 @@ interface FetchRequest {
 
     [NewObject, CallWith=ScriptExecutionContext, MayThrowLegacyException] FetchRequest clone();
 
-    [PrivateIdentifier, MayThrowLegacyException] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
-    [PrivateIdentifier, MayThrowLegacyException] FetchHeaders initializeWith(DOMString input, Dictionary init);
+    [PrivateIdentifier, NewObject] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
+    [PrivateIdentifier, NewObject] FetchHeaders initializeWith(DOMString input, Dictionary init);
     [PrivateIdentifier, MayThrowLegacyException, CallWith=ScriptState] void setBody(any body, FetchRequest? request);
 };
 FetchRequest implements FetchBody;

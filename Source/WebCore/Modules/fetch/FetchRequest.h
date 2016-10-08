@@ -31,9 +31,11 @@
 
 #if ENABLE(FETCH_API)
 
+#include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -46,8 +48,8 @@ class FetchRequest final : public FetchBodyOwner {
 public:
     static Ref<FetchRequest> create(ScriptExecutionContext& context) { return adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { })); }
 
-    FetchHeaders* initializeWith(FetchRequest&, const Dictionary&, ExceptionCode&);
-    FetchHeaders* initializeWith(const String&, const Dictionary&, ExceptionCode&);
+    ExceptionOr<Ref<FetchHeaders>> initializeWith(FetchRequest&, const Dictionary&);
+    ExceptionOr<Ref<FetchHeaders>> initializeWith(const String&, const Dictionary&);
     void setBody(JSC::ExecState&, JSC::JSValue, FetchRequest*, ExceptionCode&);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
@@ -96,7 +98,7 @@ public:
 private:
     FetchRequest(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&, InternalRequest&&);
 
-    void initializeOptions(const Dictionary&, ExceptionCode&);
+    ExceptionOr<Ref<FetchHeaders>> initializeOptions(const Dictionary&);
 
     // ActiveDOMObject API.
     const char* activeDOMObjectName() const final;

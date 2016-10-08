@@ -376,6 +376,17 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     throwDOMException(exec, scope, ec);
 }
 
+void setDOMException(ExecState* exec, ExceptionCode ec, const String& message)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!ec || scope.exception())
+        return;
+
+    throwException(exec, scope, createDOMException(exec, ec, message));
+}
+
 void setDOMException(ExecState* exec, const ExceptionCodeWithMessage& ec)
 {
     VM& vm = exec->vm();

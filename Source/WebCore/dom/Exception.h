@@ -26,6 +26,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 using ExceptionCode = int;
@@ -33,11 +35,14 @@ using ExceptionCode = int;
 class Exception {
 public:
     explicit Exception(ExceptionCode);
+    explicit Exception(ExceptionCode, const String&);
 
-    ExceptionCode code() const;
+    ExceptionCode code() const { return m_code; }
+    const String& message() const { return m_message; }
 
 private:
     ExceptionCode m_code;
+    String m_message;
 };
 
 inline Exception::Exception(ExceptionCode code)
@@ -45,9 +50,10 @@ inline Exception::Exception(ExceptionCode code)
 {
 }
 
-inline ExceptionCode Exception::code() const
+inline Exception::Exception(ExceptionCode code, const String& message)
+    : m_code(code)
+    , m_message(message)
 {
-    return m_code;
 }
 
 }

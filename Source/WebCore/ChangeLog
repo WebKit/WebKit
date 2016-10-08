@@ -1,5 +1,42 @@
 2016-10-08  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Request constructor should provide exception messages
+        https://bugs.webkit.org/show_bug.cgi?id=162382
+
+        Reviewed by Darin Adler.
+
+        No change of behavior, except that exceptions now have error messages.
+
+        Added support of exception messages to ExceptionOr.
+        Making use of ExceptionOr for Request constructor parameter checking.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setReferrerPolicy):
+        (WebCore::setMode):
+        (WebCore::setCredentials):
+        (WebCore::setCache):
+        (WebCore::setRedirect):
+        (WebCore::setMethod):
+        (WebCore::setReferrer):
+        (WebCore::buildOptions):
+        (WebCore::FetchRequest::initializeOptions):
+        (WebCore::FetchRequest::initializeWith):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchRequest.idl:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * dom/Exception.h:
+        (WebCore::Exception::code):
+        (WebCore::Exception::message):
+        (WebCore::Exception::Exception):
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::exceptionMessage):
+
+2016-10-08  Youenn Fablet  <youenn@apple.com>
+
         Refactor binding generated casted-this checks
         https://bugs.webkit.org/show_bug.cgi?id=162677
 

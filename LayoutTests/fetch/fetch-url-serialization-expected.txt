@@ -97,7 +97,7 @@ FAIL Testing Request url 'file:c:\foo\bar.html' with base 'file:///tmp/mock/path
 FAIL Testing Request url '  File:c|////foo\bar.html' with base 'file:///tmp/mock/path' assert_equals: expected "file:///c:////foo/bar.html" but got "file:///tmp/mock/c|////foo/bar.html"
 FAIL Testing Request url 'C|/foo/bar' with base 'file:///tmp/mock/path' assert_equals: expected "file:///C:/foo/bar" but got "file:///tmp/mock/C|/foo/bar"
 FAIL Testing Request url '/C|\foo\bar' with base 'file:///tmp/mock/path' assert_equals: expected "file:///C:/foo/bar" but got "file:///C|/foo/bar"
-FAIL Testing Request url '//C|/foo/bar' with base 'file:///tmp/mock/path' Type error
+FAIL Testing Request url '//C|/foo/bar' with base 'file:///tmp/mock/path' URL is not valid or contains user credentials.
 PASS Testing Request url '//server/file' with base 'file:///tmp/mock/path' 
 PASS Testing Request url '\\server\file' with base 'file:///tmp/mock/path' 
 PASS Testing Request url '/\server/file' with base 'file:///tmp/mock/path' 

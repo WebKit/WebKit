@@ -187,6 +187,7 @@ JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 
 // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
+void setDOMException(JSC::ExecState*, ExceptionCode, const String&);
 void setDOMException(JSC::ExecState*, const ExceptionCodeWithMessage&);
 
 WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
@@ -946,7 +947,7 @@ template<typename T> inline JSC::JSValue toNullableJSNumber(Optional<T> optional
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ExceptionOr<T>&& value)
 {
     if (UNLIKELY(value.hasException())) {
-        setDOMException(state, value.exceptionCode());
+        setDOMException(state, value.exceptionCode(), value.exceptionMessage());
         return JSC::jsUndefined();
     }
     return toJS(state, globalObject, value.takeReturnValue());
@@ -956,7 +957,7 @@ template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state,
 {
     // FIXME: It's really annoying to have two of these functions. Should find a way to combine toJS and toJSNewlyCreated.
     if (UNLIKELY(value.hasException())) {
-        setDOMException(state, value.exceptionCode());
+        setDOMException(state, value.exceptionCode(), value.exceptionMessage());
         return JSC::jsUndefined();
     }
     return toJSNewlyCreated(state, globalObject, value.takeReturnValue());
