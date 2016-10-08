@@ -29,7 +29,6 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
-#include "JSNodeOrString.h"
 #include "JSXMLDocument.h"
 #include "Location.h"
 #include "NodeTraversal.h"
@@ -106,24 +105,6 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& docume
     if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
         return wrapper;
     return toJSNewlyCreated(state, globalObject, Ref<Document>(document));
-}
-
-JSValue JSDocument::prepend(ExecState& state)
-{
-    ExceptionCode ec = 0;
-    wrapped().prepend(toNodeOrStringVector(state), ec);
-    setDOMException(&state, ec);
-
-    return jsUndefined();
-}
-
-JSValue JSDocument::append(ExecState& state)
-{
-    ExceptionCode ec = 0;
-    wrapped().append(toNodeOrStringVector(state), ec);
-    setDOMException(&state, ec);
-
-    return jsUndefined();
 }
 
 #if ENABLE(TOUCH_EVENTS)

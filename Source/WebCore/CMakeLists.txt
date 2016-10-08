@@ -1068,7 +1068,6 @@ set(WebCore_SOURCES
     bindings/js/JSCSSValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCharacterDataCustom.cpp
     bindings/js/JSClientRectCustom.cpp
     bindings/js/JSCommandLineAPIHostCustom.cpp
     bindings/js/JSCryptoAlgorithmBuilder.cpp
@@ -1105,7 +1104,6 @@ set(WebCore_SOURCES
     bindings/js/JSDictionary.cpp
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSDocumentFragmentCustom.cpp
-    bindings/js/JSDocumentTypeCustom.cpp
     bindings/js/JSElementCustom.cpp
     bindings/js/JSErrorEventCustom.cpp
     bindings/js/JSErrorHandler.cpp
@@ -1158,7 +1156,6 @@ set(WebCore_SOURCES
     bindings/js/JSNodeCustom.cpp
     bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
-    bindings/js/JSNodeOrString.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSPerformanceEntryCustom.cpp
     bindings/js/JSPerformanceTimingCustom.cpp

@@ -2737,8 +2737,6 @@
 		7C1E97281A9F9834007BF0FB /* AutoFillButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
-		7C33F35A1B4A044800502CAF /* JSCharacterDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C33F3581B4A044800502CAF /* JSCharacterDataCustom.cpp */; };
-		7C33F35E1B4A04CE00502CAF /* JSDocumentTypeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C33F35C1B4A04CE00502CAF /* JSDocumentTypeCustom.cpp */; };
 		7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */; };
 		7C3A91E61C963B8800D1A7E3 /* ClipboardAccessPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C3B79711908757B00B47A2D /* UserMessageHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */; };
@@ -2772,8 +2770,6 @@
 		7C7941E41C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */; };
 		7C7941E51C56C29300A4C58E /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */; };
 		7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */; };
-		7C91A38F1B498ABE003F9EFA /* JSNodeOrString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C91A38D1B498ABE003F9EFA /* JSNodeOrString.cpp */; };
-		7C91A3901B498ABE003F9EFA /* JSNodeOrString.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C91A38E1B498ABE003F9EFA /* JSNodeOrString.h */; };
 		7C93F3491AA6BA5E00A98BAB /* CompiledContentExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */; };
 		7C93F34A1AA6BA5E00A98BAB /* CompiledContentExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C93F34D1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */; };
@@ -9849,8 +9845,6 @@
 		7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoFillButtonElement.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
-		7C33F3581B4A044800502CAF /* JSCharacterDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCharacterDataCustom.cpp; sourceTree = "<group>"; };
-		7C33F35C1B4A04CE00502CAF /* JSDocumentTypeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentTypeCustom.cpp; sourceTree = "<group>"; };
 		7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
 		7C3A91E51C963B8800D1A7E3 /* ClipboardAccessPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardAccessPolicy.h; sourceTree = "<group>"; };
 		7C3B796F1908757B00B47A2D /* UserMessageHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandler.cpp; sourceTree = "<group>"; };
@@ -9896,8 +9890,6 @@
 		7C7941E21C56C29300A4C58E /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		7C7941E31C56C29300A4C58E /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
 		7C83DE851D04CBD400FEBCF3 /* SpringSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpringSolver.h; sourceTree = "<group>"; };
-		7C91A38D1B498ABE003F9EFA /* JSNodeOrString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeOrString.cpp; sourceTree = "<group>"; };
-		7C91A38E1B498ABE003F9EFA /* JSNodeOrString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeOrString.h; sourceTree = "<group>"; };
 		7C93F3471AA6BA5E00A98BAB /* CompiledContentExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompiledContentExtension.cpp; sourceTree = "<group>"; };
 		7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledContentExtension.h; sourceTree = "<group>"; };
 		7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionCompiler.cpp; sourceTree = "<group>"; };
@@ -21101,8 +21093,6 @@
 				E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */,
 				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
 				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
-				7C91A38D1B498ABE003F9EFA /* JSNodeOrString.cpp */,
-				7C91A38E1B498ABE003F9EFA /* JSNodeOrString.h */,
 				CB38FD551CD21D5B00592A3F /* JSPerformanceEntryCustom.cpp */,
 				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
 				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
@@ -21154,7 +21144,6 @@
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
 				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
-				7C33F3581B4A044800502CAF /* JSCharacterDataCustom.cpp */,
 				46A58AC41D46B3FA00432036 /* JSClientRectCustom.cpp */,
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				7CEF26181D6A92E300BE905D /* JSCryptoCustom.cpp */,
@@ -21176,7 +21165,6 @@
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				ADDA94BF19686F8000453029 /* JSDocumentCustom.h */,
 				7C33F3601B4A050400502CAF /* JSDocumentFragmentCustom.cpp */,
-				7C33F35C1B4A04CE00502CAF /* JSDocumentTypeCustom.cpp */,
 				A9C6E6460D7465CA006442E9 /* JSDOMMimeTypeArrayCustom.cpp */,
 				A9C6E64A0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp */,
 				A9C6E64B0D7465E7006442E9 /* JSDOMPluginCustom.cpp */,
@@ -25263,7 +25251,6 @@
 				1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */,
 				BCD9C2C30C17B69E005C90A2 /* JSNodeList.h in Headers */,
 				AD20B18D18E9D237005A8083 /* JSNodeListCustom.h in Headers */,
-				7C91A3901B498ABE003F9EFA /* JSNodeOrString.h in Headers */,
 				33503CA410179AD7003B47E1 /* JSNotification.h in Headers */,
 				33503CA610179AD7003B47E1 /* JSNotificationCenter.h in Headers */,
 				31EC1E2914FF60EE00C94662 /* JSNotificationPermissionCallback.h in Headers */,
@@ -28648,7 +28635,6 @@
 				FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */,
 				FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */,
 				65DF31F309D1CC60000BE325 /* JSCharacterData.cpp in Sources */,
-				7C33F35A1B4A044800502CAF /* JSCharacterDataCustom.cpp in Sources */,
 				BCC065870F3CE2A700CD2D87 /* JSClientRect.cpp in Sources */,
 				46A58AC51D46B3FA00432036 /* JSClientRectCustom.cpp in Sources */,
 				BCC065890F3CE2A700CD2D87 /* JSClientRectList.cpp in Sources */,
@@ -28720,7 +28706,6 @@
 				7C33F3621B4A050400502CAF /* JSDocumentFragmentCustom.cpp in Sources */,
 				1221E05F1C02B444006A1A00 /* JSDocumentTimeline.cpp in Sources */,
 				65DF31F509D1CC60000BE325 /* JSDocumentType.cpp in Sources */,
-				7C33F35E1B4A04CE00502CAF /* JSDocumentTypeCustom.cpp in Sources */,
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				93B70D6309EB0C7C009D8468 /* JSDOMBinding.cpp in Sources */,
 				BC60D7C00D29A46300B9918F /* JSDOMCoreException.cpp in Sources */,
@@ -28983,7 +28968,6 @@
 				1A750DD40A90E729000FF215 /* JSNodeIteratorCustom.cpp in Sources */,
 				BCD9C2C20C17B69E005C90A2 /* JSNodeList.cpp in Sources */,
 				BCD9C2650C17AA67005C90A2 /* JSNodeListCustom.cpp in Sources */,
-				7C91A38F1B498ABE003F9EFA /* JSNodeOrString.cpp in Sources */,
 				33503CA310179AD7003B47E1 /* JSNotification.cpp in Sources */,
 				33503CA510179AD7003B47E1 /* JSNotificationCenter.cpp in Sources */,
 				31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */,

@@ -435,12 +435,12 @@ bool Node::appendChild(Node& newChild, ExceptionCode& ec)
     return downcast<ContainerNode>(*this).appendChild(newChild, ec);
 }
 
-static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<std::experimental::variant<Ref<Node>, String>>& vector)
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>& vector)
 {
     HashSet<RefPtr<Node>> nodeSet;
 
     auto visitor = WTF::makeVisitor(
-        [&](const Ref<Node>& node) { nodeSet.add(const_cast<Node*>(node.ptr())); },
+        [&](const std::reference_wrapper<Node>& node) { nodeSet.add(const_cast<Node*>(&node.get())); },
         [](const String&) { }
     );
 
@@ -468,7 +468,7 @@ static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashS
     return nullptr;
 }
 
-RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     if (nodeOrStringVector.isEmpty())
         return nullptr;
@@ -477,7 +477,7 @@ RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::experimental::varia
     nodes.reserveInitialCapacity(nodeOrStringVector.size());
 
     auto visitor = WTF::makeVisitor(
-        [&](Ref<Node>& node) { nodes.uncheckedAppend(node.copyRef()); },
+        [&](std::reference_wrapper<Node>& node) { nodes.uncheckedAppend(node); },
         [&](String& string) { nodes.uncheckedAppend(Text::create(document(), string)); }
     );
 
@@ -495,7 +495,7 @@ RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<std::experimental::varia
     return WTFMove(nodeToReturn);
 }
 
-void Node::before(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::before(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -516,7 +516,7 @@ void Node::before(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOr
     parent->insertBefore(*node, viablePreviousSibling.get(), ec);
 }
 
-void Node::after(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::after(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)
@@ -532,7 +532,7 @@ void Node::after(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrS
     parent->insertBefore(*node, viableNextSibling.get(), ec);
 }
 
-void Node::replaceWith(Vector<std::experimental::variant<Ref<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
+void Node::replaceWith(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&& nodeOrStringVector, ExceptionCode& ec)
 {
     RefPtr<ContainerNode> parent = parentNode();
     if (!parent)

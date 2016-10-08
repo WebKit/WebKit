@@ -44,6 +44,13 @@ struct( idlDocument => {
     fileName => '$',
 });
 
+struct( domType => {
+    name =>         '$', # Type identifier
+    isNullable =>   '$', # Is the type Nullable (T?)
+    isUnion =>      '$', # Is the type a union (T or U)
+    subtypes =>     '@', # Array of subtypes, only valid if isUnion or sequence
+});
+
 # Used to represent 'interface' blocks
 struct( domInterface => {
     name => '$',      # Class identifier
@@ -79,18 +86,12 @@ struct( domAttribute => {
     signature => '$',         # Attribute signature
 });
 
-struct( domType => {
-    name =>         '$', # Type identifier
-    isNullable =>   '$', # Is the type Nullable (T?)
-    isUnion =>      '$', # Is the type a union (T or U)
-    subtypes =>     '@', # Array of subtypes, only valid if isUnion or sequence
-});
-
 # Used to represent a map of 'variable name' <-> 'variable type'
 struct( domSignature => {
     direction => '$',   # Variable direction (in or out)
     name => '$',        # Variable name
-    type => '$'      ,  # Variable type
+    type => '$',        # Variable type name (DEPRECATED - please use idlType)
+    idlType => '$',     # Variable type
     specials => '@',    # Specials
     extendedAttributes => '$', # Extended attributes
     isNullable => '$',  # Is variable type Nullable (T?)
@@ -707,6 +708,7 @@ sub parseDictionaryMember
         $member->extendedAttributes($extendedAttributeList);
 
         my $type = $self->parseType();
+        $member->idlType($type);
         $member->type($type->name);
         $member->isNullable($type->isNullable);
 
@@ -1254,6 +1256,7 @@ sub parseAttributeRest
         $newDataNode->signature(domSignature->new());
         
         my $type = $self->parseType();
+        $newDataNode->signature->idlType($type);
         $newDataNode->signature->type($type->name);
         $newDataNode->signature->isNullable($type->isNullable);
 
@@ -1546,6 +1549,7 @@ sub parseOptionalOrRequiredArgument
         $self->assertTokenValue($self->getToken(), "optional", __LINE__);
 
         my $type = $self->parseType();
+        $paramDataNode->idlType($type);
         $paramDataNode->type(identifierRemoveNullablePrefix($type->name));
         $paramDataNode->isNullable($type->isNullable);
         $paramDataNode->isOptional(1);
@@ -1555,6 +1559,7 @@ sub parseOptionalOrRequiredArgument
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
         my $type = $self->parseType();
+        $paramDataNode->idlType($type);
         $paramDataNode->type($type->name);
         $paramDataNode->isNullable($type->isNullable);
         $paramDataNode->isOptional(0);
@@ -1617,6 +1622,7 @@ sub parseExceptionField
         $newDataNode->signature(domSignature->new());
 
         my $type = $self->parseType();
+        $newDataNode->signature->idlType($type);
         $newDataNode->signature->type($type->name);
         $newDataNode->signature->isNullable($type->isNullable);
         

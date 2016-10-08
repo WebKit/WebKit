@@ -84,9 +84,9 @@ struct IDLUSVString : IDLString { };
 
 struct IDLObject : IDLUnsupportedType { };
 
-template<typename T> struct IDLInterface : IDLType<Ref<T>> {
+template<typename T> struct IDLInterface : IDLType<std::reference_wrapper<T>> {
     using RawType = T;
-    using NullableType = RefPtr<T>;
+    using NullableType = T*;
 };
 
 template<typename T> struct IDLDictionary : IDLType<T> { };

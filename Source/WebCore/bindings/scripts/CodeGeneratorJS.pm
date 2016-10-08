@@ -248,6 +248,28 @@ sub AddIncludesForType
     }
 }
 
+sub AddToImplIncludesForIDLType
+{
+    my ($idlType, $conditional) = @_;
+
+    return if $codeGenerator->SkipIncludeHeader($idlType->name);
+
+    if ($idlType->isUnion) {
+        AddToImplIncludes("<wtf/Variant.h>", $conditional);
+
+        foreach my $memberType (@{$idlType->subtypes}) {
+            AddToImplIncludesForIDLType($memberType, $conditional);
+        }
+
+        return;
+    }
+
+    if ($codeGenerator->IsWrapperType($idlType->name)) {
+        AddToImplIncludes("JS" . $idlType->name . ".h");
+        return;
+    }
+}
+
 sub AddToImplIncludes
 {
     my $header = shift;
@@ -4010,6 +4032,7 @@ sub GenerateParametersCheck
     my $argumentIndex = 0;
     foreach my $parameter (@{$function->parameters}) {
         my $type = $parameter->type;
+        my $idlType = $parameter->idlType;
 
         die "Optional parameters of non-nullable wrapper types are not supported" if $parameter->isOptional && !$parameter->isNullable && $codeGenerator->IsWrapperType($type);
         die "Optional parameters preceding variadic parameters are not supported" if ($parameter->isOptional &&  @{$function->parameters}[$numParameters - 1]->isVariadic);
@@ -4071,17 +4094,13 @@ sub GenerateParametersCheck
             }
             $value = "WTFMove($name)";
         } elsif ($parameter->isVariadic) {
-            AddToImplIncludes("JS${type}.h", $function->signature->extendedAttributes->{Conditional}) unless $codeGenerator->SkipIncludeHeader($type) or !$codeGenerator->IsWrapperType($type);
-            my ($wrapperType, $wrappedType) = GetVariadicType($interface, $type);
-            push(@$outputArray, "    auto $name = toArguments<VariadicHelper<$wrapperType, $wrappedType>>(*state, $argumentIndex);\n");
+            $implIncludes{"JSDOMConvert.h"} = 1;
+            AddToImplIncludesForIDLType($idlType, $function->signature->extendedAttributes->{Conditional});
+        
+            my $metaType = $codeGenerator->GetIDLType($interface, $idlType);
+            push(@$outputArray, "    auto $name = convertVariadicArguments<$metaType>(*state, $argumentIndex);\n");
+            push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
 
-            if (IsNativeType($type)) {
-                push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
-            }
-            else {
-                push(@$outputArray, "    if (!$name.arguments)\n");
-                push(@$outputArray, "        return throwArgumentTypeError(*state, throwScope, $name.argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, \"$type\");\n");
-            }
             $value = "WTFMove($name.arguments.value())";
 
         } elsif ($codeGenerator->IsEnumType($type)) {

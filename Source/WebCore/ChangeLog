@@ -1,3 +1,106 @@
+2016-10-06  Sam Weinig  <sam@webkit.org>
+
+        Autogenerate passing union types as part of a functions variadic arguments
+        https://bugs.webkit.org/show_bug.cgi?id=162919
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        Remove deleted files.
+
+        * bindings/generic/IDLTypes.h:
+        Switch to use std::reference_wrapper as it's implementation type. We may need more
+        granularity here in the future, but this will work for now.
+
+        * bindings/js/JSCharacterDataCustom.cpp: Removed.
+        * bindings/js/JSDocumentTypeCustom.cpp: Removed.
+        * bindings/js/JSNodeOrString.cpp: Removed.
+        * bindings/js/JSNodeOrString.h: Removed.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::VariadicHelperBase::convert): Deleted.
+        (WebCore::toArguments): Deleted.
+        Moved to JSDOMConvert.h and renamed to convertVariadicArguments and make
+        it work in terms of IDLTypes.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLInterface<T>>::convert):
+        (WebCore::VariadicConverterBase::convert):
+        (WebCore::VariadicConverterBase<IDLInterface<T>>::convert):
+        (WebCore::convertVariadicArguments):
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::prepend): Deleted.
+        (WebCore::JSDocument::append): Deleted.
+        * bindings/js/JSDocumentFragmentCustom.cpp:
+        (WebCore::JSDocumentFragment::prepend): Deleted.
+        (WebCore::JSDocumentFragment::append): Deleted.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::before): Deleted.
+        (WebCore::JSElement::after): Deleted.
+        (WebCore::JSElement::replaceWith): Deleted.
+        (WebCore::JSElement::prepend): Deleted.
+        (WebCore::JSElement::append): Deleted.
+        Remove now generated functions.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (assert):
+        Add assert to help debugging.
+
+        (ParseInterface):
+        Don't treat union types as interfaces.
+
+        (GetFlattenedMemberTypes):
+        (GetNumberOfNullableMemberTypes):
+        (GetIDLUnionMemberTypes):
+        Implement WebIDL algorithms for getting the flattened member list of union, and use it
+        to construct the c++ IDLType.
+
+        (GetBaseIDLType):
+        (GetIDLType):
+        Add helper to convert an parsed idlType to a c++ IDLType.
+
+        (IsWrapperType):
+        Don't treat union types as wrappers.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToImplIncludesForIDLType):
+        Add helper for adding #includes based on a parsed idlType. It recursively handles union types.
+
+        (GenerateParametersCheck):
+        Use the new convertVariadicArguments function to handle all variadic arguments, including
+        union types.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseDictionaryMember):
+        (parseAttributeRest):
+        (parseOptionalOrRequiredArgument):
+        (parseExceptionField):
+        Add an idlType to domSignature and populate it.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod13):
+        (WebCore::jsTestObjPrototypeFunctionVariadicStringMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicDoubleMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicNodeMethod):
+        (WebCore::jsTestObjPrototypeFunctionVariadicUnionMethod):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::constructJSTestOverloadedConstructors5):
+        * bindings/scripts/test/TestObj.idl:
+        Add and update tests.
+
+        * dom/ChildNode.idl:
+        * dom/ParentNode.idl:
+        Remove Custom extended attribute.
+
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        Switch to using std::reference_wrapper instead of Ref<> for passed in parameters.
+
 2016-10-08  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Request constructor should provide exception messages

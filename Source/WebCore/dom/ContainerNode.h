@@ -99,8 +99,8 @@ public:
     WEBCORE_EXPORT Element* firstElementChild() const;
     WEBCORE_EXPORT Element* lastElementChild() const;
     WEBCORE_EXPORT unsigned childElementCount() const;
-    void append(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
-    void prepend(Vector<std::experimental::variant<Ref<Node>, String>>&&, ExceptionCode&);
+    void append(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
+    void prepend(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
 
     bool ensurePreInsertionValidity(Node& newChild, Node* refChild, ExceptionCode&);
 

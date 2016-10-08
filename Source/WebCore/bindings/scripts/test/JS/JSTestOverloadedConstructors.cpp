@@ -25,6 +25,7 @@
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <wtf/GetPtr.h>
@@ -137,7 +138,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     UNUSED_PARAM(throwScope);
     auto* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(state->callee());
     ASSERT(castedThis);
-    auto longArgs = toArguments<VariadicHelper<JSC::JSValue, int32_t>>(*state, 0);
+    auto longArgs = convertVariadicArguments<IDLLong>(*state, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto object = TestOverloadedConstructors::create(WTFMove(longArgs));
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));

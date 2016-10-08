@@ -71,6 +71,7 @@
 #include <runtime/ObjectConstructor.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/GetPtr.h>
+#include <wtf/Variant.h>
 
 #if ENABLE(Condition1)
 #include "JSTestObjectA.h"
@@ -984,6 +985,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(JSC::ExecStat
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicUnionMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(JSC::ExecState*);
@@ -1591,6 +1593,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "variadicStringMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicStringMethod), (intptr_t) (1) } },
     { "variadicDoubleMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicDoubleMethod), (intptr_t) (1) } },
     { "variadicNodeMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicNodeMethod), (intptr_t) (1) } },
+    { "variadicUnionMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionVariadicUnionMethod), (intptr_t) (1) } },
     { "any", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAny), (intptr_t) (2) } },
     { "testPromiseFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunction), (intptr_t) (0) } },
     { "testPromiseFunctionWithFloatArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument), (intptr_t) (1) } },
@@ -6563,9 +6566,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13(ExecSt
         return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
-    auto blobArgs = toArguments<VariadicHelper<JSBlob, Blob>>(*state, 0);
-    if (!blobArgs.arguments)
-        return throwArgumentTypeError(*state, throwScope, blobArgs.argumentIndex, "blobArgs", "TestObject", "overloadedMethod", "Blob");
+    auto blobArgs = convertVariadicArguments<IDLInterface<Blob>>(*state, 0);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.overloadedMethod(WTFMove(blobArgs.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
@@ -7081,7 +7083,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto head = state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto tail = toArguments<VariadicHelper<JSC::JSValue, String>>(*state, 1);
+    auto tail = convertVariadicArguments<IDLDOMString>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.variadicStringMethod(WTFMove(head), WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
@@ -7102,7 +7104,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto head = convert<double>(*state, state->uncheckedArgument(0), ShouldAllowNonFinite::Yes);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto tail = toArguments<VariadicHelper<JSC::JSValue, double>>(*state, 1);
+    auto tail = convertVariadicArguments<IDLUnrestrictedDouble>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
@@ -7124,10 +7126,30 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     auto head = JSNode::toWrapped(state->uncheckedArgument(0));
     if (UNLIKELY(!head))
         return throwArgumentTypeError(*state, throwScope, 0, "head", "TestObject", "variadicNodeMethod", "Node");
-    auto tail = toArguments<VariadicHelper<JSNode, Node>>(*state, 1);
-    if (!tail.arguments)
-        return throwArgumentTypeError(*state, throwScope, tail.argumentIndex, "tail", "TestObject", "variadicNodeMethod", "Node");
+    auto tail = convertVariadicArguments<IDLInterface<Node>>(*state, 1);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.variadicNodeMethod(*head, WTFMove(tail.arguments.value()));
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicUnionMethod(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    JSValue thisValue = state->thisValue();
+    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*state, throwScope, "TestObject", "variadicUnionMethod");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto head = state->uncheckedArgument(0).toWTFString(state);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto tail = convertVariadicArguments<IDLUnion<IDLInterface<Node>, IDLDOMString>>(*state, 1);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.variadicUnionMethod(WTFMove(head), WTFMove(tail.arguments.value()));
     return JSValue::encode(jsUndefined());
 }
 

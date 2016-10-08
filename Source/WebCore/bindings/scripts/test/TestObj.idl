@@ -359,6 +359,7 @@ enum TestConfidence { "high", "kinda-low" };
     void variadicStringMethod(DOMString head, DOMString... tail);
     void variadicDoubleMethod(unrestricted double head, unrestricted double... tail);
     void variadicNodeMethod(Node head, Node... tail);
+    void variadicUnionMethod(DOMString head, (Node or DOMString)... tail);
 
     // Nullable attributes.
     readonly attribute unrestricted double? nullableDoubleAttribute;
