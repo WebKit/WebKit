@@ -1,5 +1,13 @@
 2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, mark a test as failing on iOS simulator
+
+        This was intended to be a part of r206944.
+
+        * platform/ios-simulator/TestExpectations:
+
+2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Support onbeforeinput event handling for the new InputEvent spec
         https://bugs.webkit.org/show_bug.cgi?id=163021
         <rdar://problem/28658073>
