@@ -85,7 +85,7 @@ public:
 
         void attachBuffer(struct wl_resource*);
         void requestFrame(struct wl_resource*);
-        bool commit();
+        void commit();
 
         void setWebPage(WebPageProxy* webPage) { m_webPage = webPage; }
         bool prepareTextureForPainting(unsigned&, WebCore::IntSize&);
