@@ -1,3 +1,20 @@
+2016-10-07  Chris Dumez  <cdumez@apple.com>
+
+        window.navigator.language incorrectly returns all lowercase string
+        https://bugs.webkit.org/show_bug.cgi?id=163096
+
+        Reviewed by Darin Adler.
+
+        Update platformUserPreferredLanguages() so that it no longer lowercases
+        the string it returns. On Mac, we rely on CFLocale which returns
+        BCP-47 language tags as per:
+        - https://developer.apple.com/reference/corefoundation/1666963-cflocale?language=objc
+
+        * wtf/PlatformUserPreferredLanguagesMac.mm:
+        (WTF::httpStyleLanguageCode):
+        * wtf/PlatformUserPreferredLanguagesUnix.cpp:
+        (WTF::platformLanguage):
+
 2016-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add Direct2D CMake rules

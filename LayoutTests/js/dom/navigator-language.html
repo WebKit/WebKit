@@ -14,11 +14,11 @@ if (window.testRunner) {
     testRunner.setPOSIXLocale("en_US.iso88591");
 }
 
-var language = navigator.language.toLowerCase();
+var language = navigator.language;
 if (language.length == 2)
     shouldBe("language", "'en'");
 else
-    shouldBe("language", "'en-us'");
+    shouldBe("language", "'en-US'");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

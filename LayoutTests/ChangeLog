@@ -1,3 +1,17 @@
+2016-10-07  Chris Dumez  <cdumez@apple.com>
+
+        window.navigator.language incorrectly returns all lowercase string
+        https://bugs.webkit.org/show_bug.cgi?id=163096
+
+        Reviewed by Darin Adler.
+
+        Update existing test so that it does not lowercase navigator.language
+        before checking it. This way, we can make sure it returns en-US and
+        not en-us.
+
+        * js/dom/navigator-language-expected.txt:
+        * js/dom/navigator-language.html:
+
 2016-10-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         REGRESSION (r206853?): LayoutTest js/regress-141098.html failing

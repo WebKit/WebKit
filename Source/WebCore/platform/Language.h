@@ -32,7 +32,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT String defaultLanguage(); // Thread-safe.
-WEBCORE_EXPORT Vector<String> userPreferredLanguages(); // Thread-safe.
+WEBCORE_EXPORT Vector<String> userPreferredLanguages(); // Thread-safe, returns BCP 47 language tags.
 Vector<String> userPreferredLanguagesOverride();
 WEBCORE_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
 size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);

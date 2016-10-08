@@ -1,3 +1,24 @@
+2016-10-07  Chris Dumez  <cdumez@apple.com>
+
+        window.navigator.language incorrectly returns all lowercase string
+        https://bugs.webkit.org/show_bug.cgi?id=163096
+
+        Reviewed by Darin Adler.
+
+        Update navigator.language so that it no longer returns an all lowercase
+        string (e.g. 'en-us' -> 'en-US'). This matches the behavior of other
+        browsers and the specification which indicate we should return a
+        BCP 47 language tag:
+        - https://html.spec.whatwg.org/#dom-navigator-language
+        - https://tools.ietf.org/html/bcp47
+
+        The other call sites relying on userPreferredLanguages() use case
+        insensitive comparison so they will not break.
+
+        No new tests, updated existing test.
+
+        * platform/Language.h:
+
 2016-10-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support onbeforeinput event handling for the new InputEvent spec

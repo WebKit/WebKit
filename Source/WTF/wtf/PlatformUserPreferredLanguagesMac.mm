@@ -80,10 +80,10 @@ namespace WTF {
 static String httpStyleLanguageCode(NSString *language)
 {
     SInt32 languageCode;
-    SInt32 regionCode; 
-    SInt32 scriptCode; 
+    SInt32 regionCode;
+    SInt32 scriptCode;
     CFStringEncoding stringEncoding;
-    
+
     // FIXME: This transformation is very wrong:
     // 1. There is no reason why CFBundle localization names would be at all related to language names as used on the Web.
     // 2. Script Manager codes cannot represent all languages that are now supported by the platform, so the conversion is lossy.
@@ -93,17 +93,14 @@ static String httpStyleLanguageCode(NSString *language)
     if (preferredLanguageCode)
         language = (NSString *)preferredLanguageCode.get();
 
-    // Make the string lowercase.
-    NSString *lowercaseLanguageCode = [language lowercaseString];
-        
     // Turn a '_' into a '-' if it appears after a 2-letter language code
-    if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
-        RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([lowercaseLanguageCode mutableCopy]);
+    if ([language length] >= 3 && [language characterAtIndex:2] == '_') {
+        RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([language mutableCopy]);
         [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
         return mutableLanguageCode.get();
     }
 
-    return lowercaseLanguageCode;
+    return language;
 }
 
 Vector<String> platformUserPreferredLanguages()
