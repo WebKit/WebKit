@@ -101,7 +101,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
 
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
 
-        NakedPtr<Exception> exception;
+        NakedPtr<JSC::Exception> exception;
         JSValue returnValue = scriptExecutionContext->isDocument()
             ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception)
             : JSC::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);

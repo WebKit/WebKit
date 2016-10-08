@@ -1,3 +1,15 @@
+2016-10-06  Darin Adler  <darin@apple.com>
+
+        Next step on moving to modern way to return DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163016
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/do-webcore-rename: Add proposed name change of setDOMException
+        to propagateException, since this function is primarily used to take an
+        exception already effectively "thrown" by setting an ExceptionCode out
+        argument and propagate it into the JavaScript engine's exception machinery.
+
 2016-10-07  Alex Christensen  <achristensen@webkit.org>
 
         Non-special URL fragments should percent-encode non-ASCII characters

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,16 @@ enum XMLHttpRequestResponseType {
 };
 
 [
-    Exposed=(Window,Worker),
     ActiveDOMObject,
     Constructor,
     ConstructorCallWith=ScriptExecutionContext,
-    JSCustomMarkFunction,
-    JSGenerateToNativeObject,
-    JSGenerateToJSObject,
     ExportMacro=WEBCORE_EXPORT,
-    PublicIdentifier,
+    Exposed=(Window,Worker),
+    JSCustomMarkFunction,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
     PrivateIdentifier,
+    PublicIdentifier,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
     attribute EventHandler onreadystatechange;
 
@@ -56,30 +56,29 @@ enum XMLHttpRequestResponseType {
     const unsigned short LOADING = 3;
     const unsigned short DONE = 4;
 
-    [SetterMayThrowLegacyException] attribute unsigned long timeout;
+    [SetterMayThrowException] attribute unsigned long timeout;
     readonly attribute unsigned short readyState;
 
-    [SetterMayThrowLegacyException] attribute boolean withCredentials;
+    [SetterMayThrowException] attribute boolean withCredentials;
 
     // Use overloading rather than "boolean async = true" because legacy content prevents treating the 'async' argument being undefined identical from it being omitted.
-    [MayThrowLegacyException] void open(DOMString method, DOMString url);
-    [MayThrowLegacyException] void open(DOMString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null);
+    [MayThrowException] void open(DOMString method, DOMString url);
+    [MayThrowException] void open(DOMString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null);
 
-    [MayThrowLegacyException] void setRequestHeader(DOMString header, DOMString value);
+    [MayThrowException] void setRequestHeader(DOMString header, DOMString value);
 
-    [Custom, MayThrowLegacyException] void send();
+    [Custom, MayThrowException] void send();
 
     void abort();
 
     readonly attribute XMLHttpRequestUpload upload;
 
-    // response
     DOMString getAllResponseHeaders();
     DOMString? getResponseHeader(DOMString header);
-    [GetterMayThrowLegacyException, CustomGetter] readonly attribute DOMString? responseText;
-    [GetterMayThrowLegacyException] readonly attribute Document responseXML;
+    [GetterMayThrowException, CustomGetter] readonly attribute DOMString? responseText;
+    [GetterMayThrowException] readonly attribute Document responseXML;
 
-    [SetterMayThrowLegacyException] attribute XMLHttpRequestResponseType responseType;
+    [SetterMayThrowException] attribute XMLHttpRequestResponseType responseType;
     [JSBuiltin] readonly attribute Object response;
 
     readonly attribute unsigned short status;
@@ -89,6 +88,5 @@ enum XMLHttpRequestResponseType {
     [PrivateIdentifier] boolean responseCacheIsValid();
     [PrivateIdentifier, Custom] any retrieveResponse();
 
-    // Extension
-    [MayThrowLegacyException] void overrideMimeType(DOMString override);
+    [MayThrowException] void overrideMimeType(DOMString override);
 };

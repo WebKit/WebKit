@@ -141,8 +141,6 @@ namespace WebCore {
         static bool canShowModalDialog(const Frame*);
         WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
 
-        // DOM Level 0
-
         Screen* screen() const;
         History* history() const;
         Crypto* crypto() const;
@@ -380,18 +378,19 @@ namespace WebCore {
 
         HashSet<DOMWindowProperty*> m_properties;
 
-        mutable RefPtr<Screen> m_screen;
+        mutable RefPtr<Crypto> m_crypto;
         mutable RefPtr<History> m_history;
-        mutable RefPtr<Crypto>  m_crypto;
         mutable RefPtr<BarProp> m_locationbar;
+        mutable RefPtr<StyleMedia> m_media;
         mutable RefPtr<BarProp> m_menubar;
+        mutable RefPtr<Navigator> m_navigator;
         mutable RefPtr<BarProp> m_personalbar;
+        mutable RefPtr<Screen> m_screen;
         mutable RefPtr<BarProp> m_scrollbars;
+        mutable RefPtr<DOMSelection> m_selection;
         mutable RefPtr<BarProp> m_statusbar;
         mutable RefPtr<BarProp> m_toolbar;
-        mutable RefPtr<Navigator> m_navigator;
         mutable RefPtr<Location> m_location;
-        mutable RefPtr<StyleMedia> m_media;
 
         String m_status;
         String m_defaultStatus;

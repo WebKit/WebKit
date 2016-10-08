@@ -54,7 +54,7 @@ bool JSSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction, SQLEr
     args.append(toJS(exec, m_data->globalObject(), transaction));
     args.append(toJS(exec, m_data->globalObject(), error));
 
-    NakedPtr<Exception> returnedException;
+    NakedPtr<JSC::Exception> returnedException;
     JSValue result = m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(exec, returnedException);

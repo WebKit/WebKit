@@ -146,9 +146,8 @@ void JSTestNodePrototype::finishCreation(VM& vm)
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
-    if (RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled())
         putDirect(vm, vm.propertyNames->iteratorSymbol, JSFunction::create(vm, globalObject(), 0, ASCIILiteral("[Symbol.Iterator]"), jsTestNodePrototypeFunctionSymbolIterator), DontEnum);
-    }
 }
 
 const ClassInfo JSTestNode::s_info = { "TestNode", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestNode) };
@@ -221,9 +220,8 @@ bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValu
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestNode", "name");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -301,9 +299,8 @@ EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
     auto castedThis = jsDynamicCast<JSTestNode*>(thisValue);
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!castedThis)){
+    if (UNLIKELY(!castedThis))
         return throwThisTypeError(*state, throwScope, "TestNode", "toJSON");
-    }
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
 
     auto* result = constructEmptyObject(state);

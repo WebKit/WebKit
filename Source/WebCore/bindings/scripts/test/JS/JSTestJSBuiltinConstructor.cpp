@@ -197,9 +197,8 @@ bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, Encode
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestJSBuiltinConstructor* castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestJSBuiltinConstructor", "testAttributeRWCustom");
-    }
     castedThis->setTestAttributeRWCustom(*state, value);
     return true;
 }

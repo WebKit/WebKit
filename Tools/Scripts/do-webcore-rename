@@ -109,6 +109,9 @@ my %renames = (
 );
 
 my %renamesContemplatedForTheFuture = (
+    "setDOMException" => "propagateException",
+    "setDOMExceptionSlow" => "propagateExceptionSlowPath",
+
     "PassRefPtr" => "DeprecatedPassRefPtr",
 
     "HTMLPlugInImageElement" => "HTMLEmbeddedObjectElement",

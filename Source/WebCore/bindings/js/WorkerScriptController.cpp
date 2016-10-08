@@ -109,7 +109,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
     if (isExecutionForbidden())
         return;
 
-    NakedPtr<Exception> exception;
+    NakedPtr<JSC::Exception> exception;
     evaluate(sourceCode, exception);
     if (exception) {
         JSLockHolder lock(vm());
@@ -142,7 +142,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
         String sourceURL = sourceCode.url().string();
         Deprecated::ScriptValue error;
         if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript()))
-            returnedException = Exception::create(vm, createError(exec, errorMessage.impl()));
+            returnedException = JSC::Exception::create(vm, createError(exec, errorMessage.impl()));
     }
 }
 

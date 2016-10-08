@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #pragma once
 
 #include "Exception.h"
+#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -37,12 +38,23 @@ public:
     ExceptionOr(ReturnType&&);
 
     bool hasException() const;
-    ExceptionCode exceptionCode() const;
-    const String& exceptionMessage() const;
-    ReturnType&& takeReturnValue();
+    Exception&& releaseException();
+    ReturnType&& releaseReturnValue();
 
 private:
     std::experimental::variant<Exception, ReturnType> m_value;
+};
+
+template<> class ExceptionOr<void> {
+public:
+    ExceptionOr(Exception&&);
+    ExceptionOr() = default;
+
+    bool hasException() const;
+    Exception&& releaseException();
+
+private:
+    Optional<Exception> m_exception;
 };
 
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Exception&& exception)
@@ -60,19 +72,29 @@ template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException(
     return std::experimental::holds_alternative<Exception>(m_value);
 }
 
-template<typename ReturnType> inline ExceptionCode ExceptionOr<ReturnType>::exceptionCode() const
+template<typename ReturnType> inline Exception&& ExceptionOr<ReturnType>::releaseException()
 {
-    return std::experimental::get<Exception>(m_value).code();
+    return std::experimental::get<Exception>(WTFMove(m_value));
 }
 
-template<typename ReturnType> inline const String& ExceptionOr<ReturnType>::exceptionMessage() const
-{
-    return std::experimental::get<Exception>(m_value).message();
-}
-
-template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::takeReturnValue()
+template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::releaseReturnValue()
 {
     return std::experimental::get<ReturnType>(WTFMove(m_value));
+}
+
+inline ExceptionOr<void>::ExceptionOr(Exception&& exception)
+    : m_exception(WTFMove(exception))
+{
+}
+
+inline bool ExceptionOr<void>::hasException() const
+{
+    return !!m_exception;
+}
+
+inline Exception&& ExceptionOr<void>::releaseException()
+{
+    return WTFMove(m_exception.value());
 }
 
 }

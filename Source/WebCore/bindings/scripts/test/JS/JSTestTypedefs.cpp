@@ -361,9 +361,8 @@ bool setJSTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue this
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "unsignedLongLongAttr");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = convert<uint64_t>(*state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -380,9 +379,8 @@ bool setJSTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJS
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "immutableSerializedScriptValue");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -399,9 +397,8 @@ bool setJSTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue t
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "attrWithGetterException");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -418,9 +415,8 @@ bool setJSTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue t
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "attrWithSetterException");
-    }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
@@ -439,9 +435,8 @@ bool setJSTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSV
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "stringAttrWithGetterException");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -458,9 +453,8 @@ bool setJSTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSV
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestTypedefs* castedThis = jsDynamicCast<JSTestTypedefs*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestTypedefs", "stringAttrWithSetterException");
-    }
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     auto nativeValue = value.toWTFString(state);

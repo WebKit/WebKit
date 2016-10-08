@@ -421,7 +421,7 @@ void ReplayController::frameNavigated(DocumentLoader* loader)
 
     // We store the input cursor in both Document and JSDOMWindow, so that
     // replay state is accessible from JavaScriptCore and script-free layout code.
-    loader->frame()->document()->setInputCursor(m_activeCursor.get());
+    loader->frame()->document()->setInputCursor(*m_activeCursor);
     loader->frame()->script().globalObject(mainThreadNormalWorld())->setInputCursor(m_activeCursor.get());
 }
 

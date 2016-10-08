@@ -105,44 +105,52 @@ JSValue JSXMLHttpRequest::send(ExecState& state)
 {
     InspectorInstrumentation::willSendXMLHttpRequest(wrapped().scriptExecutionContext(), wrapped().url());
 
-    ExceptionCode ec = 0;
-    JSValue val = state.argument(0);
-    if (val.isUndefinedOrNull())
-        wrapped().send(ec);
-    else if (val.inherits(JSDocument::info()))
-        wrapped().send(JSDocument::toWrapped(val), ec);
-    else if (val.inherits(JSBlob::info()))
-        wrapped().send(JSBlob::toWrapped(val), ec);
-    else if (val.inherits(JSDOMFormData::info()))
-        wrapped().send(JSDOMFormData::toWrapped(val), ec);
-    else if (val.inherits(JSArrayBuffer::info()))
-        wrapped().send(toArrayBuffer(val), ec);
-    else if (val.inherits(JSArrayBufferView::info())) {
-        RefPtr<ArrayBufferView> view = toArrayBufferView(val);
-        wrapped().send(view.get(), ec);
-    } else
-        wrapped().send(val.toString(&state)->value(&state), ec);
+    JSValue value = state.argument(0);
+    ExceptionOr<void> result;
+    if (value.isUndefinedOrNull())
+        result = wrapped().send();
+    else if (value.inherits(JSDocument::info()))
+        result = wrapped().send(*JSDocument::toWrapped(value));
+    else if (value.inherits(JSBlob::info()))
+        result = wrapped().send(*JSBlob::toWrapped(value));
+    else if (value.inherits(JSDOMFormData::info()))
+        result = wrapped().send(*JSDOMFormData::toWrapped(value));
+    else if (value.inherits(JSArrayBuffer::info()))
+        result = wrapped().send(*toArrayBuffer(value));
+    else if (value.inherits(JSArrayBufferView::info()))
+        result = wrapped().send(*toArrayBufferView(value).get());
+    else {
+        // FIXME: If toString raises an exception, should we exit before calling willSendXMLHttpRequest?
+        // FIXME: If toString raises an exception, should we exit before calling send?
+        result = wrapped().send(value.toString(&state)->value(&state));
+    }
 
-    // FIXME: This should probably use ShadowChicken so that we get the right frame even when it did
-    // a tail call.
+    // FIXME: This should probably use ShadowChicken so that we get the right frame even when it did a tail call.
     // https://bugs.webkit.org/show_bug.cgi?id=155688
     SendFunctor functor;
     state.iterate(functor);
     wrapped().setLastSendLineAndColumnNumber(functor.line(), functor.column());
     wrapped().setLastSendURL(functor.url());
-    setDOMException(&state, ec);
+
+    // FIXME: Is it correct to do this only after the paragraph code of code just above, or should we exit earlier?
+    if (UNLIKELY(result.hasException())) {
+        propagateException(state, result.releaseException());
+        return { };
+    }
+
     return jsUndefined();
 }
 
 JSValue JSXMLHttpRequest::responseText(ExecState& state) const
 {
-    ExceptionCode ec = 0;
-    String text = wrapped().responseText(ec);
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsUndefined();
+    auto result = wrapped().responseText();
+
+    if (UNLIKELY(result.hasException())) {
+        propagateException(state, result.releaseException());
+        return { };
     }
-    return jsOwnedStringOrNull(&state, text);
+
+    return jsOwnedStringOrNull(&state, result.releaseReturnValue());
 }
 
 JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
@@ -174,12 +182,12 @@ JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
         break;
 
     case XMLHttpRequest::ResponseType::Document: {
-        ExceptionCode ec = 0;
-        auto document = wrapped().responseXML(ec);
-        ASSERT(!ec);
-        value = toJS(&state, globalObject(), document);
+        auto document = wrapped().responseXML();
+        ASSERT(!document.hasException());
+        value = toJS(&state, globalObject(), document.releaseReturnValue());
         break;
     }
+
     case XMLHttpRequest::ResponseType::Blob:
         value = toJSNewlyCreated(&state, globalObject(), wrapped().createResponseBlob());
         break;
@@ -188,6 +196,7 @@ JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
         value = toJS(&state, globalObject(), wrapped().createResponseArrayBuffer());
         break;
     }
+
     wrapped().didCacheResponse();
     return value;
 }

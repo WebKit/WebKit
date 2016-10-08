@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class ContainerNode;
-class DOMSelection;
 class Document;
 class Element;
 class HTMLLabelElement;
@@ -88,8 +87,6 @@ public:
 
     WEBCORE_EXPORT Element* elementFromPoint(int x, int y);
 
-    DOMSelection* getSelection() const;
-
     // Find first anchor with the given name.
     // First searches for an element with the given ID, but if that fails, then looks
     // for an anchor with the given name. ID matching is always case sensitive, but
@@ -129,8 +126,6 @@ private:
     std::unique_ptr<DocumentOrderedMap> m_labelsByForAttribute;
 
     std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
-
-    mutable RefPtr<DOMSelection> m_selection;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomicStringImpl& id) const

@@ -130,10 +130,11 @@ WebKitDOMDocumentType* webkit_dom_dom_implementation_create_document_type(WebKit
     WTF::String convertedSystemId = WTF::String::fromUTF8(systemId);
     auto result = item->createDocumentType(convertedQualifiedName, convertedPublicId, convertedSystemId);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.exceptionCode());
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(result.takeReturnValue().ptr());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImplementation* self, const gchar* namespaceURI, const gchar* qualifiedName, WebKitDOMDocumentType* doctype, GError** error)
@@ -149,10 +150,11 @@ WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImp
     WebCore::DocumentType* convertedDoctype = WebKit::core(doctype);
     auto result = item->createDocument(convertedNamespaceURI, convertedQualifiedName, convertedDoctype);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.exceptionCode());
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(result.takeReturnValue().ptr());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 WebKitDOMCSSStyleSheet* webkit_dom_dom_implementation_create_css_style_sheet(WebKitDOMDOMImplementation* self, const gchar* title, const gchar* media, GError** error)

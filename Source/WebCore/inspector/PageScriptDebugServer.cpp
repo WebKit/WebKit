@@ -123,7 +123,7 @@ bool PageScriptDebugServer::isContentScript(ExecState* exec) const
     return &currentWorld(exec) != &mainThreadNormalWorld();
 }
 
-void PageScriptDebugServer::reportException(ExecState* exec, Exception* exception) const
+void PageScriptDebugServer::reportException(ExecState* exec, JSC::Exception* exception) const
 {
     WebCore::reportException(exec, exception);
 }

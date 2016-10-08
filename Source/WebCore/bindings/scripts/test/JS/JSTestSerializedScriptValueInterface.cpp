@@ -255,9 +255,8 @@ bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSVal
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestSerializedScriptValueInterface", "value");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -274,9 +273,8 @@ bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, Encode
     JSValue value = JSValue::decode(encodedValue);
     UNUSED_PARAM(thisValue);
     JSTestSerializedScriptValueInterface* castedThis = jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis)) {
+    if (UNLIKELY(!castedThis))
         return throwSetterTypeError(*state, throwScope, "TestSerializedScriptValueInterface", "cachedValue");
-    }
     auto& impl = castedThis->wrapped();
     auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);

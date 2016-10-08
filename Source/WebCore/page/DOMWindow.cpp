@@ -597,24 +597,26 @@ void DOMWindow::resetDOMWindowProperties()
 {
     m_properties.clear();
 
-    m_screen = nullptr;
-    m_history = nullptr;
+    m_applicationCache = nullptr;
     m_crypto = nullptr;
+    m_history = nullptr;
+    m_localStorage = nullptr;
+    m_location = nullptr;
     m_locationbar = nullptr;
+    m_media = nullptr;
     m_menubar = nullptr;
+    m_navigator = nullptr;
     m_personalbar = nullptr;
+    m_screen = nullptr;
     m_scrollbars = nullptr;
+    m_selection = nullptr;
+    m_sessionStorage = nullptr;
     m_statusbar = nullptr;
     m_toolbar = nullptr;
-    m_navigator = nullptr;
+
 #if ENABLE(WEB_TIMING)
     m_performance = nullptr;
 #endif
-    m_location = nullptr;
-    m_media = nullptr;
-    m_sessionStorage = nullptr;
-    m_localStorage = nullptr;
-    m_applicationCache = nullptr;
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const
@@ -653,7 +655,7 @@ Screen* DOMWindow::screen() const
 History* DOMWindow::history() const
 {
     if (!isCurrentlyDisplayedInFrame())
-        return 0;
+        return nullptr;
     if (!m_history)
         m_history = History::create(m_frame);
     return m_history.get();
@@ -964,10 +966,11 @@ void DOMWindow::dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTarg
 
 DOMSelection* DOMWindow::getSelection()
 {
-    if (!isCurrentlyDisplayedInFrame() || !m_frame)
-        return 0;
-
-    return m_frame->document()->getSelection();
+    if (!isCurrentlyDisplayedInFrame())
+        return nullptr;
+    if (!m_selection)
+        m_selection = DOMSelection::create(*m_frame);
+    return m_selection.get();
 }
 
 Element* DOMWindow::frameElement() const

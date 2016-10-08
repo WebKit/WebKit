@@ -34,26 +34,22 @@ using ExceptionCode = int;
 
 class Exception {
 public:
-    explicit Exception(ExceptionCode);
-    explicit Exception(ExceptionCode, const String&);
+    explicit Exception(ExceptionCode, String&& = { });
 
     ExceptionCode code() const { return m_code; }
     const String& message() const { return m_message; }
+    String&& releaseMessage() { return WTFMove(m_message); }
 
 private:
     ExceptionCode m_code;
     String m_message;
 };
 
-inline Exception::Exception(ExceptionCode code)
+inline Exception::Exception(ExceptionCode code, String&& message)
     : m_code(code)
+    , m_message(WTFMove(message))
 {
-}
-
-inline Exception::Exception(ExceptionCode code, const String& message)
-    : m_code(code)
-    , m_message(message)
-{
+    ASSERT(code);
 }
 
 }

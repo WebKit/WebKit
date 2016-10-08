@@ -66,18 +66,22 @@ static inline WebCore::DOMImplementation& unwrap(DOMImplementation& wrapper)
 {
     WebCore::JSMainThreadNullState state;
     auto result = unwrap(*self).createDocumentType(qualifiedName, publicId, systemId);
-    if (result.hasException())
-        raiseDOMException(result.exceptionCode());
-    return kit(result.takeReturnValue().ptr());
+    if (result.hasException()) {
+        raiseDOMException(result.releaseException().code());
+        return nil;
+    }
+    return kit(result.releaseReturnValue().ptr());
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName doctype:(DOMDocumentType *)doctype
 {
     WebCore::JSMainThreadNullState state;
     auto result = unwrap(*self).createDocument(namespaceURI, qualifiedName, core(doctype));
-    if (result.hasException())
-        raiseDOMException(result.exceptionCode());
-    return kit(result.takeReturnValue().ptr());
+    if (result.hasException()) {
+        raiseDOMException(result.releaseException().code());
+        return nil;
+    }
+    return kit(result.releaseReturnValue().ptr());
 }
 
 - (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title media:(NSString *)media

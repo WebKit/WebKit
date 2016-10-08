@@ -117,6 +117,18 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     return value.toString(exec)->value(exec);
 }
 
+static inline bool hasUnpairedSurrogate(StringView string)
+{
+    // Fast path for 8-bit strings; they can't have any surrogates.
+    if (string.is8Bit())
+        return false;
+    for (auto codePoint : string.codePoints()) {
+        if (U_IS_SURROGATE(codePoint))
+            return true;
+    }
+    return false;
+}
+
 String valueToUSVString(ExecState* exec, JSValue value)
 {
     VM& vm = exec->vm();
@@ -124,27 +136,16 @@ String valueToUSVString(ExecState* exec, JSValue value)
 
     String string = value.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, { });
-    StringView view { string };
-
-    // Fast path for 8-bit strings, since they can't have any surrogates.
-    if (view.is8Bit())
-        return string;
 
     // Fast path for the case where there are no unpaired surrogates.
-    bool foundUnpairedSurrogate = false;
-    for (auto codePoint : view.codePoints()) {
-        if (U_IS_SURROGATE(codePoint)) {
-            foundUnpairedSurrogate = true;
-            break;
-        }
-    }
-    if (!foundUnpairedSurrogate)
+    if (!hasUnpairedSurrogate(string))
         return string;
 
     // Slow path: http://heycam.github.io/webidl/#dfn-obtain-unicode
     // Replaces unpaired surrogates with the replacement character.
     StringBuilder result;
-    result.reserveCapacity(view.length());
+    result.reserveCapacity(string.length());
+    StringView view { string };
     for (auto codePoint : view.codePoints()) {
         if (U_IS_SURROGATE(codePoint))
             result.append(replacementCharacter);
@@ -190,17 +191,17 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 {
     VM& vm = exec->vm();
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    Exception* exception = jsDynamicCast<Exception*>(exceptionValue);
+    auto* exception = jsDynamicCast<JSC::Exception*>(exceptionValue);
     if (!exception) {
         exception = vm.lastException();
         if (!exception)
-            exception = Exception::create(exec->vm(), exceptionValue, Exception::DoNotCaptureStack);
+            exception = JSC::Exception::create(exec->vm(), exceptionValue, JSC::Exception::DoNotCaptureStack);
     }
 
     reportException(exec, exception, cachedScript);
 }
 
-void reportException(ExecState* exec, Exception* exception, CachedScript* cachedScript, ExceptionDetails* exceptionDetails)
+void reportException(ExecState* exec, JSC::Exception* exception, CachedScript* cachedScript, ExceptionDetails* exceptionDetails)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -263,17 +264,12 @@ void reportCurrentException(ExecState* exec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    Exception* exception = scope.exception();
+    auto* exception = scope.exception();
     scope.clearException();
     reportException(exec, exception);
 }
 
-#define TRY_TO_CREATE_EXCEPTION(interfaceName) \
-    case interfaceName##Type: \
-        errorObject = toJS(exec, globalObject, interfaceName::create(description)); \
-        break;
-
-static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String* message)
+static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String* message = nullptr)
 {
     if (!ec)
         return jsUndefined();
@@ -338,11 +334,6 @@ JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& mess
     return createDOMException(exec, ec, &message);
 }
 
-JSValue createDOMException(ExecState* exec, ExceptionCode ec)
-{
-    return createDOMException(exec, ec, nullptr);
-}
-
 ALWAYS_INLINE static void throwDOMException(ExecState* exec, ThrowScope& throwScope, ExceptionCode ec)
 {
     ASSERT(ec && !throwScope.exception());
@@ -353,6 +344,19 @@ ALWAYS_INLINE static void throwDOMException(ExecState* exec, ThrowScope& throwSc
 {
     ASSERT(ec.code && !throwScope.exception());
     throwException(exec, throwScope, createDOMException(exec, ec.code, ec.message));
+}
+
+void propagateExceptionSlowPath(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
+{
+    ASSERT(!throwScope.exception());
+    throwException(&state, throwScope, createDOMException(&state, exception.code(), exception.releaseMessage()));
+}
+
+void propagateException(JSC::ExecState& state, Exception&& exception)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+    if (!throwScope.exception())
+        propagateExceptionSlowPath(state, throwScope, WTFMove(exception));
 }
 
 void setDOMExceptionSlow(ExecState* exec, ThrowScope& throwScope, ExceptionCode ec)
@@ -376,17 +380,6 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     throwDOMException(exec, scope, ec);
 }
 
-void setDOMException(ExecState* exec, ExceptionCode ec, const String& message)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!ec || scope.exception())
-        return;
-
-    throwException(exec, scope, createDOMException(exec, ec, message));
-}
-
 void setDOMException(ExecState* exec, const ExceptionCodeWithMessage& ec)
 {
     VM& vm = exec->vm();
@@ -397,8 +390,6 @@ void setDOMException(ExecState* exec, const ExceptionCodeWithMessage& ec)
 
     throwDOMException(exec, scope, ec);
 }
-
-#undef TRY_TO_CREATE_EXCEPTION
 
 bool hasIteratorMethod(JSC::ExecState& state, JSC::JSValue value)
 {

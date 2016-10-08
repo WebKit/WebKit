@@ -115,14 +115,14 @@ enum TestConfidence { "high", "kinda-low" };
     [EnabledAtRuntime=DOMIterator] iterable<DOMString>;
 
     // Methods
-    [Unscopable] void    voidMethod();
-    void    voidMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
-    byte    byteMethod();
-    byte    byteMethodWithArgs(byte byteArg, DOMString strArg, TestObj objArg);
-    octet   octetMethod();
-    octet   octetMethodWithArgs(octet octetArg, DOMString strArg, TestObj objArg);
-    long    longMethod();
-    long    longMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    [Unscopable] void voidMethod();
+    void voidMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
+    byte byteMethod();
+    byte byteMethodWithArgs(byte byteArg, DOMString strArg, TestObj objArg);
+    octet octetMethod();
+    octet octetMethodWithArgs(octet octetArg, DOMString strArg, TestObj objArg);
+    long longMethod();
+    long longMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     TestObj objMethod();
     TestObj objMethodWithArgs(long longArg, DOMString strArg, TestObj objArg);
     [Unforgeable] long unforgeableMethod();
@@ -149,11 +149,16 @@ enum TestConfidence { "high", "kinda-low" };
     void optionsObject(Dictionary oo, optional Dictionary ooo);
 
     // Exceptions
-    [MayThrowLegacyException] void methodWithException();
+    [MayThrowException] void methodWithException();
+    [MayThrowException] long methodWithExceptionReturningLong();
+    [MayThrowException] TestObj methodWithExceptionReturningObject();
+    [MayThrowLegacyException] void methodWithLegacyException();
     [MayThrowLegacyExceptionWithMessage] void methodWithExceptionWithMessage();
-    [GetterMayThrowLegacyException] attribute long attrWithGetterException;
+    [GetterMayThrowException] attribute long attributeWithGetterException;
+    [GetterMayThrowLegacyException] attribute long attributeWithGetterLegacyException;
     [GetterMayThrowLegacyExceptionWithMessage] attribute long attrWithGetterExceptionWithMessage;
-    [SetterMayThrowLegacyException] attribute long attrWithSetterException;
+    [SetterMayThrowException] attribute long attributeWithSetterException;
+    [SetterMayThrowLegacyException] attribute long attributeWithSetterLegacyException;
     [SetterMayThrowLegacyExceptionWithMessage] attribute long attrWithSetterExceptionWithMessage;
     [GetterMayThrowLegacyException] attribute DOMString stringAttrWithGetterException;
     [SetterMayThrowLegacyException] attribute DOMString stringAttrWithSetterException;

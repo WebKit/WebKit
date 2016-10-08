@@ -291,10 +291,9 @@ void webkit_dom_dom_selection_collapse_to_end(WebKitDOMDOMSelection* self, GErro
     g_return_if_fail(WEBKIT_DOM_IS_DOM_SELECTION(self));
     g_return_if_fail(!error || !*error);
     WebCore::DOMSelection* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->collapseToEnd(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->collapseToEnd();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -305,10 +304,9 @@ void webkit_dom_dom_selection_collapse_to_start(WebKitDOMDOMSelection* self, GEr
     g_return_if_fail(WEBKIT_DOM_IS_DOM_SELECTION(self));
     g_return_if_fail(!error || !*error);
     WebCore::DOMSelection* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    item->collapseToStart(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->collapseToStart();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -350,10 +348,9 @@ void webkit_dom_dom_selection_extend(WebKitDOMDOMSelection* self, WebKitDOMNode*
     g_return_if_fail(!error || !*error);
     WebCore::DOMSelection* item = WebKit::core(self);
     WebCore::Node* convertedNode = WebKit::core(node);
-    WebCore::ExceptionCode ec = 0;
-    item->extend(*convertedNode, offset, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->extend(*convertedNode, offset);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
@@ -364,13 +361,13 @@ WebKitDOMRange* webkit_dom_dom_selection_get_range_at(WebKitDOMDOMSelection* sel
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_SELECTION(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::DOMSelection* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Range> gobjectResult = WTF::getPtr(item->getRangeAt(index, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->getRangeAt(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 void webkit_dom_dom_selection_remove_all_ranges(WebKitDOMDOMSelection* self)

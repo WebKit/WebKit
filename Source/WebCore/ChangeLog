@@ -1,3 +1,203 @@
+2016-10-06  Darin Adler  <darin@apple.com>
+
+        Next step on moving to modern way to return DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163016
+
+        Reviewed by Ryosuke Niwa.
+
+        * Modules/fetch/FetchRequest.idl:
+        Added MayThrowException to initializeWith since it throws an exception.
+
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        (WebCore::reportCurrentException):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::reportException):
+        Use JSC::Exception explicitly to avoid ambiguity with WebCore::Exception,
+        or in some cases use auto instead.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::hasUnpairedSurrogate): Factored this inline function out of valueToUSVString
+        for clarity.
+        (WebCore::createDOMException): Removed unused TRY_TO_CREATE_EXCEPTION macro.
+        (WebCore::propagateExceptionSlowPath): Added.
+        (WebCore::propagateException): Added.
+        (WebCore::setDOMException): Removed overload that takes an exception code and message
+        string separately; no longer needed.
+
+        * bindings/js/JSDOMBinding.h: Include the ExceptionOr header
+        rather than forward declaring. Added more of the ExceptionOr handling
+        functions; some just declared and not yet defined. Updated for changes
+        to ExceptionOr interface. Removed the createDOMException function that takes
+        only an exception code; not needed outside JSDOMBinding.cpp.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send): Rewrote this to use ExceptionOr instead
+        of ExceptionCode. Added some FIXMEs as well.
+        (WebCore::JSXMLHttpRequest::responseText): Ditto.
+        (WebCore::JSXMLHttpRequest::retrieveResponse): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Fixed if statements to follow WebKit coding style
+        rather than using extra braces. Added call to propagateException for SetterMayThrowException.
+        (GenerateSerializerFunction): Fixed if statements as above.
+        (GenerateParametersCheck): Ditto. Also added call to propagateException for functions with
+        void return type and MayThrowException.
+        (GenerateReturnParameters): Tweaked coding style a bit.
+        (addIterableProperties): Fixed if statements as above.
+        (NativeToJSValue): Added code to handle various cases of GetterMayThrowException
+        and MayThrowException.
+        (GenerateConstructorDefinition): Used encodedJSValue() instead of
+        JSValue::encode(JSValue()), a longer way to say the same thing.
+
+        * bindings/scripts/IDLAttributes.txt: Added GetterMayThrowException,
+        MayThrowException, and SetterMayThrowException.
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        Regenerated results.
+
+        * bindings/scripts/test/TestObj.idl: Added some test cases.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocumentType): Tweaked formatting.
+        (WebCore::DOMImplementation::createDocument): Ditto.
+
+        * dom/DOMImplementation.idl: Added MayThrowException to two functions since
+        I am abandoning, for now, the ability to throw exceptions without any extended
+        attribute in the IDL file. This feature may return at some point if we figure
+        out a way to do it for functions without return values as well as functions with.
+
+        * dom/Document.cpp:
+        (WebCore::Document::exitPointerLock): Rewrote to streamline logic.
+        (WebCore::Document::pointerLockElement): Ditto.
+        (WebCore::Document::inputCursor): Added. No need for this to be inlined.
+        (WebCore::Document::setInputCursor): Changed to take Ref&&.
+        (WebCore::Document::getSelection): Added. Moved here from TreeScope.
+
+        * dom/Document.h: Updated for above changes.
+
+        * dom/Document.idl: Tweaked formatting.
+
+        * dom/Exception.h: Merged the two constructors into one with a default
+        argument value, which should be equally efficient. Added releaseMessage function.
+        Added assertion that this is only created for actual exceptions with non-zero
+        ExceptionCode. Unlike ExceptionCode, which has a value of 0 which means no
+        exception, we do not create an Exception if there is no exception.
+
+        * dom/ExceptionOr.h: Renamed takeReturnValue to releaseReturnValue. Replaced
+        exceptionCode and exceptionMessage with releaseException. Added ExceptionOr<void>
+        specialization.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::~TreeScope): Removed code dealing with
+        m_selection, which is now in Document.
+        (WebCore::TreeScope::getSelection): Deleted.
+
+        * dom/TreeScope.h: Removed DOMSelection.
+
+        * page/DOMSelection.cpp:
+        (WebCore::selectionShadowAncestor): Changed to take a reference rather than
+        a guaranteed-non-null pointer.
+        (WebCore::DOMSelection::DOMSelection): Changed to take a Frame& instead of
+        of a TreeScope*.
+        (WebCore::DOMSelection::clearTreeScope): Deleted.
+        (WebCore::DOMSelection::isCollapsed): Updated call to selectionShadowAncestor.
+        (WebCore::DOMSelection::type): Took out obsolete uneeeded comment. Got rid
+        of case where this returns a null string. Use ASCIILiteral.
+        (WebCore::DOMSelection::rangeCount): Streamlined code.
+        (WebCore::DOMSelection::collapse): Removed redundant check of m_frame for
+        null which is already handled by the isValidForPosition function.
+        Removed non-helpful FIXME.
+        (WebCore::DOMSelection::collapseToEnd): Changed to use ExceptionOr instead of
+        ExceptionCode.
+        (WebCore::DOMSelection::collapseToStart): Ditto.
+        (WebCore::DOMSelection::setBaseAndExtent): Removed redundant check of m_frame
+        for null which is already handled by the isValidForPosition function. Removed
+        non-helpful FIXME.
+        (WebCore::DOMSelection::setPosition): Ditto.
+        (WebCore::DOMSelection::extend): Changed to use ExceptionOr instead of
+        ExceptionCode.
+        (WebCore::DOMSelection::getRangeAt): Ditto.
+        (WebCore::DOMSelection::isValidForPosition): Changed to return false when
+        m_frame is null rather than asserting is is non-null and having every caller
+        check m_frame before calling this.
+
+        * page/DOMSelection.h: Use #pragma once. Fix indentation. Removed unneeded
+        comments. Use ExceptionOr rather than ExceptionCode.
+
+        * page/DOMSelection.idl: Move from MayThrowLegacyException to MayThrowException.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resetDOMWindowProperties): Sorted properties alphabetically
+        to make it more obvious if any are accidentally omitted or listed twice.
+        (WebCore::DOMWindow::getSelection): Changed ownership so that the window owns
+        the selection like all the other objects, rather than having it be owned by the
+        document instead.
+
+        * page/DOMWindow.h: Added m_selection, sorted all the other related properties
+        alphabetically so it's easy to compare the list here with elsewhere.
+
+        * replay/ReplayController.cpp:
+        (WebCore::ReplayController::frameNavigated): Updated to call setInputCursor
+        with a reference rather than a pointer.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseText): Use ExceptionOr rather than ExceptionCode.
+        (WebCore::XMLHttpRequest::responseXML): Ditto.
+        (WebCore::XMLHttpRequest::setTimeout): Ditto.
+        (WebCore::XMLHttpRequest::setResponseType): Ditto.
+        (WebCore::XMLHttpRequest::setWithCredentials): Ditto.
+        (WebCore::XMLHttpRequest::open): Ditto.
+        (WebCore::XMLHttpRequest::prepareToSend): Changed to return an
+        Optional<ExceptionOr> to reflect the three different states: an exception,
+        a value to return without sending, or "continue with the send algorithm".
+        The old code did this with a boolean plus an exception code. This sounds
+        confusing but is easy to read at the call sites, so probably OK to keep.
+        (WebCore::XMLHttpRequest::send): Use ExceptionOr rather than ExceptionCode.
+        (WebCore::XMLHttpRequest::sendBytesData): Ditto.
+        (WebCore::XMLHttpRequest::createRequest): Ditto.
+        (WebCore::XMLHttpRequest::overrideMimeType): Ditto.
+        (WebCore::XMLHttpRequest::setRequestHeader): Ditto.
+
+        * xml/XMLHttpRequest.h: Updated for changes above.
+
+        * xml/XMLHttpRequest.idl: Sorted interface extended attributes alphabetically.
+        Changed from MayThrowLegacyException to MayThrowException.
+
 2016-10-06  Sam Weinig  <sam@webkit.org>
 
         Autogenerate passing union types as part of a functions variadic arguments

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
- * Copyright (C) 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,85 +27,68 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef DOMSelection_h
-#define DOMSelection_h
+#pragma once
 
 #include "DOMWindowProperty.h"
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-    class Frame;
-    class Node;
-    class Position;
-    class Range;
-    class TreeScope;
-    class VisibleSelection;
+class Node;
+class Position;
+class Range;
+class VisibleSelection;
 
-    typedef int ExceptionCode;
+class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
+public:
+    static Ref<DOMSelection> create(Frame& frame) { return adoptRef(*new DOMSelection(frame)); }
 
-    class DOMSelection : public RefCounted<DOMSelection>, public DOMWindowProperty {
-    public:
-        static Ref<DOMSelection> create(const TreeScope* treeScope) { return adoptRef(*new DOMSelection(treeScope)); }
+    Node* baseNode() const;
+    Node* extentNode() const;
+    unsigned baseOffset() const;
+    unsigned extentOffset() const;
+    String type() const;
+    void setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* extentNode, unsigned extentOffset);
+    void setPosition(Node*, unsigned offset);
+    void modify(const String& alter, const String& direction, const String& granularity);
 
-        void clearTreeScope();
+    // The anchor and focus are the start and end of the selection, and
+    // reflect the direction in which the selection was made by the user.
+    // The base and extent are different, because they don't reflect expansion.
+    Node* anchorNode() const;
+    unsigned anchorOffset() const;
+    Node* focusNode() const;
+    unsigned focusOffset() const;
+    bool isCollapsed() const;
+    unsigned rangeCount() const;
+    void collapse(Node*, unsigned offset);
+    ExceptionOr<void> collapseToEnd();
+    ExceptionOr<void> collapseToStart();
+    ExceptionOr<void> extend(Node&, unsigned offset);
+    ExceptionOr<Ref<Range>> getRangeAt(unsigned);
+    void removeAllRanges();
+    void addRange(Range&);
+    void deleteFromDocument();
+    bool containsNode(Node&, bool partlyContained) const;
+    void selectAllChildren(Node&);
 
-        // Safari Selection Object API
-        // These methods return the valid equivalents of internal editing positions.
-        Node* baseNode() const;
-        Node* extentNode() const;
-        unsigned baseOffset() const;
-        unsigned extentOffset() const;
-        String type() const;
-        void setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* extentNode, unsigned extentOffset);
-        void setPosition(Node*, unsigned offset);
-        void modify(const String& alter, const String& direction, const String& granularity);
+    String toString();
 
-        // Mozilla Selection Object API
-        // In Firefox, anchor/focus are the equal to the start/end of the selection,
-        // but reflect the direction in which the selection was made by the user.  That does
-        // not mean that they are base/extent, since the base/extent don't reflect
-        // expansion.
-        // These methods return the valid equivalents of internal editing positions.
-        Node* anchorNode() const;
-        unsigned anchorOffset() const;
-        Node* focusNode() const;
-        unsigned focusOffset() const;
-        bool isCollapsed() const;
-        unsigned rangeCount() const;
-        void collapse(Node*, unsigned offset);
-        void collapseToEnd(ExceptionCode&);
-        void collapseToStart(ExceptionCode&);
-        void extend(Node&, unsigned offset, ExceptionCode&);
-        RefPtr<Range> getRangeAt(unsigned, ExceptionCode&);
-        void removeAllRanges();
-        void addRange(Range&);
-        void deleteFromDocument();
-        bool containsNode(Node&, bool partlyContained) const;
-        void selectAllChildren(Node&);
+    void empty();
 
-        String toString();
+private:
+    explicit DOMSelection(Frame&);
 
-        // Microsoft Selection Object API
-        void empty();
+    // Convenience method for accessors, caller must null-check m_frame.
+    const VisibleSelection& visibleSelection() const;
 
-    private:
-        const TreeScope* m_treeScope;
+    Node* shadowAdjustedNode(const Position&) const;
+    unsigned shadowAdjustedOffset(const Position&) const;
 
-        explicit DOMSelection(const TreeScope*);
-
-        // Convenience method for accessors, does not NULL check m_frame.
-        const VisibleSelection& visibleSelection() const;
-
-        Node* shadowAdjustedNode(const Position&) const;
-        unsigned shadowAdjustedOffset(const Position&) const;
-
-        bool isValidForPosition(Node*) const;
-    };
+    bool isValidForPosition(Node*) const;
+};
 
 } // namespace WebCore
-
-#endif // DOMSelection_h

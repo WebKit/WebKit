@@ -39,7 +39,7 @@ using namespace JSC;
     
 namespace WebCore {
 
-JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<Exception>& returnedException)
+JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer& args, CallbackType method, PropertyName functionName, NakedPtr<JSC::Exception>& returnedException)
 {
     ASSERT(callback);
 
@@ -57,7 +57,7 @@ JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer&
     }
     if (callType == CallType::None) {
         if (method == CallbackType::Function) {
-            returnedException = Exception::create(exec->vm(), createTypeError(exec));
+            returnedException = JSC::Exception::create(exec->vm(), createTypeError(exec));
             return JSValue();
         }
 
@@ -65,7 +65,7 @@ JSValue JSCallbackData::invokeCallback(JSObject* callback, MarkedArgumentBuffer&
         function = callback->get(exec, functionName);
         callType = getCallData(function, callData);
         if (callType == CallType::None) {
-            returnedException = Exception::create(exec->vm(), createTypeError(exec));
+            returnedException = JSC::Exception::create(exec->vm(), createTypeError(exec));
             return JSValue();
         }
     }

@@ -97,7 +97,7 @@ ExceptionOr<Ref<DocumentType>> DOMImplementation::createDocumentType(const Strin
     String localName;
     Document::parseQualifiedName(qualifiedName, prefix, localName, ec);
     if (ec)
-        return Exception(ec);
+        return Exception { ec };
 
     return DocumentType::create(m_document, qualifiedName, publicId, systemId);
 }
@@ -122,7 +122,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const String& na
         ExceptionCode ec = 0;
         documentElement = document->createElementNS(namespaceURI, qualifiedName, ec);
         if (ec)
-            return Exception(ec);
+            return Exception { ec };
     }
 
     if (documentType)

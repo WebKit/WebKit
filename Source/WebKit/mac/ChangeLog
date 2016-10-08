@@ -1,3 +1,15 @@
+2016-10-06  Darin Adler  <darin@apple.com>
+
+        Next step on moving to modern way to return DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163016
+
+        Reviewed by Ryosuke Niwa.
+
+        * DOM/DOMDOMImplementation.mm:
+        (-[DOMImplementation createDocumentType:publicId:systemId:]): Updated for
+        name change from takeReturnValue to releaseReturnValue.
+        (-[DOMImplementation createDocument:qualifiedName:doctype:]): Ditto.
+
 2016-10-07  Simon Fraser  <simon.fraser@apple.com>
 
         [WK1 Mac] Fix repaints of fixed-background elements in layer-backed WebViews

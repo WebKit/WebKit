@@ -25,6 +25,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 #include "ScriptWrappable.h"
@@ -69,10 +70,6 @@ class DOMWindow;
 class Frame;
 class URL;
 class Node;
-
-template<typename> class ExceptionOr;
-
-using ExceptionCode = int;
 
 struct ExceptionDetails {
     String message;
@@ -182,33 +179,22 @@ WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::JSValue exception, Cac
 WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::Exception*, CachedScript* = nullptr, ExceptionDetails* = nullptr);
 void reportCurrentException(JSC::ExecState*);
 
-JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode);
 JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 
-// Convert a DOM implementation exception code into a JavaScript exception in the execution state.
+// Convert a DOM implementation exception into a JavaScript exception in the execution state.
+void propagateException(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+void setDOMException(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
+void setDOMException(JSC::ExecState*, JSC::ThrowScope&, const ExceptionCodeWithMessage&);
+
+// Slower versions of the above for use when the caller doesn't have a ThrowScope.
+void propagateException(JSC::ExecState&, Exception&&);
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
-void setDOMException(JSC::ExecState*, ExceptionCode, const String&);
 void setDOMException(JSC::ExecState*, const ExceptionCodeWithMessage&);
 
+// Implementation details of the above.
 WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
 void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, const ExceptionCodeWithMessage&);
-
-ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwScope, const ExceptionCodeWithMessage& message)
-{
-    if (LIKELY(!message.code || throwScope.exception()))
-        return;
-    setDOMExceptionSlow(exec, throwScope, message);
-}
-
-ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwScope, ExceptionCode ec)
-{
-    if (LIKELY(!ec || throwScope.exception()))
-        return;
-    setDOMExceptionSlow(exec, throwScope, ec);
-}
-
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, ExceptionOr<T>&&);
-template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, ExceptionOr<T>&&);
+void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
 
@@ -364,6 +350,18 @@ struct BindingCaller {
         return JSC::JSValue::encode(getter(state, thisObject, throwScope));
     }
 };
+
+// ExceptionOr handling.
+void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
+template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
+JSC::JSValue toJSBoolean(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<bool>&&);
+JSC::JSValue toJSDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<double>&&);
+JSC::JSValue toJSNullableDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<Optional<double>>&&);
+JSC::JSValue toJSNullableString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
+template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+template<typename T> JSC::JSValue toJSNumber(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+template<typename T> JSC::JSValue toJSNullableNumber(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+JSC::JSValue toJSString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 
 // Inline functions and template definitions.
 
@@ -886,23 +884,49 @@ template<typename T> inline JSC::JSValue toNullableJSNumber(Optional<T> optional
     return optionalNumber ? JSC::jsNumber(optionalNumber.value()) : JSC::jsNull();
 }
 
-template<typename T> inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ExceptionOr<T>&& value)
+ALWAYS_INLINE void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
 {
-    if (UNLIKELY(value.hasException())) {
-        setDOMException(state, value.exceptionCode(), value.exceptionMessage());
-        return JSC::jsUndefined();
-    }
-    return toJS(state, globalObject, value.takeReturnValue());
+    if (throwScope.exception())
+        return;
+    propagateExceptionSlowPath(state, throwScope, WTFMove(exception));
 }
 
-template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ExceptionOr<T>&& value)
+ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwScope, ExceptionCode ec)
 {
-    // FIXME: It's really annoying to have two of these functions. Should find a way to combine toJS and toJSNewlyCreated.
+    if (LIKELY(!ec || throwScope.exception()))
+        return;
+    setDOMExceptionSlow(exec, throwScope, ec);
+}
+
+ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwScope, const ExceptionCodeWithMessage& exception)
+{
+    if (LIKELY(!exception.code || throwScope.exception()))
+        return;
+    setDOMExceptionSlow(exec, throwScope, exception);
+}
+
+inline void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<void>&& value)
+{
+    if (UNLIKELY(value.hasException()))
+        propagateException(state, throwScope, value.releaseException());
+}
+
+template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
     if (UNLIKELY(value.hasException())) {
-        setDOMException(state, value.exceptionCode(), value.exceptionMessage());
-        return JSC::jsUndefined();
+        propagateException(state, throwScope, value.releaseException());
+        return { };
     }
-    return toJSNewlyCreated(state, globalObject, value.takeReturnValue());
+    return toJS(&state, &globalObject, value.releaseReturnValue());
+}
+
+template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
 }
 
 } // namespace WebCore

@@ -115,7 +115,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (callType == CallType::None) {
         handleEventFunction = jsFunction->get(exec, Identifier::fromString(exec, "handleEvent"));
         if (UNLIKELY(scope.exception())) {
-            Exception* exception = scope.exception();
+            auto* exception = scope.exception();
             scope.clearException();
 
             event->target()->uncaughtExceptionInEventHandler();
@@ -139,7 +139,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
 
         JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
-        NakedPtr<Exception> exception;
+        NakedPtr<JSC::Exception> exception;
         JSValue retval = scriptExecutionContext->isDocument()
             ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception)
             : JSC::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);

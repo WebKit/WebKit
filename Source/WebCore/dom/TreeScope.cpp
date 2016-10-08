@@ -27,7 +27,6 @@
 #include "config.h"
 #include "TreeScope.h"
 
-#include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
@@ -49,7 +48,7 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[9];
+    void* pointers[8];
 };
 
 COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
@@ -76,10 +75,6 @@ TreeScope::TreeScope(Document& document)
 
 TreeScope::~TreeScope()
 {
-    if (m_selection) {
-        m_selection->clearTreeScope();
-        m_selection = nullptr;
-    }
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -329,21 +324,6 @@ Element* TreeScope::elementFromPoint(int x, int y)
     }
 
     return downcast<Element>(node);
-}
-
-DOMSelection* TreeScope::getSelection() const
-{
-    if (!m_rootNode.document().frame())
-        return nullptr;
-
-    if (m_selection)
-        return m_selection.get();
-
-    if (this != &m_rootNode.document())
-        return m_rootNode.document().getSelection();
-
-    m_selection = DOMSelection::create(&m_rootNode.document());
-    return m_selection.get();
 }
 
 Element* TreeScope::findAnchor(const String& name)
