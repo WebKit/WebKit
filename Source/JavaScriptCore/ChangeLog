@@ -1,3 +1,21 @@
+2016-10-07  Mark Lam  <mark.lam@apple.com>
+
+        Object.freeze() and seal() should throw if [[PreventExtensions]]() fails.
+        https://bugs.webkit.org/show_bug.cgi?id=163160
+
+        Reviewed by Saam Barati.
+
+        See https://tc39.github.io/ecma262/#sec-object.freeze,
+        https://tc39.github.io/ecma262/#sec-object.seal, and
+        https://tc39.github.io/ecma262/#sec-setintegritylevel.  We need to call
+        preventExtensions first before proceeding to freeze / seal the object.  If
+        preventExtensions fails, we should throw a TypeError.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::setIntegrityLevel):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+
 2016-10-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Support slow path call

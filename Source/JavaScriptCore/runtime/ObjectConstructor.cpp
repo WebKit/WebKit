@@ -471,6 +471,51 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
     return JSValue::encode(defineProperties(exec, newObject, asObject(exec->argument(1))));
 }
 
+enum class IntegrityLevel {
+    Sealed,
+    Frozen
+};
+
+template<IntegrityLevel level>
+bool setIntegrityLevel(ExecState* exec, VM& vm, JSObject* object)
+{
+    // See https://tc39.github.io/ecma262/#sec-setintegritylevel.
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool success = object->methodTable(vm)->preventExtensions(object, exec);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (UNLIKELY(!success))
+        return false;
+
+    PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
+    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    RETURN_IF_EXCEPTION(scope, false);
+
+    PropertyNameArray::const_iterator end = properties.end();
+    for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
+        Identifier propertyName = *iter;
+        if (vm.propertyNames->isPrivateName(propertyName))
+            continue;
+
+        PropertyDescriptor desc;
+        if (level == IntegrityLevel::Sealed)
+            desc.setConfigurable(false);
+        else {
+            if (!object->getOwnPropertyDescriptor(exec, propertyName, desc))
+                continue;
+
+            if (desc.isDataDescriptor())
+                desc.setWritable(false);
+
+            desc.setConfigurable(false);
+        }
+
+        object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+    return true;
+}
+    
 EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
 {
     VM& vm = exec->vm();
@@ -487,31 +532,13 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
         return JSValue::encode(obj);
     }
 
-    // 2. For each named own property name P of O,
-    PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    bool success = setIntegrityLevel<IntegrityLevel::Sealed>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    PropertyNameArray::const_iterator end = properties.end();
-    for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
-        Identifier propertyName = *iter;
-        if (exec->propertyNames().isPrivateName(propertyName))
-            continue;
-        // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
-        PropertyDescriptor desc;
-        if (!object->getOwnPropertyDescriptor(exec, propertyName, desc))
-            continue;
-        // b. If desc.[[Configurable]] is true, set desc.[[Configurable]] to false.
-        desc.setConfigurable(false);
-        // c. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
-        object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (!success) {
+        throwTypeError(exec, scope, ASCIILiteral("Unable to prevent extension in Object.seal"));
+        return encodedJSValue();
     }
 
-    // 3. Set the [[Extensible]] internal property of O to false.
-    object->methodTable(vm)->preventExtensions(object, exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    // 4. Return O.
     return JSValue::encode(obj);
 }
 
@@ -525,35 +552,10 @@ JSObject* objectConstructorFreeze(ExecState* exec, JSObject* object)
         return object;
     }
 
-    // 2. For each named own property name P of O,
-    PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
-    object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+    bool success = setIntegrityLevel<IntegrityLevel::Frozen>(exec, vm, object);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    PropertyNameArray::const_iterator end = properties.end();
-    for (PropertyNameArray::const_iterator iter = properties.begin(); iter != end; ++iter) {
-        Identifier propertyName = *iter;
-        if (exec->propertyNames().isPrivateName(propertyName))
-            continue;
-        // a. Let desc be the result of calling the [[GetOwnProperty]] internal method of O with P.
-        PropertyDescriptor desc;
-        if (!object->getOwnPropertyDescriptor(exec, propertyName, desc))
-            continue;
-        // b. If IsDataDescriptor(desc) is true, then
-        // i. If desc.[[Writable]] is true, set desc.[[Writable]] to false.
-        if (desc.isDataDescriptor())
-            desc.setWritable(false);
-        // c. If desc.[[Configurable]] is true, set desc.[[Configurable]] to false.
-        desc.setConfigurable(false);
-        // d. Call the [[DefineOwnProperty]] internal method of O with P, desc, and true as arguments.
-        object->methodTable(vm)->defineOwnProperty(object, exec, propertyName, desc, true);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-    }
-
-    // 3. Set the [[Extensible]] internal property of O to false.
-    object->methodTable(vm)->preventExtensions(object, exec);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
-    // 4. Return O.
+    if (!success)
+        return throwTypeError(exec, scope, ASCIILiteral("Unable to prevent extension in Object.freeze"));
     return object;
 }
 

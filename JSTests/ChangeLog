@@ -1,3 +1,13 @@
+2016-10-07  Mark Lam  <mark.lam@apple.com>
+
+        Object.freeze() and seal() should throw if [[PreventExtensions]]() fails.
+        https://bugs.webkit.org/show_bug.cgi?id=163160
+
+        Reviewed by Saam Barati.
+
+        * stress/object-freeze-with-proxy-preventExtensions.js: Added.
+        * stress/object-seal-with-proxy-preventExtensions.js: Added.
+
 2016-10-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Add initial CheckDOM and CallDOM implementations
