@@ -24,10 +24,16 @@
  */
 
 // Introduced in DOM Level 3:
+// FIXME: This should be exposed to workers as well.
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional CustomEventInit eventInitDict),
+    ConstructorCallWith=ScriptState,
 ] interface CustomEvent : Event {
-    [InitializedByEventConstructor, CustomGetter] readonly attribute any detail;
+    [CustomGetter] readonly attribute any detail;
 
     [CallWith=ScriptState] void initCustomEvent(DOMString type, boolean bubbles, boolean cancelable, any detail);
+};
+
+dictionary CustomEventInit : EventInit {
+    any detail = null;
 };

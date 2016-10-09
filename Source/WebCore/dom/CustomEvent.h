@@ -32,22 +32,27 @@
 
 namespace WebCore {
 
-struct CustomEventInit : public EventInit {
-    Deprecated::ScriptValue detail;
-};
-
 class CustomEvent final : public Event {
 public:
     virtual ~CustomEvent();
 
-    static Ref<CustomEvent> createForBindings()
+    static Ref<CustomEvent> create(IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new CustomEvent);
+        return adoptRef(*new CustomEvent(isTrusted));
     }
 
-    static Ref<CustomEvent> createForBindings(const AtomicString& type, const CustomEventInit& initializer)
+    struct Init : public EventInit {
+        Init(bool bubbles, bool cancelable, bool composed, JSC::JSValue detail)
+            : EventInit(bubbles, cancelable, composed)
+            , detail(detail)
+        { }
+
+        JSC::JSValue detail;
+    };
+
+    static Ref<CustomEvent> create(JSC::ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new CustomEvent(type, initializer));
+        return adoptRef(*new CustomEvent(state, type, initializer, isTrusted));
     }
 
     void initCustomEvent(JSC::ExecState&, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail = JSC::JSValue::JSUndefined);
@@ -59,8 +64,8 @@ public:
     RefPtr<SerializedScriptValue> trySerializeDetail(JSC::ExecState&);
 
 private:
-    CustomEvent();
-    CustomEvent(const AtomicString& type, const CustomEventInit& initializer);
+    CustomEvent(IsTrusted);
+    CustomEvent(JSC::ExecState&, const AtomicString& type, const Init& initializer, IsTrusted);
 
     Deprecated::ScriptValue m_detail; // FIXME: Why is it OK to use a strong reference here? What prevents a reference cycle?
     RefPtr<SerializedScriptValue> m_serializedDetail;

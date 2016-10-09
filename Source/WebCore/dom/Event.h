@@ -190,7 +190,7 @@ public:
     virtual EventTarget* relatedTarget() const { return nullptr; }
 
 protected:
-    Event();
+    Event(IsTrusted = IsTrusted::No);
     WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
     Event(const AtomicString& type, bool canBubble, bool cancelable, double timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);

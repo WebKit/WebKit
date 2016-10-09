@@ -459,6 +459,7 @@ dictionary TestDictionary {
     unsigned long long unsignedLargeIntegerWithDefault = 0;
     Node? nullableNode = null;
     any anyValue;
+    any anyValueWithNullDefault = null;
     AnyTypedef anyTypedefValue;
     TestDictionaryThatShouldTolerateNull dictionaryMember;
 };

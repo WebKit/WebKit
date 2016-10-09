@@ -31,13 +31,14 @@
 
 namespace WebCore {
 
-CustomEvent::CustomEvent()
+CustomEvent::CustomEvent(IsTrusted isTrusted)
+    : Event(isTrusted)
 {
 }
 
-CustomEvent::CustomEvent(const AtomicString& type, const CustomEventInit& initializer)
-    : Event(type, initializer)
-    , m_detail(initializer.detail)
+CustomEvent::CustomEvent(JSC::ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
+    , m_detail(state.vm(), initializer.detail)
 {
 }
 

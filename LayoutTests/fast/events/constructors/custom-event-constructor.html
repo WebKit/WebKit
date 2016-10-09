@@ -32,10 +32,10 @@ shouldBe("new CustomEvent('eventType', { detail: detailObject }).detail", "detai
 shouldBe("new CustomEvent('eventType', { detail: document }).detail", "document");
 
 // Detail is undefined.
-shouldBe("new CustomEvent('eventType', { detail: undefined }).detail", "undefined");
+shouldBeNull("new CustomEvent('eventType', { detail: undefined }).detail");
 
 // Detail is null.
-shouldBe("new CustomEvent('eventType', { detail: null }).detail", "null");
+shouldBeNull("new CustomEvent('eventType', { detail: null }).detail");
 
 // Detail is a getter.
 shouldBe("new CustomEvent('eventType', { get detail() { return true; } }).detail", "true");

@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-Event::Event()
-    : m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
+Event::Event(IsTrusted isTrusted)
+    : m_isTrusted(isTrusted == IsTrusted::Yes)
+    , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
 {
 }
 

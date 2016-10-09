@@ -982,7 +982,9 @@ sub GenerateDefaultValue
         my $enumerationValueName = GetEnumerationValueName(substr($value, 1, -1));
         $value = $className . "::" . $enumerationValueName;
     }
-    $value = "nullptr" if $value eq "null";
+    if ($value eq "null") {
+        $value = $member->type eq "any" ? "jsNull()" : "nullptr";
+    }
     $value = "jsUndefined()" if $value eq "undefined";
 
     return $value;
@@ -1089,7 +1091,7 @@ sub GenerateDictionaryImplementationContent
         # For each dictionary member member declared on dictionary, in lexicographical order:
         my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
         foreach my $member (@sortedMembers) {
-            $member->default("undefined") if $member->type eq "any"; # Use undefined as default value for member of type 'any'.
+            $member->default("undefined") if $member->type eq "any" and !defined($member->default); # Use undefined as default value for member of type 'any' unless specified otherwise.
 
             my $type = $member->type;
 
