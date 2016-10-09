@@ -6,6 +6,7 @@ HTMLEvents interfaceName=Event
 AnimationEvent
 BeforeLoadEvent
 BeforeUnloadEvent
+ClipboardEvent
 CloseEvent
 CompositionEvent
 CustomEvent

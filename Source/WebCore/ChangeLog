@@ -1,3 +1,51 @@
+2016-10-08  Chris Dumez  <cdumez@apple.com>
+
+        Add support for ClipboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=163164
+
+        Reviewed by Darin Adler.
+
+        Add support for ClipboardEvent:
+        - https://www.w3.org/TR/clipboard-apis/#clipboard-event-interfaces
+
+        Firefox and Chrome both already support this.
+
+        This gives us 5 more points on html5test.com.
+
+        Tests: editing/pasteboard/clipboard-event.html
+               fast/events/clipboard-event-constructor.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJSNewlyCreated): Deleted.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (WillConvertUndefinedToDefaultParameterValue):
+        We use [] as implicit default value for dictionary parameters. This change
+        is so we call convertDictionary<>() even if the parameter is undefined
+        because we want to pass a struct to the implementation initialized with
+        the default member values defined in the IDL.
+
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::ClipboardEvent):
+        (WebCore::ClipboardEvent::eventInterface):
+        * dom/ClipboardEvent.h:
+        * dom/ClipboardEvent.idl: Added.
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+        * dom/Event.idl:
+        * dom/EventInit.h: Added.
+        * dom/EventInit.idl: Added.
+        * dom/EventNames.in:
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::dataTransfer):
+        * editing/Editor.cpp:
+        (WebCore::Editor::dispatchCPPEvent):
+
 2016-10-06  Darin Adler  <darin@apple.com>
 
         Next step on moving to modern way to return DOM exceptions

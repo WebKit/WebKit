@@ -71,6 +71,4 @@
     readonly attribute EventTarget srcElement;
     [ImplementedAs=legacyReturnValue] attribute boolean returnValue;
     attribute boolean cancelBubble;
-
-    [Custom] readonly attribute DataTransfer clipboardData;
 };

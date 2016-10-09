@@ -1,0 +1,9 @@
+
+PASS First parameter is mandatory 
+PASS Omit init dictionary 
+PASS bubbles member 
+PASS bubbles member 
+PASS bubbles member 
+PASS bubbles member 
+PASS Passing a bad type for clipboardData member should throw 
+

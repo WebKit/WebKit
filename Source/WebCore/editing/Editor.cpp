@@ -883,7 +883,7 @@ bool Editor::dispatchCPPEvent(const AtomicString& eventType, DataTransferAccessP
 
     RefPtr<DataTransfer> dataTransfer = DataTransfer::createForCopyAndPaste(policy);
 
-    Ref<Event> event = ClipboardEvent::create(eventType, true, true, dataTransfer.get());
+    auto event = ClipboardEvent::create(eventType, { true, true, false, dataTransfer.get() }, Event::IsTrusted::Yes);
     target->dispatchEvent(event);
     bool noDefaultProcessing = event->defaultPrevented();
     if (noDefaultProcessing && policy == DataTransferAccessPolicy::Writable) {

@@ -286,6 +286,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/ClientRect.idl \
     $(WebCore)/dom/ClientRectList.idl \
     $(WebCore)/dom/Comment.idl \
+    $(WebCore)/dom/ClipboardEvent.idl \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
@@ -307,6 +308,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \
+    $(WebCore)/dom/EventInit.idl \
     $(WebCore)/dom/EventListener.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \

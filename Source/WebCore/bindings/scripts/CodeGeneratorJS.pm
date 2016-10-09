@@ -3991,6 +3991,7 @@ sub WillConvertUndefinedToDefaultParameterValue
     return 1 if defined $automaticallyGeneratedDefaultValue && $automaticallyGeneratedDefaultValue eq $defaultValue;
 
     return 1 if $defaultValue eq "null" && $codeGenerator->IsWrapperType($parameterType);
+    return 1 if $defaultValue eq "[]" && $codeGenerator->IsDictionaryType($parameterType);
 
     return 0;
 }

@@ -28,27 +28,38 @@
 
 namespace WebCore {
 
-    class DataTransfer;
+class DataTransfer;
 
-    class ClipboardEvent final : public Event {
-    public:
-        virtual ~ClipboardEvent();
+class ClipboardEvent final : public Event {
+public:
+    virtual ~ClipboardEvent();
 
-        static Ref<ClipboardEvent> create(const AtomicString& type, bool canBubbleArg, bool cancelableArg, DataTransfer* clipboardArg)
+    struct Init : public EventInit {
+        Init(bool bubbles, bool cancelable, bool composed, RefPtr<DataTransfer>&& clipboardData)
+            : EventInit(bubbles, cancelable, composed)
+            , clipboardData(WTFMove(clipboardData))
         {
-            return adoptRef(*new ClipboardEvent(type, canBubbleArg, cancelableArg, clipboardArg));
         }
 
-        DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
-
-    private:
-        ClipboardEvent(const AtomicString& type, bool canBubbleArg, bool cancelableArg, DataTransfer*);
-
-        EventInterface eventInterface() const override;
-        bool isClipboardEvent() const override;
-
-        RefPtr<DataTransfer> m_dataTransfer;
+        RefPtr<DataTransfer> clipboardData;
     };
+
+    static Ref<ClipboardEvent> create(const AtomicString& type, const Init& init, IsTrusted isTrusted = IsTrusted::No)
+    {
+        auto event = adoptRef(*new ClipboardEvent(type, init, isTrusted));
+        return event;
+    }
+
+    DataTransfer* clipboardData() const { return m_clipboardData.get(); }
+
+private:
+    ClipboardEvent(const AtomicString& type, const Init&, IsTrusted);
+
+    EventInterface eventInterface() const final;
+    bool isClipboardEvent() const final;
+
+    RefPtr<DataTransfer> m_clipboardData;
+};
 
 } // namespace WebCore
 

@@ -43,11 +43,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSEvent::clipboardData(ExecState& state) const
-{
-    return wrapped().isClipboardEvent() ? toJS(&state, globalObject(), wrapped().clipboardData()) : jsUndefined();
-}
-
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     case interfaceName##InterfaceType: \
         return createWrapper<interfaceName>(globalObject, WTFMove(event));

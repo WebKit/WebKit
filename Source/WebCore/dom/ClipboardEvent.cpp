@@ -28,8 +28,9 @@
 
 namespace WebCore {
 
-ClipboardEvent::ClipboardEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DataTransfer* dataTransfer)
-    : Event(eventType, canBubble, cancelable), m_dataTransfer(dataTransfer)
+ClipboardEvent::ClipboardEvent(const AtomicString& type, const Init& init, IsTrusted isTrusted)
+    : Event(type, init, isTrusted)
+    , m_clipboardData(init.clipboardData)
 {
 }
 
@@ -39,8 +40,7 @@ ClipboardEvent::~ClipboardEvent()
 
 EventInterface ClipboardEvent::eventInterface() const
 {
-    // Notice that there is no ClipboardEvent.idl.
-    return EventInterfaceType;
+    return ClipboardEventInterfaceType;
 }
 
 bool ClipboardEvent::isClipboardEvent() const

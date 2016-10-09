@@ -263,6 +263,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'ClientRectList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').value is ClipboardEvent
+PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'ClipboardEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').value is CloseEvent
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'CloseEvent').hasOwnProperty('set') is false

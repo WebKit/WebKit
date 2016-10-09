@@ -136,6 +136,7 @@
 #include "JSCSSUnknownRule.cpp"
 #include "JSCSSValue.cpp"
 #include "JSCSSValueList.cpp"
+#include "JSClipboardEvent.cpp"
 #if ENABLE(CUSTOM_ELEMENTS)
 #include "JSCustomElementRegistry.cpp"
 #endif
@@ -188,6 +189,7 @@
 #include "JSElement.cpp"
 #include "JSErrorEvent.cpp"
 #include "JSEvent.cpp"
+#include "JSEventInit.cpp"
 #include "JSEventSource.cpp"
 #include "JSEventTarget.cpp"
 #include "JSFetchBody.cpp"

@@ -375,6 +375,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ChildNode.idl
     dom/ClientRect.idl
     dom/ClientRectList.idl
+    dom/ClipboardEvent.idl
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomElementRegistry.idl
@@ -397,6 +398,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Element.idl
     dom/ErrorEvent.idl
     dom/Event.idl
+    dom/EventInit.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
     dom/GlobalEventHandlers.idl

@@ -89,9 +89,7 @@ public:
     WEBCORE_EXPORT Node* toElement() const;
     WEBCORE_EXPORT Node* fromElement() const;
 
-    // FIXME: These functions can be merged if m_dataTransfer is only initialized for drag events.
     DataTransfer* dataTransfer() const { return isDragEvent() ? m_dataTransfer.get() : nullptr; }
-    DataTransfer* internalDataTransfer() const override { return m_dataTransfer.get(); }
 
     EventInterface eventInterface() const override;
 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ClipboardEvent constructor</title>
+<script src=../../resources/testharness.js></script>
+<script src=../../resources/testharnessreport.js></script>
+</head>
+<body>
+<script>
+test(function() {
+    assert_throws(new TypeError(), function() {
+        new ClipboardEvent();
+    });
+}, "First parameter is mandatory");
+
+test(function() {
+    var event = new ClipboardEvent("foo");
+    assert_equals(event.type, "foo");
+    assert_equals(event.isTrusted, false);
+    assert_equals(event.bubbles, false);
+    assert_equals(event.cancelable, false);
+    assert_equals(event.composed, false);
+    assert_equals(event.clipboardData, null);
+}, "Omit init dictionary");
+
+test(function() {
+    var event = new ClipboardEvent("foo", {bubbles: true});
+    assert_equals(event.type, "foo");
+    assert_equals(event.isTrusted, false);
+    assert_equals(event.bubbles, true);
+    assert_equals(event.cancelable, false);
+    assert_equals(event.composed, false);
+    assert_equals(event.clipboardData, null);
+}, "bubbles member");
+
+test(function() {
+    var event = new ClipboardEvent("foo", {cancelable: true});
+    assert_equals(event.type, "foo");
+    assert_equals(event.isTrusted, false);
+    assert_equals(event.bubbles, false);
+    assert_equals(event.cancelable, true);
+    assert_equals(event.composed, false);
+    assert_equals(event.clipboardData, null);
+}, "bubbles member");
+
+test(function() {
+    var event = new ClipboardEvent("foo", {composed: true});
+    assert_equals(event.type, "foo");
+    assert_equals(event.isTrusted, false);
+    assert_equals(event.bubbles, false);
+    assert_equals(event.cancelable, false);
+    assert_equals(event.composed, true);
+    assert_equals(event.clipboardData, null);
+}, "bubbles member");
+
+test(function() {
+    var event = new ClipboardEvent("foo", {bubbles: true, cancelable: true, composed: true});
+    assert_equals(event.type, "foo");
+    assert_equals(event.isTrusted, false);
+    assert_equals(event.bubbles, true);
+    assert_equals(event.cancelable, true);
+    assert_equals(event.composed, true);
+    assert_equals(event.clipboardData, null);
+}, "bubbles member");
+
+test(function() {
+    assert_throws(new TypeError(), function() {
+        new ClipboardEvent("foo", {clipboardData: document});
+    });
+}, "Passing a bad type for clipboardData member should throw");
+</script>
+</body>
+</html>

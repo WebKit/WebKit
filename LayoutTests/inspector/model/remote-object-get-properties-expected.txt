@@ -243,7 +243,6 @@ DISPLAYABLE PROPERTIES:
     srcElement
     returnValue
     cancelBubble
-    clipboardData
     __proto__
 
 ALL PROPERTIES:
@@ -261,7 +260,6 @@ ALL PROPERTIES:
     srcElement
     returnValue
     cancelBubble
-    clipboardData
     composedPath
     stopPropagation
     preventDefault

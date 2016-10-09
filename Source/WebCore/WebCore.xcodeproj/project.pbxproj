@@ -2885,6 +2885,11 @@
 		8367587E1C56E99B008A1087 /* JSHTMLDataElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 834B86A91C56E93E00F3F0E3 /* JSHTMLDataElement.cpp */; };
 		8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A81C56E93E00F3F0E3 /* JSHTMLDataElement.h */; };
 		836C14431CDEAFD80073493F /* JSXPathNSResolverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */; };
+		836D032A1DA89B9200FFD96B /* EventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 836D03281DA89B7300FFD96B /* EventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		836D032F1DA8A13A00FFD96B /* JSEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836D032B1DA8A13200FFD96B /* JSEventInit.cpp */; };
+		836D03301DA8A13D00FFD96B /* JSEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 836D032C1DA8A13200FFD96B /* JSEventInit.h */; };
+		836D03311DA8A13F00FFD96B /* JSClipboardEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836D032D1DA8A13200FFD96B /* JSClipboardEvent.cpp */; };
+		836D03321DA8A14200FFD96B /* JSClipboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 836D032E1DA8A13200FFD96B /* JSClipboardEvent.h */; };
 		836DAA061CEAB80D00A2B707 /* RenderDescendantIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 836DAA051CEAB7CD00A2B707 /* RenderDescendantIterator.h */; };
 		836FBCEA178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */; };
 		836FBCEC178C117F00B21A15 /* SVGAnimatedProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */; };
@@ -10014,6 +10019,13 @@
 		835F8B261D2D90BA00E408EC /* Slotable.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Slotable.idl; sourceTree = "<group>"; };
 		8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NonDocumentTypeChildNode.idl; sourceTree = "<group>"; };
 		836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathNSResolverCustom.cpp; sourceTree = "<group>"; };
+		836D03271DA89B7300FFD96B /* ClipboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClipboardEvent.idl; sourceTree = "<group>"; };
+		836D03281DA89B7300FFD96B /* EventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInit.h; sourceTree = "<group>"; };
+		836D03291DA89B7300FFD96B /* EventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventInit.idl; sourceTree = "<group>"; };
+		836D032B1DA8A13200FFD96B /* JSEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventInit.cpp; sourceTree = "<group>"; };
+		836D032C1DA8A13200FFD96B /* JSEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventInit.h; sourceTree = "<group>"; };
+		836D032D1DA8A13200FFD96B /* JSClipboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSClipboardEvent.cpp; sourceTree = "<group>"; };
+		836D032E1DA8A13200FFD96B /* JSClipboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSClipboardEvent.h; sourceTree = "<group>"; };
 		836DAA051CEAB7CD00A2B707 /* RenderDescendantIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderDescendantIterator.h; sourceTree = "<group>"; };
 		836FBCE9178C113200B21A15 /* SVGAnimatedTypeAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTypeAnimator.cpp; sourceTree = "<group>"; };
 		836FBCEB178C117F00B21A15 /* SVGAnimatedProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedProperty.cpp; sourceTree = "<group>"; };
@@ -19675,6 +19687,8 @@
 				BC946347107A936600857193 /* JSBeforeLoadEvent.h */,
 				8225432CA9D4B4CF4628EC7F /* JSBeforeUnloadEvent.cpp */,
 				29E04A27BED2F81F98E9022B /* JSBeforeUnloadEvent.h */,
+				836D032D1DA8A13200FFD96B /* JSClipboardEvent.cpp */,
+				836D032E1DA8A13200FFD96B /* JSClipboardEvent.h */,
 				79AC9216109945C80021266E /* JSCompositionEvent.cpp */,
 				79AC9217109945C80021266E /* JSCompositionEvent.h */,
 				E4778B7D115A581A00B5D372 /* JSCustomEvent.cpp */,
@@ -19683,6 +19697,8 @@
 				2ECF7ADB10162B3800427DE7 /* JSErrorEvent.h */,
 				14E8378309F85D1C00B85AE4 /* JSEvent.cpp */,
 				14E8378D09F85D4F00B85AE4 /* JSEvent.h */,
+				836D032B1DA8A13200FFD96B /* JSEventInit.cpp */,
+				836D032C1DA8A13200FFD96B /* JSEventInit.h */,
 				C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */,
 				5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */,
 				B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */,
@@ -22981,6 +22997,7 @@
 				BCC0657C0F3CE1B700CD2D87 /* ClientRectList.idl */,
 				85031B290A44EFC700F992E0 /* ClipboardEvent.cpp */,
 				85031B2A0A44EFC700F992E0 /* ClipboardEvent.h */,
+				836D03271DA89B7300FFD96B /* ClipboardEvent.idl */,
 				9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */,
 				E425A49918292B840020CFCF /* CollectionIndexCache.h */,
 				6550B697099DF0270090D781 /* Comment.cpp */,
@@ -23101,6 +23118,8 @@
 				4138D3331244054800323D33 /* EventContext.h */,
 				418A06CF133C04D500CD379C /* EventDispatcher.cpp */,
 				418A06CE133C04D500CD379C /* EventDispatcher.h */,
+				836D03281DA89B7300FFD96B /* EventInit.h */,
+				836D03291DA89B7300FFD96B /* EventInit.idl */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				85AFA7410AAF298400E84305 /* EventListener.idl */,
 				AD4495F1141FC08900541EDF /* EventListenerMap.cpp */,
@@ -25276,6 +25295,7 @@
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
 				FDEA6247152102FC00479DF0 /* JSPeriodicWave.h in Headers */,
 				93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */,
+				836D03301DA8A13D00FFD96B /* JSEventInit.h in Headers */,
 				5189F01E10B37BD900F3C739 /* JSPopStateEvent.h in Headers */,
 				598365DD1355F557001B185D /* JSPositionCallback.h in Headers */,
 				FE80DA720E9C472F000D6F75 /* JSPositionError.h in Headers */,
@@ -26158,6 +26178,7 @@
 				BCE32B9C1517C0B200F542EC /* RenderMultiColumnSet.h in Headers */,
 				94DE5C921D83011D00164F2A /* CSSSupportsParser.h in Headers */,
 				BC1A7D9818FCB5B000421879 /* RenderMultiColumnSpannerPlaceholder.h in Headers */,
+				836D032A1DA89B9200FFD96B /* EventInit.h in Headers */,
 				8AC822FD180FC03300FB64D5 /* RenderNamedFlowFragment.h in Headers */,
 				BC85F23D151915E000BC17BE /* RenderNamedFlowThread.h in Headers */,
 				BCEA4880097D93020094C9E4 /* RenderObject.h in Headers */,
@@ -26956,6 +26977,7 @@
 				9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */,
 				A863E2011343412000274926 /* UnicodeBidi.h in Headers */,
 				518864E11BBAF57400E540C9 /* UniqueIDBDatabase.h in Headers */,
+				836D03321DA8A14200FFD96B /* JSClipboardEvent.h in Headers */,
 				5198F7A51BBDB79300E2CC5F /* UniqueIDBDatabaseConnection.h in Headers */,
 				5198F7A91BBDD38500E2CC5F /* UniqueIDBDatabaseTransaction.h in Headers */,
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,
@@ -28127,6 +28149,7 @@
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */,
+				836D032F1DA8A13A00FFD96B /* JSEventInit.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
 				FED13D3A0CEA934600D89466 /* EditorIOS.mm in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,
@@ -30492,6 +30515,7 @@
 				3140379C124BEA7F00AF40E4 /* WebCoreMotionManager.mm in Sources */,
 				CDC979F41C498C0900DB50D4 /* WebCoreNSErrorExtras.mm in Sources */,
 				934D9BA50B8C116B007B42A9 /* WebCoreNSStringExtras.mm in Sources */,
+				836D03311DA8A13F00FFD96B /* JSClipboardEvent.cpp in Sources */,
 				C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */,
