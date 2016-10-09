@@ -1,3 +1,17 @@
+2016-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Update KeyboardEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163176
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test now that the exception message is slightly
+        different in some cases. Also add test coverage for passing
+        modifierAltGraph / modifierCapsLock in initialization dictionary.
+
+        * fast/events/constructors/keyboard-event-constructor-expected.txt:
+        * fast/events/constructors/keyboard-event-constructor.html:
+
 2016-10-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Miscellaneous unreviewed test gardening

@@ -310,6 +310,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/Event.idl \
     $(WebCore)/dom/EventInit.idl \
     $(WebCore)/dom/EventListener.idl \
+    $(WebCore)/dom/EventModifierInit.idl \
     $(WebCore)/dom/EventTarget.idl \
     $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/GlobalEventHandlers.idl \
@@ -348,6 +349,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/TransitionEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
+    $(WebCore)/dom/UIEventInit.idl \
     $(WebCore)/dom/WebKitAnimationEvent.idl \
     $(WebCore)/dom/WebKitNamedFlow.idl \
     $(WebCore)/dom/WebKitTransitionEvent.idl \

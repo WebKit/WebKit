@@ -190,6 +190,7 @@
 #include "JSErrorEvent.cpp"
 #include "JSEvent.cpp"
 #include "JSEventInit.cpp"
+#include "JSEventModifierInit.cpp"
 #include "JSEventSource.cpp"
 #include "JSEventTarget.cpp"
 #include "JSFetchBody.cpp"
@@ -630,6 +631,7 @@
 #include "JSTransitionEvent.cpp"
 #include "JSTreeWalker.cpp"
 #include "JSUIEvent.cpp"
+#include "JSUIEventInit.cpp"
 #include "JSUIRequestEvent.cpp"
 #include "JSURLUtils.cpp"
 #if ENABLE(USER_MESSAGE_HANDLERS)

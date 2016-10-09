@@ -19,8 +19,7 @@
  */
 
 [
-    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional KeyboardEventInit eventInitDict),
 ] interface KeyboardEvent : UIEvent {
 
     const unsigned long DOM_KEY_LOCATION_STANDARD = 0x00;
@@ -28,23 +27,23 @@
     const unsigned long DOM_KEY_LOCATION_RIGHT = 0x02;
     const unsigned long DOM_KEY_LOCATION_NUMPAD = 0x03;
 
-    [InitializedByEventConstructor, Conditional=KEYBOARD_KEY_ATTRIBUTE] readonly attribute DOMString key;
-    [InitializedByEventConstructor, Conditional=KEYBOARD_CODE_ATTRIBUTE] readonly attribute DOMString code;
-    [InitializedByEventConstructor] readonly attribute unsigned long location;
+    [Conditional=KEYBOARD_KEY_ATTRIBUTE] readonly attribute DOMString key;
+    [Conditional=KEYBOARD_CODE_ATTRIBUTE] readonly attribute DOMString code;
+    readonly attribute unsigned long location;
 
-    [InitializedByEventConstructor] readonly attribute boolean ctrlKey;
-    [InitializedByEventConstructor] readonly attribute boolean shiftKey;
-    [InitializedByEventConstructor] readonly attribute boolean altKey;
-    [InitializedByEventConstructor] readonly attribute boolean metaKey;
-    [InitializedByEventConstructor] readonly attribute boolean repeat;
+    readonly attribute boolean ctrlKey;
+    readonly attribute boolean shiftKey;
+    readonly attribute boolean altKey;
+    readonly attribute boolean metaKey;
+    readonly attribute boolean repeat;
 
-    [InitializedByEventConstructor] readonly attribute boolean isComposing;
+    readonly attribute boolean isComposing;
 
     boolean getModifierState(DOMString keyArg);
 
     // Everything below is legacy.
-    [InitializedByEventConstructor] readonly attribute DOMString keyIdentifier;
-    [InitializedByEventConstructor, ImplementedAs=location] readonly attribute unsigned long keyLocation;
+    readonly attribute DOMString keyIdentifier;
+    [ImplementedAs=location] readonly attribute unsigned long keyLocation;
     readonly attribute boolean altGraphKey;
 
     // FIXME: this does not match the version in the DOM spec.
@@ -52,4 +51,17 @@
     void initKeyboardEvent(optional DOMString type = "undefined", optional boolean canBubble = false, optional boolean cancelable = false,
         optional DOMWindow? view = null, optional DOMString keyIdentifier = "undefined", optional unsigned long location = 0,
         optional boolean ctrlKey = false, optional boolean altKey = false, optional boolean shiftKey = false, optional boolean metaKey = false, optional boolean altGraphKey = false);
+};
+
+dictionary KeyboardEventInit : EventModifierInit {
+    DOMString key = "";
+    DOMString code = "";
+    unsigned long location;
+    boolean repeat = false;
+    boolean isComposing = false;
+
+    // This members are not in the specification but are needed to initialize the corresponding legacy
+    // attributes we still support on KeyboardEvent for backward compatibility.
+    DOMString keyIdentifier = "";
+    unsigned long keyLocation;
 };

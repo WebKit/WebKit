@@ -1,3 +1,51 @@
+2016-10-09  Chris Dumez  <cdumez@apple.com>
+
+        Update KeyboardEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163176
+
+        Reviewed by Darin Adler.
+
+        Update KeyboardEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a proper constructor instead, like in the specification:
+        - https://www.w3.org/TR/uievents/#interface-keyboardevent
+
+        Also add support for passing modifierAltGraph / modifierCapsLock
+        in the inialization dictionary as we support those modifiers via
+        getModifierState().
+
+        No new tests, extended existing test.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventModifierInit.h: Added.
+        (WebCore::EventModifierInit::EventModifierInit):
+        * dom/EventModifierInit.idl: Added.
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        (WebCore::KeyboardEvent::getModifierState):
+        * dom/KeyboardEvent.h:
+        * dom/KeyboardEvent.idl:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create): Deleted.
+        * dom/UIEventInit.h: Added.
+        (WebCore::UIEventInit::UIEventInit):
+        * dom/UIEventInit.idl: Added.
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::altGraphKey):
+        (WebCore::UIEventWithKeyState::capsLockKey):
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        (WebCore::UIEventWithKeyState::ctrlKey): Deleted.
+        (WebCore::UIEventWithKeyState::shiftKey): Deleted.
+        (WebCore::UIEventWithKeyState::altKey): Deleted.
+        (WebCore::UIEventWithKeyState::metaKey): Deleted.
+
 2016-10-09  Youenn Fablet  <youenn@apple.com>
 
         Promise attribute getters should reject promises in case of casted-this errors

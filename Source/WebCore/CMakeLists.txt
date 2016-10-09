@@ -399,6 +399,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ErrorEvent.idl
     dom/Event.idl
     dom/EventInit.idl
+    dom/EventModifierInit.idl
     dom/EventTarget.idl
     dom/FocusEvent.idl
     dom/GlobalEventHandlers.idl
@@ -439,6 +440,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TransitionEvent.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
+    dom/UIEventInit.idl
     dom/WebKitAnimationEvent.idl
     dom/WebKitNamedFlow.idl
     dom/WebKitTransitionEvent.idl

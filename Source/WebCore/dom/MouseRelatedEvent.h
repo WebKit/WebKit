@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-struct MouseRelatedEventInit : public UIEventWithKeyStateInit {
+struct MouseRelatedEventInit : public EventModifierInit {
     int screenX { 0 };
     int screenY { 0 };
 };

@@ -68,7 +68,7 @@ shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: 'koakuma'
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: '' }).keyIdentifier", "");
 
 // Non-strings.
-shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: undefined }).keyIdentifier", "undefined");
+shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: undefined }).keyIdentifier", "");
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: null }).keyIdentifier", "null");
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: false }).keyIdentifier", "false");
 shouldBeEqualToString("new KeyboardEvent('eventType', { keyIdentifier: true }).keyIdentifier", "true");
@@ -120,6 +120,9 @@ shouldBe("new KeyboardEvent('eventType', { location: KeyboardEvent.DOM_KEY_LOCAT
     shouldBe("new KeyboardEvent('eventType', { " + attr + ": false })." + attr, "false");
     shouldBe("new KeyboardEvent('eventType', { " + attr + ": true })." + attr, "true");
 });
+
+shouldBeTrue("new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph')");
+shouldBeTrue("new KeyboardEvent('eventType', { modifierCapsLock: true }).getModifierState('CapsLock')");
 
 // All initializers are passed.
 shouldBe("new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles", "true");

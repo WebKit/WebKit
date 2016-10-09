@@ -25,23 +25,23 @@ PASS new KeyboardEvent('eventType', { repeat: true }).repeat is true
 PASS new KeyboardEvent('eventType', { }).isComposing is false
 PASS new KeyboardEvent('eventType', { isComposing: false }).isComposing is false
 PASS new KeyboardEvent('eventType', { isComposing: true }).isComposing is true
-PASS new KeyboardEvent('eventType', { view: testObject }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: document }).view threw exception TypeError: Dictionary member is not of type Window.
+PASS new KeyboardEvent('eventType', { view: testObject }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: document }).view threw exception TypeError: Type error.
 PASS new KeyboardEvent('eventType', { view: undefined }).view is null
 PASS new KeyboardEvent('eventType', { view: null }).view is null
-PASS new KeyboardEvent('eventType', { view: false }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: true }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: '' }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: 'chocolate' }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: 12345 }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: 18446744073709551615 }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: NaN }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { view: {valueOf: function () { return window; } } }).view threw exception TypeError: Dictionary member is not of type Window.
-PASS new KeyboardEvent('eventType', { get view() { return 123; } }).view threw exception TypeError: Dictionary member is not of type Window.
+PASS new KeyboardEvent('eventType', { view: false }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: true }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: '' }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: 'chocolate' }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: 12345 }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: 18446744073709551615 }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: NaN }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { view: {valueOf: function () { return window; } } }).view threw exception TypeError: Type error.
+PASS new KeyboardEvent('eventType', { get view() { return 123; } }).view threw exception TypeError: Type error.
 PASS new KeyboardEvent('eventType', { get view() { throw 'KeyboardEvent Error'; } }) threw exception KeyboardEvent Error.
 PASS new KeyboardEvent('eventType', { keyIdentifier: 'koakuma' }).keyIdentifier is "koakuma"
 PASS new KeyboardEvent('eventType', { keyIdentifier: '' }).keyIdentifier is ""
-PASS new KeyboardEvent('eventType', { keyIdentifier: undefined }).keyIdentifier is "undefined"
+PASS new KeyboardEvent('eventType', { keyIdentifier: undefined }).keyIdentifier is ""
 PASS new KeyboardEvent('eventType', { keyIdentifier: null }).keyIdentifier is "null"
 PASS new KeyboardEvent('eventType', { keyIdentifier: false }).keyIdentifier is "false"
 PASS new KeyboardEvent('eventType', { keyIdentifier: true }).keyIdentifier is "true"
@@ -106,6 +106,8 @@ PASS new KeyboardEvent('eventType', { shiftKey: false }).shiftKey is false
 PASS new KeyboardEvent('eventType', { shiftKey: true }).shiftKey is true
 PASS new KeyboardEvent('eventType', { metaKey: false }).metaKey is false
 PASS new KeyboardEvent('eventType', { metaKey: true }).metaKey is true
+PASS new KeyboardEvent('eventType', { modifierAltGraph: true }).getModifierState('AltGraph') is true
+PASS new KeyboardEvent('eventType', { modifierCapsLock: true }).getModifierState('CapsLock') is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).bubbles is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).cancelable is true
 PASS new KeyboardEvent('eventType', { bubbles: true, cancelable: true, view: window, detail: 111, key: 'a', code: 'KeyA', keyIdentifier: 'chocolate', location: 222, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true }).view is window

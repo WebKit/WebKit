@@ -46,8 +46,8 @@ UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelab
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer)
-    : Event(eventType, initializer)
+UIEvent::UIEvent(const AtomicString& eventType, const UIEventInit& initializer, IsTrusted isTrusted)
+    : Event(eventType, initializer, isTrusted)
     , m_view(initializer.view.get())
     , m_detail(initializer.detail)
 {
