@@ -1,3 +1,9 @@
+2016-10-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Skip new custom elements tests, they're all failing
+
+        * platform/gtk/TestExpectations:
+
 2016-10-09  Youenn Fablet  <youenn@apple.com>
 
         Promise attribute getters should reject promises in case of casted-this errors

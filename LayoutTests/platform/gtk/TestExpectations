@@ -656,6 +656,7 @@ webkit.org/b/155505 http/tests/security/contentSecurityPolicy/userAgentShadowDOM
 
 # Custom Elements API still not enabled/tested on GTK+
 webkit.org/b/156108 fast/custom-elements [ Skip ]
+webkit.org/b/156108 imported/w3c/web-platform-tests/custom-elements [ Skip ]
 
 webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
 webkit.org/b/137096 svg/custom/altglyph.svg [ Failure ]
