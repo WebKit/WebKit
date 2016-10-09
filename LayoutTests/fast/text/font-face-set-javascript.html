@@ -163,9 +163,15 @@ fontFaceSet.load("garbage").then(function(arg) {
 }).then(function(arg) {
     item = arg;
     shouldBe("item", "fontFaceSet");
-    finishJSTest();
 }, function(arg) {
     testFailed("Ready attribute should never fail");
+}).then(function() {
+    return Object.getOwnPropertyDescriptor(Object.getPrototypeOf(fontFaceSet), 'ready').get.apply(fontFace5);
+}).then(function(arg) {
+    testFailed("Ready attribute should be rejected when used with an object which is not FontFaceSet");
+    finishJSTest();
+}, function(arg) {
+    testPassed("" + arg);
     finishJSTest();
 });
 shouldBeEqualToString("fontFaceSet.status", "loaded");

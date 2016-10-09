@@ -1,3 +1,13 @@
+2016-10-09  Youenn Fablet  <youenn@apple.com>
+
+        Promise attribute getters should reject promises in case of casted-this errors
+        https://bugs.webkit.org/show_bug.cgi?id=163167
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-set-javascript-expected.txt:
+        * fast/text/font-face-set-javascript.html:
+
 2016-10-08  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Write HTML to the pasteboard when copying image in WebKit

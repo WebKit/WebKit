@@ -59,6 +59,7 @@ PASS item is fontFaceSet
 PASS fontFaceSet.status is "loaded"
 PASS fontFaceSet.status is "loading"
 PASS item is fontFaceSet
+PASS TypeError: The FontFaceSet.ready getter can only be used on instances of FontFaceSet
 PASS successfullyParsed is true
 
 TEST COMPLETE

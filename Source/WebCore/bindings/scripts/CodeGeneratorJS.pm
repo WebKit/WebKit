@@ -2920,7 +2920,12 @@ sub GenerateImplementation
 
             if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                 my $templateParameters = "${getFunctionName}Getter";
-                $templateParameters .= ", CastedThisErrorBehavior::ReturnEarly" if ($attribute->signature->extendedAttributes->{LenientThis});
+                if ($attribute->signature->extendedAttributes->{LenientThis}) {
+                    $templateParameters .= ", CastedThisErrorBehavior::ReturnEarly";
+                } elsif (IsReturningPromise($attribute)) {
+                    $templateParameters .= ", CastedThisErrorBehavior::RejectPromise";
+                }
+
                 push(@implContent, "static inline JSValue ${getFunctionName}Getter(ExecState*, ${className}*, ThrowScope& throwScope);\n\n");
 
                 push(@implContent, "EncodedJSValue ${getFunctionName}(ExecState* state, EncodedJSValue thisValue, PropertyName)\n");

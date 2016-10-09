@@ -386,6 +386,8 @@ enum TestConfidence { "high", "kinda-low" };
     attribute _optional                attributeWithReservedEnumType;
     void _any(unrestricted float a, long b);
 
+
+    readonly attribute Promise testReadOnlyPromiseAttribute;
     // Promise function
     Promise testPromiseFunction();
     Promise testPromiseFunctionWithFloatArgument(float a);

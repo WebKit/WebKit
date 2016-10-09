@@ -32,6 +32,7 @@
 #include "HTMLParserIdioms.h"
 #include "IDBDatabaseException.h"
 #include "JSDOMConvert.h"
+#include "JSDOMPromise.h"
 #include "JSDOMWindowCustom.h"
 #include "JSExceptionBase.h"
 #include "SecurityOrigin.h"
@@ -971,6 +972,11 @@ String makeGetterTypeErrorMessage(const char* interfaceName, const char* attribu
 JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* interfaceName, const char* attributeName)
 {
     return throwVMTypeError(&state, scope, makeGetterTypeErrorMessage(interfaceName, attributeName));
+}
+
+JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
+{
+    return createRejectedPromiseWithTypeError(state, makeGetterTypeErrorMessage(interfaceName, attributeName));
 }
 
 bool throwSetterTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* interfaceName, const char* attributeName)

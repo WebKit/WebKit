@@ -134,6 +134,8 @@ String makeThisTypeErrorMessage(const char* interfaceName, const char* attribute
 WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* attributeName);
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
 
+JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+
 WEBCORE_EXPORT JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject&, const JSC::ClassInfo*);
 WEBCORE_EXPORT JSC::Structure* cacheDOMStructure(JSDOMGlobalObject&, JSC::Structure*, const JSC::ClassInfo*);
 
@@ -329,7 +331,7 @@ template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFu
 template<typename T> struct NativeValueTraits;
 
 
-enum class CastedThisErrorBehavior { Throw, ReturnEarly };
+enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise };
 
 template<typename JSClass>
 struct BindingCaller {
@@ -343,8 +345,11 @@ struct BindingCaller {
         auto* thisObject = JSClass::castForAttribute(state, thisValue);
         if (UNLIKELY(!thisObject)) {
             ASSERT(JSClass::info());
-            return shouldThrow == CastedThisErrorBehavior::Throw ?
-                throwGetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : JSC::JSValue::encode(JSC::jsUndefined());
+            if (shouldThrow == CastedThisErrorBehavior::Throw)
+                return throwGetterTypeError(*state, throwScope, JSClass::info()->className, attributeName);
+            if (shouldThrow == CastedThisErrorBehavior::RejectPromise)
+                return rejectPromiseWithGetterTypeError(*state, JSClass::info()->className, attributeName);
+            return JSC::JSValue::encode(JSC::jsUndefined());
         }
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
         return JSC::JSValue::encode(getter(state, thisObject, throwScope));
