@@ -1,5 +1,28 @@
 2016-10-08  Chris Dumez  <cdumez@apple.com>
 
+        [Mac] Write HTML to the pasteboard when copying image in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=163100
+
+        Reviewed by Darin Adler.
+
+        Convert editing/pasteboard/copy-standalone-image.html into a ref test
+        and unskip on WebKit2 now that it passes there as well. Before this
+        patch, the test would fail on WebKit2 (the pasted image would not be
+        displayed).
+
+        * editing/pasteboard/copy-standalone-image-expected.html: Added.
+        * editing/pasteboard/copy-standalone-image.html:
+        * platform/gtk/editing/pasteboard/copy-standalone-image-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/ios-simulator-wk2/editing/pasteboard/copy-standalone-image-expected.png: Removed.
+        * platform/ios-simulator/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/copy-standalone-image-expected.png: Removed.
+        * platform/mac/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/win/editing/pasteboard/copy-standalone-image-expected.txt: Removed.
+        * platform/wk2/TestExpectations:
+
+2016-10-08  Chris Dumez  <cdumez@apple.com>
+
         Update CustomEvent to stop using legacy [ConstructorTemplate=Event]
         https://bugs.webkit.org/show_bug.cgi?id=163174
 

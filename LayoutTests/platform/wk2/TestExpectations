@@ -511,9 +511,6 @@ transitions/text-indent-transition.html
 # These storage tests fail in WebKit2 on the bot, but not running locally
 storage/websql/multiple-databases-garbage-collection.html
 
-# Crashes the WebProcess
-editing/pasteboard/copy-standalone-image.html
-
 # Mysterious failure after enabling paste tests
 editing/mac/pasteboard/text-precomposed.html
 

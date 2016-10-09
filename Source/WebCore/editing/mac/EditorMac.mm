@@ -310,6 +310,14 @@ RefPtr<SharedBuffer> Editor::selectionInWebArchiveFormat()
     return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
 }
 
+RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
+{
+    RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(imageElement);
+    if (!archive)
+        return nullptr;
+    return SharedBuffer::wrapCFData(archive->rawDataRepresentation().get());
+}
+
 RefPtr<Range> Editor::adjustedSelectionRange()
 {
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in?
@@ -436,6 +444,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
         return;
     ASSERT(cachedImage);
 
+    pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
     pasteboardImage.url.userVisibleForm = client()->userVisibleString(pasteboardImage.url.url);
