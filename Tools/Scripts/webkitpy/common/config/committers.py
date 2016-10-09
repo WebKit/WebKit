@@ -92,7 +92,7 @@ class Contributor(object):
                 return True
         return False
 
-    def __dict__(self):
+    def as_dict(self):
         info = {"emails" : self._case_preserved_emails}
 
         if self.irc_nicknames:
@@ -156,7 +156,7 @@ class CommitterList(object):
     def _contributor_list_to_dict(list):
         committers_dict = {}
         for contributor in sorted(list):
-            committers_dict[contributor.full_name] = contributor.__dict__()
+            committers_dict[contributor.full_name] = contributor.as_dict()
         return committers_dict
 
     def as_json(self):
