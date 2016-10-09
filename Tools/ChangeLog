@@ -1,3 +1,55 @@
+2016-10-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Add support for canonicalizing contributors.json, and have check-webkit-style check the format.
+        https://bugs.webkit.org/show_bug.cgi?id=163177
+
+        Reviewed by Ryosuke Niwa.
+        
+        Make it possible to round-trip contributors.json through CommitterList, so we can
+        support writing out contributors.json in canonical format. This requires saving
+        the case-preserved email and expertise in Contributor. CommitterList also needs
+        to be able to generate the "exclusive" lists, since it currently uses lists
+        that are the union of, say, committers and reviewers.
+        
+        If contributors.json is malformed (invalid JSON), catch the Exception, report it
+        and exit rather than allowing the exception to propagate. With an invalid file,
+        an exception would be thrown before the JSON style checker reached this file, so
+        the error was not correctly reported.
+        
+        Add style/checker/committer.py for checking that committers.json has the canonical format.
+        
+        Add support to validate-committer-lists to dump out the canonical json (-d) or update
+        the file in-place (-c).
+
+        * Scripts/validate-committer-lists:
+        (CommitterListFromGit._print_three_column_row):
+        (CommitterListFromGit.possibly_expired_committers):
+        (CommitterListFromGit):
+        (CommitterListFromGit.print_possibly_expired_committers):
+        (main):
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__init__):
+        (Contributor.__dict__):
+        (Committer.__init__):
+        (Reviewer.__init__):
+        (CommitterList.load_json):
+        (CommitterList):
+        (CommitterList._contributor_list_to_dict):
+        (CommitterList.as_json):
+        (CommitterList.reformat_in_place):
+        (CommitterList._exclusive_contributors):
+        (CommitterList._exclusive_committers):
+        (Contributor.matches_glob): Deleted.
+        (CommitterList.contributors): Deleted.
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/contributors.py: Added.
+        (ContributorsChecker):
+        (ContributorsChecker.__init__):
+        (ContributorsChecker.check):
+        (ContributorsChecker._unidiff_output):
+
 2016-10-06  Darin Adler  <darin@apple.com>
 
         Next step on moving to modern way to return DOM exceptions

@@ -31,17 +31,14 @@
 
 import fnmatch
 import json
+import sys
 
 from webkitpy.common.editdistance import edit_distance
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
 
-
-# The list of contributors have been moved to contributors.json
-
-
 class Contributor(object):
-    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None):
+    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, expertise=None):
         assert(name)
         assert(email_or_emails)
         self.full_name = name
@@ -49,11 +46,13 @@ class Contributor(object):
             self.emails = [email_or_emails]
         else:
             self.emails = email_or_emails
+        self._case_preserved_emails = self.emails
         self.emails = map(lambda email: email.lower(), self.emails)  # Emails are case-insensitive.
         if isinstance(irc_nickname_or_nicknames, str):
             self.irc_nicknames = [irc_nickname_or_nicknames]
         else:
             self.irc_nicknames = irc_nickname_or_nicknames
+        self.expertise = expertise
         self.can_commit = False
         self.can_review = False
 
@@ -93,16 +92,26 @@ class Contributor(object):
                 return True
         return False
 
+    def __dict__(self):
+        info = {"emails" : self._case_preserved_emails}
+
+        if self.irc_nicknames:
+            info["nicks"] = self.irc_nicknames
+
+        if self.expertise:
+            info["expertise"] = self.expertise
+
+        return info
 
 class Committer(Contributor):
-    def __init__(self, name, email_or_emails, irc_nickname=None):
-        Contributor.__init__(self, name, email_or_emails, irc_nickname)
+    def __init__(self, name, email_or_emails, irc_nickname=None, expertise=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname, expertise)
         self.can_commit = True
 
 
 class Reviewer(Committer):
-    def __init__(self, name, email_or_emails, irc_nickname=None):
-        Committer.__init__(self, name, email_or_emails, irc_nickname)
+    def __init__(self, name, email_or_emails, irc_nickname=None, expertise=None):
+        Committer.__init__(self, name, email_or_emails, irc_nickname, expertise)
         self.can_review = True
 
 
@@ -132,17 +141,50 @@ class CommitterList(object):
     def load_json():
         filesystem = FileSystem()
         json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
-        contributors = json.loads(filesystem.read_text_file(json_path))
+        try:
+            contributors = json.loads(filesystem.read_text_file(json_path))
+        except ValueError, e:
+            sys.exit('contributors.json is malformed: ' + str(e))
 
         return {
-            'Contributors': [Contributor(name, data.get('emails'), data.get('nicks')) for name, data in contributors['Contributors'].iteritems()],
-            'Committers': [Committer(name, data.get('emails'), data.get('nicks')) for name, data in contributors['Committers'].iteritems()],
-            'Reviewers': [Reviewer(name, data.get('emails'), data.get('nicks')) for name, data in contributors['Reviewers'].iteritems()],
+            'Contributors': [Contributor(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Contributors'].iteritems()],
+            'Committers':   [Committer(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Committers'].iteritems()],
+            'Reviewers':    [Reviewer(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Reviewers'].iteritems()],
         }
 
+    @staticmethod
+    def _contributor_list_to_dict(list):
+        committers_dict = {}
+        for contributor in sorted(list):
+            committers_dict[contributor.full_name] = contributor.__dict__()
+        return committers_dict
+
+    def as_json(self):
+        result = {
+            'Contributors': CommitterList._contributor_list_to_dict(self._exclusive_contributors()),
+            'Committers':   CommitterList._contributor_list_to_dict(self._exclusive_committers()),
+            'Reviewers':    CommitterList._contributor_list_to_dict(self._reviewers)
+        }
+        return json.dumps(result, sort_keys=True, indent=3, separators=(',', ' : '))
+
+    def reformat_in_place(self):
+        filesystem = FileSystem()
+        json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
+        filesystem.write_text_file(json_path, self.as_json())
+
+    # Contributors who are not in any other category.
+    def _exclusive_contributors(self):
+        return filter(lambda contributor: not (contributor.can_commit or contributor.can_review), self._contributors)
+
+    # Committers who are not reviewers.
+    def _exclusive_committers(self):
+        return filter(lambda contributor: contributor.can_commit and not contributor.can_review, self._committers)
+
+    # This is the superset of contributors + committers + reviewers
     def contributors(self):
         return self._contributors
 
+    # This is the superset of committers + reviewers
     def committers(self):
         return self._committers
 

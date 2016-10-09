@@ -38,6 +38,7 @@ import sys
 
 from checkers.common import categories as CommonCategories
 from checkers.common import CarriageReturnChecker
+from checkers.contributors import ContributorsChecker
 from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
 from checkers.cmake import CMakeChecker
@@ -603,9 +604,12 @@ class CheckerDispatcher(object):
                 checker = TextChecker(file_path, handle_style_error)
         elif file_type == FileType.JSON:
             basename = os.path.basename(file_path)
-            if commit_queue and basename == 'contributors.json':
-                checker = JSONContributorsChecker(file_path, handle_style_error)
-            if basename == 'features.json':
+            if basename == 'contributors.json':
+                if commit_queue:
+                    checker = JSONContributorsChecker(file_path, handle_style_error)
+                else:
+                    checker = ContributorsChecker(file_path, handle_style_error)
+            elif basename == 'features.json':
                 checker = JSONFeaturesChecker(file_path, handle_style_error)
             else:
                 checker = JSONChecker(file_path, handle_style_error)

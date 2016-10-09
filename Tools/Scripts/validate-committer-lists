@@ -215,19 +215,27 @@ class CommitterListFromGit(object):
     def _print_three_column_row(widths, values):
         print "%s%s%s" % (values[0].ljust(widths[0]), values[1].ljust(widths[1]), values[2])
 
-    def print_possibly_expired_committers(self, committer_list):
+    def possibly_expired_committers(self, committer_list):
         authors_and_last_commits = self._last_commit_by_author().items()
         authors_and_last_commits.sort(lambda a,b: cmp(a[1], b[1]), reverse=True)
-        committer_cuttof = date.today() - timedelta(days=365)
+        committer_cutof = date.today() - timedelta(days=365)
+        retired_authors_and_last_commits = []
+        for (author, last_commit) in authors_and_last_commits:
+            last_commit_date = date.fromtimestamp(last_commit)
+            if committer_cutof > last_commit_date:
+                retired_authors_and_last_commits.append((author, last_commit))
+        return retired_authors_and_last_commits
+
+    def print_possibly_expired_committers(self, committer_list):
+        retired_authors_and_last_commits = self.possibly_expired_committers(committer_list)
         column_widths = [13, 25]
         print
         print "Committers who have not committed within one year:"
         self._print_three_column_row(column_widths, ("Last Commit", "Committer Email", "Committer Record"))
-        for (author, last_commit) in authors_and_last_commits:
+        for (author, last_commit) in retired_authors_and_last_commits:
+            committer_record = committer_list.committer_by_email(author)
             last_commit_date = date.fromtimestamp(last_commit)
-            if committer_cuttof > last_commit_date:
-                committer_record = committer_list.committer_by_email(author)
-                self._print_three_column_row(column_widths, (str(last_commit_date), author, committer_record))
+            self._print_three_column_row(column_widths, (str(last_commit_date), author, committer_record))
 
     def print_committers_missing_from_committer_list(self, committer_list):
         missing_from_contributors_json = []
@@ -265,9 +273,22 @@ class CommitterListBugzillaChecker(object):
 def main():
     parser = OptionParser()
     parser.add_option("-b", "--check-bugzilla-emails", action="store_true", help="Check the bugzilla_email for each committer against bugs.webkit.org")
+    parser.add_option("-d", "--dump", action="store_true", help="Dump the contributor list as JSON to stdout (suitable for saving to contributors.json)")
+    parser.add_option("-c", "--canonicalize", action="store_true", help="Canonicalize contributors.json, rewriting it in-place")
+
     (options, args) = parser.parse_args()
 
     committer_list = CommitterList()
+    if options.dump:
+        print committer_list.as_json()
+        return 0;
+
+    if options.canonicalize:
+        print "Updating contributors.json in-place..."
+        committer_list.reformat_in_place()
+        print "Done"
+        return 0;
+
     CommitterListFromMailingList().check_for_emails_missing_from_list(committer_list)
  
     if not Git.in_working_directory("."):
@@ -277,6 +298,7 @@ The following checks are disabled:
  - List of historical committers missing from contributors.json
 """
         return 1
+
     svn_committer_list = CommitterListFromGit()
     svn_committer_list.print_possibly_expired_committers(committer_list)
     svn_committer_list.print_committers_missing_from_committer_list(committer_list)
