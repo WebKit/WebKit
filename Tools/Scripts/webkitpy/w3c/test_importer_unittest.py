@@ -164,27 +164,37 @@ class TestImporterTest(unittest.TestCase):
         # FIXME: Mock-up of git cannot use submodule command, hence the json file is empty, but still it should be created
         #self.assertTrue('https://github.com/w3c/testharness.js/archive/db4d391a69877d4a1eaaf51d1725c99a5b8ed84.tar.gz' in fs.read_text_file('/mock-checkout/LayoutTests/w3c/resources/web-platform-tests-modules.json'))
 
-    def test_tests_directory(self):
+    def test_skip_test_import(self):
         FAKE_FILES = {
             '/mock-checkout/WebKitBuild/w3c-tests/streams-api/reference-implementation/web-platform-tests/test.html': '<!doctype html><script src="/resources/testharness.js"></script><script src="/resources/testharnessreport.js"></script>',
-    '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
+            '/mock-checkout/LayoutTests/imported/w3c/resources/TestRepositories': '''
 [
     {
-        "name": "streams-api",
-        "url": "https://github.com/whatwg/streams.git",
+        "name": "web-platform-tests",
+        "url": "https://github.com/myrepo",
         "revision": "7cc96dd",
-        "tests_directory": "reference-implementation/web-platform-tests",
         "paths_to_skip": [],
         "paths_to_import": [],
         "import_options": []
      }
-]
-'''}
+]''',
+            '/mock-checkout/LayoutTests/imported/w3c/resources/ImportExpectations': '''
+web-platform-tests/dir-to-skip [ Skip ]
+web-platform-tests/dir-to-skip/dir-to-import [ Pass ]
+web-platform-tests/dir-to-skip/file-to-import.html [ Pass ]
+''',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/test-to-skip.html': 'to be skipped',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html': 'to be imported',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html': 'to be skipped',
+            '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests/dir-to-skip/file-to-import.html': 'to be imported',
+        }
 
-        fs = self.import_downloaded_tests(['--no-fetch', '--import-all', '-d', 'w3c'], FAKE_FILES)
+        fs = self.import_downloaded_tests(['--no-fetch', '-d', 'w3c'], FAKE_FILES)
 
-        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/streams-api/reference-implementation/web-platform-tests/test.html'))
-        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/streams-api/test.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/file-to-import.html'))
+        self.assertTrue(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-import/test-to-import.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/dir-to-not-import/test-to-not-import.html'))
+        self.assertFalse(fs.exists('/mock-checkout/LayoutTests/w3c/web-platform-tests/dir-to-skip/test-to-skip.html'))
 
     def test_clean_directory_option(self):
         FAKE_FILES = {
