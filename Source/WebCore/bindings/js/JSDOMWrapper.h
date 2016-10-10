@@ -59,6 +59,7 @@ public:
     static constexpr bool isDOMWrapper = true;
 
     ImplementationClass& wrapped() const { return const_cast<ImplementationClass&>(m_wrapped.get()); }
+    static ptrdiff_t offsetOfWrapped() { return OBJECT_OFFSETOF(JSDOMWrapper<ImplementationClass>, m_wrapped); }
 
 protected:
     JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)

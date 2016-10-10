@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCore_FWD_DOMJITGetterSetter_h
-#define WebCore_FWD_DOMJITGetterSetter_h
-#include <JavaScriptCore/DOMJITGetterSetter.h>
+#ifndef WebCore_FWD_DOMJITPatchpoint_h
+#define WebCore_FWD_DOMJITPatchpoint_h
+#include <JavaScriptCore/DOMJITPatchpoint.h>
 #endif

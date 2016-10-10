@@ -641,6 +641,7 @@ sub GetJSCAttributesForAttribute
     push(@specials, "DontEnum") if ($attribute->signature->extendedAttributes->{NotEnumerable} || $is_global_constructor);
     push(@specials, "ReadOnly") if IsReadonly($attribute);
     push(@specials, "CustomAccessor") unless $is_global_constructor or IsJSBuiltin($interface, $attribute);
+    push(@specials, "DOMJITAttribute") if $attribute->signature->extendedAttributes->{"DOMJIT"};
     push(@specials, "Accessor | Builtin") if  IsJSBuiltin($interface, $attribute);
     return (@specials > 0) ? join(" | ", @specials) : "0";
 }
@@ -1418,6 +1419,8 @@ sub GenerateHeader
     my $hasForwardDeclaringFunctions = 0;
     my $hasForwardDeclaringAttributes = 0;
 
+    my $hasDOMJITAttributes = 0;
+
     # Attribute and function enums
     if ($numAttributes > 0) {
         push(@headerContent, "    static ${className}* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);\n");
@@ -1434,6 +1437,7 @@ sub GenerateHeader
                 $needsVisitChildren = 1;
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
+            $hasDOMJITAttributes = 1 if $attribute->signature->extendedAttributes->{"DOMJIT"};
 
             $hasForwardDeclaringAttributes = 1 if $attribute->signature->extendedAttributes->{ForwardDeclareInHeader};
         }
@@ -1641,6 +1645,29 @@ sub GenerateHeader
         }
     }
 
+    if ($hasDOMJITAttributes) {
+        $headerIncludes{"<domjit/DOMJITGetterSetter.h>"} = 1;
+        push(@headerContent,"// DOMJIT emitters for attributes\n\n");
+        foreach my $attribute (@{$interface->attributes}) {
+            next unless $attribute->signature->extendedAttributes->{"DOMJIT"};
+
+            my $interfaceName = $interface->name;
+            my $className = $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name);
+            my $domJITClassName = $className . "DOMJIT";
+
+            push(@headerContent, "JSC::DOMJIT::GetterSetter* domJITGetterSetterFor$className(void);\n");
+
+            push(@headerContent, "class $domJITClassName : public JSC::DOMJIT::GetterSetter {\n");
+            push(@headerContent, "public:\n");
+            push(@headerContent, "    $domJITClassName();\n");
+            push(@headerContent, "#if ENABLE(JIT)\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> callDOM() override;\n");
+            push(@headerContent, "#endif\n");
+            push(@headerContent, "};\n\n");
+        }
+    }
+
     if (HasCustomConstructor($interface)) {
         push(@headerContent, "// Custom constructor\n");
         push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState&);\n\n");
@@ -1720,14 +1747,19 @@ sub GeneratePropertiesHashTable
         my $special = GetJSCAttributesForAttribute($interface, $attribute);
         push(@$hashSpecials, $special);
 
-        my $getter = GetAttributeGetterName($interface, $className, $attribute);
-        push(@$hashValue1, $getter);
-
-        if (IsReadonly($attribute)) {
+        if ($attribute->signature->extendedAttributes->{"DOMJIT"}) {
+            push(@$hashValue1, "domJITGetterSetterFor" . $interface->name . $codeGenerator->WK_ucfirst($attribute->signature->name));
             push(@$hashValue2, "0");
         } else {
-            my $setter = GetAttributeSetterName($interface, $className, $attribute);
-            push(@$hashValue2, $setter);
+            my $getter = GetAttributeGetterName($interface, $className, $attribute);
+            push(@$hashValue1, $getter);
+
+            if (IsReadonly($attribute)) {
+                push(@$hashValue2, "0");
+            } else {
+                my $setter = GetAttributeSetterName($interface, $className, $attribute);
+                push(@$hashValue2, $setter);
+            }
         }
 
         my $conditional = $attribute->signature->extendedAttributes->{Conditional};
@@ -2506,17 +2538,23 @@ sub GenerateImplementation
             my @specials = ();
             push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{Deletable};
             push(@specials, "ReadOnly") if IsReadonly($attribute);
+            push(@specials, "DOMJITAttribute") if $attribute->signature->extendedAttributes->{"DOMJIT"};
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
             push(@hashSpecials, $special);
 
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@hashValue1, $getter);
-
-            if (IsReadonly($attribute)) {
+            if ($attribute->signature->extendedAttributes->{"DOMJIT"}) {
+                push(@hashValue1, "domJITGetterSetterFor" . $interface->name . $codeGenerator->WK_ucfirst($attribute->signature->name));
                 push(@hashValue2, "0");
             } else {
-                my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@hashValue2, $setter);
+                my $getter = GetAttributeGetterName($interface, $className, $attribute);
+                push(@hashValue1, $getter);
+
+                if (IsReadonly($attribute)) {
+                    push(@hashValue2, "0");
+                } else {
+                    my $setter = GetAttributeSetterName($interface, $className, $attribute);
+                    push(@hashValue2, $setter);
+                }
             }
 
             my $conditional = $attribute->signature->extendedAttributes->{Conditional};
@@ -3093,6 +3131,26 @@ sub GenerateImplementation
             }
 
             push(@implContent, "}\n\n");
+
+            if ($attribute->signature->extendedAttributes->{"DOMJIT"}) {
+                $implIncludes{"<wtf/NeverDestroyed.h>"} = 1;
+                my $interfaceName = $interface->name;
+                my $attributeName = $attribute->signature->name;
+                my $generatorName = $interfaceName . $codeGenerator->WK_ucfirst($attribute->signature->name);
+                my $domJITClassName = $generatorName . "DOMJIT";
+                my $getter = GetAttributeGetterName($interface, $generatorName, $attribute);
+                my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $generatorName, $attribute);
+                push(@implContent, "$domJITClassName::$domJITClassName()\n");
+                push(@implContent, "    : JSC::DOMJIT::GetterSetter($getter, $setter, ${className}::info())\n");
+                push(@implContent, "{\n");
+                push(@implContent, "}\n\n");
+
+                push(@implContent, "JSC::DOMJIT::GetterSetter* domJITGetterSetterFor" . $generatorName . "()\n");
+                push(@implContent, "{\n");
+                push(@implContent, "    static NeverDestroyed<$domJITClassName> compiler;\n");
+                push(@implContent, "    return &compiler.get();\n");
+                push(@implContent, "}\n\n");
+            }
 
             push(@implContent, "#endif\n\n") if $attributeConditionalString;
         }
@@ -5094,6 +5152,8 @@ sub GenerateHashTableValueArray
             $firstTargetType = "static_cast<BuiltinGenerator>";
         } elsif ("@$specials[$i]" =~ m/ConstantInteger/) {
             $firstTargetType = "";
+        } elsif ("@$specials[$i]" =~ m/DOMJITAttribute/) {
+            $firstTargetType = "static_cast<DOMJITGetterSetterGenerator>";
         } else {
             $firstTargetType = "static_cast<PropertySlot::GetValueFunc>";
             $secondTargetType = "static_cast<PutPropertySlot::PutValueFunc>";

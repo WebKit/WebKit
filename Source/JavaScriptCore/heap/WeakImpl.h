@@ -51,7 +51,9 @@ public:
     void setState(State);
 
     const JSValue& jsValue();
+    static ptrdiff_t offsetOfJSValue() { return OBJECT_OFFSETOF(WeakImpl, m_jsValue); }
     WeakHandleOwner* weakHandleOwner();
+    static ptrdiff_t offsetOfWeakHandleOwner() { return OBJECT_OFFSETOF(WeakImpl, m_weakHandleOwner); }
     void* context();
 
     static WeakImpl* asWeakImpl(JSValue*);

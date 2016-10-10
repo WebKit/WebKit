@@ -1,3 +1,15 @@
+2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Node accessors in DOMJIT
+        https://bugs.webkit.org/show_bug.cgi?id=163005
+
+        Reviewed by Filip Pizlo.
+
+        * js/dom/domjit-accessor-monomorphic-expected.txt: Added.
+        * js/dom/domjit-accessor-monomorphic.html: Added.
+        * js/dom/domjit-accessor-polymorphic-expected.txt: Added.
+        * js/dom/domjit-accessor-polymorphic.html: Added.
+
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking media/controls/airplay-picker.html as flaky on ElCapitan+.

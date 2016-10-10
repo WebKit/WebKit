@@ -47,12 +47,12 @@
     [SetterMayThrowLegacyException] attribute DOMString? nodeValue;
 
     readonly attribute unsigned short nodeType;
-    readonly attribute Node? parentNode;
+    [DOMJIT] readonly attribute Node? parentNode;
     readonly attribute NodeList childNodes;
-    readonly attribute Node? firstChild;
-    readonly attribute Node? lastChild;
-    readonly attribute Node? previousSibling;
-    readonly attribute Node? nextSibling;
+    [DOMJIT] readonly attribute Node? firstChild;
+    [DOMJIT] readonly attribute Node? lastChild;
+    [DOMJIT] readonly attribute Node? previousSibling;
+    [DOMJIT] readonly attribute Node? nextSibling;
     readonly attribute Document? ownerDocument;
 
     [Custom, MayThrowLegacyException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);

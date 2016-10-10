@@ -30,5 +30,6 @@
 // macro(OperationType, ArgType1, ArgType2, ...)
 #define DOMJIT_SLOW_PATH_CALLS(macro) \
     macro(J_JITOperation_EP, JSValueRegs, GPRReg) \
+    macro(J_JITOperation_EGP, JSValueRegs, GPRReg, GPRReg) \
 
 #endif

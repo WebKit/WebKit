@@ -72,6 +72,7 @@ namespace WebCore {
 
         DOMWrapperWorld& world() { return m_world.get(); }
         bool worldIsNormal() const { return m_worldIsNormal; }
+        static ptrdiff_t offsetOfWorldIsNormal() { return OBJECT_OFFSETOF(JSDOMGlobalObject, m_worldIsNormal); }
 
         JSBuiltinInternalFunctions& builtinInternalFunctions() { return m_builtinInternalFunctions; }
 
@@ -95,7 +96,7 @@ namespace WebCore {
 
         Event* m_currentEvent;
         Ref<DOMWrapperWorld> m_world;
-        bool m_worldIsNormal;
+        uint8_t m_worldIsNormal;
 
     private:
         void addBuiltinGlobals(JSC::VM&);

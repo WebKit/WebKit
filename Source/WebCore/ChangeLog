@@ -1,3 +1,132 @@
+2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Node accessors in DOMJIT
+        https://bugs.webkit.org/show_bug.cgi?id=163005
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements DOMJIT accessors in WebCore. We plan to offer 2 things in DOMJIT.
+
+            1. Hand written DOM inlining.
+
+            We inject DOMJIT::Patchpoint compiler into JSC. And JSC uses this to inline DOM operation,
+            and drop type checks. Since the operation is fully inlined, potentially it has large
+            performance boost. Note that CSS Selector JIT compiler already does the similar things:
+            accessing parentNode etc. directly by using offsets.
+
+            2. Exposing signature information.
+
+            We will offer function type signature by some representation and pass it to JSC.
+            JSC will use to drop type checks. Since IDL code generator already knows this,
+            we can automatically generate such a information. Since we don't perform any inlining,
+            the performance boost may be limited. But it's worth doing.
+
+        This patch implements the first one, hand written DOM inlining facility. We add a new IDL attribute,
+        "DOMJIT". This means that "This readonly attribute have a DOMJIT patchpoint compiler".
+        We annotate several accessors at first. "firstChild", "lastChild", "nextSibling", "previousSibling",
+        and "parentNode". And we implement DOMJIT::Patchpoint for that in JSNodeDOMJIT.cpp.
+
+        This patchpoint will be integrated into JSC's DFG and FTL. And these tiers can drop type checks and
+        inline the entire code of these accessors. JSC compiler still does not know much about DOM. And WebCore
+        does not know much about each tier of JSC. WebCore just offers the generic patchpoints and they are
+        used in both DFG and FTL tiers. The layer separation is still kept.
+
+        While very small microbenchmark[1] shows performance benefit, still we cannot improve DOM
+        benchmarks due to the lack of following implementations. Once the following implementations
+        are implemented, we will get performance boost.
+
+        1. Super polymorphic sites.
+
+            This inlining is super effective if we run some microbenchmarks. However, Dromaeo does not
+            show so much performance benefit. This is because Dromaeo's dom-traverse.html is super
+            polymorphic call site where JSC gives up optimization. For example, in the following
+            dromaeo's benchmark, we can see so various DOM nodes at the `cur.firstChild` site, like,
+            HTMLDivElement, HTMLAnchorElement, Text, Comment etc. JSC gives up optimization since we
+            encounter so many Structures. This should be optimized since they share the large part of
+            prototype-chain and they hit the exactly same CustomGetter, Node.prototype.firstChild.
+            We will handle this and when we optimize it, this DOMJIT works well on Dromaeo.
+
+                test( "firstChild", function(){
+                    var nodes = document.body.childNodes, nl = nodes.length;
+
+                    for ( var i = 0; i < num; i++ ) {
+                        for ( var j = 0; j < nl; j++ ) {
+                            var cur = nodes[j];
+                            while ( cur )
+                                cur = cur.firstChild;
+                            ret = cur;
+                        }
+                    }
+                });
+
+        2. Emit code in IC.
+
+            Currently, we only optimize DOMJIT accessors in DFG and FTL. However, we should leverage
+            this DOMJIT::Patchpoint to emit inlined code even in Inline Caching (IC). We will emit
+            CheckDOM's code for IC's guard phase, and emit CallDOM's code for IC's get phase. This
+            offers performance benefit even if we live in baseline JIT code. And this should be easy.
+
+        [1]: With the following one, we can see 3x improvement (26ms v.s. 80ms).
+
+            var element = document.getElementsByTagName('div')[3];
+            var before = Date.now();
+            for (var i = 0; i < 1e7; ++i)
+                element.firstChild;
+            console.log(Date.now() - before);
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/domjit/DOMJITGetterSetter.h:
+        * ForwardingHeaders/domjit/DOMJITPatchpoint.h: Copied from Source/JavaScriptCore/domjit/DOMJITSlowPathCalls.h.
+        * ForwardingHeaders/domjit/DOMJITPatchpointParams.h: Copied from Source/JavaScriptCore/domjit/DOMJITSlowPathCalls.h.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::offsetOfWrapped):
+        (WebCore::JSDOMWrapper::wrapped): Deleted.
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::offsetOfWrapper):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetJSCAttributesForAttribute):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        (GenerateHashTableValueArray):
+        * bindings/scripts/IDLAttributes.txt:
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::lastChildMemoryOffset):
+        (WebCore::ContainerNode::lastChild): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::flagIsContainer):
+        (WebCore::Node::flagIsText): Deleted.
+        * dom/Node.idl:
+        * domjit/DOMJITHelpers.h: Added.
+        (WebCore::DOMJITHelpers::branchIfNotWorldIsNormal):
+        (WebCore::DOMJITHelpers::branchIfNotWeakIsLive):
+        (WebCore::DOMJITHelpers::tryLookUpWrapperCache):
+        (WebCore::DOMJITHelpers::toWrapper):
+        (WebCore::DOMJITHelpers::branchIfDOMWrapper):
+        (WebCore::DOMJITHelpers::branchIfNotDOMWrapper):
+        (WebCore::DOMJITHelpers::branchIfNode):
+        (WebCore::DOMJITHelpers::branchIfNotNode):
+        (WebCore::DOMJITHelpers::branchIfElement):
+        (WebCore::DOMJITHelpers::branchIfNotElement):
+        (WebCore::DOMJITHelpers::branchIfDocumentWrapper):
+        (WebCore::DOMJITHelpers::branchIfNotDocumentWrapper):
+        * domjit/JSNodeDOMJIT.cpp: Added.
+        (WebCore::toWrapperSlow):
+        (WebCore::createCallDOMForOffsetAccess):
+        (WebCore::checkNode):
+        (WebCore::NodeFirstChildDOMJIT::checkDOM):
+        (WebCore::NodeFirstChildDOMJIT::callDOM):
+        (WebCore::NodeLastChildDOMJIT::checkDOM):
+        (WebCore::NodeLastChildDOMJIT::callDOM):
+        (WebCore::NodeNextSiblingDOMJIT::checkDOM):
+        (WebCore::NodeNextSiblingDOMJIT::callDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::checkDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::callDOM):
+        (WebCore::NodeParentNodeDOMJIT::checkDOM):
+        (WebCore::NodeParentNodeDOMJIT::callDOM):
+
 2016-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support InputEvent.data for the new InputEvent spec

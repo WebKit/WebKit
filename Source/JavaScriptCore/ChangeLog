@@ -1,3 +1,32 @@
+2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Node accessors in DOMJIT
+        https://bugs.webkit.org/show_bug.cgi?id=163005
+
+        Reviewed by Filip Pizlo.
+
+        Add some helper methods and offsetOfXXX for JSC::Weak since it is used
+        for DOM wrapper caching.
+
+        And make DOMJIT::Patchpoint in FTL closer to one in DFG. We add resultConstraint
+        to avoid the situation that the same register is allocated to child and result.
+
+        We also extend DOMJIT::Patchpoint to tell useTagTypeNumberRegister / useTagMaskRegister.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * domjit/DOMJITSlowPathCalls.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * heap/WeakImpl.h:
+        (JSC::WeakImpl::offsetOfJSValue):
+        (JSC::WeakImpl::offsetOfWeakHandleOwner):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::boxCell):
+        (JSC::AssemblyHelpers::boxInt32): Deleted.
+        * jit/JITOperations.h:
+
 2016-10-09  Filip Pizlo  <fpizlo@apple.com>
 
         Air should expose API for pinning registers

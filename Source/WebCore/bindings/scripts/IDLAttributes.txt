@@ -55,6 +55,7 @@ CustomReturn
 CustomSetPrototype
 CustomSetter
 CustomToJSObject
+DOMJIT
 Deletable
 DoNotCheckConstants
 DoNotCheckSecurity

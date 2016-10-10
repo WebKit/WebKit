@@ -1204,6 +1204,16 @@ public:
         move(TrustedImm32(JSValue::Int32Tag), boxedRegs.tagGPR());
 #endif
     }
+
+    void boxCell(GPRReg cellGPR, JSValueRegs boxedRegs)
+    {
+#if USE(JSVALUE64)
+        move(cellGPR, boxedRegs.gpr());
+#else
+        move(cellGPR, boxedRegs.payloadGPR());
+        move(TrustedImm32(JSValue::CellTag), boxedRegs.tagGPR());
+#endif
+    }
     
     void callExceptionFuzz();
     

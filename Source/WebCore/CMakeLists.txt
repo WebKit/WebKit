@@ -49,6 +49,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
+    "${WEBCORE_DIR}/domjit"
     "${WEBCORE_DIR}/editing"
     "${WEBCORE_DIR}/fileapi"
     "${WEBCORE_DIR}/history"
@@ -1528,6 +1529,8 @@ set(WebCore_SOURCES
     dom/WheelEvent.cpp
 
     dom/default/PlatformMessagePortChannel.cpp
+
+    domjit/JSNodeDOMJIT.cpp
 
     editing/AlternativeTextController.cpp
     editing/AppendNodeCommand.cpp
