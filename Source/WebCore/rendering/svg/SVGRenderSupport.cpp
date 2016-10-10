@@ -439,10 +439,18 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext* context, const
     else {
         DashArray dashArray;
         dashArray.reserveInitialCapacity(dashes.size());
-        for (auto& dash : dashes)
-            dashArray.uncheckedAppend(dash.value(lengthContext));
+        bool canSetLineDash = false;
 
-        context->setLineDash(dashArray, lengthContext.valueForLength(svgStyle.strokeDashOffset()));
+        for (auto& dash : dashes) {
+            dashArray.uncheckedAppend(dash.value(lengthContext));
+            if (dashArray.last() > 0)
+                canSetLineDash = true;
+        }
+
+        if (canSetLineDash)
+            context->setLineDash(dashArray, lengthContext.valueForLength(svgStyle.strokeDashOffset()));
+        else
+            context->setStrokeStyle(SolidStroke);
     }
 }
 
