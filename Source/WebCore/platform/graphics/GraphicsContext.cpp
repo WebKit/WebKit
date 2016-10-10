@@ -964,7 +964,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags)
 }
 #endif
 
-#if !USE(CAIRO)
+#if !USE(CAIRO) && !USE(DIRECT2D)
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }

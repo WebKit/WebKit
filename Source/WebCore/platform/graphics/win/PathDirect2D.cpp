@@ -490,7 +490,7 @@ FloatPoint Path::currentPoint() const
     if (isNull())
         return FloatPoint();
 
-    float length;
+    float length = 0;
     HRESULT hr = m_path->ComputeLength(nullptr, &length);
     if (!SUCCEEDED(hr))
         return FloatPoint();
@@ -502,6 +502,16 @@ FloatPoint Path::currentPoint() const
         return FloatPoint();
 
     return point;
+}
+
+float Path::length() const
+{
+    float length = 0;
+    HRESULT hr = m_path->ComputeLength(nullptr, &length);
+    if (!SUCCEEDED(hr))
+        return 0;
+
+    return length;
 }
 
 void Path::apply(const PathApplierFunction& function) const

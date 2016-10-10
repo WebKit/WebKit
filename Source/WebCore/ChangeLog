@@ -1,3 +1,45 @@
+2016-10-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Implement dashed and dotted border line drawing
+        https://bugs.webkit.org/show_bug.cgi?id=163235
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing fast/border tests.
+
+        * platform/graphics/GraphicsContext.cpp: Use custom 'setPlatformStrokeStyle' for D2D.
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::length): Don't use default implementation for Direct2D.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::brushWithColor): Initialize pointer to nullptr.
+        (WebCore::GraphicsContext::drawRect): Use proper stroke style.
+        (WebCore::GraphicsContextPlatformPrivate::setLineCap): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setLineJoin): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setStrokeStyle): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setMiterLimit): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setDashOffset): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setPatternWidth): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setPatternOffset): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setStrokeThickness): Added.
+        (WebCore::GraphicsContextPlatformPrivate::setDashes): Added.
+        (WebCore::GraphicsContextPlatformPrivate::recomputeStrokeStyle): Added.
+        (WebCore::GraphicsContextPlatformPrivate::strokeStyle): Added.
+        (WebCore::GraphicsContext::drawLine): Use proper stroke style.
+        (WebCore::GraphicsContext::drawEllipse): Ditto.
+        (WebCore::GraphicsContext::drawPath): Ditto.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::setPlatformStrokeStyle): Added.
+        (WebCore::GraphicsContext::setMiterLimit): Tell D2D context about miter limit.
+        (WebCore::GraphicsContext::setLineCap): Ditto for line cap.
+        (WebCore::GraphicsContext::setLineDash): Ditto for dashes.
+        (WebCore::GraphicsContext::setLineJoin): Ditto for join style.
+        (WebCore::GraphicsContext::setPlatformStrokeThickness): Ditto for stroke thickness.
+        (WebCore::GraphicsContext::platformStrokeEllipse): Use proper stroke style.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::currentPoint): Zero-initialize a value.
+        (WebCore::Path::length): Added.
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Update ProgressEvent to stop using legacy [ConstructorTemplate=Event]

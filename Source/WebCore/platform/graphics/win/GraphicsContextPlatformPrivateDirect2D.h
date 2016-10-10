@@ -59,8 +59,19 @@ public:
     void concatCTM(const AffineTransform&);
     void setCTM(const AffineTransform&);
 
+    void setLineCap(LineCap);
+    void setLineJoin(LineJoin);
+    void setStrokeStyle(StrokeStyle);
+    void setMiterLimit(float);
+    void setDashOffset(float);
+    void setPatternWidth(float);
+    void setPatternOffset(float);
+    void setStrokeThickness(float);
+    void setDashes(const DashArray&);
+
     ID2D1RenderTarget* renderTarget() { return m_renderTarget.get(); }
     ID2D1Layer* clipLayer() const { return m_renderStates.last().m_activeLayer.get(); }
+    ID2D1StrokeStyle* strokeStyle();
 
     COMPtr<ID2D1SolidColorBrush> brushWithColor(const D2D1_COLOR_F&);
 
@@ -69,15 +80,19 @@ public:
     D2D1_COMPOSITE_MODE m_compositeMode { D2D1_COMPOSITE_MODE_SOURCE_OVER };
     bool m_shouldIncludeChildWindows { false };
     bool m_didBeginDraw { false };
+    bool m_strokeSyleIsDirty { false };
 
     COMPtr<ID2D1SolidColorBrush> m_solidStrokeBrush;
     COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
 
 private:
+    void recomputeStrokeStyle();
+
     COMPtr<ID2D1RenderTarget> m_renderTarget;
     HashMap<RGBA32, COMPtr<ID2D1SolidColorBrush>> m_solidColoredBrushCache;
     COMPtr<ID2D1SolidColorBrush> m_whiteBrush;
     COMPtr<ID2D1SolidColorBrush> m_zeroBrush;
+    COMPtr<ID2D1StrokeStyle> m_d2dStrokeStyle;
 
     struct RenderState {
         COMPtr<ID2D1DrawingStateBlock> m_drawingStateBlock;
@@ -86,6 +101,16 @@ private:
     };
 
     Vector<RenderState> m_renderStates;
+
+    D2D1_CAP_STYLE m_lineCap { D2D1_CAP_STYLE_FLAT };
+    D2D1_LINE_JOIN m_lineJoin { D2D1_LINE_JOIN_MITER };
+    StrokeStyle m_strokeStyle { SolidStroke };
+    DashArray m_dashes;
+    float m_miterLimit { 1.0f };
+    float m_dashOffset { 0 };
+    float m_patternWidth { 1.0f };
+    float m_patternOffset { 0 };
+    float m_strokeThickness { 0 };
 };
 
 class D2DContextStateSaver {
