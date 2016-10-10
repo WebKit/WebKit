@@ -24,7 +24,7 @@
  */
 
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional ProgressEventInit eventInitDict),
     Exposed=(Window,Worker),
 ] interface ProgressEvent : Event {
     [InitializedByEventConstructor] readonly attribute boolean lengthComputable;
@@ -32,3 +32,8 @@
     [InitializedByEventConstructor] readonly attribute unsigned long long total;
 };
 
+dictionary ProgressEventInit : EventInit {
+    boolean lengthComputable = false;
+    unsigned long long loaded = 0;
+    unsigned long long total = 0;
+};
