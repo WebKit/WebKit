@@ -48,6 +48,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/folder.txt
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-delete.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-foreach.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-get.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-has.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-set.htm

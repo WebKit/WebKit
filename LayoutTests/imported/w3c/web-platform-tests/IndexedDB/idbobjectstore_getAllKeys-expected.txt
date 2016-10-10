@@ -1,0 +1,14 @@
+
+FAIL Single item get store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Single item get (generated key) store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL getAllKeys on empty object store store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get all values store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Test maxCount store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get bound range store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get bound range with maxCount store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get upper excluded store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get lower excluded store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Get bound range (generated) with maxCount store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL Non existent key store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+FAIL zero maxCount store.getAllKeys is not a function. (In 'store.getAllKeys(range, maxCount)', 'store.getAllKeys' is undefined)
+

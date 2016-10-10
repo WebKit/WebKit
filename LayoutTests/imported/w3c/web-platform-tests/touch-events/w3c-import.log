@@ -20,5 +20,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/touch-events/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/touch-events/multi-touch-interactions.js
 /LayoutTests/imported/w3c/web-platform-tests/touch-events/touch-globaleventhandler-interface.html
+/LayoutTests/imported/w3c/web-platform-tests/touch-events/touch-retargeting.html
 /LayoutTests/imported/w3c/web-platform-tests/touch-events/touch-support.js
 /LayoutTests/imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html

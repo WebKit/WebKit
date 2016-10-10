@@ -30,8 +30,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/grouping-ol.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/ol.start-reflection-2.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1d-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1d.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-2-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-2.html

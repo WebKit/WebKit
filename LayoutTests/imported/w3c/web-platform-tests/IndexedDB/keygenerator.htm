@@ -6,8 +6,8 @@
 <link rel=assert title="The current number of a key generator is always set to 1 when the object store for that key generator is first created.">
 <link rel=assert title="When a key generator is used to generate a new key for a object store, the key generator's current number is used as the new key value and then the key generator's current number is increased by 1.">
 <link rel=assert title="When a record is stored in a object store which uses a key generator, and an explicit key is defined, if the key's value is a float greater than or equal to the key generator's current number, then the key generator's current number is set to the smallest integer number larger than the explicit key. Only explicit keys which are float values affect the current number of the key generator.">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <script src="support.js"></script>
 
 <script>

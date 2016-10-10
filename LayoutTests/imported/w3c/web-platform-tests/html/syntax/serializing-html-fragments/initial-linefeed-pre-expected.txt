@@ -6,8 +6,8 @@ x
 
 x
 
-FAIL outer div assert_equals: expected "\n<div id=\"inner\">\n<pre id=\"pre1\">x</pre>\n<pre id=\"pre2\">\n\nx</pre>\n<textarea id=\"textarea1\">x</textarea>\n<textarea id=\"textarea2\">\n\nx</textarea>\n<listing id=\"listing1\">x</listing>\n<listing id=\"listing2\">\n\nx</listing>\n</div>\n" but got "\n<div id=\"inner\">\n<pre id=\"pre1\">x</pre>\n<pre id=\"pre2\">\nx</pre>\n<textarea id=\"textarea1\">x</textarea>\n<textarea id=\"textarea2\">\nx</textarea>\n<listing id=\"listing1\">x</listing>\n<listing id=\"listing2\">\nx</listing>\n</div>\n"
-FAIL inner div assert_equals: expected "\n<pre id=\"pre1\">x</pre>\n<pre id=\"pre2\">\n\nx</pre>\n<textarea id=\"textarea1\">x</textarea>\n<textarea id=\"textarea2\">\n\nx</textarea>\n<listing id=\"listing1\">x</listing>\n<listing id=\"listing2\">\n\nx</listing>\n" but got "\n<pre id=\"pre1\">x</pre>\n<pre id=\"pre2\">\nx</pre>\n<textarea id=\"textarea1\">x</textarea>\n<textarea id=\"textarea2\">\nx</textarea>\n<listing id=\"listing1\">x</listing>\n<listing id=\"listing2\">\nx</listing>\n"
+PASS outer div 
+PASS inner div 
 PASS pre1 
 PASS pre2 
 PASS textarea1 

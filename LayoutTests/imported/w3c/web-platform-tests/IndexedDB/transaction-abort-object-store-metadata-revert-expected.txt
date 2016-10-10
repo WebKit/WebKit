@@ -1,0 +1,6 @@
+
+FAIL Created stores get marked as deleted after their transaction aborts undefined is not an object (evaluating 'actual.length')
+FAIL Deleted stores get marked as not-deleted after the transaction aborts undefined is not an object (evaluating 'actual.length')
+FAIL Created+deleted stores are still marked as deleted after their transaction aborts undefined is not an object (evaluating 'actual.length')
+FAIL Un-instantiated deleted stores get marked as not-deleted after the transaction aborts undefined is not an object (evaluating 'actual.length')
+

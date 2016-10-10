@@ -1,0 +1,5 @@
+
+PASS HTMLScriptElement: crossorigin attribute network test1 
+FAIL HTMLScriptElement: crossorigin attribute network test2 assert_true: invalid values should default to include credentials due to response tainting expected true got false
+PASS HTMLScriptElement: crossorigin attribute network test3 
+

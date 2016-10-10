@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: line 2422: Error: assert_throws: transaction-state check should precede deletion check function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException TransactionInactiveError: property "code" is equal to undefined, expected 0
+
+Harness Error (FAIL), message = Error: assert_throws: transaction-state check should precede deletion check function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException TransactionInactiveError: property "code" is equal to undefined, expected 0
+
+TIMEOUT TransactionInactiveError v.s. InvalidStateError(deleted index) Test timed out
+FAIL InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect source) assert_throws: deletion check should precede index source check function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL InvalidStateError(deleted source) v.s. InvalidAccessError(incorrect direction) assert_throws: deletion check should precede cursor direction check function "function () {
+              cursor.continuePrimaryKey("A"..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration complete) assert_throws: direction check should precede got_value_flag check function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+FAIL InvalidAccessError(incorrect direction) v.s. InvalidStateError(iteration ongoing) assert_throws: direction check should precede iteration ongoing check function "function () {
+                    cursor.continuePrimaryK..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+FAIL InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration ongoing) assert_throws: index source check should precede iteration ongoing check function "function () {
+                    cursor.continuePrimaryK..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+FAIL InvalidAccessError(incorrect source) v.s. InvalidStateError(iteration complete) assert_throws: index source check should precede got_value_flag check function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidAccessError: property "code" is equal to undefined, expected 15
+FAIL InvalidStateError(iteration ongoing) v.s. DataError(unset key) assert_throws: iteration ongoing check should precede unset key check function "function () {
+                    cursor.continuePrimaryK..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL InvalidStateError(iteration complete) v.s. DataError(unset key) assert_throws: got_value_flag check should precede unset key check function "function () {
+                cursor.continuePrimaryKey(n..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL DataError(unset key) assert_throws: DataError is expected if key is unset. function "function () {
+                cursor.continuePrimaryKey(n..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+FAIL DataError(unset primary key) assert_throws: DataError is expected if primary key is unset. function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+FAIL DataError(keys are lower then current one) in 'next' direction assert_throws: DataError is expected if key is lower then current one. function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+FAIL DataError(keys are larger then current one) in 'prev' direction assert_throws: DataError is expected if key is larger then current one. function "function () {
+                cursor.continuePrimaryKey("..." threw object "TypeError: cursor.continuePrimaryKey is not a function. (..." that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+

@@ -5,9 +5,9 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="disconnectedCallback must be enqueued whenever custom element is removed from a document">
 <link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#dfn-connected-callback">
-<script src="../../../../resources/testharness.js"></script>
-<script src="../../../../resources/testharnessreport.js"></script>
-<script src="resources/document-types.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="./resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -20,7 +20,7 @@ class MyCustomElement extends HTMLElement {
 }
 customElements.define('my-custom-element', MyCustomElement);
 
-DocumentTypes.forEach(function (entry) {
+document_types().forEach(function (entry) {
     var documentName = entry.name;
     var getDocument = entry.create;
 
@@ -32,7 +32,7 @@ DocumentTypes.forEach(function (entry) {
             doc.documentElement.removeChild(instance);
             assert_array_equals(calls, ['disconnected', instance]);
         });
-    }, 'Removing a custom element from a ' + documentName + ' must enqueue and invoke disconnectedCallback');
+    }, 'Removing a custom element from ' + documentName + ' must enqueue and invoke disconnectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -44,7 +44,7 @@ DocumentTypes.forEach(function (entry) {
             doc.documentElement.removeChild(parent);
             assert_array_equals(calls, ['disconnected', instance]);
         });
-    }, 'Removing an ancestor of custom element from a ' + documentName + ' must enqueue and invoke disconnectedCallback');
+    }, 'Removing an ancestor of custom element from ' + documentName + ' must enqueue and invoke disconnectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -58,7 +58,7 @@ DocumentTypes.forEach(function (entry) {
             shadowRoot.removeChild(instance);
             assert_array_equals(calls, ['disconnected', instance]);
         });
-    }, 'Removing a custom element from a shadow tree in a ' + documentName + ' must enqueue and invoke disconnectedCallback');
+    }, 'Removing a custom element from a shadow tree in ' + documentName + ' must enqueue and invoke disconnectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -85,7 +85,7 @@ DocumentTypes.forEach(function (entry) {
             shadowRoot.removeChild(instance);
             assert_array_equals(calls, []);
         });
-    }, 'Removing a custom element from a detached shadow tree that belongs to a ' + documentName + ' must not enqueue and invoke disconnectedCallback');
+    }, 'Removing a custom element from a detached shadow tree that belongs to ' + documentName + ' must not enqueue and invoke disconnectedCallback');
 });
 
 </script>

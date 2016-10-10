@@ -40,6 +40,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/parse-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/requri.py
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-1.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-2.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-helper.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/shift-jis-html.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/status.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/trickle.py

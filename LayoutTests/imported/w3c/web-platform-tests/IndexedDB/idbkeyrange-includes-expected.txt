@@ -1,0 +1,9 @@
+
+FAIL IDBKeyRange.includes() with a closed range assert_true: IDBKeyRange has a .includes expected true got false
+FAIL IDBKeyRange.includes() with an open range openRange.includes is not a function. (In 'openRange.includes(5)', 'openRange.includes' is undefined)
+FAIL IDBKeyRange.includes() with an only range range.includes is not a function. (In 'range.includes(42)', 'range.includes' is undefined)
+FAIL IDBKeyRange.includes() with an closed lower-bounded range range.includes is not a function. (In 'range.includes(4)', 'range.includes' is undefined)
+FAIL IDBKeyRange.includes() with an open lower-bounded range range.includes is not a function. (In 'range.includes(4)', 'range.includes' is undefined)
+FAIL IDBKeyRange.includes() with an closed upper-bounded range range.includes is not a function. (In 'range.includes(4)', 'range.includes' is undefined)
+FAIL IDBKeyRange.includes() with an open upper-bounded range range.includes is not a function. (In 'range.includes(4)', 'range.includes' is undefined)
+

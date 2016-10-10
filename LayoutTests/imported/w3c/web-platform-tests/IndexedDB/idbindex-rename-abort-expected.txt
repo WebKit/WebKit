@@ -1,0 +1,4 @@
+
+PASS IndexedDB index rename in aborted transaction 
+FAIL IndexedDB index creation and rename in an aborted transaction assert_equals: IDBIndex.name should reflect the last rename immediately after transaction.abort() returns expected "by_author_renamed_again" but got "by_author"
+

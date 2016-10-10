@@ -1,0 +1,3 @@
+
+PASS load events should not be fired for inline scripts 
+

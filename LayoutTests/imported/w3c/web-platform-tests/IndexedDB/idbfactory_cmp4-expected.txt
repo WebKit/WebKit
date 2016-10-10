@@ -1,0 +1,6 @@
+
+FAIL Compare in unsigned octet values (in the range [0, 255]) Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+FAIL Compare values in then same length Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+FAIL Compare values in different lengths Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+FAIL Compare when the values in the range of their minimal length are the same Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+

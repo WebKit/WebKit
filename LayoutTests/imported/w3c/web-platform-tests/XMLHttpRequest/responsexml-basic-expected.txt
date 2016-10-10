@@ -1,4 +1,4 @@
 
-FAIL XMLHttpRequest: responseXML basic test undefined is not an object (evaluating 'client.responseXML.documentElement.childrenNodes')
+PASS XMLHttpRequest: responseXML basic test 
 PASS responseXML on empty response documents 
 

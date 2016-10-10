@@ -8,8 +8,8 @@
 <meta rel=assert title="set the request's error attribute to a DOMError with a type of AbortError.">
 <meta rel=assert title="Dispatch an event at request. The event must use the Event interface and have its type set to 'error'. The event bubbles and is cancelable. The propagation path for the event is transaction's connection, then transaction and finally the request. There is no default action for the event.">
 <meta rel=assert title="Queue up an operation to dispatch an event at transaction. The event must use the Event interface and have its type set to 'abort'. The event does bubble but is not cancelable. The propagation path for the event is transaction's connection and then transaction.">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <script src="support.js"></script>
 
 <script>

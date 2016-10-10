@@ -1,0 +1,11 @@
+
+FAIL IndexedDB index rename in new transaction assert_equals: IDBIndex name should change immediately after a rename expected "renamed_by_author" but got "by_author"
+FAIL IndexedDB index rename in the transaction where it is created assert_equals: IDBIndex name should change immediately after a rename expected "renamed_by_author" but got "by_author"
+PASS IndexedDB index rename to the same name succeeds 
+FAIL IndexedDB index rename to the name of a deleted index succeeds assert_array_equals: IDBObjectStore.indexNames should immediately reflect the rename property 0, expected "by_title" but got "by_author"
+FAIL IndexedDB index swapping via renames succeeds Failed to execute 'index' on 'IDBObjectStore': The specified index was not found.
+FAIL IndexedDB index rename stringifies non-string names assert_equals: IDBIndex name should change immediately after a rename to a number expected "42" but got "by_author"
+FAIL IndexedDB index can be renamed to "" assert_equals: IDBIndex name should change immediately after the rename expected "" but got "by_author"
+FAIL IndexedDB index can be renamed to "\u0000" assert_equals: IDBIndex name should change immediately after the rename expected "\0" but got "by_author"
+FAIL IndexedDB index can be renamed to "\uDC00\uD800" assert_equals: IDBIndex name should change immediately after the rename expected "í°í " but got "by_author"
+

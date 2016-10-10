@@ -71,24 +71,24 @@ PASS innerHTML <listing> context starting with U+000A
 PASS innerHTML <pre> context not starting with U+000A 
 PASS innerHTML <textarea> context not starting with U+000A 
 PASS innerHTML <listing> context not starting with U+000A 
-FAIL innerHTML <pre> non-context starting with U+000A assert_equals: expected "<pre>\n\n</%text>" but got "<pre>\n</pre>"
-FAIL innerHTML <textarea> non-context starting with U+000A assert_equals: expected "<textarea>\n\n</%text>" but got "<textarea>\n</textarea>"
-FAIL innerHTML <listing> non-context starting with U+000A assert_equals: expected "<listing>\n\n</%text>" but got "<listing>\n</listing>"
-FAIL innerHTML <pre> non-context not starting with U+000A assert_equals: expected "<pre>a\n</%text>" but got "<pre>a\n</pre>"
-FAIL innerHTML <textarea> non-context not starting with U+000A assert_equals: expected "<textarea>a\n</%text>" but got "<textarea>a\n</textarea>"
-FAIL innerHTML <listing> non-context not starting with U+000A assert_equals: expected "<listing>a\n</%text>" but got "<listing>a\n</listing>"
-FAIL outerHTML <pre> context starting with U+000A assert_equals: expected "<pre>\n\n</%text>" but got "<pre>\n</pre>"
-FAIL outerHTML <textarea> context starting with U+000A assert_equals: expected "<textarea>\n\n</%text>" but got "<textarea>\n</textarea>"
-FAIL outerHTML <listing> context starting with U+000A assert_equals: expected "<listing>\n\n</%text>" but got "<listing>\n</listing>"
-FAIL outerHTML <pre> context not starting with U+000A assert_equals: expected "<pre>a\n</%text>" but got "<pre>a\n</pre>"
-FAIL outerHTML <textarea> context not starting with U+000A assert_equals: expected "<textarea>a\n</%text>" but got "<textarea>a\n</textarea>"
-FAIL outerHTML <listing> context not starting with U+000A assert_equals: expected "<listing>a\n</%text>" but got "<listing>a\n</listing>"
-FAIL outerHTML <pre> non-context starting with U+000A assert_equals: expected "<span><pre>\n\n</%text></span>" but got "<span><pre>\n</pre></span>"
-FAIL outerHTML <textarea> non-context starting with U+000A assert_equals: expected "<span><textarea>\n\n</%text></span>" but got "<span><textarea>\n</textarea></span>"
-FAIL outerHTML <listing> non-context starting with U+000A assert_equals: expected "<span><listing>\n\n</%text></span>" but got "<span><listing>\n</listing></span>"
-FAIL outerHTML <pre> non-context not starting with U+000A assert_equals: expected "<span><pre>a\n</%text></span>" but got "<span><pre>a\n</pre></span>"
-FAIL outerHTML <textarea> non-context not starting with U+000A assert_equals: expected "<span><textarea>a\n</%text></span>" but got "<span><textarea>a\n</textarea></span>"
-FAIL outerHTML <listing> non-context not starting with U+000A assert_equals: expected "<span><listing>a\n</%text></span>" but got "<span><listing>a\n</listing></span>"
+PASS innerHTML <pre> non-context starting with U+000A 
+PASS innerHTML <textarea> non-context starting with U+000A 
+PASS innerHTML <listing> non-context starting with U+000A 
+PASS innerHTML <pre> non-context not starting with U+000A 
+PASS innerHTML <textarea> non-context not starting with U+000A 
+PASS innerHTML <listing> non-context not starting with U+000A 
+PASS outerHTML <pre> context starting with U+000A 
+PASS outerHTML <textarea> context starting with U+000A 
+PASS outerHTML <listing> context starting with U+000A 
+PASS outerHTML <pre> context not starting with U+000A 
+PASS outerHTML <textarea> context not starting with U+000A 
+PASS outerHTML <listing> context not starting with U+000A 
+PASS outerHTML <pre> non-context starting with U+000A 
+PASS outerHTML <textarea> non-context starting with U+000A 
+PASS outerHTML <listing> non-context starting with U+000A 
+PASS outerHTML <pre> non-context not starting with U+000A 
+PASS outerHTML <textarea> non-context not starting with U+000A 
+PASS outerHTML <listing> non-context not starting with U+000A 
 PASS innerHTML Void context node area 
 PASS innerHTML Void context node base 
 PASS innerHTML Void context node basefont 

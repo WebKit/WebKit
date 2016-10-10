@@ -1,0 +1,13 @@
+
+FAIL IndexedDB object store rename in new transaction assert_equals: IDBObjectStore name should change immediately after a rename expected "renamed_books" but got "books"
+FAIL IndexedDB object store rename in the transaction where it is created assert_equals: IDBObjectStore name should change immediately after a rename expected "renamed_books" but got "books"
+FAIL IndexedDB object store rename covers index promise_test: Unhandled rejection with value: object "NotFoundError (DOM IDBDatabase Exception 8): Failed to ex..."
+FAIL IndexedDB object store rename covers key generator promise_test: Unhandled rejection with value: object "NotFoundError (DOM IDBDatabase Exception 8): Failed to ex..."
+PASS IndexedDB object store rename to the same name succeeds 
+FAIL IndexedDB object store rename to the name of a deleted store succeeds assert_array_equals: IDBDatabase.objectStoreNames should immediately reflect the rename property 0, expected "not_books" but got "books"
+FAIL IndexedDB object store swapping via renames succeeds Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.
+FAIL IndexedDB object store rename stringifies non-string names assert_equals: IDBObjectStore name should change immediately after a rename to a number expected "42" but got "books"
+FAIL IndexedDB object store can be renamed to "" assert_equals: IDBObjectStore name should change immediately after the rename expected "" but got "books"
+FAIL IndexedDB object store can be renamed to "\u0000" assert_equals: IDBObjectStore name should change immediately after the rename expected "\0" but got "books"
+FAIL IndexedDB object store can be renamed to "\uDC00\uD800" assert_equals: IDBObjectStore name should change immediately after the rename expected "í°í " but got "books"
+

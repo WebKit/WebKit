@@ -1,0 +1,6 @@
+
+FAIL Array v.s. Binary Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+FAIL Binary v.s. String Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.
+PASS String v.s. Date 
+PASS Date v.s. Number 
+

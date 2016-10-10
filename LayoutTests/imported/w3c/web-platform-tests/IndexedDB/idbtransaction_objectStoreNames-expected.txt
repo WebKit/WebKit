@@ -1,0 +1,10 @@
+
+FAIL IDBTransaction.objectStoreNames - during upgrade transaction undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - value after close undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - transaction scope undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - value after commit undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - value after abort undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - sorting undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - no duplicates undefined is not an object (evaluating 'actual.length')
+FAIL IDBTransaction.objectStoreNames - unusual names undefined is not an object (evaluating 'actual.length')
+

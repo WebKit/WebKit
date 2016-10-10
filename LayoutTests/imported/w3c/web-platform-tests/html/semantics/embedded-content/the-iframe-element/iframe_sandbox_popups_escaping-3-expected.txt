@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 7: Error while parsing the 'sandbox' attribute: 'allow-popups-to-escape-sandbox' is an invalid sandbox flag.
+CONSOLE MESSAGE: line 15: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-3.html'. The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Check that popups from a sandboxed iframe escape the sandbox if
+       allow-popups-to-escape-sandbox is used Test timed out
+

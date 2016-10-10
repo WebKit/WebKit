@@ -1,0 +1,7 @@
+
+FAIL IDBObjectStore.openKeyCursor() - forward iteration store.openKeyCursor is not a function. (In 'store.openKeyCursor()', 'store.openKeyCursor' is undefined)
+FAIL IDBObjectStore.openKeyCursor() - reverse iteration store.openKeyCursor is not a function. (In 'store.openKeyCursor(null, "prev")', 'store.openKeyCursor' is undefined)
+FAIL IDBObjectStore.openKeyCursor() - forward iteration with range store.openKeyCursor is not a function. (In 'store.openKeyCursor(IDBKeyRange.bound(4, 6))', 'store.openKeyCursor' is undefined)
+FAIL IDBObjectStore.openKeyCursor() - reverse iteration with range store.openKeyCursor is not a function. (In 'store.openKeyCursor(IDBKeyRange.bound(4, 6), "prev")', 'store.openKeyCursor' is undefined)
+FAIL IDBObjectStore.openKeyCursor() - invalid inputs assert_throws: openKeyCursor should throw on invalid number key function "function () { store.openKeyCursor(NaN); }" threw object "TypeError: store.openKeyCursor is not a function. (In 'st..." that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+

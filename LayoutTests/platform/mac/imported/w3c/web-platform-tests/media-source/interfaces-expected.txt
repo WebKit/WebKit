@@ -27,9 +27,9 @@ PASS MediaSource interface: mediaSource must inherit property "sourceBuffers" wi
 PASS MediaSource interface: mediaSource must inherit property "activeSourceBuffers" with the proper type (1) 
 PASS MediaSource interface: mediaSource must inherit property "readyState" with the proper type (2) 
 PASS MediaSource interface: mediaSource must inherit property "duration" with the proper type (3) 
-FAIL MediaSource interface: mediaSource must inherit property "onsourceopen" with the proper type (4) Unrecognized type EventHandler
-FAIL MediaSource interface: mediaSource must inherit property "onsourceended" with the proper type (5) Unrecognized type EventHandler
-FAIL MediaSource interface: mediaSource must inherit property "onsourceclose" with the proper type (6) Unrecognized type EventHandler
+PASS MediaSource interface: mediaSource must inherit property "onsourceopen" with the proper type (4) 
+PASS MediaSource interface: mediaSource must inherit property "onsourceended" with the proper type (5) 
+PASS MediaSource interface: mediaSource must inherit property "onsourceclose" with the proper type (6) 
 PASS MediaSource interface: mediaSource must inherit property "addSourceBuffer" with the proper type (7) 
 PASS MediaSource interface: calling addSourceBuffer(DOMString) on mediaSource with too few arguments must throw TypeError 
 PASS MediaSource interface: mediaSource must inherit property "removeSourceBuffer" with the proper type (8) 
@@ -80,11 +80,11 @@ PASS SourceBuffer interface: sourceBuffer must inherit property "videoTracks" wi
 PASS SourceBuffer interface: sourceBuffer must inherit property "textTracks" with the proper type (6) 
 PASS SourceBuffer interface: sourceBuffer must inherit property "appendWindowStart" with the proper type (7) 
 PASS SourceBuffer interface: sourceBuffer must inherit property "appendWindowEnd" with the proper type (8) 
-FAIL SourceBuffer interface: sourceBuffer must inherit property "onupdatestart" with the proper type (9) Unrecognized type EventHandler
-FAIL SourceBuffer interface: sourceBuffer must inherit property "onupdate" with the proper type (10) Unrecognized type EventHandler
-FAIL SourceBuffer interface: sourceBuffer must inherit property "onupdateend" with the proper type (11) Unrecognized type EventHandler
-FAIL SourceBuffer interface: sourceBuffer must inherit property "onerror" with the proper type (12) Unrecognized type EventHandler
-FAIL SourceBuffer interface: sourceBuffer must inherit property "onabort" with the proper type (13) Unrecognized type EventHandler
+PASS SourceBuffer interface: sourceBuffer must inherit property "onupdatestart" with the proper type (9) 
+PASS SourceBuffer interface: sourceBuffer must inherit property "onupdate" with the proper type (10) 
+PASS SourceBuffer interface: sourceBuffer must inherit property "onupdateend" with the proper type (11) 
+PASS SourceBuffer interface: sourceBuffer must inherit property "onerror" with the proper type (12) 
+PASS SourceBuffer interface: sourceBuffer must inherit property "onabort" with the proper type (13) 
 PASS SourceBuffer interface: sourceBuffer must inherit property "appendBuffer" with the proper type (14) 
 PASS SourceBuffer interface: calling appendBuffer(BufferSource) on sourceBuffer with too few arguments must throw TypeError 
 PASS SourceBuffer interface: sourceBuffer must inherit property "abort" with the proper type (15) 
@@ -107,8 +107,8 @@ PASS SourceBufferList interface: attribute onremovesourcebuffer
 PASS SourceBufferList must be primary interface of mediaSource.sourceBuffers 
 PASS Stringification of mediaSource.sourceBuffers 
 PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "length" with the proper type (0) 
-FAIL SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onaddsourcebuffer" with the proper type (1) Unrecognized type EventHandler
-FAIL SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onremovesourcebuffer" with the proper type (2) Unrecognized type EventHandler
+PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onaddsourcebuffer" with the proper type (1) 
+PASS SourceBufferList interface: mediaSource.sourceBuffers must inherit property "onremovesourcebuffer" with the proper type (2) 
 PASS EventTarget interface: mediaSource.sourceBuffers must inherit property "addEventListener" with the proper type (0) 
 PASS EventTarget interface: calling addEventListener(DOMString,EventListener,boolean) on mediaSource.sourceBuffers with too few arguments must throw TypeError 
 PASS EventTarget interface: mediaSource.sourceBuffers must inherit property "removeEventListener" with the proper type (1) 

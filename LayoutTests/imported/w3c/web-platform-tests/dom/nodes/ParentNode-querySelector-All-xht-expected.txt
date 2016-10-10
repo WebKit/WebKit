@@ -83,12 +83,6 @@ PASS Document.querySelector: Invalid class: .bar.
 PASS Document.querySelectorAll: Invalid class: .bar. 
 PASS Document.querySelector: Invalid combinator: div & address, p 
 PASS Document.querySelectorAll: Invalid combinator: div & address, p 
-FAIL Document.querySelector: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelector(q)
-      }" did not throw
-FAIL Document.querySelectorAll: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" did not throw
 PASS Document.querySelector: Invalid combinator: div ++ address, p 
 PASS Document.querySelectorAll: Invalid combinator: div ++ address, p 
 PASS Document.querySelector: Invalid combinator: div ~~ address, p 
@@ -151,12 +145,6 @@ PASS Detached Element.querySelector: Invalid class: .bar.
 PASS Detached Element.querySelectorAll: Invalid class: .bar. 
 PASS Detached Element.querySelector: Invalid combinator: div & address, p 
 PASS Detached Element.querySelectorAll: Invalid combinator: div & address, p 
-FAIL Detached Element.querySelector: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelector(q)
-      }" did not throw
-FAIL Detached Element.querySelectorAll: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" did not throw
 PASS Detached Element.querySelector: Invalid combinator: div ++ address, p 
 PASS Detached Element.querySelectorAll: Invalid combinator: div ++ address, p 
 PASS Detached Element.querySelector: Invalid combinator: div ~~ address, p 
@@ -219,12 +207,6 @@ PASS Fragment.querySelector: Invalid class: .bar.
 PASS Fragment.querySelectorAll: Invalid class: .bar. 
 PASS Fragment.querySelector: Invalid combinator: div & address, p 
 PASS Fragment.querySelectorAll: Invalid combinator: div & address, p 
-FAIL Fragment.querySelector: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelector(q)
-      }" did not throw
-FAIL Fragment.querySelectorAll: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" did not throw
 PASS Fragment.querySelector: Invalid combinator: div ++ address, p 
 PASS Fragment.querySelectorAll: Invalid combinator: div ++ address, p 
 PASS Fragment.querySelector: Invalid combinator: div ~~ address, p 
@@ -287,12 +269,6 @@ PASS In-document Element.querySelector: Invalid class: .bar.
 PASS In-document Element.querySelectorAll: Invalid class: .bar. 
 PASS In-document Element.querySelector: Invalid combinator: div & address, p 
 PASS In-document Element.querySelectorAll: Invalid combinator: div & address, p 
-FAIL In-document Element.querySelector: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelector(q)
-      }" did not throw
-FAIL In-document Element.querySelectorAll: Invalid combinator: div >> address, p assert_throws: function "function () {
-        root.querySelectorAll(q)
-      }" did not throw
 PASS In-document Element.querySelector: Invalid combinator: div ++ address, p 
 PASS In-document Element.querySelectorAll: Invalid combinator: div ++ address, p 
 PASS In-document Element.querySelector: Invalid combinator: div ~~ address, p 
@@ -625,6 +601,20 @@ PASS Document.querySelectorAll: Descendant combinator, whitespace characters: #d
 #descendant-div2 
 PASS Document.querySelector: Descendant combinator, whitespace characters: #descendant	
 #descendant-div2 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Document.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 
+PASS Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Document.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Document.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Document.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Document.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
+PASS Document.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
 PASS Document.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Document.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Document.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1041,6 +1031,18 @@ PASS Detached Element.querySelectorAll: Descendant combinator, whitespace charac
 #descendant-div2 
 PASS Detached Element.querySelector: Descendant combinator, whitespace characters: #descendant	
 #descendant-div2 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Detached Element.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Detached Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Detached Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Detached Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Detached Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Detached Element.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
+PASS Detached Element.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
 PASS Detached Element.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Detached Element.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Detached Element.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1457,6 +1459,18 @@ PASS Fragment.querySelectorAll: Descendant combinator, whitespace characters: #d
 #descendant-div2 
 PASS Fragment.querySelector: Descendant combinator, whitespace characters: #descendant	
 #descendant-div2 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Fragment.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Fragment.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Fragment.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Fragment.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Fragment.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS Fragment.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
+PASS Fragment.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
 PASS Fragment.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Fragment.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Fragment.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1875,6 +1889,20 @@ PASS In-document Element.querySelectorAll: Descendant combinator, whitespace cha
 #descendant-div2 
 PASS In-document Element.querySelector: Descendant combinator, whitespace characters: #descendant	
 #descendant-div2 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS In-document Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 
+PASS In-document Element.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
+PASS In-document Element.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 
 PASS In-document Element.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS In-document Element.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS In-document Element.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 

@@ -16,6 +16,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/contains.json
-/LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_raf.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/microtask_after_script.html
 /LayoutTests/imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/task_microtask_ordering.html

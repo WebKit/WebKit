@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL IndexedDB object store rename in aborted transaction undefined is not an object (evaluating 'actual.length')
+TIMEOUT IndexedDB object store creation and rename in an aborted transaction Test timed out
+

@@ -5,9 +5,9 @@
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="connectedCallback must be enqueued whenever custom element is inserted into a document">
 <link rel="help" href="https://w3c.github.io/webcomponents/spec/custom/#dfn-connected-callback">
-<script src="../../../../resources/testharness.js"></script>
-<script src="../../../../resources/testharnessreport.js"></script>
-<script src="resources/document-types.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -20,7 +20,7 @@ class MyCustomElement extends HTMLElement {
 }
 customElements.define('my-custom-element', MyCustomElement);
 
-DocumentTypes.forEach(function (entry) {
+document_types().forEach(function (entry) {
     var documentName = entry.name;
     var getDocument = entry.create;
 
@@ -31,7 +31,7 @@ DocumentTypes.forEach(function (entry) {
             doc.documentElement.appendChild(instance);
             assert_array_equals(calls, ['connected', instance]);
         });
-    }, 'Inserting a custom element into a ' + documentName + ' must enqueue and invoke connectedCallback');
+    }, 'Inserting a custom element into ' + documentName + ' must enqueue and invoke connectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -42,7 +42,7 @@ DocumentTypes.forEach(function (entry) {
             doc.documentElement.appendChild(parent);
             assert_array_equals(calls, ['connected', instance]);
         });
-    }, 'Inserting an ancestor of custom element into a ' + documentName + ' must enqueue and invoke connectedCallback');
+    }, 'Inserting an ancestor of custom element into ' + documentName + ' must enqueue and invoke connectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -55,7 +55,7 @@ DocumentTypes.forEach(function (entry) {
             shadowRoot.appendChild(instance);
             assert_array_equals(calls, ['connected', instance]);
         });
-    }, 'Inserting a custom element into a shadow tree in a ' + documentName + ' must enqueue and invoke connectedCallback');
+    }, 'Inserting a custom element into a shadow tree in ' + documentName + ' must enqueue and invoke connectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -68,7 +68,7 @@ DocumentTypes.forEach(function (entry) {
             doc.documentElement.appendChild(host);
             assert_array_equals(calls, ['connected', instance]);
         });
-    }, 'Inserting the shadow host of a custom element into a ' + documentName + ' must enqueue and invoke connectedCallback');
+    }, 'Inserting the shadow host of a custom element into ' + documentName + ' must enqueue and invoke connectedCallback');
 
     promise_test(function () {
         return getDocument().then(function (doc) {
@@ -80,7 +80,7 @@ DocumentTypes.forEach(function (entry) {
             shadowRoot.appendChild(instance);
             assert_array_equals(calls, []);
         });
-    }, 'Inserting a custom element into a detached shadow tree that belongs to a ' + documentName + ' must not enqueue and invoke connectedCallback');
+    }, 'Inserting a custom element into a detached shadow tree that belongs to ' + documentName + ' must not enqueue and invoke connectedCallback');
 });
 
 </script>

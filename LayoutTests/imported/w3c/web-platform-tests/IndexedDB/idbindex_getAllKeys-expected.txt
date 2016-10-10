@@ -1,0 +1,15 @@
+
+FAIL Single item get index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Empty object store index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get all keys index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get all generated keys index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL maxCount=10 index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get bound range index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get bound range with maxCount index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get upper excluded index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get lower excluded index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Get bound range (generated) with maxCount index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Non existent key index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL maxCount=0 index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+FAIL Retrieve multiEntry keys index.getAllKeys is not a function. (In 'index.getAllKeys(range, maxCount)', 'index.getAllKeys' is undefined)
+

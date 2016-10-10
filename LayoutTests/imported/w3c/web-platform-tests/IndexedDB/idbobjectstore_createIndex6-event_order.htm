@@ -6,8 +6,8 @@
 <meta rel=assert title="The index that is requested to be created can contain constraints on the data allowed in the index's referenced object store, such as requiring uniqueness of the values referenced by the index's keyPath. If the referenced object store already contains data which violates these constraints, this must not cause the implementation of createIndex to throw an exception or affect what it returns. The implementation must still create and return an IDBIndex object. Instead the implementation must queue up an operation to abort the 'versionchange' transaction which was used for the createIndex call.">
 <meta rel=assert title="In some implementations it's possible for the implementation to asynchronously run into problems creating the index after the createIndex function has returned. For example in implementations where metadata about the newly created index is queued up to be inserted into the database asynchronously, or where the implementation might need to ask the user for permission for quota reasons. Such implementations must still create and return an IDBIndex object. Instead, once the implementation realizes that creating the index has failed, it must abort the transaction using the steps for aborting a transaction using the appropriate error as error parameter.">
 <meta rel=assert title="if the index can't be created due to unique constraints, ConstraintError must be used as error">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
 <script src=support.js></script>
 
 <script>

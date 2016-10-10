@@ -1,3 +1,596 @@
+2016-10-10  Youenn Fablet  <youennf@gmail.com>
+
+        Sync web-platform-tests up to revision 33f4da1
+        https://bugs.webkit.org/show_bug.cgi?id=163205
+
+        Reviewed by Alex Christensen.
+
+        * resources/ImportExpectations:
+        * resources/TestRepositories:
+        * resources/resource-files.json:
+        * resources/web-platform-tests-modules.json:
+        * web-platform-tests/IndexedDB/OWNERS: Added.
+        * web-platform-tests/IndexedDB/README.md: Added.
+        * web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html:
+        * web-platform-tests/IndexedDB/close-in-upgradeneeded.html:
+        * web-platform-tests/IndexedDB/cursor-overloads.htm:
+        * web-platform-tests/IndexedDB/idb_binary_key_conversion-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idb_binary_key_conversion.htm: Added.
+        * web-platform-tests/IndexedDB/idb_webworkers.htm:
+        * web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm:
+        * web-platform-tests/IndexedDB/idbcursor-advance-invalid.htm:
+        * web-platform-tests/IndexedDB/idbcursor-advance.htm:
+        * web-platform-tests/IndexedDB/idbcursor-continue.htm:
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange.htm:
+        * web-platform-tests/IndexedDB/idbcursor-direction-index.htm:
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm:
+        * web-platform-tests/IndexedDB/idbcursor-direction-objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor-direction.htm:
+        * web-platform-tests/IndexedDB/idbcursor-key.htm:
+        * web-platform-tests/IndexedDB/idbcursor-primarykey.htm:
+        * web-platform-tests/IndexedDB/idbcursor-reused.htm:
+        * web-platform-tests/IndexedDB/idbcursor-source.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index6.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index7.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index8.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_index9.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_advance_objectstore5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index6.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index7.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_index8.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_invalid.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_continue_objectstore6.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_index.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_index2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_index3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_index4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_index5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_delete_objectstore5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_iterating.htm:
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index.htm:
+        * web-platform-tests/IndexedDB/idbcursor_iterating_index2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor_iterating_objectstore2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index6.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index7.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_index8-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor_update_index8.htm: Added.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore2.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore3.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore4.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore5.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore6.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore7.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore8.htm:
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore9-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbcursor_update_objectstore9.htm: Added.
+        * web-platform-tests/IndexedDB/idbdatabase_close.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_close2.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore-createIndex-emptyname.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-1000ends.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore10-emptyname.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore11.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore2.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore3.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore4.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore5.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore6.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore7.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore8-parameters.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_createObjectStore9-invalidparameters.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore2.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore3.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_deleteObjectStore4-not_reused.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_transaction.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_transaction2.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_transaction3.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_transaction4.htm:
+        * web-platform-tests/IndexedDB/idbdatabase_transaction5.htm:
+        * web-platform-tests/IndexedDB/idbfactory_cmp.htm:
+        * web-platform-tests/IndexedDB/idbfactory_cmp2.htm:
+        * web-platform-tests/IndexedDB/idbfactory_cmp3-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbfactory_cmp3.htm: Added.
+        * web-platform-tests/IndexedDB/idbfactory_cmp4-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbfactory_cmp4.htm: Added.
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase.htm:
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase2.htm:
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase3.htm:
+        * web-platform-tests/IndexedDB/idbfactory_deleteDatabase4.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open10.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open11.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open12.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open2.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open3.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open4.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open5.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open6.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open7.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open8.htm:
+        * web-platform-tests/IndexedDB/idbfactory_open9.htm:
+        * web-platform-tests/IndexedDB/idbindex-multientry-arraykeypath.htm:
+        * web-platform-tests/IndexedDB/idbindex-multientry-big.htm:
+        * web-platform-tests/IndexedDB/idbindex-multientry.htm:
+        * web-platform-tests/IndexedDB/idbindex-rename-abort-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-rename-abort.html: Added.
+        * web-platform-tests/IndexedDB/idbindex-rename-errors-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-rename-errors.html: Added.
+        * web-platform-tests/IndexedDB/idbindex-rename-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex-rename.html: Added.
+        * web-platform-tests/IndexedDB/idbindex_count.htm:
+        * web-platform-tests/IndexedDB/idbindex_count2.htm:
+        * web-platform-tests/IndexedDB/idbindex_count3.htm:
+        * web-platform-tests/IndexedDB/idbindex_count4.htm:
+        * web-platform-tests/IndexedDB/idbindex_get.htm:
+        * web-platform-tests/IndexedDB/idbindex_get2.htm:
+        * web-platform-tests/IndexedDB/idbindex_get3.htm:
+        * web-platform-tests/IndexedDB/idbindex_get4.htm:
+        * web-platform-tests/IndexedDB/idbindex_get5.htm:
+        * web-platform-tests/IndexedDB/idbindex_get6.htm:
+        * web-platform-tests/IndexedDB/idbindex_get7-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_get7.htm:
+        * web-platform-tests/IndexedDB/idbindex_get8-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_get7-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_get8.htm: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_get7.htm.
+        * web-platform-tests/IndexedDB/idbindex_getAll-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex_getAll.html: Added.
+        * web-platform-tests/IndexedDB/idbindex_getAllKeys-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbindex_getAllKeys.html: Added.
+        * web-platform-tests/IndexedDB/idbindex_getKey.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey2.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey3.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey4.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey5.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey6.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey7-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_getKey7.htm:
+        * web-platform-tests/IndexedDB/idbindex_getKey8-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey7-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_getKey8.htm: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_getKey7.htm.
+        * web-platform-tests/IndexedDB/idbindex_indexNames.htm:
+        * web-platform-tests/IndexedDB/idbindex_openCursor.htm:
+        * web-platform-tests/IndexedDB/idbindex_openCursor2-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openCursor2.htm:
+        * web-platform-tests/IndexedDB/idbindex_openCursor3-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor2-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openCursor3.htm: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openCursor2.htm.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor.htm:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor2.htm:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor3-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm:
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor4-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor3-expected.txt.
+        * web-platform-tests/IndexedDB/idbindex_openKeyCursor4.htm: Copied from LayoutTests/imported/w3c/web-platform-tests/IndexedDB/idbindex_openKeyCursor3.htm.
+        * web-platform-tests/IndexedDB/idbkeyrange-includes-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbkeyrange-includes.htm: Added.
+        * web-platform-tests/IndexedDB/idbkeyrange.htm:
+        * web-platform-tests/IndexedDB/idbkeyrange_incorrect.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-abort-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-abort.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-errors-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-errors.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-store-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore-rename-store.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_add.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add10.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add11.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add12.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add13.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add14.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add15.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add16.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add5.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add6.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add7.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add8.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_add9.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_clear.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_clear2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_clear3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_clear4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_count.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_count2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_count3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_count4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex10.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex11.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex12.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex13.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order.htm: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex3-usable-right-away.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex4-deleteIndex-event_order.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex5-emptykeypath.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex6-event_order.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex7-event_order.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex8-valid_keys.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_createIndex9-emptyname.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete5.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete6.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_delete7.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_deleteIndex.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_deleted.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get5.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get6.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_get7.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_getAll-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_getAll.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_getAllKeys-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_index.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_openCursor_invalid.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm: Added.
+        * web-platform-tests/IndexedDB/idbobjectstore_put.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put10.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put11.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put12.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put13.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put14.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put15.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put16.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put2.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put3.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put4.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put5.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put6.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put7.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put8.htm:
+        * web-platform-tests/IndexedDB/idbobjectstore_put9.htm:
+        * web-platform-tests/IndexedDB/idbtransaction-oncomplete.htm:
+        * web-platform-tests/IndexedDB/idbtransaction.htm:
+        * web-platform-tests/IndexedDB/idbtransaction_abort.htm:
+        * web-platform-tests/IndexedDB/idbtransaction_objectStoreNames-expected.txt: Added.
+        * web-platform-tests/IndexedDB/idbtransaction_objectStoreNames.html: Added.
+        * web-platform-tests/IndexedDB/idbversionchangeevent.htm:
+        * web-platform-tests/IndexedDB/index_sort_order.htm:
+        * web-platform-tests/IndexedDB/interfaces.html:
+        * web-platform-tests/IndexedDB/interfaces.idl:
+        * web-platform-tests/IndexedDB/interfaces.worker.js:
+        (request.onload):
+        * web-platform-tests/IndexedDB/key_invalid.htm:
+        * web-platform-tests/IndexedDB/key_valid.html:
+        * web-platform-tests/IndexedDB/keygenerator-constrainterror.htm:
+        * web-platform-tests/IndexedDB/keygenerator-overflow.htm:
+        * web-platform-tests/IndexedDB/keygenerator.htm:
+        * web-platform-tests/IndexedDB/keyorder.htm:
+        * web-platform-tests/IndexedDB/keypath.htm:
+        * web-platform-tests/IndexedDB/keypath_invalid.htm:
+        * web-platform-tests/IndexedDB/keypath_maxsize.htm:
+        * web-platform-tests/IndexedDB/list_ordering.htm:
+        * web-platform-tests/IndexedDB/objectstore_keyorder.htm:
+        * web-platform-tests/IndexedDB/request_bubble-and-capture.htm:
+        * web-platform-tests/IndexedDB/string-list-ordering.htm:
+        * web-platform-tests/IndexedDB/support-promises.js: Added.
+        (const.databaseName):
+        (const.requestWatcher):
+        (const.migrateDatabase):
+        (const.createDatabase):
+        (const.openDatabase):
+        (const.createBooksStore):
+        (const.createNotBooksStore):
+        (const.checkStoreIndexes):
+        (const.checkStoreGenerator):
+        (const.checkStoreContents):
+        (const.checkAuthorIndexContents):
+        (const.checkTitleIndexContents):
+        * web-platform-tests/IndexedDB/support.js:
+        (indexeddb_test):
+        (add_completion_callback): Deleted.
+        (fail): Deleted.
+        * web-platform-tests/IndexedDB/transaction-abort-generator-revert-expected.txt: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-generator-revert.html: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-index-metadata-revert-expected.txt: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-index-metadata-revert.html: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-multiple-metadata-revert-expected.txt: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-multiple-metadata-revert.html: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert-expected.txt: Added.
+        * web-platform-tests/IndexedDB/transaction-abort-object-store-metadata-revert.html: Added.
+        * web-platform-tests/IndexedDB/transaction-create_in_versionchange.htm:
+        * web-platform-tests/IndexedDB/transaction-lifetime-blocked.htm:
+        * web-platform-tests/IndexedDB/transaction-lifetime-empty-expected.txt: Added.
+        * web-platform-tests/IndexedDB/transaction-lifetime-empty.html: Added.
+        * web-platform-tests/IndexedDB/transaction-lifetime.htm:
+        * web-platform-tests/IndexedDB/transaction-requestqueue.htm:
+        * web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm:
+        * web-platform-tests/IndexedDB/value.htm:
+        * web-platform-tests/IndexedDB/value_recursive.htm:
+        * web-platform-tests/IndexedDB/w3c-import.log: Added.
+        * web-platform-tests/IndexedDB/writer-starvation.htm:
+        * web-platform-tests/README.md:
+        * web-platform-tests/XMLHttpRequest/abort-after-send-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-after-send.htm:
+        * web-platform-tests/XMLHttpRequest/abort-during-upload-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-during-upload.htm:
+        * web-platform-tests/XMLHttpRequest/abort-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/abort-event-order.htm:
+        * web-platform-tests/XMLHttpRequest/formdata-foreach-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/formdata-foreach.html: Added.
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        * web-platform-tests/XMLHttpRequest/progress-events-response-data-gzip.htm:
+        * web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-1.htm: Added.
+        * web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-2.htm: Added.
+        * web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-helper.js: Added.
+        (assert_equals):
+        (assert_throws):
+        (run_test):
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/resources/xmlhttprequest-event-order.js:
+        (getNextEvent):
+        * web-platform-tests/XMLHttpRequest/responsexml-basic-expected.txt:
+        * web-platform-tests/XMLHttpRequest/responsexml-basic.htm:
+        * web-platform-tests/XMLHttpRequest/responsexml-document-properties.htm:
+        * web-platform-tests/XMLHttpRequest/send-no-response-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-response-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/send-response-event-order.htm:
+        * web-platform-tests/XMLHttpRequest/send-sync-response-event-order-expected.txt:
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+        * web-platform-tests/common/get-host-info.sub.js:
+        (get_port):
+        (get_host_info): Deleted.
+        * web-platform-tests/config.json: Added.
+        * web-platform-tests/custom-elements/CustomElementRegistry.html:
+        * web-platform-tests/custom-elements/HTMLElement-constructor.html:
+        * web-platform-tests/custom-elements/adopted-callback-expected.txt:
+        * web-platform-tests/custom-elements/adopted-callback.html:
+        * web-platform-tests/custom-elements/attribute-changed-callback-expected.txt:
+        * web-platform-tests/custom-elements/attribute-changed-callback.html:
+        * web-platform-tests/custom-elements/connected-callbacks-expected.txt:
+        * web-platform-tests/custom-elements/connected-callbacks.html:
+        * web-platform-tests/custom-elements/custom-element-registry/define.html:
+        * web-platform-tests/custom-elements/disconnected-callbacks-expected.txt:
+        * web-platform-tests/custom-elements/disconnected-callbacks.html:
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget.html:
+        * web-platform-tests/custom-elements/reaction-timing.html:
+        * web-platform-tests/custom-elements/reactions/Attr.html:
+        * web-platform-tests/custom-elements/reactions/ChildNode.html:
+        * web-platform-tests/custom-elements/reactions/DOMTokenList.html:
+        * web-platform-tests/custom-elements/reactions/Document.html:
+        * web-platform-tests/custom-elements/reactions/Element.html:
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap.html:
+        * web-platform-tests/custom-elements/reactions/Node.html:
+        * web-platform-tests/custom-elements/reactions/ParentNode.html:
+        * web-platform-tests/custom-elements/reactions/Range.html:
+        * web-platform-tests/custom-elements/reactions/resources/reactions.js:
+        (testNodeConnector):
+        (testNodeDisconnector):
+        (testCloner):
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+        (assert_attribute_log_entry):
+        (define_new_custom_element.CustomElement):
+        (define_new_custom_element.CustomElement.prototype.attributeChangedCallback):
+        (define_new_custom_element.CustomElement.prototype.connectedCallback):
+        (define_new_custom_element.CustomElement.prototype.disconnectedCallback):
+        (define_new_custom_element.CustomElement.prototype.adoptedCallback):
+        (define_new_custom_element.return.takeLog):
+        (define_new_custom_element):
+        (document_types.return.create):
+        (document_types.create):
+        (document_types.):
+        (document_types):
+        (test_with_window): Deleted.
+        * web-platform-tests/custom-elements/resources/document-types.js: Removed.
+        * web-platform-tests/custom-elements/resources/w3c-import.log:
+        * web-platform-tests/diff-manifest.py: Added.
+        (call):
+        (get_manifest):
+        (main):
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-indices-expected.txt:
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-indices.html:
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-names-expected.txt:
+        * web-platform-tests/dom/collections/HTMLCollection-supported-property-names.html:
+        * web-platform-tests/dom/events/Event-propagation.html:
+        * web-platform-tests/dom/interfaces-expected.txt:
+        * web-platform-tests/dom/lists/DOMTokenList-Iterable-expected.txt: Added.
+        * web-platform-tests/dom/lists/DOMTokenList-Iterable.html: Added.
+        * web-platform-tests/dom/lists/DOMTokenList-iteration.html:
+        * web-platform-tests/dom/lists/w3c-import.log:
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Node-childNodes.html:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/dom/nodes/selectors.js:
+        * web-platform-tests/fetch/api/basic/integrity-sharedworker-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/integrity-sharedworker.html: Added.
+        * web-platform-tests/fetch/api/headers/headers-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/response/response-idl-expected.txt:
+        * web-platform-tests/html/browsers/history/the-history-interface/non-automated/traverse_the_session_history_unload_prompt_1.html: Removed.
+        * web-platform-tests/html/browsers/history/the-history-interface/non-automated/w3c-import.log:
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting-expected.txt: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location-prototype-setting.html: Added.
+        * web-platform-tests/html/browsers/history/the-location-interface/location_hash-expected.txt:
+        * web-platform-tests/html/browsers/history/the-location-interface/location_hash.html:
+        * web-platform-tests/html/browsers/history/the-location-interface/location_reload.html:
+        * web-platform-tests/html/browsers/history/the-location-interface/w3c-import.log:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects-on-new-window-expected.txt:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html:
+        * web-platform-tests/html/browsers/origin/cross-origin-objects/win-documentdomain.sub.html:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/named-objects-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/named-objects.html:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms-expected.txt:
+        * web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms.html:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-canvas-element/historical.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-append-to-child-document-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-append-to-child-document.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_script.html:
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-3.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-2.html: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-3.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-1.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-3.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping.html.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/w3c-import.log:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/invalid-src.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-checkValidity.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-reportValidity.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-stepMismatch.html:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid-expected.txt:
+        * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-valid.html:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-indexed-element-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-indexed-element.html:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-nameditem-expected.txt:
+        * web-platform-tests/html/semantics/forms/the-form-element/form-nameditem.html:
+        * web-platform-tests/html/semantics/forms/the-input-element/checkbox.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1a.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1b.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1c.html:
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1d-expected.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/reversed-1d.html: Added.
+        * web-platform-tests/html/semantics/grouping-content/the-ol-element/w3c-import.log:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/load-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/load-event.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/cross-origin.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/resources/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/custom-elements/resources/w3c-import.log.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin-network-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin-network.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-crossorigin.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onerror-insertion-point-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onerror-insertion-point-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onerror-insertion-point-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onerror-insertion-point-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-insertion-point-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/script-onload-insertion-point.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onerror-insertion-point-1-helper.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onerror-insertion-point-2-helper.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onload-insertion-point-helper.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onload-insertion-point-helper.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/support/w3c-import.log: Copied from LayoutTests/imported/w3c/web-platform-tests/w3c-import.log.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/w3c-import.log:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-expected.txt:
+        * web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate.html:
+        * web-platform-tests/html/syntax/serializing-html-fragments/initial-linefeed-pre-expected.txt:
+        * web-platform-tests/html/syntax/serializing-html-fragments/initial-linefeed-pre.html:
+        * web-platform-tests/html/syntax/serializing-html-fragments/serializing-expected.txt:
+        * web-platform-tests/html/syntax/serializing-html-fragments/serializing.html:
+        * web-platform-tests/html/webappapis/animation-frames/idlharness-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/event-loops/w3c-import.log:
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setInterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setInterval.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setTimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-cross-origin-setTimeout.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setInterval-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setInterval.html: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setTimeout-expected.txt: Added.
+        * web-platform-tests/html/webappapis/scripting/processing-model-2/runtime-error-cross-origin-setTimeout.html: Added.
+        * web-platform-tests/media-source/interfaces.html:
+        * web-platform-tests/media-source/mediasource-avtracks-expected.txt:
+        * web-platform-tests/media-source/mediasource-remove-expected.txt:
+        * web-platform-tests/media-source/mediasource-remove.html:
+        * web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html:
+        * web-platform-tests/media-source/mediasource-util.js:
+        (EventExpectationsManager): Deleted.
+        (EventExpectationsManager.prototype.expectEvent): Deleted.
+        * web-platform-tests/media-source/mp4/test.mp4:
+        * web-platform-tests/media-source/webm/test.webm:
+        * web-platform-tests/resource-timing/resources/gzip_xml.py: Added.
+        (main):
+        * web-platform-tests/resource-timing/resources/w3c-import.log:
+        * web-platform-tests/resource-timing/test_resource_timing-expected.txt:
+        * web-platform-tests/resource-timing/test_resource_timing.js:
+        (setup):
+        (poll_for_stylesheet_load.inner):
+        (poll_for_stylesheet_load):
+        (resource_load):
+        (switch.): Deleted.
+        (switch.case.string_appeared_here.xmlhttp.onload): Deleted.
+        (onload): Deleted.
+        * web-platform-tests/shadow-dom/Document-prototype-adoptNode.html:
+        * web-platform-tests/shadow-dom/Document-prototype-currentScript.html:
+        * web-platform-tests/shadow-dom/Document-prototype-importNode.html:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow.html:
+        * web-platform-tests/shadow-dom/Element-interface-shadowRoot-attribute.html:
+        * web-platform-tests/shadow-dom/Extensions-to-Event-Interface.html:
+        * web-platform-tests/shadow-dom/HTMLSlotElement-interface.html:
+        * web-platform-tests/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html:
+        * web-platform-tests/shadow-dom/Node-prototype-cloneNode.html:
+        * web-platform-tests/shadow-dom/OWNERS:
+        * web-platform-tests/shadow-dom/ShadowRoot-interface.html:
+        * web-platform-tests/shadow-dom/Slotable-interface.html:
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target-expected.txt:
+        * web-platform-tests/shadow-dom/event-composed-path-with-related-target.html:
+        * web-platform-tests/shadow-dom/event-composed-path.html:
+        * web-platform-tests/shadow-dom/event-composed.html:
+        * web-platform-tests/shadow-dom/event-inside-shadow-tree.html:
+        * web-platform-tests/shadow-dom/event-inside-slotted-node.html:
+        * web-platform-tests/shadow-dom/event-with-related-target.html:
+        * web-platform-tests/shadow-dom/leaktests/get-elements.html:
+        * web-platform-tests/shadow-dom/leaktests/html-collection.html:
+        * web-platform-tests/shadow-dom/leaktests/window-frames.html:
+        * web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html:
+        * web-platform-tests/shadow-dom/slotchange-event.html:
+        * web-platform-tests/shadow-dom/slotchange.html:
+        * web-platform-tests/shadow-dom/slots-fallback.html:
+        * web-platform-tests/shadow-dom/slots.html:
+        * web-platform-tests/touch-events/create-touch-touchlist.html:
+        * web-platform-tests/touch-events/historical.html:
+        * web-platform-tests/touch-events/touch-globaleventhandler-interface.html:
+        * web-platform-tests/touch-events/touch-retargeting.html: Added.
+        * web-platform-tests/touch-events/touch-touchevent-constructor.html:
+        * web-platform-tests/touch-events/w3c-import.log:
+        * web-platform-tests/url/interfaces-expected.txt:
+        * web-platform-tests/w3c-import.log:
+
 2016-10-06  Chris Dumez  <cdumez@apple.com>
 
         Overwriting an attribute event listener can lead to wrong event listener firing order
