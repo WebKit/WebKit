@@ -34,28 +34,24 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "GenericEventQueue.h"
-#include "MediaSourcePrivate.h"
 #include "MediaSourcePrivateClient.h"
-#include "ScriptWrappable.h"
-#include "SourceBuffer.h"
-#include "SourceBufferList.h"
 #include "URLRegistry.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class GenericEventQueue;
+class ContentType;
+class HTMLMediaElement;
+class SourceBuffer;
+class SourceBufferList;
+class SourceBufferPrivate;
+class TimeRanges;
 
-class MediaSource : public MediaSourcePrivateClient, public ActiveDOMObject, public EventTargetWithInlineData, public URLRegistrable {
+class MediaSource final : public MediaSourcePrivateClient, public ActiveDOMObject, public EventTargetWithInlineData, public URLRegistrable {
 public:
     static void setRegistry(URLRegistry*);
-    static MediaSource* lookup(const String& url) { return s_registry ? static_cast<MediaSource*>(s_registry->lookup(url)) : 0; }
-
-    static const AtomicString& openKeyword();
-    static const AtomicString& closedKeyword();
-    static const AtomicString& endedKeyword();
+    static MediaSource* lookup(const String& url) { return s_registry ? static_cast<MediaSource*>(s_registry->lookup(url)) : nullptr; }
 
     static Ref<MediaSource> create(ScriptExecutionContext&);
     virtual ~MediaSource();
@@ -71,75 +67,74 @@ public:
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(Optional<EndOfStreamError>);
 
-    // MediaSourcePrivateClient
-    void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) override;
-    MediaTime duration() const override;
-    std::unique_ptr<PlatformTimeRanges> buffered() const override;
-    void seekToTime(const MediaTime&) override;
+    MediaTime duration() const final;
+    std::unique_ptr<PlatformTimeRanges> buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
     void monitorSourceBuffers();
     bool isSeeking() const { return m_pendingSeekTime.isValid(); }
-    void completeSeek();
     Ref<TimeRanges> seekable();
-    void setLiveSeekableRange(double start, double end, ExceptionCode&);
-    void clearLiveSeekableRange(ExceptionCode&);
+    ExceptionOr<void> setLiveSeekableRange(double start, double end);
+    ExceptionOr<void> clearLiveSeekableRange();
 
-
-    void setDuration(double, ExceptionCode&);
-    Optional<ExceptionCode> setDurationInternal(const MediaTime&);
+    ExceptionOr<void> setDuration(double);
+    ExceptionOr<void> setDurationInternal(const MediaTime&);
     MediaTime currentTime() const;
     const AtomicString& readyState() const { return m_readyState; }
-    void setReadyState(const AtomicString&);
-    void endOfStream(Optional<EndOfStreamError>, ExceptionCode&);
+    ExceptionOr<void> endOfStream(Optional<EndOfStreamError>);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement; }
 
-    // MediaSource.idl methods
     SourceBufferList* sourceBuffers() { return m_sourceBuffers.get(); }
     SourceBufferList* activeSourceBuffers() { return m_activeSourceBuffers.get(); }
-    SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
-    void removeSourceBuffer(SourceBuffer&, ExceptionCode&);
+    ExceptionOr<SourceBuffer*> addSourceBuffer(const String& type);
+    ExceptionOr<void> removeSourceBuffer(SourceBuffer&);
     static bool isTypeSupported(const String& type);
 
-    // EventTarget interface
     ScriptExecutionContext* scriptExecutionContext() const final;
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const override;
 
-    // URLRegistrable interface
-    URLRegistry& registry() const override;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
-    using RefCounted<MediaSourcePrivateClient>::ref;
-    using RefCounted<MediaSourcePrivateClient>::deref;
-
-    // ActiveDOMObject API.
-    bool hasPendingActivity() const override;
+    bool hasPendingActivity() const final;
 
     static const MediaTime& currentTimeFudgeFactor();
 
-protected:
+private:
     explicit MediaSource(ScriptExecutionContext&);
 
-    // ActiveDOMObject API.
-    void stop() override;
-    bool canSuspendForDocumentSuspension() const override;
-    const char* activeDOMObjectName() const override;
+    void stop() final;
+    bool canSuspendForDocumentSuspension() const final;
+    const char* activeDOMObjectName() const final;
 
+    void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
+    void seekToTime(const MediaTime&) final;
+
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+    EventTargetInterface eventTargetInterface() const final;
+
+    URLRegistry& registry() const final;
+
+    static const AtomicString& openKeyword();
+    static const AtomicString& closedKeyword();
+    static const AtomicString& endedKeyword();
+    void setReadyState(const AtomicString&);
     void onReadyStateChange(const AtomicString& oldState, const AtomicString& newState);
+
     Vector<PlatformTimeRanges> activeRanges() const;
 
-    RefPtr<SourceBufferPrivate> createSourceBufferPrivate(const ContentType&, ExceptionCode&);
+    ExceptionOr<Ref<SourceBufferPrivate>> createSourceBufferPrivate(const ContentType&);
     void scheduleEvent(const AtomicString& eventName);
-    GenericEventQueue& asyncEventQueue() { return m_asyncEventQueue; }
 
     bool hasBufferedTime(const MediaTime&);
     bool hasCurrentTime();
     bool hasFutureTime();
 
     void regenerateActiveSourceBuffers();
+
+    void completeSeek();
 
     static URLRegistry* s_registry;
 
@@ -148,7 +143,7 @@ protected:
     RefPtr<SourceBufferList> m_activeSourceBuffers;
     mutable std::unique_ptr<PlatformTimeRanges> m_buffered;
     std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
-    HTMLMediaElement* m_mediaElement;
+    HTMLMediaElement* m_mediaElement { nullptr };
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     AtomicString m_readyState;

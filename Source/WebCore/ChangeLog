@@ -1,3 +1,50 @@
+2016-10-10  Darin Adler  <darin@apple.com>
+
+        Move media source from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163201
+
+        Reviewed by Chris Dumez.
+
+        * Modules/mediasource/MediaSource.cpp: Removed unneeded includes.
+        (WebCore::MediaSource::create): Use auto.
+        (WebCore::MediaSource::MediaSource): Initialize m_mediaElement in class definition.
+        (WebCore::MediaSource::setLiveSeekableRange): Use ExceptionOr.
+        (WebCore::MediaSource::clearLiveSeekableRange): Ditto.
+        (WebCore::MediaSource::setDuration): Ditto.
+        (WebCore::MediaSource::setDurationInternal): Ditto.
+        (WebCore::MediaSource::endOfStream): Ditto.
+        (WebCore::MediaSource::streamEndedWithError): Use bufferedInternal.
+        (WebCore::MediaSource::addSourceBuffer): Use ExceptionOr.
+        (WebCore::MediaSource::removeSourceBuffer): Ditto.
+        (WebCore::MediaSource::detachFromElement): Use removeSourceBuffer
+        without IGNORE_EXCEPTION since that is now the default behavior.
+        (WebCore::MediaSource::activeRanges): Use bufferedInternal.
+        (WebCore::MediaSource::createSourceBufferPrivate): Use ExceptionOr.
+
+        * Modules/mediasource/MediaSource.h: Removed unneeded includes.
+        Made more things private and also private rather than protected.
+
+        * Modules/mediasource/MediaSource.idl: Use non-legacy exceptions.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::buffered): Use ExceptionOr.
+        (WebCore::SourceBuffer::setTimestampOffset): Ditto.
+        (WebCore::SourceBuffer::setAppendWindowStart): Ditto.
+        (WebCore::SourceBuffer::setAppendWindowEnd): Ditto.
+        (WebCore::SourceBuffer::appendBuffer): Ditto.
+        (WebCore::SourceBuffer::abort): Ditto.
+        (WebCore::SourceBuffer::remove): Ditto.
+        (WebCore::SourceBuffer::appendBufferInternal): Ditto.
+        (WebCore::SourceBuffer::setMode): Ditto.
+
+        * Modules/mediasource/SourceBuffer.h: Removed unneeded includes.
+        Updated for above changes. Made more things private.
+
+        * Modules/mediasource/SourceBuffer.idl: Use non-legacy exceptions.
+
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.h:
+        Added now-needed include of MediaSourcePrivate.h.
+
 2016-10-10  Jer Noble  <jer.noble@apple.com>
 
         Address flaky airplay-* LayouTests

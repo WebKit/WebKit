@@ -38,32 +38,31 @@
     Conditional=MEDIA_SOURCE,
     ExportMacro=WEBCORE_EXPORT,
 ] interface SourceBuffer : EventTarget {
-
-    [SetterMayThrowLegacyException] attribute AppendMode mode;
+    [SetterMayThrowException] attribute AppendMode mode;
 
     readonly attribute boolean updating;
   
     // Returns the time ranges buffered.
-    [GetterMayThrowLegacyException] readonly attribute TimeRanges buffered;
+    [GetterMayThrowException] readonly attribute TimeRanges buffered;
 
     // Applies an offset to media segment timestamps.
-    [SetterMayThrowLegacyException] attribute double timestampOffset;
+    [SetterMayThrowException] attribute double timestampOffset;
 
     // Track support
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
     [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
 
-    [SetterMayThrowLegacyException] attribute double appendWindowStart;
-    [SetterMayThrowLegacyException] attribute unrestricted double appendWindowEnd;
+    [SetterMayThrowException] attribute double appendWindowStart;
+    [SetterMayThrowException] attribute unrestricted double appendWindowEnd;
 
     // Append segment data.
-    [MayThrowLegacyException] void appendBuffer(ArrayBuffer data);
-    [MayThrowLegacyException] void appendBuffer(ArrayBufferView data);
+    [MayThrowException] void appendBuffer(ArrayBuffer data);
+    [MayThrowException] void appendBuffer(ArrayBufferView data);
 
     // Abort the current segment append sequence.
-    [MayThrowLegacyException] void abort();
-    [MayThrowLegacyException] void remove(unrestricted double start, unrestricted double end);
+    [MayThrowException] void abort();
+    [MayThrowException] void remove(unrestricted double start, unrestricted double end);
 
     attribute EventHandler onupdatestart;
     attribute EventHandler onupdate;
@@ -71,4 +70,3 @@
     attribute EventHandler onerror;
     attribute EventHandler onabort;
 };
-
