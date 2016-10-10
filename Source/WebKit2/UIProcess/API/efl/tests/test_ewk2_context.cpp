@@ -329,6 +329,6 @@ TEST_F(EWK2UnitTestBase, ewk_context_preferred_languages)
 
     ewk_context_preferred_languages_set(nullptr);
     ASSERT_TRUE(loadUrlSync(httpServer->getURLForPath("/index.html").data()));
-    ASSERT_STREQ("en-us", s_acceptLanguages);
+    ASSERT_STREQ("en-US", s_acceptLanguages);
     free(s_acceptLanguages);
 }
