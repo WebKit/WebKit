@@ -35,6 +35,7 @@ class Element;
 class MediaQueryEvaluator;
 class RuleSet;
 class SelectorFilter;
+class ShadowRoot;
 class StyleSheetContents;
 
 class StyleInvalidationAnalysis {
@@ -45,6 +46,7 @@ public:
     bool dirtiesAllStyle() const { return m_dirtiesAllStyle; }
     bool hasShadowPseudoElementRulesInAuthorSheet() const { return m_hasShadowPseudoElementRulesInAuthorSheet; }
     void invalidateStyle(Document&);
+    void invalidateStyle(ShadowRoot&);
     void invalidateStyle(Element&);
 
 private:

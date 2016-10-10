@@ -1,3 +1,13 @@
+2016-10-09  Antti Koivisto  <antti@apple.com>
+
+        Enable optimized stylesheet updates in shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=163180
+
+        Reviewed by Darin Adler.
+
+        * fast/shadow-dom/scoped-style-invalidation-expected.txt: Added.
+        * fast/shadow-dom/scoped-style-invalidation.html: Added.
+
 2016-10-09  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         Unreviewed, EFL Gardening on Oct. 10th - 2

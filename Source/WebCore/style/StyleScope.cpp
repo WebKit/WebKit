@@ -129,13 +129,10 @@ void Scope::removePendingSheet(RemovePendingSheetNotificationType notification)
         return;
     }
 
-    if (m_shadowRoot) {
-        // FIXME: Make optimized updates work.
-        didChangeContentsOrInterpretation();
-        return;
-    }
+    didChangeCandidatesForActiveSet();
 
-    m_document.didRemoveAllPendingStylesheet();
+    if (!m_shadowRoot)
+        m_document.didRemoveAllPendingStylesheet();
 }
 
 void Scope::addStyleSheetCandidateNode(Node& node, bool createdByParser)
@@ -300,7 +297,12 @@ Scope::StyleResolverUpdateType Scope::analyzeStyleSheetChange(const Vector<RefPt
     StyleInvalidationAnalysis invalidationAnalysis(addedSheets, styleResolver.mediaQueryEvaluator());
     if (invalidationAnalysis.dirtiesAllStyle())
         return styleResolverUpdateType;
-    invalidationAnalysis.invalidateStyle(m_document);
+
+    if (m_shadowRoot)
+        invalidationAnalysis.invalidateStyle(*m_shadowRoot);
+    else
+        invalidationAnalysis.invalidateStyle(m_document);
+
     requiresFullStyleRecalc = false;
 
     return styleResolverUpdateType;
@@ -346,10 +348,6 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
         clearResolver();
         return;
     }
-
-    // FIXME: Support optimized invalidation in shadow trees.
-    if (m_shadowRoot)
-        updateType = UpdateType::ContentsOrInterpretation;
 
     m_didUpdateActiveStyleSheets = true;
 

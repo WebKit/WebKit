@@ -169,6 +169,16 @@ void StyleInvalidationAnalysis::invalidateStyle(Document& document)
     invalidateStyleForTree(*documentElement, &filter);
 }
 
+void StyleInvalidationAnalysis::invalidateStyle(ShadowRoot& shadowRoot)
+{
+    ASSERT(!m_dirtiesAllStyle);
+
+    for (auto& child : childrenOfType<Element>(shadowRoot)) {
+        SelectorFilter filter;
+        invalidateStyleForTree(child, &filter);
+    }
+}
+
 void StyleInvalidationAnalysis::invalidateStyle(Element& element)
 {
     ASSERT(!m_dirtiesAllStyle);

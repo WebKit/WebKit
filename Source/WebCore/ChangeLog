@@ -1,3 +1,26 @@
+2016-10-09  Antti Koivisto  <antti@apple.com>
+
+        Enable optimized stylesheet updates in shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=163180
+
+        Reviewed by Darin Adler.
+
+        When we get a new stylesheet (for example when load completes) we invalidate only
+        those elements in DOM that are affected by the new sheet. This patch makes the
+        optimization also work in shadow trees.
+
+        Test: fast/shadow-dom/scoped-style-invalidation.html
+
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateStyle):
+        * css/StyleInvalidationAnalysis.h:
+        * dom/Document.cpp:
+        (WebCore::Document::didRemoveAllPendingStylesheet):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::removePendingSheet):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+
 2016-10-10  Youenn Fablet  <youenn@apple.com>
 
         Refactor binding generated casted-this checks for attribute setters
