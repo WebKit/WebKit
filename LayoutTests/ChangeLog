@@ -1,3 +1,12 @@
+2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking media/controls/airplay-picker.html as flaky on ElCapitan+.
+        https://bugs.webkit.org/show_bug.cgi?id=163231
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2016-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support InputEvent.data for the new InputEvent spec
