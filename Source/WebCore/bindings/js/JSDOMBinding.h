@@ -333,7 +333,22 @@ enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise };
 
 template<typename JSClass>
 struct BindingCaller {
+    using AttributeSetterFunction = bool(JSC::ExecState*, JSClass*, JSC::JSValue, JSC::ThrowScope&);
     using AttributeGetterFunction = JSC::JSValue(JSC::ExecState*, JSClass*, JSC::ThrowScope&);
+
+    template<AttributeSetterFunction setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static bool setAttribute(JSC::ExecState* state, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, const char* attributeName)
+    {
+        ASSERT(state);
+        auto throwScope = DECLARE_THROW_SCOPE(state->vm());
+        auto* thisObject = JSClass::castForAttribute(state, thisValue);
+        if (UNLIKELY(!thisObject)) {
+            ASSERT(JSClass::info());
+            return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : false;
+        }
+        // FIXME: We should refactor the binding generated code to use references for state and thisObject.
+        return setter(state, thisObject, JSC::JSValue::decode(encodedValue), throwScope);
+    }
 
     template<AttributeGetterFunction getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue attribute(JSC::ExecState* state, JSC::EncodedJSValue thisValue, const char* attributeName)

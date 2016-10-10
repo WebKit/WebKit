@@ -3201,26 +3201,28 @@ sub GenerateImplementation
             my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-            push(@implContent, "bool ${putFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    VM& vm = state->vm();\n");
-            push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-            push(@implContent, "    UNUSED_PARAM(throwScope);\n");
-            push(@implContent, "    JSValue value = JSValue::decode(encodedValue);\n");
-            push(@implContent, "    UNUSED_PARAM(thisValue);\n") if !$attribute->isStatic;
             if (!$attribute->isStatic) {
-                if ($interface->extendedAttributes->{CustomProxyToJSObject}) {
-                    push(@implContent, "    ${className}* castedThis = to${className}(JSValue::decode(thisValue));\n");
-                } else {
-                    push(@implContent, "    ${className}* castedThis = " . GetCastingHelperForThisObject($interface) . "(JSValue::decode(thisValue));\n");
-                }
-                push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-                if ($attribute->signature->extendedAttributes->{LenientThis}) {
-                    push(@implContent, "        return false;\n");
-                } else {
-                    push(@implContent, "        return throwSetterTypeError(*state, throwScope, \"$visibleInterfaceName\", \"$name\");\n");
-                }
+                my $setterFunction = "${putFunctionName}Function";
+                my $templateParameters = $setterFunction;
+                $templateParameters .= ", CastedThisErrorBehavior::ReturnEarly" if $attribute->signature->extendedAttributes->{LenientThis};
+
+                push(@implContent, "static inline bool ${setterFunction}(ExecState*, ${className}*, JSValue, ThrowScope&);\n\n");
+
+                push(@implContent, "bool ${putFunctionName}(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)\n");
+                push(@implContent, "{\n");
+                push(@implContent, "    return BindingCaller<${className}>::setAttribute<${templateParameters}>(state, thisValue, encodedValue, \"$name\");\n");
+                push(@implContent, "}\n\n");
+
+                push(@implContent, "static inline bool ${setterFunction}(ExecState* state, ${className}* castedThis, JSValue value, ThrowScope& throwScope)\n");
+                push(@implContent, "{\n");
+                push(@implContent, "    UNUSED_PARAM(state);\n");
+                push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+            } else {
+                push(@implContent, "bool ${putFunctionName}(ExecState* state, EncodedJSValue, EncodedJSValue encodedValue)\n");
+                push(@implContent, "{\n");
+                push(@implContent, "    UNUSED_PARAM(state);\n");
             }
+
             if ($interface->extendedAttributes->{CheckSecurity} && !$attribute->signature->extendedAttributes->{DoNotCheckSecurity} && !$attribute->signature->extendedAttributes->{DoNotCheckSecurityOnSetter}) {
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");

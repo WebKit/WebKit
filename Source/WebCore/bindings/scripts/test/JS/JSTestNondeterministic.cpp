@@ -356,16 +356,17 @@ bool setJSTestNondeterministicConstructor(ExecState* state, EncodedJSValue thisV
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
+static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+
 bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicWriteableAttrFunction>(state, thisValue, encodedValue, "nondeterministicWriteableAttr");
+}
+
+static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestNondeterministic", "nondeterministicWriteableAttr");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -374,16 +375,17 @@ bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, En
 }
 
 
+static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+
 bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicExceptionAttr");
+}
+
+static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestNondeterministic", "nondeterministicExceptionAttr");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -392,16 +394,17 @@ bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, En
 }
 
 
+static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+
 bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicGetterExceptionAttr");
+}
+
+static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestNondeterministic", "nondeterministicGetterExceptionAttr");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -410,16 +413,17 @@ bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* sta
 }
 
 
+static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+
 bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicSetterExceptionAttr");
+}
+
+static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNondeterministic* castedThis = jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestNondeterministic", "nondeterministicSetterExceptionAttr");
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     auto nativeValue = value.toWTFString(state);

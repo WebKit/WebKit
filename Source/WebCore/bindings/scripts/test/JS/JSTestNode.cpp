@@ -212,16 +212,17 @@ bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, Encode
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
+static inline bool setJSTestNodeNameFunction(ExecState*, JSTestNode*, JSValue, ThrowScope&);
+
 bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNode>::setAttribute<setJSTestNodeNameFunction>(state, thisValue, encodedValue, "name");
+}
+
+static inline bool setJSTestNodeNameFunction(ExecState* state, JSTestNode* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestNode* castedThis = jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestNode", "name");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);

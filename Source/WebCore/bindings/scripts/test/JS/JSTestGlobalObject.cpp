@@ -276,16 +276,17 @@ bool setJSTestGlobalObjectConstructor(ExecState* state, EncodedJSValue thisValue
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
+static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+
 bool setJSTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectRegularAttributeFunction>(state, thisValue, encodedValue, "regularAttribute");
+}
+
+static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestGlobalObject", "regularAttribute");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -294,16 +295,17 @@ bool setJSTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue this
 }
 
 
+static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+
 bool setJSTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectPublicAndPrivateAttributeFunction>(state, thisValue, encodedValue, "publicAndPrivateAttribute");
+}
+
+static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestGlobalObject", "publicAndPrivateAttribute");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -313,16 +315,17 @@ bool setJSTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSV
 
 
 #if ENABLE(TEST_FEATURE)
+static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+
 bool setJSTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction>(state, thisValue, encodedValue, "publicAndPrivateConditionalAttribute");
+}
+
+static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestGlobalObject", "publicAndPrivateConditionalAttribute");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -333,16 +336,17 @@ bool setJSTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state,
 #endif
 
 #if ENABLE(TEST_FEATURE)
+static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+
 bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction>(state, thisValue, encodedValue, "enabledAtRuntimeAttribute");
+}
+
+static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestGlobalObject* castedThis = jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestGlobalObject", "enabledAtRuntimeAttribute");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);

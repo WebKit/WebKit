@@ -678,12 +678,9 @@ bool JSTestInterface::putByIndex(JSCell* cell, ExecState* state, unsigned index,
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
-bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, EncodedJSValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(state);
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
     TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
@@ -693,16 +690,17 @@ bool setJSTestInterfaceConstructorImplementsStaticAttr(ExecState* state, Encoded
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline bool setJSTestInterfaceImplementsStr2Function(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceImplementsStr2Function>(state, thisValue, encodedValue, "implementsStr2");
+}
+
+static inline bool setJSTestInterfaceImplementsStr2Function(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "implementsStr2");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -713,16 +711,17 @@ bool setJSTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue thisValue
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline bool setJSTestInterfaceImplementsStr3Function(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceImplementsStr3Function>(state, thisValue, encodedValue, "implementsStr3");
+}
+
+static inline bool setJSTestInterfaceImplementsStr3Function(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "implementsStr3");
     castedThis->setImplementsStr3(*state, value);
     return true;
 }
@@ -730,16 +729,17 @@ bool setJSTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue thisValue
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline bool setJSTestInterfaceImplementsNodeFunction(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceImplementsNodeFunction>(state, thisValue, encodedValue, "implementsNode");
+}
+
+static inline bool setJSTestInterfaceImplementsNodeFunction(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "implementsNode");
     auto& impl = castedThis->wrapped();
     auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
@@ -753,12 +753,9 @@ bool setJSTestInterfaceImplementsNode(ExecState* state, EncodedJSValue thisValue
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, EncodedJSValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
+    UNUSED_PARAM(state);
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
     WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
@@ -768,16 +765,17 @@ bool setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* state, Encod
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline bool setJSTestInterfaceSupplementalStr2Function(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceSupplementalStr2Function>(state, thisValue, encodedValue, "supplementalStr2");
+}
+
+static inline bool setJSTestInterfaceSupplementalStr2Function(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "supplementalStr2");
     auto& impl = castedThis->wrapped();
     auto nativeValue = value.toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -788,16 +786,17 @@ bool setJSTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue thisVal
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline bool setJSTestInterfaceSupplementalStr3Function(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceSupplementalStr3Function>(state, thisValue, encodedValue, "supplementalStr3");
+}
+
+static inline bool setJSTestInterfaceSupplementalStr3Function(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "supplementalStr3");
     castedThis->setSupplementalStr3(*state, value);
     return true;
 }
@@ -805,16 +804,17 @@ bool setJSTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue thisVal
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline bool setJSTestInterfaceSupplementalNodeFunction(ExecState*, JSTestInterface*, JSValue, ThrowScope&);
+
 bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::setAttribute<setJSTestInterfaceSupplementalNodeFunction>(state, thisValue, encodedValue, "supplementalNode");
+}
+
+static inline bool setJSTestInterfaceSupplementalNodeFunction(ExecState* state, JSTestInterface* castedThis, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestInterface* castedThis = jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestInterface", "supplementalNode");
     auto& impl = castedThis->wrapped();
     auto nativeValue = JSNode::toWrapped(value);
     if (UNLIKELY(!nativeValue)) {
