@@ -1471,3 +1471,6 @@ webkit.org/b/161720 [ Debug ] storage/indexeddb/key-type-array.html [ Pass Timeo
 webkit.org/b/155138 [ Debug ] inspector/console/addInspectedNode.html [ Pass Timeout ]
 
 webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
+
+webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled.html [ Pass Timeout ]
+webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled-private.html [ Pass Timeout ]
