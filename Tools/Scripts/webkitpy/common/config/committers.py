@@ -67,6 +67,15 @@ class Contributor(object):
     def __unicode__(self):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
+    def __eq__(self, other):
+        return (self.full_name == other.full_name
+            and self.emails == other.emails
+            and self._case_preserved_emails == other._case_preserved_emails
+            and self.irc_nicknames == other.irc_nicknames
+            and self.expertise == other.expertise
+            and self.can_commit == other.can_commit
+            and self.can_review == other.can_review)
+
     def contains_string(self, search_string):
         string = search_string.lower()
         if string in self.full_name.lower():
@@ -95,6 +104,11 @@ class Contributor(object):
     def as_dict(self):
         info = {"emails" : self._case_preserved_emails}
 
+        if self.can_review:
+            info["status"] = "reviewer"
+        elif self.can_commit:
+            info["status"] = "committer"
+
         if self.irc_nicknames:
             info["nicks"] = self.irc_nicknames
 
@@ -102,6 +116,7 @@ class Contributor(object):
             info["expertise"] = self.expertise
 
         return info
+
 
 class Committer(Contributor):
     def __init__(self, name, email_or_emails, irc_nickname=None, expertise=None):
@@ -122,23 +137,16 @@ class CommitterList(object):
                  committers=[],
                  reviewers=[],
                  contributors=[]):
-        # FIXME: These arguments only exist for testing. Clean it up.
-        if not (committers or reviewers or contributors):
-            loaded_data = self.load_json()
-            contributors = loaded_data['Contributors']
-            committers = loaded_data['Committers']
-            reviewers = loaded_data['Reviewers']
+        if committers or reviewers or contributors:
+            self.load_test_data(committers, reviewers, contributors)
+        else:
+            self.load_json()
 
-        self._contributors = contributors + committers + reviewers
-        self._committers = committers + reviewers
-        self._reviewers = reviewers
         self._contributors_by_name = {}
         self._accounts_by_email = {}
         self._accounts_by_login = {}
 
-    @staticmethod
-    @memoized
-    def load_json():
+    def load_json(self):
         filesystem = FileSystem()
         json_path = filesystem.join(filesystem.dirname(filesystem.path_to_module('webkitpy.common.config')), 'contributors.json')
         try:
@@ -146,11 +154,29 @@ class CommitterList(object):
         except ValueError, e:
             sys.exit('contributors.json is malformed: ' + str(e))
 
-        return {
-            'Contributors': [Contributor(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Contributors'].iteritems()],
-            'Committers':   [Committer(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Committers'].iteritems()],
-            'Reviewers':    [Reviewer(name, data.get('emails'), data.get('nicks'), data.get('expertise')) for name, data in contributors['Reviewers'].iteritems()],
-        }
+        self._contributors = []
+        self._committers = []
+        self._reviewers = []
+
+        for name, data in contributors.iteritems():
+            contributor = None
+            status = data.get('status')
+            if status == "reviewer":
+                contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+                self._reviewers.append(contributor)
+                self._committers.append(contributor)
+            elif status == "committer":
+                contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+                self._committers.append(contributor)
+            else:
+                contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+
+            self._contributors.append(contributor)
+
+    def load_test_data(self, committers, reviewers, contributors):
+        self._contributors = contributors + committers + reviewers
+        self._committers = committers + reviewers
+        self._reviewers = reviewers
 
     @staticmethod
     def _contributor_list_to_dict(list):
@@ -160,11 +186,7 @@ class CommitterList(object):
         return committers_dict
 
     def as_json(self):
-        result = {
-            'Contributors': CommitterList._contributor_list_to_dict(self._exclusive_contributors()),
-            'Committers':   CommitterList._contributor_list_to_dict(self._exclusive_committers()),
-            'Reviewers':    CommitterList._contributor_list_to_dict(self._reviewers)
-        }
+        result = CommitterList._contributor_list_to_dict(self._contributors)
         return json.dumps(result, sort_keys=True, indent=3, separators=(',', ' : '))
 
     def reformat_in_place(self):

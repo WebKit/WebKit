@@ -1,3 +1,20 @@
+2016-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert contributors.json to a flat list
+        https://bugs.webkit.org/show_bug.cgi?id=163183
+
+        Reviewed by Darin Adler.
+        
+        Make contributors.json easier to maintain by eliminating the big groupings ("Committers", "Reviewers" etc)
+        and moving that data to a "status" property on each contributor.
+        
+        Fix script that does bugzilla autocomplete.
+
+        * committers-autocomplete.js:
+        (statusToType):
+        (parseCommittersPy):
+        (parseType): Deleted.
+
 2016-07-16  David Kilzer  <ddkilzer@apple.com>
 
         Use secure (https) links on enter_bug.cgi

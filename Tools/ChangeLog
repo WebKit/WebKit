@@ -1,3 +1,25 @@
+2016-10-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert contributors.json to a flat list
+        https://bugs.webkit.org/show_bug.cgi?id=163183
+
+        Reviewed by Darin Adler.
+        
+        Make contributors.json easier to maintain by eliminating the big groupings ("Committers", "Reviewers" etc)
+        and moving that data to a "status" property on each contributor.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__eq__): Implement this to fix unit tests, now that load_json() is not @memoized.
+        (Contributor.as_dict): Include status in the dict.
+        (CommitterList.__init__): Clean up to make the testing code path more explicit.
+        (CommitterList.load_json):
+        (CommitterList.load_test_data):
+        (CommitterList.as_json):
+        (Contributor.__unicode__): Deleted.
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois): The ordering here is now alphabetical.
+
 2016-10-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] CMake does not support the dep files for implicit dependency

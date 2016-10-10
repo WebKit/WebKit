@@ -133,16 +133,15 @@ function parseContributorsJSON(text) {
     var contributorsJSON = JSON.parse(text);
     var contributors = [];
 
-    for (var contributorType in contributorsJSON) {
-        for (var contributor in contributorsJSON[contributorType]) {
-            contributors.push({
-                name: contributor,
-                kind: contributorType.replace(/s$/, "").toLowerCase(),
-                emails: contributorsJSON[contributorType][contributor].emails,
-                nicks: contributorsJSON[contributorType][contributor].nicks,
-                expertise: contributorsJSON[contributorType][contributor].expertise
-            });
-        }
+    for (var contributor in contributorsJSON) {
+        var data = contributorsJSON[contributor];
+        contributors.push({
+            name: contributor,
+            kind: data.status ? data.status : 'contributor',
+            emails: data.emails,
+            nicks: data.nicks,
+            expertise: data.expertise
+        });
     }
     return contributors;
 }

@@ -27,27 +27,28 @@ WebKitCommitters = (function() {
     var COMMITTERS_URL = 'https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/webkitpy/common/config/contributors.json';
     var m_committers;
 
-    function parseType(key, records, type) {
-        for (var name in records) {
-            var record = records[name];
+    function statusToType(status) {
+        if (status === 'reviewer')
+            return 'r';
+        if (status === 'committer')
+            return 'c';
+        return undefined;
+    }
+
+    function parseCommittersPy(text) {
+        var contributors = JSON.parse(text);
+
+        m_committers = [];
+
+        for (var name in contributors) {
+            var record = contributors[name];
             m_committers.push({
                 name: name,
                 emails: record.emails,
                 irc: record.nicks,
-                type: type,
+                type: statusToType(record.status),
             });
         }
-    }
-
-    function parseCommittersPy(text) {
-        var parsedContributorsJSON = JSON.parse(text);
-
-        m_committers = [];
-
-        var records = text.split('\n');
-        parseType('Committer', parsedContributorsJSON['Committers'], 'c');
-        parseType('Reviewer', parsedContributorsJSON['Reviewers'], 'r');
-        parseType('Contributor', parsedContributorsJSON['Contributors']);
     }
 
     function loadCommitters(callback) {
