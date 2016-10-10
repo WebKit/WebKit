@@ -5382,7 +5382,7 @@ PASS Navigator interface: attribute userAgent
 PASS Navigator interface: attribute vendor 
 PASS Navigator interface: attribute vendorSub 
 PASS Navigator interface: attribute language 
-FAIL Navigator interface: attribute languages assert_true: The prototype object must have a property "languages" expected true got false
+PASS Navigator interface: attribute languages 
 PASS Navigator interface: attribute onLine 
 FAIL Navigator interface: operation registerProtocolHandler(DOMString,USVString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerProtocolHandler" missing
 FAIL Navigator interface: operation registerContentHandler(DOMString,USVString,DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerContentHandler" missing
@@ -5407,7 +5407,7 @@ PASS Navigator interface: window.navigator must inherit property "userAgent" wit
 PASS Navigator interface: window.navigator must inherit property "vendor" with the proper type (7) 
 PASS Navigator interface: window.navigator must inherit property "vendorSub" with the proper type (8) 
 PASS Navigator interface: window.navigator must inherit property "language" with the proper type (9) 
-FAIL Navigator interface: window.navigator must inherit property "languages" with the proper type (10) assert_inherits: property "languages" not found in prototype chain
+FAIL Navigator interface: window.navigator must inherit property "languages" with the proper type (10) Unrecognized type [object Object]
 PASS Navigator interface: window.navigator must inherit property "onLine" with the proper type (11) 
 FAIL Navigator interface: window.navigator must inherit property "registerProtocolHandler" with the proper type (12) assert_inherits: property "registerProtocolHandler" not found in prototype chain
 FAIL Navigator interface: calling registerProtocolHandler(DOMString,USVString,DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "registerProtocolHandler" not found in prototype chain

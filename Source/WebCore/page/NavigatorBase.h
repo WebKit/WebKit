@@ -27,6 +27,7 @@
 #define NavigatorBase_h
 
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -46,6 +47,7 @@ public:
     static bool onLine();
 
     static String language();
+    static Vector<String> languages();
 
 #if ENABLE(NAVIGATOR_HWCONCURRENCY)
     static int hardwareConcurrency();

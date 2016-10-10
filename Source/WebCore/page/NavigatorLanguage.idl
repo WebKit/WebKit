@@ -30,5 +30,5 @@
     NoInterfaceObject
 ] interface NavigatorLanguage {
     [Nondeterministic]  readonly attribute DOMString language;
-    // readonly attribute FrozenArray<DOMString> languages;
+    readonly attribute FrozenArray<DOMString> languages;
 };

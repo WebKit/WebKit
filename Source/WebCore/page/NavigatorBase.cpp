@@ -139,6 +139,12 @@ String NavigatorBase::language()
     return defaultLanguage();
 }
 
+Vector<String> NavigatorBase::languages()
+{
+    // We intentionally expose only the primary language for privacy reasons.
+    return { defaultLanguage() };
+}
+
 #if ENABLE(NAVIGATOR_HWCONCURRENCY)
 
 int NavigatorBase::hardwareConcurrency()

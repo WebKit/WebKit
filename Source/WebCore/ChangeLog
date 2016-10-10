@@ -1,3 +1,26 @@
+2016-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Add support for Navigator.languages attribute
+        https://bugs.webkit.org/show_bug.cgi?id=163220
+
+        Reviewed by Darin Adler.
+
+        Add support for Navigator.languages attribute:
+        - https://html.spec.whatwg.org/#navigatorlanguage
+
+        Firefox and Chrome already support this.
+
+        Currently, we always return a single language for privacy reasons so
+        this API does not actually bring anything new besides interoperability
+        with other browsers and compliance with the HTML specification.
+
+        No new tests, rebaselined existing tests.
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::languages):
+        * page/NavigatorBase.h:
+        * page/NavigatorLanguage.idl:
+
 2016-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Implement dashed and dotted border line drawing
