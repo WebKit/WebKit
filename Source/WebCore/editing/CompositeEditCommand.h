@@ -114,6 +114,7 @@ public:
     virtual void setShouldRetainAutocorrectionIndicator(bool);
     virtual bool shouldStopCaretBlinking() const { return false; }
     virtual String inputEventTypeName() const;
+    virtual String inputEventData() const { return { }; }
 
 protected:
     explicit CompositeEditCommand(Document&, EditAction = EditActionUnspecified);

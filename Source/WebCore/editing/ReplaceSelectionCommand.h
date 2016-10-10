@@ -58,6 +58,7 @@ public:
 private:
     ReplaceSelectionCommand(Document&, RefPtr<DocumentFragment>&&, CommandOptions, EditAction);
 
+    String inputEventData() const final;
     virtual void doApply();
 
     class InsertedNodes {

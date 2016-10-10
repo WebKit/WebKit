@@ -34,15 +34,17 @@
 
 namespace WebCore {
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, int detail)
+InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, int detail)
     : UIEvent(eventType, canBubble, cancelable, view, detail)
     , m_inputType(inputType)
+    , m_data(data)
 {
 }
 
 InputEvent::InputEvent(const AtomicString& eventType, const InputEventInit& initializer)
     : UIEvent(eventType, initializer)
-    , m_inputType(initializer.inputType)
+    , m_inputType(emptyString())
+    , m_data(initializer.data)
 {
 }
 

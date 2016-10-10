@@ -2198,13 +2198,9 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
     return !beforeLoadEvent->defaultPrevented();
 }
 
-void Node::dispatchInputEvent(const String& inputType)
+void Node::dispatchInputEvent()
 {
-    auto* settings = document().settings();
-    if (settings && settings->inputEventsEnabled())
-        dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, document().defaultView(), 0));
-    else
-        dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));
+    dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));
 }
 
 void Node::defaultEventHandler(Event& event)

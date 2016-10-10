@@ -1,3 +1,74 @@
+2016-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.data for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163113
+        <rdar://problem/28681935>
+
+        Reviewed by Darin Adler.
+
+        Introduces InputEvent.data, a string attribute that, if non-null, indicates the text to be inserted by an input
+        event. For text areas and text inputs, the 'insertText', 'insertFromPaste', 'insertFromDrop', and
+        'insertReplacementText' input types should cause subsequent `input` and `beforeinput` events to have non-null
+        data. However, for contenteditable areas, only 'insertText' leads to having data in resulting InputEvents.
+
+        To implement this, we introduce a new virtual method, CompositeEditCommand::inputEventData, which gives
+        composite editing commands the chance to vend a data string for input events they might fire (by default, this
+        is null).
+
+        Tests: fast/events/input-events-paste-data.html
+               fast/events/input-events-typing-data.html
+
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h:
+        * dom/InputEvent.idl:
+
+        Currently, our InputEventInit struct is wrong. According to the UI-Events spec at www.w3.org/TR/uievents/, the
+        init struct for an InputEvent should contain a data string (added in this patch) as well as an isComposing flag
+        (to be added in a future patch along with composition support). While adding support for the data attribute, we
+        tweak the InputEvent IDL and headers slightly to adjust for this.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchInputEvent):
+        * dom/Node.h:
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand::inputEventData):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::isEditingTextAreaOrTextInput):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+        (WebCore::dispatchInputEvents):
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::setBaseWritingDirection):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::inputEventData):
+        * editing/ReplaceRangeWithTextCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::inputEventData):
+        * editing/ReplaceSelectionCommand.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::inputEventData):
+        * editing/SpellingCorrectionCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::inputEventData):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        * editing/TypingCommand.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setEditingValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxOnChange):
+        (WebCore::HTMLSelectElement::dispatchChangeEventForMenuList):
+
 2016-10-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206972.

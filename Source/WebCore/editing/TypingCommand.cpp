@@ -110,6 +110,7 @@ TypingCommand::TypingCommand(Document& document, ETypingCommand commandType, con
     : TextInsertionBaseCommand(document, editActionForTypingCommand(commandType, granularity))
     , m_commandType(commandType)
     , m_textToInsert(textToInsert)
+    , m_currentTextToInsert(textToInsert)
     , m_openForMoreTyping(true)
     , m_selectInsertedText(options & SelectInsertedText)
     , m_smartDelete(options & SmartDelete)
@@ -344,6 +345,14 @@ String TypingCommand::inputEventTypeName() const
     return inputTypeNameForEditingAction(m_currentTypingEditAction);
 }
 
+String TypingCommand::inputEventData() const
+{
+    if (m_currentTypingEditAction == EditActionTypingInsertText)
+        return m_currentTextToInsert;
+
+    return CompositeEditCommand::inputEventData();
+}
+
 void TypingCommand::didApplyCommand()
 {
     // TypingCommands handle applied editing separately (see TypingCommand::typingAddedToOpenCommand).
@@ -404,13 +413,12 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     }
 }
 
-bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextGranularity granularity)
+bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextGranularity granularity, const String& text)
 {
     if (m_isHandlingInitialTypingCommand)
         return true;
 
-    // FIXME: Use the newly added typing command and granularity to ensure that an InputEvent with the
-    // correct inputType is dispatched.
+    m_currentTextToInsert = text;
     m_currentTypingEditAction = editActionForTypingCommand(commandType, granularity);
     return frame().editor().willApplyEditing(*this);
 }
@@ -456,7 +464,7 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String &text, bool se
 
 void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool selectInsertedText)
 {
-    if (!willAddTypingToOpenCommand(InsertText, CharacterGranularity))
+    if (!willAddTypingToOpenCommand(InsertText, CharacterGranularity, text))
         return;
 
     RefPtr<InsertTextCommand> command = InsertTextCommand::create(document(), text, selectInsertedText,

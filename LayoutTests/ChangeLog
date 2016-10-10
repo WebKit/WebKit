@@ -1,3 +1,24 @@
+2016-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.data for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163113
+        <rdar://problem/28681935>
+
+        Reviewed by Darin Adler.
+
+        Adds 2 new layout tests verifying the data attribute of `beforeinput` and `input` events when typing, pasting,
+        and selecting candidate replacements in plain text and contenteditable areas.
+
+        Also tweaks an existing test to ensure that `data` is an attribute of an InputEvent.
+
+        * fast/events/input-events-fired-when-typing-expected.txt:
+        * fast/events/input-events-fired-when-typing.html:
+        * fast/events/input-events-paste-data-expected.txt: Added.
+        * fast/events/input-events-paste-data.html: Added.
+        * fast/events/input-events-typing-data-expected.txt: Added.
+        * fast/events/input-events-typing-data.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking storage/indexeddb/modern/abort-requests-cancelled* tests as flaky on mac.

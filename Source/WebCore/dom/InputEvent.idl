@@ -26,5 +26,6 @@
 [
     ConstructorTemplate=Event
 ] interface InputEvent : UIEvent {
-    [InitializedByEventConstructor] readonly attribute DOMString inputType;
+    readonly attribute DOMString inputType;
+    [InitializedByEventConstructor] readonly attribute DOMString? data;
 };

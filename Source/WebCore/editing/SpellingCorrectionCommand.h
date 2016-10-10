@@ -42,6 +42,8 @@ private:
     void doApply() override;
     bool shouldRetainAutocorrectionIndicator() const override;
 
+    String inputEventData() const final;
+
     RefPtr<Range> m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;
     String m_corrected;

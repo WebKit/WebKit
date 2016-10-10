@@ -117,11 +117,12 @@ private:
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
     String inputEventTypeName() const final;
+    String inputEventData() const final;
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 
     void updatePreservesTypingStyle(ETypingCommand);
-    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity);
+    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString());
     void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();
@@ -138,6 +139,7 @@ private:
     ETypingCommand m_commandType;
     EditAction m_currentTypingEditAction;
     String m_textToInsert;
+    String m_currentTextToInsert;
     bool m_openForMoreTyping;
     bool m_selectInsertedText;
     bool m_smartDelete;

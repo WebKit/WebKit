@@ -65,4 +65,12 @@ void ReplaceRangeWithTextCommand::doApply()
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
 }
 
+String ReplaceRangeWithTextCommand::inputEventData() const
+{
+    if (isEditingTextAreaOrTextInput())
+        return m_text;
+
+    return CompositeEditCommand::inputEventData();
+}
+
 } // namespace WebCore

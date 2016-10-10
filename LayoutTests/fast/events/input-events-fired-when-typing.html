@@ -35,6 +35,7 @@
         {
             debug("Fired `oninput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
+            shouldBeDefined("event.__lookupGetter__('data')");
             shouldBe("Object.getPrototypeOf(event)", "InputEvent.prototype");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");
@@ -46,6 +47,7 @@
         {
             debug("Fired `onbeforeinput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
+            shouldBeDefined("event.__lookupGetter__('data')");
             shouldBe("Object.getPrototypeOf(event)", "InputEvent.prototype");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");

@@ -1254,6 +1254,14 @@ void ReplaceSelectionCommand::doApply()
     completeHTMLReplacement(lastPositionToSelect);
 }
 
+String ReplaceSelectionCommand::inputEventData() const
+{
+    if (isEditingTextAreaOrTextInput())
+        return m_documentFragment->textContent();
+
+    return CompositeEditCommand::inputEventData();
+}
+
 bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePosition& originalVisPosBeforeEndBR)
 {
     if (!endBR || !endBR->inDocument())

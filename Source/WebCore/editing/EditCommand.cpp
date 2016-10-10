@@ -33,6 +33,8 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "HTMLInputElement.h"
+#include "HTMLTextAreaElement.h"
 #include "NodeTraversal.h"
 #include "htmlediting.h"
 
@@ -138,6 +140,23 @@ static inline EditCommandComposition* compositionIfPossible(EditCommand* command
     if (!command->isCompositeEditCommand())
         return 0;
     return toCompositeEditCommand(command)->composition();
+}
+
+bool EditCommand::isEditingTextAreaOrTextInput() const
+{
+    auto* frame = m_document->frame();
+    if (!frame)
+        return false;
+
+    auto* container = frame->selection().selection().start().containerNode();
+    if (!container)
+        return false;
+
+    auto* ancestor = container->shadowHost();
+    if (!ancestor)
+        return false;
+
+    return is<HTMLTextAreaElement>(*ancestor) || (is<HTMLInputElement>(*ancestor) && downcast<HTMLInputElement>(*ancestor).isText());
 }
 
 void EditCommand::setStartingSelection(const VisibleSelection& s)
