@@ -25,11 +25,13 @@
 
 const Icons = {
     Airplay         : "airplay",
+    AirplayPlacard  : "airplay-placard",
     EnterFullscreen : "enter-fullscreen",
     EnterPiP        : "pip-in",
     ExitFullscreen  : "exit-fullscreen",
     Forward         : "forward",
     Pause           : "pause",
+    PiPPlacard      : "pip-placard",
     Play            : "play",
     Rewind          : "rewind",
     ScaleToFill     : "scale-to-fill",

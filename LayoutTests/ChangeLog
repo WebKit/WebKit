@@ -1,3 +1,20 @@
+2016-10-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Placards
+        https://bugs.webkit.org/show_bug.cgi?id=163110
+        <rdar://problem/28669342>
+
+        Reviewed by Dean Jackson.
+
+        Testing the properties of the new Placard class and its subclasses.
+
+        * media/modern-media-controls/airplay-placard/airplay-placard-expected.txt: Added.
+        * media/modern-media-controls/airplay-placard/airplay-placard.html: Added.
+        * media/modern-media-controls/pip-placard/pip-placard-expected.txt: Added.
+        * media/modern-media-controls/pip-placard/pip-placard.html: Added.
+        * media/modern-media-controls/placard/placard-expected.txt: Added.
+        * media/modern-media-controls/placard/placard.html: Added.
+
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking fast/replaced/preferred-widths.html as flaky on mac.

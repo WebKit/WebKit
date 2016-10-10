@@ -1,3 +1,45 @@
+2016-10-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Placards
+        https://bugs.webkit.org/show_bug.cgi?id=163110
+        <rdar://problem/28669342>
+
+        Reviewed by Dean Jackson.
+
+        Inline media controls need to display placards when the video is no longer playing inline,
+        such as when the video is playing fullscreen or via AirPlay. To that end, we introduce a
+        new Placard class and two subclasses for display during fullscreen or AirPlay playback.
+        Note that localization will be done in a later patch.
+
+        Tests: media/modern-media-controls/airplay-placard/airplay-placard.html
+               media/modern-media-controls/pip-placard/pip-placard.html
+               media/modern-media-controls/placard/placard.html
+
+        * Modules/modern-media-controls/controls/airplay-placard.js:
+        (AirplayPlacard):
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/pip-placard.js:
+        (PiPPlacard):
+        * Modules/modern-media-controls/controls/placard.css:
+        (.placard):
+        (.placard .container):
+        (.placard .icon):
+        (.placard .title,):
+        (.placard .title):
+        (.placard .description):
+        * Modules/modern-media-controls/controls/placard.js:
+        (Placard.):
+        * Modules/modern-media-controls/images/iOS/airplay-placard@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/airplay-placard@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/airplay-placard@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-placard@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-placard@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-placard@3x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-placard@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-placard@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-placard@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-placard@2x.png: Added.
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Add support for Navigator.languages attribute

@@ -1,0 +1,43 @@
+Testing the Placard class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Placard with all parameters
+PASS placard.element.localName is "div"
+PASS placard.element.className is "placard"
+PASS placard.children.length is 1
+PASS placard.children[0].element.localName is "div"
+PASS placard.children[0].element.className is "container"
+PASS placard.children[0].children.length is 3
+PASS placard.children[0].children[0] instanceof IconButton is true
+PASS placard.children[0].children[0].iconName is Icons.AirplayPlacard
+PASS placard.children[0].children[1] instanceof LayoutNode is true
+PASS placard.children[0].children[1].element.localName is "div"
+PASS placard.children[0].children[1].element.className is "title"
+PASS placard.children[0].children[1].element.innerText is "My title"
+PASS placard.children[0].children[2] instanceof LayoutNode is true
+PASS placard.children[0].children[2].element.localName is "div"
+PASS placard.children[0].children[2].element.className is "description"
+PASS placard.children[0].children[2].element.innerText is "My description"
+
+Placard without any parameter
+PASS defaultPlacard.children[0].children.length is 0
+
+Placard with only a description
+PASS onlyDescriptionPlacard.children[0].children.length is 1
+PASS onlyDescriptionPlacard.children[0].children[0] instanceof LayoutNode is true
+PASS onlyDescriptionPlacard.children[0].children[0].element.className is "description"
+
+Placard with only a title
+PASS onlyTitlePlacard.children[0].children.length is 1
+PASS onlyTitlePlacard.children[0].children[0] instanceof LayoutNode is true
+PASS onlyTitlePlacard.children[0].children[0].element.className is "title"
+
+Placard with only an icon
+PASS onlyIconPlacard.children[0].children.length is 1
+PASS onlyIconPlacard.children[0].children[0] instanceof IconButton is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
