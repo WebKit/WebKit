@@ -1,3 +1,16 @@
+2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r206731): [SOUP] Network process crash in gotHeadersCallback
+        https://bugs.webkit.org/show_bug.cgi?id=163170
+
+        Reviewed by Michael Catanzaro.
+
+        Do not assume NetworkingContext is non-null and valid before using it.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+
 2016-10-10  Youenn Fablet  <youenn@apple.com>
 
         Images and scripts should be said as clean based on CachedResource::isCORSSameOrigin

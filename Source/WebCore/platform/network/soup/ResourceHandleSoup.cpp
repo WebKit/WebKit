@@ -151,14 +151,16 @@ static void gotHeadersCallback(SoupMessage* message, gpointer data)
 
     ResourceHandleInternal* d = handle->getInternal();
 
-    // We are a bit more conservative with the persistent credential storage than the session store,
-    // since we are waiting until we know that this authentication succeeded before actually storing.
-    // This is because we want to avoid hitting the disk twice (once to add and once to remove) for
-    // incorrect credentials or polluting the keychain with invalid credentials.
-    if (!isAuthenticationFailureStatusCode(message->status_code) && message->status_code < 500) {
-        d->m_context->storageSession().saveCredentialToPersistentStorage(
-            d->m_credentialDataToSaveInPersistentStore.protectionSpace,
-            d->m_credentialDataToSaveInPersistentStore.credential);
+    if (d->m_context && d->m_context->isValid()) {
+        // We are a bit more conservative with the persistent credential storage than the session store,
+        // since we are waiting until we know that this authentication succeeded before actually storing.
+        // This is because we want to avoid hitting the disk twice (once to add and once to remove) for
+        // incorrect credentials or polluting the keychain with invalid credentials.
+        if (!isAuthenticationFailureStatusCode(message->status_code) && message->status_code < 500) {
+            d->m_context->storageSession().saveCredentialToPersistentStorage(
+                d->m_credentialDataToSaveInPersistentStore.protectionSpace,
+                d->m_credentialDataToSaveInPersistentStore.credential);
+        }
     }
 
     // The original response will be needed later to feed to willSendRequest in
@@ -830,7 +832,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // of all request latency, versus a one-time latency for the small subset of requests that
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
-    if (useCredentialStorage) {
+    if (useCredentialStorage && d->m_context && d->m_context->isValid()) {
         d->m_context->storageSession().getCredentialFromPersistentStorage(challenge.protectionSpace(), [this, protectedThis = makeRef(*this)] (Credential&& credential) {
             continueDidReceiveAuthenticationChallenge(WTFMove(credential));
         });
