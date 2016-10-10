@@ -23,51 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitMediaKeys_h
-#define WebKitMediaKeys_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "CDM.h"
-#include "EventTarget.h"
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include <runtime/Uint8Array.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class HTMLMediaElement;
+class ScriptExecutionContext;
 class WebKitMediaKeySession;
 
-class WebKitMediaKeys : public RefCounted<WebKitMediaKeys>, public CDMClient {
+class WebKitMediaKeys final : public RefCounted<WebKitMediaKeys>, private CDMClient {
 public:
-    static RefPtr<WebKitMediaKeys> create(const String& keySystem, ExceptionCode&);
+    static ExceptionOr<Ref<WebKitMediaKeys>> create(const String& keySystem);
     virtual ~WebKitMediaKeys();
 
-    RefPtr<WebKitMediaKeySession> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData, ExceptionCode&);
-
+    ExceptionOr<Ref<WebKitMediaKeySession>> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData);
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
-
     const String& keySystem() const { return m_keySystem; }
-    CDM* cdm() { return m_cdm.get(); }
 
-    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
+    CDM& cdm() { ASSERT(m_cdm); return *m_cdm; }
+
     void setMediaElement(HTMLMediaElement*);
 
     void keyAdded();
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
-protected:
-    // CDMClient:
-    MediaPlayer* cdmMediaPlayer(const CDM*) const override;
+private:
+    MediaPlayer* cdmMediaPlayer(const CDM*) const final;
 
-    WebKitMediaKeys(const String& keySystem, std::unique_ptr<CDM>);
+    WebKitMediaKeys(const String& keySystem, std::unique_ptr<CDM>&&);
 
     Vector<Ref<WebKitMediaKeySession>> m_sessions;
-
-    HTMLMediaElement* m_mediaElement;
+    HTMLMediaElement* m_mediaElement { nullptr };
     String m_keySystem;
     std::unique_ptr<CDM> m_cdm;
 };
@@ -75,5 +68,3 @@ protected:
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // WebKitMediaKeys_h

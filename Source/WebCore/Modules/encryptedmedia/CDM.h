@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CDM_h
-#define CDM_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -62,7 +61,7 @@ public:
     ~CDM();
 
     bool supportsMIMEType(const String&) const;
-    std::unique_ptr<CDMSession> createSession(CDMSessionClient*);
+    std::unique_ptr<CDMSession> createSession(CDMSessionClient&);
 
     const String& keySystem() const { return m_keySystem; }
 
@@ -80,5 +79,3 @@ private:
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // CDM_h

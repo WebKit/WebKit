@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
     Constructor(DOMString keySystem),
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
 ] interface WebKitMediaKeys {
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
+    [CallWith=ScriptExecutionContext, MayThrowException] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
     static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;
 };

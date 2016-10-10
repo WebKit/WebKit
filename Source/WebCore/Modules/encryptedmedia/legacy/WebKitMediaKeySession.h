@@ -23,70 +23,65 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitMediaKeySession_h
-#define WebKitMediaKeySession_h
+#pragma once
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "ActiveDOMObject.h"
 #include "CDMSession.h"
 #include "EventTarget.h"
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "GenericEventQueue.h"
 #include "Timer.h"
 #include <runtime/Uint8Array.h>
 #include <wtf/Deque.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class WebKitMediaKeyError;
 class WebKitMediaKeys;
 
-class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMSessionClient {
+class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, private ActiveDOMObject, private CDMSessionClient {
 public:
-    static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys*, const String& keySystem);
+    static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();
 
-    const String& keySystem() const { return m_keySystem; }
-    CDMSession* session() { return m_session.get(); }
-    const String& sessionId() const;
-
-    void setError(WebKitMediaKeyError*);
     WebKitMediaKeyError* error() { return m_error.get(); }
-
-    void setKeys(WebKitMediaKeys* keys) { m_keys = keys; }
-    WebKitMediaKeys* keys() const { return m_keys; }
-
-    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
-    void update(Ref<Uint8Array>&& key, ExceptionCode&);
-
-    bool isClosed() const { return !m_session; }
+    const String& keySystem() const { return m_keySystem; }
+    const String& sessionId() const;
+    ExceptionOr<void> update(Ref<Uint8Array>&& key);
     void close();
 
+    CDMSession* session() { return m_session.get(); }
+
+    void detachKeys() { m_keys = nullptr; }
+
+    void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
-    using RefCounted<WebKitMediaKeySession>::ref;
-    using RefCounted<WebKitMediaKeySession>::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
-    void enqueueEvent(RefPtr<Event>&&);
+    bool hasPendingActivity() const final;
 
-    EventTargetInterface eventTargetInterface() const override { return WebKitMediaKeySessionEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
-
-    // ActiveDOMObject API.
-    bool hasPendingActivity() const override;
-
-protected:
-    WebKitMediaKeySession(ScriptExecutionContext&, WebKitMediaKeys*, const String& keySystem);
+private:
+    WebKitMediaKeySession(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
     void keyRequestTimerFired();
     void addKeyTimerFired();
 
-    // CDMSessionClient
-    void sendMessage(Uint8Array*, String destinationURL) override;
-    void sendError(MediaKeyErrorCode, uint32_t systemCode) override;
-    String mediaKeysStorageDirectory() const override;
+    void sendMessage(Uint8Array*, String destinationURL) final;
+    void sendError(MediaKeyErrorCode, uint32_t systemCode) final;
+    String mediaKeysStorageDirectory() const final;
+
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
+    void stop() final;
+    bool canSuspendForDocumentSuspension() const final;
+    const char* activeDOMObjectName() const final;
+
+    EventTargetInterface eventTargetInterface() const final { return WebKitMediaKeySessionEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     WebKitMediaKeys* m_keys;
     String m_keySystem;
@@ -104,19 +99,8 @@ protected:
 
     Deque<Ref<Uint8Array>> m_pendingKeys;
     Timer m_addKeyTimer;
-
-private:
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
-
-    // ActiveDOMObject API.
-    void stop() override;
-    bool canSuspendForDocumentSuspension() const override;
-    const char* activeDOMObjectName() const override;
 };
 
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#endif // WebKitMediaKeySession_h

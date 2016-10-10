@@ -28,13 +28,10 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "CDM.h"
-#include "CDMSession.h"
 #include "Document.h"
-#include "Event.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "FileSystem.h"
-#include "GenericEventQueue.h"
 #include "Settings.h"
 #include "WebKitMediaKeyError.h"
 #include "WebKitMediaKeyMessageEvent.h"
@@ -42,19 +39,19 @@
 
 namespace WebCore {
 
-Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(ScriptExecutionContext& context, WebKitMediaKeys* keys, const String& keySystem)
+Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(ScriptExecutionContext& context, WebKitMediaKeys& keys, const String& keySystem)
 {
     auto session = adoptRef(*new WebKitMediaKeySession(context, keys, keySystem));
     session->suspendIfNeeded();
     return session;
 }
 
-WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, WebKitMediaKeys* keys, const String& keySystem)
+WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, WebKitMediaKeys& keys, const String& keySystem)
     : ActiveDOMObject(&context)
-    , m_keys(keys)
+    , m_keys(&keys)
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)
-    , m_session(keys->cdm()->createSession(this))
+    , m_session(keys.cdm().createSession(*this))
     , m_keyRequestTimer(*this, &WebKitMediaKeySession::keyRequestTimerFired)
     , m_addKeyTimer(*this, &WebKitMediaKeySession::addKeyTimerFired)
 {
@@ -62,17 +59,10 @@ WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, We
 
 WebKitMediaKeySession::~WebKitMediaKeySession()
 {
-    if (m_session) {
+    if (m_session)
         m_session->setClient(nullptr);
-        m_session = nullptr;
-    }
 
     m_asyncEventQueue.cancelAllEvents();
-}
-
-void WebKitMediaKeySession::setError(WebKitMediaKeyError* error)
-{
-    m_error = error;
 }
 
 void WebKitMediaKeySession::close()
@@ -104,7 +94,7 @@ void WebKitMediaKeySession::keyRequestTimerFired()
         return;
 
     while (!m_pendingKeyRequests.isEmpty()) {
-        PendingKeyRequest request = m_pendingKeyRequests.takeFirst();
+        auto request = m_pendingKeyRequests.takeFirst();
 
         // NOTE: Continued from step 5 in MediaKeys::createSession().
         // The user agent will asynchronously execute the following steps in the task:
@@ -117,7 +107,7 @@ void WebKitMediaKeySession::keyRequestTimerFired()
 
         // 3. Use cdm to generate a key request and follow the steps for the first matching condition from the following list:
 
-        RefPtr<Uint8Array> keyRequest = m_session->generateKeyRequest(request.mimeType, request.initData.ptr(), destinationURL, errorCode, systemCode);
+        auto keyRequest = m_session->generateKeyRequest(request.mimeType, request.initData.ptr(), destinationURL, errorCode, systemCode);
 
         // Otherwise [if a request is not successfully generated]:
         if (errorCode) {
@@ -140,20 +130,20 @@ void WebKitMediaKeySession::keyRequestTimerFired()
     }
 }
 
-void WebKitMediaKeySession::update(Ref<Uint8Array>&& key, ExceptionCode& ec)
+ExceptionOr<void> WebKitMediaKeySession::update(Ref<Uint8Array>&& key)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
     // The addKey(key) method must run the following steps:
     // 1. If the first or second argument [sic] is an empty array, throw an INVALID_ACCESS_ERR.
     // NOTE: the reference to a "second argument" is a spec bug.
-    if (!key->length()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
+    if (!key->length())
+        return Exception { INVALID_ACCESS_ERR };
 
     // 2. Schedule a task to handle the call, providing key.
     m_pendingKeys.append(WTFMove(key));
     m_addKeyTimer.startOneShot(0);
+
+    return { };
 }
 
 void WebKitMediaKeySession::addKeyTimerFired()
@@ -192,7 +182,8 @@ void WebKitMediaKeySession::addKeyTimerFired()
             keyaddedEvent->setTarget(this);
             m_asyncEventQueue.enqueueEvent(WTFMove(keyaddedEvent));
 
-            keys()->keyAdded();
+            ASSERT(m_keys);
+            m_keys->keyAdded();
         }
 
         // 2.8. If any of the preceding steps in the task failed
@@ -216,10 +207,9 @@ void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationU
     m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
-void WebKitMediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
+void WebKitMediaKeySession::sendError(MediaKeyErrorCode errorCode, uint32_t systemCode)
 {
-    Ref<WebKitMediaKeyError> error = WebKitMediaKeyError::create(errorCode, systemCode).get();
-    setError(error.ptr());
+    m_error = WebKitMediaKeyError::create(errorCode, systemCode);
 
     auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
     keyerrorEvent->setTarget(this);
@@ -228,19 +218,19 @@ void WebKitMediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorC
 
 String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
-    Document* document = downcast<Document>(scriptExecutionContext());
+    auto* document = downcast<Document>(scriptExecutionContext());
     if (!document)
         return emptyString();
 
-    Settings* settings = document->settings();
+    auto* settings = document->settings();
     if (!settings)
         return emptyString();
 
-    String storageDirectory = settings->mediaKeysStorageDirectory();
+    auto storageDirectory = settings->mediaKeysStorageDirectory();
     if (storageDirectory.isEmpty())
         return emptyString();
 
-    SecurityOrigin* origin = document->securityOrigin();
+    auto* origin = document->securityOrigin();
     if (!origin)
         return emptyString();
 
@@ -249,7 +239,7 @@ String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 
 bool WebKitMediaKeySession::hasPendingActivity() const
 {
-    return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents();
+    return (m_keys && m_session) || m_asyncEventQueue.hasPendingEvents();
 }
 
 void WebKitMediaKeySession::stop()

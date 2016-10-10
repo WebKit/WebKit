@@ -1,3 +1,59 @@
+2016-10-09  Darin Adler  <darin@apple.com>
+
+        Move encrypted media from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163194
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::createSession): Take a reference instead of a pointer.
+        * Modules/encryptedmedia/CDM.h: Updated for above change.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        (WebCore::WebKitMediaKeySession::create): Take a reference instead of a pointer.
+        (WebCore::WebKitMediaKeySession::MediaKeySession): Ditto.
+        (WebCore::WebKitMediaKeySession::~MediaKeySession): Removed unneeded code that
+        sets m_session to null.
+        (WebCore::WebKitMediaKeySession::keyRequestTimerFired): Use auto.
+        (WebCore::WebKitMediaKeySession::update): Use ExceptionOr.
+        (WebCore::WebKitMediaKeySession::addKeyTimerFired): Use m_keys directly instead
+        of calling the keys function.
+        (WebCore::WebKitMediaKeySession::sendError): Set m_error directly instead of
+        calling the setError function.
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory): Use auto.
+        (WebCore::WebKitMediaKeySession::hasPendingActivity): Check m_session directly
+        instead of writing !isClosed.
+        (WebCore::WebKitMediaKeySession::setError): Deleted.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h: Use pragma once. Removed
+        unneeded includes. Changed create to take a reference instead of a pointer.
+        Made most members and base classes private instead of public. Also removed
+        a few now-unneeded functions. Made everything that was formerly protected
+        private instead, since the two are the same in a final class.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl: Removed unneeded comments.
+        Moved from MayThrowLegacyException to MayThrowException.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp:
+        (WebCore::WebKitMediaKeys::create): Use ExceptionOr.
+        (WebCore::WebKitMediaKeys::MediaKeys): Made argument be an rvalue reference.
+        Also initialize m_mediaElement in the class definition.
+        (WebCore::WebKitMediaKeys::~MediaKeys): Call detachKeys instead of setKeys(nullptr).
+        (WebCore::WebKitMediaKeys::createSession): Use ExceptionOr. Also pass reference
+        insteead of pointer to create. Also removed unneeded separate checks for null
+        strings in code that already calls isEmpty.
+        (WebCore::WebKitMediaKeys::isTypeSupported): Removed unneeded checks for null strings
+        in code that already calls isEmpty.
+        (WebCore::WebKitMediaKeys::cdmMediaPlayer): Tweaked a bit.
+        (WebCore::WebKitMediaKeys::cachedKeyForKeyId): Use auto.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h: Use pragma once. Removed unneeded includes.
+        Changed cdm() function to return a reference. Initialize m_mediaElement.
+        Use private instead of protected.
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl: Use ConstructorMayThrowException
+        and MayThrowException instead of the legacy versions.
+
 2016-10-09  Zan Dobersek  <zdobersek@igalia.com>
 
         ENABLE_LEGACY_ENCRYPTED_MEDIA interfaces should have a hard-coded WebKit prefix
