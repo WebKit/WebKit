@@ -73,7 +73,7 @@ public:
 
     virtual bool shouldAllowNavigationFromDrags() const { return false; }
 
-    virtual bool isPluginViewBase() const { return true; }
+    bool isPluginViewBase() const override { return true; }
     virtual bool shouldNotAddLayer() const { return false; }
 
     virtual AudioHardwareActivityType audioHardwareActivity() const { return AudioHardwareActivityType::Unknown; }

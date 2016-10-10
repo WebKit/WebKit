@@ -1,3 +1,14 @@
+2016-10-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added override specifier to PluginViewBase::isPluginViewBase()
+        https://bugs.webkit.org/show_bug.cgi?id=163218
+
+        Reviewed by Alex Christensen.
+
+        No new tests needed.
+
+        * plugins/PluginViewBase.h:
+
 2016-10-10  Alex Christensen  <achristensen@webkit.org>
 
         Don't run SecurityOrigin's port through URLParser
