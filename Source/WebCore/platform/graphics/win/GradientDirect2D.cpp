@@ -67,9 +67,12 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
     RELEASE_ASSERT(SUCCEEDED(hr));
 
     if (m_radial) {
+        FloatSize offset = p1() - p0();
         ID2D1RadialGradientBrush* radialGradient = nullptr;
+        float radiusX = endRadius() + offset.width();
+        float radiusY = radiusX / m_aspectRatio;
         hr = renderTarget->CreateRadialGradientBrush(
-            D2D1::RadialGradientBrushProperties(p0(), p1(), startRadius(), endRadius()),
+            D2D1::RadialGradientBrushProperties(p0(), D2D1::Point2F(offset.width(), offset.height()), radiusX, radiusY),
             D2D1::BrushProperties(), gradientStopCollection.get(),
             &radialGradient);
         RELEASE_ASSERT(SUCCEEDED(hr));
@@ -109,7 +112,7 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
         d2dContext->SetTransform(ctm);
     }
 
-    if (!m_cachedHash)
+    if (!m_cachedHash || !m_gradient)
         generateGradient(d2dContext);
 
     if (!context->didBeginDraw())
