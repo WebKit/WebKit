@@ -2606,8 +2606,7 @@ private:
     void compileCheckStringIdent()
     {
         UniquedStringImpl* uid = m_node->uidOperand();
-        LValue string = lowStringIdent(m_node->child1());
-        LValue stringImpl = m_out.loadPtr(string, m_heaps.JSString_value);
+        LValue stringImpl = lowStringIdent(m_node->child1());
         speculate(BadIdent, noValue(), nullptr, m_out.notEqual(stringImpl, m_out.constIntPtr(uid)));
     }
 

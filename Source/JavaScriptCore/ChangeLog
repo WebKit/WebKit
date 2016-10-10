@@ -1,3 +1,16 @@
+2016-10-10  Saam Barati  <sbarati@apple.com>
+
+        compileCheckStringIdent in the FTL is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=163215
+
+        Reviewed by Mark Lam and Filip Pizlo.
+
+        lowStringIdent() returns the StringImpl pointer. The compileCheckStringIdent()
+        was treating its return value as the actual JSString. This is wrong.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckStringIdent):
+
 2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node accessors in DOMJIT
