@@ -1,0 +1,3 @@
+
+PASS TouchEvent's touches, targetTouches, and changedTouches should be retargeted. 
+
