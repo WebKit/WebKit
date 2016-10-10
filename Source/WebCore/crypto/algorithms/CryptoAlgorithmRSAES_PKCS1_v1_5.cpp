@@ -28,8 +28,8 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmRsaKeyGenParams.h"
-#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
+#include "CryptoAlgorithmRsaKeyGenParamsDeprecated.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
@@ -65,7 +65,7 @@ bool CryptoAlgorithmRSAES_PKCS1_v1_5::keyAlgorithmMatches(const CryptoKey& key) 
     return true;
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParameters&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     if (!keyAlgorithmMatches(key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -75,7 +75,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParameters&, 
     platformEncrypt(downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParameters&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     if (!keyAlgorithmMatches(key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -85,9 +85,9 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParameters&, 
     platformDecrypt(downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
+    const CryptoAlgorithmRsaKeyGenParamsDeprecated& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParamsDeprecated>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);
@@ -96,9 +96,9 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameter
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, rsaParameters.hash, rsaParameters.hasHash, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback));
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyParamsWithHash& rsaParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHashDeprecated& rsaParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHashDeprecated>(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = downcast<CryptoKeyDataRSAComponents>(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, rsaParameters.hash, rsaParameters.hasHash, rsaComponents, extractable, usage);

@@ -28,14 +28,14 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmAesCbcParams.h"
+#include "CryptoAlgorithmAesCbcParamsDeprecated.h"
 #include "CryptoKeyAES.h"
 #include "ExceptionCode.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {
 
-static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, CryptoAlgorithm::VectorCallback&& callback, CryptoAlgorithm::VoidCallback&& failureCallback)
+static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, CryptoAlgorithm::VectorCallback&& callback, CryptoAlgorithm::VoidCallback&& failureCallback)
 {
     static_assert(sizeof(parameters.iv) == kCCBlockSizeAES128, "Initialization vector size must be the same as algorithm block size");
 
@@ -82,12 +82,12 @@ static void transformAES_CBC(CCOperation operation, const CryptoAlgorithmAesCbcP
     callback(result);
 }
 
-void CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmAES_CBC::platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     transformAES_CBC(kCCEncrypt, parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
 }
 
-void CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParams& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmAES_CBC::platformDecrypt(const CryptoAlgorithmAesCbcParamsDeprecated& parameters, const CryptoKeyAES& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     transformAES_CBC(kCCDecrypt, parameters, key, data, WTFMove(callback), WTFMove(failureCallback));
 }

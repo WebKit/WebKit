@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacParams;
+class CryptoAlgorithmHmacParamsDeprecated;
 class CryptoKeyHMAC;
 
 class CryptoAlgorithmHMAC final : public CryptoAlgorithm {
@@ -44,18 +44,18 @@ public:
 
     CryptoAlgorithmIdentifier identifier() const override;
 
-    void sign(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void verify(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void sign(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void verify(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void generateKey(const CryptoAlgorithmParametersDeprecated&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
 
 private:
     CryptoAlgorithmHMAC();
     virtual ~CryptoAlgorithmHMAC();
 
-    bool keyAlgorithmMatches(const CryptoAlgorithmHmacParams& algorithmParameters, const CryptoKey&) const;
-    void platformSign(const CryptoAlgorithmHmacParams&, const CryptoKeyHMAC&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
-    void platformVerify(const CryptoAlgorithmHmacParams&, const CryptoKeyHMAC&, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    bool keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDeprecated& algorithmParameters, const CryptoKey&) const;
+    void platformSign(const CryptoAlgorithmHmacParamsDeprecated&, const CryptoKeyHMAC&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    void platformVerify(const CryptoAlgorithmHmacParamsDeprecated&, const CryptoKeyHMAC&, const CryptoOperationData& signature, const CryptoOperationData&, BoolCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
 };
 
 }

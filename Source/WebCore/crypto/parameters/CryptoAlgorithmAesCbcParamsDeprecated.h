@@ -23,27 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmHmacParams_h
-#define CryptoAlgorithmHmacParams_h
+#pragma once
 
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
+#include <array>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmAesCbcParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    // The inner hash function to use.
-    CryptoAlgorithmIdentifier hash;
+    // The initialization vector. MUST be 16 bytes.
+    std::array<char, 16> iv;
 
-    Class parametersClass() const override { return Class::HmacParams; }
+    Class parametersClass() const override { return Class::AesCbcParams; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesCbcParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmHmacParams_h

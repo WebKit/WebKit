@@ -23,36 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRsaKeyParamsWithHash_h
-#define CryptoAlgorithmRsaKeyParamsWithHash_h
+#pragma once
 
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoAlgorithmParameters.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/TypeCasts.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-// This parameters class is currently not specified in WebCrypto.
-// It is necessary to support import from JWK, which treats hash function as part of algorithm
-// identifier, so we need to remember it to compare with one passed to sign or verify functions.
-class CryptoAlgorithmRsaKeyParamsWithHash final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmParametersDeprecated : public RefCounted<CryptoAlgorithmParametersDeprecated> {
 public:
-    CryptoAlgorithmRsaKeyParamsWithHash()
-        : hasHash(false)
-    {
-    }
+    CryptoAlgorithmParametersDeprecated() { }
+    virtual ~CryptoAlgorithmParametersDeprecated() { }
 
-    // The hash algorithm to use.
-    bool hasHash;
-    CryptoAlgorithmIdentifier hash;
-
-    Class parametersClass() const override { return Class::RsaKeyParamsWithHash; }
+    enum class Class {
+        None,
+        AesCbcParams,
+        AesKeyGenParams,
+        HmacKeyParams,
+        HmacParams,
+        RsaKeyGenParams,
+        RsaKeyParamsWithHash,
+        RsaOaepParams,
+        RsaSsaParams
+    };
+    virtual Class parametersClass() const { return Class::None; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaKeyParamsWithHash)
+#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName##Deprecated) \
+    static bool isType(const WebCore::CryptoAlgorithmParametersDeprecated& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParametersDeprecated::Class::ToClassName; } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRsaKeyParamsWithHash_h

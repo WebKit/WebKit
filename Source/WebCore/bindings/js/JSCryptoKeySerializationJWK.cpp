@@ -29,9 +29,9 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithm.h"
-#include "CryptoAlgorithmHmacParams.h"
+#include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoAlgorithmRegistry.h"
-#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
 #include "CryptoKey.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
@@ -162,22 +162,22 @@ JSCryptoKeySerializationJWK::~JSCryptoKeySerializationJWK()
 {
 }
 
-static Ref<CryptoAlgorithmParameters> createHMACParameters(CryptoAlgorithmIdentifier hashFunction)
+static Ref<CryptoAlgorithmParametersDeprecated> createHMACParameters(CryptoAlgorithmIdentifier hashFunction)
 {
-    auto hmacParameters = adoptRef(*new CryptoAlgorithmHmacParams);
+    auto hmacParameters = adoptRef(*new CryptoAlgorithmHmacParamsDeprecated);
     hmacParameters->hash = hashFunction;
     return WTFMove(hmacParameters);
 }
 
-static Ref<CryptoAlgorithmParameters> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
+static Ref<CryptoAlgorithmParametersDeprecated> createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier hashFunction)
 {
-    auto rsaKeyParameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHash);
+    auto rsaKeyParameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHashDeprecated);
     rsaKeyParameters->hasHash = true;
     rsaKeyParameters->hash = hashFunction;
     return WTFMove(rsaKeyParameters);
 }
 
-Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(CryptoAlgorithm* suggestedAlgorithm, CryptoAlgorithmParameters* suggestedParameters) const
+Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(CryptoAlgorithm* suggestedAlgorithm, CryptoAlgorithmParametersDeprecated* suggestedParameters) const
 {
     VM& vm = m_exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -189,7 +189,7 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
 
     auto& algorithmRegisty = CryptoAlgorithmRegistry::singleton();
     RefPtr<CryptoAlgorithm> algorithm;
-    RefPtr<CryptoAlgorithmParameters> parameters;
+    RefPtr<CryptoAlgorithmParametersDeprecated> parameters;
     if (m_jwkAlgorithmName == "HS256") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::HMAC);
         parameters = createHMACParameters(CryptoAlgorithmIdentifier::SHA_256);
@@ -210,28 +210,28 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_512);
     } else if (m_jwkAlgorithmName == "RSA1_5") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5);
-        parameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHash);
+        parameters = adoptRef(*new CryptoAlgorithmRsaKeyParamsWithHashDeprecated);
     } else if (m_jwkAlgorithmName == "RSA-OAEP") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::RSA_OAEP);
         parameters = createRSAKeyParametersWithHash(CryptoAlgorithmIdentifier::SHA_1);
     } else if (m_jwkAlgorithmName == "A128CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else if (m_jwkAlgorithmName == "A192CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else if (m_jwkAlgorithmName == "A256CBC") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_CBC);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else if (m_jwkAlgorithmName == "A128KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else if (m_jwkAlgorithmName == "A192KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else if (m_jwkAlgorithmName == "A256KW") {
         algorithm = algorithmRegisty.create(CryptoAlgorithmIdentifier::AES_KW);
-        parameters = adoptRef(*new CryptoAlgorithmParameters);
+        parameters = adoptRef(*new CryptoAlgorithmParametersDeprecated);
     } else {
         throwTypeError(m_exec, scope, "Unsupported JWK algorithm " + m_jwkAlgorithmName);
         return Nullopt;
@@ -247,14 +247,14 @@ Optional<CryptoAlgorithmPair> JSCryptoKeySerializationJWK::reconcileAlgorithm(Cr
         return Nullopt;
 
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::HMAC) {
-        if (downcast<CryptoAlgorithmHmacParams>(*parameters).hash != downcast<CryptoAlgorithmHmacParams>(*suggestedParameters).hash)
+        if (downcast<CryptoAlgorithmHmacParamsDeprecated>(*parameters).hash != downcast<CryptoAlgorithmHmacParamsDeprecated>(*suggestedParameters).hash)
             return Nullopt;
         return CryptoAlgorithmPair { suggestedAlgorithm, suggestedParameters };
     }
     if (algorithm->identifier() == CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5
         || algorithm->identifier() == CryptoAlgorithmIdentifier::RSA_OAEP) {
-        CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*parameters);
-        CryptoAlgorithmRsaKeyParamsWithHash& suggestedRSAKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(*suggestedParameters);
+        CryptoAlgorithmRsaKeyParamsWithHashDeprecated& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHashDeprecated>(*parameters);
+        CryptoAlgorithmRsaKeyParamsWithHashDeprecated& suggestedRSAKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHashDeprecated>(*suggestedParameters);
         ASSERT(rsaKeyParameters.hasHash);
         if (suggestedRSAKeyParameters.hasHash) {
             if (suggestedRSAKeyParameters.hash != rsaKeyParameters.hash)

@@ -5957,7 +5957,7 @@
 		E125F8351822F18A00D84CD9 /* CryptoKeyHMAC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */; };
 		E125F8361822F18A00D84CD9 /* CryptoKeyHMAC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */; };
 		E125F8381822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */; };
-		E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */; };
+		E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */; };
 		E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */; };
 		E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */; };
 		E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */; };
@@ -6051,9 +6051,9 @@
 		E19AC3F31824DC7900349426 /* CryptoAlgorithmSHA384.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3EB1824DC7900349426 /* CryptoAlgorithmSHA384.h */; };
 		E19AC3F41824DC7900349426 /* CryptoAlgorithmSHA512.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3EC1824DC7900349426 /* CryptoAlgorithmSHA512.cpp */; };
 		E19AC3F51824DC7900349426 /* CryptoAlgorithmSHA512.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */; };
-		E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */; };
+		E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h */; };
 		E19AC3F9182566F700349426 /* CryptoKeyMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */; };
-		E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */; };
+		E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h */; };
 		E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */; };
 		E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */; };
@@ -6080,12 +6080,12 @@
 		E1BB84AD1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */; };
 		E1BD3319182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BD3317182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp */; };
 		E1BD331A182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD3318182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h */; };
-		E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h */; };
-		E1BD331E182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h */; };
+		E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h */; };
+		E1BD331E182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h */; };
 		E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */; };
 		E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */; };
 		E1C266D818317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */; };
-		E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */; };
+		E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h */; };
 		E1C266DE18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */; };
 		E1C266DF18319F31003F8B33 /* CryptoKeyDataRSAComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */; };
 		E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */; };
@@ -6102,9 +6102,9 @@
 		E1C4DE6E0EA75C650023CCD6 /* ActiveDOMObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */; };
 		E1C657121815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */; };
 		E1C657131815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657111815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h */; };
-		E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParams.h */; };
+		E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h */; };
 		E1C657251816E69D00256CDD /* CryptoAlgorithmIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */; };
-		E1C657271816F9FE00256CDD /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657261816F9FE00256CDD /* CryptoAlgorithmParameters.h */; };
+		E1C657271816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C657261816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h */; };
 		E1C8BE5D0E8BD15A0064CB7D /* JSWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */; };
 		E1C94AF9191303F000D5A893 /* BlobPart.h in Headers */ = {isa = PBXBuildFile; fileRef = E1C94AF7191303F000D5A893 /* BlobPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1CA5CBB0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp */; };
@@ -6134,7 +6134,7 @@
 		E1FE1370183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE136E183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp */; };
 		E1FE137418402A6700892F13 /* CommonCryptoUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE137218402A6700892F13 /* CommonCryptoUtilities.cpp */; };
 		E1FE137518402A6700892F13 /* CommonCryptoUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */; };
-		E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h */; };
+		E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h */; };
 		E1FE137A184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */; };
 		E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */; };
 		E1FE137E184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */; };
@@ -13571,7 +13571,7 @@
 		E125F8331822F18A00D84CD9 /* CryptoKeyHMAC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyHMAC.cpp; sourceTree = "<group>"; };
 		E125F8341822F18A00D84CD9 /* CryptoKeyHMAC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyHMAC.h; sourceTree = "<group>"; };
 		E125F8371822F1EB00D84CD9 /* CryptoAlgorithmHMACMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmHMACMac.cpp; sourceTree = "<group>"; };
-		E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcParams.h; sourceTree = "<group>"; };
+		E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCbcParamsDeprecated.h; sourceTree = "<group>"; };
 		E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoOperationData.cpp; sourceTree = "<group>"; };
 		E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoOperationData.h; sourceTree = "<group>"; };
 		E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CBC.cpp; sourceTree = "<group>"; };
@@ -13671,9 +13671,9 @@
 		E19AC3EB1824DC7900349426 /* CryptoAlgorithmSHA384.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA384.h; sourceTree = "<group>"; };
 		E19AC3EC1824DC7900349426 /* CryptoAlgorithmSHA512.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmSHA512.cpp; sourceTree = "<group>"; };
 		E19AC3ED1824DC7900349426 /* CryptoAlgorithmSHA512.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmSHA512.h; sourceTree = "<group>"; };
-		E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesKeyGenParams.h; sourceTree = "<group>"; };
+		E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesKeyGenParamsDeprecated.h; sourceTree = "<group>"; };
 		E19AC3F8182566F700349426 /* CryptoKeyMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyMac.cpp; sourceTree = "<group>"; };
-		E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHmacKeyParams.h; sourceTree = "<group>"; };
+		E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHmacKeyParamsDeprecated.h; sourceTree = "<group>"; };
 		E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNodeAlgorithms.h; sourceTree = "<group>"; };
 		E1A3162B134BC32D007C9A4F /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; };
 		E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSAttributedStringExtras.mm; sourceTree = "<group>"; };
@@ -13707,14 +13707,14 @@
 		E1BA67161742BDE000C20251 /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1BA67191742BEF400C20251 /* WebCoreTestShimLibrary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTestShimLibrary.cpp; sourceTree = "<group>"; };
 		E1BB84AC1822CA7400525043 /* CryptoAlgorithmRegistryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRegistryMac.cpp; sourceTree = "<group>"; };
-		E1BD3317182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp; sourceTree = "<group>"; };
-		E1BD3318182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRSASSA_PKCS1_v1_5.h; sourceTree = "<group>"; };
-		E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaSsaParams.h; sourceTree = "<group>"; };
-		E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaKeyGenParams.h; sourceTree = "<group>"; };
+		E1BD3317182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		E1BD3318182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CryptoAlgorithmRSASSA_PKCS1_v1_5.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CryptoAlgorithmRsaSsaParamsDeprecated.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaKeyGenParamsDeprecated.h; sourceTree = "<group>"; };
 		E1BE512B0CF6C512002EA959 /* XSLTUnicodeSort.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTUnicodeSort.cpp; sourceTree = "<group>"; };
 		E1BE512C0CF6C512002EA959 /* XSLTUnicodeSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTUnicodeSort.h; sourceTree = "<group>"; };
-		E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; sourceTree = "<group>"; };
-		E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaKeyParamsWithHash.h; sourceTree = "<group>"; };
+		E1C266D618317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h; sourceTree = "<group>"; };
 		E1C266DC18319F31003F8B33 /* CryptoKeyDataRSAComponents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyDataRSAComponents.cpp; sourceTree = "<group>"; };
 		E1C266DD18319F31003F8B33 /* CryptoKeyDataRSAComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyDataRSAComponents.h; sourceTree = "<group>"; };
 		E1C362ED0EAF2AA9007410BC /* JSWorkerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerLocation.h; sourceTree = "<group>"; };
@@ -13729,11 +13729,11 @@
 		E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossOriginAccessControl.cpp; sourceTree = "<group>"; };
 		E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMObject.h; sourceTree = "<group>"; };
 		E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMObject.cpp; sourceTree = "<group>"; };
-		E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmDictionary.cpp; sourceTree = "<group>"; };
+		E1C657101815F9DD00256CDD /* JSCryptoAlgorithmDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = JSCryptoAlgorithmDictionary.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E1C657111815F9DD00256CDD /* JSCryptoAlgorithmDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmDictionary.h; sourceTree = "<group>"; };
-		E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHmacParams.h; sourceTree = "<group>"; };
+		E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmHmacParamsDeprecated.h; sourceTree = "<group>"; };
 		E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmIdentifier.h; sourceTree = "<group>"; };
-		E1C657261816F9FE00256CDD /* CryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParameters.h; sourceTree = "<group>"; };
+		E1C657261816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParametersDeprecated.h; sourceTree = "<group>"; };
 		E1C6CFC21746D293007B87A1 /* DOMWindowConstructors.idl */ = {isa = PBXFileReference; lastKnownFileType = text; lineEnding = 0; path = DOMWindowConstructors.idl; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
 		E1C8BE5C0E8BD15A0064CB7D /* JSWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorker.cpp; sourceTree = "<group>"; };
 		E1C94AF7191303F000D5A893 /* BlobPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobPart.h; sourceTree = "<group>"; };
@@ -13765,7 +13765,7 @@
 		E1FE136E183FECF000892F13 /* CryptoAlgorithmRSA_OAEPMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRSA_OAEPMac.cpp; sourceTree = "<group>"; };
 		E1FE137218402A6700892F13 /* CommonCryptoUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonCryptoUtilities.cpp; sourceTree = "<group>"; };
 		E1FE137318402A6700892F13 /* CommonCryptoUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoUtilities.h; sourceTree = "<group>"; };
-		E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaOaepParams.h; sourceTree = "<group>"; };
+		E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRsaOaepParamsDeprecated.h; sourceTree = "<group>"; };
 		E1FE1378184D21BB00892F13 /* CryptoAlgorithmAES_KW.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_KW.cpp; sourceTree = "<group>"; };
 		E1FE1379184D21BB00892F13 /* CryptoAlgorithmAES_KW.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_KW.h; sourceTree = "<group>"; };
 		E1FE137C184D270200892F13 /* CryptoAlgorithmAES_KWMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_KWMac.cpp; sourceTree = "<group>"; };
@@ -22156,14 +22156,14 @@
 		E1C657141816015F00256CDD /* parameters */ = {
 			isa = PBXGroup;
 			children = (
-				E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h */,
-				E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h */,
-				E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h */,
-				E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParams.h */,
-				E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h */,
-				E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h */,
-				E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h */,
-				E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h */,
+				E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */,
+				E19AC3F61824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h */,
+				E19DA29B18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h */,
+				E1C6571E1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h */,
+				E1BD331D182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h */,
+				E1C266DA18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h */,
+				E1FE1376184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h */,
+				E1BD331B182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h */,
 			);
 			path = parameters;
 			sourceTree = "<group>";
@@ -22284,7 +22284,7 @@
 				E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */,
 				E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */,
 				E1C657241816E69D00256CDD /* CryptoAlgorithmIdentifier.h */,
-				E1C657261816F9FE00256CDD /* CryptoAlgorithmParameters.h */,
+				E1C657261816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h */,
 				E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */,
 				E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */,
 				E157A8E218173A3A009F821D /* CryptoKey.cpp */,
@@ -24209,21 +24209,21 @@
 				E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */,
 				E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */,
 				E1FE137B184D21BB00892F13 /* CryptoAlgorithmAES_KW.h in Headers */,
-				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParams.h in Headers */,
-				E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParams.h in Headers */,
+				E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h in Headers */,
+				E19AC3F71824E5D100349426 /* CryptoAlgorithmAesKeyGenParamsDeprecated.h in Headers */,
 				E125F8321822F11B00D84CD9 /* CryptoAlgorithmHMAC.h in Headers */,
-				E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParams.h in Headers */,
-				E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParams.h in Headers */,
+				E19DA29C18189ADD00088BC8 /* CryptoAlgorithmHmacKeyParamsDeprecated.h in Headers */,
+				E1C6571F1816E50300256CDD /* CryptoAlgorithmHmacParamsDeprecated.h in Headers */,
 				E1C657251816E69D00256CDD /* CryptoAlgorithmIdentifier.h in Headers */,
-				E1C657271816F9FE00256CDD /* CryptoAlgorithmParameters.h in Headers */,
+				E1C657271816F9FE00256CDD /* CryptoAlgorithmParametersDeprecated.h in Headers */,
 				E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */,
 				E1FE136B183FE1AB00892F13 /* CryptoAlgorithmRSA_OAEP.h in Headers */,
 				E1233F0D185A3E3B008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5.h in Headers */,
-				E1BD331E182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParams.h in Headers */,
-				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHash.h in Headers */,
-				E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParams.h in Headers */,
+				E1BD331E182D8F4200C05D9F /* CryptoAlgorithmRsaKeyGenParamsDeprecated.h in Headers */,
+				E1C266DB18319935003F8B33 /* CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h in Headers */,
+				E1FE1377184D1E3300892F13 /* CryptoAlgorithmRsaOaepParamsDeprecated.h in Headers */,
 				E1BD331A182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.h in Headers */,
-				E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParams.h in Headers */,
+				E1BD331C182D8EE900C05D9F /* CryptoAlgorithmRsaSsaParamsDeprecated.h in Headers */,
 				E125F82C1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.h in Headers */,
 				E19AC3EF1824DC7900349426 /* CryptoAlgorithmSHA224.h in Headers */,
 				E19AC3F11824DC7900349426 /* CryptoAlgorithmSHA256.h in Headers */,

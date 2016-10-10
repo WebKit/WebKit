@@ -36,14 +36,14 @@
 namespace WebCore {
 
 class CryptoAlgorithm;
-class CryptoAlgorithmParameters;
+class CryptoAlgorithmParametersDeprecated;
 class CryptoKeyData;
 
 typedef std::pair<const uint8_t*, size_t> CryptoOperationData;
 
 struct CryptoAlgorithmPair {
     RefPtr<CryptoAlgorithm> algorithm;
-    RefPtr<CryptoAlgorithmParameters> parameters;
+    RefPtr<CryptoAlgorithmParametersDeprecated> parameters;
 };
 
 class CryptoKeySerialization {
@@ -53,7 +53,7 @@ public:
     virtual ~CryptoKeySerialization() { }
 
     // Returns false if suggested algorithm was not compatible with one stored in the serialization.
-    virtual Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParameters*) const = 0;
+    virtual Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParametersDeprecated*) const = 0;
 
     virtual void reconcileUsages(CryptoKeyUsage&) const = 0;
     virtual void reconcileExtractable(bool&) const = 0;

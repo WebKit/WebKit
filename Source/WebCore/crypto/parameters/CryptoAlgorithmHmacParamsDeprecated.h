@@ -23,37 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRsaOaepParams_h
-#define CryptoAlgorithmRsaOaepParams_h
+#pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaOaepParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmHmacParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmRsaOaepParams()
-        : hasLabel(false)
-    {
-    }
-
-    // The hash function to apply to the message.
+    // The inner hash function to use.
     CryptoAlgorithmIdentifier hash;
 
-    // The optional label/application data to associate with the message.
-    // FIXME: Is there a difference between a missing label and an empty one? Perhaps we don't need the hasLabel member.
-    bool hasLabel;
-    Vector<uint8_t> label;
-
-    Class parametersClass() const override { return Class::RsaOaepParams; }
+    Class parametersClass() const override { return Class::HmacParams; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaOaepParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRsaOaepParams_h

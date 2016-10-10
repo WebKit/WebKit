@@ -28,7 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmHmacParams.h"
+#include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
 #include "ExceptionCode.h"
 #include <gnutls/gnutls.h>
@@ -68,7 +68,7 @@ static Vector<uint8_t> calculateSignature(gnutls_mac_algorithm_t algorithm, cons
     return result;
 }
 
-void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);
@@ -82,7 +82,7 @@ void CryptoAlgorithmHMAC::platformSign(const CryptoAlgorithmHmacParams& paramete
     callback(signature);
 }
 
-void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParams& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmHMAC::platformVerify(const CryptoAlgorithmHmacParamsDeprecated& parameters, const CryptoKeyHMAC& key, const CryptoOperationData& expectedSignature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     UNUSED_PARAM(failureCallback);
     gnutls_mac_algorithm_t algorithm = getGnutlsDigestAlgorithm(parameters.hash);

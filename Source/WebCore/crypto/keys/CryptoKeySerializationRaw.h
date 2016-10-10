@@ -51,7 +51,7 @@ public:
 private:
     CryptoKeySerializationRaw(const CryptoOperationData&);
 
-    Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParameters*) const override;
+    Optional<CryptoAlgorithmPair> reconcileAlgorithm(CryptoAlgorithm*, CryptoAlgorithmParametersDeprecated*) const override;
 
     void reconcileUsages(CryptoKeyUsage&) const override;
     void reconcileExtractable(bool&) const override;

@@ -29,7 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithm.h"
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyData.h"
 #include "CryptoKeySerializationRaw.h"
@@ -454,7 +454,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     return promise;
 }
 
-static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParameters> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
+static void importKey(ExecState& state, CryptoKeyFormat keyFormat, CryptoOperationData data, RefPtr<CryptoAlgorithm> algorithm, RefPtr<CryptoAlgorithmParametersDeprecated> parameters, bool extractable, CryptoKeyUsage keyUsages, CryptoAlgorithm::KeyCallback callback, CryptoAlgorithm::VoidCallback failureCallback)
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -533,7 +533,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
         return jsUndefined();
 
     RefPtr<CryptoAlgorithm> algorithm;
-    RefPtr<CryptoAlgorithmParameters> parameters;
+    RefPtr<CryptoAlgorithmParametersDeprecated> parameters;
     if (!state.uncheckedArgument(2).isNull()) {
         algorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(2));
         ASSERT(scope.exception() || algorithm);
@@ -752,7 +752,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         return jsUndefined();
 
     RefPtr<CryptoAlgorithm> unwrappedKeyAlgorithm;
-    RefPtr<CryptoAlgorithmParameters> unwrappedKeyAlgorithmParameters;
+    RefPtr<CryptoAlgorithmParametersDeprecated> unwrappedKeyAlgorithmParameters;
     if (!state.uncheckedArgument(4).isNull()) {
         unwrappedKeyAlgorithm = createAlgorithmFromJSValue(state, state.uncheckedArgument(4));
         ASSERT(scope.exception() || unwrappedKeyAlgorithm);

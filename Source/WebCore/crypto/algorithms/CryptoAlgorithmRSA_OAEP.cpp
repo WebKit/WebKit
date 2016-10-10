@@ -28,9 +28,9 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmRsaKeyGenParams.h"
-#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
-#include "CryptoAlgorithmRsaOaepParams.h"
+#include "CryptoAlgorithmRsaKeyGenParamsDeprecated.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
+#include "CryptoAlgorithmRsaOaepParamsDeprecated.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
@@ -57,7 +57,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSA_OAEP::identifier() const
     return s_identifier;
 }
 
-bool CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches(const CryptoAlgorithmRsaOaepParams& algorithmParameters, const CryptoKey& key) const
+bool CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches(const CryptoAlgorithmRsaOaepParamsDeprecated& algorithmParameters, const CryptoKey& key) const
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
@@ -69,9 +69,9 @@ bool CryptoAlgorithmRSA_OAEP::keyAlgorithmMatches(const CryptoAlgorithmRsaOaepPa
     return true;
 }
 
-void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
+    const CryptoAlgorithmRsaOaepParamsDeprecated& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParamsDeprecated>(parameters);
 
     if (!keyAlgorithmMatches(rsaOAEPParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -81,9 +81,9 @@ void CryptoAlgorithmRSA_OAEP::encrypt(const CryptoAlgorithmParameters& parameter
     platformEncrypt(rsaOAEPParameters, downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaOaepParams& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
+    const CryptoAlgorithmRsaOaepParamsDeprecated& rsaOAEPParameters = downcast<CryptoAlgorithmRsaOaepParamsDeprecated>(parameters);
 
     if (!keyAlgorithmMatches(rsaOAEPParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -93,9 +93,9 @@ void CryptoAlgorithmRSA_OAEP::decrypt(const CryptoAlgorithmParameters& parameter
     platformDecrypt(rsaOAEPParameters, downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
+    const CryptoAlgorithmRsaKeyGenParamsDeprecated& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParamsDeprecated>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);
@@ -104,9 +104,9 @@ void CryptoAlgorithmRSA_OAEP::generateKey(const CryptoAlgorithmParameters& param
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSA_OAEP, rsaParameters.hash, rsaParameters.hasHash, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback));
 }
 
-void CryptoAlgorithmRSA_OAEP::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSA_OAEP::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHashDeprecated& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHashDeprecated>(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = downcast<CryptoKeyDataRSAComponents>(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSA_OAEP, rsaKeyParameters.hash, rsaKeyParameters.hasHash, rsaComponents, extractable, usage);

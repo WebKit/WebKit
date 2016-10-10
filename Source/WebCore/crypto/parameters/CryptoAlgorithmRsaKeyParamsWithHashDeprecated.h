@@ -23,26 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAesKeyGenParams_h
-#define CryptoAlgorithmAesKeyGenParams_h
+#pragma once
 
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmAesKeyGenParams final : public CryptoAlgorithmParameters {
+// This parameters class is currently not specified in WebCrypto.
+// It is necessary to support import from JWK, which treats hash function as part of algorithm
+// identifier, so we need to remember it to compare with one passed to sign or verify functions.
+class CryptoAlgorithmRsaKeyParamsWithHashDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    // The length, in bits, of the key.
-    unsigned length;
+    CryptoAlgorithmRsaKeyParamsWithHashDeprecated()
+        : hasHash(false)
+    {
+    }
 
-    Class parametersClass() const override { return Class::AesKeyGenParams; }
+    // The hash algorithm to use.
+    bool hasHash;
+    CryptoAlgorithmIdentifier hash;
+
+    Class parametersClass() const override { return Class::RsaKeyParamsWithHash; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesKeyGenParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaKeyParamsWithHash)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmAesKeyGenParams_h

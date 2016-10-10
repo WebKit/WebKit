@@ -23,43 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmParameters_h
-#define CryptoAlgorithmParameters_h
+#pragma once
 
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
+#include "CryptoAlgorithmParametersDeprecated.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmParameters : public RefCounted<CryptoAlgorithmParameters> {
-    WTF_MAKE_NONCOPYABLE(CryptoAlgorithmParameters);
+class CryptoAlgorithmAesKeyGenParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmParameters() { }
-    virtual ~CryptoAlgorithmParameters() { }
+    // The length, in bits, of the key.
+    unsigned length;
 
-    enum class Class {
-        None,
-        AesCbcParams,
-        AesKeyGenParams,
-        HmacKeyParams,
-        HmacParams,
-        RsaKeyGenParams,
-        RsaKeyParamsWithHash,
-        RsaOaepParams,
-        RsaSsaParams
-    };
-    virtual Class parametersClass() const { return Class::None; }
+    Class parametersClass() const override { return Class::AesKeyGenParams; }
 };
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName) \
-    static bool isType(const WebCore::CryptoAlgorithmParameters& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParameters::Class::ToClassName; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesKeyGenParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmParameters_h

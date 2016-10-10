@@ -23,27 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmAesCbcParams_h
-#define CryptoAlgorithmAesCbcParams_h
+#pragma once
 
-#include "CryptoAlgorithmParameters.h"
-#include <array>
+#include "CryptoAlgorithmParametersDeprecated.h"
+#include <wtf/Vector.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmAesCbcParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaKeyGenParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    // The initialization vector. MUST be 16 bytes.
-    std::array<char, 16> iv;
+    CryptoAlgorithmRsaKeyGenParamsDeprecated()
+        : hasHash(false)
+    {
+    }
+    // The length, in bits, of the RSA modulus.
+    unsigned modulusLength;
+    // The RSA public exponent, encoded as BigInteger.
+    Vector<uint8_t> publicExponent;
+    // The hash algorith identifier
+    bool hasHash;
+    CryptoAlgorithmIdentifier hash;
 
-    Class parametersClass() const override { return Class::AesCbcParams; }
+    Class parametersClass() const override { return Class::RsaKeyGenParams; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(AesCbcParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaKeyGenParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmAesCbcParams_h

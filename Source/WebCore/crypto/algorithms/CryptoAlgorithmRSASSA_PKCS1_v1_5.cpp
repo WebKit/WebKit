@@ -28,9 +28,9 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmRsaKeyGenParams.h"
-#include "CryptoAlgorithmRsaKeyParamsWithHash.h"
-#include "CryptoAlgorithmRsaSsaParams.h"
+#include "CryptoAlgorithmRsaKeyGenParamsDeprecated.h"
+#include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
+#include "CryptoAlgorithmRsaSsaParamsDeprecated.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
@@ -57,7 +57,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmRSASSA_PKCS1_v1_5::identifier() const
     return s_identifier;
 }
 
-bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithmRsaSsaParams& algorithmParameters, const CryptoKey& key) const
+bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithmRsaSsaParamsDeprecated& algorithmParameters, const CryptoKey& key) const
 {
     if (key.algorithmIdentifier() != s_identifier)
         return false;
@@ -69,9 +69,9 @@ bool CryptoAlgorithmRSASSA_PKCS1_v1_5::keyAlgorithmMatches(const CryptoAlgorithm
     return true;
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParams>(parameters);
+    const CryptoAlgorithmRsaSsaParamsDeprecated& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParamsDeprecated>(parameters);
 
     if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -81,9 +81,9 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(const CryptoAlgorithmParameters& par
     platformSign(rsaSSAParameters, downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& signature, const CryptoOperationData& data, BoolCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
-    const CryptoAlgorithmRsaSsaParams& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParams>(parameters);
+    const CryptoAlgorithmRsaSsaParamsDeprecated& rsaSSAParameters = downcast<CryptoAlgorithmRsaSsaParamsDeprecated>(parameters);
 
     if (!keyAlgorithmMatches(rsaSSAParameters, key)) {
         ec = NOT_SUPPORTED_ERR;
@@ -93,9 +93,9 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(const CryptoAlgorithmParameters& p
     platformVerify(rsaSSAParameters,  downcast<CryptoKeyRSA>(key), signature, data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParameters& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyGenParams& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(parameters);
+    const CryptoAlgorithmRsaKeyGenParamsDeprecated& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParamsDeprecated>(parameters);
 
     auto keyPairCallback = [callback](CryptoKeyPair& pair) {
         callback(nullptr, &pair);
@@ -104,9 +104,9 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey(const CryptoAlgorithmParamete
     CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaParameters.hash, rsaParameters.hasHash, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback));
 }
 
-void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParameters& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
-    const CryptoAlgorithmRsaKeyParamsWithHash& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHash>(parameters);
+    const CryptoAlgorithmRsaKeyParamsWithHashDeprecated& rsaKeyParameters = downcast<CryptoAlgorithmRsaKeyParamsWithHashDeprecated>(parameters);
     const CryptoKeyDataRSAComponents& rsaComponents = downcast<CryptoKeyDataRSAComponents>(keyData);
 
     RefPtr<CryptoKeyRSA> result = CryptoKeyRSA::create(CryptoAlgorithmIdentifier::RSASSA_PKCS1_v1_5, rsaKeyParameters.hash, rsaKeyParameters.hasHash, rsaComponents, extractable, usage);

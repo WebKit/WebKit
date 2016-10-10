@@ -23,36 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmRsaKeyGenParams_h
-#define CryptoAlgorithmRsaKeyGenParams_h
+#pragma once
 
-#include "CryptoAlgorithmParameters.h"
-#include <wtf/Vector.h>
+#include "CryptoAlgorithmIdentifier.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmRsaKeyGenParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmRsaSsaParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmRsaKeyGenParams()
-        : hasHash(false)
-    {
-    }
-    // The length, in bits, of the RSA modulus.
-    unsigned modulusLength;
-    // The RSA public exponent, encoded as BigInteger.
-    Vector<uint8_t> publicExponent;
-    // The hash algorith identifier
-    bool hasHash;
+    // The hash algorithm to use.
     CryptoAlgorithmIdentifier hash;
 
-    Class parametersClass() const override { return Class::RsaKeyGenParams; }
+    Class parametersClass() const override { return Class::RsaSsaParams; }
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaKeyGenParams)
+SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(RsaSsaParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmRsaKeyGenParams_h

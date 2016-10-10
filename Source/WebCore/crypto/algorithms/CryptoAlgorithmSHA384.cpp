@@ -52,7 +52,7 @@ CryptoAlgorithmIdentifier CryptoAlgorithmSHA384::identifier() const
     return s_identifier;
 }
 
-void CryptoAlgorithmSHA384::digest(const CryptoAlgorithmParameters&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmSHA384::digest(const CryptoAlgorithmParametersDeprecated&, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
 {
     std::unique_ptr<CryptoDigest> digest = CryptoDigest::create(CryptoDigest::Algorithm::SHA_384);
     if (!digest) {

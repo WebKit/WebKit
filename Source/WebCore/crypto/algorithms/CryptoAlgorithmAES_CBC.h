@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CryptoAlgorithmAesCbcParams;
+class CryptoAlgorithmAesCbcParamsDeprecated;
 class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CBC final : public CryptoAlgorithm {
@@ -44,18 +44,18 @@ public:
 
     CryptoAlgorithmIdentifier identifier() const override;
 
-    void encrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void decrypt(const CryptoAlgorithmParameters&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void generateKey(const CryptoAlgorithmParameters&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
-    void importKey(const CryptoAlgorithmParameters&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void decrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void generateKey(const CryptoAlgorithmParametersDeprecated&, bool extractable, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
+    void importKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKeyData&, bool extractable, CryptoKeyUsage, KeyCallback&&, VoidCallback&& failureCallback, ExceptionCode&) override;
 
 private:
     CryptoAlgorithmAES_CBC();
     virtual ~CryptoAlgorithmAES_CBC();
 
-    bool keyAlgorithmMatches(const CryptoAlgorithmAesCbcParams& algorithmParameters, const CryptoKey&) const;
-    void platformEncrypt(const CryptoAlgorithmAesCbcParams&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
-    void platformDecrypt(const CryptoAlgorithmAesCbcParams&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    bool keyAlgorithmMatches(const CryptoAlgorithmAesCbcParamsDeprecated& algorithmParameters, const CryptoKey&) const;
+    void platformEncrypt(const CryptoAlgorithmAesCbcParamsDeprecated&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
+    void platformDecrypt(const CryptoAlgorithmAesCbcParamsDeprecated&, const CryptoKeyAES&, const CryptoOperationData&, VectorCallback&&, VoidCallback&& failureCallback, ExceptionCode&);
 };
 
 }

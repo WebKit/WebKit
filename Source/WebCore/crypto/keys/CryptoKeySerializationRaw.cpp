@@ -29,7 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithm.h"
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 #include "CryptoKey.h"
 #include "CryptoKeyDataOctetSequence.h"
 
@@ -44,7 +44,7 @@ CryptoKeySerializationRaw::~CryptoKeySerializationRaw()
 {
 }
 
-Optional<CryptoAlgorithmPair> CryptoKeySerializationRaw::reconcileAlgorithm(CryptoAlgorithm* algorithm, CryptoAlgorithmParameters* parameters) const
+Optional<CryptoAlgorithmPair> CryptoKeySerializationRaw::reconcileAlgorithm(CryptoAlgorithm* algorithm, CryptoAlgorithmParametersDeprecated* parameters) const
 {
     return CryptoAlgorithmPair { algorithm, parameters };
 }

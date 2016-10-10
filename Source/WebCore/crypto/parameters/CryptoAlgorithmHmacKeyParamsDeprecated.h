@@ -23,19 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CryptoAlgorithmHmacKeyParams_h
-#define CryptoAlgorithmHmacKeyParams_h
+#pragma once
 
 #include "CryptoAlgorithmIdentifier.h"
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmParametersDeprecated.h"
 
 #if ENABLE(SUBTLE_CRYPTO)
 
 namespace WebCore {
 
-class CryptoAlgorithmHmacKeyParams final : public CryptoAlgorithmParameters {
+class CryptoAlgorithmHmacKeyParamsDeprecated final : public CryptoAlgorithmParametersDeprecated {
 public:
-    CryptoAlgorithmHmacKeyParams()
+    CryptoAlgorithmHmacKeyParamsDeprecated()
         : hasLength(false)
     {
     }
@@ -56,4 +55,3 @@ public:
 SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(HmacKeyParams)
 
 #endif // ENABLE(SUBTLE_CRYPTO)
-#endif // CryptoAlgorithmHmacKeyParams_h

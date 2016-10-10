@@ -1,3 +1,67 @@
+2016-10-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Rename CryptoAlgorithmParameters to CryptoAlgorithmParametersDeprecated
+        https://bugs.webkit.org/show_bug.cgi?id=163163
+        <rdar://problem/28681544>
+
+        Reviewed by Brent Fulgham.
+
+        Replace all uses of 'CryptoAlgorithmParameters' with 'CryptoAlgorithmParametersDeprecated' in preparation for a new CryptoAlgorithmParameters type.
+
+        No changes of behaviors. No new tests.
+
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        * bindings/js/JSCryptoAlgorithmDictionary.h:
+        * bindings/js/JSCryptoKeySerializationJWK.cpp:
+        * bindings/js/JSCryptoKeySerializationJWK.h:
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        * crypto/CryptoAlgorithm.cpp:
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoAlgorithmParametersDeprecated.h: Renamed from Source/WebCore/crypto/CryptoAlgorithmParameters.h.
+        * crypto/CryptoKeySerialization.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmSHA1.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA1.h:
+        * crypto/algorithms/CryptoAlgorithmSHA224.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA224.h:
+        * crypto/algorithms/CryptoAlgorithmSHA256.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA256.h:
+        * crypto/algorithms/CryptoAlgorithmSHA384.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA384.h:
+        * crypto/algorithms/CryptoAlgorithmSHA512.cpp:
+        * crypto/algorithms/CryptoAlgorithmSHA512.h:
+        * crypto/keys/CryptoKeySerializationRaw.cpp:
+        * crypto/gnutls/CryptoAlgorithmAES_CBCGnuTLS.cpp:
+        * crypto/gnutls/CryptoAlgorithmHMACGnuTLS.cpp:
+        * crypto/gnutls/CryptoAlgorithmRSA_OAEPGnuTLS.cpp:
+        * crypto/gnutls/CryptoAlgorithmRSASSA_PKCS1_v1_5GnuTLS.cpp:
+        * crypto/keys/CryptoKeySerializationRaw.h:
+        * crypto/mac/CryptoAlgorithmAES_CBCMac.cpp:
+        * crypto/mac/CryptoAlgorithmHMACMac.cpp:
+        * crypto/mac/CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp:
+        * crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp:
+        * crypto/parameters/CryptoAlgorithmAesCbcParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmAesCbcParams.h.
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmAesKeyGenParams.h.
+        * crypto/parameters/CryptoAlgorithmHmacKeyParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmHmacKeyParams.h.
+        * crypto/parameters/CryptoAlgorithmHmacParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmHmacParams.h.
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h.
+        * crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHash.h.
+        * crypto/parameters/CryptoAlgorithmRsaOaepParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmRsaOaepParams.h.
+        * crypto/parameters/CryptoAlgorithmRsaSsaParamsDeprecated.h: Renamed from Source/WebCore/crypto/parameters/CryptoAlgorithmRsaSsaParams.h.
+
 2016-10-10  Darin Adler  <darin@apple.com>
 
         Move NotificationCenter from legacy to new DOM exceptions
