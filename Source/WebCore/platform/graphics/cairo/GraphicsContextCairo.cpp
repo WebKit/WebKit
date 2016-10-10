@@ -324,7 +324,7 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     if (drawsDashedLine) {
         cairo_save(cairoContext);
         // Figure out end points to ensure we always paint corners.
-        cornerWidth = strokeStyle == DottedStroke ? thickness : std::min(2 * thickness, std::max(thickness, strokeWidth / 3));
+        cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth);
         if (isVerticalLine) {
             fillRectWithColor(cairoContext, FloatRect(point1.x(), point1.y(), thickness, cornerWidth), strokeColor);
             fillRectWithColor(cairoContext, FloatRect(point1.x(), point2.y() - cornerWidth, thickness, cornerWidth), strokeColor);
@@ -333,30 +333,14 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
             fillRectWithColor(cairoContext, FloatRect(point2.x() - cornerWidth, point1.y(), cornerWidth, thickness), strokeColor);
         }
         strokeWidth -= 2 * cornerWidth;
-        float patternWidth = strokeStyle == DottedStroke ? thickness : std::min(3 * thickness, std::max(thickness, strokeWidth / 3));
+        float patternWidth = dashedLinePatternWidthForStrokeWidth(strokeWidth);
         // Check if corner drawing sufficiently covers the line.
         if (strokeWidth <= patternWidth + 1) {
             cairo_restore(cairoContext);
             return;
         }
 
-        // Pattern starts with full fill and ends with the empty fill.
-        // 1. Let's start with the empty phase after the corner.
-        // 2. Check if we've got odd or even number of patterns and whether they fully cover the line.
-        // 3. In case of even number of patterns and/or remainder, move the pattern start position
-        // so that the pattern is balanced between the corners.
-        float patternOffset = patternWidth;
-        int numberOfSegments = std::floor(strokeWidth / patternWidth);
-        bool oddNumberOfSegments = numberOfSegments % 2;
-        float remainder = strokeWidth - (numberOfSegments * patternWidth);
-        if (oddNumberOfSegments && remainder)
-            patternOffset -= remainder / 2.f;
-        else if (!oddNumberOfSegments) {
-            if (remainder)
-                patternOffset += patternOffset - (patternWidth + remainder) / 2.f;
-            else
-                patternOffset += patternWidth / 2.f;
-        }
+        float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
         const double dashedLine[2] = { static_cast<double>(patternWidth), static_cast<double>(patternWidth) };
         cairo_set_dash(cairoContext, dashedLine, 2, patternOffset);
     } else {
@@ -366,18 +350,9 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     }
 
 
-    FloatPoint p1 = point1;
-    FloatPoint p2 = point2;
-    // Center line and cut off corners for pattern patining.
-    if (isVerticalLine) {
-        float centerOffset = (p2.x() - p1.x()) / 2;
-        p1.move(centerOffset, cornerWidth);
-        p2.move(-centerOffset, -cornerWidth);
-    } else {
-        float centerOffset = (p2.y() - p1.y()) / 2;
-        p1.move(cornerWidth, centerOffset);
-        p2.move(-cornerWidth, -centerOffset);
-    }
+    auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
+    auto p1 = centeredPoints[0];
+    auto p2 = centeredPoints[1];
 
     if (shouldAntialias())
         cairo_set_antialias(cairoContext, CAIRO_ANTIALIAS_NONE);

@@ -618,6 +618,11 @@ private:
 
     FloatRect computeLineBoundsAndAntialiasingModeForText(const FloatPoint&, float width, bool printing, Color&);
 
+    float dashedLineCornerWidthForStrokeWidth(float) const;
+    float dashedLinePatternWidthForStrokeWidth(float) const;
+    float dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
+    Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
+
     GraphicsContextPlatformPrivate* m_data { nullptr };
     DisplayList::Recorder* m_displayListRecorder { nullptr };
 

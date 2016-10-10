@@ -37,6 +37,8 @@
 #if USE(CG)
 typedef struct CGPattern* CGPatternRef;
 typedef CGPatternRef PlatformPatternPtr;
+#elif USE(DIRECT2D)
+typedef void* PlatformPatternPtr;
 #elif USE(CAIRO)
 #include <cairo.h>
 typedef cairo_pattern_t* PlatformPatternPtr;

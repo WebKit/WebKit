@@ -502,49 +502,22 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     D2DContextStateSaver stateSaver(*m_data, drawsDashedLine);
     if (drawsDashedLine) {
         // Figure out end points to ensure we always paint corners.
-        cornerWidth = strokeStyle == DottedStroke ? thickness : std::min(2 * thickness, std::max(thickness, strokeWidth / 3));
+        cornerWidth = dashedLineCornerWidthForStrokeWidth(strokeWidth);
         strokeWidth -= 2 * cornerWidth;
-        float patternWidth = strokeStyle == DottedStroke ? thickness : std::min(3 * thickness, std::max(thickness, strokeWidth / 3));
+        float patternWidth = dashedLinePatternWidthForStrokeWidth(strokeWidth);
         // Check if corner drawing sufficiently covers the line.
         if (strokeWidth <= patternWidth + 1)
             return;
 
-        // Pattern starts with full fill and ends with the empty fill.
-        // 1. Let's start with the empty phase after the corner.
-        // 2. Check if we've got odd or even number of patterns and whether they fully cover the line.
-        // 3. In case of even number of patterns and/or remainder, move the pattern start position
-        // so that the pattern is balanced between the corners.
-        float patternOffset = patternWidth;
-        int numberOfSegments = floorf(strokeWidth / patternWidth);
-        bool oddNumberOfSegments = numberOfSegments % 2;
-        float remainder = strokeWidth - (numberOfSegments * patternWidth);
-        if (oddNumberOfSegments && remainder)
-            patternOffset -= remainder / 2;
-        else if (!oddNumberOfSegments) {
-            if (remainder)
-                patternOffset += patternOffset - (patternWidth + remainder) / 2;
-            else
-                patternOffset += patternWidth / 2;
-        }
+        float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
         const float dashes[2] = { patternWidth, patternWidth };
-
         auto strokeStyleProperties = D2D1::StrokeStyleProperties();
-
         GraphicsContext::systemFactory()->CreateStrokeStyle(&strokeStyleProperties, dashes, ARRAYSIZE(dashes), &d2dStrokeStyle);
     }
 
-    FloatPoint p1 = point1;
-    FloatPoint p2 = point2;
-    // Center line and cut off corners for pattern patining.
-    if (isVerticalLine) {
-        float centerOffset = (p2.x() - p1.x()) / 2;
-        p1.move(centerOffset, cornerWidth);
-        p2.move(-centerOffset, -cornerWidth);
-    } else {
-        float centerOffset = (p2.y() - p1.y()) / 2;
-        p1.move(cornerWidth, centerOffset);
-        p2.move(-cornerWidth, -centerOffset);
-    }
+    auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
+    auto p1 = centeredPoints[0];
+    auto p2 = centeredPoints[1];
 
     context->SetTags(1, __LINE__);
 

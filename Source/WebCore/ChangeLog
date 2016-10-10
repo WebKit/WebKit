@@ -1,3 +1,28 @@
+2016-10-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Reduce code duplication between CG, Cairo, and Direct2D
+        https://bugs.webkit.org/show_bug.cgi?id=163157
+
+        Reviewed by Darin Adler.
+
+        Move a number of routines that have been copied-and-pasted to different
+        platform files into the main GraphicsContext.cpp file.
+
+        No new tests because there is no change in behavior.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::dashedLineCornerWidthForStrokeWidth): Added.
+        (WebCore::GraphicsContext::dashedLinePatternWidthForStrokeWidth): Added.
+        (WebCore::GraphicsContext::dashedLinePatternOffsetForPatternAndStrokeWidth): Added.
+        (WebCore::GraphicsContext::centerLineAndCutOffCorners): Added.
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawLine): Call new helper function.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine): Ditto.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawLine): Ditto.
+
 2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r206731): [SOUP] Network process crash in gotHeadersCallback
