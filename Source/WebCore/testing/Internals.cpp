@@ -408,6 +408,11 @@ void Internals::resetToConsistentState(Page& page)
     MockContentFilterSettings::reset();
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    page.setMockMediaPlaybackTargetPickerEnabled(true);
+    page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::Unknown);
+#endif
+
     page.setShowAllPlugins(false);
 }
 

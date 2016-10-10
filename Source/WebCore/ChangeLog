@@ -1,3 +1,25 @@
+2016-10-10  Jer Noble  <jer.noble@apple.com>
+
+        Address flaky airplay-* LayouTests
+        https://bugs.webkit.org/show_bug.cgi?id=163044
+
+        Reviewed by Brent Fulgham.
+
+        Two separate problems conspired to make airplay tests a bit flaky:
+
+        For one, when the HTMLMediaElement clears its MediaPlayer, it won't necessarily notify
+        clients that it has stopped playing to a wireless target. The WebMediaSessionManager may
+        eventually cause this value to reset, but it's asynchronous, and may fire after the next
+        test starts. Reset this state explicitly.
+
+        For two, the state of the mock playback target picker was not being reset between test
+        invocations.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2016-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         Correct typo in comment (patining -> painting).

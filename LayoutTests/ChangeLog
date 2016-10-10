@@ -1,3 +1,13 @@
+2016-10-10  Jer Noble  <jer.noble@apple.com>
+
+        Address flaky airplay-* LayouTests
+        https://bugs.webkit.org/show_bug.cgi?id=163044
+
+        Reviewed by Brent Fulgham.
+
+        * media/airplay-autoplay.html:
+        * platform/mac/TestExpectations:
+
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/xmlhttprequest/onabort-response-getters.html as flaky on ios-simulator.

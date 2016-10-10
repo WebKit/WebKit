@@ -5048,6 +5048,11 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
         // doesn't support playback to a target.
         enqueuePlaybackTargetAvailabilityChangedEvent();
     }
+
+    if (m_isPlayingToWirelessTarget) {
+        m_isPlayingToWirelessTarget = false;
+        scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
+    }
 #endif
 
     if (m_isWaitingUntilMediaCanStart) {

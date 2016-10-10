@@ -8,11 +8,6 @@
 
     var phase = 'video-1';
 
-    if (window.internals) {
-        internals.setMockMediaPlaybackTargetPickerEnabled(true);
-        internals.setMockMediaPlaybackTargetPickerState('', 'Unknown');
-    }
-
     function start() 
     {
         findMediaElement();
@@ -31,10 +26,8 @@
         runWithKeyDown(function() {
             run(`video.webkitShowPlaybackTargetPicker()`);
             setTimeout(function() {
-                if (window.internals) {
-                    internals.setMockMediaPlaybackTargetPickerEnabled(true);
+                if (window.internals)
                     internals.setMockMediaPlaybackTargetPickerState('Sleepy TV', 'DeviceAvailable');
-                }
             }, 100);
         });
         video.currentTime = video.duration - 1;

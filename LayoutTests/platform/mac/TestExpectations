@@ -1160,9 +1160,6 @@ webkit.org/b/141534 [ Yosemite ] media/video-load-networkState.html [ Pass Crash
 # See also: rdar://problem/27356144
 webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
 
-# Fails when an actual AppleTV is nearby.
-webkit.org/b/148912 [ ElCapitan+ ] media/controls/airplay-picker.html [ Pass Failure ]
-
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 [ Yosemite+ ] editing/selection/extend-by-character-007.html [ Pass ]
 
