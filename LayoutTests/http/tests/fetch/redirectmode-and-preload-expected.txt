@@ -1,0 +1,6 @@
+
+PASS Fetch should check for redirections even if resource is preloaded (same fetch options except for redirect mode) 
+PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 
+PASS Fetch should check for redirections even if resource is preloaded (same fetch options except for redirect mode) 
+PASS Fetch should check for redirections even if resource is preloaded (different fetch mode, different redirect mode) 
+

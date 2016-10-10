@@ -1,3 +1,14 @@
+2016-10-10  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Memory cache should not bypass redirect mode
+        https://bugs.webkit.org/show_bug.cgi?id=162959
+
+        Reviewed by Darin Adler.
+
+        * http/tests/fetch/redirectmode-and-preload-expected.txt: Added.
+        * http/tests/fetch/redirectmode-and-preload.html: Added.
+        * http/tests/fetch/resources/redirect-with-cache.php:
+
 2016-10-09  Antti Koivisto  <antti@apple.com>
 
         Enable optimized stylesheet updates in shadow trees

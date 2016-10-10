@@ -1,5 +1,30 @@
 2016-10-10  Youenn Fablet  <youenn@apple.com>
 
+        [Fetch API] Memory cache should not bypass redirect mode
+        https://bugs.webkit.org/show_bug.cgi?id=162959
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/fetch/redirectmode-and-preload.html
+
+        Ensure reloading of resources if the redirect modes are different between request and cached resource, and
+        cached resource has redirections.
+
+        As a temporary workaround, we activate resource update for raw resources in
+        shouldUpdateCachedResourceWithCurrentRequest but disable it in canUpdateFromResource.
+        This allows handling reloading of resources with different redirection mode in canUpdateFromResource.
+
+        A future patch should allow loading cached raw resources from other cached raw resources.
+
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::hasRedirections):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+        (WebCore::canUpdateFromResource):
+        (WebCore::CachedResourceLoader::updateCachedResourceWithCurrentRequest):
+
+2016-10-10  Youenn Fablet  <youenn@apple.com>
+
         Attribute getter binding generated code should use more references
         https://bugs.webkit.org/show_bug.cgi?id=163179
 

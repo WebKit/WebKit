@@ -234,25 +234,26 @@ public:
     virtual void destroyDecodedData() { }
 
     void setOwningCachedResourceLoader(CachedResourceLoader* cachedResourceLoader) { m_owningCachedResourceLoader = cachedResourceLoader; }
-    
+
     bool isPreloaded() const { return m_preloadCount; }
     void increasePreloadCount() { ++m_preloadCount; }
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
-    
+
     void registerHandle(CachedResourceHandleBase* h);
     WEBCORE_EXPORT void unregisterHandle(CachedResourceHandleBase* h);
-    
+
     bool canUseCacheValidator() const;
 
     enum class RevalidationDecision { No, YesDueToCachePolicy, YesDueToNoStore, YesDueToNoCache, YesDueToExpired };
     virtual RevalidationDecision makeRevalidationDecision(CachePolicy) const;
     bool redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot) const;
+    bool hasRedirections() const { return m_redirectChainCacheStatus.status != RedirectChainCacheStatus::Status::NoRedirection;  }
 
     bool varyHeaderValuesMatch(const ResourceRequest&, const CachedResourceLoader&);
 
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
-    
+
     // HTTP revalidation support methods for CachedResourceLoader.
     void setResourceToRevalidate(CachedResource*);
     virtual void switchClientsToRevalidatedResource();

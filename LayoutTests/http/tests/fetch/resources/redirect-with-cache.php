@@ -1,7 +1,7 @@
 <?php
     $url = $_GET["url"];
 
-    $enableCaching = isset($_SERVER["ENABLECACHING"]) ? true : false;
+    $enableCaching = isset($_SERVER["ENABLECACHING"]) || isset($_GET["enableCaching"]) ? true : false;
     $code = isset($_GET["code"]) ? $_GET["code"] : 302;
 
     header("HTTP/1.1 $code");

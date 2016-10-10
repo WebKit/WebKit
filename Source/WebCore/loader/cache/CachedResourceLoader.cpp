@@ -561,8 +561,6 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         return false;
     case CachedResource::MediaResource:
         return false;
-    case CachedResource::RawResource:
-        return false;
     case CachedResource::MainResource:
         return false;
 #if ENABLE(LINK_PREFETCH)
@@ -574,14 +572,43 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
     default:
         break;
     }
-    return resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin();
+
+    if (resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin())
+        return true;
+
+    if (resource.options().redirect != request.options().redirect && resource.hasRedirections())
+        return true;
+
+    return false;
+}
+
+static inline bool isResourceSuitableForDirectReuse(const CachedResource& resource, const CachedResourceRequest& request)
+{
+    // FIXME: For being loaded requests, the response tainting may not be correctly computed if the fetch mode is not the same.
+    // Even if the fetch mode is the same, we are not sure that the resource can be reused (Vary: Origin header for instance).
+    // We should find a way to improve this.
+    if (resource.status() != CachedResource::Cached)
+        return false;
+
+    // If the cached resource has not followed redirections, it is incomplete and we should not use it.
+    // Let's make sure the memory cache has no such resource.
+    ASSERT(resource.response().type() != ResourceResponse::Type::Opaqueredirect);
+
+    // We could support redirect modes other than Follow in case of a redirected resource.
+    // This case is rare and is not worth optimizing currently.
+    if (request.options().redirect != FetchOptions::Redirect::Follow && resource.hasRedirections())
+        return false;
+
+    // FIXME: Implement reuse of cached raw resources.
+    if (resource.type() == CachedResource::Type::RawResource)
+        return false;
+
+    return true;
 }
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceWithCurrentRequest(const CachedResource& resource, CachedResourceRequest&& request)
 {
-    // FIXME: For being loaded requests, we currently do not use the same resource, as this may induce errors in the resource response tainting.
-    // We should find a way to improve this.
-    if (resource.status() != CachedResource::Cached) {
+    if (!isResourceSuitableForDirectReuse(resource, request)) {
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
         return loadResource(resource.type(), WTFMove(request));
     }
