@@ -1,3 +1,11 @@
+2016-10-09  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [EFL] Gardening timout tests, failure tests on Oct. 10th.
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2016-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r165103): labels list doesn't get invalidated when other lists are invalidated at document level
