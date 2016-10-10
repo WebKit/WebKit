@@ -1,5 +1,29 @@
 2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        NetworkSession: downloads started by startDownload() can fail before starting from the API point of view
+        https://bugs.webkit.org/show_bug.cgi?id=163107
+
+        Reviewed by Alex Christensen.
+
+        In the network process we use a PendingDownload in this case, but in the UI process we always have a single
+        download proxy. If an error happens before the pending download is converted inot a real download, the DidFail
+        messages is received in the download proxy before the DidStart one. This is problematic at least for the GTK+
+        API, because it's common to connect to the started signal and connect to all other signals from there, but in
+        this case the started signal is never emitted, and then the failed one is not handled. This is not a problem for
+        downloads started by convertTaskToDownload, because in that case those loads are not considered a download by
+        the UI process when those early errors happen, and then the web page handles them.
+
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::PendingDownload): Send DidStart message right after the network load starts like the
+        non network session code does.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload): Send DidStart message now that the normal load has been converted
+        into a download.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation): Do not send DidStart message here.
+
+2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Network Session: PendingDownload is always nullptr in DownloadManager::dataTaskBecameDownloadTask
         https://bugs.webkit.org/show_bug.cgi?id=163006
 

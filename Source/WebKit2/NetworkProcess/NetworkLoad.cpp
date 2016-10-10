@@ -24,15 +24,17 @@
  */
 
 #include "config.h"
-
 #include "NetworkLoad.h"
 
 #include "AuthenticationManager.h"
+#include "DownloadProxyMessages.h"
 #include "NetworkProcess.h"
 #include "SessionTracker.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
@@ -187,6 +189,7 @@ void NetworkLoad::convertTaskToDownload(DownloadID downloadID, const ResourceReq
     if (!m_task)
         return;
 
+    NetworkProcess::singleton().downloadManager().downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(updatedRequest, String()), downloadID.downloadID());
     m_task->setPendingDownloadID(downloadID);
     
     ASSERT(m_responseCompletionHandler);
