@@ -398,7 +398,6 @@ http/tests/loading/cross-origin-XHR-willLoadRequest.html
 http/tests/loading/unfinished-load-back-to-cached-page-callbacks.html
 http/tests/loading/unfinished-main-resource-back-to-cached-page-callbacks.html
 http/tests/misc/acid3.html
-http/tests/misc/isindex-with-no-form.html
 http/tests/navigation/document-location-click-timeout.html
 http/tests/navigation/document-location-click.html
 http/tests/navigation/document-location-mouseover.html

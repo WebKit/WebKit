@@ -1,5 +1,16 @@
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
+        TestExpectations cleanup for LayoutTests that no longer exist.
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
+
         Marking tiled-drawing/scrolling/latched-div-with-scroll-snap.html as flaky on mac-wk2.
         https://bugs.webkit.org/show_bug.cgi?id=162505
 

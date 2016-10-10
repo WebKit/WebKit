@@ -1877,7 +1877,6 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/dynamic/paused-event-dispatch.html
 fast/events/anchor-image-scrolled-x-y.html
 fast/events/autoscroll-should-not-stop-on-keypress.html [ Skip ]
-fast/events/constructors/media-key-event-constructor.html
 fast/events/input-image-scrolled-x-y.html
 fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
@@ -2345,7 +2344,6 @@ imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
 imported/blink/http/tests/security/referrer-policy-attribute-img-origin-when-crossorigin.html [ ImageOnlyFailure Pass ]
 imported/blink/http/tests/security/referrer-policy-attribute-img-origin.html [ ImageOnlyFailure Pass ]
 imported/blink/http/tests/security/referrer-policy-attribute-img-picture.html [ ImageOnlyFailure Pass ]
-imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials.html [ Failure Pass ]
 imported/blink/plugins/empty-per-context-data.html [ Skip ]
 imported/blink/svg/as-background-image/overflow-auto.html [ ImageOnlyFailure Pass ]
 imported/blink/svg/as-image/overflow-auto.html [ ImageOnlyFailure Pass ]
