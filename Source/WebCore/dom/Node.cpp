@@ -2198,7 +2198,7 @@ bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
     return !beforeLoadEvent->defaultPrevented();
 }
 
-void Node::dispatchInputEvent(const AtomicString& inputType)
+void Node::dispatchInputEvent(const String& inputType)
 {
     auto* settings = document().settings();
     if (settings && settings->inputEventsEnabled())

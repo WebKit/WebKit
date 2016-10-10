@@ -563,6 +563,7 @@ static NSString* undoNameForEditAction(EditAction editAction)
     switch (editAction) {
         case EditActionUnspecified: return nil;
         case EditActionInsert: return nil;
+        case EditActionInsertReplacement: return nil;
         case EditActionSetColor: return UI_STRING_KEY_INTERNAL("Set Color", "Set Color (Undo action name)", "Undo action name");
         case EditActionSetBackgroundColor: return UI_STRING_KEY_INTERNAL("Set Background Color", "Set Background Color (Undo action name)", "Undo action name");
         case EditActionTurnOffKerning: return UI_STRING_KEY_INTERNAL("Turn Off Kerning", "Turn Off Kerning (Undo action name)", "Undo action name");
@@ -592,10 +593,22 @@ static NSString* undoNameForEditAction(EditAction editAction)
         case EditActionPaste: return UI_STRING_KEY_INTERNAL("Paste", "Paste (Undo action name)", "Undo action name");
         case EditActionPasteFont: return UI_STRING_KEY_INTERNAL("Paste Font", "Paste Font (Undo action name)", "Undo action name");
         case EditActionPasteRuler: return UI_STRING_KEY_INTERNAL("Paste Ruler", "Paste Ruler (Undo action name)", "Undo action name");
-        case EditActionTyping: return UI_STRING_KEY_INTERNAL("Typing", "Typing (Undo action name)", "Undo action name");
+        case EditActionTypingDeleteSelection:
+        case EditActionTypingDeleteBackward:
+        case EditActionTypingDeleteForward:
+        case EditActionTypingDeleteWordBackward:
+        case EditActionTypingDeleteWordForward:
+        case EditActionTypingDeleteLineBackward:
+        case EditActionTypingDeleteLineForward:
+        case EditActionTypingInsertText:
+        case EditActionTypingInsertLineBreak:
+        case EditActionTypingInsertParagraph:
+            return UI_STRING_KEY_INTERNAL("Typing", "Typing (Undo action name)", "Undo action name");
         case EditActionCreateLink: return UI_STRING_KEY_INTERNAL("Create Link", "Create Link (Undo action name)", "Undo action name");
         case EditActionUnlink: return UI_STRING_KEY_INTERNAL("Unlink", "Unlink (Undo action name)", "Undo action name");
-        case EditActionInsertList: return UI_STRING_KEY_INTERNAL("Insert List", "Insert List (Undo action name)", "Undo action name");
+        case EditActionInsertOrderedList:
+        case EditActionInsertUnorderedList:
+            return UI_STRING_KEY_INTERNAL("Insert List", "Insert List (Undo action name)", "Undo action name");
         case EditActionFormatBlock: return UI_STRING_KEY_INTERNAL("Formatting", "Format Block (Undo action name)", "Undo action name");
         case EditActionIndent: return UI_STRING_KEY_INTERNAL("Indent", "Indent (Undo action name)", "Undo action name");
         case EditActionOutdent: return UI_STRING_KEY_INTERNAL("Outdent", "Outdent (Undo action name)", "Undo action name");

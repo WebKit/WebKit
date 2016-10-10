@@ -1,3 +1,14 @@
+2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.inputType for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163025
+        <rdar://problem/28658092>
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (undoNameForEditAction):
+
 2016-10-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Connect WebCore/WebKit Drawing

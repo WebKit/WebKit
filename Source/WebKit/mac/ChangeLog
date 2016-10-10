@@ -1,3 +1,17 @@
+2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.inputType for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163025
+        <rdar://problem/28658092>
+
+        Reviewed by Darin Adler.
+
+        Accounts for some changes to the EditAction enum in nameForEditAction. See WebCore ChangeLog
+        entry for more details.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction):
+
 2016-10-06  Darin Adler  <darin@apple.com>
 
         Next step on moving to modern way to return DOM exceptions

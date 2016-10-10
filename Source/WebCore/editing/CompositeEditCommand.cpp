@@ -326,13 +326,23 @@ void CompositeEditCommand::apply()
 {
     if (!endingSelection().isContentRichlyEditable()) {
         switch (editingAction()) {
-        case EditActionTyping:
+        case EditActionTypingDeleteSelection:
+        case EditActionTypingDeleteBackward:
+        case EditActionTypingDeleteForward:
+        case EditActionTypingDeleteWordBackward:
+        case EditActionTypingDeleteWordForward:
+        case EditActionTypingDeleteLineBackward:
+        case EditActionTypingDeleteLineForward:
+        case EditActionTypingInsertText:
+        case EditActionTypingInsertLineBreak:
+        case EditActionTypingInsertParagraph:
         case EditActionPaste:
         case EditActionDrag:
         case EditActionSetWritingDirection:
         case EditActionCut:
         case EditActionUnspecified:
         case EditActionInsert:
+        case EditActionInsertReplacement:
         case EditActionDelete:
         case EditActionDictation:
             break;
@@ -397,6 +407,11 @@ bool CompositeEditCommand::shouldRetainAutocorrectionIndicator() const
 
 void CompositeEditCommand::setShouldRetainAutocorrectionIndicator(bool)
 {
+}
+
+String CompositeEditCommand::inputEventTypeName() const
+{
+    return inputTypeNameForEditingAction(editingAction());
 }
 
 //

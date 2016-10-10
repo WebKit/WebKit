@@ -193,6 +193,11 @@ void InsertListCommand::doApply()
     doApplyForSingleParagraph(false, listTag, endingSelection().firstRange().get());
 }
 
+EditAction InsertListCommand::editingAction() const
+{
+    return m_type == OrderedList ? EditActionInsertOrderedList : EditActionInsertUnorderedList;
+}
+
 void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const HTMLQualifiedName& listTag, Range* currentSelection)
 {
     // FIXME: This will produce unexpected results for a selection that starts just before a

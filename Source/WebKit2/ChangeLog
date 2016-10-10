@@ -1,3 +1,19 @@
+2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.inputType for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163025
+        <rdar://problem/28658092>
+
+        Reviewed by Darin Adler.
+
+        Accounts for some changes to the EditAction enum in nameForEditAction. Some former edit
+        actions, such as EditActionTyping, have been split out into its more specific subtypes,
+        so we preserve shipping behavior by treating all of the new subtypes the same way as the
+        original type.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+
 2016-10-08  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [GTK] Drop redundant wl_display_flush_clients() call

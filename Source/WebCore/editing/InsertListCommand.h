@@ -33,7 +33,7 @@ namespace WebCore {
 class HTMLElement;
 class HTMLQualifiedName;
 
-class InsertListCommand : public CompositeEditCommand {
+class InsertListCommand final : public CompositeEditCommand {
 public:
     enum Type { OrderedList, UnorderedList };
 
@@ -44,13 +44,13 @@ public:
 
     static RefPtr<HTMLElement> insertList(Document&, Type);
     
-    virtual bool preservesTypingStyle() const { return true; }
+    bool preservesTypingStyle() const final { return true; }
 
 private:
     InsertListCommand(Document&, Type);
 
-    virtual void doApply();
-    virtual EditAction editingAction() const { return EditActionInsertList; }
+    void doApply() final;
+    EditAction editingAction() const final;
 
     HTMLElement* fixOrphanedListChild(Node*);
     bool selectionHasListOfType(const VisibleSelection& selection, const QualifiedName&);

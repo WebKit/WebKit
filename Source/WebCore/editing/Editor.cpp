@@ -1067,7 +1067,7 @@ bool Editor::willApplyEditing(CompositeEditCommand& command) const
     if (!composition)
         return true;
 
-    return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), emptyString());
+    return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), command.inputEventTypeName());
 }
 
 void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
@@ -1086,7 +1086,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
     FrameSelection::SetSelectionOptions options = cmd->isDictationCommand() ? FrameSelection::DictationTriggered : 0;
     
     changeSelectionAfterCommand(newSelection, options);
-    dispatchInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), emptyString());
+    dispatchInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), cmd->inputEventTypeName());
 
     updateEditorUINowIfScheduled();
     
@@ -1111,7 +1111,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 
 bool Editor::willUnapplyEditing(const EditCommandComposition& composition) const
 {
-    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), emptyString());
+    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyUndo");
 }
 
 void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
@@ -1122,7 +1122,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), emptyString());
+    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), "historyUndo");
 
     updateEditorUINowIfScheduled();
 
@@ -1136,7 +1136,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
 bool Editor::willReapplyEditing(const EditCommandComposition& composition) const
 {
-    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), emptyString());
+    return dispatchBeforeInputEvents(composition.startingRootEditableElement(), composition.endingRootEditableElement(), "historyRedo");
 }
 
 void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
@@ -1147,7 +1147,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, FrameSelection::defaultSetSelectionOptions());
-    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), emptyString());
+    dispatchInputEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement(), "historyRedo");
     
     updateEditorUINowIfScheduled();
 
@@ -3097,8 +3097,9 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         return;
     }
 
+    String inputTypeName = inputTypeNameForEditingAction(editingAction);
     auto* element = m_frame.selection().selection().rootEditableElement();
-    if (element && !dispatchBeforeInputEvent(*element, emptyString()))
+    if (element && !dispatchBeforeInputEvent(*element, inputTypeName))
         return;
 
     // Calculate the current typing style.
@@ -3115,7 +3116,7 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
 
     if (element)
-        element->dispatchInputEvent(emptyString());
+        element->dispatchInputEvent(inputTypeName);
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(typingStyle);

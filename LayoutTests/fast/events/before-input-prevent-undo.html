@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <input id="field" onbeforeinput=handleBeforeInput(event)></input>
+    <script src="../../resources/dump-as-markup.js"></script>
+    <script>
+        Markup.description(`To manually test this, type some into the input field below and try to undo. The value of the text field should not change after attempting to undo.`);
+
+        (function() {
+            if (!window.internals || !window.eventSender || !window.testRunner)
+                return;
+
+            internals.settings.setInputEventsEnabled(true);
+            document.querySelector("#field").focus();
+
+            eventSender.keyDown("a", []);
+            eventSender.keyDown("b", []);
+            eventSender.keyDown("c", []);
+            Markup.dump("field", "initial value");
+
+            testRunner.execCommand("Undo");
+            Markup.dump("field", "after prevented undo");
+        })();
+
+        function handleBeforeInput(event)
+        {
+            if (event.inputType === "historyUndo")
+                event.preventDefault();
+        }
+    </script>
+</body>
+
+</html>

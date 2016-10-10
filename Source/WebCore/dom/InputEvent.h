@@ -55,10 +55,10 @@ public:
 
     bool isInputEvent() const override { return true; }
     EventInterface eventInterface() const final { return InputEventInterfaceType; }
-    String inputType() const { return m_inputType.string(); }
+    String inputType() const { return m_inputType; }
 
 private:
-    AtomicString m_inputType;
+    String m_inputType;
 };
 
 } // namespace WebCore

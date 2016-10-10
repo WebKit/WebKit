@@ -1,3 +1,74 @@
+2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.inputType for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163025
+        <rdar://problem/28658092>
+
+        Reviewed by Darin Adler.
+
+        Adds support for the inputType attribute of InputEvent. To do this, we introduce a helper to
+        map EditActions to inputType names, and also split out ambiguous EditActions (such as
+        EditActionTyping) into more specific subtypes (such as EditActionTypingDeleteBackward,
+        EditActionTypingInsertParagraph, etc.), each of which corresponds to an inputType.
+
+        In places where we create CompositeEditCommands, we now pass in these specific EditActions
+        where appropriate, and when dispatching `beforeinput` and `input` events, we ask the
+        CompositeEditCommand for its input type name, which it derives from its editingAction.
+
+        Tests: fast/events/before-input-prevent-biu.html
+               fast/events/before-input-prevent-cut.html
+               fast/events/before-input-prevent-paste.html
+               fast/events/before-input-prevent-typing.html
+               fast/events/before-input-prevent-undo.html
+
+        * dom/InputEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchInputEvent):
+        * dom/Node.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::inputEventTypeName):
+
+        Allows a CompositeEditCommand to specify the inputType its corresponding `beforeinput` and `input` events
+        should have.
+
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand::shouldStopCaretBlinking): Deleted.
+        * editing/EditAction.h:
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::willUnapplyEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::willReapplyEditing):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::computeAndSetTypingStyle):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::editingAction):
+        * editing/InsertListCommand.h:
+        (WebCore::InsertListCommand::preservesTypingStyle): Deleted.
+        (WebCore::InsertListCommand::editingAction): Deleted.
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand):
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::SpellingCorrectionCommand):
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionForTypingCommand):
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::inputEventTypeName):
+
+        The editingAction() of a TypingCommand is the first editing action the TypingCommand was initialized using.
+        Since subsequent typing commands update the last open typing command, we override inputEventTypeName here to
+        use the last updated editing action rather than the default (initial) editing action.
+
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        * editing/TypingCommand.h:
+
 2016-10-09  Darin Adler  <darin@apple.com>
 
         Move ApplePaySession from legacy to new DOM exceptions

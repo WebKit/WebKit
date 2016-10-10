@@ -1,3 +1,26 @@
+2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.inputType for the new InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163025
+        <rdar://problem/28658092>
+
+        Reviewed by Darin Adler.
+
+        Adds new layout tests to check that various actions, such as cutting, pasting and undoing can
+        be prevented via the InputEvent fired in a `beforechange` handler.
+
+        * fast/events/before-input-prevent-biu-expected.txt: Added.
+        * fast/events/before-input-prevent-biu.html: Added.
+        * fast/events/before-input-prevent-cut-expected.txt: Added.
+        * fast/events/before-input-prevent-cut.html: Added.
+        * fast/events/before-input-prevent-paste-expected.txt: Added.
+        * fast/events/before-input-prevent-paste.html: Added.
+        * fast/events/before-input-prevent-typing-expected.txt: Added.
+        * fast/events/before-input-prevent-typing.html: Added.
+        * fast/events/before-input-prevent-undo-expected.txt: Added.
+        * fast/events/before-input-prevent-undo.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-09  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Gardening timout tests, failure tests on Oct. 10th.

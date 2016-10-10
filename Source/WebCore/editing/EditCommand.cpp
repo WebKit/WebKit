@@ -38,6 +38,69 @@
 
 namespace WebCore {
 
+String inputTypeNameForEditingAction(EditAction action)
+{
+    switch (action) {
+    case EditActionJustify:
+    case EditActionAlignLeft:
+        return ASCIILiteral("formatJustifyLeft");
+    case EditActionAlignRight:
+        return ASCIILiteral("formatJustifyRight");
+    case EditActionCenter:
+        return ASCIILiteral("formatJustifyCenter");
+    case EditActionSubscript:
+        return ASCIILiteral("formatSubscript");
+    case EditActionSuperscript:
+        return ASCIILiteral("formatSuperscript");
+    case EditActionUnderline:
+        return ASCIILiteral("formatUnderline");
+    case EditActionDrag:
+        return ASCIILiteral("deleteByDrag");
+    case EditActionCut:
+        return ASCIILiteral("deleteByCut");
+    case EditActionBold:
+        return ASCIILiteral("formatBold");
+    case EditActionItalics:
+        return ASCIILiteral("formatItalic");
+    case EditActionPaste:
+        return ASCIILiteral("insertFromPaste");
+    case EditActionDelete:
+    case EditActionTypingDeleteSelection:
+        return ASCIILiteral("deleteContent");
+    case EditActionTypingDeleteBackward:
+        return ASCIILiteral("deleteContentBackward");
+    case EditActionTypingDeleteForward:
+        return ASCIILiteral("deleteContentForward");
+    case EditActionTypingDeleteWordBackward:
+        return ASCIILiteral("deleteWordBackward");
+    case EditActionTypingDeleteWordForward:
+        return ASCIILiteral("deleteWordForward");
+    case EditActionTypingDeleteLineBackward:
+        return ASCIILiteral("deleteHardLineBackward");
+    case EditActionTypingDeleteLineForward:
+        return ASCIILiteral("deleteHardLineForward");
+    case EditActionInsert:
+    case EditActionTypingInsertText:
+        return ASCIILiteral("insertText");
+    case EditActionInsertReplacement:
+        return ASCIILiteral("insertReplacementText");
+    case EditActionTypingInsertLineBreak:
+        return ASCIILiteral("insertLineBreak");
+    case EditActionTypingInsertParagraph:
+        return ASCIILiteral("insertParagraph");
+    case EditActionInsertOrderedList:
+        return ASCIILiteral("insertOrderedList");
+    case EditActionInsertUnorderedList:
+        return ASCIILiteral("insertUnorderedList");
+    case EditActionIndent:
+        return ASCIILiteral("formatIndent");
+    case EditActionOutdent:
+        return ASCIILiteral("formatOutdent");
+    default:
+        return emptyString();
+    }
+}
+
 EditCommand::EditCommand(Document& document, EditAction editingAction)
     : m_document(document)
     , m_editingAction(editingAction)

@@ -116,6 +116,8 @@ private:
     bool shouldStopCaretBlinking() const { return true; }
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
+    String inputEventTypeName() const final;
+
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 
     void updatePreservesTypingStyle(ETypingCommand);
@@ -134,6 +136,7 @@ private:
     void didApplyCommand();
 
     ETypingCommand m_commandType;
+    EditAction m_currentTypingEditAction;
     String m_textToInsert;
     bool m_openForMoreTyping;
     bool m_selectInsertedText;
