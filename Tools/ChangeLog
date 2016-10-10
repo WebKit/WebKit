@@ -1,5 +1,40 @@
 2016-10-09  Simon Fraser  <simon.fraser@apple.com>
 
+        Make validate-committer-lists show inactive reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=163193
+
+        Reviewed by Sam Weinig.
+        
+        In preparation for updating contributors.json with the WebKit policy of retiring
+        inactive reviewers, make validate-committer-lists show the list of reviewers who
+        have not reviewed in the past year.
+        
+        This list is computed by grepping the output of 'git log --since=1.year" for
+        the reviewer line, and looking up reviewers via Contributor.mentioned_in_text(),
+        which looks for full names, aliases, irc nicks and email addresses.
+        
+        Support for aliases is added to Contributor. Aliases are alternates
+        or misspellings of the reviewer's name. Some common aliases were added to
+        contributors.json by manual examination of "Reviewed by" lines.
+
+        * Scripts/validate-committer-lists:
+        (CommitterListFromGit.possibly_expired_committers):
+        (CommitterListFromGit):
+        (CommitterListFromGit.possibly_inactive_reviewers):
+        (CommitterListFromGit.print_possibly_expired_committers):
+        (CommitterListFromGit.print_possibly_inactive_reviewers):
+        * Scripts/webkitpy/common/config/committers.py:
+        (Contributor.__init__):
+        (Contributor.contains_string):
+        (Contributor.mentioned_in_text):
+        (Contributor.as_dict):
+        (Committer.__init__):
+        (Reviewer.__init__):
+        (CommitterList.load_json):
+        * Scripts/webkitpy/common/config/contributors.json:
+
+2016-10-09  Simon Fraser  <simon.fraser@apple.com>
+
         Convert contributors.json to a flat list
         https://bugs.webkit.org/show_bug.cgi?id=163183
 

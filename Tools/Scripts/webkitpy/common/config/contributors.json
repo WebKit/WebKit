@@ -445,6 +445,9 @@
       "status" : "committer"
    },
    "Andreas Kling" : {
+      "aliases" : [
+         "Andreas Goran Kling"
+      ],
       "emails" : [
          "akling@apple.com",
          "kling@webkit.org",
@@ -845,6 +848,9 @@
       "status" : "committer"
    },
    "Benjamin Poulain" : {
+      "aliases" : [
+         "Ben Poulain"
+      ],
       "emails" : [
          "benjamin@webkit.org",
          "bpoulain@apple.com",
@@ -858,6 +864,9 @@
       "status" : "reviewer"
    },
    "Beth Dakin" : {
+      "aliases" : [
+         "Deth Bakin"
+      ],
       "emails" : [
          "bdakin@apple.com"
       ],
@@ -1129,6 +1138,9 @@
       "status" : "reviewer"
    },
    "Chris Dumez" : {
+      "aliases" : [
+         "Christophe Dumez"
+      ],
       "emails" : [
          "cdumez@apple.com",
          "dchris@gmail.com",
@@ -1289,6 +1301,9 @@
       "status" : "reviewer"
    },
    "Dan Bernstein" : {
+      "aliases" : [
+         "mitz"
+      ],
       "emails" : [
          "mitz@webkit.org",
          "mitz@apple.com"
@@ -1430,6 +1445,9 @@
       "status" : "reviewer"
    },
    "David Hyatt" : {
+      "aliases" : [
+         "Dave Hyatt"
+      ],
       "emails" : [
          "hyatt@apple.com"
       ],
@@ -1441,6 +1459,9 @@
       "status" : "reviewer"
    },
    "David Kilzer" : {
+      "aliases" : [
+         "Dave Kilzer"
+      ],
       "emails" : [
          "ddkilzer@webkit.org",
          "ddkilzer@apple.com"
@@ -1661,6 +1682,9 @@
       "status" : "committer"
    },
    "Don Melton" : {
+      "aliases" : [
+         "Gramps"
+      ],
       "emails" : [
          "gramps@apple.com"
       ],
@@ -1782,6 +1806,9 @@
       "status" : "reviewer"
    },
    "Emil A Eklund" : {
+      "aliases" : [
+         "Emil Eklund"
+      ],
       "emails" : [
          "eae@chromium.org"
       ],
@@ -1933,6 +1960,9 @@
       "status" : "committer"
    },
    "Filip Pizlo" : {
+      "aliases" : [
+         "Phil Pizlo"
+      ],
       "emails" : [
          "fpizlo@apple.com"
       ],
@@ -2047,6 +2077,9 @@
       "status" : "committer"
    },
    "Geoffrey Garen" : {
+      "aliases" : [
+         "Geoff Garen"
+      ],
       "emails" : [
          "ggaren@apple.com"
       ],
@@ -2275,6 +2308,9 @@
       "status" : "committer"
    },
    "Holger Freyther" : {
+      "aliases" : [
+         "Holger Hans Peter Freyther"
+      ],
       "emails" : [
          "zecke@selfish.org",
          "zecke@webkit.org"
@@ -2883,6 +2919,9 @@
       "status" : "committer"
    },
    "Jon Honeycutt" : {
+      "aliases" : [
+         "John Honeycutt"
+      ],
       "emails" : [
          "jhoneycutt@apple.com"
       ],
@@ -2986,6 +3025,9 @@
       "status" : "committer"
    },
    "Joseph Pecoraro" : {
+      "aliases" : [
+         "Joe Pecoraro"
+      ],
       "emails" : [
          "joepeck@webkit.org",
          "pecoraro@apple.com"
@@ -3212,6 +3254,9 @@
       "status" : "committer"
    },
    "Kenneth Rohde Christiansen" : {
+      "aliases" : [
+         "Kenneth Christiansen"
+      ],
       "emails" : [
          "kenneth@webkit.org",
          "kenneth.r.christiansen@intel.com",
@@ -3227,6 +3272,9 @@
       "status" : "reviewer"
    },
    "Kenneth Russell" : {
+      "aliases" : [
+         "Ken Russell"
+      ],
       "emails" : [
          "kbr@google.com",
          "kbr@chromium.org"
@@ -4064,6 +4112,9 @@
       ]
    },
    "Myles C. Maxfield" : {
+      "aliases" : [
+         "Myles Maxfield"
+      ],
       "emails" : [
          "mmaxfield@apple.com"
       ],
@@ -4177,6 +4228,9 @@
       "status" : "committer"
    },
    "Nikolas Zimmermann" : {
+      "aliases" : [
+         "Niko Zimmermann"
+      ],
       "emails" : [
          "zimmermann@kde.org",
          "zimmermann@physik.rwth-aachen.de",
@@ -5147,6 +5201,9 @@
       ]
    },
    "Tim Horton" : {
+      "aliases" : [
+         "Timothy Horton"
+      ],
       "emails" : [
          "thorton@apple.com",
          "timothy_horton@apple.com"
@@ -5172,6 +5229,9 @@
       ]
    },
    "Timothy Hatcher" : {
+      "aliases" : [
+         "Tim Hatcher"
+      ],
       "emails" : [
          "timothy@apple.com",
          "timothy@hatcher.name"
@@ -5674,6 +5734,9 @@
       "status" : "committer"
    },
    "Zoltan Herczeg" : {
+      "aliases" : [
+         "Zolt\u00e1n Herczeg"
+      ],
       "emails" : [
          "zherczeg@webkit.org",
          "zherczeg@inf.u-szeged.hu"

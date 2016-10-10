@@ -38,7 +38,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
 
 class Contributor(object):
-    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, expertise=None):
+    def __init__(self, name, email_or_emails, irc_nickname_or_nicknames=None, alias_or_aliases=None, expertise=None):
         assert(name)
         assert(email_or_emails)
         self.full_name = name
@@ -48,10 +48,17 @@ class Contributor(object):
             self.emails = email_or_emails
         self._case_preserved_emails = self.emails
         self.emails = map(lambda email: email.lower(), self.emails)  # Emails are case-insensitive.
+
         if isinstance(irc_nickname_or_nicknames, str):
             self.irc_nicknames = [irc_nickname_or_nicknames]
         else:
             self.irc_nicknames = irc_nickname_or_nicknames
+
+        if isinstance(alias_or_aliases, str):
+            self.aliases = [alias_or_aliases]
+        else:
+            self.aliases = alias_or_aliases
+
         self.expertise = expertise
         self.can_commit = False
         self.can_review = False
@@ -84,8 +91,29 @@ class Contributor(object):
             for nickname in self.irc_nicknames:
                 if string in nickname.lower():
                     return True
+        if self.aliases:
+            for alias in self.aliases:
+                if string in alias.lower():
+                    return True
         for email in self.emails:
             if string in email:
+                return True
+        return False
+
+    def mentioned_in_text(self, text):
+        lower_text = text.lower()
+        if self.full_name.lower() in lower_text:
+            return True
+        if self.irc_nicknames:
+            for nickname in self.irc_nicknames:
+                if nickname.lower() in lower_text:
+                    return True
+        if self.aliases:
+            for alias in self.aliases:
+                if alias.lower() in lower_text:
+                    return True
+        for email in self.emails:
+            if email in lower_text:
                 return True
         return False
 
@@ -104,6 +132,9 @@ class Contributor(object):
     def as_dict(self):
         info = {"emails" : self._case_preserved_emails}
 
+        if self.aliases:
+            info["aliases"] = self.aliases
+
         if self.can_review:
             info["status"] = "reviewer"
         elif self.can_commit:
@@ -119,14 +150,14 @@ class Contributor(object):
 
 
 class Committer(Contributor):
-    def __init__(self, name, email_or_emails, irc_nickname=None, expertise=None):
-        Contributor.__init__(self, name, email_or_emails, irc_nickname, expertise)
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
         self.can_commit = True
 
 
 class Reviewer(Committer):
-    def __init__(self, name, email_or_emails, irc_nickname=None, expertise=None):
-        Committer.__init__(self, name, email_or_emails, irc_nickname, expertise)
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
+        Committer.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
         self.can_review = True
 
 
@@ -162,14 +193,14 @@ class CommitterList(object):
             contributor = None
             status = data.get('status')
             if status == "reviewer":
-                contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+                contributor = Reviewer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
                 self._reviewers.append(contributor)
                 self._committers.append(contributor)
             elif status == "committer":
-                contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+                contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
                 self._committers.append(contributor)
             else:
-                contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('expertise'))
+                contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
 
             self._contributors.append(contributor)
 

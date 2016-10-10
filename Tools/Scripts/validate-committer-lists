@@ -40,6 +40,7 @@ from datetime import date, datetime, timedelta
 from optparse import OptionParser
 
 from webkitpy.common.config.committers import CommitterList
+from webkitpy.common.checkout.changelog import ChangeLogEntry
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.net.bugzilla import Bugzilla
 
@@ -226,6 +227,29 @@ class CommitterListFromGit(object):
                 retired_authors_and_last_commits.append((author, last_commit))
         return retired_authors_and_last_commits
 
+    def possibly_inactive_reviewers(self, committer_list):
+        git_log_args = ['git', 'log', '--since=1.year']
+        process = subprocess.Popen(git_log_args, stdout=subprocess.PIPE)
+        git_output, err = process.communicate()
+
+        comment_regex = re.compile(r'^Date: .+?\n+(.+?)(?:^commit |\Z)', re.MULTILINE | re.DOTALL)
+        reviewed_by_regexp = re.compile(ChangeLogEntry.reviewed_by_regexp, re.MULTILINE)
+        
+        reviewers = committer_list.reviewers()
+
+        for comment in comment_regex.findall(git_output):
+            reviewer_match = reviewed_by_regexp.search(comment)
+            if reviewer_match:
+                reviewers_text = reviewer_match.group('reviewer').decode('utf-8', 'backslashreplace')
+                # reviewers might be something like "Darin Adler and Dave Hyatt".
+                # Rather than trying to fuzzy match names, find known reviewers and remove them from the list.
+                for reviewer in reviewers:
+                    if reviewer.mentioned_in_text(reviewers_text):
+                        reviewers.remove(reviewer)
+                        break
+
+        return reviewers
+
     def print_possibly_expired_committers(self, committer_list):
         retired_authors_and_last_commits = self.possibly_expired_committers(committer_list)
         column_widths = [13, 25]
@@ -236,6 +260,15 @@ class CommitterListFromGit(object):
             committer_record = committer_list.committer_by_email(author)
             last_commit_date = date.fromtimestamp(last_commit)
             self._print_three_column_row(column_widths, (str(last_commit_date), author, committer_record))
+
+    def print_possibly_inactive_reviewers(self, committer_list):
+        inactive_reviewers = self.possibly_inactive_reviewers(committer_list)
+        
+        column_widths = [13, 25]
+        print
+        print "Reviewers who have not reviewed within one year:"
+        for contributor in inactive_reviewers:
+            print "\"{}\" {}".format(contributor.full_name.encode("utf-8"), contributor.bugzilla_email())
 
     def print_committers_missing_from_committer_list(self, committer_list):
         missing_from_contributors_json = []
@@ -294,13 +327,15 @@ def main():
     if not Git.in_working_directory("."):
         print """\n\nWARNING: validate-committer-lists requires a git checkout.
 The following checks are disabled:
- - List of committers ordered by last commit
+ - List of inactive committers
+ - List of inactive reviewers
  - List of historical committers missing from contributors.json
 """
         return 1
 
     svn_committer_list = CommitterListFromGit()
     svn_committer_list.print_possibly_expired_committers(committer_list)
+    svn_committer_list.print_possibly_inactive_reviewers(committer_list)
     svn_committer_list.print_committers_missing_from_committer_list(committer_list)
 
     if options.check_bugzilla_emails:
