@@ -50,7 +50,7 @@ public:
             m_lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
             return true;
         }
-        throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
     bool setLastIndex(ExecState* exec, JSValue lastIndex, bool shouldThrow)
@@ -64,7 +64,7 @@ public:
         }
 
         if (shouldThrow)
-            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
     JSValue getLastIndex() const

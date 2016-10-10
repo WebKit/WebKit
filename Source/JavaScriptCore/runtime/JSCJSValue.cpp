@@ -163,7 +163,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             prototype = obj->getPrototypeDirect();
             if (prototype.isNull()) {
                 if (slot.isStrictMode())
-                    throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+                    throwTypeError(exec, scope, ReadonlyPropertyWriteError);
                 return false;
             }
         }
@@ -175,7 +175,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         if (offset != invalidOffset) {
             if (attributes & ReadOnly) {
                 if (slot.isStrictMode())
-                    throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+                    throwTypeError(exec, scope, ReadonlyPropertyWriteError);
                 return false;
             }
 
@@ -198,7 +198,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     }
     
     if (slot.isStrictMode())
-        throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
     return false;
 }
 
@@ -222,7 +222,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
         return putResult;
     
     if (shouldThrow)
-        throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
     return false;
 }
 

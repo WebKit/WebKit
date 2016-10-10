@@ -406,7 +406,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
     if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
         // Fail if the length is not writable.
         if (map->lengthIsReadOnly())
-            return reject(exec, throwException, StrictModeReadonlyPropertyWriteError);
+            return reject(exec, throwException, ReadonlyPropertyWriteError);
 
         if (newLength < length) {
             // Copy any keys we might be interested in into a vector.
@@ -625,7 +625,7 @@ JSValue JSArray::pop(ExecState* exec)
         unsigned length = storage->length();
         if (!length) {
             if (!isLengthWritable())
-                throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
             return jsUndefined();
         }
 

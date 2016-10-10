@@ -95,7 +95,7 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
 
     if (getterSetterObj->isSetterNull()) {
         if (ecmaMode == StrictMode)
-            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
 

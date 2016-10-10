@@ -119,7 +119,7 @@ bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName proper
     // All imported bindings are immutable.
     JSModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
     if (resolution.type == JSModuleRecord::Resolution::Type::Resolved) {
-        throwTypeError(exec, scope, ASCIILiteral(StrictModeReadonlyPropertyWriteError));
+        throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
         return false;
     }
     return Base::put(thisObject, exec, propertyName, value, slot);

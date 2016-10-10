@@ -68,7 +68,7 @@ struct HashTable;
 struct HashTableValue;
 
 JS_EXPORT_PRIVATE JSObject* throwTypeError(ExecState*, ThrowScope&, const String&);
-extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
+extern JS_EXPORTDATA const char* ReadonlyPropertyWriteError;
 extern JS_EXPORTDATA const char* UnconfigurablePropertyChangeAccessMechanismError;
 
 COMPILE_ASSERT(None < FirstInternalAttribute, None_is_below_FirstInternalAttribute);

@@ -61,7 +61,7 @@ static unsigned lastArraySize = 0;
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSObject);
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSFinalObject);
 
-const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
+const char* ReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 const char* UnconfigurablePropertyChangeAccessMechanismError = "Attempting to change access mechanism for an unconfigurable property.";
 
 const ClassInfo JSObject::s_info = { "Object", 0, 0, CREATE_METHOD_TABLE(JSObject) };
@@ -389,11 +389,11 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     if (ownDescriptor.isDataDescriptor()) {
         // 9.1.9.1-4-a If ownDesc.[[Writable]] is false, return false.
         if (!ownDescriptor.writable())
-            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+            return reject(exec, shouldThrow, ReadonlyPropertyWriteError);
 
         // 9.1.9.1-4-b If Type(Receiver) is not Object, return false.
         if (!receiver.isObject())
-            return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+            return reject(exec, shouldThrow, ReadonlyPropertyWriteError);
 
         // In OrdinarySet, the receiver may not be the same to the object.
         // So, we perform [[GetOwnProperty]] onto the receiver while we already perform [[GetOwnProperty]] onto the object.
@@ -408,11 +408,11 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
         if (existingDescriptorFound) {
             // 9.1.9.1-4-d-i If IsAccessorDescriptor(existingDescriptor) is true, return false.
             if (existingDescriptor.isAccessorDescriptor())
-                return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+                return reject(exec, shouldThrow, ReadonlyPropertyWriteError);
 
             // 9.1.9.1-4-d-ii If existingDescriptor.[[Writable]] is false, return false.
             if (!existingDescriptor.writable())
-                return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+                return reject(exec, shouldThrow, ReadonlyPropertyWriteError);
 
             // 9.1.9.1-4-d-iii Let valueDesc be the PropertyDescriptor{[[Value]]: V}.
             PropertyDescriptor valueDescriptor;
@@ -434,7 +434,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
     // 9.1.9.1-7 If setter is undefined, return false.
     JSValue setter = ownDescriptor.setter();
     if (!setter.isObject())
-        return reject(exec, shouldThrow, StrictModeReadonlyPropertyWriteError);
+        return reject(exec, shouldThrow, ReadonlyPropertyWriteError);
 
     // 9.1.9.1-8 Perform ? Call(setter, Receiver, << V >>).
     JSObject* setterObject = asObject(setter);
@@ -468,7 +468,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         if (isValidOffset(offset)) {
             if (attributes & ReadOnly) {
                 ASSERT(structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == this);
-                return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
+                return reject(exec, slot.isStrictMode(), ReadonlyPropertyWriteError);
             }
 
             JSValue gs = obj->getDirect(offset);
@@ -513,7 +513,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
 
     ASSERT(!structure(vm)->prototypeChainMayInterceptStoreTo(exec->vm(), propertyName) || obj == this);
     if (!putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
-        return reject(exec, slot.isStrictMode(), StrictModeReadonlyPropertyWriteError);
+        return reject(exec, slot.isStrictMode(), ReadonlyPropertyWriteError);
     return true;
 }
 
@@ -1297,7 +1297,7 @@ bool JSObject::setPrototypeWithCycleCheck(VM& vm, ExecState* exec, JSValue proto
 
     if (!isExtensible) {
         if (shouldThrowIfCantSet)
-            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
 
@@ -2264,7 +2264,7 @@ bool JSObject::putByIndexBeyondVectorLengthWithArrayStorage(ExecState* exec, uns
         // Prohibit growing the array if length is not writable.
         if (map->lengthIsReadOnly() || !isStructureExtensible()) {
             if (shouldThrow)
-                throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
             return false;
         }
         length = i + 1;
@@ -2402,7 +2402,7 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
         if (mode != PutDirectIndexLikePutDirect) {
             // Prohibit growing the array if length is not writable.
             if (map->lengthIsReadOnly())
-                return reject(exec, mode == PutDirectIndexShouldThrow, StrictModeReadonlyPropertyWriteError);
+                return reject(exec, mode == PutDirectIndexShouldThrow, ReadonlyPropertyWriteError);
             if (!isStructureExtensible())
                 return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
         }

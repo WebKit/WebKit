@@ -4131,7 +4131,7 @@ bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
     // If we're in strict mode, we always throw.
     // If we're not in strict mode, we throw for "const" variables but not the function callee.
     if (isStrictMode() || variable.isConst()) {
-        emitThrowTypeError(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError));
+        emitThrowTypeError(Identifier::fromString(m_vm, ReadonlyPropertyWriteError));
         return true;
     }
     return false;

@@ -276,7 +276,7 @@ SLOW_PATH_DECL(slow_path_throw_tdz_error)
 SLOW_PATH_DECL(slow_path_throw_strict_mode_readonly_property_write_error)
 {
     BEGIN();
-    THROW(createTypeError(exec, ASCIILiteral(StrictModeReadonlyPropertyWriteError)));
+    THROW(createTypeError(exec, ASCIILiteral(ReadonlyPropertyWriteError)));
 }
 
 SLOW_PATH_DECL(slow_path_not)

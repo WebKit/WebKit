@@ -103,7 +103,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     if (result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
         if (shouldThrow)
-            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
     
@@ -156,7 +156,7 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
     if (!(attributes & Accessor)) {
         if (attributes & ReadOnly) {
             if (shouldThrow)
-                throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
             return false;
         }
 

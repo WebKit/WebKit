@@ -455,7 +455,7 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
     }
     if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller) {
         if (slot.isStrictMode())
-            throwTypeError(exec, scope, StrictModeReadonlyPropertyWriteError);
+            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
         return false;
     }
     thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
