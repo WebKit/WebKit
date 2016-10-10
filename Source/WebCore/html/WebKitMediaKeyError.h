@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,14 +22,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-[
-    Conditional=LEGACY_ENCRYPTED_MEDIA,
-    Constructor(DOMString keySystem),
-    ConstructorMayThrowLegacyException,
-    InterfaceName=WebKitMediaKeys,
-] interface MediaKeys {
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] MediaKeySession createSession(DOMString type, Uint8Array initData);
-    static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
-    readonly attribute DOMString keySystem;
+
+#ifndef WebKitMediaKeyError_h
+#define WebKitMediaKeyError_h
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
+#include <runtime/Uint8Array.h>
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+class WebKitMediaKeyError : public RefCounted<WebKitMediaKeyError> {
+public:
+    enum {
+        MEDIA_KEYERR_UNKNOWN = 1,
+        MEDIA_KEYERR_CLIENT,
+        MEDIA_KEYERR_SERVICE,
+        MEDIA_KEYERR_OUTPUT,
+        MEDIA_KEYERR_HARDWARECHANGE,
+        MEDIA_KEYERR_DOMAIN
+    };
+    typedef unsigned short Code;
+
+    static Ref<WebKitMediaKeyError> create(Code code, uint32_t systemCode = 0) { return adoptRef(*new WebKitMediaKeyError(code, systemCode)); }
+
+    Code code() const { return m_code; }
+    uint32_t systemCode() { return m_systemCode; }
+
+private:
+    explicit WebKitMediaKeyError(Code code, unsigned long systemCode) : m_code(code), m_systemCode(systemCode) { }
+
+    Code m_code;
+    unsigned long m_systemCode;
 };
+
+} // namespace WebCore
+
+#endif
+#endif

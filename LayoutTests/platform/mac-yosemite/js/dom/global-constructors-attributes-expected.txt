@@ -973,11 +973,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaError').hasOwnProperty('get')
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaError').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').value is MediaKeyNeededEvent
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'MediaKeyNeededEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').value is MediaList
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('set') is false
@@ -2338,6 +2333,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyMessageEvent').hasOw
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyMessageEvent').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyMessageEvent').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyMessageEvent').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyNeededEvent').value is WebKitMediaKeyNeededEvent
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyNeededEvent').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyNeededEvent').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyNeededEvent').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeyNeededEvent').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeySession').value is WebKitMediaKeySession
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeySession').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'WebKitMediaKeySession').hasOwnProperty('set') is false

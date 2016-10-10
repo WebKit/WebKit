@@ -45,7 +45,7 @@
 #include <wtf/text/AtomicString.h>
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#include "JSMediaKeyError.h"
+#include "JSWebKitMediaKeyError.h"
 #endif
 
 #if ENABLE(FETCH_API)
@@ -257,9 +257,9 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<WebKitMediaKeyError>& result)
 {
-    result = JSMediaKeyError::toWrapped(value);
+    result = JSWebKitMediaKeyError::toWrapped(value);
 }
 #endif
 

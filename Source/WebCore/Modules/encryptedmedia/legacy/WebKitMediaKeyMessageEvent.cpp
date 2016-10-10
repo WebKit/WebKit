@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,25 +21,42 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-     */
+ */
 
-[
-    Conditional=LEGACY_ENCRYPTED_MEDIA,
-    InterfaceName=WebKitMediaKeySession,
-    ActiveDOMObject,
-] interface MediaKeySession : EventTarget {
-    // error state
-    readonly attribute MediaKeyError error;
+#include "config.h"
+#include "WebKitMediaKeyMessageEvent.h"
 
-    // session properties
-    readonly attribute DOMString keySystem;
-    readonly attribute DOMString sessionId;
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-    // session operations
-    [MayThrowLegacyException] void update(Uint8Array key);
-    void close();
-    
-    attribute EventHandler onwebkitkeyadded;
-    attribute EventHandler onwebkitkeyerror;
-    attribute EventHandler onwebkitkeymessage;
-};
+#include "EventNames.h"
+#include <runtime/Uint8Array.h>
+
+namespace WebCore {
+
+WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL)
+    : Event(type, false, false)
+    , m_message(message)
+    , m_destinationURL(destinationURL)
+{
+}
+
+
+WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type, const WebKitMediaKeyMessageEventInit& initializer)
+    : Event(type, initializer)
+    , m_message(initializer.message)
+    , m_destinationURL(initializer.destinationURL)
+{
+}
+
+WebKitMediaKeyMessageEvent::~WebKitMediaKeyMessageEvent()
+{
+}
+
+EventInterface WebKitMediaKeyMessageEvent::eventInterface() const
+{
+    return WebKitMediaKeyMessageEventInterfaceType;
+}
+
+} // namespace WebCore
+
+#endif

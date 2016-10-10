@@ -30,7 +30,7 @@
 
 #include "CDM.h"
 #include "CDMSession.h"
-#include "MediaKeyError.h"
+#include "WebKitMediaKeyError.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint8Array.h>
@@ -116,7 +116,7 @@ RefPtr<Uint8Array> MockCDMSession::generateKeyRequest(const String&, Uint8Array*
 {
     for (unsigned i = 0; i < initDataPrefix()->length(); ++i) {
         if (!initData || i >= initData->length() || initData->item(i) != initDataPrefix()->item(i)) {
-            errorCode = MediaKeyError::MEDIA_KEYERR_UNKNOWN;
+            errorCode = WebKitMediaKeyError::MEDIA_KEYERR_UNKNOWN;
             return nullptr;
         }
     }
@@ -132,7 +132,7 @@ bool MockCDMSession::update(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short
 {
     for (unsigned i = 0; i < keyPrefix()->length(); ++i) {
         if (i >= key->length() || key->item(i) != keyPrefix()->item(i)) {
-            errorCode = MediaKeyError::MEDIA_KEYERR_CLIENT;
+            errorCode = WebKitMediaKeyError::MEDIA_KEYERR_CLIENT;
             return false;
         }
     }

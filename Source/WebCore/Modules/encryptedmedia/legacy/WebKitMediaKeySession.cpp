@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "MediaKeySession.h"
+#include "WebKitMediaKeySession.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -35,32 +35,32 @@
 #include "EventNames.h"
 #include "FileSystem.h"
 #include "GenericEventQueue.h"
-#include "MediaKeyError.h"
-#include "MediaKeyMessageEvent.h"
-#include "MediaKeys.h"
 #include "Settings.h"
+#include "WebKitMediaKeyError.h"
+#include "WebKitMediaKeyMessageEvent.h"
+#include "WebKitMediaKeys.h"
 
 namespace WebCore {
 
-Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeys* keys, const String& keySystem)
+Ref<WebKitMediaKeySession> WebKitMediaKeySession::create(ScriptExecutionContext& context, WebKitMediaKeys* keys, const String& keySystem)
 {
-    auto session = adoptRef(*new MediaKeySession(context, keys, keySystem));
+    auto session = adoptRef(*new WebKitMediaKeySession(context, keys, keySystem));
     session->suspendIfNeeded();
     return session;
 }
 
-MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeys* keys, const String& keySystem)
+WebKitMediaKeySession::WebKitMediaKeySession(ScriptExecutionContext& context, WebKitMediaKeys* keys, const String& keySystem)
     : ActiveDOMObject(&context)
     , m_keys(keys)
     , m_keySystem(keySystem)
     , m_asyncEventQueue(*this)
     , m_session(keys->cdm()->createSession(this))
-    , m_keyRequestTimer(*this, &MediaKeySession::keyRequestTimerFired)
-    , m_addKeyTimer(*this, &MediaKeySession::addKeyTimerFired)
+    , m_keyRequestTimer(*this, &WebKitMediaKeySession::keyRequestTimerFired)
+    , m_addKeyTimer(*this, &WebKitMediaKeySession::addKeyTimerFired)
 {
 }
 
-MediaKeySession::~MediaKeySession()
+WebKitMediaKeySession::~WebKitMediaKeySession()
 {
     if (m_session) {
         m_session->setClient(nullptr);
@@ -70,34 +70,34 @@ MediaKeySession::~MediaKeySession()
     m_asyncEventQueue.cancelAllEvents();
 }
 
-void MediaKeySession::setError(MediaKeyError* error)
+void WebKitMediaKeySession::setError(WebKitMediaKeyError* error)
 {
     m_error = error;
 }
 
-void MediaKeySession::close()
+void WebKitMediaKeySession::close()
 {
     if (m_session)
         m_session->releaseKeys();
 }
 
-RefPtr<ArrayBuffer> MediaKeySession::cachedKeyForKeyId(const String& keyId) const
+RefPtr<ArrayBuffer> WebKitMediaKeySession::cachedKeyForKeyId(const String& keyId) const
 {
     return m_session ? m_session->cachedKeyForKeyID(keyId) : nullptr;
 }
 
-const String& MediaKeySession::sessionId() const
+const String& WebKitMediaKeySession::sessionId() const
 {
     return m_session->sessionId();
 }
 
-void MediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData)
+void WebKitMediaKeySession::generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData)
 {
     m_pendingKeyRequests.append({ mimeType, WTFMove(initData) });
     m_keyRequestTimer.startOneShot(0);
 }
 
-void MediaKeySession::keyRequestTimerFired()
+void WebKitMediaKeySession::keyRequestTimerFired()
 {
     ASSERT(m_pendingKeyRequests.size());
     if (!m_session)
@@ -112,7 +112,7 @@ void MediaKeySession::keyRequestTimerFired()
         // 1. Let cdm be the cdm loaded in the MediaKeys constructor.
         // 2. Let destinationURL be null.
         String destinationURL;
-        MediaKeyError::Code errorCode = 0;
+        WebKitMediaKeyError::Code errorCode = 0;
         uint32_t systemCode = 0;
 
         // 3. Use cdm to generate a key request and follow the steps for the first matching condition from the following list:
@@ -140,7 +140,7 @@ void MediaKeySession::keyRequestTimerFired()
     }
 }
 
-void MediaKeySession::update(Ref<Uint8Array>&& key, ExceptionCode& ec)
+void WebKitMediaKeySession::update(Ref<Uint8Array>&& key, ExceptionCode& ec)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
     // The addKey(key) method must run the following steps:
@@ -156,7 +156,7 @@ void MediaKeySession::update(Ref<Uint8Array>&& key, ExceptionCode& ec)
     m_addKeyTimer.startOneShot(0);
 }
 
-void MediaKeySession::addKeyTimerFired()
+void WebKitMediaKeySession::addKeyTimerFired()
 {
     ASSERT(m_pendingKeys.size());
     if (!m_session)
@@ -209,16 +209,16 @@ void MediaKeySession::addKeyTimerFired()
     }
 }
 
-void MediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
+void WebKitMediaKeySession::sendMessage(Uint8Array* message, String destinationURL)
 {
-    auto event = MediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
+    auto event = WebKitMediaKeyMessageEvent::create(eventNames().webkitkeymessageEvent, message, destinationURL);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
-void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
+void WebKitMediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, uint32_t systemCode)
 {
-    Ref<MediaKeyError> error = MediaKeyError::create(errorCode, systemCode).get();
+    Ref<WebKitMediaKeyError> error = WebKitMediaKeyError::create(errorCode, systemCode).get();
     setError(error.ptr());
 
     auto keyerrorEvent = Event::create(eventNames().webkitkeyerrorEvent, false, false);
@@ -226,7 +226,7 @@ void MediaKeySession::sendError(CDMSessionClient::MediaKeyErrorCode errorCode, u
     m_asyncEventQueue.enqueueEvent(WTFMove(keyerrorEvent));
 }
 
-String MediaKeySession::mediaKeysStorageDirectory() const
+String WebKitMediaKeySession::mediaKeysStorageDirectory() const
 {
     Document* document = downcast<Document>(scriptExecutionContext());
     if (!document)
@@ -247,22 +247,22 @@ String MediaKeySession::mediaKeysStorageDirectory() const
     return pathByAppendingComponent(storageDirectory, origin->databaseIdentifier());
 }
 
-bool MediaKeySession::hasPendingActivity() const
+bool WebKitMediaKeySession::hasPendingActivity() const
 {
     return (m_keys && !isClosed()) || m_asyncEventQueue.hasPendingEvents();
 }
 
-void MediaKeySession::stop()
+void WebKitMediaKeySession::stop()
 {
     close();
 }
 
-const char* MediaKeySession::activeDOMObjectName() const
+const char* WebKitMediaKeySession::activeDOMObjectName() const
 {
-    return "MediaKeySession";
+    return "WebKitMediaKeySession";
 }
 
-bool MediaKeySession::canSuspendForDocumentSuspension() const
+bool WebKitMediaKeySession::canSuspendForDocumentSuspension() const
 {
     // FIXME: We should try and do better here.
     return false;

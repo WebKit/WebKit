@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaKeys_h
-#define MediaKeys_h
+#ifndef WebKitMediaKeys_h
+#define WebKitMediaKeys_h
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -38,15 +38,15 @@
 
 namespace WebCore {
 
-class MediaKeySession;
 class HTMLMediaElement;
+class WebKitMediaKeySession;
 
-class MediaKeys : public RefCounted<MediaKeys>, public CDMClient {
+class WebKitMediaKeys : public RefCounted<WebKitMediaKeys>, public CDMClient {
 public:
-    static RefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
-    virtual ~MediaKeys();
+    static RefPtr<WebKitMediaKeys> create(const String& keySystem, ExceptionCode&);
+    virtual ~WebKitMediaKeys();
 
-    RefPtr<MediaKeySession> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData, ExceptionCode&);
+    RefPtr<WebKitMediaKeySession> createSession(ScriptExecutionContext&, const String& mimeType, Ref<Uint8Array>&& initData, ExceptionCode&);
 
     static bool isTypeSupported(const String& keySystem, const String& mimeType);
 
@@ -63,9 +63,9 @@ protected:
     // CDMClient:
     MediaPlayer* cdmMediaPlayer(const CDM*) const override;
 
-    MediaKeys(const String& keySystem, std::unique_ptr<CDM>);
+    WebKitMediaKeys(const String& keySystem, std::unique_ptr<CDM>);
 
-    Vector<Ref<MediaKeySession>> m_sessions;
+    Vector<Ref<WebKitMediaKeySession>> m_sessions;
 
     HTMLMediaElement* m_mediaElement;
     String m_keySystem;
@@ -76,4 +76,4 @@ protected:
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#endif // MediaKeys_h
+#endif // WebKitMediaKeys_h

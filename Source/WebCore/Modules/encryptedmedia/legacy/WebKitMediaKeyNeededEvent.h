@@ -23,41 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#ifndef WebKitMediaKeyNeededEvent_h
+#define WebKitMediaKeyNeededEvent_h
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "MediaKeyMessageEvent.h"
-
-#include "EventNames.h"
-#include <runtime/Uint8Array.h>
+#include "Event.h"
+#include "WebKitMediaKeyError.h"
 
 namespace WebCore {
 
-MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL)
-    : Event(type, false, false)
-    , m_message(message)
-    , m_destinationURL(destinationURL)
-{
-}
+struct WebKitMediaKeyNeededEventInit : public EventInit {
+    RefPtr<Uint8Array> initData;
+};
 
+class WebKitMediaKeyNeededEvent : public Event {
+public:
+    virtual ~WebKitMediaKeyNeededEvent();
 
-MediaKeyMessageEvent::MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEventInit& initializer)
-    : Event(type, initializer)
-    , m_message(initializer.message)
-    , m_destinationURL(initializer.destinationURL)
-{
-}
+    static Ref<WebKitMediaKeyNeededEvent> create(const AtomicString& type, Uint8Array* initData)
+    {
+        return adoptRef(*new WebKitMediaKeyNeededEvent(type, initData));
+    }
 
-MediaKeyMessageEvent::~MediaKeyMessageEvent()
-{
-}
+    static Ref<WebKitMediaKeyNeededEvent> createForBindings(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer)
+    {
+        return adoptRef(*new WebKitMediaKeyNeededEvent(type, initializer));
+    }
 
-EventInterface MediaKeyMessageEvent::eventInterface() const
-{
-    return MediaKeyMessageEventInterfaceType;
-}
+    EventInterface eventInterface() const override;
+
+    Uint8Array* initData() const { return m_initData.get(); }
+
+private:
+    WebKitMediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData);
+    WebKitMediaKeyNeededEvent(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer);
+
+    RefPtr<Uint8Array> m_initData;
+};
 
 } // namespace WebCore
 
+#endif
 #endif

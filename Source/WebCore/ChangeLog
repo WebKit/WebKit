@@ -1,5 +1,101 @@
 2016-10-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        ENABLE_LEGACY_ENCRYPTED_MEDIA interfaces should have a hard-coded WebKit prefix
+        https://bugs.webkit.org/show_bug.cgi?id=162982
+
+        Reviewed by Jer Noble.
+
+        Have the Web-exposed interfaces guarded by ENABLE_LEGACY_ENCRYPTED_MEDIA also use
+        the WebKit prefix in the implementations. This will prevent conflicts between
+        interfaces with same names in both the legacy API and the future EME API.
+
+        Most of the interfaces in this legacy API already used the WebKit prefix when
+        exposed via JS bindings. The only exception is MediaKeyNeededEvent, which gets
+        prefixed in this patch.
+
+        The interface implementations for this legacy API are also moved under the
+        Modules/encryptedmedia/legacy/ directory.
+
+        No new tests -- covered by existing tests (with the relevant changes reflected
+        in the updated baselines).
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/encryptedmedia/CDM.cpp:
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::generateKeyRequest):
+        (WebCore::CDMSessionClearKey::update):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyMessageEvent.cpp.
+        (WebCore::WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent):
+        (WebCore::WebKitMediaKeyMessageEvent::~WebKitMediaKeyMessageEvent):
+        (WebCore::WebKitMediaKeyMessageEvent::eventInterface):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.h: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyMessageEvent.h.
+        (WebCore::WebKitMediaKeyMessageEvent::create):
+        (WebCore::WebKitMediaKeyMessageEvent::createForBindings):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyMessageEvent.idl.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyNeededEvent.cpp.
+        (WebCore::WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent):
+        (WebCore::WebKitMediaKeyNeededEvent::~WebKitMediaKeyNeededEvent):
+        (WebCore::WebKitMediaKeyNeededEvent::eventInterface):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.h: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyNeededEvent.h.
+        (WebCore::WebKitMediaKeyNeededEvent::create):
+        (WebCore::WebKitMediaKeyNeededEvent::createForBindings):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeyNeededEvent.idl.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeySession.cpp.
+        (WebCore::WebKitMediaKeySession::create):
+        (WebCore::WebKitMediaKeySession::WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::~WebKitMediaKeySession):
+        (WebCore::WebKitMediaKeySession::setError):
+        (WebCore::WebKitMediaKeySession::close):
+        (WebCore::WebKitMediaKeySession::cachedKeyForKeyId):
+        (WebCore::WebKitMediaKeySession::sessionId):
+        (WebCore::WebKitMediaKeySession::generateKeyRequest):
+        (WebCore::WebKitMediaKeySession::keyRequestTimerFired):
+        (WebCore::WebKitMediaKeySession::update):
+        (WebCore::WebKitMediaKeySession::addKeyTimerFired):
+        (WebCore::WebKitMediaKeySession::sendMessage):
+        (WebCore::WebKitMediaKeySession::sendError):
+        (WebCore::WebKitMediaKeySession::mediaKeysStorageDirectory):
+        (WebCore::WebKitMediaKeySession::hasPendingActivity):
+        (WebCore::WebKitMediaKeySession::stop):
+        (WebCore::WebKitMediaKeySession::activeDOMObjectName):
+        (WebCore::WebKitMediaKeySession::canSuspendForDocumentSuspension):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeySession.h.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeySession.idl.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeys.cpp.
+        (WebCore::WebKitMediaKeys::create):
+        (WebCore::WebKitMediaKeys::WebKitMediaKeys):
+        (WebCore::WebKitMediaKeys::~WebKitMediaKeys):
+        (WebCore::WebKitMediaKeys::createSession):
+        (WebCore::WebKitMediaKeys::isTypeSupported):
+        (WebCore::WebKitMediaKeys::setMediaElement):
+        (WebCore::WebKitMediaKeys::cdmMediaPlayer):
+        (WebCore::WebKitMediaKeys::keyAdded):
+        (WebCore::WebKitMediaKeys::cachedKeyForKeyId):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.h: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeys.h.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl: Renamed from Source/WebCore/Modules/encryptedmedia/MediaKeys.idl.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::setMediaKeys):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::keys):
+        * html/HTMLMediaElement.idl:
+        * html/WebKitMediaKeyError.h: Renamed from Source/WebCore/html/MediaKeyError.h.
+        (WebCore::WebKitMediaKeyError::create):
+        (WebCore::WebKitMediaKeyError::WebKitMediaKeyError):
+        * html/WebKitMediaKeyError.idl: Renamed from Source/WebCore/html/MediaKeyError.idl.
+        * testing/MockCDM.cpp:
+        (WebCore::MockCDMSession::generateKeyRequest):
+        (WebCore::MockCDMSession::update):
+
+2016-10-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove stale ENABLE(ENCRYPTED_MEDIA) code in HTMLMediaElement
         https://bugs.webkit.org/show_bug.cgi?id=163111
 

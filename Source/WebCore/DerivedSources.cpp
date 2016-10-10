@@ -329,13 +329,6 @@
 #endif
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#include "JSMediaKeyError.cpp"
-#include "JSMediaKeyMessageEvent.cpp"
-#include "JSMediaKeyNeededEvent.cpp"
-#include "JSMediaKeySession.cpp"
-#include "JSMediaKeys.cpp"
-#endif
 #include "JSMediaQueryList.cpp"
 #include "JSMediaQueryListListener.cpp"
 #include "JSMediaRemoteControls.cpp"
@@ -649,6 +642,13 @@
 #include "JSWebKitCSSMatrix.cpp"
 #include "JSWebKitCSSRegionRule.cpp"
 #include "JSWebKitCSSViewportRule.cpp"
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "JSWebKitMediaKeyError.cpp"
+#include "JSWebKitMediaKeyMessageEvent.cpp"
+#include "JSWebKitMediaKeyNeededEvent.cpp"
+#include "JSWebKitMediaKeySession.cpp"
+#include "JSWebKitMediaKeys.cpp"
+#endif
 #include "JSWebKitNamedFlow.cpp"
 #include "JSWebKitPlaybackTargetAvailabilityEvent.cpp"
 #include "JSWebKitPoint.cpp"

@@ -25,8 +25,14 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    ConstructorTemplate=Event 
-] interface MediaKeyNeededEvent : Event {
-    readonly attribute Uint8Array initData;
+    ImplementationLacksVTable,
+] interface WebKitMediaKeyError {
+    const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
+    const unsigned short MEDIA_KEYERR_CLIENT = 2;
+    const unsigned short MEDIA_KEYERR_SERVICE = 3;
+    const unsigned short MEDIA_KEYERR_OUTPUT = 4;
+    const unsigned short MEDIA_KEYERR_HARDWARECHANGE = 5;
+    const unsigned short MEDIA_KEYERR_DOMAIN = 6;
+    readonly attribute unsigned short code;
+    readonly attribute unsigned long systemCode;
 };
-

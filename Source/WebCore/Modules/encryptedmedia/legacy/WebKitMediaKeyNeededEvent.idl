@@ -23,41 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaKeyError_h
-#define MediaKeyError_h
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
-#include <runtime/Uint8Array.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class MediaKeyError : public RefCounted<MediaKeyError> {
-public:
-    enum {
-        MEDIA_KEYERR_UNKNOWN = 1,
-        MEDIA_KEYERR_CLIENT,
-        MEDIA_KEYERR_SERVICE,
-        MEDIA_KEYERR_OUTPUT,
-        MEDIA_KEYERR_HARDWARECHANGE,
-        MEDIA_KEYERR_DOMAIN
-    };
-    typedef unsigned short Code;
-
-    static Ref<MediaKeyError> create(Code code, uint32_t systemCode = 0) { return adoptRef(*new MediaKeyError(code, systemCode)); }
-
-    Code code() const { return m_code; }
-    uint32_t systemCode() { return m_systemCode; }
-
-private:
-    explicit MediaKeyError(Code code, unsigned long systemCode) : m_code(code), m_systemCode(systemCode) { }
-
-    Code m_code;
-    unsigned long m_systemCode;
+[
+    Conditional=LEGACY_ENCRYPTED_MEDIA,
+    ConstructorTemplate=Event 
+] interface WebKitMediaKeyNeededEvent : Event {
+    readonly attribute Uint8Array initData;
 };
 
-} // namespace WebCore
-
-#endif
-#endif

@@ -15,7 +15,6 @@ IDBDatabase conditional=INDEXED_DATABASE
 IDBOpenDBRequest conditional=INDEXED_DATABASE
 IDBRequest conditional=INDEXED_DATABASE
 IDBTransaction conditional=INDEXED_DATABASE
-MediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 MediaController conditional=VIDEO
 MediaRemoteControls conditional=MEDIA_SESSION
 MediaSource conditional=MEDIA_SOURCE
@@ -35,6 +34,7 @@ TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
 VideoTrackList conditional=VIDEO_TRACK
+WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebKitNamedFlow
 WebSocket conditional=WEB_SOCKETS
 Worker

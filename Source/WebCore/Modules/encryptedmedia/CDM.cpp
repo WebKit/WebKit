@@ -32,9 +32,8 @@
 #include "CDMPrivateClearKey.h"
 #include "CDMPrivateMediaPlayer.h"
 #include "CDMSession.h"
-#include "MediaKeyError.h"
-#include "MediaKeys.h"
 #include "MediaPlayer.h"
+#include "WebKitMediaKeys.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 

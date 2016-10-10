@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2012 Google Inc.  All rights reserved.
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaKeyMessageEvent_h
-#define MediaKeyMessageEvent_h
+#include "config.h"
+#include "WebKitMediaKeyNeededEvent.h"
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "Event.h"
-#include "MediaKeyError.h"
+#include "EventNames.h"
+#include <runtime/Uint8Array.h>
 
 namespace WebCore {
 
-struct MediaKeyMessageEventInit : public EventInit {
-    RefPtr<Uint8Array> message;
-    String destinationURL;
-};
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData)
+    : Event(type, false, false)
+    , m_initData(initData)
+{
+}
 
-class MediaKeyMessageEvent : public Event {
-public:
-    virtual ~MediaKeyMessageEvent();
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer)
+    : Event(type, initializer)
+    , m_initData(initializer.initData)
+{
+}
 
-    static Ref<MediaKeyMessageEvent> create(const AtomicString& type, Uint8Array* message, const String& destinationURL)
-    {
-        return adoptRef(*new MediaKeyMessageEvent(type, message, destinationURL));
-    }
+WebKitMediaKeyNeededEvent::~WebKitMediaKeyNeededEvent()
+{
+}
 
-    static Ref<MediaKeyMessageEvent> createForBindings(const AtomicString& type, const MediaKeyMessageEventInit& initializer)
-    {
-        return adoptRef(*new MediaKeyMessageEvent(type, initializer));
-    }
-
-    EventInterface eventInterface() const override;
-
-    Uint8Array* message() const { return m_message.get(); }
-    String destinationURL() const { return m_destinationURL; }
-
-private:
-    MediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL);
-    MediaKeyMessageEvent(const AtomicString& type, const MediaKeyMessageEventInit& initializer);
-
-    RefPtr<Uint8Array> m_message;
-    String m_destinationURL;
-};
+EventInterface WebKitMediaKeyNeededEvent::eventInterface() const
+{
+    return WebKitMediaKeyNeededEventInterfaceType;
+}
 
 } // namespace WebCore
 
-#endif
 #endif

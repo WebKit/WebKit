@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaKeySession_h
-#define MediaKeySession_h
+#ifndef WebKitMediaKeySession_h
+#define WebKitMediaKeySession_h
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
@@ -41,23 +41,23 @@
 
 namespace WebCore {
 
-class MediaKeyError;
-class MediaKeys;
+class WebKitMediaKeyError;
+class WebKitMediaKeys;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMSessionClient {
+class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMSessionClient {
 public:
-    static Ref<MediaKeySession> create(ScriptExecutionContext&, MediaKeys*, const String& keySystem);
-    ~MediaKeySession();
+    static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys*, const String& keySystem);
+    ~WebKitMediaKeySession();
 
     const String& keySystem() const { return m_keySystem; }
     CDMSession* session() { return m_session.get(); }
     const String& sessionId() const;
 
-    void setError(MediaKeyError*);
-    MediaKeyError* error() { return m_error.get(); }
+    void setError(WebKitMediaKeyError*);
+    WebKitMediaKeyError* error() { return m_error.get(); }
 
-    void setKeys(MediaKeys* keys) { m_keys = keys; }
-    MediaKeys* keys() const { return m_keys; }
+    void setKeys(WebKitMediaKeys* keys) { m_keys = keys; }
+    WebKitMediaKeys* keys() const { return m_keys; }
 
     void generateKeyRequest(const String& mimeType, Ref<Uint8Array>&& initData);
     void update(Ref<Uint8Array>&& key, ExceptionCode&);
@@ -67,19 +67,19 @@ public:
 
     RefPtr<ArrayBuffer> cachedKeyForKeyId(const String& keyId) const;
 
-    using RefCounted<MediaKeySession>::ref;
-    using RefCounted<MediaKeySession>::deref;
+    using RefCounted<WebKitMediaKeySession>::ref;
+    using RefCounted<WebKitMediaKeySession>::deref;
 
     void enqueueEvent(RefPtr<Event>&&);
 
-    EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
+    EventTargetInterface eventTargetInterface() const override { return WebKitMediaKeySessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
 
     // ActiveDOMObject API.
     bool hasPendingActivity() const override;
 
 protected:
-    MediaKeySession(ScriptExecutionContext&, MediaKeys*, const String& keySystem);
+    WebKitMediaKeySession(ScriptExecutionContext&, WebKitMediaKeys*, const String& keySystem);
     void keyRequestTimerFired();
     void addKeyTimerFired();
 
@@ -88,10 +88,10 @@ protected:
     void sendError(MediaKeyErrorCode, uint32_t systemCode) override;
     String mediaKeysStorageDirectory() const override;
 
-    MediaKeys* m_keys;
+    WebKitMediaKeys* m_keys;
     String m_keySystem;
     String m_sessionId;
-    RefPtr<MediaKeyError> m_error;
+    RefPtr<WebKitMediaKeyError> m_error;
     GenericEventQueue m_asyncEventQueue;
     std::unique_ptr<CDMSession> m_session;
 
@@ -119,4 +119,4 @@ private:
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#endif // MediaKeySession_h
+#endif // WebKitMediaKeySession_h
