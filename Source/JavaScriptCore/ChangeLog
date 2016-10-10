@@ -1,3 +1,23 @@
+2016-10-08  Filip Pizlo  <fpizlo@apple.com>
+
+        B3 should know about mutable pinned registers
+        https://bugs.webkit.org/show_bug.cgi?id=163172
+
+        Reviewed by Keith Miller.
+        
+        If we have mutable pinned registers then we need to know which operations mutate them. At
+        first I considered making this into a heap range thing, but I think that this would be very
+        confusing. Also, in the future, we might want to make Effects track register sets of
+        clobbered registers (see bug 163173).
+
+        * b3/B3Effects.cpp:
+        (JSC::B3::Effects::interferes):
+        (JSC::B3::Effects::operator==):
+        (JSC::B3::Effects::dump):
+        * b3/B3Effects.h:
+        (JSC::B3::Effects::forCall):
+        (JSC::B3::Effects::mustExecute):
+
 2016-10-08  Saam Barati  <sbarati@apple.com>
 
         HasIndexedProperty clobberize rule is wrong for Array::ForceOSRExit

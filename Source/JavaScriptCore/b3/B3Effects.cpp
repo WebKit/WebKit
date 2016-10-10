@@ -44,14 +44,14 @@ bool interferesWithTerminal(const Effects& terminal, const Effects& other)
 {
     if (!terminal.terminal)
         return false;
-    return other.terminal || other.controlDependent || other.writesLocalState || other.writes;
+    return other.terminal || other.controlDependent || other.writesLocalState || other.writes || other.writesPinned;
 }
 
 bool interferesWithExitSideways(const Effects& exitsSideways, const Effects& other)
 {
     if (!exitsSideways.exitsSideways)
         return false;
-    return other.controlDependent || other.writes;
+    return other.controlDependent || other.writes || other.writesPinned;
 }
 
 bool interferesWithWritesLocalState(const Effects& writesLocalState, const Effects& other)
@@ -61,17 +61,26 @@ bool interferesWithWritesLocalState(const Effects& writesLocalState, const Effec
     return other.writesLocalState || other.readsLocalState;
 }
 
+bool interferesWithWritesPinned(const Effects& writesPinned, const Effects& other)
+{
+    if (!writesPinned.writesPinned)
+        return false;
+    return other.writesPinned || other.readsPinned;
+}
+
 } // anonymous namespace
 
 bool Effects::interferes(const Effects& other) const
 {
-    if (interferesWithTerminal(*this, other) || interferesWithTerminal(other, *this))
-        return true;
-    if (interferesWithExitSideways(*this, other) || interferesWithExitSideways(other, *this))
-        return true;
-    if (interferesWithWritesLocalState(*this, other) || interferesWithWritesLocalState(other, *this))
-        return true;
-    return writes.overlaps(other.writes)
+    return interferesWithTerminal(*this, other)
+        || interferesWithTerminal(other, *this)
+        || interferesWithExitSideways(*this, other)
+        || interferesWithExitSideways(other, *this)
+        || interferesWithWritesLocalState(*this, other)
+        || interferesWithWritesLocalState(other, *this)
+        || interferesWithWritesPinned(*this, other)
+        || interferesWithWritesPinned(other, *this)
+        || writes.overlaps(other.writes)
         || writes.overlaps(other.reads)
         || reads.overlaps(other.writes);
 }
@@ -83,6 +92,8 @@ bool Effects::operator==(const Effects& other) const
         && controlDependent == other.controlDependent
         && writesLocalState == other.writesLocalState
         && readsLocalState == other.readsLocalState
+        && writesPinned == other.writesPinned
+        && readsPinned == other.readsPinned
         && writes == other.writes
         && reads == other.reads;
 }
@@ -105,6 +116,10 @@ void Effects::dump(PrintStream& out) const
         out.print(comma, "WritesLocalState");
     if (readsLocalState)
         out.print(comma, "ReadsLocalState");
+    if (writesPinned)
+        out.print(comma, "WritesPinned");
+    if (readsPinned)
+        out.print(comma, "ReadsPinned");
     if (writes)
         out.print(comma, "Writes:", writes);
     if (reads)
