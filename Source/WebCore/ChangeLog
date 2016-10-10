@@ -1,3 +1,20 @@
+2016-10-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address some review feedback from r206979 and r207010
+        https://bugs.webkit.org/show_bug.cgi?id=163236
+
+        Reviewed by Tim Horton.
+
+        In TypingCommand.h, some methods on TypingCommand should be marked as final to reflect the fact that they
+        override methods in CompositeEditCommand. Also, HTMLFormControlElement::dispatchFormControlInputEvent does not
+        need to specify HTMLElement::dispatchInputEvent() when calling dispatchInputEvent().
+
+        No new tests, since there is no behavior change.
+
+        * editing/TypingCommand.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent):
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Update MessageEvent to stop using legacy [ConstructorTemplate=Event]
