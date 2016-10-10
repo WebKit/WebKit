@@ -1,3 +1,21 @@
+2016-10-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove stale ENABLE(ENCRYPTED_MEDIA) code in HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=163111
+
+        Reviewed by Alex Christensen.
+
+        Remove three method implementations in HTMLMediaElement which had their
+        declarations and the related WebIDL entries removed in the first ENCRYPTED_MEDIA
+        purge in r206440.
+
+        No new tests -- no changes in behavior.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitGenerateKeyRequest): Deleted.
+        (WebCore::HTMLMediaElement::webkitAddKey): Deleted.
+        (WebCore::HTMLMediaElement::webkitCancelKeyRequest): Deleted.
+
 2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support InputEvent.inputType for the new InputEvent spec
