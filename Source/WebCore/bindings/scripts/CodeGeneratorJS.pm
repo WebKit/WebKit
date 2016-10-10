@@ -986,6 +986,7 @@ sub GenerateDefaultValue
     if ($value eq "null") {
         $value = $member->type eq "any" ? "jsNull()" : "nullptr";
     }
+    $value = "{ }" if $value eq "[]";
     $value = "jsUndefined()" if $value eq "undefined";
 
     return $value;
@@ -1120,6 +1121,14 @@ sub GenerateDictionaryImplementationContent
                 $result .= "        Optional<${nativeType}> $key = convertDictionary<${nativeType}>(state, ${key}Value).value();\n";
                 $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
                 $result .= "        result.$key = $key.value();\n";
+            } elsif ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
+                my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
+                if ($codeGenerator->IsWrapperType($innerType)) {
+                    $result .= "        result.$key = convertWrapperTypeSequence<$innerType, JS$innerType, $nativeType>(state, ${key}Value);\n";
+                } else {
+                    $result .= "        result.$key = convert<${nativeType}>(state, ${key}Value);\n";
+                }
+                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             } else {
                 my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
                 $result .= "        result.$key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
@@ -4778,14 +4787,15 @@ my %nativeType = (
     "unsigned short" => "uint16_t",
 );
 
-sub GetVariadicType
+sub GetNativeVectorType
 {
     my ($interface, $type) = @_;
 
-    my $wrappedType = IsNativeType($type) ? GetNativeType($interface, $type) : $type;
-    my $wrapperType = IsNativeType($type) ? "JSC::JSValue" : "JS$wrappedType";
+    die "This should only be called for sequence or array types" unless $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
-    return ($wrapperType, $wrappedType);
+    my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
+    return "MessagePortArray" if $innerType eq "MessagePort";
+    return "Vector<" . GetNativeVectorInnerType($innerType) . ">";
 }
 
 sub GetNativeType
@@ -4802,7 +4812,7 @@ sub GetNativeType
 
     return "RefPtr<${type}>" if $codeGenerator->IsTypedArrayType($type) and $type ne "ArrayBuffer";
 
-    return "Vector<" . GetNativeVectorInnerType($codeGenerator->GetSequenceOrFrozenArrayInnerType($type)) . ">" if $codeGenerator->IsSequenceOrFrozenArrayType($type);
+    return GetNativeVectorType($interface, $type) if $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
     return "${type}*";
 }

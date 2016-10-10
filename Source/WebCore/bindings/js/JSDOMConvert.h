@@ -49,6 +49,7 @@ template<typename T> const char* expectedEnumerationValues();
 
 enum class IsNullable { No, Yes };
 template<typename T, typename JST> T* convertWrapperType(JSC::ExecState&, JSC::JSValue, IsNullable);
+template<typename T, typename JST, typename VectorType> VectorType convertWrapperTypeSequence(JSC::ExecState&, JSC::JSValue);
 
 // This is where the implementation of the things declared above begins:
 
@@ -75,6 +76,11 @@ template<typename T, typename JST> inline T* convertWrapperType(JSC::ExecState& 
     if (!object && (isNullable == IsNullable::No || !value.isUndefinedOrNull()))
         throwTypeError(&state, scope);
     return object;
+}
+
+template<typename T, typename JST, typename VectorType> inline VectorType convertWrapperTypeSequence(JSC::ExecState& state, JSC::JSValue value)
+{
+    return toRefPtrNativeArray<T, JST, VectorType>(state, value);
 }
 
 template<typename T> struct DefaultConverter {

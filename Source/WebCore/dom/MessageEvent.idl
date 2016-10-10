@@ -26,15 +26,15 @@
  */
 
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional MessageEventInit eventInitDict),
+    ConstructorCallWith=ScriptState,
     Exposed=(Window,Worker),
 ] interface MessageEvent : Event {
-    [InitializedByEventConstructor] readonly attribute USVString origin;
-    [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
-    [InitializedByEventConstructor] readonly attribute EventTarget source; // May be a DOMWindow or a MessagePort.
-
-    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
-    [InitializedByEventConstructor] readonly attribute sequence<MessagePort> ports;
+    readonly attribute USVString origin;
+    readonly attribute DOMString lastEventId;
+    readonly attribute EventTarget? source; // May be a DOMWindow or a MessagePort.
+    [CachedAttribute, CustomGetter] readonly attribute any data;
+    readonly attribute FrozenArray<MessagePort> ports;
 
     [Custom] void initMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
         optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional DOMWindow sourceArg,
@@ -43,4 +43,12 @@
     [Custom] void webkitInitMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
         optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional DOMWindow sourceArg,
         optional Array transferables);
+};
+
+dictionary MessageEventInit : EventInit {
+      any data = null;
+      USVString origin = "";
+      DOMString lastEventId = "";
+      EventTarget? source = null;
+      sequence<MessagePort> ports = [];
 };

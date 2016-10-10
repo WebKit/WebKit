@@ -1,3 +1,34 @@
+2016-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Update MessageEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163187
+
+        Reviewed by Darin Adler.
+
+        Update MessageEvent to stop using legacy [ConstructorTemplate=Event] and
+        use a regular constructor as in the specification:
+        - https://html.spec.whatwg.org/multipage/comms.html#the-messageevent-interfaces
+
+        No new tests, updated existing test.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toRefPtrNativeArray):
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convertWrapperTypeSequence):
+        (WebCore::convertWrapperType): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        (GenerateDictionaryImplementationContent):
+        (GetNativeType):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::trySerializeData):
+        (WebCore::MessageEvent::createForBindings): Deleted.
+        (WebCore::MessageEvent::initMessageEvent): Deleted.
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+
 2016-10-10  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Buttons

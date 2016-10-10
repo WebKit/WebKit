@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+using namespace JSC;
+
 static inline bool isValidSource(EventTarget* source)
 {
     return !source || source->toDOMWindow() || source->isMessagePort();
@@ -45,10 +47,10 @@ inline MessageEvent::MessageEvent()
 {
 }
 
-inline MessageEvent::MessageEvent(const AtomicString& type, const MessageEventInit& initializer)
-    : Event(type, initializer)
+inline MessageEvent::MessageEvent(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_dataType(DataTypeScriptValue)
-    , m_dataAsScriptValue(initializer.data)
+    , m_dataAsScriptValue(state.vm(), initializer.data)
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
     , m_source(isValidSource(initializer.source.get()) ? initializer.source : nullptr)
@@ -131,9 +133,9 @@ Ref<MessageEvent> MessageEvent::createForBindings()
     return adoptRef(*new MessageEvent);
 }
 
-Ref<MessageEvent> MessageEvent::createForBindings(const AtomicString& type, const MessageEventInit& initializer)
+Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MessageEvent(type, initializer));
+    return adoptRef(*new MessageEvent(state, type, initializer, isTrusted));
 }
 
 MessageEvent::~MessageEvent()
@@ -172,7 +174,7 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_ports = WTFMove(ports);
 }
     
-RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(JSC::ExecState* exec)
+RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(ExecState* exec)
 {
     ASSERT(!m_dataAsScriptValue.hasNoValue());
     

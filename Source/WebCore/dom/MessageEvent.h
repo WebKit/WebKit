@@ -36,14 +36,6 @@ namespace WebCore {
 
 class Blob;
 
-struct MessageEventInit : public EventInit {
-    Deprecated::ScriptValue data;
-    String origin;
-    String lastEventId;
-    RefPtr<EventTarget> source;
-    MessagePortArray ports;
-};
-
 class MessageEvent final : public Event {
 public:
     static Ref<MessageEvent> create(std::unique_ptr<MessagePortArray>, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, EventTarget* source = nullptr);
@@ -52,7 +44,16 @@ public:
     static Ref<MessageEvent> create(Ref<Blob>&& data, const String& origin);
     static Ref<MessageEvent> create(Ref<ArrayBuffer>&& data, const String& origin = { });
     static Ref<MessageEvent> createForBindings();
-    static Ref<MessageEvent> createForBindings(const AtomicString& type, const MessageEventInit&);
+
+    struct Init : EventInit {
+        JSC::JSValue data;
+        String origin;
+        String lastEventId;
+        RefPtr<EventTarget> source;
+        MessagePortArray ports;
+    };
+    static Ref<MessageEvent> create(JSC::ExecState&, const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
+
     virtual ~MessageEvent();
 
     void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, std::unique_ptr<MessagePortArray>);
@@ -86,7 +87,7 @@ public:
     
 private:
     MessageEvent();
-    MessageEvent(const AtomicString&, const MessageEventInit&);
+    MessageEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
     MessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, EventTarget* source, std::unique_ptr<MessagePortArray>);
     MessageEvent(const AtomicString& type, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId);
     MessageEvent(const String& data, const String& origin);

@@ -30,8 +30,8 @@ shouldBe("new MessageEvent('eventType', { cancelable: true }).cancelable", "true
 // data is passed.
 shouldBe("new MessageEvent('eventType', { data: test_object }).data", "test_object");
 shouldBe("new MessageEvent('eventType', { data: document }).data", "document");
-shouldBe("new MessageEvent('eventType', { data: undefined }).data", "undefined");
-shouldBe("new MessageEvent('eventType', { data: null }).data", "null");
+shouldBeNull("new MessageEvent('eventType', { data: undefined }).data");
+shouldBeNull("new MessageEvent('eventType', { data: null }).data");
 shouldBe("new MessageEvent('eventType', { data: false }).data", "false");
 shouldBe("new MessageEvent('eventType', { data: true }).data", "true");
 shouldBeEqualToString("new MessageEvent('eventType', { data: '' }).data", "");
@@ -51,7 +51,7 @@ shouldThrow("new MessageEvent('eventType', { get data() { throw 'MessageEvent Er
     shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": '' })." + attr, "");
 
     // Non-strings.
-    shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": undefined })." + attr, "undefined");
+    shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": undefined })." + attr, "");
     shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": null })." + attr, "null");
     shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": false })." + attr, "false");
     shouldBeEqualToString("new MessageEvent('eventType', { " + attr + ": true })." + attr, "true");
@@ -76,21 +76,21 @@ var channel = new MessageChannel();
 shouldBe("new MessageEvent('eventType', { ports: [channel.port1], source: channel.port1 }).source", "channel.port1");
 
 // Unacceptable source objects (not a Window or a MessagePort).
-shouldBe("new MessageEvent('eventType', { source: test_object }).source", "null");
+shouldThrowErrorName("new MessageEvent('eventType', { source: test_object }).source", "TypeError");
 shouldBe("new MessageEvent('eventType', { source: document }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: document.body }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: undefined }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: null }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: false }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: true }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: '' }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: 'chocolate' }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: 12345 }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: 18446744073709551615 }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: NaN }).source", "null");
+shouldThrowErrorName("new MessageEvent('eventType', { source: false }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: true }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: '' }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: 'chocolate' }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: 12345 }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: 18446744073709551615 }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: NaN }).source", "TypeError");
 // Note that valueOf() is not called, when the left hand side is evaluated.
-shouldBeFalse("new MessageEvent('eventType', { source: {valueOf: function () { return window; } } }).source == window");
-shouldBe("new MessageEvent('eventType', { get source() { return 123; } }).source", "null");
+shouldThrowErrorName("new MessageEvent('eventType', { source: {valueOf: function () { return window; } } })", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { get source() { return 123; } }).source", "TypeError");
 shouldThrow("new MessageEvent('eventType', { get source() { throw 'MessageEvent Error'; } })");
 
 // ports is passed.
@@ -101,12 +101,12 @@ shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, 
 shouldBe("new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[2]", "channel2.port1");
 shouldBe("new MessageEvent('eventType', { ports: [] }).ports", "[]");
 shouldBe("new MessageEvent('eventType', { ports: undefined }).ports", "[]");
-shouldBe("new MessageEvent('eventType', { ports: null }).ports", "[]");
 
 // Invalid message ports.
 shouldThrow("new MessageEvent('eventType', { ports: [1, 2, 3] }).ports[2]");
 shouldThrow("new MessageEvent('eventType', { ports: test_object }).ports");
 shouldThrow("new MessageEvent('eventType', { ports: document }).ports");
+shouldThrow("new MessageEvent('eventType', { ports: null }).ports")
 shouldThrow("new MessageEvent('eventType', { ports: false }).ports");
 shouldThrow("new MessageEvent('eventType', { ports: true }).ports");
 shouldThrow("new MessageEvent('eventType', { ports: '' }).ports");

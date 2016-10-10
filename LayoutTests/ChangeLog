@@ -1,3 +1,18 @@
+2016-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Update MessageEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163187
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test now that:
+        - Exception messages are sometimes a bit different
+        - We properly use the default member value when input is an explicit undefined
+        - We throw in more cases of bad input
+
+        * fast/events/constructors/message-event-constructor-expected.txt:
+        * fast/events/constructors/message-event-constructor.html:
+
 2016-10-10  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Buttons
