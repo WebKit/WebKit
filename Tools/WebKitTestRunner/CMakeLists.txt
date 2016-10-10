@@ -97,7 +97,7 @@ set(WebKitTestRunner_IDL_FILES
     "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
 )
 
-GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
+GENERATE_BINDINGS(
     OUTPUT_SOURCE WebKitTestRunnerInjectedBundle_SOURCES
     INPUT_FILES ${WebKitTestRunnerInjectedBundle_IDL_FILES}
     BASE_DIR ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
@@ -106,7 +106,7 @@ GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
     DESTINATION ${DERIVED_SOURCES_DIR}/InjectedBundle
     GENERATOR TestRunner)
 
-GENERATE_BINDINGS(WebKitTestRunnerBindings
+GENERATE_BINDINGS(
     OUTPUT_SOURCE WebKitTestRunner_SOURCES
     INPUT_FILES ${WebKitTestRunner_IDL_FILES}
     BASE_DIR ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/Bindings
@@ -122,11 +122,9 @@ include_directories(SYSTEM ${WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
 target_link_libraries(TestRunnerInjectedBundle ${WebKitTestRunner_LIBRARIES})
-add_dependencies(TestRunnerInjectedBundle WebKitTestRunnerInjectedBundleBindings)
 
 add_executable(WebKitTestRunner ${WebKitTestRunner_SOURCES})
 target_link_libraries(WebKitTestRunner ${WebKitTestRunner_LIBRARIES})
-add_dependencies(WebKitTestRunner WebKitTestRunnerBindings)
 
 if (NOT APPLE)
     add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})

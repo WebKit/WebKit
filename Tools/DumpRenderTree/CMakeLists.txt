@@ -120,7 +120,7 @@ set(DumpRenderTree_IDL_FILES
     "${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}/Bindings/UIScriptController.idl"
 )
 
-GENERATE_BINDINGS(DumpRenderTreeBindings
+GENERATE_BINDINGS(
     OUTPUT_SOURCE DumpRenderTree_SOURCES
     INPUT_FILES ${DumpRenderTree_IDL_FILES}
     BASE_DIR ${DUMP_RENDER_TREE_BINDINGS_DIR}
@@ -135,7 +135,6 @@ include_directories(${DumpRenderTree_INCLUDE_DIRECTORIES})
 
 add_executable(DumpRenderTree ${DumpRenderTree_SOURCES})
 target_link_libraries(DumpRenderTree ${DumpRenderTree_LIBRARIES})
-add_dependencies(DumpRenderTree DumpRenderTreeBindings)
 
 if (ENABLE_NETSCAPE_PLUGIN_API)
     add_library(TestNetscapePlugin SHARED ${TestNetscapePlugin_SOURCES})
