@@ -74,7 +74,7 @@ public:
 
     void startDownload(WebCore::SessionID, DownloadID, const WebCore::ResourceRequest&, const String& suggestedName = { });
 #if USE(NETWORK_SESSION)
-    std::pair<RefPtr<NetworkDataTask>, std::unique_ptr<PendingDownload>> dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
+    void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #endif

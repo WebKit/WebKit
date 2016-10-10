@@ -1,3 +1,36 @@
+2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Network Session: PendingDownload is always nullptr in DownloadManager::dataTaskBecameDownloadTask
+        https://bugs.webkit.org/show_bug.cgi?id=163006
+
+        Reviewed by Alex Christensen.
+
+        In DownloadManager::dataTaskBecameDownloadTask() we are supposed to have either a pending download, or a network
+        data task depending on whether the download was started by startDownload() or convertTaskToDownload. However, in
+        both cases we do have a data task and never a pending download. In the case of startDownload() the pending
+        download is removed from m_pendingDownloads in willDecidePendingDownloadDestination(). The task is always
+        added to m_downloadsWaitingForDestination in willDecidePendingDownloadDestination() and to
+        m_downloadsAfterDestinationDecided in continueDecidePendingDownloadDestination() in both cases.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::dataTaskBecameDownloadTask): Add an ASSERT to ensure we don't have a pending download
+        at this point and that the download is not already in the map. Remove the download from the
+        m_downloadsAfterDestinationDecided map, but don't check its result because it might not bein that map if
+        dataTaskBecameDownloadTask is called synchronously from the didReceiveResponse completion handler.
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination): Do not take the pending download here, wait
+        until didReceiveResponse completion handler is called.
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination): Take the pending download here ensuring
+        it's alive while the didReceiveResponse completion handler is called. Also remove invalid early return when
+        either networkDataTask or completionHandler are nullptr because we are using both unconditionally, we should
+        return early if both are nullptr to avoid crashes. However, we are checking that the download is in the
+        m_downloadsWaitingForDestination and in that case we should always have both, so better add asserts there. If
+        the download is already in the map after the completion handler it means that dataTaskBecameDownloadTask() has
+        alrady been called, so we can just return in that case.
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]): Protect the NetworkDataTask that can
+        be deleted by dataTaskBecameDownloadTask().
+
 2016-10-10  Tim Horton  <timothy_horton@apple.com>
 
         Share more code between iOS and macOS ViewGestureController

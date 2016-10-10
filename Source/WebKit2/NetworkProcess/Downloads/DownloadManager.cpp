@@ -67,18 +67,12 @@ void DownloadManager::startDownload(SessionID sessionID, DownloadID downloadID, 
 }
 
 #if USE(NETWORK_SESSION)
-std::pair<RefPtr<NetworkDataTask>, std::unique_ptr<PendingDownload>> DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
+void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)
 {
-    // This is needed for downloads started with startDownload, otherwise it will return nullptr.
-    auto pendingDownload = m_pendingDownloads.take(downloadID);
-
-    // This is needed for downloads started with convertTaskToDownload, otherwise it will return nullptr.
-    auto downloadAfterLocationDecided = m_downloadsAfterDestinationDecided.take(downloadID);
-    
-    ASSERT(!!pendingDownload != !!downloadAfterLocationDecided);
-    
+    ASSERT(!m_pendingDownloads.contains(downloadID));
+    ASSERT(!m_downloads.contains(downloadID));
+    m_downloadsAfterDestinationDecided.remove(downloadID);
     m_downloads.add(downloadID, WTFMove(download));
-    return std::make_pair(WTFMove(downloadAfterLocationDecided), WTFMove(pendingDownload));
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -102,8 +96,6 @@ void DownloadManager::continueWillSendRequest(DownloadID downloadID, WebCore::Re
 void DownloadManager::willDecidePendingDownloadDestination(NetworkDataTask& networkDataTask, ResponseCompletionHandler&& completionHandler)
 {
     auto downloadID = networkDataTask.pendingDownloadID();
-    auto pendingDownload = m_pendingDownloads.take(downloadID);
-    ASSERT(networkDataTask.pendingDownload() == pendingDownload.get());
     auto addResult = m_downloadsWaitingForDestination.set(downloadID, std::make_pair<RefPtr<NetworkDataTask>, ResponseCompletionHandler>(&networkDataTask, WTFMove(completionHandler)));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
@@ -122,14 +114,21 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
 {
 #if USE(NETWORK_SESSION)
     if (m_downloadsWaitingForDestination.contains(downloadID)) {
+        auto pendingDownload = m_pendingDownloads.take(downloadID);
         auto pair = m_downloadsWaitingForDestination.take(downloadID);
         auto networkDataTask = WTFMove(pair.first);
         auto completionHandler = WTFMove(pair.second);
-        if (!networkDataTask || !completionHandler)
-            return;
+        ASSERT(networkDataTask);
+        ASSERT(completionHandler);
+        ASSERT(!pendingDownload || pendingDownload.get() == networkDataTask->pendingDownload());
 
         networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle, allowOverwrite);
         completionHandler(PolicyDownload);
+
+        if (m_downloads.contains(downloadID)) {
+            // The completion handler already called dataTaskBecameDownloadTask().
+            return;
+        }
 
         ASSERT(!m_downloadsAfterDestinationDecided.contains(downloadID));
         m_downloadsAfterDestinationDecided.set(downloadID, networkDataTask);
