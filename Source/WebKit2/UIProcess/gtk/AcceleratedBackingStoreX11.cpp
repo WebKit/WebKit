@@ -37,6 +37,7 @@
 #include <X11/extensions/Xdamage.h>
 #include <cairo-xlib.h>
 #include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
