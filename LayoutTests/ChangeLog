@@ -1,3 +1,13 @@
+2016-10-09  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        Unreviewed, EFL Gardening on Oct. 10th - 2
+
+        Mark missing test to Skip because the tests aren't supported by EFL yet.
+        Unskip passing tests and add *PASS* to some flaky tests because I guess
+        it is still flaky.
+
+        * platform/efl/TestExpectations:
+
 2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support InputEvent.inputType for the new InputEvent spec

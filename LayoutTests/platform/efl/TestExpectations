@@ -68,6 +68,7 @@ animations/trigger-container-scroll-simple.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
 
 # EFL WebKitTestRunner doesn't support this test based on emoji font
+editing/deleting/delete-emoji.html [ Skip ]
 editing/selection/extend-by-character-007.html [ Skip ]
 fast/text/softbank-emoji.html [ Skip ]
 fast/text/emoji.html [ Skip ]
@@ -94,6 +95,7 @@ fast/text/emoji-gender-fe0f-8.html [ Skip ]
 fast/text/emoji-gender-fe0f-9.html [ Skip ]
 fast/text/emoji-single-parent-family.html [ Skip ]
 fast/text/emoji-single-parent-family-2.html [ Skip ]
+
 
 # This test has been added for ios port since r185842.
 fast/text/arabic-times-new-roman.html [ Skip ]
@@ -411,6 +413,9 @@ fast/repaint/selection-gap-flipped-fixed-child.html [ Skip ]
 fast/repaint/selection-gap-transformed-absolute-child.html [ Skip ]
 fast/repaint/selection-gap-transformed-fixed-child.html [ Skip ]
 
+# GTK port only supports it now.
+mathml/presentation/bug159513.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -608,9 +613,6 @@ webkit.org/b/92726 fast/dom/NavigatorContentUtils/unregister-protocol-handler.ht
 # Crashes on plugin test, also blocked by 108077
 webkit.org/b/98747 plugins/document-open.html [ Crash Failure Timeout ]
 
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Timeout ]
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Timeout ]
-
 # Sometimes hit !m_finishedNodes.size() assertion in AudioContext destructor.
 webkit.org/b/105870 webaudio/audiobuffersource.html [ Pass Crash ]
 webkit.org/b/105870 webaudio/audionode-connect-order.html [ Pass Crash ]
@@ -789,10 +791,10 @@ webkit.org/b/135498 css3/device-adapt/opera/constrain-023.xhtml [ Crash Timeout 
 webkit.org/b/135498 css3/device-adapt/viewport-width-not-affecting-next-page.html [ Failure ]
 
 # Started to timeout after bumping EFL to 1.9
-webkit.org/b/136099 fast/animation/request-animation-frame-during-modal.html [ Crash Timeout ]
-webkit.org/b/136099 fast/dom/Window/open-window-min-size.html [ Crash Timeout ]
-webkit.org/b/136099 fast/events/show-modal-dialog-onblur-onfocus.html [ Crash Timeout ]
-webkit.org/b/136099 fast/events/scroll-event-during-modal-dialog.html [ Crash Timeout ]
+webkit.org/b/136099 fast/animation/request-animation-frame-during-modal.html [ Crash Pass Timeout ]
+webkit.org/b/136099 fast/dom/Window/open-window-min-size.html [ Crash Pass Timeout ]
+webkit.org/b/136099 fast/events/show-modal-dialog-onblur-onfocus.html [ Crash Pass Timeout ]
+webkit.org/b/136099 fast/events/scroll-event-during-modal-dialog.html [ Crash Pass Timeout ]
 webkit.org/b/136099 fast/harness/show-modal-dialog.html [ Crash Timeout ]
 
 #webkit.org/b/142158 inspector/dom/remove-multiple-nodes.html [ Crash Pass ]
@@ -1878,9 +1880,6 @@ webkit.org/b/105294 webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure 
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
-# New test added in r142335 that is failing on EFL, Qt and GTK.
-webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
-
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
@@ -2143,7 +2142,6 @@ webkit.org/b/127489 http/tests/misc/will-send-request-returns-null-on-redirect.h
 webkit.org/b/127725 media/video-restricted-no-preload-auto.html [ Crash ]
 
 # Subpixel rendering: borders are reporting float values.
-webkit.org/b/128061 fast/block/float/016.html [ Failure ]
 webkit.org/b/128061 fast/multicol/span/anonymous-style-inheritance.html [ Failure ]
 webkit.org/b/128061 fast/repaint/repaint-during-scroll-with-zoom.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
@@ -2211,8 +2209,6 @@ svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ]
 
 webkit.org/b/133220 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/133220 fast/events/shadow-event-path-2.html [ Failure ]
-
-webkit.org/b/133308 fast/selectors/hover-quirks.html [ Failure ]
 
 # Tests failing or flaky with closer reasons unknwown at this time
 #webkit.org/b/133857 inspector/layers/layers-blending-compositing-reasons.html [ Failure ]
@@ -2359,7 +2355,6 @@ webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
 webkit.org/b/143364 fast/fixed-layout [ Skip ]
 
 webkit.org/b/131044 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/131044 media/media-preload-no-delay-loadevent.html [ Failure ]
 webkit.org/b/131044 media/track/video/video-track-mkv-theora-language.html [ Failure ]
 webkit.org/b/131044 media/video-controls-no-scripting.html [ Failure ]
 webkit.org/b/131044 media/video-fullscreeen-only-controls.html [ Failure ]
@@ -2443,7 +2438,6 @@ accessibility/transformed-element.html [ Failure ]
 
 webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
 
-webkit.org/b/146495 accessibility/content-editable-as-textarea.html [ Timeout ]
 webkit.org/b/146495 editing/selection/designmode-no-caret.html [ Timeout ]
 
 # Test requires hardcoded font names, which I do not have for this port.
@@ -2754,10 +2748,6 @@ webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/document-meta
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Failure ]
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-api-texttracks.html [ Failure ]
 webkit.org/b/158412 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html [ Crash ]
-
-# These tests hardcode platform-specific font aliases.
-webkit.org/b/158649 fast/text/chinese-font-name-aliases.html [ ImageOnlyFailure ]
-webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/159754 workers/bomb.html [ Slow ]
 
