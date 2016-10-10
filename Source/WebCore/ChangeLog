@@ -1,5 +1,56 @@
 2016-10-09  Darin Adler  <darin@apple.com>
 
+        Move ApplePaySession from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163191
+
+        Reviewed by Sam Weinig.
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::create): Use ExceptionOr.
+        (WebCore::ApplePaySession::ApplePaySession): Moved initialization
+        of two of the data members to class definition.
+        (WebCore::ApplePaySession::supportsVersion): Use ExceptionOr.
+        (WebCore::ApplePaySession::canMakePayments): Ditto.
+        (WebCore::ApplePaySession::canMakePaymentsWithActiveCard): Ditto.
+        (WebCore::ApplePaySession::openPaymentSetup): Ditto.
+        (WebCore::ApplePaySession::begin): Ditto.
+        (WebCore::ApplePaySession::abort): Ditto.
+        (WebCore::ApplePaySession::completeMerchantValidation): Ditto.
+        (WebCore::ApplePaySession::completeShippingMethodSelection): Ditto.
+        (WebCore::ApplePaySession::completeShippingContactSelection): Ditto.
+        (WebCore::ApplePaySession::completePaymentMethodSelection): Ditto.
+        (WebCore::ApplePaySession::completePayment): Ditto.
+        (WebCore::ApplePaySession::validateMerchant): Use auto and get instead of
+        using a RefPtr type and * for event dispatching.
+        (WebCore::ApplePaySession::didAuthorizePayment): Ditto.
+        (WebCore::ApplePaySession::didSelectShippingMethod): Ditto.
+        (WebCore::ApplePaySession::didSelectShippingContact): Ditto.
+        (WebCore::ApplePaySession::didSelectPaymentMethod): Ditto.
+        (WebCore::ApplePaySession::didCancelPayment): Ditto.
+        (WebCore::ApplePaySession::paymentCoordinator): Moved dereferencing
+        inside the downcast.
+
+        * Modules/applepay/ApplePaySession.h: Updated for changes above.
+
+        * Modules/applepay/ApplePaySession.idl: Use MayThrowException.
+
+        * bindings/js/JSApplePaySessionCustom.cpp:
+        (WebCore::JSApplePaySession::completeShippingMethodSelection):
+        Use propagateException.
+        (WebCore::JSApplePaySession::completeShippingContactSelection): Ditto.
+        (WebCore::JSApplePaySession::completePaymentMethodSelection): Ditto.
+
+        * bindings/js/JSDOMBinding.h: Added implementation of toJSBoolean.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition): Generate the different arguments for
+        toJSNewlyCreated when ConstructorMayThrowException is specified that
+        activate the version of that function that handles exceptions.
+
+        * bindings/scripts/IDLAttributes.txt: Added ConstructorMayThrowException.
+
+2016-10-09  Darin Adler  <darin@apple.com>
+
         Replace all uses of ExceptionCodeWithMessage with WebCore::Exception
         https://bugs.webkit.org/show_bug.cgi?id=163178
 

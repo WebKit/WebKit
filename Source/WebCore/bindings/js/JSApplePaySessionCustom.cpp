@@ -53,7 +53,6 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 3))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    ExceptionCode ec = 0;
     uint16_t status = convert<uint16_t>(state, state.argument(0), NormalConversion);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
@@ -62,8 +61,7 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
 
     ArrayValue newLineItems { &state, state.argument(2) };
     RETURN_IF_EXCEPTION(scope, JSValue());
-    impl.completeShippingMethodSelection(status, newTotal, newLineItems, ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, impl.completeShippingMethodSelection(status, newTotal, newLineItems));
 
     return jsUndefined();
 }
@@ -83,7 +81,6 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 4))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    ExceptionCode ec = 0;
     uint16_t status = convert<uint16_t>(state, state.argument(0), NormalConversion);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
@@ -95,8 +92,8 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
 
     ArrayValue newLineItems { &state, state.argument(3) };
     RETURN_IF_EXCEPTION(scope, JSValue());
-    impl.completeShippingContactSelection(status, newShippingMethods, newTotal, newLineItems, ec);
-    setDOMException(&state, ec);
+
+    propagateException(state, scope, impl.completeShippingContactSelection(status, newShippingMethods, newTotal, newLineItems));
 
     return jsUndefined();
 }
@@ -116,14 +113,13 @@ JSValue JSApplePaySession::completePaymentMethodSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 2))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    ExceptionCode ec = 0;
     Dictionary newTotal = { &state, state.argument(0) };
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newLineItems { &state, state.argument(1) };
     RETURN_IF_EXCEPTION(scope, JSValue());
-    impl.completePaymentMethodSelection(newTotal, newLineItems, ec);
-    setDOMException(&state, ec);
+
+    propagateException(state, scope, impl.completePaymentMethodSelection(newTotal, newLineItems));
 
     return jsUndefined();
 }

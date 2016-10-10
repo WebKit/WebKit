@@ -5538,7 +5538,11 @@ END
             }
 
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n") if $codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{ConstructorCallWith}, "ScriptState");
-            push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));\n");
+            if ($interface->extendedAttributes->{ConstructorMayThrowException}) {
+                push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated(*state, *castedThis->globalObject(), throwScope, WTFMove(object)));\n");
+            } else {
+                push(@$outputArray, "    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));\n");
+            }
             push(@$outputArray, "}\n\n");
         }
     }

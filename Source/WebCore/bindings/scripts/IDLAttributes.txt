@@ -33,6 +33,7 @@ Conditional=*
 Constructor
 ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorConditional=*
+ConstructorMayThrowException
 ConstructorMayThrowLegacyException
 ConstructorTemplate=Event|TypedArray
 Custom

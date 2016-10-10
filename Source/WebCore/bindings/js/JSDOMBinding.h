@@ -916,6 +916,15 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobal
     return toJS(&state, &globalObject, value.releaseReturnValue());
 }
 
+inline JSC::JSValue toJSBoolean(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<bool>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return JSC::jsBoolean(value.releaseReturnValue());
+}
+
 template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
 {
     if (UNLIKELY(value.hasException())) {

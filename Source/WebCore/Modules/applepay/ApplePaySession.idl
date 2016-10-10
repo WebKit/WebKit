@@ -28,7 +28,7 @@
     Conditional=APPLE_PAY,
     Constructor(unsigned long version, Dictionary paymentRequest),
     ConstructorCallWith=Document,
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
     EnabledBySetting=ApplePay,
 ] interface ApplePaySession : EventTarget {
     const unsigned short STATUS_SUCCESS = 0;
@@ -40,18 +40,18 @@
     const unsigned short STATUS_PIN_INCORRECT = 6;
     const unsigned short STATUS_PIN_LOCKOUT = 7;
 
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] static boolean supportsVersion(unsigned long version);
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] static boolean canMakePayments();
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] static Promise canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
-    [CallWith=ScriptExecutionContext, MayThrowLegacyException] static Promise openPaymentSetup(DOMString merchantIdentifier);
+    [CallWith=ScriptExecutionContext, MayThrowException] static boolean supportsVersion(unsigned long version);
+    [CallWith=ScriptExecutionContext, MayThrowException] static boolean canMakePayments();
+    [CallWith=ScriptExecutionContext, MayThrowException] static Promise canMakePaymentsWithActiveCard(DOMString merchantIdentifier);
+    [CallWith=ScriptExecutionContext, MayThrowException] static Promise openPaymentSetup(DOMString merchantIdentifier);
 
-    [MayThrowLegacyException] void begin();
-    [MayThrowLegacyException] void abort();
-    [MayThrowLegacyException] void completeMerchantValidation(Dictionary merchantSession);
-    [Custom, MayThrowLegacyException] void completeShippingMethodSelection(unsigned short status, Dictionary newTotal, sequence<Dictionary> newLineItems);
-    [Custom, MayThrowLegacyException] void completeShippingContactSelection(unsigned short status, sequence<Dictionary> newShippingMethods, Dictionary newTotal, sequence<Dictionary> newLineItems);
-    [Custom, MayThrowLegacyException] void completePaymentMethodSelection(Dictionary newTotal, sequence<Dictionary> newLineItems);
-    [MayThrowLegacyException] void completePayment(unsigned short status);
+    [MayThrowException] void begin();
+    [MayThrowException] void abort();
+    [MayThrowException] void completeMerchantValidation(Dictionary merchantSession);
+    [Custom, MayThrowException] void completeShippingMethodSelection(unsigned short status, Dictionary newTotal, sequence<Dictionary> newLineItems);
+    [Custom, MayThrowException] void completeShippingContactSelection(unsigned short status, sequence<Dictionary> newShippingMethods, Dictionary newTotal, sequence<Dictionary> newLineItems);
+    [Custom, MayThrowException] void completePaymentMethodSelection(Dictionary newTotal, sequence<Dictionary> newLineItems);
+    [MayThrowException] void completePayment(unsigned short status);
 
     attribute EventHandler onvalidatemerchant;
     attribute EventHandler onpaymentmethodselected;
