@@ -29,20 +29,7 @@
 
 namespace WebCore {
 
-struct EventModifierInit : public UIEventInit {
-    EventModifierInit() = default;
-
-    EventModifierInit(bool bubbles, bool cancelable, bool composed, RefPtr<DOMWindow>&& view, int detail,
-        bool ctrlKey, bool shiftKey, bool altKey, bool metaKey, bool modifierAltGraph, bool modifierCapsLock)
-            : UIEventInit(bubbles, cancelable, composed, WTFMove(view), detail)
-            , ctrlKey(ctrlKey)
-            , shiftKey(shiftKey)
-            , altKey(altKey)
-            , metaKey(metaKey)
-            , modifierAltGraph(modifierAltGraph)
-            , modifierCapsLock(modifierCapsLock)
-        { }
-
+struct EventModifierInit : UIEventInit {
     bool ctrlKey { false };
     bool shiftKey { false };
     bool altKey { false };

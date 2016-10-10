@@ -54,19 +54,6 @@ public:
     }
 
     struct Init : public EventModifierInit {
-        Init(bool bubbles, bool cancelable, bool composed, RefPtr<DOMWindow>&& view, int detail,
-            bool ctrlKey, bool shiftKey, bool altKey, bool metaKey, bool modifierAltGraph, bool modifierCapsLock,
-            String key, String code, Optional<unsigned> location, bool repeat, bool isComposing, String keyIdentifier,
-            Optional<unsigned> keyLocation)
-                : EventModifierInit(bubbles, cancelable, composed, WTFMove(view), detail, ctrlKey, shiftKey, altKey, metaKey, modifierAltGraph, modifierCapsLock)
-                , key(key)
-                , code(code)
-                , location(location ? *location : keyLocation.valueOr(DOM_KEY_LOCATION_STANDARD))
-                , repeat(repeat)
-                , isComposing(isComposing)
-                , keyIdentifier(keyIdentifier)
-            { }
-
         String key;
         String code;
         unsigned location;
@@ -75,6 +62,7 @@ public:
 
         // Legacy.
         String keyIdentifier;
+        Optional<unsigned> keyLocation;
     };
 
     static Ref<KeyboardEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)

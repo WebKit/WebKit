@@ -56,7 +56,7 @@
 dictionary KeyboardEventInit : EventModifierInit {
     DOMString key = "";
     DOMString code = "";
-    unsigned long location;
+    unsigned long location = 0;
     boolean repeat = false;
     boolean isComposing = false;
 

@@ -135,7 +135,7 @@ KeyboardEvent::KeyboardEvent(const AtomicString& eventType, const Init& initiali
     , m_code(initializer.code)
 #endif
     , m_keyIdentifier(initializer.keyIdentifier)
-    , m_location(initializer.location)
+    , m_location(initializer.keyLocation ? *initializer.keyLocation : initializer.location)
     , m_repeat(initializer.repeat)
     , m_isComposing(initializer.isComposing)
 #if PLATFORM(COCOA)

@@ -32,13 +32,6 @@
 namespace WebCore {
 
 struct UIEventInit : public EventInit {
-    UIEventInit() = default;
-    UIEventInit(bool bubbles, bool cancelable, bool composed, RefPtr<DOMWindow>&& view, int detail)
-        : EventInit(bubbles, cancelable, composed)
-        , view(WTFMove(view))
-        , detail(detail)
-    { }
-
     RefPtr<DOMWindow> view;
     int detail { 0 };
 };

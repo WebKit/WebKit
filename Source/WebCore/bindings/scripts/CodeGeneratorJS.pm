@@ -1086,6 +1086,8 @@ sub GenerateDictionaryImplementationContent
     my $arguments = "";
     my $comma = "";
 
+    $result .= "    $className result;\n";
+
     # 5. For each dictionary dictionary in dictionaries, in order:
     foreach my $dictionary (@dictionaries) {
         # For each dictionary member member declared on dictionary, in lexicographical order:
@@ -1102,11 +1104,6 @@ sub GenerateDictionaryImplementationContent
             $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
 
             my $nativeType = GetNativeTypeFromSignature($interface, $member);
-            if ($member->isOptional && !defined $member->default) {
-                $result .= "    Converter<$nativeType>::OptionalValue $key;\n";
-            } else {
-                $result .= "    $nativeType $key;\n";
-            }
 
             # 5.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
@@ -1115,20 +1112,23 @@ sub GenerateDictionaryImplementationContent
                 AddToImplIncludes("JS${type}.h");
                 die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
                 my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
-                $result .= "        $key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
+                $result .= "        result.$key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
+                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             } elsif ($codeGenerator->IsDictionaryType($type)) {
                 my $nativeType = GetNativeType($interface, $type);
-                $result .= "        $key = convertDictionary<${nativeType}>(state, ${key}Value);\n";
+                $result .= "        Optional<${nativeType}> $key = convertDictionary<${nativeType}>(state, ${key}Value).value();\n";
+                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
+                $result .= "        result.$key = $key.value();\n";
             } else {
                 my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
-                $result .= "        $key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+                $result .= "        result.$key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             }
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             # Value is undefined.
             # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if ($member->isOptional && defined $member->default) {
                 $result .= "    } else\n";
-                $result .= "        $key = " . GenerateDefaultValue($interface, $member) . ";\n";
+                $result .= "        result.$key = " . GenerateDefaultValue($interface, $member) . ";\n";
             } elsif (!$member->isOptional) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
@@ -1139,23 +1139,9 @@ sub GenerateDictionaryImplementationContent
                 $result .= "    }\n";
             }
         }
-
-        # 6. Return dict.
-        foreach my $member (@{$dictionary->members}) {
-            my $value;
-            if ($codeGenerator->IsWrapperType($member->type) && !$member->isNullable) {
-                $value = "*" . $member->name;
-            } elsif ($codeGenerator->IsDictionaryType($member->type)) {
-                $value = $member->name . ".value()";
-            } else {
-                $value = "WTFMove(" . $member->name . ")";
-            }
-            $arguments .= $comma . $value;
-            $comma = ", ";
-        }
     }
 
-    $result .= "    return $className { " . $arguments . " };\n";
+    $result .= "    return WTFMove(result);\n";
     $result .= "}\n\n";
     $result .= "#endif\n\n" if $conditionalString;
 

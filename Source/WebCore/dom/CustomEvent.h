@@ -41,12 +41,7 @@ public:
         return adoptRef(*new CustomEvent(isTrusted));
     }
 
-    struct Init : public EventInit {
-        Init(bool bubbles, bool cancelable, bool composed, JSC::JSValue detail)
-            : EventInit(bubbles, cancelable, composed)
-            , detail(detail)
-        { }
-
+    struct Init : EventInit {
         JSC::JSValue detail;
     };
 

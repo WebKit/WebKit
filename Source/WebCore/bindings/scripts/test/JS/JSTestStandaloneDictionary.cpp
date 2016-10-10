@@ -40,19 +40,18 @@ template<> Optional<TestStandaloneDictionary> convertDictionary<TestStandaloneDi
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
+    TestStandaloneDictionary result;
     JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
-    Converter<bool>::OptionalValue boolMember;
     if (!boolMemberValue.isUndefined()) {
-        boolMember = convert<bool>(state, boolMemberValue);
+        result.boolMember = convert<bool>(state, boolMemberValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));
-    Converter<String>::OptionalValue stringMember;
     if (!stringMemberValue.isUndefined()) {
-        stringMember = convert<String>(state, stringMemberValue);
+        result.stringMember = convert<String>(state, stringMemberValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
-    return TestStandaloneDictionary { WTFMove(boolMember), WTFMove(stringMember) };
+    return WTFMove(result);
 }
 
 } // namespace WebCore

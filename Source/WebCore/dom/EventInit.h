@@ -28,13 +28,6 @@
 namespace WebCore {
 
 struct EventInit {
-    EventInit() = default;
-    EventInit(bool bubbles, bool cancelable, bool composed)
-        : bubbles(bubbles)
-        , cancelable(cancelable)
-        , composed(composed)
-    { }
-
     bool bubbles { false };
     bool cancelable { false };
     bool composed { false };

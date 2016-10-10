@@ -34,13 +34,7 @@ class ClipboardEvent final : public Event {
 public:
     virtual ~ClipboardEvent();
 
-    struct Init : public EventInit {
-        Init(bool bubbles, bool cancelable, bool composed, RefPtr<DataTransfer>&& clipboardData)
-            : EventInit(bubbles, cancelable, composed)
-            , clipboardData(WTFMove(clipboardData))
-        {
-        }
-
+    struct Init : EventInit {
         RefPtr<DataTransfer> clipboardData;
     };
 
