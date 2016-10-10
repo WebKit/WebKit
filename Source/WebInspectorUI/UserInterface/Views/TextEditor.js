@@ -497,9 +497,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             if (noHighlight)
                 return;
 
-            // Don't show blue line highlight when debugging.
-            // FIXME: This could be better, we could avoid highlight only when switching for active call frames switches.
-            if (WebInspector.debuggerManager.paused)
+            // Avoid highlighting the execution line while debugging.
+            if (WebInspector.debuggerManager.paused && (!this._executionLineNumber || line === this._executionLineNumber))
                 return;
 
             this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);

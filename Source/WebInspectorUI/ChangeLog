@@ -1,3 +1,15 @@
+2016-10-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Revealed line not highlighted in TextEditor while debugger paused
+        https://bugs.webkit.org/show_bug.cgi?id=163197
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.revealPosition.revealAndHighlightLine):
+        Avoid highlighting the execution line while debugging, but allow
+        other lines to be highlighted.
+
 2016-10-06  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Inspector exception in `parseTextForRule()` when pasting into CSS rule selector
