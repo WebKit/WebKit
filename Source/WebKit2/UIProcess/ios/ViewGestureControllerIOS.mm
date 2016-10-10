@@ -34,6 +34,7 @@
 #import "ViewSnapshotStore.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKWebViewInternal.h"
+#import "WeakObjCPtr.h"
 #import "WebBackForwardList.h"
 #import "WebPageGroup.h"
 #import "WebPageMessages.h"
@@ -140,11 +141,6 @@ void ViewGestureController::platformTeardown()
     [m_swipeInteractiveTransitionDelegate invalidate];
 }
 
-void ViewGestureController::setAlternateBackForwardListSourceView(WKWebView *view)
-{
-    m_alternateBackForwardListSourceView = view;
-}
-
 void ViewGestureController::installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView)
 {
     ASSERT(!m_swipeInteractiveTransitionDelegate);
@@ -159,7 +155,9 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     m_webPageProxy.recordAutomaticNavigationSnapshot();
 
-    m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
+    RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
+    m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : &m_webPageProxy;
+
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
     if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)
         m_webPageProxy.navigationGestureDidBegin();
@@ -237,14 +235,6 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     [transition startInteractiveTransition:m_swipeTransitionContext.get()];
 
     m_activeGestureType = ViewGestureType::Swipe;
-}
-
-bool ViewGestureController::canSwipeInDirection(SwipeDirection direction)
-{
-    auto& backForwardList = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page->backForwardList() : m_webPageProxy.backForwardList();
-    if (direction == SwipeDirection::Back)
-        return !!backForwardList.backItem();
-    return !!backForwardList.forwardItem();
 }
 
 void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *context, bool cancelled)

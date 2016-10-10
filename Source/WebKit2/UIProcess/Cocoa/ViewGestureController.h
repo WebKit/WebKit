@@ -28,22 +28,19 @@
 
 #include "MessageReceiver.h"
 #include "SameDocumentNavigationType.h"
-#include "WeakObjCPtr.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
 #include <chrono>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
-
-// FIXME: Move this file out of the mac/ subdirectory.
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS CALayer;
 
 #if PLATFORM(IOS)
 OBJC_CLASS UIView;
 OBJC_CLASS WKSwipeTransitionController;
-OBJC_CLASS WKWebView;
 OBJC_CLASS _UINavigationInteractiveTransitionBase;
 OBJC_CLASS _UIViewControllerOneToOneTransitionContext;
 OBJC_CLASS _UIViewControllerTransitionContext;
@@ -109,13 +106,15 @@ public:
     bool isPhysicallySwipingLeft(SwipeDirection) const;
 #else
     void installSwipeHandler(UIView *gestureRecognizerView, UIView *swipingView);
-    void setAlternateBackForwardListSourceView(WKWebView *);
-    bool canSwipeInDirection(SwipeDirection);
     void beginSwipeGesture(_UINavigationInteractiveTransitionBase *, SwipeDirection);
     void endSwipeGesture(WebBackForwardListItem* targetItem, _UIViewControllerTransitionContext *, bool cancelled);
     void willCommitPostSwipeTransitionLayerTree(bool);
     void setRenderTreeSize(uint64_t);
 #endif
+    
+    void setAlternateBackForwardListSourcePage(WebPageProxy*);
+    
+    bool canSwipeInDirection(SwipeDirection) const;
 
     WebCore::Color backgroundColorForCurrentSnapshot() const { return m_backgroundColorForCurrentSnapshot; }
 
@@ -202,7 +201,7 @@ private:
 
     class PendingSwipeTracker {
     public:
-        PendingSwipeTracker(WebPageProxy&, std::function<void(NSEvent *, SwipeDirection)> trackSwipeCallback);
+        PendingSwipeTracker(WebPageProxy&, ViewGestureController&);
         bool handleEvent(NSEvent *);
         void eventWasNotHandledByWebCore(NSEvent *);
 
@@ -227,7 +226,7 @@ private:
 
         bool m_shouldIgnorePinnedState { false };
 
-        std::function<void(NSEvent *, SwipeDirection)> m_trackSwipeCallback;
+        ViewGestureController& m_viewGestureController;
         WebPageProxy& m_webPageProxy;
     };
 #endif
@@ -238,6 +237,9 @@ private:
     RunLoop::Timer<ViewGestureController> m_swipeActiveLoadMonitoringTimer;
 
     WebCore::Color m_backgroundColorForCurrentSnapshot;
+    
+    WeakPtr<WebPageProxy> m_alternateBackForwardListSourcePage;
+    RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
 
 #if PLATFORM(MAC)
     RefPtr<ViewSnapshot> m_currentSwipeSnapshot;
@@ -277,8 +279,6 @@ private:
     RetainPtr<WKSwipeTransitionController> m_swipeInteractiveTransitionDelegate;
     RetainPtr<_UIViewControllerOneToOneTransitionContext> m_swipeTransitionContext;
     uint64_t m_snapshotRemovalTargetRenderTreeSize { 0 };
-    WeakObjCPtr<WKWebView> m_alternateBackForwardListSourceView;
-    RefPtr<WebPageProxy> m_webPageProxyForBackForwardListForCurrentSwipe;
     uint64_t m_gesturePendingSnapshotRemoval { 0 };
 #endif
 

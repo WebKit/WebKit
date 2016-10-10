@@ -2198,7 +2198,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         if (!_gestureController) {
             _gestureController = std::make_unique<WebKit::ViewGestureController>(*_page);
             _gestureController->installSwipeHandler(self, [self scrollView]);
-            _gestureController->setAlternateBackForwardListSourceView([_configuration _alternateWebViewForNavigationGestures]);
+            if (WKWebView *alternateWebView = [_configuration _alternateWebViewForNavigationGestures])
+                _gestureController->setAlternateBackForwardListSourcePage(alternateWebView->_page.get());
         }
     } else
         _gestureController = nullptr;
