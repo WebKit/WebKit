@@ -60,10 +60,10 @@ class IDBConnectionProxy {
 public:
     IDBConnectionProxy(IDBConnectionToServer&);
 
-    RefPtr<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
+    Ref<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
     void didOpenDatabase(const IDBResultData&);
 
-    RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
+    Ref<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&);
     void didDeleteDatabase(const IDBResultData&);
 
     void createObjectStore(TransactionOperation&, const IDBObjectStoreInfo&);

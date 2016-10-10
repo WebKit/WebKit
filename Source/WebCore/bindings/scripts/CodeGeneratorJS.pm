@@ -2896,8 +2896,7 @@ sub GenerateImplementation
             my $type = $attribute->signature->type;
             my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
             my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{ImplementedAs} || $name);
-            my $getterMayThrowLegacyExceptionWithMessage = $attribute->signature->extendedAttributes->{GetterMayThrowLegacyExceptionWithMessage};
-            my $getterMayThrowLegacyException = $attribute->signature->extendedAttributes->{GetterMayThrowLegacyException} || $getterMayThrowLegacyExceptionWithMessage;
+            my $getterMayThrowLegacyException = $attribute->signature->extendedAttributes->{GetterMayThrowLegacyException};
 
             $implIncludes{"ExceptionCode.h"} = 1 if $getterMayThrowLegacyException;
 
@@ -2938,11 +2937,7 @@ sub GenerateImplementation
             my @arguments = ();
             if ($getterMayThrowLegacyException && !HasCustomGetter($attribute->signature->extendedAttributes)) {
                 push(@arguments, "ec");
-                if ($getterMayThrowLegacyExceptionWithMessage) {
-                    push(@implContent, "    ExceptionCodeWithMessage ec;\n");
-                } else {
-                    push(@implContent, "    ExceptionCode ec = 0;\n");
-                }
+                push(@implContent, "    ExceptionCode ec = 0;\n");
             }
 
             # Global constructors can be disabled at runtime.
@@ -2983,7 +2978,7 @@ sub GenerateImplementation
 
                 my $nativeType = GetNativeType($interface, $type);
                 my $memoizedType = GetNativeTypeForMemoization($interface, $type);
-                my $exceptionCode = $getterMayThrowLegacyExceptionWithMessage ? "ec.code" : ($getterMayThrowLegacyException ? "ec" : "0");
+                my $exceptionCode = $getterMayThrowLegacyException ? "ec" : "0";
                 push(@implContent, "    static NeverDestroyed<const AtomicString> bindingName(\"$interfaceName.$name\", AtomicString::ConstructFromLiteral);\n");
                 push(@implContent, "    if (cursor.isCapturing()) {\n");
                 push(@implContent, "        $memoizedType memoizedResult = thisObject->wrapped().$implGetterFunctionName(" . join(", ", @arguments) . ");\n");
@@ -3032,7 +3027,7 @@ sub GenerateImplementation
                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{Conditional});
                     push(@implContent, "    return JS" . $constructorType . "::getConstructor(state->vm(), thisObject->globalObject());\n");
                 }
-            } elsif (!$attribute->signature->extendedAttributes->{GetterMayThrowLegacyException} && !$attribute->signature->extendedAttributes->{GetterMayThrowLegacyExceptionWithMessage}) {
+            } elsif (!$attribute->signature->extendedAttributes->{GetterMayThrowLegacyException}) {
                 my $cacheIndex = 0;
                 if ($attribute->signature->extendedAttributes->{CachedAttribute}) {
                     $cacheIndex = $currentCachedAttribute;
@@ -3199,8 +3194,7 @@ sub GenerateImplementation
             my $type = $attribute->signature->type;
             my $putFunctionName = GetAttributeSetterName($interface, $className, $attribute);
             my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
-            my $setterMayThrowLegacyExceptionWithMessage = $attribute->signature->extendedAttributes->{SetterMayThrowLegacyExceptionWithMessage};
-            my $setterMayThrowLegacyException = $attribute->signature->extendedAttributes->{SetterMayThrowLegacyException} || $setterMayThrowLegacyExceptionWithMessage;
+            my $setterMayThrowLegacyException = $attribute->signature->extendedAttributes->{SetterMayThrowLegacyException};
 
             $implIncludes{"ExceptionCode.h"} = 1 if $setterMayThrowLegacyException;
 
@@ -3293,11 +3287,8 @@ sub GenerateImplementation
                         push(@implContent, "    auto& impl = castedThis->wrapped();\n");
                     }
                 }
-                if ($setterMayThrowLegacyExceptionWithMessage) {
-                    push(@implContent, "    ExceptionCodeWithMessage ec;\n");
-                } elsif ($setterMayThrowLegacyException) {
-                    push(@implContent, "    ExceptionCode ec = 0;\n");
-                }
+
+                push(@implContent, "    ExceptionCode ec = 0;\n") if $setterMayThrowLegacyException;
 
                 my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
 
@@ -3348,10 +3339,7 @@ sub GenerateImplementation
                         push(@implContent, "    setDOMException(state, throwScope, ec);\n") if $setterMayThrowLegacyException;
                     }
                     if ($svgPropertyType) {
-                        if ($setterMayThrowLegacyExceptionWithMessage) {
-                            push(@implContent, "    if (LIKELY(!ec.code))\n");
-                            push(@implContent, "        impl.commitChange();\n");
-                        } elsif ($setterMayThrowLegacyException) {
+                        if ($setterMayThrowLegacyException) {
                             push(@implContent, "    if (LIKELY(!ec))\n");
                             push(@implContent, "        impl.commitChange();\n");
                         } else {
@@ -3449,10 +3437,7 @@ sub GenerateImplementation
             my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
             my $isOverloaded = $function->{overloads} && @{$function->{overloads}} > 1;
 
-            die "MayThrowLegacyException and MayThrowLegacyExceptionWithMessage are mutually exclusive" if $function->signature->extendedAttributes->{MayThrowLegacyException} && $function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage};
-
-            my $mayThrowLegacyExceptionWithMessage = $function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage};
-            my $mayThrowLegacyException = $function->signature->extendedAttributes->{MayThrowLegacyException} || $mayThrowLegacyExceptionWithMessage;
+            my $mayThrowLegacyException = $function->signature->extendedAttributes->{MayThrowLegacyException};
 
             next if $isCustom && $isOverloaded && $function->{overloadIndex} > 1;
 
@@ -3517,11 +3502,7 @@ END
                 } else {
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    if ($mayThrowLegacyExceptionWithMessage) {
-                        push(@implContent, "    ExceptionCodeWithMessage ec;\n");
-                    } elsif ($mayThrowLegacyException) {
-                        push(@implContent, "    ExceptionCode ec = 0;\n");
-                    }
+                    push(@implContent, "    ExceptionCode ec = 0;\n") if $mayThrowLegacyException;
 
                     my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
@@ -3563,11 +3544,7 @@ END
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
-                    if ($mayThrowLegacyExceptionWithMessage) {
-                        push(@implContent, "    ExceptionCodeWithMessage ec;\n");
-                    } elsif ($mayThrowLegacyException) {
-                        push(@implContent, "    ExceptionCode ec = 0;\n");
-                    }
+                    push(@implContent, "    ExceptionCode ec = 0;\n") if $mayThrowLegacyException;
 
                     if ($function->signature->extendedAttributes->{CheckSecurityForNode}) {
                         push(@implContent, "    if (!shouldAllowAccessToNode(state, impl." . $function->signature->name . "(" . ($mayThrowLegacyException ? "ec" : "") .")))\n");
@@ -4229,7 +4206,7 @@ sub GenerateReturnParameters
 
     my @arguments;
     push(@arguments, "WTFMove(promise)") if IsReturningPromise($function);
-    push(@arguments, "ec") if $function->signature->extendedAttributes->{MayThrowLegacyException} || $function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage};
+    push(@arguments, "ec") if $function->signature->extendedAttributes->{MayThrowLegacyException};
     return @arguments;
 }
 
@@ -4516,8 +4493,7 @@ sub GenerateImplementationFunctionCall()
     my ($function, $functionString, $indent, $svgPropertyType, $interface) = @_;
 
     my $nondeterministic = $function->signature->extendedAttributes->{Nondeterministic};
-    my $mayThrowLegacyExceptionWithMessage = $function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage};
-    my $mayThrowLegacyException = $function->signature->extendedAttributes->{MayThrowLegacyException} || $mayThrowLegacyExceptionWithMessage;
+    my $mayThrowLegacyException = $function->signature->extendedAttributes->{MayThrowLegacyException};
 
     if ($function->signature->type eq "void" || IsReturningPromise($function)) {
         if ($nondeterministic) {
@@ -4538,10 +4514,7 @@ sub GenerateImplementationFunctionCall()
         }
 
         if ($svgPropertyType and !$function->isStatic) {
-            if ($mayThrowLegacyExceptionWithMessage) {
-                push(@implContent, $indent . "if (LIKELY(!ec.code))\n");
-                push(@implContent, $indent . "    impl.commitChange();\n");
-            } elsif ($mayThrowLegacyException) {
+            if ($mayThrowLegacyException) {
                 push(@implContent, $indent . "if (LIKELY(!ec))\n");
                 push(@implContent, $indent . "    impl.commitChange();\n");
             } else {
@@ -4566,7 +4539,7 @@ sub GenerateImplementationFunctionCall()
             push(@implContent, $indent . "static NeverDestroyed<const AtomicString> bindingName(\"$bindingName\", AtomicString::ConstructFromLiteral);\n");
             push(@implContent, $indent . "if (cursor.isCapturing()) {\n");
             push(@implContent, $indent . "    $nativeType memoizedResult = $functionString;\n");
-            my $exceptionCode = $mayThrowLegacyExceptionWithMessage ? "ec.code" : ($mayThrowLegacyException ? "ec" : "0");
+            my $exceptionCode = $mayThrowLegacyException ? "ec" : "0";
             push(@implContent, $indent . "    cursor.appendInput<MemoizedDOMResult<$memoizedType>>(bindingName.get().string(), memoizedResult, $exceptionCode);\n");
             push(@implContent, $indent . "    result = " . NativeToJSValue($function->signature, 1, $interface, "memoizedResult", $thisObject) . ";\n");
             push(@implContent, $indent . "} else if (cursor.isReplaying()) {\n");
@@ -4575,8 +4548,7 @@ sub GenerateImplementationFunctionCall()
             # FIXME: the generated code should report an error if an input cannot be fetched or converted.
             push(@implContent, $indent . "    if (input && input->convertTo<$memoizedType>(memoizedResult)) {\n");
             push(@implContent, $indent . "        result = " . NativeToJSValue($function->signature, 1, $interface, "memoizedResult", $thisObject) . ";\n");
-            push(@implContent, $indent . "        ec.code = input->exceptionCode();\n") if $mayThrowLegacyExceptionWithMessage;
-            push(@implContent, $indent . "        ec = input->exceptionCode();\n") if $mayThrowLegacyException && !$mayThrowLegacyExceptionWithMessage;
+            push(@implContent, $indent . "        ec = input->exceptionCode();\n") if $mayThrowLegacyException;
             push(@implContent, $indent . "    } else\n");
             push(@implContent, $indent . "        result = " . NativeToJSValue($function->signature, 1, $interface, $functionString, $thisObject) . ";\n");
             push(@implContent, $indent . "} else\n");
@@ -5506,13 +5478,9 @@ END
 
             GenerateArgumentsCountCheck($outputArray, $function, $interface);
 
-            if ($function->signature->extendedAttributes->{MayThrowLegacyException} || $function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage} || $interface->extendedAttributes->{ConstructorMayThrowLegacyException}) {
+            if ($function->signature->extendedAttributes->{MayThrowLegacyException} || $interface->extendedAttributes->{ConstructorMayThrowLegacyException}) {
                 $implIncludes{"ExceptionCode.h"} = 1;
-                if ($function->signature->extendedAttributes->{MayThrowLegacyExceptionWithMessage}) {
-                    push(@$outputArray, "    ExceptionCodeWithMessage ec;\n");
-                } else {
-                    push(@$outputArray, "    ExceptionCode ec = 0;\n");
-                }
+                push(@$outputArray, "    ExceptionCode ec = 0;\n");
             }
 
             # FIXME: For now, we do not support SVG constructors.

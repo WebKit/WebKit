@@ -153,13 +153,10 @@ enum TestConfidence { "high", "kinda-low" };
     [MayThrowException] long methodWithExceptionReturningLong();
     [MayThrowException] TestObj methodWithExceptionReturningObject();
     [MayThrowLegacyException] void methodWithLegacyException();
-    [MayThrowLegacyExceptionWithMessage] void methodWithExceptionWithMessage();
     [GetterMayThrowException] attribute long attributeWithGetterException;
     [GetterMayThrowLegacyException] attribute long attributeWithGetterLegacyException;
-    [GetterMayThrowLegacyExceptionWithMessage] attribute long attrWithGetterExceptionWithMessage;
     [SetterMayThrowException] attribute long attributeWithSetterException;
     [SetterMayThrowLegacyException] attribute long attributeWithSetterLegacyException;
-    [SetterMayThrowLegacyExceptionWithMessage] attribute long attrWithSetterExceptionWithMessage;
     [GetterMayThrowLegacyException] attribute DOMString stringAttrWithGetterException;
     [SetterMayThrowLegacyException] attribute DOMString stringAttrWithSetterException;
 

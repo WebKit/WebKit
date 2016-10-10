@@ -28,11 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaEndpointSessionDescription_h
-#define MediaEndpointSessionDescription_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
+#include "ExceptionOr.h"
 #include "RTCSessionDescription.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,8 +46,8 @@ class DOMError;
 class MediaEndpointSessionDescription : public RefCounted<MediaEndpointSessionDescription> {
 public:
     static Ref<MediaEndpointSessionDescription> create(RTCSessionDescription::SdpType, RefPtr<MediaEndpointSessionConfiguration>&&);
-    static RefPtr<MediaEndpointSessionDescription> create(RefPtr<RTCSessionDescription>&&, const SDPProcessor&, ExceptionCodeWithMessage&);
-    virtual ~MediaEndpointSessionDescription() { }
+    static ExceptionOr<Ref<MediaEndpointSessionDescription>> create(RefPtr<RTCSessionDescription>&&, const SDPProcessor&);
+    virtual ~MediaEndpointSessionDescription() { } // FIXME: Why is this virtual? There are no other virtual functions in this class.
 
     RefPtr<RTCSessionDescription> toRTCSessionDescription(const SDPProcessor&) const;
 
@@ -73,5 +73,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MediaEndpointSessionDescription_h

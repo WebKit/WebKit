@@ -23,30 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef History_h
-#define History_h
+#pragma once
 
 #include "DOMWindowProperty.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
-#include "URL.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class Document;
 class Frame;
-struct ExceptionCodeWithMessage;
-typedef int ExceptionCode;
+class URL;
 
-class History : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
+class History final : public ScriptWrappable, public RefCounted<History>, public DOMWindowProperty {
 public:
-    static Ref<History> create(Frame* frame) { return adoptRef(*new History(frame)); }
+    static Ref<History> create(Frame& frame) { return adoptRef(*new History(frame)); }
 
     unsigned length() const;
-    PassRefPtr<SerializedScriptValue> state();
+    SerializedScriptValue* state();
     void back();
     void forward();
     void go(int);
@@ -58,18 +53,15 @@ public:
     bool stateChanged() const;
     bool isSameAsCurrentState(SerializedScriptValue*) const;
 
-    enum class StateObjectType {
-        Push,
-        Replace
-    };
-    void stateObjectAdded(PassRefPtr<SerializedScriptValue>, const String& title, const String& url, StateObjectType, ExceptionCodeWithMessage&);
+    enum class StateObjectType { Push, Replace };
+    ExceptionOr<void> stateObjectAdded(RefPtr<SerializedScriptValue>&&, const String& title, const String& url, StateObjectType);
 
 private:
-    explicit History(Frame*);
+    explicit History(Frame&);
 
     URL urlForState(const String& url);
 
-    PassRefPtr<SerializedScriptValue> stateInternal() const;
+    SerializedScriptValue* stateInternal() const;
 
     RefPtr<SerializedScriptValue> m_lastStateObjectRequested;
 
@@ -84,5 +76,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // History_h

@@ -33,8 +33,8 @@
     readonly attribute boolean lowerOpen;
     readonly attribute boolean upperOpen;
 
-    [CallWith=ScriptState, MayThrowLegacyException] static IDBKeyRange only(any value);
-    [CallWith=ScriptState, MayThrowLegacyException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
-    [CallWith=ScriptState, MayThrowLegacyException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
-    [CallWith=ScriptState, MayThrowLegacyException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
+    [CallWith=ScriptState, MayThrowException] static IDBKeyRange only(any value);
+    [CallWith=ScriptState, MayThrowException] static IDBKeyRange lowerBound(any lower, optional boolean open = false);
+    [CallWith=ScriptState, MayThrowException] static IDBKeyRange upperBound(any upper, optional boolean open = false);
+    [CallWith=ScriptState, MayThrowException] static IDBKeyRange bound(any lower, any upper, optional boolean lowerOpen = false, optional boolean upperOpen = false);
 };

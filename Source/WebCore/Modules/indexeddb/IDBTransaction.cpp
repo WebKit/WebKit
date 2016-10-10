@@ -88,16 +88,14 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
     return readwrite;
 }
 
-IndexedDB::TransactionMode IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
+Optional<IndexedDB::TransactionMode> IDBTransaction::stringToMode(const String& modeString)
 {
-    if (modeString.isNull()
-        || modeString == IDBTransaction::modeReadOnly())
+    if (modeString.isNull() || modeString == IDBTransaction::modeReadOnly())
         return IndexedDB::TransactionMode::ReadOnly;
     if (modeString == IDBTransaction::modeReadWrite())
         return IndexedDB::TransactionMode::ReadWrite;
 
-    ec = TypeError;
-    return IndexedDB::TransactionMode::ReadOnly;
+    return Nullopt;
 }
 
 const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode)
@@ -186,35 +184,32 @@ const String& IDBTransaction::mode() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-WebCore::IDBDatabase* IDBTransaction::db()
+IDBDatabase* IDBTransaction::db()
 {
     ASSERT(currentThread() == m_database->originThreadID());
-    return &m_database.get();
+    return m_database.ptr();
 }
 
-RefPtr<DOMError> IDBTransaction::error() const
+DOMError* IDBTransaction::error() const
 {
     ASSERT(currentThread() == m_database->originThreadID());
-    return m_domError;
+    return m_domError.get();
 }
 
-RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& objectStoreName, ExceptionCodeWithMessage& ec)
+ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objectStoreName)
 {
     LOG(IndexedDB, "IDBTransaction::objectStore");
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (!scriptExecutionContext())
-        return nullptr;
+        return Exception { IDBDatabaseException::InvalidStateError };
 
-    if (isFinishedOrFinishing()) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.");
-        return nullptr;
-    }
+    if (isFinishedOrFinishing())
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.") };
 
     auto iterator = m_referencedObjectStores.find(objectStoreName);
     if (iterator != m_referencedObjectStores.end())
-        return iterator->value;
+        return Ref<IDBObjectStore> { *iterator->value };
 
     bool found = false;
     for (auto& objectStore : m_info.objectStores()) {
@@ -225,23 +220,17 @@ RefPtr<WebCore::IDBObjectStore> IDBTransaction::objectStore(const String& object
     }
 
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
-    if (!info) {
-        ec.code = IDBDatabaseException::NotFoundError;
-        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.");
-        return nullptr;
-    }
+    if (!info)
+        return Exception { IDBDatabaseException::NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     // Version change transactions are scoped to every object store in the database.
-    if (!info || (!found && !isVersionChange())) {
-        ec.code = IDBDatabaseException::NotFoundError;
-        ec.message = ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.");
-        return nullptr;
-    }
+    if (!info || (!found && !isVersionChange()))
+        return Exception { IDBDatabaseException::NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     auto objectStore = IDBObjectStore::create(*scriptExecutionContext(), *info, *this);
-    m_referencedObjectStores.set(objectStoreName, &objectStore.get());
+    m_referencedObjectStores.set(objectStoreName, objectStore.ptr());
 
-    return adoptRef(&objectStore.leakRef());
+    return WTFMove(objectStore);
 }
 
 
@@ -254,8 +243,7 @@ void IDBTransaction::abortDueToFailedRequest(DOMError& error)
         return;
 
     m_domError = &error;
-    ExceptionCodeWithMessage ec;
-    abort(ec);
+    internalAbort();
 }
 
 void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
@@ -268,16 +256,24 @@ void IDBTransaction::transitionedToFinishing(IndexedDB::TransactionState state)
     m_referencedObjectStores.clear();
 }
 
-void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
+ExceptionOr<void> IDBTransaction::abort()
 {
     LOG(IndexedDB, "IDBTransaction::abort");
     ASSERT(currentThread() == m_database->originThreadID());
 
-    if (isFinishedOrFinishing()) {
-        ec.code = IDBDatabaseException::InvalidStateError;
-        ec.message = ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.");
-        return;
-    }
+    if (isFinishedOrFinishing())
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.") };
+
+    internalAbort();
+
+    return { };
+}
+
+void IDBTransaction::internalAbort()
+{
+    LOG(IndexedDB, "IDBTransaction::internalAbort");
+    ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT(!isFinishedOrFinishing());
 
     m_database->willAbortTransaction(*this);
 
@@ -290,8 +286,7 @@ void IDBTransaction::abort(ExceptionCodeWithMessage& ec)
     
     m_abortQueue.swap(m_transactionOperationQueue);
 
-    auto operation = IDBClient::createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServerAndCancelRequests);
-    scheduleOperation(WTFMove(operation));
+    scheduleOperation(IDBClient::createTransactionOperation(*this, nullptr, &IDBTransaction::abortOnServerAndCancelRequests));
 }
 
 void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperation& operation)
@@ -348,8 +343,7 @@ void IDBTransaction::stop()
     if (isFinishedOrFinishing())
         return;
 
-    ExceptionCodeWithMessage ec;
-    abort(ec);
+    internalAbort();
 }
 
 bool IDBTransaction::isActive() const

@@ -322,12 +322,12 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
     if (m_client->internalSignalingState() == SignalingState::Closed)
         return;
 
-    ExceptionCodeWithMessage exception;
-    auto newDescription = MediaEndpointSessionDescription::create(WTFMove(description), *m_sdpProcessor, exception);
-    if (exception.code) {
-        promise.reject(exception.code, exception.message);
+    auto result = MediaEndpointSessionDescription::create(WTFMove(description), *m_sdpProcessor);
+    if (result.hasException()) {
+        promise.reject(result.releaseException());
         return;
     }
+    auto newDescription = result.releaseReturnValue();
 
     if (!localDescriptionTypeValidForState(newDescription->type())) {
         promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
@@ -389,12 +389,12 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
     // Update state and local descriptions according to setLocal/RemoteDescription processing model
     switch (newDescription->type()) {
     case RTCSessionDescription::SdpType::Offer:
-        m_pendingLocalDescription = newDescription;
+        m_pendingLocalDescription = WTFMove(newDescription);
         newSignalingState = SignalingState::HaveLocalOffer;
         break;
 
     case RTCSessionDescription::SdpType::Answer:
-        m_currentLocalDescription = newDescription;
+        m_currentLocalDescription = WTFMove(newDescription);
         m_currentRemoteDescription = m_pendingRemoteDescription;
         m_pendingLocalDescription = nullptr;
         m_pendingRemoteDescription = nullptr;
@@ -407,7 +407,7 @@ void MediaEndpointPeerConnection::setLocalDescriptionTask(RefPtr<RTCSessionDescr
         break;
 
     case RTCSessionDescription::SdpType::Pranswer:
-        m_pendingLocalDescription = newDescription;
+        m_pendingLocalDescription = WTFMove(newDescription);
         newSignalingState = SignalingState::HaveLocalPrAnswer;
         break;
     }
@@ -453,12 +453,12 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
     if (m_client->internalSignalingState() == SignalingState::Closed)
         return;
 
-    ExceptionCodeWithMessage exception;
-    auto newDescription = MediaEndpointSessionDescription::create(WTFMove(description), *m_sdpProcessor, exception);
-    if (exception.code) {
-        promise.reject(exception.code, exception.message);
+    auto result = MediaEndpointSessionDescription::create(WTFMove(description), *m_sdpProcessor);
+    if (result.hasException()) {
+        promise.reject(result.releaseException());
         return;
     }
+    auto newDescription = result.releaseReturnValue();
 
     if (!remoteDescriptionTypeValidForState(newDescription->type())) {
         promise.reject(INVALID_STATE_ERR, "Description type incompatible with current signaling state");
@@ -564,12 +564,12 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
     // Update state and local descriptions according to setLocal/RemoteDescription processing model
     switch (newDescription->type()) {
     case RTCSessionDescription::SdpType::Offer:
-        m_pendingRemoteDescription = newDescription;
+        m_pendingRemoteDescription = WTFMove(newDescription);
         newSignalingState = SignalingState::HaveRemoteOffer;
         break;
 
     case RTCSessionDescription::SdpType::Answer:
-        m_currentRemoteDescription = newDescription;
+        m_currentRemoteDescription = WTFMove(newDescription);
         m_currentLocalDescription = m_pendingLocalDescription;
         m_pendingRemoteDescription = nullptr;
         m_pendingLocalDescription = nullptr;
@@ -582,7 +582,7 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
         break;
 
     case RTCSessionDescription::SdpType::Pranswer:
-        m_pendingRemoteDescription = newDescription;
+        m_pendingRemoteDescription = WTFMove(newDescription);
         newSignalingState = SignalingState::HaveRemotePrAnswer;
         break;
     }

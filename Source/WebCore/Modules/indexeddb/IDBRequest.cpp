@@ -126,23 +126,14 @@ IDBRequest::~IDBRequest()
         m_cursorResult->clearRequest();
 }
 
-unsigned short IDBRequest::errorCode(ExceptionCode&) const
+ExceptionOr<DOMError*> IDBRequest::error() const
 {
     ASSERT(currentThread() == originThreadID());
 
-    return 0;
-}
+    if (!m_isDone)
+        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.") };
 
-RefPtr<DOMError> IDBRequest::error(ExceptionCodeWithMessage& ec) const
-{
-    ASSERT(currentThread() == originThreadID());
-
-    if (m_isDone)
-        return m_domError;
-
-    ec.code = IDBDatabaseException::InvalidStateError;
-    ec.message = ASCIILiteral("Failed to read the 'error' property from 'IDBRequest': The request has not finished.");
-    return nullptr;
+    return m_domError.get();
 }
 
 void IDBRequest::setSource(IDBCursor& cursor)

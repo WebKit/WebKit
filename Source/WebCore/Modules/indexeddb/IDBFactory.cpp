@@ -76,82 +76,59 @@ IDBFactory::~IDBFactory()
 {
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<uint64_t> version, ExceptionCodeWithMessage& ec)
+ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::open(ScriptExecutionContext& context, const String& name, Optional<uint64_t> version)
 {
     LOG(IndexedDB, "IDBFactory::open");
     
-    if (version && !version.value()) {
-        ec.code = TypeError;
-        ec.message = ASCIILiteral("IDBFactory.open() called with a version of 0");
-        return nullptr;
-    }
+    if (version && !version.value())
+        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with a version of 0") };
 
-    return openInternal(context, name, version.valueOr(0), ec);
+    return openInternal(context, name, version.valueOr(0));
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version, ExceptionCodeWithMessage& ec)
+ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::openInternal(ScriptExecutionContext& context, const String& name, unsigned long long version)
 {
-    if (name.isNull()) {
-        ec.code = TypeError;
-        ec.message = ASCIILiteral("IDBFactory.open() called without a database name");
-        return nullptr;
-    }
+    if (name.isNull())
+        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called without a database name") };
 
-    if (shouldThrowSecurityException(context)) {
-        ec.code = SECURITY_ERR;
-        ec.message = ASCIILiteral("IDBFactory.open() called in an invalid security context");
-        return nullptr;
-    }
+    if (shouldThrowSecurityException(context))
+        return Exception { SECURITY_ERR, ASCIILiteral("IDBFactory.open() called in an invalid security context") };
 
     ASSERT(context.securityOrigin());
     ASSERT(context.topOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, *context.securityOrigin(), *context.topOrigin());
-    if (!databaseIdentifier.isValid()) {
-        ec.code = TypeError;
-        ec.message = ASCIILiteral("IDBFactory.open() called with an invalid security origin");
-        return nullptr;
-    }
+    if (!databaseIdentifier.isValid())
+        return Exception { TypeError, ASCIILiteral("IDBFactory.open() called with an invalid security origin") };
 
     return m_connectionProxy->openDatabase(context, databaseIdentifier, version);
 }
 
-RefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name, ExceptionCodeWithMessage& ec)
+ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionContext& context, const String& name)
 {
     LOG(IndexedDB, "IDBFactory::deleteDatabase - %s", name.utf8().data());
 
-    if (name.isNull()) {
-        ec.code = TypeError;
-        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called without a database name");
-    }
-    
-    if (shouldThrowSecurityException(context)) {
-        ec.code = SECURITY_ERR;
-        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called in an invalid security context");
-        return nullptr;
-    }
+    if (name.isNull())
+        return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called without a database name") };
+
+    if (shouldThrowSecurityException(context))
+        return Exception { SECURITY_ERR, ASCIILiteral("IDBFactory.deleteDatabase() called in an invalid security context") };
 
     ASSERT(context.securityOrigin());
     ASSERT(context.topOrigin());
     IDBDatabaseIdentifier databaseIdentifier(name, *context.securityOrigin(), *context.topOrigin());
-    if (!databaseIdentifier.isValid()) {
-        ec.code = TypeError;
-        ec.message = ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin");
-        return nullptr;
-    }
+    if (!databaseIdentifier.isValid())
+        return Exception { TypeError, ASCIILiteral("IDBFactory.deleteDatabase() called with an invalid security origin") };
 
     return m_connectionProxy->deleteDatabase(context, databaseIdentifier);
 }
 
-short IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSValue secondValue, ExceptionCodeWithMessage& ec)
+ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSValue secondValue)
 {
-    Ref<IDBKey> first = scriptValueToIDBKey(execState, firstValue);
-    Ref<IDBKey> second = scriptValueToIDBKey(execState, secondValue);
+    auto first = scriptValueToIDBKey(execState, firstValue);
+    auto second = scriptValueToIDBKey(execState, secondValue);
 
-    if (!first->isValid() || !second->isValid()) {
-        ec.code = IDBDatabaseException::DataError;
-        ec.message = ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.");
-        return 0;
-    }
+    if (!first->isValid() || !second->isValid())
+        return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.") };
 
     return first->compare(second.get());
 }

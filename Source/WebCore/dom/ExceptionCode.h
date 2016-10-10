@@ -16,10 +16,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef ExceptionCode_h
-#define ExceptionCode_h
-
-#include <wtf/text/WTFString.h>
+#pragma once
 
 namespace WebCore {
 
@@ -27,8 +24,7 @@ namespace WebCore {
 // In our DOM implementation we use int instead, and use different
 // numerical ranges for different types of DOM exception, so that
 // an exception of any type can be expressed with a single integer.
-typedef int ExceptionCode;
-
+using ExceptionCode = int;
 
 // Some of these are considered historical since they have been
 // changed or removed from the specifications.
@@ -82,11 +78,4 @@ enum {
     RangeError = 106,
 };
 
-struct ExceptionCodeWithMessage {
-    ExceptionCode code { 0 };
-    String message;
-};
-
 } // namespace WebCore
-
-#endif // ExceptionCode_h

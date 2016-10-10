@@ -53,19 +53,19 @@ public:
     bool unique() const;
     bool multiEntry() const;
 
-    RefPtr<IDBRequest> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
 
-    RefPtr<IDBRequest> count(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> count(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, JSC::JSValue key);
 
-    RefPtr<IDBRequest> openKeyCursor(JSC::ExecState&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> openKeyCursor(JSC::ExecState&, JSC::JSValue key, const String& direction, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
+    ExceptionOr<Ref<IDBRequest>> openKeyCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
 
-    RefPtr<IDBRequest> get(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> get(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> getKey(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> getKey(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> getKey(JSC::ExecState&, JSC::JSValue key);
 
     const IDBIndexInfo& info() const { return m_info; }
 
@@ -78,9 +78,9 @@ public:
     void* objectStoreAsOpaqueRoot() { return &m_objectStore; }
 
 private:
-    RefPtr<IDBRequest> doCount(JSC::ExecState&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> doGet(JSC::ExecState&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> doGetKey(JSC::ExecState&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> doCount(JSC::ExecState&, const IDBKeyRangeData&);
+    ExceptionOr<Ref<IDBRequest>> doGet(JSC::ExecState&, const IDBKeyRangeData&);
+    ExceptionOr<Ref<IDBRequest>> doGetKey(JSC::ExecState&, const IDBKeyRangeData&);
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;

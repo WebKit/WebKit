@@ -866,7 +866,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningLong(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningObject(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithLegacyException(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMessage(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(JSC::ExecState*);
@@ -1061,14 +1060,10 @@ JSC::EncodedJSValue jsTestObjAttributeWithGetterException(JSC::ExecState*, JSC::
 bool setJSTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttributeWithGetterLegacyException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithGetterLegacyException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjAttrWithGetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjAttrWithGetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttributeWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttributeWithSetterLegacyException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithSetterLegacyException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjAttrWithSetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjAttrWithSetterExceptionWithMessage(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1378,10 +1373,8 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "typedArrayAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTypedArrayAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTypedArrayAttr) } },
     { "attributeWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithGetterException) } },
     { "attributeWithGetterLegacyException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithGetterLegacyException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithGetterLegacyException) } },
-    { "attrWithGetterExceptionWithMessage", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithGetterExceptionWithMessage), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithGetterExceptionWithMessage) } },
     { "attributeWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithSetterException) } },
     { "attributeWithSetterLegacyException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithSetterLegacyException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithSetterLegacyException) } },
-    { "attrWithSetterExceptionWithMessage", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttrWithSetterExceptionWithMessage), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttrWithSetterExceptionWithMessage) } },
     { "stringAttrWithGetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) } },
     { "stringAttrWithSetterException", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithSetterException) } },
     { "customAttr", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
@@ -1478,7 +1471,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithExceptionReturningLong", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithExceptionReturningLong), (intptr_t) (0) } },
     { "methodWithExceptionReturningObject", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithExceptionReturningObject), (intptr_t) (0) } },
     { "methodWithLegacyException", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithLegacyException), (intptr_t) (0) } },
-    { "methodWithExceptionWithMessage", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithExceptionWithMessage), (intptr_t) (0) } },
     { "customMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethod), (intptr_t) (0) } },
     { "customMethodWithArgs", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionCustomMethodWithArgs), (intptr_t) (3) } },
 #if ENABLE(Condition3)
@@ -2391,24 +2383,6 @@ static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecStat
     return result;
 }
 
-static inline JSValue jsTestObjAttrWithGetterExceptionWithMessageGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
-
-EncodedJSValue jsTestObjAttrWithGetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return BindingCaller<JSTestObj>::attribute<jsTestObjAttrWithGetterExceptionWithMessageGetter>(state, thisValue, "attrWithGetterExceptionWithMessage");
-}
-
-static inline JSValue jsTestObjAttrWithGetterExceptionWithMessageGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    ExceptionCodeWithMessage ec;
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsNumber(impl.attrWithGetterExceptionWithMessage(ec));
-    setDOMException(state, throwScope, ec);
-    return result;
-}
-
 static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
@@ -2438,22 +2412,6 @@ static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecStat
     UNUSED_PARAM(state);
     auto& impl = thisObject->wrapped();
     JSValue result = jsNumber(impl.attributeWithSetterLegacyException());
-    return result;
-}
-
-static inline JSValue jsTestObjAttrWithSetterExceptionWithMessageGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
-
-EncodedJSValue jsTestObjAttrWithSetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return BindingCaller<JSTestObj>::attribute<jsTestObjAttrWithSetterExceptionWithMessageGetter>(state, thisValue, "attrWithSetterExceptionWithMessage");
-}
-
-static inline JSValue jsTestObjAttrWithSetterExceptionWithMessageGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsNumber(impl.attrWithSetterExceptionWithMessage());
     return result;
 }
 
@@ -3920,24 +3878,6 @@ bool setJSTestObjAttributeWithGetterLegacyException(ExecState* state, EncodedJSV
 }
 
 
-bool setJSTestObjAttrWithGetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestObject", "attrWithGetterExceptionWithMessage");
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttrWithGetterExceptionWithMessage(WTFMove(nativeValue));
-    return true;
-}
-
-
 bool setJSTestObjAttributeWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     VM& vm = state->vm();
@@ -3971,26 +3911,6 @@ bool setJSTestObjAttributeWithSetterLegacyException(ExecState* state, EncodedJSV
     auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithSetterLegacyException(WTFMove(nativeValue), ec);
-    setDOMException(state, throwScope, ec);
-    return true;
-}
-
-
-bool setJSTestObjAttrWithSetterExceptionWithMessage(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    JSValue value = JSValue::decode(encodedValue);
-    UNUSED_PARAM(thisValue);
-    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
-    if (UNLIKELY(!castedThis))
-        return throwSetterTypeError(*state, throwScope, "TestObject", "attrWithSetterExceptionWithMessage");
-    auto& impl = castedThis->wrapped();
-    ExceptionCodeWithMessage ec;
-    auto nativeValue = convert<int32_t>(*state, value, NormalConversion);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttrWithSetterExceptionWithMessage(WTFMove(nativeValue), ec);
     setDOMException(state, throwScope, ec);
     return true;
 }
@@ -5277,23 +5197,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithLegacyException
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.methodWithLegacyException(ec);
-    setDOMException(state, throwScope, ec);
-    return JSValue::encode(jsUndefined());
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionWithMessage(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithExceptionWithMessage");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    auto& impl = castedThis->wrapped();
-    ExceptionCodeWithMessage ec;
-    impl.methodWithExceptionWithMessage(ec);
     setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }

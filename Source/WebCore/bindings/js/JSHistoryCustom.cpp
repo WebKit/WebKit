@@ -75,9 +75,7 @@ JSValue JSHistory::pushState(ExecState& state)
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
-    ExceptionCodeWithMessage ec;
-    wrapped().stateObjectAdded(WTFMove(historyState), title, url, History::StateObjectType::Push, ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, wrapped().stateObjectAdded(WTFMove(historyState), title, url, History::StateObjectType::Push));
 
     m_state.clear();
 
@@ -106,9 +104,7 @@ JSValue JSHistory::replaceState(ExecState& state)
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
-    ExceptionCodeWithMessage ec;
-    wrapped().stateObjectAdded(WTFMove(historyState), title, url, History::StateObjectType::Replace, ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, wrapped().stateObjectAdded(WTFMove(historyState), title, url, History::StateObjectType::Replace));
 
     m_state.clear();
 

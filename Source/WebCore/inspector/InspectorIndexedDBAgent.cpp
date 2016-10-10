@@ -106,19 +106,17 @@ private:
 
 class OpenDatabaseCallback final : public EventListener {
 public:
-    static Ref<OpenDatabaseCallback> create(ExecutableWithDatabase* executableWithDatabase)
+    static Ref<OpenDatabaseCallback> create(ExecutableWithDatabase& executableWithDatabase)
     {
         return adoptRef(*new OpenDatabaseCallback(executableWithDatabase));
     }
 
-    virtual ~OpenDatabaseCallback() { }
-
-    bool operator==(const EventListener& other) const override
+    bool operator==(const EventListener& other) const final
     {
         return this == &other;
     }
 
-    void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext*, Event* event) final
     {
         if (event->type() != eventNames().successEvent) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected event type.");
@@ -141,10 +139,10 @@ public:
     }
 
 private:
-    OpenDatabaseCallback(ExecutableWithDatabase* executableWithDatabase)
+    OpenDatabaseCallback(ExecutableWithDatabase& executableWithDatabase)
         : EventListener(EventListener::CPPEventListenerType)
         , m_executableWithDatabase(executableWithDatabase) { }
-    RefPtr<ExecutableWithDatabase> m_executableWithDatabase;
+    Ref<ExecutableWithDatabase> m_executableWithDatabase;
 };
 
 void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, const String& databaseName)
@@ -154,15 +152,13 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    ExceptionCodeWithMessage ec;
-    RefPtr<IDBOpenDBRequest> idbOpenDBRequest = idbFactory->open(*context(), databaseName, Nullopt, ec);
-    if (ec.code) {
+    auto result = idbFactory->open(*context(), databaseName, Nullopt);
+    if (result.hasException()) {
         requestCallback().sendFailure("Could not open database.");
         return;
     }
 
-    Ref<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
-    idbOpenDBRequest->addEventListener(eventNames().successEvent, WTFMove(callback), false);
+    result.releaseReturnValue()->addEventListener(eventNames().successEvent, OpenDatabaseCallback::create(*this), false);
 }
 
 
@@ -203,29 +199,26 @@ static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
 
 static RefPtr<IDBTransaction> transactionForDatabase(IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())
 {
-    ExceptionCodeWithMessage ec;
-    RefPtr<IDBTransaction> idbTransaction = idbDatabase->transaction(objectStoreName, mode, ec);
-    if (ec.code)
+    auto result = idbDatabase->transaction(objectStoreName, mode);
+    if (result.hasException())
         return nullptr;
-    return idbTransaction;
+    return result.releaseReturnValue();
 }
 
 static RefPtr<IDBObjectStore> objectStoreForTransaction(IDBTransaction* idbTransaction, const String& objectStoreName)
 {
-    ExceptionCodeWithMessage ec;
-    RefPtr<IDBObjectStore> idbObjectStore = idbTransaction->objectStore(objectStoreName, ec);
-    if (ec.code)
+    auto result = idbTransaction->objectStore(objectStoreName);
+    if (result.hasException())
         return nullptr;
-    return idbObjectStore;
+    return result.releaseReturnValue();
 }
 
 static RefPtr<IDBIndex> indexForObjectStore(IDBObjectStore* idbObjectStore, const String& indexName)
 {
-    ExceptionCodeWithMessage ec;
-    RefPtr<IDBIndex> idbIndex = idbObjectStore->index(indexName, ec);
-    if (ec.code)
+    auto index = idbObjectStore->index(indexName);
+    if (index.hasException())
         return nullptr;
-    return idbIndex;
+    return index.releaseReturnValue();
 }
 
 class DatabaseLoader final : public ExecutableWithDatabase {
@@ -253,7 +246,7 @@ public:
             auto indexes = Inspector::Protocol::Array<Inspector::Protocol::IndexedDB::ObjectStoreIndex>::create();
     
             for (auto& indexInfo : objectStoreInfo->indexMap().values()) {
-                Ref<ObjectStoreIndex> objectStoreIndex = ObjectStoreIndex::create()
+                auto objectStoreIndex = ObjectStoreIndex::create()
                     .setName(indexInfo.name())
                     .setKeyPath(keyPathFromIDBKeyPath(indexInfo.keyPath()))
                     .setUnique(indexInfo.unique())
@@ -262,7 +255,7 @@ public:
                 indexes->addItem(WTFMove(objectStoreIndex));
             }
     
-            Ref<ObjectStore> objectStore = ObjectStore::create()
+            auto objectStore = ObjectStore::create()
                 .setName(objectStoreInfo->name())
                 .setKeyPath(keyPathFromIDBKeyPath(objectStoreInfo->keyPath()))
                 .setAutoIncrement(objectStoreInfo->autoIncrement())
@@ -271,7 +264,7 @@ public:
             objectStores->addItem(WTFMove(objectStore));
         }
     
-        Ref<DatabaseWithObjectStores> result = DatabaseWithObjectStores::create()
+        auto result = DatabaseWithObjectStores::create()
             .setName(databaseInfo.name())
             .setVersion(databaseInfo.version())
             .setObjectStores(WTFMove(objectStores))
@@ -403,9 +396,7 @@ public:
         auto& cursor = *cursorResult;
 
         if (m_skipCount) {
-            ExceptionCodeWithMessage ec;
-            cursor.advance(m_skipCount, ec);
-            if (ec.code)
+            if (cursor.advance(m_skipCount).hasException())
                 m_requestCallback->sendFailure("Could not advance cursor.");
             m_skipCount = 0;
             return;
@@ -417,18 +408,16 @@ public:
         }
 
         // Continue cursor before making injected script calls, otherwise transaction might be finished.
-        ExceptionCodeWithMessage ec;
-        cursor.continueFunction(nullptr, ec);
-        if (ec.code) {
+        if (cursor.continueFunction(nullptr).hasException()) {
             m_requestCallback->sendFailure("Could not continue cursor.");
             return;
         }
 
-        JSC::ExecState* state = context ? context->execState() : nullptr;
+        auto* state = context ? context->execState() : nullptr;
         if (!state)
             return;
 
-        RefPtr<DataEntry> dataEntry = DataEntry::create()
+        auto dataEntry = DataEntry::create()
             .setKey(m_injectedScript.wrapObject(cursor.key(), String(), true))
             .setPrimaryKey(m_injectedScript.wrapObject(cursor.primaryKey(), String(), true))
             .setValue(m_injectedScript.wrapObject(cursor.value(), String(), true))
@@ -474,39 +463,47 @@ public:
         if (!requestCallback().isActive())
             return;
 
-        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName);
+        auto idbTransaction = transactionForDatabase(&database, m_objectStoreName);
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
 
-        RefPtr<IDBObjectStore> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
+        auto idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
             m_requestCallback->sendFailure("Could not get object store");
             return;
         }
 
         TransactionActivator activator(idbTransaction.get());
-        ExceptionCodeWithMessage ec;
         RefPtr<IDBRequest> idbRequest;
-        JSC::ExecState* exec = context() ? context()->execState() : nullptr;
+        auto* exec = context() ? context()->execState() : nullptr;
         if (!m_indexName.isEmpty()) {
-            RefPtr<IDBIndex> idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
+            auto idbIndex = indexForObjectStore(idbObjectStore.get(), m_indexName);
             if (!idbIndex) {
                 m_requestCallback->sendFailure("Could not get index");
                 return;
             }
 
-            idbRequest = exec ? idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext(), ec) : nullptr;
-        } else
-            idbRequest = exec ? idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext(), ec) : nullptr;
+            if (exec) {
+                auto result = idbIndex->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext());
+                if (!result.hasException())
+                    idbRequest = result.releaseReturnValue();
+            }
+        } else {
+            if (exec) {
+                auto result = idbObjectStore->openCursor(*exec, m_idbKeyRange.get(), IDBCursor::directionNext());
+                if (!result.hasException())
+                    idbRequest = result.releaseReturnValue();
+            }
+        }
 
         if (!idbRequest) {
             m_requestCallback->sendFailure("Could not open cursor to populate database data");
             return;
         }
 
-        Ref<OpenCursorCallback> openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), m_skipCount, m_pageSize);
+        auto openCursorCallback = OpenCursorCallback::create(m_injectedScript, m_requestCallback.copyRef(), m_skipCount, m_pageSize);
         idbRequest->addEventListener(eventNames().successEvent, WTFMove(openCursorCallback), false);
     }
 
@@ -709,26 +706,28 @@ public:
         if (!requestCallback().isActive())
             return;
 
-        RefPtr<IDBTransaction> idbTransaction = transactionForDatabase(&database, m_objectStoreName, IDBTransaction::modeReadWrite());
+        auto idbTransaction = transactionForDatabase(&database, m_objectStoreName, IDBTransaction::modeReadWrite());
         if (!idbTransaction) {
             m_requestCallback->sendFailure("Could not get transaction");
             return;
         }
 
-        RefPtr<IDBObjectStore> idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
+        auto idbObjectStore = objectStoreForTransaction(idbTransaction.get(), m_objectStoreName);
         if (!idbObjectStore) {
             m_requestCallback->sendFailure("Could not get object store");
             return;
         }
 
         TransactionActivator activator(idbTransaction.get());
-        ExceptionCodeWithMessage ec;
-        JSC::ExecState* exec = context() ? context()->execState() : nullptr;
-        RefPtr<IDBRequest> idbRequest = exec ? idbObjectStore->clear(*exec, ec) : nullptr;
-        ASSERT(!ec.code);
-        if (ec.code) {
-            m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), ec.code));
-            return;
+        RefPtr<IDBRequest> idbRequest;
+        if (auto* exec = context() ? context()->execState() : nullptr) {
+            auto result = idbObjectStore->clear(*exec);
+            ASSERT(!result.hasException());
+            if (result.hasException()) {
+                m_requestCallback->sendFailure(String::format("Could not clear object store '%s': %d", m_objectStoreName.utf8().data(), result.releaseException().code()));
+                return;
+            }
+            idbRequest = result.releaseReturnValue();
         }
 
         idbTransaction->addEventListener(eventNames().completeEvent, ClearObjectStoreListener::create(m_requestCallback.copyRef()), false);

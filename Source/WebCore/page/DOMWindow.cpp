@@ -657,7 +657,7 @@ History* DOMWindow::history() const
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
     if (!m_history)
-        m_history = History::create(m_frame);
+        m_history = History::create(*m_frame);
     return m_history.get();
 }
 

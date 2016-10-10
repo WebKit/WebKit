@@ -125,6 +125,7 @@ public:
 
     template<class ResolveResultType> void resolveWithNewlyCreated(Ref<ResolveResultType>&&);
 
+    void reject(Exception&&);
     void reject(ExceptionCode, const String& = { });
 
     JSC::JSValue promise() const;

@@ -181,22 +181,20 @@ WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::JSValue exception, Cac
 WEBCORE_EXPORT void reportException(JSC::ExecState*, JSC::Exception*, CachedScript* = nullptr, ExceptionDetails* = nullptr);
 void reportCurrentException(JSC::ExecState*);
 
+JSC::JSValue createDOMException(JSC::ExecState&, Exception&&);
 JSC::JSValue createDOMException(JSC::ExecState*, ExceptionCode, const String&);
 
 // Convert a DOM implementation exception into a JavaScript exception in the execution state.
 void propagateException(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
 void setDOMException(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
-void setDOMException(JSC::ExecState*, JSC::ThrowScope&, const ExceptionCodeWithMessage&);
 
 // Slower versions of the above for use when the caller doesn't have a ThrowScope.
 void propagateException(JSC::ExecState&, Exception&&);
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
-void setDOMException(JSC::ExecState*, const ExceptionCodeWithMessage&);
 
 // Implementation details of the above.
-WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
-void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, const ExceptionCodeWithMessage&);
 void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
 
@@ -364,8 +362,8 @@ JSC::JSValue toJSDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<double>&&);
 JSC::JSValue toJSNullableDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<Optional<double>>&&);
 JSC::JSValue toJSNullableString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-template<typename T> JSC::JSValue toJSNumber(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-template<typename T> JSC::JSValue toJSNullableNumber(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+template<typename T> JSC::JSValue toJSNumber(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<T>&& value);
+template<typename T> JSC::JSValue toJSNullableNumber(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<T>&& value);
 JSC::JSValue toJSString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 
 // Inline functions and template definitions.
@@ -903,13 +901,6 @@ ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwS
     setDOMExceptionSlow(exec, throwScope, ec);
 }
 
-ALWAYS_INLINE void setDOMException(JSC::ExecState* exec, JSC::ThrowScope& throwScope, const ExceptionCodeWithMessage& exception)
-{
-    if (LIKELY(!exception.code || throwScope.exception()))
-        return;
-    setDOMExceptionSlow(exec, throwScope, exception);
-}
-
 inline void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<void>&& value)
 {
     if (UNLIKELY(value.hasException()))
@@ -932,6 +923,15 @@ template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state,
         return { };
     }
     return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
+}
+
+template<typename T> inline JSC::JSValue toJSNumber(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return JSC::jsNumber(value.releaseReturnValue());
 }
 
 } // namespace WebCore

@@ -89,6 +89,18 @@ void DeferredPromise::callFunction(ExecState& exec, JSValue function, JSValue re
     clear();
 }
 
+void DeferredPromise::reject(Exception&& exception)
+{
+    if (isSuspended())
+        return;
+
+    ASSERT(m_deferred);
+    ASSERT(m_globalObject);
+    auto& state = *m_globalObject->globalExec();
+    JSC::JSLockHolder locker(&state);
+    reject(state, createDOMException(state, WTFMove(exception)));
+}
+
 void DeferredPromise::reject(ExceptionCode ec, const String& message)
 {
     if (isSuspended())

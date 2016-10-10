@@ -26,12 +26,10 @@
 [
     Conditional=CUSTOM_ELEMENTS,
     EnabledAtRuntime=CustomElements,
+    ImplementationLacksVTable,
     JSGenerateToNativeObject,
-    ImplementationLacksVTable
 ] interface CustomElementRegistry {
-
     [CEReactions, Custom] void define(DOMString name, Function constructor);
     any get(DOMString name);
-    [MayThrowLegacyExceptionWithMessage, Custom] Promise whenDefined(DOMString name);
-
+    [Custom, MayThrowException] Promise whenDefined(DOMString name);
 };

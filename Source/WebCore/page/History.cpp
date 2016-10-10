@@ -38,15 +38,13 @@
 #include "Page.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
-#include "SerializedScriptValue.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-History::History(Frame* frame)
-    : DOMWindowProperty(frame)
-    , m_lastStateObjectRequested(nullptr)
+History::History(Frame& frame)
+    : DOMWindowProperty(&frame)
 {
 }
 
@@ -54,26 +52,26 @@ unsigned History::length() const
 {
     if (!m_frame)
         return 0;
-    if (!m_frame->page())
+    auto* page = m_frame->page();
+    if (!page)
         return 0;
-    return m_frame->page()->backForward().count();
+    return page->backForward().count();
 }
 
-PassRefPtr<SerializedScriptValue> History::state()
+SerializedScriptValue* History::state()
 {
     m_lastStateObjectRequested = stateInternal();
-    return m_lastStateObjectRequested;
+    return m_lastStateObjectRequested.get();
 }
 
-PassRefPtr<SerializedScriptValue> History::stateInternal() const
+SerializedScriptValue* History::stateInternal() const
 {
     if (!m_frame)
-        return 0;
-
-    if (HistoryItem* historyItem = m_frame->loader().history().currentItem())
-        return historyItem->stateObject();
-
-    return 0;
+        return nullptr;
+    auto* historyItem = m_frame->loader().history().currentItem();
+    if (!historyItem)
+        return nullptr;
+    return historyItem->stateObject();
 }
 
 bool History::stateChanged() const
@@ -83,7 +81,7 @@ bool History::stateChanged() const
 
 bool History::isSameAsCurrentState(SerializedScriptValue* state) const
 {
-    return state == stateInternal().get();
+    return state == stateInternal();
 }
 
 void History::back()
@@ -136,29 +134,24 @@ URL History::urlForState(const String& urlString)
     return URL(baseURL, urlString);
 }
 
-void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const String& title, const String& urlString, StateObjectType stateObjectType, ExceptionCodeWithMessage& ec)
+ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data, const String& title, const String& urlString, StateObjectType stateObjectType)
 {
-    // Each unique main-frame document is only allowed to send 64mb of state object payload to the UI client/process.
+    // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
     static uint32_t totalStateObjectPayloadLimit = 0x4000000;
     static double stateObjectTimeSpan = 30.0;
     static unsigned perStateObjectTimeSpanLimit = 100;
 
     if (!m_frame || !m_frame->page())
-        return;
+        return { };
 
     URL fullURL = urlForState(urlString);
-    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL)) {
-        ec.code = SECURITY_ERR;
-        return;
-    }
+    if (!fullURL.isValid() || !m_frame->document()->securityOrigin()->canRequest(fullURL))
+        return Exception { SECURITY_ERR };
 
     if (fullURL.hasUsername() || fullURL.hasPassword()) {
-        ec.code = SECURITY_ERR;
         if (stateObjectType == StateObjectType::Replace)
-            ec.message = makeString("Attempt to use history.replaceState() to change session history URL to ", fullURL.string(), " is insecure; Username/passwords aren't allowed in state object URLs");
-        else
-            ec.message = makeString("Attempt to use history.pushState() to add URL ", fullURL.string(), " to session history is insecure; Username/passwords aren't allowed in state object URLs");
-        return;
+            return Exception { SECURITY_ERR, "Attempt to use history.replaceState() to change session history URL to " + fullURL.string() + " is insecure; Username/passwords aren't allowed in state object URLs" };
+        return Exception { SECURITY_ERR, "Attempt to use history.pushState() to add URL " + fullURL.string() + " to session history is insecure; Username/passwords aren't allowed in state object URLs" };
     }
 
     Document* mainDocument = m_frame->page()->mainFrame().document();
@@ -169,7 +162,7 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     }
 
     if (!mainHistory)
-        return;
+        return { };
 
     double currentTimestamp = currentTime();
     if (currentTimestamp - mainHistory->m_currentStateObjectTimeSpanStart > stateObjectTimeSpan) {
@@ -178,12 +171,9 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     }
     
     if (mainHistory->m_currentStateObjectTimeSpanObjectsAdded >= perStateObjectTimeSpanLimit) {
-        ec.code = SECURITY_ERR;
         if (stateObjectType == StateObjectType::Replace)
-            ec.message = String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan);
-        else
-            ec.message = String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan);
-        return;
+            return Exception { SECURITY_ERR, String::format("Attempt to use history.replaceState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan) };
+        return Exception { SECURITY_ERR, String::format("Attempt to use history.pushState() more than %u times per %f seconds", perStateObjectTimeSpanLimit, stateObjectTimeSpan) };
     }
 
     Checked<unsigned> titleSize = title.length();
@@ -203,12 +193,9 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
     newTotalUsage += payloadSize;
 
     if (newTotalUsage > totalStateObjectPayloadLimit) {
-        ec.code = QUOTA_EXCEEDED_ERR;
         if (stateObjectType == StateObjectType::Replace)
-            ec.message = ASCIILiteral("Attempt to store more data than allowed using history.replaceState()");
-        else
-            ec.message = ASCIILiteral("Attempt to store more data than allowed using history.pushState()");
-        return;
+            return Exception { QUOTA_EXCEEDED_ERR, ASCIILiteral("Attempt to store more data than allowed using history.replaceState()") };
+        return Exception { QUOTA_EXCEEDED_ERR, ASCIILiteral("Attempt to store more data than allowed using history.pushState()") };
     }
 
     m_mostRecentStateObjectUsage = payloadSize.unsafeGet();
@@ -226,6 +213,8 @@ void History::stateObjectAdded(PassRefPtr<SerializedScriptValue> data, const Str
         m_frame->loader().history().replaceState(data, title, fullURL.string());
         m_frame->loader().client().dispatchDidReplaceStateWithinPage();
     }
+
+    return { };
 }
 
 } // namespace WebCore

@@ -1,3 +1,204 @@
+2016-10-09  Darin Adler  <darin@apple.com>
+
+        Replace all uses of ExceptionCodeWithMessage with WebCore::Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163178
+
+        Reviewed by Sam Weinig.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::stringToDirection): Return an Optional instead of
+        using an ExceptionCode out argument, since this function just needs to
+        indicate failure, not actually throw an exception.
+        (WebCore::IDBCursor::update): Return ExceptionOr instead of using an
+        ExceptionCodeWithMessage out argument.
+        (WebCore::IDBCursor::advance): Ditto.
+        (WebCore::IDBCursor::continueFunction): Ditto.
+        (WebCore::IDBCursor::deleteFunction): Ditto.
+        * Modules/indexeddb/IDBCursor.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBCursor.idl: Sorted extended attributes alphabetically.
+        Use MayThrowException instead of MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBDatabase::transaction): Ditto.
+        (WebCore::IDBDatabase::deleteObjectStore): Ditto.
+        * Modules/indexeddb/IDBDatabase.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBDatabase.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::open): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBFactory::openInternal): Ditto.
+        (WebCore::IDBFactory::deleteDatabase): Ditto.
+        (WebCore::IDBFactory::cmp): Ditto.
+        * Modules/indexeddb/IDBFactory.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBFactory.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBIndex::count): Ditto.
+        (WebCore::IDBIndex::doCount): Ditto.
+        (WebCore::IDBIndex::openKeyCursor): Ditto.
+        (WebCore::IDBIndex::get): Ditto.
+        (WebCore::IDBIndex::doGet): Ditto.
+        (WebCore::IDBIndex::getKey): Ditto.
+        (WebCore::IDBIndex::doGetKey): Ditto.
+        * Modules/indexeddb/IDBIndex.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBIndex.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only): Return ExceptionOr instead of
+        using an ExceptionCode out argument.
+        (WebCore::IDBKeyRange::lowerBound): Ditto.
+        (WebCore::IDBKeyRange::upperBound): Ditto.
+        (WebCore::IDBKeyRange::bound): Ditto.
+        * Modules/indexeddb/IDBKeyRange.h: Updated for above changes.
+        * Modules/indexeddb/IDBKeyRange.idl: Use MayThrowException instead of
+        MayThrowLegacyException.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::openCursor): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBObjectStore::get): Ditto.
+        (WebCore::IDBObjectStore::add): Ditto.
+        (WebCore::IDBObjectStore::put): Ditto.
+        (WebCore::IDBObjectStore::putForCursorUpdate): Ditto.
+        (WebCore::IDBObjectStore::putOrAdd): Ditto.
+        (WebCore::IDBObjectStore::deleteFunction): Ditto.
+        (WebCore::IDBObjectStore::doDelete): Ditto.
+        (WebCore::IDBObjectStore::clear): Ditto.
+        (WebCore::IDBObjectStore::createIndex): Ditto.
+        (WebCore::IDBObjectStore::index): Ditto.
+        (WebCore::IDBObjectStore::deleteIndex): Ditto.
+        (WebCore::IDBObjectStore::count): Ditto.
+        (WebCore::IDBObjectStore::doCount): Ditto.
+        * Modules/indexeddb/IDBObjectStore.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBObjectStore.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::errorCode): Deleted. Was dead code.
+        (WebCore::IDBRequest::error): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        * Modules/indexeddb/IDBRequest.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBRequest.idl: Use GetterMayThrowException instead of
+        GetterMayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::stringToMode): Return an Optional instead of
+        using an ExceptionCode out argument, since this function just needs to
+        indicate failure, not actually throw an exception.
+        (WebCore::IDBTransaction::db): Tweaked code a bit.
+        (WebCore::IDBTransaction::error): Return a pointer instead of a RefPtr.
+        (WebCore::IDBTransaction::objectStore): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBTransaction::abortDueToFailedRequest): Call internalAbort.
+        (WebCore::IDBTransaction::abort): Return ExceptionOr instead of
+        using an ExceptionCodeWithMessage out argument.
+        (WebCore::IDBTransaction::internalAbort): Added a version that asserts
+        instead of throwing an exception for internal use.
+        (WebCore::IDBTransaction::stop): Call internalAbort.
+        * Modules/indexeddb/IDBTransaction.h: Updated for above changes.
+
+        * Modules/indexeddb/IDBTransaction.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::openDatabase): Updated to return
+        a Ref instead of a RefPtr, since the function can never return null.
+        (WebCore::IDBClient::IDBConnectionProxy::deleteDatabase): Ditto.
+        * Modules/indexeddb/client/IDBConnectionProxy.h: Updated for above changes.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setLocalDescriptionTask): Updated
+        exception handling to use ExceptionOr instead of ExceptionCodeWithMessage.
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask): Ditto.
+        * Modules/mediastream/MediaEndpointSessionDescription.cpp:
+        (WebCore::MediaEndpointSessionDescription::create): Ditto.
+        * Modules/mediastream/MediaEndpointSessionDescription.h: Updated for above change.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::createDOMException): Added overload for Exception.
+        (WebCore::throwDOMException): Deleted overload for ExceptionCodeWithMessage.
+        Updated code to call the new createDOMException function.
+        (WebCore::setDOMExceptionSlow): Ditto.
+        (WebCore::setDOMException): Ditto.
+
+        * bindings/js/JSDOMBinding.h: Added overload of createDOMException that takes
+        an Exception. Deleted functions dealing with ExceptionCodeWithMessage. Fixed
+        interface of toJSNumber and toJSNullableNumber and implemented toJSNumber.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DeferredPromise::reject): Added overload that takes an Exception.
+        * bindings/js/JSDOMPromise.h: Updated for above change.
+
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState): Use propagateException to deal with
+        ExceptionOr instead of ExceptionCodeWithMessage.
+        (WebCore::JSHistory::replaceState): Ditto.
+
+        * bindings/js/JSIDBDatabaseCustom.cpp:
+        (WebCore::JSIDBDatabase::createObjectStore): Use toJS and
+        to deal with ExceptionOr rather than setDOMException to deal
+        with ExceptionCodeWithMessage.
+
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::result): Use propagateException and
+        Exception rather than setDOMException and ExceptionCodeWithMessage.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Removed support for GetterMayThrowLegacyExceptionWithMessage,
+        SetterMayThrowLegacyExceptionWithMessage, and MayThrowLegacyExceptionWithMessage.
+        (GenerateReturnParameters): Ditto.
+        (GenerateImplementationFunctionCall): Ditto.
+        (GenerateConstructorDefinition): Ditto.
+
+        * bindings/scripts/IDLAttributes.txt: Removed GetterMayThrowLegacyExceptionWithMessage,
+        SetterMayThrowLegacyExceptionWithMessage, and MayThrowLegacyExceptionWithMessage.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp: Regenerated.
+        * bindings/scripts/test/TestObj.idl: Removed tests cases for now-removed attributes.
+
+        * dom/CustomElementRegistry.idl: Use MayThrowException instead of
+        MayThrowLegacyExceptionWithMessage.
+
+        * dom/ExceptionCode.h: Removed ExceptionCodeWithMessage. Also updated to use pragma
+        once, removed include of WTFString.h and switched to using instead of typedef.
+
+        * history/HistoryItem.h: Return a pointer instead of a RefPtr from stateObject
+        to cut down a little on unnecessary reference count churn.
+
+        * inspector/InspectorIndexedDBAgent.cpp: Updated all the code that uses IDB
+        classes to use the new versions rather than the old ExceptionCodeWithMessage versions.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::history): Pass a reference instead of a pointer.
+
+        * page/History.cpp:
+        (WebCore::History::History): Take a reference instead of a pointer.
+        (WebCore::History::length): Tweaked to use a local variable.
+        (WebCore::History::state): Return a pointer instead of a PassRefPtr.
+        (WebCore::History::stateInternal): Ditto. Also use early return consistently.
+        (WebCore::History::isSameAsCurrentState): Updated for above change.
+        (WebCore::History::stateObjectAdded): Return ExceptionOr rather than taking an
+        ExceptionCodeWithMessage out argument.
+
+        * page/History.h: Use pragma once. Removed some unneeded includes. Marked class final.
+        Updated for changes above.
+
+        * page/History.idl: Use MayThrowException instead of MayThrowLegacyException.
+
 2016-10-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r165103): labels list doesn't get invalidated when other lists are invalidated at document level

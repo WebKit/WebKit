@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "ActiveDOMObject.h"
+#include "ExceptionOr.h"
 #include "IDBObjectStoreInfo.h"
 #include <wtf/HashSet.h>
 
@@ -46,7 +47,6 @@ class IDBKeyRange;
 class IDBRequest;
 class IDBTransaction;
 
-struct ExceptionCodeWithMessage;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
@@ -70,22 +70,22 @@ public:
         bool multiEntry;
     };
 
-    RefPtr<IDBRequest> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> get(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> get(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> deleteFunction(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> deleteFunction(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> clear(JSC::ExecState&, ExceptionCodeWithMessage&);
-    RefPtr<IDBIndex> createIndex(JSC::ExecState&, const String& name, const IDBKeyPath&, const IndexParameters&, ExceptionCodeWithMessage&);
-    RefPtr<IDBIndex> index(const String& name, ExceptionCodeWithMessage&);
-    void deleteIndex(const String& name, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> count(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> count(JSC::ExecState&, JSC::JSValue key, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
+    ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> get(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> add(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> put(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&, JSC::JSValue key);
+    ExceptionOr<Ref<IDBRequest>> clear(JSC::ExecState&);
+    ExceptionOr<Ref<IDBIndex>> createIndex(JSC::ExecState&, const String& name, const IDBKeyPath&, const IndexParameters&);
+    ExceptionOr<Ref<IDBIndex>> index(const String& name);
+    ExceptionOr<void> deleteIndex(const String& name);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);
+    ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, JSC::JSValue key);
 
-    RefPtr<IDBRequest> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> putForCursorUpdate(JSC::ExecState&, JSC::JSValue, JSC::JSValue key);
 
     void markAsDeleted();
     bool isDeleted() const { return m_deleted; }
@@ -100,9 +100,9 @@ private:
     IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);
 
     enum class InlineKeyCheck { Perform, DoNotPerform };
-    RefPtr<IDBRequest> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> doCount(JSC::ExecState&, const IDBKeyRangeData&, ExceptionCodeWithMessage&);
-    RefPtr<IDBRequest> doDelete(JSC::ExecState&, IDBKeyRange*, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBRequest>> putOrAdd(JSC::ExecState&, JSC::JSValue, RefPtr<IDBKey>, IndexedDB::ObjectStoreOverwriteMode, InlineKeyCheck);
+    ExceptionOr<Ref<IDBRequest>> doCount(JSC::ExecState&, const IDBKeyRangeData&);
+    ExceptionOr<Ref<IDBRequest>> doDelete(JSC::ExecState&, IDBKeyRange*);
 
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;

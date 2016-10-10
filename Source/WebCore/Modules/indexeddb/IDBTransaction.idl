@@ -25,8 +25,8 @@
  */
 
 [
-    Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
+    Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
     SkipVTableValidation,
 ] interface IDBTransaction : EventTarget {
@@ -34,8 +34,8 @@
     readonly attribute IDBDatabase db;
     readonly attribute DOMError error;
 
-    [MayThrowLegacyExceptionWithMessage] IDBObjectStore objectStore (DOMString name);
-    [MayThrowLegacyExceptionWithMessage] void abort ();
+    [MayThrowException] IDBObjectStore objectStore(DOMString name);
+    [MayThrowException] void abort();
 
     attribute EventHandler onabort;
     attribute EventHandler oncomplete;

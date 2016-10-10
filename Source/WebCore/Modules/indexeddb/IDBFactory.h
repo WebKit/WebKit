@@ -27,6 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ExceptionOr.h"
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -44,8 +45,6 @@ class IDBOpenDBRequest;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
-struct ExceptionCodeWithMessage;
-
 namespace IDBClient {
 class IDBConnectionProxy;
 }
@@ -57,17 +56,17 @@ public:
     static Ref<IDBFactory> create(IDBClient::IDBConnectionProxy&);
     ~IDBFactory();
 
-    RefPtr<IDBOpenDBRequest> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version, ExceptionCodeWithMessage&);
-    RefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext&, const String& name, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBOpenDBRequest>> open(ScriptExecutionContext&, const String& name, Optional<uint64_t> version);
+    ExceptionOr<Ref<IDBOpenDBRequest>> deleteDatabase(ScriptExecutionContext&, const String& name);
 
-    short cmp(JSC::ExecState&, JSC::JSValue first, JSC::JSValue second, ExceptionCodeWithMessage&);
+    ExceptionOr<short> cmp(JSC::ExecState&, JSC::JSValue first, JSC::JSValue second);
 
     WEBCORE_EXPORT void getAllDatabaseNames(const SecurityOrigin& mainFrameOrigin, const SecurityOrigin& openingOrigin, std::function<void (const Vector<String>&)>);
 
 private:
     explicit IDBFactory(IDBClient::IDBConnectionProxy&);
 
-    RefPtr<IDBOpenDBRequest> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBOpenDBRequest>> openInternal(ScriptExecutionContext&, const String& name, unsigned long long version);
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
 };

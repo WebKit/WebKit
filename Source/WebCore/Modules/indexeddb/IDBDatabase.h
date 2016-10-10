@@ -55,11 +55,11 @@ public:
     uint64_t version() const;
     RefPtr<DOMStringList> objectStoreNames() const;
 
-    RefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCodeWithMessage&);
-    RefPtr<IDBObjectStore> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement, ExceptionCodeWithMessage&);
-    RefPtr<IDBTransaction> transaction(const Vector<String>&, const String& mode, ExceptionCodeWithMessage&);
-    RefPtr<IDBTransaction> transaction(const String&, const String& mode, ExceptionCodeWithMessage&);
-    void deleteObjectStore(const String& name, ExceptionCodeWithMessage&);
+    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, const Dictionary&);
+    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement);
+    ExceptionOr<Ref<IDBTransaction>> transaction(const Vector<String>&, const String& mode);
+    ExceptionOr<Ref<IDBTransaction>> transaction(const String&, const String& mode);
+    ExceptionOr<void> deleteObjectStore(const String& name);
     void close();
 
     // EventTarget

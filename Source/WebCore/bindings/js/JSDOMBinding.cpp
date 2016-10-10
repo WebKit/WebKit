@@ -335,22 +335,21 @@ JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& mess
     return createDOMException(exec, ec, &message);
 }
 
+JSValue createDOMException(ExecState& state, Exception&& exception)
+{
+    return createDOMException(&state, exception.code(), exception.releaseMessage());
+}
+
 ALWAYS_INLINE static void throwDOMException(ExecState* exec, ThrowScope& throwScope, ExceptionCode ec)
 {
     ASSERT(ec && !throwScope.exception());
     throwException(exec, throwScope, createDOMException(exec, ec));
 }
 
-ALWAYS_INLINE static void throwDOMException(ExecState* exec, ThrowScope& throwScope, const ExceptionCodeWithMessage& ec)
-{
-    ASSERT(ec.code && !throwScope.exception());
-    throwException(exec, throwScope, createDOMException(exec, ec.code, ec.message));
-}
-
 void propagateExceptionSlowPath(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
 {
     ASSERT(!throwScope.exception());
-    throwException(&state, throwScope, createDOMException(&state, exception.code(), exception.releaseMessage()));
+    throwException(&state, throwScope, createDOMException(state, WTFMove(exception)));
 }
 
 void propagateException(JSC::ExecState& state, Exception&& exception)
@@ -365,28 +364,12 @@ void setDOMExceptionSlow(ExecState* exec, ThrowScope& throwScope, ExceptionCode 
     throwDOMException(exec, throwScope, ec);
 }
 
-void setDOMExceptionSlow(ExecState* exec, ThrowScope& throwScope, const ExceptionCodeWithMessage& ec)
-{
-    throwDOMException(exec, throwScope, ec);
-}
-
 void setDOMException(ExecState* exec, ExceptionCode ec)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!ec || scope.exception())
-        return;
-
-    throwDOMException(exec, scope, ec);
-}
-
-void setDOMException(ExecState* exec, const ExceptionCodeWithMessage& ec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!ec.code || scope.exception())
         return;
 
     throwDOMException(exec, scope, ec);

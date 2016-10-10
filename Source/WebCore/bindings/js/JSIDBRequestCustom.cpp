@@ -42,13 +42,9 @@ JSValue JSIDBRequest::result(ExecState& state) const
     auto& request = wrapped();
 
     if (!request.isDone()) {
-        ExceptionCodeWithMessage ec;
-        ec.code = IDBDatabaseException::InvalidStateError;
-        ec.message = ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.");
-        setDOMException(&state, ec);
-        return jsUndefined();
+        propagateException(state, Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to read the 'result' property from 'IDBRequest': The request has not finished.") });
+        return { };
     }
-
     if (auto* cursor = request.cursorResult())
         return toJS(&state, globalObject(), *cursor);
     if (auto* database = request.databaseResult())

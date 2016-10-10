@@ -69,7 +69,7 @@ public:
     static const AtomicString& modeReadOnlyLegacy();
     static const AtomicString& modeReadWriteLegacy();
 
-    static IndexedDB::TransactionMode stringToMode(const String&, ExceptionCode&);
+    static Optional<IndexedDB::TransactionMode> stringToMode(const String&);
     static const AtomicString& modeToString(IndexedDB::TransactionMode);
 
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
@@ -80,9 +80,9 @@ public:
     // IDBTransaction IDL
     const String& mode() const;
     IDBDatabase* db();
-    RefPtr<DOMError> error() const;
-    RefPtr<IDBObjectStore> objectStore(const String& name, ExceptionCodeWithMessage&);
-    void abort(ExceptionCodeWithMessage&);
+    DOMError* error() const;
+    ExceptionOr<Ref<IDBObjectStore>> objectStore(const String& name);
+    ExceptionOr<void> abort();
 
     EventTargetInterface eventTargetInterface() const final { return IDBTransactionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -152,6 +152,7 @@ private:
 
     void commit();
 
+    void internalAbort();
     void notifyDidAbort(const IDBError&);
     void finishAbortOrCommit();
 
