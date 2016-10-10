@@ -520,7 +520,9 @@ RefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(const S
     String host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
     
     host = decodeURLEscapeSequences(host);
-    return create(URL(URL(), protocol + "://" + host + ":" + String::number(port) + "/"));
+    auto origin = create(URL(URL(), protocol + "://" + host + "/"));
+    origin->m_port = port;
+    return WTFMove(origin);
 }
 
 Ref<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const String& databaseIdentifier)
@@ -535,7 +537,9 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
     if (port < 0 || port > MaxAllowedPort)
         return createUnique();
     String decodedHost = decodeURLEscapeSequences(host);
-    return create(URL(URL(), protocol + "://" + host + ":" + String::number(port) + "/"));
+    auto origin = create(URL(URL(), protocol + "://" + host + "/"));
+    origin->m_port = port;
+    return origin;
 }
 
 String SecurityOrigin::databaseIdentifier() const 

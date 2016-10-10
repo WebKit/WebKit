@@ -1,3 +1,20 @@
+2016-10-10  Alex Christensen  <achristensen@webkit.org>
+
+        Don't run SecurityOrigin's port through URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=163253
+
+        Reviewed by Brady Eidson.
+
+        No change in behavior.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::maybeCreateFromDatabaseIdentifier):
+        (WebCore::SecurityOrigin::create):
+        We used to parse URLs like "file://:0/" which are valid when using URL::parse
+        but aren't valid when we start using the URLParser, which matches other browsers' failure
+        to parse URLs with a port but no host. There is no reason to write and parse the port.
+        Setting m_port directly accomplishes the same thing.
+ 
 2016-10-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         <Error>: CGContextSetLineDash: invalid dash array: at least one element must be non-zero
