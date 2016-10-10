@@ -2683,3 +2683,5 @@ webkit.org/b/163009 media/modern-media-controls/icon-button/icon-button-active-s
 
 # This variation font test requires Skia which isn't available on iOS.
 webkit.org/b/163093 fast/text/variations/advances.html [ Failure ]
+
+webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
