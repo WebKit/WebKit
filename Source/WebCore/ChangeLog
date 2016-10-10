@@ -1,5 +1,31 @@
 2016-10-10  Youenn Fablet  <youenn@apple.com>
 
+        Images and scripts should be said as clean based on CachedResource::isCORSSameOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=162390
+
+        Reviewed by Darin Adler.
+
+        No observable change of behavior.
+
+        Renaming CachedResource::isClean to isCORSSameOrigin to match html spec terminology.
+        Making use of it to check whether images taint canvas and whether script errors should be sanitized.
+
+        Some asserts are added to ensure that a resource fetched using one origin is not reused for another origin.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::initializeStyleSheet):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::isOriginClean):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::isCORSSameOrigin):
+        * loader/cache/CachedResource.h:
+
+2016-10-10  Youenn Fablet  <youenn@apple.com>
+
         [Fetch API] Memory cache should not bypass redirect mode
         https://bugs.webkit.org/show_bug.cgi?id=162959
 

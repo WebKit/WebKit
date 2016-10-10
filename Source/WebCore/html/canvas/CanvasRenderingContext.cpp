@@ -60,11 +60,17 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* image)
     if (!image || !canvas()->originClean())
         return false;
 
-    CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage->image()->hasSingleSecurityOrigin())
+    ASSERT(image->cachedImage());
+    CachedImage& cachedImage = *image->cachedImage();
+
+    ASSERT(cachedImage.image());
+    if (!cachedImage.image()->hasSingleSecurityOrigin())
         return true;
 
-    return wouldTaintOrigin(cachedImage->responseForSameOriginPolicyChecks().url()) && !cachedImage->passesAccessControlCheck(*canvas()->securityOrigin());
+    ASSERT(canvas()->securityOrigin());
+    ASSERT(cachedImage.origin());
+    ASSERT(canvas()->securityOrigin()->toString() == cachedImage.origin()->toString());
+    return !cachedImage.isCORSSameOrigin();
 }
 
 bool CanvasRenderingContext::wouldTaintOrigin(const HTMLVideoElement* video)

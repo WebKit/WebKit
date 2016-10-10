@@ -492,13 +492,12 @@ bool CachedImage::currentFrameKnownToBeOpaque(const RenderElement* renderer)
     return image->currentFrameKnownToBeOpaque();
 }
 
-bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
+bool CachedImage::isOriginClean(SecurityOrigin* origin)
 {
-    if (!image()->hasSingleSecurityOrigin())
-        return false;
-    if (passesAccessControlCheck(*securityOrigin))
-        return true;
-    return !securityOrigin->taintsCanvas(responseForSameOriginPolicyChecks().url());
+    ASSERT_UNUSED(origin, origin);
+    ASSERT(this->origin());
+    ASSERT(origin->toString() == this->origin()->toString());
+    return !loadFailedOrCanceled() && isCORSSameOrigin();
 }
 
 CachedResource::RevalidationDecision CachedImage::makeRevalidationDecision(CachePolicy cachePolicy) const
