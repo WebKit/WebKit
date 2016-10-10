@@ -172,19 +172,19 @@ inline JSTestNode* JSTestNode::castForAttribute(JSC::ExecState*, EncodedJSValue 
     return jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestNodeNameGetter(ExecState*, JSTestNode*, ThrowScope& throwScope);
+static inline JSValue jsTestNodeNameGetter(ExecState&, JSTestNode&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestNode>::attribute<jsTestNodeNameGetter>(state, thisValue, "name");
 }
 
-static inline JSValue jsTestNodeNameGetter(ExecState* state, JSTestNode* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestNodeNameGetter(ExecState& state, JSTestNode& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.name());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.name());
     return result;
 }
 

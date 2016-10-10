@@ -145,20 +145,20 @@ inline JSTestActiveDOMObject* JSTestActiveDOMObject::castForAttribute(JSC::ExecS
     return jsDynamicCast<JSTestActiveDOMObject*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState*, JSTestActiveDOMObject*, ThrowScope& throwScope);
+static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState&, JSTestActiveDOMObject&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestActiveDOMObjectExcitingAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestActiveDOMObject>::attribute<jsTestActiveDOMObjectExcitingAttrGetter>(state, thisValue, "excitingAttr");
 }
 
-static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState* state, JSTestActiveDOMObject* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, JSTestActiveDOMObject& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (!BindingSecurity::shouldAllowAccessToFrame(state, thisObject->wrapped().frame(), ThrowSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.excitingAttr());
     return result;
 }

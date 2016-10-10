@@ -183,52 +183,52 @@ inline JSTestEventConstructor* JSTestEventConstructor::castForAttribute(JSC::Exe
     return jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestEventConstructorAttr1Getter(ExecState*, JSTestEventConstructor*, ThrowScope& throwScope);
+static inline JSValue jsTestEventConstructorAttr1Getter(ExecState&, JSTestEventConstructor&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestEventConstructorAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr1Getter>(state, thisValue, "attr1");
 }
 
-static inline JSValue jsTestEventConstructorAttr1Getter(ExecState* state, JSTestEventConstructor* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr1Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attr1());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attr1());
     return result;
 }
 
-static inline JSValue jsTestEventConstructorAttr2Getter(ExecState*, JSTestEventConstructor*, ThrowScope& throwScope);
+static inline JSValue jsTestEventConstructorAttr2Getter(ExecState&, JSTestEventConstructor&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestEventConstructorAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr2Getter>(state, thisValue, "attr2");
 }
 
-static inline JSValue jsTestEventConstructorAttr2Getter(ExecState* state, JSTestEventConstructor* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr2Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attr2());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attr2());
     return result;
 }
 
 #if ENABLE(SPECIAL_EVENT)
-static inline JSValue jsTestEventConstructorAttr3Getter(ExecState*, JSTestEventConstructor*, ThrowScope& throwScope);
+static inline JSValue jsTestEventConstructorAttr3Getter(ExecState&, JSTestEventConstructor&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestEventConstructorAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestEventConstructor>::attribute<jsTestEventConstructorAttr3Getter>(state, thisValue, "attr3");
 }
 
-static inline JSValue jsTestEventConstructorAttr3Getter(ExecState* state, JSTestEventConstructor* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr3Getter(ExecState& state, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attr3());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attr3());
     return result;
 }
 

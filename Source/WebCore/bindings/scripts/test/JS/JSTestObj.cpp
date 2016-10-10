@@ -1693,982 +1693,984 @@ inline JSTestObj* JSTestObj::castForAttribute(JSC::ExecState*, EncodedJSValue th
     return jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReadOnlyLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReadOnlyLongAttrGetter>(state, thisValue, "readOnlyLongAttr");
 }
 
-static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.readOnlyLongAttr());
     return result;
 }
 
-static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReadOnlyStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReadOnlyStringAttrGetter>(state, thisValue, "readOnlyStringAttr");
 }
 
-static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.readOnlyStringAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.readOnlyStringAttr());
     return result;
 }
 
-static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReadOnlyTestObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReadOnlyTestObjAttrGetter>(state, thisValue, "readOnlyTestObjAttr");
 }
 
-static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.readOnlyTestObjAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.readOnlyTestObjAttr());
     return result;
 }
 
-static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState*);
+static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState&);
 
 EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* state, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsTestObjConstructorStaticReadOnlyLongAttrGetter(state));
+    ASSERT(state);
+    return JSValue::encode(jsTestObjConstructorStaticReadOnlyLongAttrGetter(*state));
 }
 
-static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState* state)
+static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
     JSValue result = jsNumber(TestObj::staticReadOnlyLongAttr());
     return result;
 }
 
-static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState*);
+static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState&);
 
 EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSValue, PropertyName)
 {
-    return JSValue::encode(jsTestObjConstructorStaticStringAttrGetter(state));
+    ASSERT(state);
+    return JSValue::encode(jsTestObjConstructorStaticStringAttrGetter(*state));
 }
 
-static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState* state)
+static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsStringWithCache(state, TestObj::staticStringAttr());
+    JSValue result = jsStringWithCache(&state, TestObj::staticStringAttr());
     return result;
 }
 
-static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConstructorTestSubObj(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConstructorTestSubObjGetter>(state, thisValue, "TestSubObj");
 }
 
-static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConstructorTestSubObjGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return JSTestSubObj::getConstructor(state->vm(), thisObject->globalObject());
+    return JSTestSubObj::getConstructor(state.vm(), thisObject.globalObject());
 }
 
-static inline JSValue jsTestObjTestSubObjEnabledBySettingConstructorGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjTestSubObjEnabledBySettingConstructorGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjTestSubObjEnabledBySettingConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjTestSubObjEnabledBySettingConstructorGetter>(state, thisValue, "TestSubObjEnabledBySetting");
 }
 
-static inline JSValue jsTestObjTestSubObjEnabledBySettingConstructorGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjTestSubObjEnabledBySettingConstructorGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (UNLIKELY(!thisObject->wrapped().frame()))
+    if (UNLIKELY(!thisObject.wrapped().frame()))
         return jsUndefined();
-    Settings& settings = thisObject->wrapped().frame()->settings();
+    Settings& settings = thisObject.wrapped().frame()->settings();
     if (!settings.testSettingEnabled())
         return jsUndefined();
-    return JSTestSubObj::getConstructor(state->vm(), thisObject->globalObject());
+    return JSTestSubObj::getConstructor(state.vm(), thisObject.globalObject());
 }
 
-static inline JSValue jsTestObjEnumAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjEnumAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjEnumAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjEnumAttrGetter>(state, thisValue, "enumAttr");
 }
 
-static inline JSValue jsTestObjEnumAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjEnumAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.enumAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.enumAttr());
     return result;
 }
 
-static inline JSValue jsTestObjByteAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjByteAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjByteAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjByteAttrGetter>(state, thisValue, "byteAttr");
 }
 
-static inline JSValue jsTestObjByteAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjByteAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.byteAttr());
     return result;
 }
 
-static inline JSValue jsTestObjOctetAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjOctetAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjOctetAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjOctetAttrGetter>(state, thisValue, "octetAttr");
 }
 
-static inline JSValue jsTestObjOctetAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjOctetAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.octetAttr());
     return result;
 }
 
-static inline JSValue jsTestObjShortAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjShortAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjShortAttrGetter>(state, thisValue, "shortAttr");
 }
 
-static inline JSValue jsTestObjShortAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjShortAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.shortAttr());
     return result;
 }
 
-static inline JSValue jsTestObjClampedShortAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjClampedShortAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjClampedShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjClampedShortAttrGetter>(state, thisValue, "clampedShortAttr");
 }
 
-static inline JSValue jsTestObjClampedShortAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjClampedShortAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.clampedShortAttr());
     return result;
 }
 
-static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjEnforceRangeShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjEnforceRangeShortAttrGetter>(state, thisValue, "enforceRangeShortAttr");
 }
 
-static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.enforceRangeShortAttr());
     return result;
 }
 
-static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjUnsignedShortAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjUnsignedShortAttrGetter>(state, thisValue, "unsignedShortAttr");
 }
 
-static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.unsignedShortAttr());
     return result;
 }
 
-static inline JSValue jsTestObjLongAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjLongAttrGetter>(state, thisValue, "longAttr");
 }
 
-static inline JSValue jsTestObjLongAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjLongAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.longAttr());
     return result;
 }
 
-static inline JSValue jsTestObjLongLongAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjLongLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjLongLongAttrGetter>(state, thisValue, "longLongAttr");
 }
 
-static inline JSValue jsTestObjLongLongAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjLongLongAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.longLongAttr());
     return result;
 }
 
-static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjUnsignedLongLongAttrGetter>(state, thisValue, "unsignedLongLongAttr");
 }
 
-static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.unsignedLongLongAttr());
     return result;
 }
 
-static inline JSValue jsTestObjStringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStringAttrGetter>(state, thisValue, "stringAttr");
 }
 
-static inline JSValue jsTestObjStringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.stringAttr());
     return result;
 }
 
-static inline JSValue jsTestObjUsvstringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjUsvstringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjUsvstringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjUsvstringAttrGetter>(state, thisValue, "usvstringAttr");
 }
 
-static inline JSValue jsTestObjUsvstringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjUsvstringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.usvstringAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.usvstringAttr());
     return result;
 }
 
-static inline JSValue jsTestObjTestObjAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjTestObjAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjTestObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjTestObjAttrGetter>(state, thisValue, "testObjAttr");
 }
 
-static inline JSValue jsTestObjTestObjAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjTestObjAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.testObjAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.testObjAttr());
     return result;
 }
 
-static inline JSValue jsTestObjTestNullableObjAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjTestNullableObjAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjTestNullableObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjTestNullableObjAttrGetter>(state, thisValue, "testNullableObjAttr");
 }
 
-static inline JSValue jsTestObjTestNullableObjAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjTestNullableObjAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.testNullableObjAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.testNullableObjAttr());
     return result;
 }
 
-static inline JSValue jsTestObjLenientTestObjAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjLenientTestObjAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjLenientTestObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjLenientTestObjAttrGetter, CastedThisErrorBehavior::ReturnEarly>(state, thisValue, "lenientTestObjAttr");
 }
 
-static inline JSValue jsTestObjLenientTestObjAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjLenientTestObjAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.lenientTestObjAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.lenientTestObjAttr());
     return result;
 }
 
-static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjUnforgeableAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjUnforgeableAttrGetter>(state, thisValue, "unforgeableAttr");
 }
 
-static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.unforgeableAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.unforgeableAttr());
     return result;
 }
 
-static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStringAttrTreatingNullAsEmptyStringGetter>(state, thisValue, "stringAttrTreatingNullAsEmptyString");
 }
 
-static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringAttrTreatingNullAsEmptyString());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.stringAttrTreatingNullAsEmptyString());
     return result;
 }
 
-static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjUsvstringAttrTreatingNullAsEmptyString(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter>(state, thisValue, "usvstringAttrTreatingNullAsEmptyString");
 }
 
-static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.usvstringAttrTreatingNullAsEmptyString());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.usvstringAttrTreatingNullAsEmptyString());
     return result;
 }
 
-static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjImplementationEnumAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjImplementationEnumAttrGetter>(state, thisValue, "implementationEnumAttr");
 }
 
-static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.implementationEnumAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.implementationEnumAttr());
     return result;
 }
 
-static inline JSValue jsTestObjXMLObjAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjXMLObjAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjXMLObjAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjXMLObjAttrGetter>(state, thisValue, "XMLObjAttr");
 }
 
-static inline JSValue jsTestObjXMLObjAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjXMLObjAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.xmlObjAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.xmlObjAttr());
     return result;
 }
 
-static inline JSValue jsTestObjCreateGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjCreateGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjCreate(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjCreateGetter>(state, thisValue, "create");
 }
 
-static inline JSValue jsTestObjCreateGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjCreateGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsBoolean(impl.isCreate());
     return result;
 }
 
-static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedStringAttrGetter>(state, thisValue, "reflectedStringAttr");
 }
 
-static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedUSVStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedUSVStringAttrGetter>(state, thisValue, "reflectedUSVStringAttr");
 }
 
-static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedIntegralAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedIntegralAttrGetter>(state, thisValue, "reflectedIntegralAttr");
 }
 
-static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedUnsignedIntegralAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedUnsignedIntegralAttrGetter>(state, thisValue, "reflectedUnsignedIntegralAttr");
 }
 
-static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedBooleanAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedBooleanAttrGetter>(state, thisValue, "reflectedBooleanAttr");
 }
 
-static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedURLAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedURLAttrGetter>(state, thisValue, "reflectedURLAttr");
 }
 
-static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedUSVURLAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedUSVURLAttrGetter>(state, thisValue, "reflectedUSVURLAttr");
 }
 
-static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedStringAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedStringAttrGetter>(state, thisValue, "reflectedStringAttr");
 }
 
-static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedCustomIntegralAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedCustomIntegralAttrGetter>(state, thisValue, "reflectedCustomIntegralAttr");
 }
 
-static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedCustomBooleanAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedCustomBooleanAttrGetter>(state, thisValue, "reflectedCustomBooleanAttr");
 }
 
-static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
     return result;
 }
 
-static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReflectedCustomURLAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReflectedCustomURLAttrGetter>(state, thisValue, "reflectedCustomURLAttr");
 }
 
-static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
     return result;
 }
 
 #if ENABLE(TEST_FEATURE)
-static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjEnabledAtRuntimeAttributeGetter>(state, thisValue, "enabledAtRuntimeAttribute");
 }
 
-static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.enabledAtRuntimeAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.enabledAtRuntimeAttribute());
     return result;
 }
 
 #endif
 
-static inline JSValue jsTestObjTypedArrayAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjTypedArrayAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjTypedArrayAttrGetter>(state, thisValue, "typedArrayAttr");
 }
 
-static inline JSValue jsTestObjTypedArrayAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjTypedArrayAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.typedArrayAttr());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.typedArrayAttr());
     return result;
 }
 
-static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeWithGetterExceptionGetter>(state, thisValue, "attributeWithGetterException");
 }
 
-static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJSNumber(*state, throwScope, impl.attributeWithGetterException());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJSNumber(state, throwScope, impl.attributeWithGetterException());
     return result;
 }
 
-static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithGetterLegacyException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeWithGetterLegacyExceptionGetter>(state, thisValue, "attributeWithGetterLegacyException");
 }
 
-static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.attributeWithGetterLegacyException(ec));
-    setDOMException(state, throwScope, ec);
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeWithSetterExceptionGetter>(state, thisValue, "attributeWithSetterException");
 }
 
-static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.attributeWithSetterException());
     return result;
 }
 
-static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithSetterLegacyException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeWithSetterLegacyExceptionGetter>(state, thisValue, "attributeWithSetterLegacyException");
 }
 
-static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.attributeWithSetterLegacyException());
     return result;
 }
 
-static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStringAttrWithGetterExceptionGetter>(state, thisValue, "stringAttrWithGetterException");
 }
 
-static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringAttrWithGetterException(ec));
-    setDOMException(state, throwScope, ec);
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.stringAttrWithGetterException(ec));
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStringAttrWithSetterExceptionGetter>(state, thisValue, "stringAttrWithSetterException");
 }
 
-static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringAttrWithSetterException());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.stringAttrWithSetterException());
     return result;
 }
 
-static inline JSValue jsTestObjCustomAttrGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjCustomAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjCustomAttr(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjCustomAttrGetter>(state, thisValue, "customAttr");
 }
 
-static inline JSValue jsTestObjCustomAttrGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjCustomAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return thisObject->customAttr(*state);
+    return thisObject.customAttr(state);
 }
 
-static inline JSValue jsTestObjOnfooGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjOnfooGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjOnfoo(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjOnfooGetter>(state, thisValue, "onfoo");
 }
 
-static inline JSValue jsTestObjOnfooGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjOnfooGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject->wrapped(), eventNames().fooEvent);
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent);
 }
 
-static inline JSValue jsTestObjOnwebkitfooGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjOnwebkitfooGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjOnwebkitfoo(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjOnwebkitfooGetter>(state, thisValue, "onwebkitfoo");
 }
 
-static inline JSValue jsTestObjOnwebkitfooGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjOnwebkitfooGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject->wrapped(), eventNames().fooEvent);
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent);
 }
 
-static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptStateAttributeGetter>(state, thisValue, "withScriptStateAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsNumber(impl.withScriptStateAttribute(*state));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsNumber(impl.withScriptStateAttribute(state));
     return result;
 }
 
-static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithCallWithAndSetterCallWithAttributeGetter>(state, thisValue, "withCallWithAndSetterCallWithAttribute");
 }
 
-static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsNumber(impl.withCallWithAndSetterCallWithAttribute(*state));
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsNumber(impl.withCallWithAndSetterCallWithAttribute(state));
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptExecutionContextAttributeGetter>(state, thisValue, "withScriptExecutionContextAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptExecutionContextAttribute(*context));
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptExecutionContextAttribute(*context));
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptStateAttributeRaisesGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptStateAttributeRaisesGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptStateAttributeRaisesGetter>(state, thisValue, "withScriptStateAttributeRaises");
 }
 
-static inline JSValue jsTestObjWithScriptStateAttributeRaisesGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptStateAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptStateAttributeRaises(*state, ec));
-    setDOMException(state, throwScope, ec);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptStateAttributeRaises(state, ec));
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptExecutionContextAttributeRaisesGetter>(state, thisValue, "withScriptExecutionContextAttributeRaises");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptExecutionContextAttributeRaises(*context, ec));
-    setDOMException(state, throwScope, ec);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptExecutionContextAttributeRaises(*context, ec));
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter>(state, thisValue, "withScriptExecutionContextAndScriptStateAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptExecutionContextAndScriptStateAttribute(*state, *context));
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateAttribute(state, *context));
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter>(state, thisValue, "withScriptExecutionContextAndScriptStateAttributeRaises");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptExecutionContextAndScriptStateAttributeRaises(*state, *context, ec));
-    setDOMException(state, throwScope, ec);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateAttributeRaises(state, *context, ec));
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter>(state, thisValue, "withScriptExecutionContextAndScriptStateWithSpacesAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
+    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
         return jsUndefined();
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(*state, *context));
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context));
     return result;
 }
 
-static inline JSValue jsTestObjWithScriptArgumentsAndCallStackAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjWithScriptArgumentsAndCallStackAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjWithScriptArgumentsAndCallStackAttributeGetter>(state, thisValue, "withScriptArgumentsAndCallStackAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptArgumentsAndCallStackAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjWithScriptArgumentsAndCallStackAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.withScriptArgumentsAndCallStackAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.withScriptArgumentsAndCallStackAttribute());
     return result;
 }
 
 #if ENABLE(Condition1)
-static inline JSValue jsTestObjConditionalAttr1Getter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr1Getter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr1Getter>(state, thisValue, "conditionalAttr1");
 }
 
-static inline JSValue jsTestObjConditionalAttr1Getter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr1Getter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.conditionalAttr1());
     return result;
 }
@@ -2676,18 +2678,18 @@ static inline JSValue jsTestObjConditionalAttr1Getter(ExecState* state, JSTestOb
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-static inline JSValue jsTestObjConditionalAttr2Getter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr2Getter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr2Getter>(state, thisValue, "conditionalAttr2");
 }
 
-static inline JSValue jsTestObjConditionalAttr2Getter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr2Getter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.conditionalAttr2());
     return result;
 }
@@ -2695,18 +2697,18 @@ static inline JSValue jsTestObjConditionalAttr2Getter(ExecState* state, JSTestOb
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-static inline JSValue jsTestObjConditionalAttr3Getter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr3Getter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr3(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr3Getter>(state, thisValue, "conditionalAttr3");
 }
 
-static inline JSValue jsTestObjConditionalAttr3Getter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr3Getter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.conditionalAttr3());
     return result;
 }
@@ -2714,460 +2716,460 @@ static inline JSValue jsTestObjConditionalAttr3Getter(ExecState* state, JSTestOb
 #endif
 
 #if ENABLE(Condition1)
-static inline JSValue jsTestObjConditionalAttr4ConstructorGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr4ConstructorGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr4Constructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr4ConstructorGetter>(state, thisValue, "conditionalAttr4");
 }
 
-static inline JSValue jsTestObjConditionalAttr4ConstructorGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr4ConstructorGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return JSTestObjectA::getConstructor(state->vm(), thisObject->globalObject());
+    return JSTestObjectA::getConstructor(state.vm(), thisObject.globalObject());
 }
 
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
-static inline JSValue jsTestObjConditionalAttr5ConstructorGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr5ConstructorGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr5Constructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr5ConstructorGetter>(state, thisValue, "conditionalAttr5");
 }
 
-static inline JSValue jsTestObjConditionalAttr5ConstructorGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr5ConstructorGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return JSTestObjectB::getConstructor(state->vm(), thisObject->globalObject());
+    return JSTestObjectB::getConstructor(state.vm(), thisObject.globalObject());
 }
 
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
-static inline JSValue jsTestObjConditionalAttr6ConstructorGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjConditionalAttr6ConstructorGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjConditionalAttr6Constructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjConditionalAttr6ConstructorGetter>(state, thisValue, "conditionalAttr6");
 }
 
-static inline JSValue jsTestObjConditionalAttr6ConstructorGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjConditionalAttr6ConstructorGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return JSTestObjectC::getConstructor(state->vm(), thisObject->globalObject());
+    return JSTestObjectC::getConstructor(state.vm(), thisObject.globalObject());
 }
 
 #endif
 
-static inline JSValue jsTestObjCachedAttribute1Getter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjCachedAttribute1Getter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjCachedAttribute1(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjCachedAttribute1Getter>(state, thisValue, "cachedAttribute1");
 }
 
-static inline JSValue jsTestObjCachedAttribute1Getter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjCachedAttribute1Getter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (JSValue cachedValue = thisObject->m_cachedAttribute1.get())
+    if (JSValue cachedValue = thisObject.m_cachedAttribute1.get())
         return cachedValue;
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = impl.cachedAttribute1();
-    thisObject->m_cachedAttribute1.set(state->vm(), thisObject, result);
+    thisObject.m_cachedAttribute1.set(state.vm(), &thisObject, result);
     return result;
 }
 
-static inline JSValue jsTestObjCachedAttribute2Getter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjCachedAttribute2Getter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjCachedAttribute2(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjCachedAttribute2Getter>(state, thisValue, "cachedAttribute2");
 }
 
-static inline JSValue jsTestObjCachedAttribute2Getter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjCachedAttribute2Getter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (JSValue cachedValue = thisObject->m_cachedAttribute2.get())
+    if (JSValue cachedValue = thisObject.m_cachedAttribute2.get())
         return cachedValue;
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = impl.cachedAttribute2();
-    thisObject->m_cachedAttribute2.set(state->vm(), thisObject, result);
+    thisObject.m_cachedAttribute2.set(state.vm(), &thisObject, result);
     return result;
 }
 
-static inline JSValue jsTestObjAnyAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAnyAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAnyAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAnyAttributeGetter>(state, thisValue, "anyAttribute");
 }
 
-static inline JSValue jsTestObjAnyAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAnyAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = impl.anyAttribute();
     return result;
 }
 
-static inline JSValue jsTestObjContentDocumentGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjContentDocumentGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjContentDocument(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjContentDocumentGetter>(state, thisValue, "contentDocument");
 }
 
-static inline JSValue jsTestObjContentDocumentGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjContentDocumentGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    return shouldAllowAccessToNode(state, impl.contentDocument()) ? toJS(state, thisObject->globalObject(), impl.contentDocument()) : jsNull();
+    auto& impl = thisObject.wrapped();
+    return shouldAllowAccessToNode(&state, impl.contentDocument()) ? toJS(&state, thisObject.globalObject(), impl.contentDocument()) : jsNull();
 }
 
-static inline JSValue jsTestObjMutablePointGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjMutablePointGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjMutablePoint(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjMutablePointGetter>(state, thisValue, "mutablePoint");
 }
 
-static inline JSValue jsTestObjMutablePointGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjMutablePointGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), SVGStaticPropertyTearOff<TestObj, SVGPoint>::create(impl, impl.mutablePoint(), &TestObj::updateMutablePoint));
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), SVGStaticPropertyTearOff<TestObj, SVGPoint>::create(impl, impl.mutablePoint(), &TestObj::updateMutablePoint));
     return result;
 }
 
-static inline JSValue jsTestObjImmutablePointGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjImmutablePointGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjImmutablePoint(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjImmutablePointGetter>(state, thisValue, "immutablePoint");
 }
 
-static inline JSValue jsTestObjImmutablePointGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjImmutablePointGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), SVGPropertyTearOff<SVGPoint>::create(impl.immutablePoint()));
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), SVGPropertyTearOff<SVGPoint>::create(impl.immutablePoint()));
     return result;
 }
 
-static inline JSValue jsTestObjStrawberryGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStrawberryGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStrawberry(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStrawberryGetter>(state, thisValue, "strawberry");
 }
 
-static inline JSValue jsTestObjStrawberryGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStrawberryGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.blueberry());
     return result;
 }
 
-static inline JSValue jsTestObjDescriptionGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjDescriptionGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjDescription(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjDescriptionGetter>(state, thisValue, "description");
 }
 
-static inline JSValue jsTestObjDescriptionGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjDescriptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.description());
     return result;
 }
 
-static inline JSValue jsTestObjIdGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjIdGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjId(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjIdGetter>(state, thisValue, "id");
 }
 
-static inline JSValue jsTestObjIdGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjIdGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.id());
     return result;
 }
 
-static inline JSValue jsTestObjHashGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjHashGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjHash(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjHashGetter>(state, thisValue, "hash");
 }
 
-static inline JSValue jsTestObjHashGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjHashGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.hash());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.hash());
     return result;
 }
 
-static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjReplaceableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjReplaceableAttributeGetter>(state, thisValue, "replaceableAttribute");
 }
 
-static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsNumber(impl.replaceableAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableDoubleAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableDoubleAttributeGetter>(state, thisValue, "nullableDoubleAttribute");
 }
 
-static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = toNullableJSNumber(impl.nullableDoubleAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableLongAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableLongAttributeGetter>(state, thisValue, "nullableLongAttribute");
 }
 
-static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = toNullableJSNumber(impl.nullableLongAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableBooleanAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableBooleanAttributeGetter>(state, thisValue, "nullableBooleanAttribute");
 }
 
-static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = jsBoolean(impl.nullableBooleanAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableStringAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableStringAttributeGetter>(state, thisValue, "nullableStringAttribute");
 }
 
-static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringOrNull(state, impl.nullableStringAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringOrNull(&state, impl.nullableStringAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableLongSettableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableLongSettableAttributeGetter>(state, thisValue, "nullableLongSettableAttribute");
 }
 
-static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = toNullableJSNumber(impl.nullableLongSettableAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableStringSettableAttributeGetter>(state, thisValue, "nullableStringSettableAttribute");
 }
 
-static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringOrNull(state, impl.nullableStringSettableAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringOrNull(&state, impl.nullableStringSettableAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableUSVStringSettableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableUSVStringSettableAttributeGetter>(state, thisValue, "nullableUSVStringSettableAttribute");
 }
 
-static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringOrNull(state, impl.nullableUSVStringSettableAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringOrNull(&state, impl.nullableUSVStringSettableAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjNullableStringValueGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjNullableStringValueGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjNullableStringValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjNullableStringValueGetter>(state, thisValue, "nullableStringValue");
 }
 
-static inline JSValue jsTestObjNullableStringValueGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjNullableStringValueGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
-    auto& impl = thisObject->wrapped();
+    auto& impl = thisObject.wrapped();
     JSValue result = toNullableJSNumber(impl.nullableStringValue(ec));
-    setDOMException(state, throwScope, ec);
+    setDOMException(&state, throwScope, ec);
     return result;
 }
 
-static inline JSValue jsTestObjAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeGetter>(state, thisValue, "attribute");
 }
 
-static inline JSValue jsTestObjAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attribute());
     return result;
 }
 
-static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjAttributeWithReservedEnumType(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjAttributeWithReservedEnumTypeGetter>(state, thisValue, "attributeWithReservedEnumType");
 }
 
-static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.attributeWithReservedEnumType());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.attributeWithReservedEnumType());
     return result;
 }
 
-static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjTestReadOnlyPromiseAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjTestReadOnlyPromiseAttributeGetter, CastedThisErrorBehavior::RejectPromise>(state, thisValue, "testReadOnlyPromiseAttribute");
 }
 
-static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.testReadOnlyPromiseAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.testReadOnlyPromiseAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjPutForwardsAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjPutForwardsAttributeGetter>(state, thisValue, "putForwardsAttribute");
 }
 
-static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.putForwardsAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.putForwardsAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjPutForwardsNullableAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjPutForwardsNullableAttributeGetter>(state, thisValue, "putForwardsNullableAttribute");
 }
 
-static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = toJS(state, thisObject->globalObject(), impl.putForwardsNullableAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS(&state, thisObject.globalObject(), impl.putForwardsNullableAttribute());
     return result;
 }
 
-static inline JSValue jsTestObjStringifierAttributeGetter(ExecState*, JSTestObj*, ThrowScope& throwScope);
+static inline JSValue jsTestObjStringifierAttributeGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestObjStringifierAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestObj>::attribute<jsTestObjStringifierAttributeGetter>(state, thisValue, "stringifierAttribute");
 }
 
-static inline JSValue jsTestObjStringifierAttributeGetter(ExecState* state, JSTestObj* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestObjStringifierAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringifierAttribute());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.stringifierAttribute());
     return result;
 }
 

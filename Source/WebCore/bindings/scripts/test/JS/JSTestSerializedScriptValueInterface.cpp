@@ -137,89 +137,89 @@ inline JSTestSerializedScriptValueInterface* JSTestSerializedScriptValueInterfac
     return jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState*, JSTestSerializedScriptValueInterface*, ThrowScope& throwScope);
+static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceValueGetter>(state, thisValue, "value");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState* state, JSTestSerializedScriptValueInterface* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = impl.value() ? impl.value()->deserialize(state, thisObject->globalObject(), 0) : jsNull();
+    auto& impl = thisObject.wrapped();
+    JSValue result = impl.value() ? impl.value()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
     return result;
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(ExecState*, JSTestSerializedScriptValueInterface*, ThrowScope& throwScope);
+static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceReadonlyValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceReadonlyValueGetter>(state, thisValue, "readonlyValue");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(ExecState* state, JSTestSerializedScriptValueInterface* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(state, thisObject->globalObject(), 0) : jsNull();
+    auto& impl = thisObject.wrapped();
+    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
     return result;
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(ExecState*, JSTestSerializedScriptValueInterface*, ThrowScope& throwScope);
+static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceCachedValueGetter>(state, thisValue, "cachedValue");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(ExecState* state, JSTestSerializedScriptValueInterface* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (JSValue cachedValue = thisObject->m_cachedValue.get())
+    if (JSValue cachedValue = thisObject.m_cachedValue.get())
         return cachedValue;
-    auto& impl = thisObject->wrapped();
-    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(state, thisObject->globalObject(), 0) : jsNull();
-    thisObject->m_cachedValue.set(state->vm(), thisObject, result);
+    auto& impl = thisObject.wrapped();
+    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    thisObject.m_cachedValue.set(state.vm(), &thisObject, result);
     return result;
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState*, JSTestSerializedScriptValueInterface*, ThrowScope& throwScope);
+static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestSerializedScriptValueInterfacePorts(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfacePortsGetter>(state, thisValue, "ports");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState* state, JSTestSerializedScriptValueInterface* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsArray(state, thisObject->globalObject(), impl.ports());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsArray(&state, thisObject.globalObject(), impl.ports());
     return result;
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(ExecState*, JSTestSerializedScriptValueInterface*, ThrowScope& throwScope);
+static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(ExecState&, JSTestSerializedScriptValueInterface&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::attribute<jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter>(state, thisValue, "cachedReadonlyValue");
 }
 
-static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(ExecState* state, JSTestSerializedScriptValueInterface* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    if (JSValue cachedValue = thisObject->m_cachedReadonlyValue.get())
+    if (JSValue cachedValue = thisObject.m_cachedReadonlyValue.get())
         return cachedValue;
-    auto& impl = thisObject->wrapped();
-    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(state, thisObject->globalObject(), 0) : jsNull();
-    thisObject->m_cachedReadonlyValue.set(state->vm(), thisObject, result);
+    auto& impl = thisObject.wrapped();
+    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    thisObject.m_cachedReadonlyValue.set(state.vm(), &thisObject, result);
     return result;
 }
 

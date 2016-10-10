@@ -137,19 +137,19 @@ inline JSTestException* JSTestException::castForAttribute(JSC::ExecState*, Encod
     return jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestExceptionNameGetter(ExecState*, JSTestException*, ThrowScope& throwScope);
+static inline JSValue jsTestExceptionNameGetter(ExecState&, JSTestException&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestExceptionName(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestException>::attribute<jsTestExceptionNameGetter>(state, thisValue, "name");
 }
 
-static inline JSValue jsTestExceptionNameGetter(ExecState* state, JSTestException* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestExceptionNameGetter(ExecState& state, JSTestException& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    auto& impl = thisObject->wrapped();
-    JSValue result = jsStringWithCache(state, impl.name());
+    auto& impl = thisObject.wrapped();
+    JSValue result = jsStringWithCache(&state, impl.name());
     return result;
 }
 

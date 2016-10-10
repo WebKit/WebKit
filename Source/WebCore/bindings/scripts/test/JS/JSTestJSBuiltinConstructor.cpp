@@ -137,32 +137,32 @@ inline JSTestJSBuiltinConstructor* JSTestJSBuiltinConstructor::castForAttribute(
     return jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
 }
 
-static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState*, JSTestJSBuiltinConstructor*, ThrowScope& throwScope);
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState&, JSTestJSBuiltinConstructor&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestJSBuiltinConstructorTestAttributeCustom(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestJSBuiltinConstructor>::attribute<jsTestJSBuiltinConstructorTestAttributeCustomGetter>(state, thisValue, "testAttributeCustom");
 }
 
-static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState* state, JSTestJSBuiltinConstructor* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState& state, JSTestJSBuiltinConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return thisObject->testAttributeCustom(*state);
+    return thisObject.testAttributeCustom(state);
 }
 
-static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState*, JSTestJSBuiltinConstructor*, ThrowScope& throwScope);
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState&, JSTestJSBuiltinConstructor&, ThrowScope& throwScope);
 
 EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     return BindingCaller<JSTestJSBuiltinConstructor>::attribute<jsTestJSBuiltinConstructorTestAttributeRWCustomGetter>(state, thisValue, "testAttributeRWCustom");
 }
 
-static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState* state, JSTestJSBuiltinConstructor* thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestJSBuiltinConstructorTestAttributeRWCustomGetter(ExecState& state, JSTestJSBuiltinConstructor& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return thisObject->testAttributeRWCustom(*state);
+    return thisObject.testAttributeRWCustom(state);
 }
 
 EncodedJSValue jsTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
