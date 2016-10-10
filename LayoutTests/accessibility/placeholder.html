@@ -12,6 +12,8 @@
     <span id="label">Birthday:</span>
     <div id="search" role="searchbox" aria-labelledby="label" aria-placeholder="MM-DD-YYYY">03-14-1879</div>
     
+    <input type="text" id="input" placeholder="Fill in the blank" aria-placeholder="aria placeholder">
+    
     <p id="description"></p>
     <div id="console"></div>
      
@@ -29,7 +31,11 @@
             
             var search = accessibilityController.accessibleElementById("search");
             shouldBe("search.stringAttributeValue('AXPlaceholderValue')", "'MM-DD-YYYY'");
-
+            
+            // When the placeholder and aria-placeholder attributes are both present, use the placeholder
+            // attribute's value.
+            var input = accessibilityController.accessibleElementById("input");
+            shouldBe("input.stringAttributeValue('AXPlaceholderValue')", "'Fill in the blank'");
         }
     </script>
 

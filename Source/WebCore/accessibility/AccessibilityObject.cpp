@@ -2280,13 +2280,13 @@ bool AccessibilityObject::isValueAutofilled() const
 
 const AtomicString& AccessibilityObject::placeholderValue() const
 {
-    const AtomicString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
-    if (!ariaPlaceholder.isEmpty())
-        return ariaPlaceholder;
-    
     const AtomicString& placeholder = getAttribute(placeholderAttr);
     if (!placeholder.isEmpty())
         return placeholder;
+    
+    const AtomicString& ariaPlaceholder = getAttribute(aria_placeholderAttr);
+    if (!ariaPlaceholder.isEmpty())
+        return ariaPlaceholder;
     
     return nullAtom;
 }

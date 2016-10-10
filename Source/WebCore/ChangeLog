@@ -1,3 +1,20 @@
+2016-10-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Update AXPlaceHolder algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=163229
+
+        Reviewed by Chris Fleizach.
+
+        From https://w3c.github.io/html-aam/
+        When the placeholder and aria-placeholder attributes are both present, we
+        should expose the value of the placeholder attribute. Updated the algorithm
+        for that.
+
+        Changes are covered in the modified test.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::placeholderValue):
+
 2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node accessors in DOMJIT
