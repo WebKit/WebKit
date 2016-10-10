@@ -37,7 +37,7 @@ namespace WebKit {
 
 class WebInspectorProxy;
 
-class WebInspectorServer : public WebSocketServer, public WebSocketServerClient {
+class WebInspectorServer final : public WebSocketServer, public WebSocketServerClient {
 public:
     typedef HashMap<unsigned, WebInspectorProxy*> ClientMap;
     static WebInspectorServer& singleton();
@@ -53,11 +53,11 @@ private:
     ~WebInspectorServer();
 
     // WebSocketServerClient implementation. Events coming from remote connections.
-    virtual void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
-    virtual bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
-    virtual void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<HTTPRequest>);
-    virtual void didReceiveWebSocketMessage(WebSocketServerConnection*, const String& message);
-    virtual void didCloseWebSocketConnection(WebSocketServerConnection*);
+    void didReceiveUnrecognizedHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) final;
+    bool didReceiveWebSocketUpgradeHTTPRequest(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) final;
+    void didEstablishWebSocketConnection(WebSocketServerConnection*, PassRefPtr<HTTPRequest>) final;
+    void didReceiveWebSocketMessage(WebSocketServerConnection*, const String& message) final;
+    void didCloseWebSocketConnection(WebSocketServerConnection*) final;
 
     bool platformResourceForPath(const String& path, Vector<char>& data, String& contentType);
 #if PLATFORM(GTK) || PLATFORM(EFL)

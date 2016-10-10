@@ -1,3 +1,12 @@
+2016-10-10  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Added final specifier to WebInspectorServer and to its overridden methods
+        https://bugs.webkit.org/show_bug.cgi?id=163228
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+
 2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] 2.14.0 Compile Errors: GTK 3.22.1
