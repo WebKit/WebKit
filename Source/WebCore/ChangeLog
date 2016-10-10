@@ -1,5 +1,12 @@
 2016-10-10  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct typo in comment (patining -> painting).
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::centerLineAndCutOffCorners):
+
+2016-10-10  Brent Fulgham  <bfulgham@apple.com>
+
         Reduce code duplication between CG, Cairo, and Direct2D
         https://bugs.webkit.org/show_bug.cgi?id=163157
 

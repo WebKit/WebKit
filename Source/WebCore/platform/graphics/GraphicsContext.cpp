@@ -1163,7 +1163,7 @@ float GraphicsContext::dashedLinePatternOffsetForPatternAndStrokeWidth(float pat
 
 Vector<FloatPoint> GraphicsContext::centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const
 {
-    // Center line and cut off corners for pattern patining.
+    // Center line and cut off corners for pattern painting.
     if (isVerticalLine) {
         float centerOffset = (point2.x() - point1.x()) / 2.0f;
         point1.move(centerOffset, cornerWidth);
