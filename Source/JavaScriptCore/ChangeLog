@@ -1,3 +1,82 @@
+2016-10-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should expose API for pinning registers
+        https://bugs.webkit.org/show_bug.cgi?id=163175
+
+        Reviewed by Keith Miller.
+        
+        You can now call Procedure::pinRegister(), or Code::pinRegister(), and it will make this
+        register behave as follows:
+        
+        - B3 and Air will emit no code that modifies the value in this register, except if that
+          happens via a Patchpoint or stackmap constraint (i.e. the user explicitly asked for it).
+        - B3 and Air will allow others to modify the register. For example, if the register is not
+          callee-save, then the compiler knows that the register's value will be trashed by any
+          C-style call.
+        - Air will be happy to emit code that reads from this register, including coalescing tmps
+          with it, so longer as there is no interference (i.e. no chance of the register's value
+          changing). For example, if we went back to having pinned tag registers, we would tell B3
+          to use them by (1) excluding them from any clobber set (easy, since they're callee save)
+          and (2) emitting ArgumentReg to grab their value. There's a test that does this.
+        
+        This is accomplished by taking regsInPriorityOrder() and making it a method of Code. Air 
+        already used this API when choosing registers in register allocation. Code now also vends a
+        mutableRegs() set, which is derived from regsInPriorityOrder(), that can quickly tell you if
+        a register can be mutated. Doing it this way means that most of this is a purely mechanical
+        change. The calls to mutableRegs() are the places where we had to change logic:
+        
+        - The register allocators needs to know that coalescing with a precolored pinned tmp is free.
+        - The callee-save handler needs to know that we're not supposed to save/restore pinned
+          registers.
+        
+        Note that in this scheme, pinned registers are simply registers that do not appear in
+        regsInPriorityOrder(). This means, for example, that we will now say that FP is pinned. So,
+        this means that you can also pin registers by calling setRegsInPriorityOrder() and passing a
+        vector that excludes some registers. More generally, this means that clients can now tweak
+        the register allocator's register preferences, since the ordering in that list reflects the
+        order in which the allocator will try registers.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::pinRegister):
+        * b3/B3Procedure.h:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::setRegsInPriorityOrder):
+        (JSC::B3::Air::Code::pinRegister):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::regsInPriorityOrder):
+        (JSC::B3::Air::Code::mutableRegs):
+        (JSC::B3::Air::Code::isPinned):
+        (JSC::B3::Air::Code::regsInPriorityOrderImpl):
+        (JSC::B3::Air::Code::proc): Deleted.
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirEmitShuffle.h:
+        * b3/air/AirHandleCalleeSaves.cpp:
+        (JSC::B3::Air::handleCalleeSaves):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirRegisterPriority.cpp: Removed.
+        * b3/air/AirRegisterPriority.h: Removed.
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * b3/air/testair.cpp:
+        (JSC::B3::Air::testShuffleBroadcastAllRegs):
+        (JSC::B3::Air::testShuffleShiftAllRegs):
+        (JSC::B3::Air::testShuffleRotateAllRegs):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegs64):
+        (JSC::B3::Air::testShuffleShiftMemoryAllRegsMixedWidth):
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegs64):
+        (JSC::B3::Air::testShuffleRotateMemoryAllRegsMixedWidth):
+        * b3/testb3.cpp:
+        (JSC::B3::testPinRegisters):
+        (JSC::B3::run):
+        * jit/RegisterSet.h:
+
 2016-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         B3 should know about mutable pinned registers

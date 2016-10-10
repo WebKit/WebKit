@@ -63,6 +63,27 @@ public:
     ~Code();
 
     Procedure& proc() { return m_proc; }
+    
+    const Vector<Reg>& regsInPriorityOrder(Arg::Type type) const
+    {
+        switch (type) {
+        case Arg::GP:
+            return m_gpRegsInPriorityOrder;
+        case Arg::FP:
+            return m_fpRegsInPriorityOrder;
+        }
+        ASSERT_NOT_REACHED();
+    }
+    
+    void setRegsInPriorityOrder(Arg::Type, const Vector<Reg>&);
+    
+    // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
+    // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
+    const RegisterSet& mutableRegs() const { return m_mutableRegs; }
+    
+    bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
+    
+    void pinRegister(Reg);
 
     JS_EXPORT_PRIVATE BasicBlock* addBlock(double frequency = 1);
 
@@ -250,7 +271,21 @@ private:
     
     Code(Procedure&);
 
+    Vector<Reg>& regsInPriorityOrderImpl(Arg::Type type)
+    {
+        switch (type) {
+        case Arg::GP:
+            return m_gpRegsInPriorityOrder;
+        case Arg::FP:
+            return m_fpRegsInPriorityOrder;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
+    Vector<Reg> m_gpRegsInPriorityOrder;
+    Vector<Reg> m_fpRegsInPriorityOrder;
+    RegisterSet m_mutableRegs;
     SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;

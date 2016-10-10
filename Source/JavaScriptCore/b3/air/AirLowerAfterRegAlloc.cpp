@@ -36,7 +36,6 @@
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
 #include "AirPhaseScope.h"
-#include "AirRegisterPriority.h"
 #include "B3CCallValue.h"
 #include "B3ValueInlines.h"
 #include "RegisterSet.h"
@@ -86,7 +85,7 @@ void lowerAfterRegAlloc(Code& code)
         std::array<Arg, 2> result;
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
-            for (Reg reg : regsInPriorityOrder(type)) {
+            for (Reg reg : code.regsInPriorityOrder(type)) {
                 if (!set.get(reg)) {
                     result[i] = Tmp(reg);
                     set.set(reg);
@@ -134,7 +133,7 @@ void lowerAfterRegAlloc(Code& code)
                 std::array<Arg, 2> gpScratch = getScratches(set, Arg::GP);
                 std::array<Arg, 2> fpScratch = getScratches(set, Arg::FP);
                 insertionSet.insertInsts(
-                    instIndex, emitShuffle(pairs, gpScratch, fpScratch, inst.origin));
+                    instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
                 inst = Inst();
                 break;
             }
@@ -193,7 +192,7 @@ void lowerAfterRegAlloc(Code& code)
                     dataLog("Pre-call pairs for ", inst, ": ", listDump(pairs), "\n");
                 
                 insertionSet.insertInsts(
-                    instIndex, emitShuffle(pairs, gpScratch, fpScratch, inst.origin));
+                    instIndex, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
 
                 inst = buildCCall(code, inst.origin, destinations);
                 if (oldKind.traps)
@@ -224,7 +223,7 @@ void lowerAfterRegAlloc(Code& code)
                 fpScratch = getScratches(liveRegs, Arg::FP);
                 
                 insertionSet.insertInsts(
-                    instIndex + 1, emitShuffle(pairs, gpScratch, fpScratch, inst.origin));
+                    instIndex + 1, emitShuffle(code, pairs, gpScratch, fpScratch, inst.origin));
                 break;
             }
 

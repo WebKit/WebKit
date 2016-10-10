@@ -875,8 +875,6 @@
 		0FEC85811BDACDC70080FF74 /* AirInstInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */; };
 		0FEC85831BDACDC70080FF74 /* AirPhaseScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */; };
 		0FEC85841BDACDC70080FF74 /* AirPhaseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */; };
-		0FEC85851BDACDC70080FF74 /* AirRegisterPriority.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85601BDACDC70080FF74 /* AirRegisterPriority.cpp */; };
-		0FEC85861BDACDC70080FF74 /* AirRegisterPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85611BDACDC70080FF74 /* AirRegisterPriority.h */; };
 		0FEC85871BDACDC70080FF74 /* AirSpecial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85621BDACDC70080FF74 /* AirSpecial.cpp */; };
 		0FEC85881BDACDC70080FF74 /* AirSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85631BDACDC70080FF74 /* AirSpecial.h */; };
 		0FEC85891BDACDC70080FF74 /* AirSpillEverything.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC85641BDACDC70080FF74 /* AirSpillEverything.cpp */; };
@@ -3151,8 +3149,6 @@
 		0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirInstInlines.h; path = b3/air/AirInstInlines.h; sourceTree = "<group>"; };
 		0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPhaseScope.cpp; path = b3/air/AirPhaseScope.cpp; sourceTree = "<group>"; };
 		0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPhaseScope.h; path = b3/air/AirPhaseScope.h; sourceTree = "<group>"; };
-		0FEC85601BDACDC70080FF74 /* AirRegisterPriority.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirRegisterPriority.cpp; path = b3/air/AirRegisterPriority.cpp; sourceTree = "<group>"; };
-		0FEC85611BDACDC70080FF74 /* AirRegisterPriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirRegisterPriority.h; path = b3/air/AirRegisterPriority.h; sourceTree = "<group>"; };
 		0FEC85621BDACDC70080FF74 /* AirSpecial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirSpecial.cpp; path = b3/air/AirSpecial.cpp; sourceTree = "<group>"; };
 		0FEC85631BDACDC70080FF74 /* AirSpecial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirSpecial.h; path = b3/air/AirSpecial.h; sourceTree = "<group>"; };
 		0FEC85641BDACDC70080FF74 /* AirSpillEverything.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirSpillEverything.cpp; path = b3/air/AirSpillEverything.cpp; sourceTree = "<group>"; };
@@ -5063,8 +5059,6 @@
 				0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */,
 				0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */,
 				0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */,
-				0FEC85601BDACDC70080FF74 /* AirRegisterPriority.cpp */,
-				0FEC85611BDACDC70080FF74 /* AirRegisterPriority.h */,
 				0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */,
 				0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */,
 				0F338DFB1BED51270013C88F /* AirSimplifyCFG.cpp */,
@@ -7260,7 +7254,6 @@
 				0FEC85801BDACDC70080FF74 /* AirInst.h in Headers */,
 				0FEC85811BDACDC70080FF74 /* AirInstInlines.h in Headers */,
 				0FEC85841BDACDC70080FF74 /* AirPhaseScope.h in Headers */,
-				0FEC85861BDACDC70080FF74 /* AirRegisterPriority.h in Headers */,
 				0F45703D1BE45F0A0062A629 /* AirReportUsedRegisters.h in Headers */,
 				0FEC85881BDACDC70080FF74 /* AirSpecial.h in Headers */,
 				0FEC858A1BDACDC70080FF74 /* AirSpillEverything.h in Headers */,
@@ -9001,7 +8994,6 @@
 				0FEC857D1BDACDC70080FF74 /* AirInsertionSet.cpp in Sources */,
 				0FEC857F1BDACDC70080FF74 /* AirInst.cpp in Sources */,
 				0FEC85831BDACDC70080FF74 /* AirPhaseScope.cpp in Sources */,
-				0FEC85851BDACDC70080FF74 /* AirRegisterPriority.cpp in Sources */,
 				0F45703C1BE45F0A0062A629 /* AirReportUsedRegisters.cpp in Sources */,
 				0FEC85871BDACDC70080FF74 /* AirSpecial.cpp in Sources */,
 				0FEC85891BDACDC70080FF74 /* AirSpillEverything.cpp in Sources */,

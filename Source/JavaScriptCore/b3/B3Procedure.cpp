@@ -305,6 +305,11 @@ void Procedure::requestCallArgAreaSizeInBytes(unsigned size)
     code().requestCallArgAreaSizeInBytes(size);
 }
 
+void Procedure::pinRegister(Reg reg)
+{
+    code().pinRegister(reg);
+}
+
 unsigned Procedure::frameSize() const
 {
     return code().frameSize();

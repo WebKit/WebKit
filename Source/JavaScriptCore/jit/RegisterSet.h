@@ -48,7 +48,7 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
     static RegisterSet runtimeRegisters();
     static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
-    static RegisterSet calleeSaveRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet calleeSaveRegisters();
     static RegisterSet vmCalleeSaveRegisters(); // Callee save registers that might be saved and used by any tier.
     static RegisterSet llintBaselineCalleeSaveRegisters(); // Registers saved and used by the LLInt.
     static RegisterSet dfgCalleeSaveRegisters(); // Registers saved and used by the DFG JIT.
@@ -107,7 +107,7 @@ public:
     size_t numberOfSetFPRs() const;
     size_t numberOfSetRegisters() const { return m_bits.count(); }
     
-    void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     
     enum EmptyValueTag { EmptyValue };
     enum DeletedValueTag { DeletedValue };

@@ -28,7 +28,6 @@
 #include "AirCode.h"
 #include "AirGenerate.h"
 #include "AirInstInlines.h"
-#include "AirRegisterPriority.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3Compilation.h"
 #include "B3Procedure.h"
@@ -393,7 +392,7 @@ void testShuffleBroadcastAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
 
     BasicBlock* root = code.addBlock();
     root->append(Move, nullptr, Arg::imm(35), Tmp(GPRInfo::regT0));
@@ -860,7 +859,7 @@ void testShuffleShiftAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
 
     BasicBlock* root = code.addBlock();
     for (unsigned i = 0; i < regs.size(); ++i)
@@ -896,7 +895,7 @@ void testShuffleRotateAllRegs()
     B3::Procedure proc;
     Code& code = proc.code();
 
-    const Vector<Reg>& regs = regsInPriorityOrder(Arg::GP);
+    const Vector<Reg>& regs = code.regsInPriorityOrder(Arg::GP);
 
     BasicBlock* root = code.addBlock();
     for (unsigned i = 0; i < regs.size(); ++i)
@@ -1168,7 +1167,7 @@ void testShuffleShiftMemoryAllRegs()
     memory[0] = 35;
     memory[1] = 36;
 
-    Vector<Reg> regs = regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1218,7 +1217,7 @@ void testShuffleShiftMemoryAllRegs64()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1279,7 +1278,7 @@ void testShuffleShiftMemoryAllRegsMixedWidth()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1469,7 +1468,7 @@ void testShuffleRotateMemoryAllRegs64()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();
@@ -1521,7 +1520,7 @@ void testShuffleRotateMemoryAllRegsMixedWidth()
     memory[0] = 35000000000000ll;
     memory[1] = 36000000000000ll;
 
-    Vector<Reg> regs = regsInPriorityOrder(Arg::GP);
+    Vector<Reg> regs = code.regsInPriorityOrder(Arg::GP);
     regs.removeFirst(Reg(GPRInfo::regT0));
 
     BasicBlock* root = code.addBlock();

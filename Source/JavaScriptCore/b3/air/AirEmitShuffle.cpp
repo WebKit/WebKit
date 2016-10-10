@@ -28,8 +28,8 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
 #include "AirInstInlines.h"
-#include "AirRegisterPriority.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/ListDump.h>
 
@@ -40,8 +40,8 @@ namespace {
 bool verbose = false;
 
 template<typename Functor>
-Tmp findPossibleScratch(Arg::Type type, const Functor& functor) {
-    for (Reg reg : regsInPriorityOrder(type)) {
+Tmp findPossibleScratch(Code& code, Arg::Type type, const Functor& functor) {
+    for (Reg reg : code.regsInPriorityOrder(type)) {
         Tmp tmp(reg);
         if (functor(tmp))
             return tmp;
@@ -49,9 +49,9 @@ Tmp findPossibleScratch(Arg::Type type, const Functor& functor) {
     return Tmp();
 }
 
-Tmp findPossibleScratch(Arg::Type type, const Arg& arg1, const Arg& arg2) {
+Tmp findPossibleScratch(Code& code, Arg::Type type, const Arg& arg1, const Arg& arg2) {
     return findPossibleScratch(
-        type,
+        code, type,
         [&] (Tmp tmp) -> bool {
             return !arg1.usesTmp(tmp) && !arg2.usesTmp(tmp);
         });
@@ -79,7 +79,8 @@ Inst createShuffle(Value* origin, const Vector<ShufflePair>& pairs)
 }
 
 Vector<Inst> emitShuffle(
-    Vector<ShufflePair> pairs, std::array<Arg, 2> scratches, Arg::Type type, Value* origin)
+    Code& code, Vector<ShufflePair> pairs, std::array<Arg, 2> scratches, Arg::Type type,
+    Value* origin)
 {
     if (verbose) {
         dataLog(
@@ -303,7 +304,7 @@ Vector<Inst> emitShuffle(
         
         if (!isValidForm(move, pair.src().kind(), pair.dst().kind())) {
             Tmp scratch =
-                getScratch(scratchIndex, findPossibleScratch(type, pair.src(), pair.dst()));
+                getScratch(scratchIndex, findPossibleScratch(code, type, pair.src(), pair.dst()));
             RELEASE_ASSERT(scratch);
             if (isValidForm(move, pair.src().kind(), Arg::Tmp))
                 result.append(Inst(moveForWidth(pair.width()), origin, pair.src(), scratch));
@@ -435,7 +436,7 @@ Vector<Inst> emitShuffle(
                     // Moving data between two spills is rare. To get here a lot of rare stuff has to
                     // all happen at once.
                     
-                    Tmp scratch = getScratch(0, findPossibleScratch(type, left, right));
+                    Tmp scratch = getScratch(0, findPossibleScratch(code, type, left, right));
                     RELEASE_ASSERT(scratch);
                     result.append(Inst(moveForWidth(swapWidth), origin, left, scratch));
                     result.append(Inst(swap, origin, scratch, right));
@@ -469,7 +470,7 @@ Vector<Inst> emitShuffle(
             // available register file.
 
             Tmp scratch = findPossibleScratch(
-                type,
+                code, type,
                 [&] (Tmp tmp) -> bool {
                     for (ShufflePair pair : rotate.loop) {
                         if (pair.src().usesTmp(tmp))
@@ -512,7 +513,7 @@ Vector<Inst> emitShuffle(
 }
 
 Vector<Inst> emitShuffle(
-    const Vector<ShufflePair>& pairs,
+    Code& code, const Vector<ShufflePair>& pairs,
     const std::array<Arg, 2>& gpScratch, const std::array<Arg, 2>& fpScratch,
     Value* origin)
 {
@@ -531,8 +532,8 @@ Vector<Inst> emitShuffle(
     }
 
     Vector<Inst> result;
-    result.appendVector(emitShuffle(gpPairs, gpScratch, Arg::GP, origin));
-    result.appendVector(emitShuffle(fpPairs, fpScratch, Arg::FP, origin));
+    result.appendVector(emitShuffle(code, gpPairs, gpScratch, Arg::GP, origin));
+    result.appendVector(emitShuffle(code, fpPairs, fpScratch, Arg::FP, origin));
     return result;
 }
 

@@ -212,8 +212,11 @@ public:
     unsigned callArgAreaSizeInBytes() const;
     void requestCallArgAreaSizeInBytes(unsigned size);
 
+    // This tells the register allocators to stay away from this register.
+    JS_EXPORT_PRIVATE void pinRegister(Reg);
+
     JS_EXPORT_PRIVATE unsigned frameSize() const;
-    const RegisterAtOffsetList& calleeSaveRegisters() const;
+    JS_EXPORT_PRIVATE const RegisterAtOffsetList& calleeSaveRegisters() const;
 
     PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
     PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }

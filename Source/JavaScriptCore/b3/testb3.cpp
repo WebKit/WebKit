@@ -13327,6 +13327,60 @@ void testPCOriginMapDoesntInsertNops()
     compile(proc);
 }
 
+void testPinRegisters()
+{
+    auto go = [&] (bool pin) {
+        Procedure proc;
+        RegisterSet csrs;
+        csrs.merge(RegisterSet::calleeSaveRegisters());
+        csrs.exclude(RegisterSet::stackRegisters());
+        if (pin) {
+            csrs.forEach(
+                [&] (Reg reg) {
+                    proc.pinRegister(reg);
+                });
+        }
+        BasicBlock* root = proc.addBlock();
+        Value* a = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* b = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* c = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* d = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::regCS0);
+        root->appendNew<CCallValue>(
+            proc, Void, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), static_cast<intptr_t>(0x1234)));
+        root->appendNew<CCallValue>(
+            proc, Void, Origin(),
+            root->appendNew<ConstPtrValue>(proc, Origin(), static_cast<intptr_t>(0x1235)),
+            a, b, c);
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
+        patchpoint->appendSomeRegister(d);
+        patchpoint->setGenerator(
+            [&] (CCallHelpers&, const StackmapGenerationParams& params) {
+                CHECK_EQ(params[0].gpr(), GPRInfo::regCS0);
+            });
+        root->appendNew<Value>(proc, Return, Origin());
+        auto code = compile(proc);
+        bool usesCSRs = false;
+        for (Air::BasicBlock* block : proc.code()) {
+            for (Air::Inst& inst : *block) {
+                if (inst.kind.opcode == Air::Patch && inst.origin == patchpoint)
+                    continue;
+                inst.forEachTmpFast(
+                    [&] (Air::Tmp tmp) {
+                        if (tmp.isReg())
+                            usesCSRs |= csrs.get(tmp.reg());
+                    });
+            }
+        }
+        for (const RegisterAtOffset& regAtOffset : proc.calleeSaveRegisters())
+            usesCSRs |= csrs.get(regAtOffset.reg());
+        CHECK_EQ(usesCSRs, !pin);
+    };
+    
+    go(true);
+    go(false);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14774,6 +14828,7 @@ void run(const char* filter)
     RUN(testTrappingStoreElimination());
     RUN(testMoveConstants());
     RUN(testPCOriginMapDoesntInsertNops());
+    RUN(testPinRegisters());
     
     if (tasks.isEmpty())
         usage();

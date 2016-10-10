@@ -37,6 +37,8 @@ class Value;
 
 namespace Air {
 
+class Code;
+
 class ShufflePair {
 public:
     ShufflePair()
@@ -100,12 +102,12 @@ Inst createShuffle(Value* origin, const Vector<ShufflePair>&);
 // NOTE: Use this method (and its friend below) to emit shuffles after register allocation. Before
 // register allocation it is much better to simply use the Shuffle instruction.
 Vector<Inst> emitShuffle(
-    Vector<ShufflePair>, std::array<Arg, 2> scratch, Arg::Type, Value* origin);
+    Code& code, Vector<ShufflePair>, std::array<Arg, 2> scratch, Arg::Type, Value* origin);
 
 // Perform a shuffle that involves any number of types. Pass scratch registers or memory locations
 // for each type according to the rules above.
 Vector<Inst> emitShuffle(
-    const Vector<ShufflePair>&,
+    Code& code, const Vector<ShufflePair>&,
     const std::array<Arg, 2>& gpScratch, const std::array<Arg, 2>& fpScratch,
     Value* origin);
 

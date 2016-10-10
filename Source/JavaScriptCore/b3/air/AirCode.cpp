@@ -40,10 +40,49 @@ Code::Code(Procedure& proc)
     : m_proc(proc)
     , m_lastPhaseName("initial")
 {
+    // Come up with initial orderings of registers. The user may replace this with something else.
+    Arg::forEachType(
+        [&] (Arg::Type type) {
+            Vector<Reg> result;
+            RegisterSet all = type == Arg::GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
+            all.exclude(RegisterSet::stackRegisters());
+            all.exclude(RegisterSet::reservedHardwareRegisters());
+            RegisterSet calleeSave = RegisterSet::calleeSaveRegisters();
+            all.forEach(
+                [&] (Reg reg) {
+                    if (!calleeSave.get(reg))
+                        result.append(reg);
+                });
+            all.forEach(
+                [&] (Reg reg) {
+                    if (calleeSave.get(reg))
+                        result.append(reg);
+                });
+            setRegsInPriorityOrder(type, result);
+        });
 }
 
 Code::~Code()
 {
+}
+
+void Code::setRegsInPriorityOrder(Arg::Type type, const Vector<Reg>& regs)
+{
+    regsInPriorityOrderImpl(type) = regs;
+    m_mutableRegs = RegisterSet();
+    Arg::forEachType(
+        [&] (Arg::Type type) {
+            for (Reg reg : regsInPriorityOrder(type))
+                m_mutableRegs.set(reg);
+        });
+}
+
+void Code::pinRegister(Reg reg)
+{
+    Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).type());
+    regs.removeFirst(reg);
+    m_mutableRegs.clear(reg);
+    ASSERT(!regs.contains(reg));
 }
 
 BasicBlock* Code::addBlock(double frequency)
