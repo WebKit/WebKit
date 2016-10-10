@@ -26,14 +26,19 @@
 class IconButton extends Button
 {
 
-    constructor(layoutDelegate)
+    constructor({ layoutDelegate = null, cssClassName = "", iconName = "" } = {})
     {
         super(layoutDelegate);
 
         this.element.classList.add("icon");
+        if (!!cssClassName)
+            this.element.classList.add(cssClassName);
 
         this._image = null;
         this._iconName = "";
+
+        if (!!iconName)
+            this.iconName = iconName;
 
         this.size = { width: 0, height: 0 };
     }

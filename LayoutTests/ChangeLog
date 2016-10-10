@@ -1,3 +1,40 @@
+2016-10-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Buttons
+        https://bugs.webkit.org/show_bug.cgi?id=163109
+        <rdar://problem/28668954>
+
+        Reviewed by Dean Jackson.
+
+        Adding new tests for all new button types introduced, including any custom JS properties
+        and backing DOM structure that they may have, as well as checking which assets are loaded.
+
+        * media/modern-media-controls/airplay-button/airplay-button-expected.txt: Added.
+        * media/modern-media-controls/airplay-button/airplay-button-on-expected.txt: Added.
+        * media/modern-media-controls/airplay-button/airplay-button-on.html: Added.
+        * media/modern-media-controls/airplay-button/airplay-button.html: Added.
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button-expected.txt: Added.
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button.html: Added.
+        * media/modern-media-controls/forward-button/forward-button-expected.txt: Added.
+        * media/modern-media-controls/forward-button/forward-button.html: Added.
+        * media/modern-media-controls/fullscreen-button/fullscreen-button-expected.txt: Added.
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html: Added.
+        * media/modern-media-controls/mute-button/mute-button-expected.txt: Added.
+        * media/modern-media-controls/mute-button/mute-button.html: Added.
+        * media/modern-media-controls/pip-button/pip-button-expected.txt: Added.
+        * media/modern-media-controls/pip-button/pip-button.html: Added.
+        * media/modern-media-controls/play-pause-button/play-pause-button-expected.txt: Added.
+        * media/modern-media-controls/play-pause-button/play-pause-button.html: Added.
+        * media/modern-media-controls/rewind-button/rewind-button-expected.txt: Added.
+        * media/modern-media-controls/rewind-button/rewind-button.html: Added.
+        * media/modern-media-controls/skip-back-button/skip-back-button-expected.txt: Added.
+        * media/modern-media-controls/skip-back-button/skip-back-button.html: Added.
+        * media/modern-media-controls/start-button/start-button-expected.txt: Added.
+        * media/modern-media-controls/start-button/start-button.html: Added.
+        * media/modern-media-controls/tracks-button/tracks-button-expected.txt: Added.
+        * media/modern-media-controls/tracks-button/tracks-button.html: Added.
+        * platform/ios-simulator/media/modern-media-controls/airplay-button/airplay-button-on-expected.txt: Added.
+
 2016-10-10  Nan Wang  <n_wang@apple.com>
 
         AX: Update AXPlaceHolder algorithm

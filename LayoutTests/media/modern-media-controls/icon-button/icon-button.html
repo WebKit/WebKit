@@ -18,7 +18,7 @@ iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-con
 
 const layoutDelegate = {};
 
-const iconButton = new IconButton(layoutDelegate);
+const iconButton = new IconButton({ layoutDelegate });
 
 shouldBeEqualToString("iconButton.element.localName", "button");
 shouldBeEqualToString("iconButton.element.className", "icon");

@@ -1,3 +1,111 @@
+2016-10-10  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Buttons
+        https://bugs.webkit.org/show_bug.cgi?id=163109
+        <rdar://problem/28668954>
+
+        Reviewed by Dean Jackson.
+
+        We introduce specific IconButton subclasses for the various buttons we will be using
+        in media controls on macOS (inline and fullscreen) and iOS. One class, StartButton, is
+        a subclass of Button and not IconButton because we're only interested in having it display
+        an <img> element rather than use a mask and requires additional DOM structure.
+
+        Tests: media/modern-media-controls/airplay-button/airplay-button-on.html
+               media/modern-media-controls/airplay-button/airplay-button.html
+               media/modern-media-controls/aspect-ratio-button/aspect-ratio-button.html
+               media/modern-media-controls/forward-button/forward-button.html
+               media/modern-media-controls/fullscreen-button/fullscreen-button.html
+               media/modern-media-controls/mute-button/mute-button.html
+               media/modern-media-controls/pip-button/pip-button.html
+               media/modern-media-controls/play-pause-button/play-pause-button.html
+               media/modern-media-controls/rewind-button/rewind-button.html
+               media/modern-media-controls/skip-back-button/skip-back-button.html
+               media/modern-media-controls/start-button/start-button.html
+               media/modern-media-controls/tracks-button/tracks-button.html
+
+        * Modules/modern-media-controls/controls/airplay-button.css:
+        (button.airplay.on):
+        * Modules/modern-media-controls/controls/airplay-button.js:
+        (AirplayButton):
+        (AirplayButton.prototype.set on):
+        * Modules/modern-media-controls/controls/aspect-ratio-button.js:
+        (AspectRatioButton):
+        (AspectRatioButton.prototype.get scalesToFill):
+        (AspectRatioButton.prototype.set scalesToFill):
+        * Modules/modern-media-controls/controls/forward-button.js:
+        (ForwardButton):
+        * Modules/modern-media-controls/controls/fullscreen-button.js:
+        (FullscreenButton):
+        * Modules/modern-media-controls/controls/icon-button.js:
+        * Modules/modern-media-controls/controls/icon-service.js:
+        * Modules/modern-media-controls/controls/mute-button.js:
+        (MuteButton):
+        (MuteButton.prototype.get muted):
+        (MuteButton.prototype.set muted):
+        * Modules/modern-media-controls/controls/pip-button.js:
+        (PiPButton):
+        * Modules/modern-media-controls/controls/play-pause-button.js:
+        (PlayPauseButton):
+        (PlayPauseButton.prototype.get playing):
+        (PlayPauseButton.prototype.set playing):
+        * Modules/modern-media-controls/controls/rewind-button.js:
+        (RewindButton):
+        * Modules/modern-media-controls/controls/skip-back-button.js:
+        (SkipBackButton):
+        * Modules/modern-media-controls/controls/start-button.js:
+        (StartButton):
+        * Modules/modern-media-controls/controls/tracks-button.js:
+        (TracksButton):
+        * Modules/modern-media-controls/images/iOS/airplay@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/airplay@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/enter-fullscreen@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/interval-skip-back@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pause@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-in@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-in@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/pip-in@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/play@1x.png: Added.
+        * Modules/modern-media-controls/images/iOS/play@2x.png: Added.
+        * Modules/modern-media-controls/images/iOS/play@3x.png: Added.
+        * Modules/modern-media-controls/images/iOS/start@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/airplay@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/enter-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/exit-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/exit-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/forward@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/forward@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/interval-skip-back@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/media-selection@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-in@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/pip-in@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play-fullscreen@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play-fullscreen@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/play@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/rewind@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/rewind@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/scale-to-fill@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/scale-to-fill@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/scale-to-fit@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/scale-to-fit@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-mute@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume-mute@2x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume@1x.png: Added.
+        * Modules/modern-media-controls/images/macOS/volume@2x.png: Added.
+
 2016-10-10  Nan Wang  <n_wang@apple.com>
 
         AX: Update AXPlaceHolder algorithm
