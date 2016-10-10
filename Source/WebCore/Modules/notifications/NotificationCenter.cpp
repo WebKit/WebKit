@@ -35,6 +35,7 @@
 
 #include "NotificationCenter.h"
 
+#include "ExceptionCode.h"
 #include "Notification.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -42,15 +43,15 @@
 
 namespace WebCore {
 
-Ref<NotificationCenter> NotificationCenter::create(ScriptExecutionContext* context, NotificationClient* client)
+Ref<NotificationCenter> NotificationCenter::create(ScriptExecutionContext& context, NotificationClient* client)
 {
     auto notificationCenter = adoptRef(*new NotificationCenter(context, client));
     notificationCenter->suspendIfNeeded();
     return notificationCenter;
 }
 
-NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)
-    : ActiveDOMObject(context)
+NotificationCenter::NotificationCenter(ScriptExecutionContext& context, NotificationClient* client)
+    : ActiveDOMObject(&context)
     , m_client(client)
     , m_timer([this]() { timerFired(); })
 {
@@ -58,13 +59,11 @@ NotificationCenter::NotificationCenter(ScriptExecutionContext* context, Notifica
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
 
-RefPtr<Notification> NotificationCenter::createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode& ec)
+ExceptionOr<Ref<Notification>> NotificationCenter::createNotification(const String& iconURI, const String& title, const String& body)
 {
-    if (!m_client || !scriptExecutionContext()) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
-    return Notification::create(title, body, iconURI, *scriptExecutionContext(), ec, *this);
+    if (!m_client || !scriptExecutionContext())
+        return Exception { INVALID_STATE_ERR };
+    return Notification::create(title, body, iconURI, *scriptExecutionContext(), *this);
 }
 
 int NotificationCenter::checkPermission()
@@ -85,7 +84,7 @@ int NotificationCenter::checkPermission()
     return m_client->checkPermission(scriptExecutionContext());
 }
 
-void NotificationCenter::requestPermission(const RefPtr<VoidCallback>& callback)
+void NotificationCenter::requestPermission(RefPtr<VoidCallback>&& callback)
 {
     if (!m_client || !scriptExecutionContext())
         return;
@@ -103,12 +102,12 @@ void NotificationCenter::requestPermission(const RefPtr<VoidCallback>& callback)
         });
         return;
     case SecurityOrigin::Ask:
-        m_client->requestPermission(scriptExecutionContext(), callback.get());
+        m_client->requestPermission(scriptExecutionContext(), WTFMove(callback));
         return;
     }
 
     ASSERT_NOT_REACHED();
-    m_client->requestPermission(scriptExecutionContext(), callback.get());
+    m_client->requestPermission(scriptExecutionContext(), WTFMove(callback));
 }
 
 #endif

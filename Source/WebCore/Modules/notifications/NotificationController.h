@@ -23,14 +23,12 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#ifndef NotificationController_h
-#define NotificationController_h
+#pragma once
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
 
 #include "Page.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -38,23 +36,20 @@ class NotificationClient;
 
 class NotificationController : public Supplement<Page> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(NotificationController);
 public:
     explicit NotificationController(NotificationClient*);
     ~NotificationController();
 
     static const char* supplementName();
     static NotificationController* from(Page* page) { return static_cast<NotificationController*>(Supplement<Page>::from(page, supplementName())); }
-    WEBCORE_EXPORT static NotificationClient* clientFrom(Page*);
+    WEBCORE_EXPORT static NotificationClient* clientFrom(Page&);
 
-    NotificationClient* client() { return m_client; }
-    
+    NotificationClient& client() { return m_client; }
+
 private:
-    NotificationClient* m_client;
+    NotificationClient& m_client;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-
-#endif // NotificationController_h

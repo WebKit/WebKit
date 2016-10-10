@@ -1,3 +1,51 @@
+2016-10-10  Darin Adler  <darin@apple.com>
+
+        Move NotificationCenter from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163217
+
+        Reviewed by Chris Dumez.
+
+        * Modules/notifications/DOMWindowNotifications.cpp:
+        (WebCore::DOMWindowNotifications::webkitNotifications): Pass reference to
+        document instead of pointer. Also use auto and early return.
+
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::Notification): Move checks that can lead to
+        throwing an exception out of the constructor into the create function.
+        (WebCore::Notification::create): Changed to use ExceptionOr. Also moved
+        checks that can lead to throwing an exception here.
+        (WebCore::Notification::show): Update since NotificationController::client
+        now returns a reference.
+        (WebCore::Notification::permission): Ditto.
+        (WebCore::Notification::requestPermission): Ditto.
+
+        * Modules/notifications/Notification.h: Updated for above changes.
+
+        * Modules/notifications/NotificationCenter.cpp:
+        (WebCore::NotificationCenter::create): Take a reference to the script execution
+        context instead of a pointer.
+        (WebCore::NotificationCenter::NotificationCenter): Ditto.
+        (WebCore::NotificationCenter::createNotification): Use ExceptionOr.
+        (WebCore::NotificationCenter::requestPermission): Take an rvalue reference.
+
+        * Modules/notifications/NotificationCenter.h: Use pragma once.
+        Marked the class final. Updated for changes above.
+
+        * Modules/notifications/NotificationCenter.idl: Use non-legacy exceptions.
+
+        * Modules/notifications/NotificationController.cpp:
+        (WebCore::NotificationController::NotificationController): Use a reference rather
+        than a pointer for m_client, since it is never null.
+        (WebCore::NotificationController::~NotificationController): Ditto.
+        (WebCore::NotificationController::clientFrom): Updated for the change above.
+
+        * Modules/notifications/NotificationController.h: Updated for the change above.
+
+        * Modules/notifications/WorkerGlobalScopeNotifications.cpp:
+        (WebCore::WorkerGlobalScopeNotifications::webkitNotifications): Updated to
+        pass a reference for the script execution context. Also added FIXME about the
+        fact that the client is always null.
+
 2016-10-10  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Placards

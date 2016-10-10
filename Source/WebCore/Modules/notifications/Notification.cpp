@@ -50,22 +50,13 @@ namespace WebCore {
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
 
-Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext& context, ExceptionCode& ec, NotificationCenter& notificationCenter)
+Notification::Notification(const String& title, const String& body, URL&& iconURL, ScriptExecutionContext& context, NotificationCenter& notificationCenter)
     : ActiveDOMObject(&context)
+    , m_icon(WTFMove(iconURL))
     , m_title(title)
     , m_body(body)
     , m_notificationCenter(&notificationCenter)
 {
-    if (m_notificationCenter->checkPermission() != NotificationClient::PermissionAllowed) {
-        ec = SECURITY_ERR;
-        return;
-    }
-
-    m_icon = iconURI.isEmpty() ? URL() : scriptExecutionContext()->completeURL(iconURI);
-    if (!m_icon.isEmpty() && !m_icon.isValid()) {
-        ec = SYNTAX_ERR;
-        return;
-    }
 }
 
 #endif
@@ -93,11 +84,18 @@ Notification::~Notification()
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
 
-Ref<Notification> Notification::create(const String& title, const String& body, const String& iconURI, ScriptExecutionContext& context, ExceptionCode& ec, NotificationCenter& provider)
+ExceptionOr<Ref<Notification>> Notification::create(const String& title, const String& body, const String& iconURL, ScriptExecutionContext& context, NotificationCenter& provider)
 { 
-    auto notification = adoptRef(*new Notification(title, body, iconURI, context, ec, provider));
+    if (provider.checkPermission() != NotificationClient::PermissionAllowed)
+        return Exception { SECURITY_ERR };
+
+    URL completedIconURL = iconURL.isEmpty() ? URL() : context.completeURL(iconURL);
+    if (!completedIconURL.isEmpty() && !completedIconURL.isValid())
+        return Exception { SYNTAX_ERR };
+
+    auto notification = adoptRef(*new Notification(title, body, WTFMove(completedIconURL), context, provider));
     notification.get().suspendIfNeeded();
-    return notification;
+    return WTFMove(notification);
 }
 
 #endif
@@ -146,7 +144,7 @@ void Notification::show()
         auto* page = downcast<Document>(*scriptExecutionContext()).page();
         if (!page)
             return;
-        if (NotificationController::from(page)->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
+        if (NotificationController::from(page)->client().checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
             dispatchErrorEvent();
             return;
         }
@@ -224,7 +222,7 @@ void Notification::dispatchErrorEvent()
 
 String Notification::permission(Document& document)
 {
-    return permissionString(NotificationController::from(document.page())->client()->checkPermission(&document));
+    return permissionString(NotificationController::from(document.page())->client().checkPermission(&document));
 }
 
 String Notification::permissionString(NotificationClient::Permission permission)
@@ -243,7 +241,7 @@ String Notification::permissionString(NotificationClient::Permission permission)
 
 void Notification::requestPermission(Document& document, RefPtr<NotificationPermissionCallback>&& callback)
 {
-    NotificationController::from(document.page())->client()->requestPermission(&document, WTFMove(callback));
+    NotificationController::from(document.page())->client().requestPermission(&document, WTFMove(callback));
 }
 
 #endif

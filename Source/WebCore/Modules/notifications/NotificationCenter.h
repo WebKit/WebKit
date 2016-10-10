@@ -29,11 +29,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NotificationCenter_h
-#define NotificationCenter_h
+#pragma once
 
 #include "ActiveDOMObject.h"
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "Timer.h"
 #include <wtf/RefCounted.h>
 
@@ -45,15 +44,15 @@ class Notification;
 class NotificationClient;
 class VoidCallback;
 
-class NotificationCenter : public RefCounted<NotificationCenter>, private ActiveDOMObject {
+class NotificationCenter final : public RefCounted<NotificationCenter>, private ActiveDOMObject {
 public:
-    static Ref<NotificationCenter> create(ScriptExecutionContext*, NotificationClient*);
+    static Ref<NotificationCenter> create(ScriptExecutionContext&, NotificationClient*);
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    RefPtr<Notification> createNotification(const String& iconURI, const String& title, const String& body, ExceptionCode&);
+    ExceptionOr<Ref<Notification>> createNotification(const String& iconURL, const String& title, const String& body);
 
     int checkPermission();
-    void requestPermission(const RefPtr<VoidCallback>&);
+    void requestPermission(RefPtr<VoidCallback>&&);
 #endif
 
     NotificationClient* client() const { return m_client; }
@@ -61,11 +60,11 @@ public:
     using ActiveDOMObject::hasPendingActivity;
 
 private:
-    NotificationCenter(ScriptExecutionContext*, NotificationClient*);
+    NotificationCenter(ScriptExecutionContext&, NotificationClient*);
 
-    void stop() override;
-    const char* activeDOMObjectName() const override;
-    bool canSuspendForDocumentSuspension() const override;
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     void timerFired();
 
@@ -77,5 +76,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-
-#endif // NotificationCenter_h

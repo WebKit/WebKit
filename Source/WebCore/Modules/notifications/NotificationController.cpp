@@ -33,21 +33,22 @@
 namespace WebCore {
 
 NotificationController::NotificationController(NotificationClient* client)
-    : m_client(client)
+    : m_client(*client)
 {
+    ASSERT(client);
 }
 
 NotificationController::~NotificationController()
 {
-    if (m_client)
-        m_client->notificationControllerDestroyed();
+    m_client.notificationControllerDestroyed();
 }
 
-NotificationClient* NotificationController::clientFrom(Page* page)
+NotificationClient* NotificationController::clientFrom(Page& page)
 {
-    if (NotificationController* controller = NotificationController::from(page))
-        return controller->client();
-    return 0;
+    auto* controller = NotificationController::from(&page);
+    if (!controller)
+        return nullptr;
+    return &controller->client();
 }
 
 const char* NotificationController::supplementName()

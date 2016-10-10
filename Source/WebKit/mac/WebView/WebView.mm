@@ -9002,9 +9002,12 @@ bool LayerFlushController::flushLayers()
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    auto* page = _private->page;
+    if (!page)
+        return 0;
     JSContextRef context = [[self mainFrame] globalContext];
-    WebCore::Notification* notification = JSNotification::toWrapped(toJS(toJS(context), jsNotification));
-    return static_cast<WebNotificationClient*>(NotificationController::clientFrom(_private->page))->notificationIDForTesting(notification);
+    auto* notification = JSNotification::toWrapped(toJS(toJS(context), jsNotification));
+    return static_cast<WebNotificationClient*>(NotificationController::clientFrom(*page))->notificationIDForTesting(notification);
 #else
     return 0;
 #endif

@@ -1,3 +1,13 @@
+2016-10-10  Darin Adler  <darin@apple.com>
+
+        Move NotificationCenter from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163217
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebView.mm:
+        (-[WebView _notificationIDForTesting:]): Pass reference to page rather than pointer.
+
 2016-10-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support InputEvent.inputType for the new InputEvent spec

@@ -35,13 +35,11 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "NotificationClient.h"
+#include "Timer.h"
 #include "URL.h"
 #include "WritingMode.h"
-
-#if ENABLE(NOTIFICATIONS)
-#include "Timer.h"
-#endif
 
 namespace WebCore {
 
@@ -55,7 +53,7 @@ class Notification final : public RefCounted<Notification>, public ActiveDOMObje
     WTF_MAKE_FAST_ALLOCATED;
 public:
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    static Ref<Notification> create(const String& title, const String& body, const String& iconURL, ScriptExecutionContext&, ExceptionCode&, NotificationCenter&);
+    static ExceptionOr<Ref<Notification>> create(const String& title, const String& body, const String& iconURL, ScriptExecutionContext&, NotificationCenter&);
 #endif
 
 #if ENABLE(NOTIFICATIONS)
@@ -111,7 +109,7 @@ public:
 
 private:
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    Notification(const String& title, const String& body, const String& iconURL, ScriptExecutionContext&, ExceptionCode&, NotificationCenter&);
+    Notification(const String& title, const String& body, URL&& iconURL, ScriptExecutionContext&, NotificationCenter&);
 #endif
 
 #if ENABLE(NOTIFICATIONS)
