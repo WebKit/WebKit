@@ -1,5 +1,18 @@
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] BadDamage X error in /webkit2/WebKitWebView/preferred-size
+        https://bugs.webkit.org/show_bug.cgi?id=162489
+
+        Reviewed by Michael Catanzaro.
+
+        Do a XSync right after creating/destroying the XDamage used by the redirected window in X11.
+
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::~AcceleratedBackingStoreX11):
+        (WebKit::AcceleratedBackingStoreX11::update):
+
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
         https://bugs.webkit.org/show_bug.cgi?id=162139
 
