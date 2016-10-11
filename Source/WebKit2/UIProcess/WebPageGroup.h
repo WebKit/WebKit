@@ -53,7 +53,6 @@ public:
     void addPage(WebPageProxy*);
     void removePage(WebPageProxy*);
 
-    const String& identifier() const { return m_data.identifier; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
 
     const WebPageGroupData& data() const { return m_data; }
@@ -64,41 +63,12 @@ public:
 
     WebUserContentControllerProxy& userContentController();
 
-    void addUserStyleSheet(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserStyleLevel);
-    void addUserScript(const String& source, const String& baseURL, API::Array* whitelist, API::Array* blacklist, WebCore::UserContentInjectedFrames, WebCore::UserScriptInjectionTime);
-    void removeAllUserStyleSheets();
-    void removeAllUserScripts();
-    void removeAllUserContent();
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    void addUserContentExtension(API::UserContentExtension&);
-    void removeUserContentExtension(const String&);
-    void removeAllUserContentExtensions();
-#endif
-
 private:
-    template<typename T> void sendToAllProcessesInGroup(const T&, uint64_t destinationID);
-
     WebPageGroupData m_data;
     RefPtr<WebPreferences> m_preferences;
     RefPtr<WebUserContentControllerProxy> m_userContentController;
     HashSet<WebPageProxy*> m_pages;
 };
-
-template<typename T>
-void WebPageGroup::sendToAllProcessesInGroup(const T& message, uint64_t destinationID)
-{
-    HashSet<WebProcessProxy*> processesSeen;
-
-    for (WebPageProxy* webPageProxy : m_pages) {
-        WebProcessProxy& webProcessProxy = webPageProxy->process();
-        if (!processesSeen.add(&webProcessProxy).isNewEntry)
-            continue;
-
-        if (webProcessProxy.canSendMessage())
-            webProcessProxy.send(T(message), destinationID);
-    }
-}
 
 } // namespace WebKit
 

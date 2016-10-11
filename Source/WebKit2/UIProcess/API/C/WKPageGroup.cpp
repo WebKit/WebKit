@@ -27,6 +27,9 @@
 #include "WKPageGroup.h"
 
 #include "APIUserContentExtension.h"
+#include "APIUserContentWorld.h"
+#include "APIUserScript.h"
+#include "APIUserStyleSheet.h"
 #include "WKAPICast.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
@@ -45,11 +48,6 @@ WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier)
     return toAPI(pageGroup.leakRef());
 }
 
-WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroupRef)
-{
-    return toCopiedAPI(toImpl(pageGroupRef)->identifier());
-}
-
 void WKPageGroupSetPreferences(WKPageGroupRef pageGroupRef, WKPreferencesRef preferencesRef)
 {
     toImpl(pageGroupRef)->setPreferences(toImpl(preferencesRef));
@@ -65,22 +63,43 @@ WKUserContentControllerRef WKPageGroupGetUserContentController(WKPageGroupRef pa
     return toAPI(&toImpl(pageGroupRef)->userContentController());
 }
 
-void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames)
+void WKPageGroupAddUserStyleSheet(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames)
 {
-    toImpl(pageGroupRef)->addUserStyleSheet(toWTFString(sourceRef), toWTFString(baseURL), toImpl(whitelistedURLPatterns), toImpl(blacklistedURLPatterns), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel);
+    auto source = toWTFString(sourceRef);
+
+    if (source.isEmpty())
+        return;
+
+    auto baseURLString = toWTFString(baseURLRef);
+    auto whitelist = toImpl(whitelistedURLPatterns);
+    auto blacklist = toImpl(blacklistedURLPatterns);
+
+    Ref<API::UserStyleSheet> userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { source, (baseURLString.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserContentInjectedFrames(injectedFrames), WebCore::UserStyleUserLevel }, API::UserContentWorld::normalWorld());
+
+    toImpl(pageGroupRef)->userContentController().addUserStyleSheet(userStyleSheet.get());
 }
 
-void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroupRef)
+void WKPageGroupRemoveAllUserStyleSheets(WKPageGroupRef pageGroup)
 {
-    toImpl(pageGroupRef)->removeAllUserStyleSheets();
+    toImpl(pageGroup)->userContentController().removeAllUserStyleSheets();
 }
 
-void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURL, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames, _WKUserScriptInjectionTime injectionTime)
+void WKPageGroupAddUserScript(WKPageGroupRef pageGroupRef, WKStringRef sourceRef, WKURLRef baseURLRef, WKArrayRef whitelistedURLPatterns, WKArrayRef blacklistedURLPatterns, WKUserContentInjectedFrames injectedFrames, _WKUserScriptInjectionTime injectionTime)
 {
-    toImpl(pageGroupRef)->addUserScript(toWTFString(sourceRef), toWTFString(baseURL), toImpl(whitelistedURLPatterns), toImpl(blacklistedURLPatterns), toUserContentInjectedFrames(injectedFrames), toUserScriptInjectionTime(injectionTime));
+    auto source = toWTFString(sourceRef);
+
+    if (source.isEmpty())
+        return;
+
+    auto baseURLString = toWTFString(baseURLRef);
+    auto whitelist = toImpl(whitelistedURLPatterns);
+    auto blacklist = toImpl(blacklistedURLPatterns);
+
+    Ref<API::UserScript> userScript = API::UserScript::create(WebCore::UserScript { source, (baseURLString.isEmpty() ? WebCore::blankURL() : WebCore::URL(WebCore::URL(), baseURLString)), whitelist ? whitelist->toStringVector() : Vector<String>(), blacklist ? blacklist->toStringVector() : Vector<String>(), toUserScriptInjectionTime(injectionTime), toUserContentInjectedFrames(injectedFrames) }, API::UserContentWorld::normalWorld());
+    toImpl(pageGroupRef)->userContentController().addUserScript(userScript.get());
 }
 
 void WKPageGroupRemoveAllUserScripts(WKPageGroupRef pageGroupRef)
 {
-    toImpl(pageGroupRef)->removeAllUserScripts();
+    toImpl(pageGroupRef)->userContentController().removeAllUserScripts();
 }

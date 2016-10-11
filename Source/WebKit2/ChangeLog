@@ -1,3 +1,43 @@
+2016-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Clean up WebPageGroup somewhat
+        https://bugs.webkit.org/show_bug.cgi?id=163299
+
+        Reviewed by Tim Horton.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPageGroupCopyIdentifier):
+        Move this here from WKPageGroup.
+
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveUserContentFilter):
+        (WKPageGroupRemoveAllUserContentFilters):
+        Just call directly into the user content controller.
+
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupAddUserStyleSheet):
+        (WKPageGroupRemoveAllUserStyleSheets):
+        (WKPageGroupAddUserScript):
+        (WKPageGroupRemoveAllUserScripts):
+        Just call directly into the user content controller.
+
+        * UIProcess/API/C/WKPageGroup.h:
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::addUserStyleSheet): Deleted.
+        (WebKit::WebPageGroup::addUserScript): Deleted.
+        (WebKit::WebPageGroup::removeAllUserStyleSheets): Deleted.
+        (WebKit::WebPageGroup::removeAllUserScripts): Deleted.
+        (WebKit::WebPageGroup::removeAllUserContent): Deleted.
+        (WebKit::WebPageGroup::addUserContentExtension): Deleted.
+        (WebKit::WebPageGroup::removeUserContentExtension): Deleted.
+        (WebKit::WebPageGroup::removeAllUserContentExtensions): Deleted.
+        Get rid of these, all their callers just call into the user content controller now.
+
+        * UIProcess/WebPageGroup.h:
+        (WebKit::WebPageGroup::identifier): Deleted.
+        (WebKit::WebPageGroup::sendToAllProcessesInGroup): Deleted.
+        Remove unused code.
+
 2016-10-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps

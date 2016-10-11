@@ -38,8 +38,6 @@ WK_EXPORT WKTypeID WKPageGroupGetTypeID();
 
 WK_EXPORT WKPageGroupRef WKPageGroupCreateWithIdentifier(WKStringRef identifier);
 
-WK_EXPORT WKStringRef WKPageGroupCopyIdentifier(WKPageGroupRef pageGroup);
-
 WK_EXPORT void WKPageGroupSetPreferences(WKPageGroupRef pageGroup, WKPreferencesRef preferences);
 WK_EXPORT WKPreferencesRef WKPageGroupGetPreferences(WKPageGroupRef pageGroup);
 
