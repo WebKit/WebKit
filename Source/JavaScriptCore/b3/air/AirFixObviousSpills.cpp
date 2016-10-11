@@ -191,6 +191,42 @@ private:
 
         if (verbose)
             dataLog("Fixing inst ", inst, ": ", m_state, "\n");
+        
+        // First handle some special instructions.
+        switch (inst.kind.opcode) {
+        case Move: {
+            if (inst.args[0].isBigImm() && inst.args[1].isReg()
+                && isValidForm(Add64, Arg::Imm, Arg::Tmp, Arg::Tmp)) {
+                // BigImm materializations are super expensive on both x86 and ARM. Let's try to
+                // materialize this bad boy using math instead. Note that we use unsigned math here
+                // since it's more deterministic.
+                uint64_t myValue = inst.args[0].value();
+                Reg myDest = inst.args[1].reg();
+                for (const RegConst& regConst : m_state.regConst) {
+                    uint64_t otherValue = regConst.constant;
+                    
+                    // Let's try add. That's the only thing that works on all platforms, since it's
+                    // the only cheap arithmetic op that x86 does in three operands. Long term, we
+                    // should add fancier materializations here for ARM if the BigImm is yuge.
+                    uint64_t delta = myValue - otherValue;
+                    
+                    if (Arg::isValidImmForm(delta)) {
+                        inst.kind = Add64;
+                        inst.args.resize(3);
+                        inst.args[0] = Arg::imm(delta);
+                        inst.args[1] = Tmp(regConst.reg);
+                        inst.args[2] = Tmp(myDest);
+                        return;
+                    }
+                }
+                return;
+            }
+            break;
+        }
+            
+        default:
+            break;
+        }
 
         // Create a copy in case we invalidate the instruction. That doesn't happen often.
         Inst instCopy = inst;

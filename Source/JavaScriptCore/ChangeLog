@@ -1,3 +1,18 @@
+2016-10-10  Filip Pizlo  <fpizlo@apple.com>
+
+        Air should be able to replace constant materializations with adds
+        https://bugs.webkit.org/show_bug.cgi?id=162749
+
+        Reviewed by Yusuke Suzuki.
+        
+        We have a lot of defenses against emitting code that materializes huge contants. But if we do
+        end up with such code in the backend, it's better to convert those materializations into add
+        instructions by checking if other registers are known to contain nearby constants. That's
+        what this patch does.
+
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/testb3.cpp:
+
 2016-10-11  Filip Pizlo  <fpizlo@apple.com>
 
         B3->Air lowering needs the same defenses in effectiveAddr() that it has in tryAppendLea()

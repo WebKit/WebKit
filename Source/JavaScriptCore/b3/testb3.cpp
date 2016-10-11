@@ -13705,6 +13705,30 @@ void testLoadBaseIndexShift32()
         CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(32)) * i, i), 12341234);
 }
 
+void testOptimizeMaterialization()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<CCallValue>(
+        proc, Void, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 0x123423453456llu),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 0x123423453456llu + 35));
+    root->appendNew<Value>(proc, Return, Origin());
+    
+    auto code = compile(proc);
+    bool found = false;
+    for (Air::BasicBlock* block : proc.code()) {
+        for (Air::Inst& inst : *block) {
+            if (inst.kind.opcode != Air::Add64)
+                continue;
+            if (inst.args[0] != Air::Arg::imm(35))
+                continue;
+            found = true;
+        }
+    }
+    CHECK(found);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -15143,6 +15167,7 @@ void run(const char* filter)
     RUN(testAddShl65());
     RUN(testLoadBaseIndexShift2());
     RUN(testLoadBaseIndexShift32());
+    RUN(testOptimizeMaterialization());
     
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
