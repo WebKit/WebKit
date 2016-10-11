@@ -67,6 +67,18 @@ struct Atomic {
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
+    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
+    {
+#if OS(WINDOWS)
+        // Windows makes strange assertions about the argument to compare_exchange_weak, and anyway,
+        // Windows is X86 so seq_cst is cheap.
+        order_success = std::memory_order_seq_cst;
+        order_failure = std::memory_order_seq_cst;
+#endif
+        T expectedOrActual = expected;
+        return value.compare_exchange_weak(expectedOrActual, desired, order_success, order_failure);
+    }
+
     ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
 #if OS(WINDOWS)
@@ -76,7 +88,18 @@ struct Atomic {
         T expectedOrActual = expected;
         return value.compare_exchange_strong(expectedOrActual, desired, order);
     }
-    
+
+    ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order_success, std::memory_order order_failure)
+    {
+#if OS(WINDOWS)
+        // See above.
+        order_success = std::memory_order_seq_cst;
+        order_failure = std::memory_order_seq_cst;
+#endif
+        T expectedOrActual = expected;
+        return value.compare_exchange_strong(expectedOrActual, desired, order_success, order_failure);
+    }
+
     template<typename U>
     ALWAYS_INLINE T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst)
     {
@@ -103,6 +126,8 @@ struct Atomic {
 template<typename T>
 inline bool weakCompareAndSwap(volatile T* location, T expected, T newValue)
 {
+    ASSERT(isPointerTypeAlignmentOkay(location) && "natural alignment required");
+    ASSERT(bitwise_cast<std::atomic<T>*>(location)->is_lock_free() && "expected lock-free type");
     return bitwise_cast<Atomic<T>*>(location)->compareExchangeWeak(expected, newValue, std::memory_order_relaxed);
 }
 
@@ -122,23 +147,23 @@ inline void compilerFence()
 
 // Full memory fence. No accesses will float above this, and no accesses will sink
 // below it.
-inline void armV7_dmb()
+inline void arm_dmb()
 {
-    asm volatile("dmb sy" ::: "memory");
+    asm volatile("dmb ish" ::: "memory");
 }
 
 // Like the above, but only affects stores.
-inline void armV7_dmb_st()
+inline void arm_dmb_st()
 {
-    asm volatile("dmb st" ::: "memory");
+    asm volatile("dmb ishst" ::: "memory");
 }
 
-inline void loadLoadFence() { armV7_dmb(); }
-inline void loadStoreFence() { armV7_dmb(); }
-inline void storeLoadFence() { armV7_dmb(); }
-inline void storeStoreFence() { armV7_dmb_st(); }
-inline void memoryBarrierAfterLock() { armV7_dmb(); }
-inline void memoryBarrierBeforeUnlock() { armV7_dmb(); }
+inline void loadLoadFence() { arm_dmb(); }
+inline void loadStoreFence() { arm_dmb(); }
+inline void storeLoadFence() { arm_dmb(); }
+inline void storeStoreFence() { arm_dmb_st(); }
+inline void memoryBarrierAfterLock() { arm_dmb(); }
+inline void memoryBarrierBeforeUnlock() { arm_dmb(); }
 
 #elif CPU(X86) || CPU(X86_64)
 
@@ -164,12 +189,12 @@ inline void memoryBarrierBeforeUnlock() { compilerFence(); }
 
 #else
 
-inline void loadLoadFence() { compilerFence(); }
-inline void loadStoreFence() { compilerFence(); }
-inline void storeLoadFence() { compilerFence(); }
-inline void storeStoreFence() { compilerFence(); }
-inline void memoryBarrierAfterLock() { compilerFence(); }
-inline void memoryBarrierBeforeUnlock() { compilerFence(); }
+inline void loadLoadFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void loadStoreFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void storeLoadFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void storeStoreFence() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void memoryBarrierAfterLock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
+inline void memoryBarrierBeforeUnlock() { std::atomic_thread_fence(std::memory_order_seq_cst); }
 
 #endif
 
