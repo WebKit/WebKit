@@ -2506,9 +2506,7 @@ int jscmain(int argc, char** argv)
     CommandLine options(argc, argv);
 
     // Initialize JSC before getting VM.
-#if ENABLE(SAMPLING_REGIONS)
     WTF::initializeMainThread();
-#endif
     JSC::initializeThreading();
 
     VM* vm = &VM::create(LargeHeap).leakRef();

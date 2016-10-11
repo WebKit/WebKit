@@ -1,3 +1,17 @@
+2016-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        jsc.cpp should call initializeMainThread() to make sure that GC thread assertions work
+        https://bugs.webkit.org/show_bug.cgi?id=161801
+
+        Reviewed by Keith Miller.
+        
+        The GC has debug assertions that certain things don't happen on GC threads. Those assertions
+        are no-ops unless initializeGCThreads() is called, and I think the most canonical way to do
+        that is to call initializeMainThread().
+
+        * jsc.cpp:
+        (jscmain):
+
 2016-09-09  Saam Barati  <sbarati@apple.com>
 
         Make hasOwnProperty ALWAYS_INLINE
