@@ -33,6 +33,7 @@
 #include "RenderThemeGadget.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
+#include <cstdlib>
 #include <gtk/gtk.h>
 
 namespace WebCore {
