@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UserAgentGtk.h"
 
+#include "PublicSuffix.h"
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -171,13 +172,26 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     return standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
 }
 
+static bool urlRequiresMacintoshPlatform(const URL& url)
+{
+    String baseDomain = topPrivatelyControlledDomain(url.host());
+
+    // taobao.com displays a mobile version with our standard user agent.
+    if (baseDomain == "taobao.com")
+        return true;
+
+    // web.whatsapp.com completely blocks users with our standard user agent.
+    if (baseDomain == "whatsapp.com")
+        return true;
+
+    return false;
+}
+
 String standardUserAgentForURL(const URL& url)
 {
     ASSERT(!url.isNull());
     UserAgentQuirks quirks;
-    if (url.host().endsWith(".yahoo.com")) {
-        // www.yahoo.com redirects to the mobile version when Linux is present in the UA,
-        // use always Macintosh as platform. See https://bugs.webkit.org/show_bug.cgi?id=125444.
+    if (urlRequiresMacintoshPlatform(url)) {
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
     }
 

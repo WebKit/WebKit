@@ -38,8 +38,8 @@ TEST(WebCore, UserAgentQuirksTest)
     String uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.webkit.org/"));
     EXPECT_TRUE(uaString.isNull());
 
-    // www.yahoo.com requires MAC OS platform in the UA.
-    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://www.yahoo.com/"));
+    // web.whatsapp.com requires MAC OS platform in the UA.
+    uaString = standardUserAgentForURL(URL(ParsedURLString, "http://web.whatsapp.com/"));
     EXPECT_TRUE(uaString.contains("Macintosh"));
     EXPECT_TRUE(uaString.contains("Mac OS X"));
     EXPECT_FALSE(uaString.contains("Linux"));
