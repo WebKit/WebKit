@@ -1,5 +1,22 @@
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r204163): [GTK] API test /webkit2/WebKitSecurityManager/file-xhr is failing
+        https://bugs.webkit.org/show_bug.cgi?id=161607
+
+        Reviewed by Michael Catanzaro.
+
+        Since r204163, in case of cross origin error when loading the XHR, the load fails and an error message is shown
+        in the console, but there isn't any js expcetion, which is what we were checking. Now, we check that there
+        aren't exceptions, and that the error message is sent to the console.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (consoleMessageReceivedCallback):
+        (testWebContextSecurityFileXHR):
+
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Make all WebView tests have a WebKitUserContentManager
         https://bugs.webkit.org/show_bug.cgi?id=162487
 
