@@ -3298,6 +3298,13 @@ sub GenerateImplementation
                 push(@implContent, "    UNUSED_PARAM(state);\n");
             }
 
+            if ($attribute->signature->extendedAttributes->{CEReactions}) {
+                push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
+                push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
+                push(@implContent, "#endif\n");
+                $implIncludes{"CustomElementReactionQueue.h"} = 1;
+            }
+
             if ($interface->extendedAttributes->{CheckSecurity} && !$attribute->signature->extendedAttributes->{DoNotCheckSecurity} && !$attribute->signature->extendedAttributes->{DoNotCheckSecurityOnSetter}) {
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(state, castedThis->wrapped(), ThrowSecurityError))\n");
@@ -3348,6 +3355,15 @@ sub GenerateImplementation
                     my $putForwards = $attribute->signature->extendedAttributes->{PutForwards};
                     if ($putForwards) {
                         my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->signature->extendedAttributes->{ImplementedAs} || $name);
+                        my $forwardedAttribute = $codeGenerator->GetAttributeFromInterface($interface, $type, $putForwards);
+
+                        if ($forwardedAttribute->signature->extendedAttributes->{CEReactions}) {
+                            push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
+                            push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
+                            push(@implContent, "#endif\n");
+                            $implIncludes{"CustomElementReactionQueue.h"} = 1;
+                        }
+
                         if ($attribute->signature->isNullable) {
                             push(@implContent, "    RefPtr<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    if (!forwardedImpl)\n");
@@ -3358,7 +3374,7 @@ sub GenerateImplementation
                             push(@implContent, "    Ref<${type}> forwardedImpl = castedThis->wrapped().${implGetterFunctionName}();\n");
                             push(@implContent, "    auto& impl = forwardedImpl.get();\n");
                         }
-                        $attribute = $codeGenerator->GetAttributeFromInterface($interface, $type, $putForwards);
+                        $attribute = $forwardedAttribute;
                         $type = $attribute->signature->type;
                     } else {
                         push(@implContent, "    auto& impl = castedThis->wrapped();\n");

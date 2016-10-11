@@ -1,11 +1,11 @@
 
-FAIL deleteContents on Range must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL extractContents on Range must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL cloneContents on Range must enqueue an attributeChanged reaction when cloning an element with an observed attribute assert_array_equals: lengths differ, expected 2 got 0
-FAIL cloneContents on Range must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute assert_array_equals: lengths differ, expected 1 got 0
-FAIL cloneContents on Range must enqueue an attributeChanged reaction when cloning an element only for observed attributes assert_array_equals: lengths differ, expected 4 got 3
-FAIL insertNode on Range must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
-FAIL insertNode on Range must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+PASS deleteContents on Range must enqueue a disconnected reaction 
+PASS extractContents on Range must enqueue a disconnected reaction 
+FAIL cloneContents on Range must enqueue an attributeChanged reaction when cloning an element with an observed attribute assert_array_equals: lengths differ, expected 2 got 1
+PASS cloneContents on Range must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute 
+FAIL cloneContents on Range must enqueue an attributeChanged reaction when cloning an element only for observed attributes assert_array_equals: lengths differ, expected 3 got 1
+PASS insertNode on Range must enqueue a connected reaction 
+PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+PASS insertNode on Range must enqueue a connected reaction 
+PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
 

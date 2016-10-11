@@ -28,13 +28,13 @@
 
     DOMString? getAttribute(DOMString name);
 
-    [MayThrowLegacyException, CEReactions] void setAttribute(DOMString name, DOMString value);
+    [CEReactions, MayThrowLegacyException] void setAttribute(DOMString name, DOMString value);
 
     [CEReactions] void removeAttribute(DOMString name);
     Attr? getAttributeNode(DOMString name);
 
-    [MayThrowLegacyException, CEReactions] Attr? setAttributeNode(Attr newAttr);
-    [MayThrowLegacyException, CEReactions] Attr removeAttributeNode(Attr oldAttr);
+    [CEReactions, MayThrowLegacyException] Attr? setAttributeNode(Attr newAttr);
+    [CEReactions, MayThrowLegacyException] Attr removeAttributeNode(Attr oldAttr);
 
     HTMLCollection getElementsByTagName(DOMString name);
 
@@ -43,20 +43,20 @@
 
     DOMString? getAttributeNS(DOMString? namespaceURI, DOMString localName);
 
-    [MayThrowLegacyException, CEReactions] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
+    [CEReactions, MayThrowLegacyException] void setAttributeNS(DOMString? namespaceURI, DOMString qualifiedName, DOMString value);
     [CEReactions] void removeAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     HTMLCollection getElementsByTagNameNS(DOMString? namespaceURI, DOMString localName);
 
     Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-    [MayThrowLegacyException, CEReactions] Attr? setAttributeNodeNS(Attr newAttr);
+    [CEReactions, MayThrowLegacyException] Attr? setAttributeNodeNS(Attr newAttr);
     boolean hasAttribute(DOMString name);
 
     boolean hasAttributeNS(DOMString? namespaceURI, DOMString localName);
 
     [ImplementedAs=cssomStyle] readonly attribute CSSStyleDeclaration style;
 
-    [Reflect] attribute DOMString id;
+    [CEReactions, Reflect] attribute DOMString id;
 
     readonly attribute DOMString? namespaceURI;
     readonly attribute DOMString? prefix;
@@ -100,7 +100,7 @@
     [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
     [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString outerHTML;
 
-    [Reflect=class] attribute DOMString className;
+    [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
 
     [MayThrowLegacyException] boolean matches(DOMString selectors);
@@ -124,7 +124,7 @@
     [Reflect] attribute DOMString uiactions;
 #endif
 
-    [MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);
+    [CEReactions, MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);
     [MayThrowLegacyException] void insertAdjacentHTML(DOMString where, DOMString html);
     [MayThrowLegacyException] void insertAdjacentText(DOMString where, DOMString text);
 
@@ -137,7 +137,7 @@
     // Shadow DOM API
     [EnabledAtRuntime=ShadowDOM, MayThrowLegacyException] ShadowRoot attachShadow(ShadowRootInit init);
     [EnabledAtRuntime=ShadowDOM, ImplementedAs=shadowRootForBindings, CallWith=ScriptState] readonly attribute ShadowRoot shadowRoot;
-    [EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
+    [CEReactions, EnabledAtRuntime=ShadowDOM, Reflect] attribute DOMString slot;
 
     // Event Handlers
 

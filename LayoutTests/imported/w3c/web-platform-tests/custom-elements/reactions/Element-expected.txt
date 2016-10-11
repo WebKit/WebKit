@@ -1,10 +1,10 @@
 
-FAIL id on Element must enqueue an attributeChanged reaction when adding id content attribute assert_array_equals: lengths differ, expected 1 got 0
-FAIL id on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 2 got 1
-FAIL className on Element must enqueue an attributeChanged reaction when adding class content attribute assert_array_equals: lengths differ, expected 1 got 0
-FAIL className on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 2 got 1
-FAIL slot on Element must enqueue an attributeChanged reaction when adding slot content attribute assert_array_equals: lengths differ, expected 1 got 0
-FAIL slot on Element must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 2 got 1
+PASS id on Element must enqueue an attributeChanged reaction when adding id content attribute 
+PASS id on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
+PASS className on Element must enqueue an attributeChanged reaction when adding class content attribute 
+PASS className on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
+PASS slot on Element must enqueue an attributeChanged reaction when adding slot content attribute 
+PASS slot on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
 PASS setAttribute on Element must enqueue an attributeChanged reaction when adding an attribute 
 PASS setAttribute on Element must not enqueue an attributeChanged reaction when adding an unobserved attribute 
 PASS setAttribute on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
@@ -33,6 +33,6 @@ PASS removeAttributeNode on Element must not enqueue an attributeChanged reactio
 PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
 PASS removeAttributeNode on Element must enqueue an attributeChanged reaction when removing an existing attribute 
 PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
-FAIL undefined must enqueue a connected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL undefined must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document assert_array_equals: lengths differ, expected 1 got 0
+PASS undefined must enqueue a connected reaction 
+PASS undefined must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
 

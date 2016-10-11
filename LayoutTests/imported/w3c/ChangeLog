@@ -1,3 +1,22 @@
+2016-10-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Annotate DOM API with CEReactions
+        https://bugs.webkit.org/show_bug.cgi?id=163268
+
+        Reviewed by Darin Adler.
+
+        Rebaseline tests now that more test cases are passing.
+
+        * web-platform-tests/custom-elements/reactions/Attr-expected.txt:
+        * web-platform-tests/custom-elements/reactions/ChildNode-expected.txt:
+        * web-platform-tests/custom-elements/reactions/DOMTokenList-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Document-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Element-expected.txt:
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Node-expected.txt:
+        * web-platform-tests/custom-elements/reactions/ParentNode-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Range-expected.txt:
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Enable URLParser by default

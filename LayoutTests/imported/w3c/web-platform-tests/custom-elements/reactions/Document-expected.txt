@@ -1,4 +1,4 @@
 
 FAIL importNode on Document must construct a new custom element when importing a custom element assert_array_equals: lengths differ, expected 1 got 0
-FAIL adoptNode on Document must enqueue an adopted reaction when importing a custom element assert_array_equals: lengths differ, expected 1 got 0
+PASS adoptNode on Document must enqueue an adopted reaction when importing a custom element 
 

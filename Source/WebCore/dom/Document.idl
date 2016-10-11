@@ -42,7 +42,7 @@
 
     HTMLCollection getElementsByTagName(DOMString tagname);
 
-    [NewObject, MayThrowLegacyException] Node importNode(Node importedNode, optional boolean deep = false);
+    [CEReactions, MayThrowLegacyException, NewObject] Node importNode(Node importedNode, optional boolean deep = false);
 
     [NewObject, MayThrowLegacyException] Element createElementNS(DOMString? namespaceURI, DOMString qualifiedName);
     [NewObject, MayThrowLegacyException] Attr createAttributeNS(DOMString? namespaceURI, DOMString qualifiedName);
@@ -55,7 +55,7 @@
     [SetterMayThrowLegacyException] attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
-    [MayThrowLegacyException] Node adoptNode(Node source);
+    [CEReactions, MayThrowLegacyException] Node adoptNode(Node source);
 
     [ImplementedAs=urlForBindings] readonly attribute USVString documentURI;
 

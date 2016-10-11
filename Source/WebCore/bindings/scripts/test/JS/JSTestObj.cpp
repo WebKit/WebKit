@@ -22,7 +22,6 @@
 #include "JSTestObj.h"
 
 #include "CallbackFunction.h"
-#include "CustomElementReactionQueue.h"
 #include "DOMStringList.h"
 #include "Dictionary.h"
 #include "Document.h"
@@ -978,7 +977,6 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseOverloade
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionTestStaticPromiseFunctionWithException(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomPromiseFunction(JSC::ExecState*);
-JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNeedsCustomElementReactionStack(JSC::ExecState*);
 #if ENABLE(CONDITION1) || ENABLE(CONDITION2)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(JSC::ExecState*);
 #endif
@@ -1588,7 +1586,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "testPromiseFunctionWithOptionalIntArgument", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument), (intptr_t) (0) } },
     { "testPromiseOverloadedFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseOverloadedFunction), (intptr_t) (1) } },
     { "testCustomPromiseFunction", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestCustomPromiseFunction), (intptr_t) (0) } },
-    { "methodWithNeedsCustomElementReactionStack", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNeedsCustomElementReactionStack), (intptr_t) (0) } },
 #if ENABLE(CONDITION1) || ENABLE(CONDITION2)
     { "conditionalOverload", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalOverload), (intptr_t) (1) } },
 #else
@@ -7420,24 +7417,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomPromiseFunction
         return createRejectedPromiseWithTypeError(*state, makeThisTypeErrorMessage("TestObject", "testCustomPromiseFunction"));
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->testCustomPromiseFunction(*state));
-}
-
-EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNeedsCustomElementReactionStack(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
-#if ENABLE(CUSTOM_ELEMENTS)
-    CustomElementReactionStack customElementReactionStack;
-#endif
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNeedsCustomElementReactionStack");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    auto& impl = castedThis->wrapped();
-    impl.methodWithNeedsCustomElementReactionStack();
-    return JSValue::encode(jsUndefined());
 }
 
 #if ENABLE(CONDITION1)

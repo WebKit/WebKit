@@ -26,10 +26,10 @@
     readonly attribute unsigned long length;
 
     getter Attr? getNamedItem(DOMString name);
-    [MayThrowLegacyException] Attr? setNamedItem(Attr attr);
-    [MayThrowLegacyException] Attr removeNamedItem(DOMString name);
+    [CEReactions, MayThrowLegacyException] Attr? setNamedItem(Attr attr);
+    [CEReactions, MayThrowLegacyException] Attr removeNamedItem(DOMString name);
     getter Attr? item(unsigned long index);
     Attr? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
-    [MayThrowLegacyException, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
-    [MayThrowLegacyException] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
+    [CEReactions, MayThrowLegacyException, ImplementedAs=setNamedItem] Attr? setNamedItemNS(Attr attr);
+    [CEReactions, MayThrowLegacyException] Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
 };

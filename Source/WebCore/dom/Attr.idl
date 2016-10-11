@@ -27,7 +27,7 @@
 
     readonly attribute boolean specified;
 
-    [ImplementedAs=valueForBindings] attribute DOMString value;
+    [CEReactions, ImplementedAs=valueForBindings] attribute DOMString value;
 
     readonly attribute Element ownerElement;
 

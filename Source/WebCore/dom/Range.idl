@@ -41,6 +41,8 @@
     [MayThrowLegacyException] void setEndBefore(Node refNode);
     [MayThrowLegacyException] void setEndAfter(Node refNode);
     void collapse(optional boolean toStart = false);
+    // FIXME: Using "undefined" as default parameter value is wrong.
+    [MayThrowLegacyException] void expand(optional DOMString unit = "undefined");
     [MayThrowLegacyException] void selectNode(Node refNode);
     [MayThrowLegacyException] void selectNodeContents(Node refNode);
 
@@ -52,11 +54,11 @@
 
     [MayThrowLegacyException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
-    [MayThrowLegacyException] void deleteContents();
-    [MayThrowLegacyException, NewObject] DocumentFragment extractContents();
-    [MayThrowLegacyException, NewObject] DocumentFragment cloneContents();
-    [MayThrowLegacyException] void insertNode(Node newNode);
-    [MayThrowLegacyException] void surroundContents(Node newParent);
+    [CEReactions, MayThrowLegacyException] void deleteContents();
+    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment extractContents();
+    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment cloneContents();
+    [CEReactions, MayThrowLegacyException] void insertNode(Node newNode);
+    [CEReactions, MayThrowLegacyException] void surroundContents(Node newParent);
     [NewObject] Range cloneRange();
     DOMString toString();
 
@@ -79,7 +81,4 @@
 
     [MayThrowLegacyException] short comparePoint(Node refNode, unsigned long offset);
     [MayThrowLegacyException] boolean isPointInRange(Node refNode, unsigned long offset);
-
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowLegacyException] void expand(optional DOMString unit = "undefined");
 };
