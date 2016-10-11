@@ -1,3 +1,16 @@
+2016-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix hit testing on display:block <svg> elements
+        https://bugs.webkit.org/show_bug.cgi?id=162717
+        rdar://problem/23261130
+
+        Reviewed by Zalan Bujtas.
+        
+        Test hit testing on inline and block <svg> elements.
+
+        * svg/hittest/block-svg-expected.txt: Added.
+        * svg/hittest/block-svg.html: Added.
+
 2016-09-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Toggling display: none on a parent element of a slot which shares style with its parent doesn't update the slot's visibility
