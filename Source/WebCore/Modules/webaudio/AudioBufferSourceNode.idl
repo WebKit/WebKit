@@ -44,8 +44,8 @@
     attribute unrestricted double loopStart;
     attribute unrestricted double loopEnd;
 
-    [MayThrowLegacyException] void start(optional unrestricted double when = 0, optional unrestricted double grainOffset = 0, optional unrestricted double grainDuration);
-    [MayThrowLegacyException] void stop(optional unrestricted double when = 0);
+    [MayThrowException] void start(optional unrestricted double when = 0, optional unrestricted double grainOffset = 0, optional unrestricted double grainDuration);
+    [MayThrowException] void stop(optional unrestricted double when = 0);
 
     attribute EventHandler onended;
 };

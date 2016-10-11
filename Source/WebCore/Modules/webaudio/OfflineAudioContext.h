@@ -22,23 +22,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OfflineAudioContext_h
-#define OfflineAudioContext_h
+#pragma once
 
 #include "AudioContext.h"
 
 namespace WebCore {
 
-class OfflineAudioContext : public AudioContext {
+class OfflineAudioContext final : public AudioContext {
 public:
-    static RefPtr<OfflineAudioContext> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
-
-    virtual ~OfflineAudioContext();
+    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 
 private:
     OfflineAudioContext(Document&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 };
 
 } // namespace WebCore
-
-#endif // OfflineAudioContext_h

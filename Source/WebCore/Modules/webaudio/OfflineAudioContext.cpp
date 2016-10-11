@@ -29,38 +29,24 @@
 #include "OfflineAudioContext.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-RefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
-{
-    // FIXME: add support for workers.
-    if (!is<Document>(context)) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-
-    Document& document = downcast<Document>(context);
-
-    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSampleRateRangeGood(sampleRate)) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
-    RefPtr<OfflineAudioContext> audioContext(adoptRef(new OfflineAudioContext(document, numberOfChannels, numberOfFrames, sampleRate)));
-    audioContext->suspendIfNeeded();
-    return audioContext;
-}
-
-OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : AudioContext(document, numberOfChannels, numberOfFrames, sampleRate)
 {
 }
 
-OfflineAudioContext::~OfflineAudioContext()
+ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
+    // FIXME: Add support for workers.
+    if (!is<Document>(context))
+        return Exception { NOT_SUPPORTED_ERR };
+    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSampleRateRangeGood(sampleRate))
+        return Exception { SYNTAX_ERR };
+    auto audioContext = adoptRef(*new OfflineAudioContext(downcast<Document>(context), numberOfChannels, numberOfFrames, sampleRate));
+    audioContext->suspendIfNeeded();
+    return WTFMove(audioContext);
 }
 
 } // namespace WebCore

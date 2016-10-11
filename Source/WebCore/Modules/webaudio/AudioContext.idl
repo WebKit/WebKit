@@ -61,8 +61,8 @@ enum AudioContextState {
     // Number of AudioBufferSourceNodes that are currently playing.
     readonly attribute unsigned long activeSourceCount;
     
-    [MayThrowLegacyException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
-    [MayThrowLegacyException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
+    [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    [MayThrowException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
     // FIXME: successCallback should be optional and the callbacks should not be nullable. This should also return a Promise.
@@ -71,27 +71,27 @@ enum AudioContextState {
     // Sources
     AudioBufferSourceNode createBufferSource();
 
-    [Conditional=VIDEO, MayThrowLegacyException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
+    [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 
-    [Conditional=MEDIA_STREAM, MayThrowLegacyException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
+    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
     [Conditional=MEDIA_STREAM] MediaStreamAudioDestinationNode createMediaStreamDestination();
 
     // Processing nodes
     GainNode createGain();
-    [MayThrowLegacyException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
+    [MayThrowException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
     ConvolverNode createConvolver();
     DynamicsCompressorNode createDynamicsCompressor();
     AnalyserNode createAnalyser();
-    [MayThrowLegacyException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
+    [MayThrowException] ScriptProcessorNode createScriptProcessor(unsigned long bufferSize, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
     OscillatorNode createOscillator();
-    [MayThrowLegacyException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
+    [MayThrowException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
 
     // Channel splitting and merging
-    [MayThrowLegacyException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
-    [MayThrowLegacyException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
+    [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);
+    [MayThrowException] ChannelMergerNode createChannelMerger(optional unsigned long numberOfInputs = 6);
 
     // Offline rendering
     // void prepareOfflineBufferRendering(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);

@@ -26,25 +26,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioBuffer_h
-#define AudioBuffer_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include <runtime/Float32Array.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class AudioBus;
 
-typedef int ExceptionCode;
-
 class AudioBuffer : public RefCounted<AudioBuffer> {
 public:   
     static RefPtr<AudioBuffer> create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 
-    // Returns 0 if data is not a valid audio file.
+    // Returns nullptr if data is not a valid audio file.
     static RefPtr<AudioBuffer> createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate);
 
     // Format
@@ -54,32 +50,29 @@ public:
 
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
-    RefPtr<Float32Array> getChannelData(unsigned channelIndex, ExceptionCode&);
-    Float32Array* getChannelData(unsigned channelIndex);
+    ExceptionOr<Ref<Float32Array>> getChannelData(unsigned channelIndex);
+    Float32Array* channelData(unsigned channelIndex);
     void zero();
 
     // Scalar gain
     double gain() const { return m_gain; }
     void setGain(double gain) { m_gain = gain; }
 
-    // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take awhile for this object to be deleted.
+    // Because an AudioBuffer has a JavaScript wrapper, which will be garbage collected, it may take a while for this object to be deleted.
     // releaseMemory() can be called when the AudioContext goes away, so we can release the memory earlier than when the garbage collection happens.
     // Careful! Only call this when the page unloads, after the AudioContext is no longer processing.
     void releaseMemory();
 
     size_t memoryCost() const;
     
-protected:
+private:
     AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
-    explicit AudioBuffer(AudioBus*);
+    explicit AudioBuffer(AudioBus&);
 
-    double m_gain; // scalar gain
+    double m_gain { 1.0 }; // scalar gain
     float m_sampleRate;
     size_t m_length;
-
     Vector<RefPtr<Float32Array>> m_channels;
 };
 
 } // namespace WebCore
-
-#endif // AudioBuffer_h

@@ -365,26 +365,20 @@ String AudioContext::sourceApplicationIdentifier() const
     return emptyString();
 }
 
-RefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
+ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
-    RefPtr<AudioBuffer> audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
-    if (!audioBuffer) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
-
-    return audioBuffer;
+    auto audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+    if (!audioBuffer)
+        return Exception { NOT_SUPPORTED_ERR };
+    return audioBuffer.releaseNonNull();
 }
 
-RefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer& arrayBuffer, bool mixToMono, ExceptionCode& ec)
+ExceptionOr<Ref<AudioBuffer>> AudioContext::createBuffer(ArrayBuffer& arrayBuffer, bool mixToMono)
 {
-    RefPtr<AudioBuffer> audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer.data(), arrayBuffer.byteLength(), mixToMono, sampleRate());
-    if (!audioBuffer) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
-    return audioBuffer;
+    auto audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer.data(), arrayBuffer.byteLength(), mixToMono, sampleRate());
+    if (!audioBuffer)
+        return Exception { SYNTAX_ERR };
+    return audioBuffer.releaseNonNull();
 }
 
 void AudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
@@ -406,36 +400,34 @@ Ref<AudioBufferSourceNode> AudioContext::createBufferSource()
 }
 
 #if ENABLE(VIDEO)
-RefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(HTMLMediaElement& mediaElement, ExceptionCode& ec)
+
+ExceptionOr<Ref<MediaElementAudioSourceNode>> AudioContext::createMediaElementSource(HTMLMediaElement& mediaElement)
 {
     ASSERT(isMainThread());
     lazyInitialize();
     
-    // First check if this media element already has a source node.
-    if (mediaElement.audioSourceNode()) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
-        
-    Ref<MediaElementAudioSourceNode> node = MediaElementAudioSourceNode::create(*this, mediaElement);
+    if (mediaElement.audioSourceNode())
+        return Exception { INVALID_STATE_ERR };
+
+    auto node = MediaElementAudioSourceNode::create(*this, mediaElement);
 
     mediaElement.setAudioSourceNode(node.ptr());
 
     refNode(node.get()); // context keeps reference until node is disconnected
     return WTFMove(node);
 }
+
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(MediaStream& mediaStream, ExceptionCode& ec)
+
+ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSource(MediaStream& mediaStream)
 {
     ASSERT(isMainThread());
 
     auto audioTracks = mediaStream.getAudioTracks();
-    if (audioTracks.isEmpty()) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
+    if (audioTracks.isEmpty())
+        return Exception { INVALID_STATE_ERR };
 
     MediaStreamTrack* providerTrack = nullptr;
     for (auto& track : audioTracks) {
@@ -444,11 +436,8 @@ RefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(MediaSt
             break;
         }
     }
-
-    if (!providerTrack) {
-        ec = INVALID_STATE_ERR;
-        return nullptr;
-    }
+    if (!providerTrack)
+        return Exception { INVALID_STATE_ERR };
 
     lazyInitialize();
 
@@ -468,19 +457,17 @@ Ref<MediaStreamAudioDestinationNode> AudioContext::createMediaStreamDestination(
 
 #endif
 
-RefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels, ExceptionCode& ec)
+ExceptionOr<Ref<ScriptProcessorNode>> AudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    RefPtr<ScriptProcessorNode> node = ScriptProcessorNode::create(*this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
+    auto node = ScriptProcessorNode::create(*this, m_destinationNode->sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
-    if (!node) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
+    if (!node)
+        return Exception { INDEX_SIZE_ERR };
 
     refNode(*node); // context keeps reference until we stop making javascript rendering callbacks
-    return node;
+    return node.releaseNonNull();
 }
 
 Ref<BiquadFilterNode> AudioContext::createBiquadFilter()
@@ -532,44 +519,31 @@ Ref<GainNode> AudioContext::createGain()
     return GainNode::create(*this, m_destinationNode->sampleRate());
 }
 
-RefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime, ExceptionCode& ec)
+ExceptionOr<Ref<DelayNode>> AudioContext::createDelay(double maxDelayTime)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    Ref<DelayNode> node = DelayNode::create(*this, m_destinationNode->sampleRate(), maxDelayTime, ec);
-    if (ec)
-        return nullptr;
-    return WTFMove(node);
+    return DelayNode::create(*this, m_destinationNode->sampleRate(), maxDelayTime);
 }
 
-RefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(size_t numberOfOutputs, ExceptionCode& ec)
+ExceptionOr<Ref<ChannelSplitterNode>> AudioContext::createChannelSplitter(size_t numberOfOutputs)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-
-    RefPtr<ChannelSplitterNode> node = ChannelSplitterNode::create(*this, m_destinationNode->sampleRate(), numberOfOutputs);
-
-    if (!node) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
-
-    return node;
+    auto node = ChannelSplitterNode::create(*this, m_destinationNode->sampleRate(), numberOfOutputs);
+    if (!node)
+        return Exception { INDEX_SIZE_ERR };
+    return node.releaseNonNull();
 }
 
-RefPtr<ChannelMergerNode> AudioContext::createChannelMerger(size_t numberOfInputs, ExceptionCode& ec)
+ExceptionOr<Ref<ChannelMergerNode>> AudioContext::createChannelMerger(size_t numberOfInputs)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-
-    RefPtr<ChannelMergerNode> node = ChannelMergerNode::create(*this, m_destinationNode->sampleRate(), numberOfInputs);
-
-    if (!node) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
-
-    return node;
+    auto node = ChannelMergerNode::create(*this, m_destinationNode->sampleRate(), numberOfInputs);
+    if (!node)
+        return Exception { INDEX_SIZE_ERR };
+    return node.releaseNonNull();
 }
 
 Ref<OscillatorNode> AudioContext::createOscillator()
@@ -586,15 +560,11 @@ Ref<OscillatorNode> AudioContext::createOscillator()
     return node;
 }
 
-RefPtr<PeriodicWave> AudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary, ExceptionCode& ec)
+ExceptionOr<Ref<PeriodicWave>> AudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary)
 {
     ASSERT(isMainThread());
-    
-    if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length()) {
-        ec = INDEX_SIZE_ERR;
-        return nullptr;
-    }
-    
+    if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length())
+        return Exception { INDEX_SIZE_ERR };
     lazyInitialize();
     return PeriodicWave::create(sampleRate(), real, imaginary);
 }

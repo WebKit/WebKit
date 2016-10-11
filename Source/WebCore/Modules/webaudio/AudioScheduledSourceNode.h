@@ -26,15 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioScheduledSourceNode_h
-#define AudioScheduledSourceNode_h
+#pragma once
 
 #include "AudioNode.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
-
-class AudioBus;
 
 class AudioScheduledSourceNode : public AudioNode {
 public:
@@ -57,9 +53,8 @@ public:
     
     AudioScheduledSourceNode(AudioContext&, float sampleRate);
 
-    // Scheduling.
-    void start(double when, ExceptionCode&);
-    void stop(double when, ExceptionCode&);
+    ExceptionOr<void> start(double when);
+    ExceptionOr<void> stop(double when);
 
     unsigned short playbackState() const { return static_cast<unsigned short>(m_playbackState); }
     bool isPlayingOrScheduled() const { return m_playbackState == PLAYING_STATE || m_playbackState == SCHEDULED_STATE; }
@@ -69,29 +64,25 @@ protected:
     // Get frame information for the current time quantum.
     // We handle the transition into PLAYING_STATE and FINISHED_STATE here,
     // zeroing out portions of the outputBus which are outside the range of startFrame and endFrame.
-    //
     // Each frame time is relative to the context's currentSampleFrame().
-    // quantumFrameOffset    : Offset frame in this time quantum to start rendering.
-    // nonSilentFramesToProcess : Number of frames rendering non-silence (will be <= quantumFrameSize).
-    void updateSchedulingInfo(size_t quantumFrameSize,
-                              AudioBus* outputBus,
-                              size_t& quantumFrameOffset,
-                              size_t& nonSilentFramesToProcess);
+    // quantumFrameOffset: Offset frame in this time quantum to start rendering.
+    // nonSilentFramesToProcess: Number of frames rendering non-silence (will be <= quantumFrameSize).
+    void updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess);
 
     // Called when we have no more sound to play or the noteOff() time has been reached.
     virtual void finish();
 
-    PlaybackState m_playbackState;
+    PlaybackState m_playbackState { UNSCHEDULED_STATE };
 
     // m_startTime is the time to start playing based on the context's timeline (0 or a time less than the context's current time means "now").
-    double m_startTime; // in seconds
+    double m_startTime { 0 }; // in seconds
 
     // m_endTime is the time to stop playing based on the context's timeline (0 or a time less than the context's current time means "now").
     // If it hasn't been set explicitly, then the sound will not stop playing (if looping) or will stop when the end of the AudioBuffer
     // has been reached.
     double m_endTime; // in seconds
 
-    bool m_hasEndedListener;
+    bool m_hasEndedListener { false };
 
     static const double UnknownTime;
 
@@ -102,5 +93,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // AudioScheduledSourceNode_h

@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioBasicInspectorNode_h
-#define AudioBasicInspectorNode_h
+#pragma once
 
 #include "AudioNode.h"
 
@@ -36,17 +35,15 @@ class AudioBasicInspectorNode : public AudioNode {
 public:
     AudioBasicInspectorNode(AudioContext&, float sampleRate, unsigned outputChannelCount);
 
-    // AudioNode
+private:
     void pullInputs(size_t framesToProcess) override;
-    void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&) override;
-    void disconnect(unsigned outputIndex, ExceptionCode&) override;
+    ExceptionOr<void> connect(AudioNode*, unsigned outputIndex, unsigned inputIndex) override;
+    ExceptionOr<void> disconnect(unsigned outputIndex) override;
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
 
-private:
     void updatePullStatus();
-    bool m_needAutomaticPull; // When setting to true, AudioBasicInspectorNode will be pulled automaticlly by AudioContext before the end of each render quantum.
+
+    bool m_needAutomaticPull { false }; // When setting to true, AudioBasicInspectorNode will be pulled automatically by AudioContext before the end of each render quantum.
 };
 
 } // namespace WebCore
-
-#endif // AudioBasicInspectorNode_h

@@ -28,15 +28,10 @@
 
 #include "OscillatorNode.h"
 
-#include "AudioContext.h"
 #include "AudioNodeOutput.h"
-#include "AudioUtilities.h"
-#include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
+#include "AudioParam.h"
 #include "PeriodicWave.h"
 #include "VectorMath.h"
-#include <algorithm>
-#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -67,7 +62,7 @@ OscillatorNode::OscillatorNode(AudioContext& context, float sampleRate)
     m_detune = AudioParam::create(context, "detune", 0, -4800, 4800);
 
     // Sets up default wave.
-    setType(m_type, ASSERT_NO_EXCEPTION);
+    setType(m_type);
 
     // An oscillator is always mono.
     addOutput(std::make_unique<AudioNodeOutput>(this, 1));
@@ -80,40 +75,41 @@ OscillatorNode::~OscillatorNode()
     uninitialize();
 }
 
-void OscillatorNode::setType(Type type, ExceptionCode& ec)
+ExceptionOr<void> OscillatorNode::setType(Type type)
 {
     PeriodicWave* periodicWave = nullptr;
-    float sampleRate = this->sampleRate();
 
     switch (type) {
     case Type::Sine:
         if (!s_periodicWaveSine)
-            s_periodicWaveSine = &PeriodicWave::createSine(sampleRate).leakRef();
+            s_periodicWaveSine = &PeriodicWave::createSine(sampleRate()).leakRef();
         periodicWave = s_periodicWaveSine;
         break;
     case Type::Square:
         if (!s_periodicWaveSquare)
-            s_periodicWaveSquare = &PeriodicWave::createSquare(sampleRate).leakRef();
+            s_periodicWaveSquare = &PeriodicWave::createSquare(sampleRate()).leakRef();
         periodicWave = s_periodicWaveSquare;
         break;
     case Type::Sawtooth:
         if (!s_periodicWaveSawtooth)
-            s_periodicWaveSawtooth = &PeriodicWave::createSawtooth(sampleRate).leakRef();
+            s_periodicWaveSawtooth = &PeriodicWave::createSawtooth(sampleRate()).leakRef();
         periodicWave = s_periodicWaveSawtooth;
         break;
     case Type::Triangle:
         if (!s_periodicWaveTriangle)
-            s_periodicWaveTriangle = &PeriodicWave::createTriangle(sampleRate).leakRef();
+            s_periodicWaveTriangle = &PeriodicWave::createTriangle(sampleRate()).leakRef();
         periodicWave = s_periodicWaveTriangle;
         break;
     case Type::Custom:
         if (m_type != Type::Custom)
-            ec = INVALID_STATE_ERR;
-        return;
+            return Exception { INVALID_STATE_ERR };
+        return { };
     }
 
     setPeriodicWave(periodicWave);
     m_type = type;
+
+    return { };
 }
 
 bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)
@@ -184,10 +180,10 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
 
 void OscillatorNode::process(size_t framesToProcess)
 {
-    AudioBus* outputBus = output(0)->bus();
+    auto& outputBus = *output(0)->bus();
 
-    if (!isInitialized() || !outputBus->numberOfChannels()) {
-        outputBus->zero();
+    if (!isInitialized() || !outputBus.numberOfChannels()) {
+        outputBus.zero();
         return;
     }
 
@@ -199,30 +195,29 @@ void OscillatorNode::process(size_t framesToProcess)
     std::unique_lock<Lock> lock(m_processMutex, std::try_to_lock);
     if (!lock.owns_lock()) {
         // Too bad - the try_lock() failed. We must be in the middle of changing wave-tables.
-        outputBus->zero();
+        outputBus.zero();
         return;
     }
 
     // We must access m_periodicWave only inside the lock.
     if (!m_periodicWave.get()) {
-        outputBus->zero();
+        outputBus.zero();
         return;
     }
 
     size_t quantumFrameOffset;
     size_t nonSilentFramesToProcess;
-
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess);
 
     if (!nonSilentFramesToProcess) {
-        outputBus->zero();
+        outputBus.zero();
         return;
     }
 
     unsigned periodicWaveSize = m_periodicWave->periodicWaveSize();
     double invPeriodicWaveSize = 1.0 / periodicWaveSize;
 
-    float* destP = outputBus->channel(0)->mutableData();
+    float* destP = outputBus.channel(0)->mutableData();
 
     ASSERT(quantumFrameOffset <= framesToProcess);
 
@@ -292,7 +287,7 @@ void OscillatorNode::process(size_t framesToProcess)
 
     m_virtualReadIndex = virtualReadIndex;
 
-    outputBus->clearSilentFlag();
+    outputBus.clearSilentFlag();
 }
 
 void OscillatorNode::reset()

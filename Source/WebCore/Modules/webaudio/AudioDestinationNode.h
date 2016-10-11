@@ -53,7 +53,7 @@ public:
     size_t currentSampleFrame() const { return m_currentSampleFrame; }
     double currentTime() const { return currentSampleFrame() / static_cast<double>(sampleRate()); }
 
-    virtual unsigned long maxChannelCount() const { return 0; }
+    virtual unsigned maxChannelCount() const { return 0; }
 
     // Enable local/live input for the specified device.
     virtual void enableInput(const String& inputDeviceId) = 0;

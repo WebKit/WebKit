@@ -263,8 +263,9 @@ double valueToDate(JSC::ExecState*, JSC::JSValue);
 // Validates that the passed object is a sequence type per section 4.1.13 of the WebIDL spec.
 JSC::JSObject* toJSSequence(JSC::ExecState&, JSC::JSValue, unsigned& length);
 
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer&);
+JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView&);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBuffer*);
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSC::ArrayBufferView*);
 JSC::JSValue toJS(JSC::ExecState*, JSC::JSGlobalObject*, JSC::ArrayBufferView*);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Ref<T>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&&);
@@ -591,29 +592,32 @@ inline JSC::JSObject* toJSSequence(JSC::ExecState& exec, JSC::JSValue value, uns
     return object;
 }
 
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer& buffer)
 {
-    if (!buffer)
-        return JSC::jsNull();
-    if (JSC::JSValue result = getCachedWrapper(globalObject->world(), *buffer))
+    if (auto result = getCachedWrapper(globalObject->world(), buffer))
         return result;
 
     // The JSArrayBuffer::create function will register the wrapper in finishCreation.
-    return JSC::JSArrayBuffer::create(exec->vm(), globalObject->arrayBufferStructure(), buffer);
+    return JSC::JSArrayBuffer::create(state->vm(), globalObject->arrayBufferStructure(), &buffer);
 }
 
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, JSC::ArrayBufferView* view)
+inline JSC::JSValue toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView& view)
+{
+    return view.wrap(state, globalObject);
+}
+
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, JSC::ArrayBuffer* buffer)
+{
+    if (!buffer)
+        return JSC::jsNull();
+    return toJS(state, globalObject, *buffer);
+}
+
+inline JSC::JSValue toJS(JSC::ExecState* state, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView* view)
 {
     if (!view)
         return JSC::jsNull();
-    return view->wrap(exec, globalObject);
-}
-
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, JSC::ArrayBufferView* view)
-{
-    if (!view)
-        return JSC::jsNull();
-    return view->wrap(exec, globalObject);
+    return toJS(state, globalObject, *view);
 }
 
 template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Ref<T>&& ptr)

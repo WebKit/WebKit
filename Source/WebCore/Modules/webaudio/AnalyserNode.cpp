@@ -30,7 +30,6 @@
 
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
 
@@ -72,40 +71,38 @@ void AnalyserNode::reset()
     m_analyser.reset();
 }
 
-void AnalyserNode::setFftSize(unsigned size, ExceptionCode& ec)
+ExceptionOr<void> AnalyserNode::setFftSize(unsigned size)
 {
     if (!m_analyser.setFftSize(size))
-        ec = INDEX_SIZE_ERR;
+        return Exception { INDEX_SIZE_ERR };
+    return { };
 }
 
-void AnalyserNode::setMinDecibels(double k, ExceptionCode& ec)
+ExceptionOr<void> AnalyserNode::setMinDecibels(double k)
 {
-    if (k > maxDecibels()) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (k > maxDecibels())
+        return Exception { INDEX_SIZE_ERR };
 
     m_analyser.setMinDecibels(k);
+    return { };
 }
 
-void AnalyserNode::setMaxDecibels(double k, ExceptionCode& ec)
+ExceptionOr<void> AnalyserNode::setMaxDecibels(double k)
 {
-    if (k < minDecibels()) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (k < minDecibels())
+        return Exception { INDEX_SIZE_ERR };
 
     m_analyser.setMaxDecibels(k);
+    return { };
 }
 
-void AnalyserNode::setSmoothingTimeConstant(double k, ExceptionCode& ec)
+ExceptionOr<void> AnalyserNode::setSmoothingTimeConstant(double k)
 {
-    if (k < 0 || k > 1) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (k < 0 || k > 1)
+        return Exception { INDEX_SIZE_ERR };
 
     m_analyser.setSmoothingTimeConstant(k);
+    return { };
 }
 
 } // namespace WebCore

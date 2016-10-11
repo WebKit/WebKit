@@ -1,3 +1,119 @@
+2016-10-10  Darin Adler  <darin@apple.com>
+
+        Move audio module off of legacy exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163269
+
+        Reviewed by Alex Christensen.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::setFftSize): Use ExceptionOr.
+        (WebCore::AnalyserNode::setMinDecibels): Ditto.
+        (WebCore::AnalyserNode::setMaxDecibels): Ditto.
+        (WebCore::AnalyserNode::setSmoothingTimeConstant): Ditto.
+        * Modules/webaudio/AnalyserNode.h: Update for above.
+        * Modules/webaudio/AnalyserNode.idl: Ditto.
+
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        Initialize m_needAutomaticPull in class definition.
+        (WebCore::AudioBasicInspectorNode::connect): Use ExceptionOr.
+        (WebCore::AudioBasicInspectorNode::disconnect): Ditto.
+        * Modules/webaudio/AudioBasicInspectorNode.h: Updated for above.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::createFromAudioFileData): Use reference.
+        (WebCore::AudioBuffer::AudioBuffer): Initialize m_gain in class definition.
+        (WebCore::AudioBuffer::getChannelData): Use ExceptionOr.
+        (WebCore::AudioBuffer::channelData): Rename to disambiguate with getChannelData.
+        (WebCore::AudioBuffer::zero): Use modern for loop.
+        * Modules/webaudio/AudioBuffer.h: Update for above.
+        * Modules/webaudio/AudioBuffer.idl: Ditto.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process): Use reference.
+        (WebCore::AudioBufferSourceNode::setBuffer): Use channelData.
+        (WebCore::AudioBufferSourceNode::start): Use ExceptionOr.
+        (WebCore::AudioBufferSourceNode::startPlaying): Ditto.
+        * Modules/webaudio/AudioBufferSourceNode.h: Update for above.
+        * Modules/webaudio/AudioBufferSourceNode.idl: Ditto.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createBuffer): Use ExceptionOr.
+        (WebCore::AudioContext::createMediaElementSource): Ditto.
+        (WebCore::AudioContext::createMediaStreamSource): Ditto.
+        (WebCore::AudioContext::createScriptProcessor): Ditto.
+        (WebCore::AudioContext::createDelay): Ditto.
+        (WebCore::AudioContext::createChannelSplitter): Ditto.
+        (WebCore::AudioContext::createChannelMerger): Ditto.
+        (WebCore::AudioContext::createPeriodicWave): Ditto.
+        * Modules/webaudio/AudioContext.h: Update for above.
+        * Modules/webaudio/AudioContext.idl: Ditto.
+
+        * Modules/webaudio/AudioDestinationNode.h: Use unsigned instead
+        of unsigned long for maxChannelCount.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect): Use ExceptionOr.
+        (WebCore::AudioNode::disconnect): Ditto.
+        (WebCore::AudioNode::channelCount): Use unsigned.
+        (WebCore::AudioNode::setChannelCount): Use ExceptionOr and unsigned.
+        (WebCore::AudioNode::setChannelCountMode): Ditto.
+        (WebCore::AudioNode::setChannelInterpretation): Ditto.
+        * Modules/webaudio/AudioNode.h: Update for above.
+        * Modules/webaudio/AudioNode.idl: Ditto.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        Initialize data members in class definition.
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo): Take
+        a reference instead of a pointer to the audio bus.
+        (WebCore::AudioScheduledSourceNode::start): Use ExceptionOr.
+        (WebCore::AudioScheduledSourceNode::stop): Ditto.
+        * Modules/webaudio/AudioScheduledSourceNode.h: Update for above.
+
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode): Initialize m_normalize
+        in class definition.
+        (WebCore::ConvolverNode::setBuffer): Use ExceptionOr.
+        * Modules/webaudio/ConvolverNode.h: Update for above.
+        * Modules/webaudio/ConvolverNode.idl: Ditto.
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        Initialize m_numberOfInputChannels in class definition.
+        (WebCore::DefaultAudioDestinationNode::maxChannelCount): Use unsigned.
+        (WebCore::DefaultAudioDestinationNode::setChannelCount): Use ExceptionOr.
+        * Modules/webaudio/DefaultAudioDestinationNode.h: Update for changes above.
+
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode): Moved exception logic out of constructor.
+        (WebCore::DelayNode::create): Added. Moved exception logic in here.
+        (WebCore::DelayNode::delayTime): Moved typecast here from header.
+        * Modules/webaudio/DelayNode.h: Update for above.
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::OfflineAudioContext): Marked inline.
+        (WebCore::OfflineAudioContext::create): Use ExceptionOr.
+        (WebCore::OfflineAudioContext::~OfflineAudioContext): Deleted. Unneeded.
+        * Modules/webaudio/OfflineAudioContext.h: Update for above.
+        * Modules/webaudio/OfflineAudioContext.idl: Ditto.
+
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::offlineRender): Use channelData.
+
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode): Updated for change to setType.
+        (WebCore::OscillatorNode::setType): Use ExceptionOr.
+        (WebCore::OscillatorNode::process): Use a reference.
+        * Modules/webaudio/OscillatorNode.h: Update for above.
+        * Modules/webaudio/OscillatorNode.idl: Ditto.
+
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::process): Use channelData.
+
+        * bindings/js/JSDOMBinding.h: Added overloads of toJS to it can be used on
+        references to array buffers and array buffer views, not just pointers.
+
 2016-10-10  Youenn Fablet  <youenn@apple.com>
 
         Change HTTPHeaderValues from a struct to a namespace

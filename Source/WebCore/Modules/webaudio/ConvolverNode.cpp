@@ -29,13 +29,9 @@
 
 #include "ConvolverNode.h"
 
-#include "AudioBuffer.h"
-#include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include "ExceptionCode.h"
 #include "Reverb.h"
-#include <wtf/MainThread.h>
 
 // Note about empirical tuning:
 // The maximum FFT size affects reverb performance and accuracy.
@@ -49,7 +45,6 @@ namespace WebCore {
 
 ConvolverNode::ConvolverNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
-    , m_normalize(true)
 {
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, 2));
@@ -104,7 +99,7 @@ void ConvolverNode::initialize()
 {
     if (isInitialized())
         return;
-        
+
     AudioNode::initialize();
 }
 
@@ -117,17 +112,15 @@ void ConvolverNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
+ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
 {
     ASSERT(isMainThread());
     
     if (!buffer)
-        return;
+        return { };
 
-    if (buffer->sampleRate() != context().sampleRate()) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (buffer->sampleRate() != context().sampleRate())
+        return Exception { NOT_SUPPORTED_ERR };
 
     unsigned numberOfChannels = buffer->numberOfChannels();
     size_t bufferLength = buffer->length();
@@ -136,16 +129,14 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
     // 4-channel response being interpreted as true-stereo (see Reverb class).
     bool isChannelCountGood = (numberOfChannels == 1 || numberOfChannels == 2 || numberOfChannels == 4) && bufferLength;
 
-    if (!isChannelCountGood) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (!isChannelCountGood)
+        return Exception { NOT_SUPPORTED_ERR };
 
     // Wrap the AudioBuffer by an AudioBus. It's an efficient pointer set and not a memcpy().
     // This memory is simply used in the Reverb constructor and no reference to it is kept for later use in that class.
-    RefPtr<AudioBus> bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);
+    auto bufferBus = AudioBus::create(numberOfChannels, bufferLength, false);
     for (unsigned i = 0; i < numberOfChannels; ++i)
-        bufferBus->setChannelMemory(i, buffer->getChannelData(i)->data(), bufferLength);
+        bufferBus->setChannelMemory(i, buffer->channelData(i)->data(), bufferLength);
 
     bufferBus->setSampleRate(buffer->sampleRate());
 
@@ -159,6 +150,8 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer, ExceptionCode& ec)
         m_reverb = WTFMove(reverb);
         m_buffer = buffer;
     }
+
+    return { };
 }
 
 AudioBuffer* ConvolverNode::buffer()

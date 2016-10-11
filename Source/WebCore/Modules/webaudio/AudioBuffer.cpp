@@ -32,12 +32,8 @@
 
 #include "AudioBuffer.h"
 
-#include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioFileReader.h"
-#include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
-
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 
@@ -47,22 +43,19 @@ RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t number
 {
     if (sampleRate < 22050 || sampleRate > 96000 || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
         return nullptr;
-    
     return adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate));
 }
 
 RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate)
 {
     RefPtr<AudioBus> bus = createBusFromInMemoryAudioFile(data, dataSize, mixToMono, sampleRate);
-    if (bus.get())
-        return adoptRef(*new AudioBuffer(bus.get()));
-
-    return nullptr;
+    if (!bus)
+        return nullptr;
+    return adoptRef(*new AudioBuffer(*bus));
 }
 
 AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
-    : m_gain(1.0)
-    , m_sampleRate(sampleRate)
+    : m_sampleRate(sampleRate)
     , m_length(numberOfFrames)
 {
     m_channels.reserveCapacity(numberOfChannels);
@@ -74,19 +67,18 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float
     }
 }
 
-AudioBuffer::AudioBuffer(AudioBus* bus)
-    : m_gain(1.0)
-    , m_sampleRate(bus->sampleRate())
-    , m_length(bus->length())
+AudioBuffer::AudioBuffer(AudioBus& bus)
+    : m_sampleRate(bus.sampleRate())
+    , m_length(bus.length())
 {
     // Copy audio data from the bus to the Float32Arrays we manage.
-    unsigned numberOfChannels = bus->numberOfChannels();
+    unsigned numberOfChannels = bus.numberOfChannels();
     m_channels.reserveCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
-        RefPtr<Float32Array> channelDataArray = Float32Array::create(m_length);
+        auto channelDataArray = Float32Array::create(m_length);
         channelDataArray->setNeuterable(false);
-        channelDataArray->setRange(bus->channel(i)->data(), m_length, 0);
-        m_channels.append(channelDataArray);
+        channelDataArray->setRange(bus.channel(i)->data(), m_length, 0);
+        m_channels.append(WTFMove(channelDataArray));
     }
 }
 
@@ -95,31 +87,27 @@ void AudioBuffer::releaseMemory()
     m_channels.clear();
 }
 
-RefPtr<Float32Array> AudioBuffer::getChannelData(unsigned channelIndex, ExceptionCode& ec)
+ExceptionOr<Ref<Float32Array>> AudioBuffer::getChannelData(unsigned channelIndex)
 {
-    if (channelIndex >= m_channels.size()) {
-        ec = SYNTAX_ERR;
-        return nullptr;
-    }
-
-    Float32Array* channelData = m_channels[channelIndex].get();
-    return Float32Array::create(channelData->buffer(), channelData->byteOffset(), channelData->length());
+    if (channelIndex >= m_channels.size())
+        return Exception { SYNTAX_ERR };
+    auto& channelData = *m_channels[channelIndex];
+    auto array = Float32Array::create(channelData.buffer(), channelData.byteOffset(), channelData.length());
+    RELEASE_ASSERT(array);
+    return array.releaseNonNull();
 }
 
-Float32Array* AudioBuffer::getChannelData(unsigned channelIndex)
+Float32Array* AudioBuffer::channelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
         return nullptr;
-
     return m_channels[channelIndex].get();
 }
 
 void AudioBuffer::zero()
 {
-    for (unsigned i = 0; i < m_channels.size(); ++i) {
-        if (getChannelData(i))
-            getChannelData(i)->zeroRange(0, length());
-    }
+    for (auto& channel : m_channels)
+        channel->zeroRange(0, length());
 }
 
 size_t AudioBuffer::memoryCost() const

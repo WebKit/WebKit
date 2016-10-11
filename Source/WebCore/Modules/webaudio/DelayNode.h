@@ -22,33 +22,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DelayNode_h
-#define DelayNode_h
+#pragma once
 
 #include "AudioBasicProcessorNode.h"
-#include "DelayProcessor.h"
-#include "ExceptionCode.h"
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
-class AudioParam;
-
 class DelayNode : public AudioBasicProcessorNode {
 public:
-    static Ref<DelayNode> create(AudioContext& context, float sampleRate, double maxDelayTime, ExceptionCode& ec)
-    {
-        return adoptRef(*new DelayNode(context, sampleRate, maxDelayTime, ec));
-    }
+    static ExceptionOr<Ref<DelayNode>> create(AudioContext&, float sampleRate, double maxDelayTime);
 
     AudioParam* delayTime();
 
 private:
-    DelayNode(AudioContext&, float sampleRate, double maxDelayTime, ExceptionCode&);
-
-    DelayProcessor* delayProcessor() { return static_cast<DelayProcessor*>(processor()); }
+    DelayNode(AudioContext&, float sampleRate, double maxDelayTime);
 };
 
 } // namespace WebCore
-
-#endif // DelayNode_h

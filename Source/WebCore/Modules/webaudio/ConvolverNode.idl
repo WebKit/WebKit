@@ -27,6 +27,6 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject
 ] interface ConvolverNode : AudioNode {
-    [SetterMayThrowLegacyException] attribute AudioBuffer? buffer;
+    [SetterMayThrowException] attribute AudioBuffer? buffer;
     attribute boolean normalize;
 };

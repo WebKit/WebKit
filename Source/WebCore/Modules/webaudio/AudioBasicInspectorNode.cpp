@@ -28,7 +28,6 @@
 
 #include "AudioBasicInspectorNode.h"
 
-#include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 
@@ -36,7 +35,6 @@ namespace WebCore {
 
 AudioBasicInspectorNode::AudioBasicInspectorNode(AudioContext& context, float sampleRate, unsigned outputChannelCount)
     : AudioNode(context, sampleRate)
-    , m_needAutomaticPull(false)
 {
     addInput(std::make_unique<AudioNodeInput>(this));
     addOutput(std::make_unique<AudioNodeOutput>(this, outputChannelCount));
@@ -51,24 +49,26 @@ void AudioBasicInspectorNode::pullInputs(size_t framesToProcess)
     input(0)->pull(output(0)->bus(), framesToProcess);
 }
 
-void AudioBasicInspectorNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex, ExceptionCode& ec)
+ExceptionOr<void> AudioBasicInspectorNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread());
 
     AudioContext::AutoLocker locker(context());
 
-    AudioNode::connect(destination, outputIndex, inputIndex, ec);
+    auto result = AudioNode::connect(destination, outputIndex, inputIndex);
     updatePullStatus();
+    return result;
 }
 
-void AudioBasicInspectorNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
+ExceptionOr<void> AudioBasicInspectorNode::disconnect(unsigned outputIndex)
 {
     ASSERT(isMainThread());
 
     AudioContext::AutoLocker locker(context());
 
-    AudioNode::disconnect(outputIndex, ec);
+    auto result = AudioNode::disconnect(outputIndex);
     updatePullStatus();
+    return result;
 }
 
 void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)

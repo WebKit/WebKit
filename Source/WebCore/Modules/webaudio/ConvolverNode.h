@@ -22,20 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ConvolverNode_h
-#define ConvolverNode_h
+#pragma once
 
 #include "AudioNode.h"
-#include <memory>
 #include <wtf/Lock.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class AudioBuffer;
 class Reverb;
     
-class ConvolverNode : public AudioNode {
+class ConvolverNode final : public AudioNode {
 public:
     static Ref<ConvolverNode> create(AudioContext& context, float sampleRate)
     {
@@ -44,14 +41,7 @@ public:
     
     virtual ~ConvolverNode();
     
-    // AudioNode
-    void process(size_t framesToProcess) override;
-    void reset() override;
-    void initialize() override;
-    void uninitialize() override;
-
-    // Impulse responses
-    void setBuffer(AudioBuffer*, ExceptionCode&);
+    ExceptionOr<void> setBuffer(AudioBuffer*);
     AudioBuffer* buffer();
 
     bool normalize() const { return m_normalize; }
@@ -60,8 +50,13 @@ public:
 private:
     ConvolverNode(AudioContext&, float sampleRate);
 
-    double tailTime() const override;
-    double latencyTime() const override;
+    double tailTime() const final;
+    double latencyTime() const final;
+
+    void process(size_t framesToProcess) final;
+    void reset() final;
+    void initialize() final;
+    void uninitialize() final;
 
     std::unique_ptr<Reverb> m_reverb;
     RefPtr<AudioBuffer> m_buffer;
@@ -69,10 +64,8 @@ private:
     // This synchronizes dynamic changes to the convolution impulse response with process().
     mutable Lock m_processMutex;
 
-    // Normalize the impulse response or not. Must default to true.
-    bool m_normalize;
+    // Normalize the impulse response or not.
+    bool m_normalize { true };
 };
 
 } // namespace WebCore
-
-#endif // ConvolverNode_h

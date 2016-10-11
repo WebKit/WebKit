@@ -22,18 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DefaultAudioDestinationNode_h
-#define DefaultAudioDestinationNode_h
+#pragma once
 
-#include "AudioDestination.h"
 #include "AudioDestinationNode.h"
-#include <memory>
 
 namespace WebCore {
 
-class AudioContext;
+class AudioDestination;
     
-class DefaultAudioDestinationNode : public AudioDestinationNode {
+class DefaultAudioDestinationNode final : public AudioDestinationNode {
 public:
     static Ref<DefaultAudioDestinationNode> create(AudioContext& context)
     {
@@ -42,29 +39,25 @@ public:
 
     virtual ~DefaultAudioDestinationNode();
     
-    // AudioNode   
-    void initialize() override;
-    void uninitialize() override;
-    void setChannelCount(unsigned long, ExceptionCode&) override;
-
-    // AudioDestinationNode
-    void enableInput(const String& inputDeviceId) override;
-    void startRendering() override;
-    void resume(Function<void ()>&&) override;
-    void suspend(Function<void ()>&&) override;
-    void close(Function<void ()>&&) override;
-    unsigned long maxChannelCount() const override;
-    bool isPlaying() override;
-
 private:
     explicit DefaultAudioDestinationNode(AudioContext&);
     void createDestination();
 
+    void initialize() final;
+    void uninitialize() final;
+    ExceptionOr<void> setChannelCount(unsigned) final;
+
+    void enableInput(const String& inputDeviceId) final;
+    void startRendering() final;
+    void resume(Function<void ()>&&) final;
+    void suspend(Function<void ()>&&) final;
+    void close(Function<void ()>&&) final;
+    unsigned maxChannelCount() const final;
+    bool isPlaying() final;
+
     std::unique_ptr<AudioDestination> m_destination;
     String m_inputDeviceId;
-    unsigned m_numberOfInputChannels;
+    unsigned m_numberOfInputChannels { 0 };
 };
 
 } // namespace WebCore
-
-#endif // DefaultAudioDestinationNode_h

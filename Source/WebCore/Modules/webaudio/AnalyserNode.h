@@ -22,16 +22,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AnalyserNode_h
-#define AnalyserNode_h
+#pragma once
 
 #include "AudioBasicInspectorNode.h"
 #include "RealtimeAnalyser.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AnalyserNode : public AudioBasicInspectorNode {
+class AnalyserNode final : public AudioBasicInspectorNode {
 public:
     static Ref<AnalyserNode> create(AudioContext& context, float sampleRate)
     {
@@ -39,24 +37,19 @@ public:
     }
 
     virtual ~AnalyserNode();
-    
-    // AudioNode
-    void process(size_t framesToProcess) override;
-    void reset() override;
 
-    // Javascript bindings
     unsigned fftSize() const { return m_analyser.fftSize(); }
-    void setFftSize(unsigned size, ExceptionCode&);
+    ExceptionOr<void> setFftSize(unsigned);
 
     unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
 
-    void setMinDecibels(double k, ExceptionCode&);
+    ExceptionOr<void> setMinDecibels(double);
     double minDecibels() const { return m_analyser.minDecibels(); }
 
-    void setMaxDecibels(double k, ExceptionCode&);
+    ExceptionOr<void> setMaxDecibels(double);
     double maxDecibels() const { return m_analyser.maxDecibels(); }
 
-    void setSmoothingTimeConstant(double k, ExceptionCode&);
+    ExceptionOr<void> setSmoothingTimeConstant(double);
     double smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
 
     void getFloatFrequencyData(const RefPtr<JSC::Float32Array>& array) { m_analyser.getFloatFrequencyData(array.get()); }
@@ -64,14 +57,15 @@ public:
     void getByteTimeDomainData(const RefPtr<JSC::Uint8Array>& array) { m_analyser.getByteTimeDomainData(array.get()); }
 
 private:
-    double tailTime() const override { return 0; }
-    double latencyTime() const override { return 0; }
-
     AnalyserNode(AudioContext&, float sampleRate);
+
+    void process(size_t framesToProcess) final;
+    void reset() final;
+
+    double tailTime() const final { return 0; }
+    double latencyTime() const final { return 0; }
 
     RealtimeAnalyser m_analyser;
 };
 
 } // namespace WebCore
-
-#endif // AnalyserNode_h
