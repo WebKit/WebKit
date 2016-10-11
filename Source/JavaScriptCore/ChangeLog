@@ -1,3 +1,21 @@
+2016-10-11  Saam Barati  <sbarati@apple.com>
+
+        ValueAdd should be constant folded if the operands are constant String,Primitive or Primitive,String
+        https://bugs.webkit.org/show_bug.cgi?id=163182
+
+        Reviewed by Filip Pizlo.
+
+        This code pattern shows up in Dromaeo, so it's worth optimizing for.
+        This might also show up in real world JS code due to inlining and other
+        types of constant folding.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGLazyJSValue.cpp:
+        (JSC::DFG::LazyJSValue::getValue):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option

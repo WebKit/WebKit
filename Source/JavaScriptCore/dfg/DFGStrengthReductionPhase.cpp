@@ -322,8 +322,48 @@ private:
         // move these to the abstract interpreter once AbstractValue can support LazyJSValue.
         // https://bugs.webkit.org/show_bug.cgi?id=155204
 
+        case ValueAdd: {
+            if (m_node->child1()->isConstant()
+                && m_node->child2()->isConstant()
+                && (!!m_node->child1()->tryGetString(m_graph) || !!m_node->child2()->tryGetString(m_graph))) {
+                auto tryGetConstantString = [&] (Node* node) -> String {
+                    String string = node->tryGetString(m_graph);
+                    if (!string.isEmpty())
+                        return string;
+                    JSValue value = node->constant()->value();
+                    if (!value)
+                        return String();
+                    if (value.isInt32())
+                        return String::number(value.asInt32());
+                    if (value.isNumber())
+                        return String::numberToStringECMAScript(value.asNumber());
+                    if (value.isBoolean())
+                        return value.asBoolean() ? ASCIILiteral("true") : ASCIILiteral("false");
+                    if (value.isNull())
+                        return ASCIILiteral("null");
+                    if (value.isUndefined())
+                        return ASCIILiteral("undefined");
+                    return String();
+                };
+
+                String leftString = tryGetConstantString(m_node->child1().node());
+                if (!leftString)
+                    break;
+                String rightString = tryGetConstantString(m_node->child2().node());
+                if (!rightString)
+                    break;
+
+                StringBuilder builder;
+                builder.append(leftString);
+                builder.append(rightString);
+                m_node->convertToLazyJSConstant(
+                    m_graph, LazyJSValue::newString(m_graph, builder.toString()));
+                m_changed = true;
+            }
+            break;
+        }
+
         case MakeRope:
-        case ValueAdd:
         case StrCat: {
             String leftString = m_node->child1()->tryGetString(m_graph);
             if (!leftString)

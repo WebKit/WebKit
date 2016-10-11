@@ -1,3 +1,16 @@
+2016-10-11  Saam Barati  <sbarati@apple.com>
+
+        ValueAdd should be constant folded if the operands are constant String,Primitive or Primitive,String
+        https://bugs.webkit.org/show_bug.cgi?id=163182
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/string-add-constant-folding.js: Added.
+        (assert):
+        (runTests):
+        (add):
+        (test):
+
 2016-10-07  Mark Lam  <mark.lam@apple.com>
 
         Object.freeze() and seal() should throw if [[PreventExtensions]]() fails.

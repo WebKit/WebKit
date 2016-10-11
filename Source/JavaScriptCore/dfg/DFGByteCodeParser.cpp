@@ -4239,7 +4239,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 ByValInfo* byValInfo = m_inlineStackTop->m_byValInfos.get(CodeOrigin(currentCodeOrigin().bytecodeIndex));
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                 // At that time, there is no information.
-                if (byValInfo && byValInfo->stubInfo && !byValInfo->tookSlowPath && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent) && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
+                if (byValInfo 
+                    && byValInfo->stubInfo
+                    && !byValInfo->tookSlowPath
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                    && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCell)) {
                     compiledAsPutById = true;
                     unsigned identifierNumber = m_graph.identifiers().ensure(byValInfo->cachedId.impl());
                     UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];

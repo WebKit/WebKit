@@ -51,8 +51,9 @@ JSValue LazyJSValue::getValue(VM& vm) const
     case SingleCharacterString:
         return jsSingleCharacterString(&vm, u.character);
     case KnownStringImpl:
-    case NewStringImpl:
         return jsString(&vm, u.stringImpl);
+    case NewStringImpl:
+        return jsString(&vm, AtomicStringImpl::add(u.stringImpl));
     }
     RELEASE_ASSERT_NOT_REACHED();
     return JSValue();
