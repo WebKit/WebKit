@@ -986,4 +986,3 @@ webkit.org/b/162414 imported/w3c/web-platform-tests/resource-timing/idlharness.h
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
 
-webkit.org/b/163249 media/modern-media-controls/play-pause-button/play-pause-button.html [ Failure ]

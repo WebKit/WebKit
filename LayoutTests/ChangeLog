@@ -1,5 +1,18 @@
 2016-10-11  Antoine Quint  <graouts@apple.com>
 
+        [mac] LayoutTest media/modern-media-controls/play-pause-button/play-pause-button.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=163249
+
+        Reviewed by Antoine Quint.
+
+        Wait until all icon images are loaded before running the assertions. We can determine whether
+        a button's icon image is loaded by checking it's been sized.
+
+        * TestExpectations:
+        * media/modern-media-controls/play-pause-button/play-pause-button.html:
+
+2016-10-11  Antoine Quint  <graouts@apple.com>
+
         [mac] LayoutTest media/modern-media-controls/airplay-button/airplay-button.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=163248
 
