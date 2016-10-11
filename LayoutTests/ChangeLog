@@ -1,3 +1,13 @@
+2016-09-23  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !newRelayoutRoot.container() || is<RenderView>(newRelayoutRoot.container()) || !newRelayoutRoot.container()->needsLayout() while loading sohu.com
+        https://bugs.webkit.org/show_bug.cgi?id=162466
+
+        Reviewed by Simon Fraser.
+
+        * fast/block/positioning/subtree-assert-when-positioned-element-dirties-containing-block-expected.txt: Added.
+        * fast/block/positioning/subtree-assert-when-positioned-element-dirties-containing-block.html: Added.
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
