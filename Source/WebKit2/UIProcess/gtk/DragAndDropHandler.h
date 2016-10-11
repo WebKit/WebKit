@@ -23,16 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DragAndDropHandler_h
-#define DragAndDropHandler_h
+#pragma once
 
 #if ENABLE(DRAG_SUPPORT)
 
 #include <WebCore/DataObjectGtk.h>
+#include <WebCore/DragActions.h>
 #include <WebCore/IntPoint.h>
 #include <gtk/gtk.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/glib/GRefPtr.h>
 
 typedef struct _GdkDragContext GdkDragContext;
 typedef struct _GtkSelectionData GtkSelectionData;
@@ -51,7 +52,7 @@ class DragAndDropHandler {
 public:
     DragAndDropHandler(WebPageProxy&);
 
-    void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+    void startDrag(Ref<WebCore::DataObjectGtk>&&, WebCore::DragOperation, RefPtr<ShareableBitmap>&& dragImage);
     void fillDragData(GdkDragContext*, GtkSelectionData*, unsigned info);
     void finishDrag(GdkDragContext*);
 
@@ -90,5 +91,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(DRAG_SUPPORT)
-
-#endif // DragAndDropHandler_h

@@ -203,6 +203,10 @@ struct WebPreferencesStore;
 class RemoteLayerTreeTransaction;
 #endif
 
+#if PLATFORM(GTK)
+struct PasteboardContent;
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
 #endif
@@ -726,7 +730,7 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
-    void performDragControllerAction(uint64_t action, WebCore::DragData);
+    void performDragControllerAction(uint64_t action, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t draggingSourceOperationMask, PasteboardContent&&, uint32_t flags);
 #else
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags, const SandboxExtension::Handle&, const SandboxExtension::HandleArray&);
 #endif

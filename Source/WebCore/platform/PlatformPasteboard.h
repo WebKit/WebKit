@@ -86,8 +86,8 @@ public:
     WEBCORE_EXPORT int count();
 
 #if PLATFORM(GTK)
-    WEBCORE_EXPORT void writeToClipboard(const RefPtr<DataObjectGtk>&, std::function<void()>&& primarySelectionCleared);
-    WEBCORE_EXPORT RefPtr<DataObjectGtk> readFromClipboard();
+    WEBCORE_EXPORT void writeToClipboard(const DataObjectGtk&, std::function<void()>&& primarySelectionCleared);
+    WEBCORE_EXPORT Ref<DataObjectGtk> readFromClipboard();
 #endif
 
 private:

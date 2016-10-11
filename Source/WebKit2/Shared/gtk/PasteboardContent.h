@@ -29,10 +29,11 @@ class Encoder;
 namespace WebKit {
 
 struct PasteboardContent {
-    PasteboardContent() = default;
-    explicit PasteboardContent(const RefPtr<WebCore::DataObjectGtk>&);
+    PasteboardContent();
+    explicit PasteboardContent(const WebCore::DataObjectGtk&);
+    explicit PasteboardContent(Ref<WebCore::DataObjectGtk>&&);
 
-    RefPtr<WebCore::DataObjectGtk> dataObject;
+    Ref<WebCore::DataObjectGtk> dataObject;
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, PasteboardContent&);

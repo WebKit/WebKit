@@ -214,9 +214,10 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <gtk/gtk.h>
-#include "DataObjectGtk.h"
+#include "PasteboardContent.h"
 #include "WebPrintOperationGtk.h"
+#include <WebCore/DataObjectGtk.h>
+#include <gtk/gtk.h>
 #endif
 
 #if PLATFORM(IOS)
@@ -3360,15 +3361,14 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 #if ENABLE(DRAG_SUPPORT)
 
 #if PLATFORM(GTK)
-void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dragData)
+void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, PasteboardContent&& selection, uint32_t flags)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0));
-        DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
-        data->deref();
         return;
     }
 
+    DragData dragData(selection.dataObject.ptr(), clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
     switch (action) {
     case DragControllerActionEntered: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
@@ -3392,11 +3392,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::DragData dra
     default:
         ASSERT_NOT_REACHED();
     }
-    // DragData does not delete its platformData so we need to do that here.
-    DataObjectGtk* data = const_cast<DataObjectGtk*>(dragData.platformData());
-    data->deref();
 }
-
 #else
 void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
 {

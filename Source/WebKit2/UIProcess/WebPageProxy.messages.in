@@ -303,7 +303,7 @@ messages -> WebPageProxy {
 #endif
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    StartDrag(WebCore::DragData dragData, WebKit::ShareableBitmap::Handle dragImage)
+    StartDrag(struct WebKit::PasteboardContent selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)
 #endif
 
 #if PLATFORM(COCOA)

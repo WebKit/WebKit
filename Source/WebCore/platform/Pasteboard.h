@@ -138,7 +138,7 @@ public:
 
 #if PLATFORM(GTK)
     explicit Pasteboard(const String& name);
-    explicit Pasteboard(RefPtr<DataObjectGtk>&&);
+    explicit Pasteboard(DataObjectGtk&);
 #endif
 
 #if PLATFORM(WIN)
@@ -220,10 +220,9 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    enum class ShouldIncludeSmartPaste { No, Yes };
-    void writeToClipboard(ShouldIncludeSmartPaste = ShouldIncludeSmartPaste::No);
+    void writeToClipboard();
     void readFromClipboard();
-    RefPtr<DataObjectGtk> m_dataObject;
+    Ref<DataObjectGtk> m_dataObject;
     String m_name;
 #endif
 

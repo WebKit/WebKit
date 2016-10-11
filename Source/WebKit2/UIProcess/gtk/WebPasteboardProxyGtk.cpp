@@ -41,7 +41,7 @@ namespace WebKit {
 void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const PasteboardContent& pasteboardContent)
 {
     TemporaryChange<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, m_primarySelectionOwner);
-    PlatformPasteboard(pasteboardName).writeToClipboard(pasteboardContent.dataObject, [this] {
+    PlatformPasteboard(pasteboardName).writeToClipboard(pasteboardContent.dataObject.get(), [this] {
         if (m_frameWritingToClipboard == m_primarySelectionOwner)
             return;
         setPrimarySelectionOwner(nullptr);
@@ -50,7 +50,7 @@ void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const Pa
 
 void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, PasteboardContent& pasteboardContent)
 {
-    pasteboardContent = PasteboardContent(PlatformPasteboard(pasteboardName).readFromClipboard().get());
+    pasteboardContent = PasteboardContent(PlatformPasteboard(pasteboardName).readFromClipboard());
 }
 
 void WebPasteboardProxy::setPrimarySelectionOwner(WebFrameProxy* frame)

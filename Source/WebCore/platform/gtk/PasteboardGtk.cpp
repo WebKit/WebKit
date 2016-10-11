@@ -62,7 +62,8 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dragData)
 {
-    return std::make_unique<Pasteboard>(dragData.platformData());
+    ASSERT(dragData.platformData());
+    return std::make_unique<Pasteboard>(*dragData.platformData());
 }
 #endif
 
@@ -75,10 +76,9 @@ PasteboardImage::~PasteboardImage()
 {
 }
 
-Pasteboard::Pasteboard(RefPtr<DataObjectGtk>&& dataObject)
-    : m_dataObject(WTFMove(dataObject))
+Pasteboard::Pasteboard(DataObjectGtk& dataObject)
+    : m_dataObject(dataObject)
 {
-    ASSERT(m_dataObject);
 }
 
 Pasteboard::Pasteboard(const String& name)
@@ -93,7 +93,7 @@ Pasteboard::~Pasteboard()
 
 const DataObjectGtk& Pasteboard::dataObject() const
 {
-    return *m_dataObject;
+    return m_dataObject.get();
 }
 
 static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawType)
@@ -119,11 +119,11 @@ static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawTy
     return ClipboardDataTypeUnknown;
 }
 
-void Pasteboard::writeToClipboard(ShouldIncludeSmartPaste shouldIncludeSmartPaste)
+void Pasteboard::writeToClipboard()
 {
     if (m_name.isNull())
         return;
-    m_dataObject->setCanSmartReplace(shouldIncludeSmartPaste == ShouldIncludeSmartPaste::Yes);
+
     platformStrategies()->pasteboardStrategy()->writeToClipboard(m_name, m_dataObject);
 }
 
@@ -159,8 +159,9 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
 {
     m_dataObject->clearAll();
     m_dataObject->setText(text);
+    m_dataObject->setCanSmartReplace(smartReplaceOption == CanSmartReplace);
 
-    writeToClipboard(smartReplaceOption == CanSmartReplace ? ShouldIncludeSmartPaste::Yes : ShouldIncludeSmartPaste::No);
+    writeToClipboard();
 }
 
 void Pasteboard::write(const PasteboardURL& pasteboardURL)
@@ -180,10 +181,7 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
         m_dataObject->setURL(pasteboardImage.url.url, pasteboardImage.url.title);
         m_dataObject->setMarkup(pasteboardImage.url.markup);
     }
-
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(pasteboardImage.image->getGdkPixbuf());
-    if (pixbuf)
-        m_dataObject->setImage(pixbuf.get());
+    m_dataObject->setImage(pasteboardImage.image.get());
 
     writeToClipboard();
 }
@@ -193,8 +191,9 @@ void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
     m_dataObject->clearAll();
     m_dataObject->setText(pasteboardContent.text);
     m_dataObject->setMarkup(pasteboardContent.markup);
+    m_dataObject->setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
 
-    writeToClipboard(pasteboardContent.canSmartCopyOrDelete ? ShouldIncludeSmartPaste::Yes : ShouldIncludeSmartPaste::No);
+    writeToClipboard();
 }
 
 void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
