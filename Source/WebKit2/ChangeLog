@@ -1,3 +1,21 @@
+2016-10-10  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] UIProcess crashes when using Japanese IM
+        https://bugs.webkit.org/show_bug.cgi?id=163011
+
+        We have to reference the current GdkEventKey before we try process it
+        as later when the lambda body is reached the event could be already
+        freed.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        * UIProcess/gtk/InputMethodFilter.h:
+        Use non-copyable Function so we can use WTFMove to pass the event to
+        lambda.
+
 2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] 2.14.0 Compile Errors: GTK 3.22.1
