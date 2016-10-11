@@ -52,11 +52,11 @@ struct Atomic {
     // what you are doing and have thought about it very hard. The cost of seq_cst
     // is usually not high enough to justify the risk.
 
-    T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
+    ALWAYS_INLINE T load(std::memory_order order = std::memory_order_seq_cst) const { return value.load(order); }
 
-    void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
+    ALWAYS_INLINE void store(T desired, std::memory_order order = std::memory_order_seq_cst) { value.store(desired, order); }
 
-    bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE bool compareExchangeWeak(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
 #if OS(WINDOWS)
         // Windows makes strange assertions about the argument to compare_exchange_weak, and anyway,
@@ -67,7 +67,7 @@ struct Atomic {
         return value.compare_exchange_weak(expectedOrActual, desired, order);
     }
 
-    bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE bool compareExchangeStrong(T expected, T desired, std::memory_order order = std::memory_order_seq_cst)
     {
 #if OS(WINDOWS)
         // See above.
@@ -78,7 +78,7 @@ struct Atomic {
     }
     
     template<typename U>
-    T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE T exchangeAndAdd(U addend, std::memory_order order = std::memory_order_seq_cst)
     {
 #if OS(WINDOWS)
         // See above.
@@ -87,7 +87,7 @@ struct Atomic {
         return value.fetch_add(addend, order);
     }
     
-    T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE T exchange(T newValue, std::memory_order order = std::memory_order_seq_cst)
     {
 #if OS(WINDOWS)
         // See above.

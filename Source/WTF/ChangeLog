@@ -1,3 +1,45 @@
+2016-09-14  JF Bastien  <jfbastien@apple.com>
+
+        Alwasys inline atomic operations
+        https://bugs.webkit.org/show_bug.cgi?id=155371
+
+        Reviewed by Geoffrey Garen.
+
+        Fixes "build fails with memory model cannot be stronger than
+        success memory model for ‘__atomic_compare_exchange’".
+
+        Pre-5 revisions of GCC at Os only generated an error message
+        related to invalid failure memory ordering. The reason is that
+        libstdc++ tries to be clever about enforcing the C++ standard's
+        clause [atomics.types.operations.req] ¶21 which states:
+
+            Requires: The failure argument shall not be
+            `memory_order_release` nor `memory_order_acq_rel`. The failure
+            argument shall be no stronger than the success argument.
+
+        It fails at doing this because its inlining heuristics are
+        modified by Os, and they're not quite as dumb as O0 but not smart
+        enough to get to the good code at O1. Adding ALWAYS_INLINE fixes
+        the silliness at Os, leaves O1 great, and makes O0 slightly less
+        bad but still pretty bad.
+
+        The other good news is that I'm going to get this particular
+        problem fixed in the version of C++ which will come after C++17:
+
+        https://github.com/jfbastien/papers/blob/master/source/P0418r1.bs
+
+        While we're at it we should always inline all of these wrapped
+        functions because the generated code is horrendous if the memory
+        order isn't known at compile time.
+
+        * wtf/Atomics.h:
+        (WTF::Atomic::load):
+        (WTF::Atomic::store):
+        (WTF::Atomic::compareExchangeWeak):
+        (WTF::Atomic::compareExchangeStrong):
+        (WTF::Atomic::exchangeAndAdd):
+        (WTF::Atomic::exchange):
+
 2016-09-12  Filip Pizlo  <fpizlo@apple.com>
 
         ParkingLot is going to have a bad time with threads dying
