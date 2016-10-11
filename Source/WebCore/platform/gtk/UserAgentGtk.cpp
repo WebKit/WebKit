@@ -131,8 +131,9 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     uaString.appendLiteral(" (KHTML, like Gecko) ");
 
     // Note that Chrome UAs advertise *both* Chrome and Safari.
+    // We set a meaningful value only for the first two digits here.
     if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser))
-        uaString.append("Chrome/51.0.2704.106 ");
+        uaString.append("Chrome/54.0.2704.106 ");
 
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
