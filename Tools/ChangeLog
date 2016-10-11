@@ -1,3 +1,20 @@
+2016-10-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Parallel DRTs are sharing preferences and cache.
+        https://bugs.webkit.org/show_bug.cgi?id=163013
+
+        Reviewed by Brent Fulgham.
+
+        Use separate cache and preferences for each DRT instance.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (applicationId):
+        (setApplicationId):
+        (setCacheFolder):
+        (setDefaultsToConsistentValuesForTesting):
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_test_run):
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option
