@@ -24,6 +24,7 @@
 """Checks WebKit style for ChangeLog files."""
 
 from common import TabChecker, match, search, searchIgnorecase
+from sys import maxsize
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
 
 
@@ -74,6 +75,8 @@ class ChangeLogChecker(object):
                                         "changelog/nonewtests", 5,
                                         "You should remove the 'No new tests' and either add and list tests, or explain why no new tests were possible.")
 
+        self.check_for_unwanted_security_phrases(first_line_checked, entry_lines)
+
     def check(self, lines):
         self._tab_checker.check(lines)
         first_line_checked = 0
@@ -91,3 +94,36 @@ class ChangeLogChecker(object):
             entry_lines.append(line)
 
         self.check_entry(first_line_checked, entry_lines)
+
+    def contains_phrase_in_first_line_or_across_two_lines(self, phrase, line1, line2):
+        return searchIgnorecase(phrase, line1) or ((not searchIgnorecase(phrase, line2)) and searchIgnorecase(phrase, line1 + " " + line2))
+
+    def check_for_unwanted_security_phrases(self, first_line_checked, lines):
+        unwanted_security_phrases = [
+            "arbitrary code execution", "buffer overflow", "buffer overrun",
+            "buffer underrun", "dangling pointer", "double free", "fuzzer", "fuzzing", "fuzz test",
+            "invalid cast", "jsfunfuzz", "malicious", "memory corruption", "security bug",
+            "security flaw", "use after free", "use-after-free", "UXSS",
+            "WTFCrashWithSecurityImplication",
+            "spoof",  # Captures spoof, spoofed, spoofing
+            "vulnerab",  # Captures vulnerable, vulnerability, vulnerabilities
+        ]
+
+        lines_with_single_spaces = []
+        for line in lines:
+            lines_with_single_spaces.append(" ".join(line.split()))
+
+        found_unwanted_security_phrases = []
+        last_index = len(lines_with_single_spaces) - 1
+        first_line_number_with_unwanted_phrase = maxsize
+        for unwanted_phrase in unwanted_security_phrases:
+            for line_index, line in enumerate(lines_with_single_spaces):
+                next_line = "" if line_index >= last_index else lines_with_single_spaces[line_index + 1]
+                if self.contains_phrase_in_first_line_or_across_two_lines(unwanted_phrase, line, next_line):
+                    found_unwanted_security_phrases.append(unwanted_phrase)
+                    first_line_number_with_unwanted_phrase = min(first_line_number_with_unwanted_phrase, first_line_checked + line_index)
+
+        if len(found_unwanted_security_phrases) > 0:
+            self.handle_style_error(first_line_number_with_unwanted_phrase,
+                                    "changelog/unwantedsecurityterms", 3,
+                                    "Please consider whether the use of security-sensitive phrasing could help someone exploit WebKit: {}".format(", ".join(found_unwanted_security_phrases)))

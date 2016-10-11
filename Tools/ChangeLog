@@ -1,3 +1,30 @@
+2016-10-11  John Wilander  <wilander@apple.com>
+
+        Modify check-webkit-style to prohibit sensitive phrases
+        https://bugs.webkit.org/show_bug.cgi?id=163048
+        <rdar://problem/28289755>
+
+        Terms considered or found to be too general to flag:
+        ASSERT_WITH_SECURITY_IMPLICATION, bad cast, bug, bypass, crash,
+        denial of service, dereference, disclosure, error, exploit,
+        failure, heap, integer overflow, leak, null dereference,
+        null pointer dereference, out of bounds, overflow,
+        race condition, sensitive information, stack, type confusion.
+
+        Reviewed by Brent Fulgham.
+
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        (ChangeLogChecker.check_entry):
+            Now calls ChangeLogChecker.check_for_unwanted_security_terms().
+        (ChangeLogChecker):
+        (ChangeLogChecker.check_for_unwanted_security_terms):
+            New function to check for sensitive terms.
+        (ChangeLogChecker.check_for_unwanted_security_terms.FoundUnwantedSecurityTerm):
+        (ChangeLogChecker.check_for_unwanted_security_terms.FoundUnwantedSecurityTerm.__init__):
+            Convenience class.
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        (ChangeLogCheckerTest.test_unwanted_security_terms):
+
 2016-10-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207067.
