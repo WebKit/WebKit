@@ -1,3 +1,14 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Update API test expectation after r207162.
+        https://bugs.webkit.org/show_bug.cgi?id=162660
+
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLWebFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        "https://www.example.com<>/" was an invalid URL with the old URL parser.
+        It is now a valid URL, but NSURL still considers it invalid.
+        This will be looked into more with https://bugs.webkit.org/show_bug.cgi?id=163127
+
 2016-10-11  Edward O'Connor  <eoconnor@apple.com>
 
         Update my name in contributors.json
