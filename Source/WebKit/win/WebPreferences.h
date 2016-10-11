@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef WebPreferences_H
+#define WebPreferences_H
 
 #include "WebKit.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate4 {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate3 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -243,9 +244,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE modernMediaControlsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setModernMediaControlsEnabled(BOOL);
 
-    // IWebPreferencesPrivate4
-    virtual HRESULT STDMETHODCALLTYPE setApplicationId(BSTR);
-
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.
@@ -259,16 +257,14 @@ public:
     static void removeReferenceForIdentifier(BSTR identifier);
     static WebPreferences* sharedStandardPreferences();
 
-    static CFStringRef applicationId();
-
     // From WebHistory.h
     HRESULT historyItemLimit(_Out_ int*);
     HRESULT setHistoryItemLimit(int);
     HRESULT historyAgeInDaysLimit(_Out_ int*);
     HRESULT setHistoryAgeInDaysLimit(int);
 
-    void willAddToWebView();
-    void didRemoveFromWebView();
+     void willAddToWebView();
+     void didRemoveFromWebView();
 
     HRESULT postPreferencesChangesNotification();
 
@@ -301,5 +297,6 @@ protected:
     bool m_autoSaves { false };
     bool m_automaticallyDetectsCacheModel { true };
     unsigned m_numWebViews { 0 };
-    static RetainPtr<CFStringRef> m_applicationId;
 };
+
+#endif

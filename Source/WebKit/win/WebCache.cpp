@@ -35,12 +35,7 @@
 
 #if USE(CURL)
 #include <WebCore/CurlCacheManager.h>
-#elif USE(CFNETWORK)
-#include <CFNetwork/CFURLCachePriv.h>
-#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
-
-using namespace WebCore;
 
 // WebCache ---------------------------------------------------------------------------
 
@@ -248,10 +243,8 @@ HRESULT WebCache::cacheFolder(__deref_out_opt BSTR* location)
     String cacheFolder = WebCore::CurlCacheManager::getInstance().cacheDirectory();
     *location = WebCore::BString(cacheFolder).release();
     return S_OK;
-#elif USE(CFNETWORK)
-    RetainPtr<CFStringRef> cfurlCacheDirectory = adoptCF(wkCopyFoundationCacheDirectory(0));
-    *location = BString(cfurlCacheDirectory.get()).release();
-    return S_OK;
+#else
+    return E_NOTIMPL;
 #endif
 }
 
@@ -261,12 +254,7 @@ HRESULT WebCache::setCacheFolder(_In_ BSTR location)
     String cacheFolder(location, SysStringLen(location));
     WebCore::CurlCacheManager::getInstance().setCacheDirectory(cacheFolder);
     return S_OK;
-#elif USE(CFNETWORK)
-    RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
-    CFIndex memoryCapacity = CFURLCacheMemoryCapacity(cache.get());
-    CFIndex diskCapacity = CFURLCacheDiskCapacity(cache.get());
-    RetainPtr<CFURLCacheRef> newCache = adoptCF(CFURLCacheCreate(kCFAllocatorDefault, memoryCapacity, diskCapacity, String(location).createCFString().get()));
-    CFURLCacheSetSharedURLCache(newCache.get());
-    return S_OK;
+#else
+    return E_NOTIMPL;
 #endif
 }

@@ -28,9 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
-import glob
-import logging
 import os
+import logging
 import re
 import sys
 import time
@@ -352,12 +351,6 @@ class WinPort(ApplePort):
         self.setup_crash_log_saving()
         self.prevent_error_dialogs()
         self.delete_sem_locks()
-
-        preferences_files = self._filesystem.join(os.environ['APPDATA'], "Apple Computer/Preferences", "com.apple.DumpRenderTree*")
-        filelist = glob.glob(preferences_files)
-        for file in filelist:
-            self._filesystem.remove(file)
-
         super(WinPort, self).setup_test_run(device_class)
 
     def clean_up_test_run(self):

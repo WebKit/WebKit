@@ -187,8 +187,3 @@ interface IWebPreferencesPrivate3 : IWebPreferencesPrivate2
     HRESULT setModernMediaControlsEnabled([in] BOOL enabled);
 }
 
-[uuid(F9582D72-6348-45B1-AB09-39E33459B5B9)]
-interface IWebPreferencesPrivate4 : IWebPreferencesPrivate3
-{
-    HRESULT setApplicationId([in] BSTR applicationId);
-}

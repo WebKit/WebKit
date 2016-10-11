@@ -1,3 +1,15 @@
+2016-10-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207067.
+
+        This change caused webkitpy test failures.
+
+        Reverted changeset:
+
+        "[Win] Parallel DRTs are sharing preferences and cache."
+        https://bugs.webkit.org/show_bug.cgi?id=163013
+        http://trac.webkit.org/changeset/207067
+
 2016-10-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Parallel DRTs are sharing preferences and cache.

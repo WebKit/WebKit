@@ -101,8 +101,6 @@ static bool booleanValueForPreferencesValue(CFPropertyListRef value)
 
 static CFDictionaryRef defaultSettings;
 
-RetainPtr<CFStringRef> WebPreferences::m_applicationId = kCFPreferencesCurrentApplication;
-
 static HashMap<WTF::String, COMPtr<WebPreferences>>& webPreferencesInstances()
 {
     static NeverDestroyed<HashMap<WTF::String, COMPtr<WebPreferences>>> webPreferencesInstances;
@@ -183,11 +181,6 @@ void WebPreferences::removeReferenceForIdentifier(BSTR identifier)
     WebPreferences* webPreference = webPreferencesInstances().get(identifierString);
     if (webPreference && webPreference->m_refCount == 1)
         webPreferencesInstances().remove(identifierString);
-}
-
-CFStringRef WebPreferences::applicationId()
-{
-    return m_applicationId.get();
 }
 
 void WebPreferences::initializeDefaultSettings()
@@ -313,7 +306,7 @@ RetainPtr<CFPropertyListRef> WebPreferences::valueForKey(CFStringRef key)
     if (value)
         return value;
 
-    value = adoptCF(CFPreferencesCopyAppValue(key, applicationId()));
+    value = adoptCF(CFPreferencesCopyAppValue(key, kCFPreferencesCurrentApplication));
     if (value)
         return value;
 
@@ -324,7 +317,7 @@ void WebPreferences::setValueForKey(CFStringRef key, CFPropertyListRef value)
 {
     CFDictionarySetValue(m_privatePrefs.get(), key, value);
     if (m_autoSaves) {
-        CFPreferencesSetAppValue(key, value, applicationId());
+        CFPreferencesSetAppValue(key, value, kCFPreferencesCurrentApplication);
         save();
     }
 }
@@ -455,7 +448,7 @@ BSTR WebPreferences::webPreferencesRemovedNotification()
 
 void WebPreferences::save()
 {
-    CFPreferencesAppSynchronize(applicationId());
+    CFPreferencesAppSynchronize(kCFPreferencesCurrentApplication);
 }
 
 void WebPreferences::load()
@@ -547,8 +540,6 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebPreferencesPrivate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate3))
         *ppvObject = static_cast<IWebPreferencesPrivate3*>(this);
-    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate4))
-        *ppvObject = static_cast<IWebPreferencesPrivate4*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
@@ -2000,11 +1991,5 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitModernMediaControlsEnabledPreferenceKey);
-    return S_OK;
-}
-
-HRESULT WebPreferences::setApplicationId(BSTR applicationId)
-{
-    m_applicationId = String(applicationId).createCFString();
     return S_OK;
 }
