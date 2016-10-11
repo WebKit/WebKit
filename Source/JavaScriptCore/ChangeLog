@@ -1,3 +1,16 @@
+2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Install binaries to pkglibexecdir rather than bindir
+        https://bugs.webkit.org/show_bug.cgi?id=162602
+
+        Reviewed by Carlos Garcia Campos.
+
+        Install jsc shell to LIBEXEC_INSTALL_DIR rather than EXEC_INSTALL_DIR.
+
+        Note these locations are the same on non-GTK ports.
+
+        * shell/CMakeLists.txt:
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale

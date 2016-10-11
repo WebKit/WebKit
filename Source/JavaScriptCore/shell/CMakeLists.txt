@@ -33,7 +33,7 @@ if (JSC_LINK_FLAGS)
 endif ()
 
 if (SHOULD_INSTALL_JS_SHELL)
-    install(TARGETS jsc DESTINATION "${EXEC_INSTALL_DIR}")
+    install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif ()
 
 if (WIN32)
