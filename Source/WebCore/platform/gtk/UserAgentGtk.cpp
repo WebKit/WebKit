@@ -46,6 +46,7 @@ namespace WebCore {
 class UserAgentQuirks {
 public:
     enum UserAgentQuirk {
+        NeedsChromeBrowser,
         NeedsMacintoshPlatform,
 
         NumUserAgentQuirks
@@ -125,9 +126,15 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
 
     uaString.appendLiteral(") AppleWebKit/");
     uaString.append(versionForUAString());
+    uaString.appendLiteral(" (KHTML, like Gecko) ");
+
+    // Note that Chrome UAs advertise *both* Chrome and Safari.
+    if (quirks.contains(UserAgentQuirks::NeedsChromeBrowser))
+        uaString.append("Chrome/51.0.2704.106 ");
+
     // Version/X is mandatory *before* Safari/X to be a valid Safari UA. See
     // https://bugs.webkit.org/show_bug.cgi?id=133403 for details.
-    uaString.appendLiteral(" (KHTML, like Gecko) Version/10.0 Safari/");
+    uaString.appendLiteral(" Version/10.0 Safari/");
     uaString.append(versionForUAString());
 
     return uaString.toString();
@@ -159,6 +166,30 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     return standardUserAgentStatic() + ' ' + applicationName + '/' + finalApplicationVersion;
 }
 
+// Be careful with this quirk: it's an invitation for sites to use JavaScript we can't handle.
+static bool urlRequiresChromeBrowser(const URL& url)
+{
+    String baseDomain = topPrivatelyControlledDomain(url.host());
+
+    // Needed for fonts on many sites, https://bugs.webkit.org/show_bug.cgi?id=147296
+    if (baseDomain == "typekit.net" || baseDomain == "typekit.com")
+        return true;
+
+    // Shut off Chrome ads. Avoid missing features on maps.google.com.
+    if (baseDomain.startsWith("google"))
+        return true;
+
+    // Needed for YouTube 360 (requires ENABLE_MEDIA_SOURCE).
+    if (baseDomain == "youtube.com")
+        return true;
+
+    // Slack completely blocks users with our standard user agent.
+    if (baseDomain == "slack.com")
+        return true;
+
+    return false;
+}
+
 static bool urlRequiresMacintoshPlatform(const URL& url)
 {
     String baseDomain = topPrivatelyControlledDomain(url.host());
@@ -178,9 +209,10 @@ String standardUserAgentForURL(const URL& url)
 {
     ASSERT(!url.isNull());
     UserAgentQuirks quirks;
-    if (urlRequiresMacintoshPlatform(url)) {
+    if (urlRequiresChromeBrowser(url))
+        quirks.add(UserAgentQuirks::NeedsChromeBrowser);
+    if (urlRequiresMacintoshPlatform(url))
         quirks.add(UserAgentQuirks::NeedsMacintoshPlatform);
-    }
 
     // The null string means we don't need a specific UA for the given URL.
     return quirks.isEmpty() ? String() : buildUserAgentString(quirks);

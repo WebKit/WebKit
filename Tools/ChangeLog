@@ -1,3 +1,15 @@
+2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add Chrome UA quirk
+        https://bugs.webkit.org/show_bug.cgi?id=162617
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update test. This portion of the commit was actually unreviewed.
+
+        * TestWebKitAPI/Tests/WebCore/gtk/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Install binaries to pkglibexecdir rather than bindir
