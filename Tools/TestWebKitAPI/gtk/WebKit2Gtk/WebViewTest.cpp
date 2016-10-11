@@ -24,8 +24,9 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/GUniquePtrGtk.h>
 
-WebViewTest::WebViewTest(WebKitUserContentManager* userContentManager)
-    : m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", m_webContext.get(), "user-content-manager", userContentManager, nullptr))))
+WebViewTest::WebViewTest()
+    : m_userContentManager(adoptGRef(webkit_user_content_manager_new()))
+    , m_webView(WEBKIT_WEB_VIEW(g_object_ref_sink(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", m_webContext.get(), "user-content-manager", m_userContentManager.get(), nullptr))))
     , m_mainLoop(g_main_loop_new(nullptr, TRUE))
     , m_parentWindow(nullptr)
     , m_javascriptResult(nullptr)
@@ -34,6 +35,7 @@ WebViewTest::WebViewTest(WebKitUserContentManager* userContentManager)
     , m_expectedWebProcessCrash(false)
 {
     assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webView));
+    assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_userContentManager.get()));
     g_signal_connect(m_webView, "web-process-crashed", G_CALLBACK(WebViewTest::webProcessCrashed), this);
 }
 

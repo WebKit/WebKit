@@ -232,8 +232,7 @@ public:
     }
 
     UIClientTest()
-        : WebViewTest(webkit_user_content_manager_new())
-        , m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
+        : m_scriptDialogType(WEBKIT_SCRIPT_DIALOG_ALERT)
         , m_scriptDialogConfirmed(true)
         , m_allowPermissionRequests(false)
         , m_verifyMediaTypes(false)
@@ -246,17 +245,15 @@ public:
         g_signal_connect(m_webView, "script-dialog", G_CALLBACK(scriptDialog), this);
         g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequested), this);
-        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
-        webkit_user_content_manager_register_script_message_handler(manager, "permission");
-        g_signal_connect(manager, "script-message-received::permission", G_CALLBACK(permissionResultMessageReceivedCallback), this);
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "permission");
+        g_signal_connect(m_userContentManager.get(), "script-message-received::permission", G_CALLBACK(permissionResultMessageReceivedCallback), this);
     }
 
     ~UIClientTest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
-        WebKitUserContentManager* manager = webkit_web_view_get_user_content_manager(m_webView);
-        g_signal_handlers_disconnect_matched(manager, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
-        webkit_user_content_manager_unregister_script_message_handler(manager, "permission");
+        g_signal_handlers_disconnect_matched(m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "permission");
     }
 
     static void tryWebViewCloseCallback(UIClientTest* test)

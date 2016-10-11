@@ -1,5 +1,29 @@
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Make all WebView tests have a WebKitUserContentManager
+        https://bugs.webkit.org/show_bug.cgi?id=162487
+
+        Reviewed by Michael Catanzaro.
+
+        It simplifies tests using the user content manager, and allows to use it without having to subclass WebViewTest.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestConsoleMessage.cpp:
+        (ConsoleMessageTest::ConsoleMessageTest):
+        (ConsoleMessageTest::~ConsoleMessageTest):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp:
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (testUserContentManagerInjectedStyleSheet):
+        (testUserContentManagerInjectedScript):
+        (UserScriptMessageTest::UserScriptMessageTest):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp:
+        (testWebViewIsPlayingAudio):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::WebViewTest):
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h:
+
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
         https://bugs.webkit.org/show_bug.cgi?id=162139
 

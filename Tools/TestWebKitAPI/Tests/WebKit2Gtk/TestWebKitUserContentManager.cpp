@@ -27,23 +27,6 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
-class UserContentManagerTest : public WebViewTest {
-public:
-    MAKE_GLIB_TEST_FIXTURE(UserContentManagerTest);
-
-    UserContentManagerTest()
-        : WebViewTest(webkit_user_content_manager_new())
-    {
-        // A reference is leaked when passing the result of webkit_user_content_manager_new()
-        // directly to webkit_web_view_new_with_user_content_manager() above. Adopting the
-        // reference here avoids the leak.
-        m_userContentManager = adoptGRef(webkit_web_view_get_user_content_manager(m_webView));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_userContentManager.get()));
-    }
-
-    GRefPtr<WebKitUserContentManager> m_userContentManager;
-};
-
 static WebKitTestServer* kServer;
 
 // These are all here so that they can be changed easily, if necessary.
@@ -127,7 +110,7 @@ static void removeOldInjectedContentAndResetLists(WebKitUserContentManager* user
     }
 }
 
-static void testUserContentManagerInjectedStyleSheet(UserContentManagerTest* test, gconstpointer)
+static void testUserContentManagerInjectedStyleSheet(WebViewTest* test, gconstpointer)
 {
     char* whitelist[3] = { 0, 0, 0 };
     char* blacklist[3] = { 0, 0, 0 };
@@ -170,7 +153,7 @@ static void testUserContentManagerInjectedStyleSheet(UserContentManagerTest* tes
     removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
 }
 
-static void testUserContentManagerInjectedScript(UserContentManagerTest* test, gconstpointer)
+static void testUserContentManagerInjectedScript(WebViewTest* test, gconstpointer)
 {
     char* whitelist[3] = { 0, 0, 0 };
     char* blacklist[3] = { 0, 0, 0 };
@@ -213,13 +196,12 @@ static void testUserContentManagerInjectedScript(UserContentManagerTest* test, g
     removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
 }
 
-class UserScriptMessageTest : public UserContentManagerTest {
+class UserScriptMessageTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(UserScriptMessageTest);
 
     UserScriptMessageTest()
-        : UserContentManagerTest()
-        , m_userScriptMessage(nullptr)
+        : m_userScriptMessage(nullptr)
     {
     }
 
@@ -376,8 +358,8 @@ void beforeAll()
     kServer->run(serverCallback);
 
     Test::add("WebKitWebView", "new-with-user-content-manager", testWebViewNewWithUserContentManager);
-    UserContentManagerTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
-    UserContentManagerTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);
+    WebViewTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
+    WebViewTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-received", testUserContentManagerScriptMessageReceived);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-from-dom-bindings", testUserContentManagerScriptMessageFromDOMBindings);
 }
