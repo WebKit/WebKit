@@ -552,7 +552,7 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         result.largeIntegerWithDefault = 0;
     JSValue nullableIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
     if (!nullableIntegerWithDefaultValue.isUndefined()) {
-        result.nullableIntegerWithDefault = convertNullable<int32_t>(state, nullableIntegerWithDefaultValue, NormalConversion);
+        result.nullableIntegerWithDefault = convert<IDLNullable<IDLLong>>(state, nullableIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         result.nullableIntegerWithDefault = Nullopt;
@@ -564,7 +564,7 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         result.nullableNode = nullptr;
     JSValue nullableStringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
     if (!nullableStringWithDefaultValue.isUndefined()) {
-        result.nullableStringWithDefault = convertNullable<String>(state, nullableStringWithDefaultValue);
+        result.nullableStringWithDefault = convert<IDLNullable<IDLDOMString>>(state, nullableStringWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         result.nullableStringWithDefault = String();

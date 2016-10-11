@@ -1,5 +1,12 @@
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
+        Fix bindings tests after r207150.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
         URLParser should percent-encode non-ASCII and non-printable characters in fragment
         https://bugs.webkit.org/show_bug.cgi?id=163287
 
