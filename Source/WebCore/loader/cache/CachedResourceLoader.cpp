@@ -545,10 +545,14 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
 
 bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const CachedResource& resource, const CachedResourceRequest& request)
 {
-    if (resource.type() == CachedResource::Type::FontResource || resource.type() == CachedResource::Type::SVGFontResource) {
-        // WebKit is not supporting CORS for fonts (https://bugs.webkit.org/show_bug.cgi?id=86817), no need to update the resource before reusing it.
+    // WebKit is not supporting CORS for fonts (https://bugs.webkit.org/show_bug.cgi?id=86817), no need to update the resource before reusing it.
+    if (resource.type() == CachedResource::Type::FontResource)
         return false;
-    }
+
+#if ENABLE(SVG_FONTS)
+    if (resource.type() == CachedResource::Type::SVGFontResource)
+        return false;
+#endif
 
 #if ENABLE(XSLT)
     // Load is same-origin, we do not check for CORS.

@@ -1,3 +1,15 @@
+2016-10-11  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Fixed compilation with !ENABLE(SVG_FONTS)
+        https://bugs.webkit.org/show_bug.cgi?id=163281
+
+        Reviewed by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+
 2016-10-11  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r207140.
