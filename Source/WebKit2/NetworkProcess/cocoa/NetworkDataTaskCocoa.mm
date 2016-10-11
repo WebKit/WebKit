@@ -409,6 +409,23 @@ void NetworkDataTask::suspend()
     [m_task suspend];
 }
 
+NetworkDataTask::State NetworkDataTask::state() const
+{
+    switch ([m_task state]) {
+    case NSURLSessionTaskStateRunning:
+        return State::Running;
+    case NSURLSessionTaskStateSuspended:
+        return State::Suspended;
+    case NSURLSessionTaskStateCanceling:
+        return State::Canceling;
+    case NSURLSessionTaskStateCompleted:
+        return State::Completed;
+    }
+
+    ASSERT_NOT_REACHED();
+    return State::Completed;
+}
+
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge& challenge)
 {
     return WebCore::Credential([NSURLCredential credentialForTrust:challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust]);

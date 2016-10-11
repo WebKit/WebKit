@@ -93,7 +93,15 @@ public:
     void suspend();
     void cancel();
     void resume();
-    
+
+    enum class State {
+        Running,
+        Suspended,
+        Canceling,
+        Completed
+    };
+    State state() const;
+
     typedef uint64_t TaskIdentifier;
     
     ~NetworkDataTask();

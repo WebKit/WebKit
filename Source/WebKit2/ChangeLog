@@ -1,3 +1,22 @@
+2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: NetworkDataTask is leaked if download finishes in didReceiveResponse completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=163204
+
+        Reviewed by Alex Christensen.
+
+        After the completion handler a reference of the NetworkDataTask is saved in m_downloadsAfterDestinationDecided.
+        If the download failed or was canceled DownloadManager::dataTaskBecameDownloadTask is never called and the data
+        task is kept in the download manager forever. This patch exposes NSURLSessionTask state property in
+        NetworkDataTask, so that the download manager can check the task state after the completion handler and return
+        early if the download finished or was cancelled.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTask::state):
+
 2016-10-10  Konstantin Tokarev  <annulen@yandex.ru>
 
         Added final specifier to WebInspectorServer and to its overridden methods
