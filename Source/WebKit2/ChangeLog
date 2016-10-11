@@ -1,3 +1,10 @@
+2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed typo fix
+
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkit_web_inspector_class_init):
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] BadDamage X error in /webkit2/WebKitWebView/preferred-size

@@ -240,7 +240,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
      * if you want to attach the inspector view yourself (for example, to add
      * the inspector view to a browser tab).
      *
-     * To prevent the inspector vew from being attached you can connect to this
+     * To prevent the inspector view from being attached you can connect to this
      * signal and simply return %TRUE.
      *
      * Returns: %TRUE to stop other handlers from being invoked for the event.
