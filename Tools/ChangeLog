@@ -1,3 +1,40 @@
+2016-10-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add SynchronizedFixedQueue class
+        https://bugs.webkit.org/show_bug.cgi?id=162478
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new test for SynchronizedFixedQueue. The test defines a new class
+        called ToUpperConverter which converts strings from lower case to upper
+        case. It creates two threads : (1) produce thread and (2) consume thread.
+        Here is what each thread does:
+
+        1. Main threads: Enqueues lower case strings into m_lowerQueue.
+        2. Produce thread: Dequeues lower case strings from m_lowerQueue and 
+           enqueue their upper case strings in the m_upperQueue.
+        3. Consume thread: Dequeues upper case strings from m_upperQueue.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/SynchronizedFixedQueue.cpp: Added.
+        (TestWebKitAPI::textItem): A helper function which returns a lower case string given an index.
+        (TestWebKitAPI::toUpper): A helper function which Returns the upper case of a string.
+        (TestWebKitAPI::ToUpperConverter::ToUpperConverter):
+        (TestWebKitAPI::ToUpperConverter::produceQueue): Returns a workQueue for the produce thread.
+        (TestWebKitAPI::ToUpperConverter::consumeQueue): Returns a workQueue for the consume thread.
+        (TestWebKitAPI::ToUpperConverter::startProducing): Creates a thread for the producer.
+        (TestWebKitAPI::ToUpperConverter::startConsuming): Creates a thread for the consumer.
+        (TestWebKitAPI::ToUpperConverter::start): Starts both the producer and the consumer threads.
+        (TestWebKitAPI::ToUpperConverter::stopProducing): Terminates the producer thread.
+        (TestWebKitAPI::ToUpperConverter::stopConsuming): Terminates the consumer thread.
+        (TestWebKitAPI::ToUpperConverter::stop): Terminates both the producer and the consumer threads.
+        (TestWebKitAPI::ToUpperConverter::enqueueLower): Adds a lower case string to the m_lowerQueue on the main thread.
+        (TestWebKitAPI::ToUpperConverter::isProducing): Returns whether the producing thread is active.
+        (TestWebKitAPI::ToUpperConverter::isConsuming): Returns whether the consuming thread is active.
+        (TestWebKitAPI::ToUpperConverter::produceCount): Returns the number of produced elements.
+        (TestWebKitAPI::ToUpperConverter::consumeCount): Returns the number of consumed elements.
+        (TestWebKitAPI::TEST):
+
 2016-10-11  Megan Gardner  <megan_gardner@apple.com>
 
         Extend event stream to include interpolated events and add a force press test that uses that interpolation

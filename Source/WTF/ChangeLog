@@ -1,3 +1,26 @@
+2016-10-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add SynchronizedFixedQueue class
+        https://bugs.webkit.org/show_bug.cgi?id=162478
+
+        Reviewed by Geoffrey Garen.
+
+        This class represents a simple producer/consumer worker. It facilitates
+        synchronizing enqueuing to and dequeuing from a fixed size-queue. It uses
+        a single lock and a single condition to synchronize all its members among
+        the working threads. This means a single thread is active at any time and
+        and the other threads are blocked waiting for the lock to be released. Or
+        they are sleeping waiting for the condition to be satisfied.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/SynchronizedFixedQueue.h: Added.
+        (WTF::SynchronizedFixedQueue::SynchronizedFixedQueue):
+        (WTF::SynchronizedFixedQueue::open): Restore the queue to its original state.
+        (WTF::SynchronizedFixedQueue::close): Wake all the sleeping threads with a closing state.
+        (WTF::SynchronizedFixedQueue::isOpen): Does the queue accept new items?
+        (WTF::SynchronizedFixedQueue::enqueue): Enqueue an item into the queue.
+        (WTF::SynchronizedFixedQueue::dequeue): Dequeue an item form the queue.
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead networking code
