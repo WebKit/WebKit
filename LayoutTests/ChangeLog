@@ -1,3 +1,15 @@
+2016-10-03  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid null dereference when changing focus in design mode.
+        https://bugs.webkit.org/show_bug.cgi?id=162877
+        <rdar://problem/28061261>
+
+        Reviewed by Chris Dumez.
+
+        * fast/frames/iframe-focus-crash-expected.txt: Added.
+        * fast/frames/iframe-focus-crash.html: Added.
+        * fast/frames/resources/iframe-focus-crash.html: Added.
+
 2016-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Bad cast when CSS position programmatically changed from -webkit-sticky to fixed
