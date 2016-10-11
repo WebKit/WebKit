@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2013 Cisco Systems, Inc. All rights reserved.
  * Copyright (C) 2009-2011 STMicroelectronics. All rights reserved.
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -417,6 +417,17 @@ public:
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.sublRegReg(src, dest);
+    }
+
+    void sub32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        if (dest == right) {
+            neg32(dest);
+            add32(left, dest);
+            return;
+        }
+        move(left, dest);
+        sub32(right, dest);
     }
 
     void sub32(TrustedImm32 imm, AbsoluteAddress address)

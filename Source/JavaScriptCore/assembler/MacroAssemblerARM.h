@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013-2015 Apple Inc.
+ * Copyright (C) 2008, 2013-2016 Apple Inc.
  * Copyright (C) 2009, 2010 University of Szeged
  * All rights reserved.
  *
@@ -312,6 +312,11 @@ public:
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.subs(dest, dest, src);
+    }
+
+    void sub32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        m_assembler.subs(dest, left, right);
     }
 
     void sub32(TrustedImm32 imm, RegisterID dest)

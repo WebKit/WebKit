@@ -2170,6 +2170,39 @@ void testSubArgsFloatWithEffectfulDoubleConversion(float a, float b)
     CHECK(isIdentical(effect, static_cast<double>(a) - static_cast<double>(b)));
 }
 
+void testTernarySubInstructionSelection(B3::Opcode valueModifier, Type valueType, Air::Opcode expectedOpcode)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* right = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+
+    if (valueModifier == Trunc) {
+        left = root->appendNew<Value>(proc, valueModifier, valueType, Origin(), left);
+        right = root->appendNew<Value>(proc, valueModifier, valueType, Origin(), right);
+    }
+
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Sub, Origin(), left, right));
+
+    lowerToAirForTesting(proc);
+
+    auto block = proc.code()[0];
+    unsigned numberOfSubInstructions = 0;
+    for (auto instruction : *block) {
+        if (instruction.opcode == expectedOpcode) {
+            CHECK_EQ(instruction.args.size(), 3ul);
+            CHECK_EQ(instruction.args[0].kind(), Air::Arg::Tmp);
+            CHECK_EQ(instruction.args[1].kind(), Air::Arg::Tmp);
+            CHECK_EQ(instruction.args[2].kind(), Air::Arg::Tmp);
+            numberOfSubInstructions++;
+        }
+    }
+    CHECK_EQ(numberOfSubInstructions, 1ul);
+}
+
 void testNegDouble(double a)
 {
     Procedure proc;
@@ -14423,6 +14456,11 @@ void run(const char* filter)
         RUN(testBranchBitAndImmFusion(Load8Z, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
         RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
         RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
+    }
+
+    if (isARM64()) {
+        RUN(testTernarySubInstructionSelection(Identity, Int64, Air::Sub64));
+        RUN(testTernarySubInstructionSelection(Trunc, Int32, Air::Sub32));
     }
 
     if (tasks.isEmpty())

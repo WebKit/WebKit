@@ -560,7 +560,18 @@ public:
     {
         m_assembler.subl_rr(src, dest);
     }
-    
+
+    void sub32(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        if (dest == right) {
+            neg32(dest);
+            add32(left, dest);
+            return;
+        }
+        move(left, dest);
+        sub32(right, dest);
+    }
+
     void sub32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == 1)
