@@ -1,4 +1,22 @@
 ==================
+WebKitGTK+  2.14.1
+==================
+
+What's new in WebKitGTK+ 2.14.1?
+
+  - MiniBrowser and jsc binaries are now installed in pkglibexecdir instead of bindir.
+  - Improve performance when resizing a window with multiple web views in X11.
+  - Check whether GDK can use GL before using gdk_cairo_draw_from_gl() in Wayland.
+  - Updated default UserAgent string or better compatibility.
+  - Fix a crash on github.com in IntlDateTimeFormat::resolvedOptions when using the C locale.
+  - Fix BadDamage X errors when closing the web view in X11.
+  - Fix UIProcess crash when using Japanese input method.
+  - Fix build with clang due to missing header includes.
+  - Fix the build with USE_REDIRECTED_XCOMPOSITE_WINDOW disabled.
+  - Fix several crashes and rendering issues.
+  - Translation updates: German.
+
+==================
 WebKitGTK+  2.14.0
 ==================
 
