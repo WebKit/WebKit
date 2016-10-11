@@ -864,10 +864,17 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonErrorKey());
         return Reload;
     }
-    
-    // For resources that are not yet loaded we ignore the cache policy.
-    if (existingResource->isLoading())
+
+    if (existingResource->isLoading()) {
+        // Do not use cached main resources that are still loading because sharing
+        // loading CachedResources in this case causes issues with regards to cancellation.
+        // If one of the DocumentLoader clients decides to cancel the load, then the load
+        // would be cancelled for all other DocumentLoaders as well.
+        if (type == CachedResource::Type::MainResource)
+            return Reload;
+        // For cached subresources that are still loading we ignore the cache policy.
         return Use;
+    }
 
     auto revalidationDecision = existingResource->makeRevalidationDecision(cachePolicy(type));
     logResourceRevalidationDecision(revalidationDecision, frame());

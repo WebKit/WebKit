@@ -1,3 +1,22 @@
+2016-09-16  Chris Dumez  <cdumez@apple.com>
+
+        Cancelling one frame's load cancels load in other frames that have the same URL as well
+        https://bugs.webkit.org/show_bug.cgi?id=162094
+
+        Reviewed by Antti Koivisto.
+
+        Add layout test coverage.
+
+        * http/tests/cache/iframe-detach-expected.txt: Added.
+        * http/tests/cache/iframe-detach.html: Added.
+        * http/tests/cache/resources/slow-iframe.php: Added.
+        Import Alex Christensen's test from Bug 157563.
+
+        * http/tests/navigation/frames-same-url-cancel-load-expected.txt: Added.
+        * http/tests/navigation/frames-same-url-cancel-load.html: Added.
+        * http/tests/navigation/resources/success.html: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients-expected.txt:
+
 2016-09-15  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: willBeComposited == needsToBeComposited(layer) in WebCore::RenderLayerCompositor::computeCompositingRequirements
