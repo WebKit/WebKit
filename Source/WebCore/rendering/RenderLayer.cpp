@@ -198,7 +198,8 @@ private:
     }
 
     ClipRects(const ClipRects& other)
-        : m_fixed(other.fixed())
+        : RefCounted()
+        , m_fixed(other.fixed())
         , m_overflowClipRect(other.overflowClipRect())
         , m_fixedClipRect(other.fixedClipRect())
         , m_posClipRect(other.posClipRect())
