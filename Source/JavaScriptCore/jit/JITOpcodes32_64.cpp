@@ -475,31 +475,13 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
     emitLoad(cond, regT1, regT0);
 
-    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
-    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
-    addJump(branchTest32(Zero, regT0), target);
-}
+    JSValueRegs value(regT1, regT0);
+    GPRReg scratch = regT2;
+    GPRReg result = regT3;
+    bool shouldCheckMasqueradesAsUndefined = true;
+    emitConvertValueToBoolean(value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
-void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int cond = currentInstruction[1].u.operand;
-    unsigned target = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter);
-
-    if (supportsFloatingPoint()) {
-        // regT1 contains the tag from the hot path.
-        Jump notNumber = branch32(Above, regT1, TrustedImm32(JSValue::LowestTag));
-
-        emitLoadDouble(cond, fpRegT0);
-        emitJumpSlowToHot(branchDoubleZeroOrNaN(fpRegT0, fpRegT1), target);
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jfalse));
-
-        notNumber.link(this);
-    }
-
-    callOperation(operationConvertJSValueToBoolean, regT1, regT0);
-    emitJumpSlowToHot(branchTest32(Zero, returnValueGPR), target); // Inverted.
+    addJump(branchTest32(Zero, result), target);
 }
 
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
@@ -508,32 +490,13 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     unsigned target = currentInstruction[2].u.operand;
 
     emitLoad(cond, regT1, regT0);
+    bool shouldCheckMasqueradesAsUndefined = true;
+    JSValueRegs value(regT1, regT0);
+    GPRReg scratch = regT2;
+    GPRReg result = regT3;
+    emitConvertValueToBoolean(value, result, scratch, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, m_codeBlock->globalObject());
 
-    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
-    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
-    addJump(branchTest32(NonZero, regT0), target);
-}
-
-void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    int cond = currentInstruction[1].u.operand;
-    unsigned target = currentInstruction[2].u.operand;
-
-    linkSlowCase(iter);
-
-    if (supportsFloatingPoint()) {
-        // regT1 contains the tag from the hot path.
-        Jump notNumber = branch32(Above, regT1, TrustedImm32(JSValue::LowestTag));
-
-        emitLoadDouble(cond, fpRegT0);
-        emitJumpSlowToHot(branchDoubleNonZero(fpRegT0, fpRegT1), target);
-        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jtrue));
-
-        notNumber.link(this);
-    }
-
-    callOperation(operationConvertJSValueToBoolean, regT1, regT0);
-    emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
+    addJump(branchTest32(NonZero, result), target);
 }
 
 void JIT::emit_op_jeq_null(Instruction* currentInstruction)

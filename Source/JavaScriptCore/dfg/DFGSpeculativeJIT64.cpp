@@ -1838,18 +1838,22 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     
         GPRReg arg1GPR = arg1.gpr();
         GPRReg resultGPR = result.gpr();
-    
-        arg1.use();
-    
-        m_jit.move(arg1GPR, resultGPR);
-        m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueFalse)), resultGPR);
-        JITCompiler::Jump slowCase = m_jit.branchTest64(JITCompiler::NonZero, resultGPR, TrustedImm32(static_cast<int32_t>(~1)));
-    
-        addSlowPathGenerator(
-            slowPathCall(slowCase, this, operationConvertJSValueToBoolean, resultGPR, arg1GPR, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded));
-    
-        m_jit.xor64(TrustedImm32(static_cast<int32_t>(ValueTrue)), resultGPR);
-        jsValueResult(resultGPR, node, DataFormatJSBoolean, UseChildrenCalledExplicitly);
+
+        FPRTemporary valueFPR(this);
+        FPRTemporary tempFPR(this);
+
+        bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+        JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+        Optional<GPRTemporary> scratch;
+        GPRReg scratchGPR = InvalidGPRReg;
+        if (shouldCheckMasqueradesAsUndefined) {
+            scratch = GPRTemporary(this);
+            scratchGPR = scratch->gpr();
+        }
+        bool negateResult = true;
+        m_jit.emitConvertValueToBoolean(JSValueRegs(arg1GPR), resultGPR, scratchGPR, valueFPR.fpr(), tempFPR.fpr(), shouldCheckMasqueradesAsUndefined, globalObject, negateResult);
+        m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+        jsValueResult(resultGPR, node, DataFormatJSBoolean);
         return;
     }
     case StringUse:
@@ -1992,7 +1996,20 @@ void SpeculativeJIT::emitBranch(Node* node)
             value.use();
         } else {
             GPRTemporary result(this);
+            FPRTemporary fprValue(this);
+            FPRTemporary fprTemp(this);
+            Optional<GPRTemporary> scratch;
+
+            GPRReg scratchGPR = InvalidGPRReg;
+            bool shouldCheckMasqueradesAsUndefined = !masqueradesAsUndefinedWatchpointIsStillValid();
+            if (shouldCheckMasqueradesAsUndefined) {
+                scratch = GPRTemporary(this);
+                scratchGPR = scratch->gpr();
+            }
+
             GPRReg resultGPR = result.gpr();
+            FPRReg valueFPR = fprValue.fpr();
+            FPRReg tempFPR = fprTemp.fpr();
             
             if (node->child1()->prediction() & SpecInt32Only) {
                 branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), notTaken);
@@ -2005,10 +2022,9 @@ void SpeculativeJIT::emitBranch(Node* node)
             }
     
             value.use();
-    
-            silentSpillAllRegisters(resultGPR);
-            callOperation(operationConvertJSValueToBoolean, resultGPR, valueGPR);
-            silentFillAllRegisters(resultGPR);
+
+            JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
+            m_jit.emitConvertValueToBoolean(JSValueRegs(valueGPR), resultGPR, scratchGPR, valueFPR, tempFPR, shouldCheckMasqueradesAsUndefined, globalObject);
     
             branchTest32(MacroAssembler::NonZero, resultGPR, taken);
             jump(notTaken);
