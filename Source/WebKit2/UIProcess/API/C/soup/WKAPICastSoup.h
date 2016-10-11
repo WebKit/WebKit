@@ -33,7 +33,6 @@
 namespace WebKit {
 
 class WebSoupCustomProtocolRequestManager;
-class WebSoupRequestManagerProxy;
 
 WK_ADD_API_MAPPING(WKSoupCustomProtocolRequestManagerRef, WebSoupCustomProtocolRequestManager)
 
