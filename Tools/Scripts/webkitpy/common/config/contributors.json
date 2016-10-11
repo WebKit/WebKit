@@ -1766,14 +1766,6 @@
       ],
       "status" : "committer"
    },
-   "Edward O'Connor" : {
-      "emails" : [
-         "eoconnor@apple.com"
-      ],
-      "nicks" : [
-         "hober"
-      ]
-   },
    "Eli Fidler" : {
       "emails" : [
          "efidler@rim.com",
@@ -5141,6 +5133,19 @@
          "tdanderson"
       ],
       "status" : "committer"
+   },
+   "Theresa O'Connor" : {
+      "aliases" : [
+         "Edward O'Connor",
+         "Ted O'Connor",
+         "Tess O'Connor"
+      ],
+      "emails" : [
+         "eoconnor@apple.com"
+      ],
+      "nicks" : [
+         "hober"
+      ]
    },
    "Thiago Marcos P. Santos" : {
       "emails" : [
