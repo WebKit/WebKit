@@ -2545,7 +2545,6 @@ media/video-controls-fullscreen-volume.html
 media/video-controls-no-display-with-text-track.html
 media/video-controls-show-on-kb-or-ax-event.html
 media/video-fullscreen-restriction-removed.html
-media/video-play-require-user-gesture.html
 media/video-playsinline.html
 media/video-remote-control-playpause.html
 media/video-volume-slider-drag.html
@@ -2626,15 +2625,11 @@ media/video-controls-drop-and-restore-timeline.html [ Failure ]
 media/video-controls-in-media-document.html [ Failure ]
 media/video-controls-no-scripting.html [ Failure ]
 media/video-controls-toggling.html [ Failure ]
-media/video-controls-transformed.html [ Failure ]
-media/video-controls-visible-audio-only.html [ Failure ]
 media/video-controls-visible-exiting-fullscreen.html [ Failure ]
 media/video-controls-zoomed.html [ Failure ]
 media/video-frame-accurate-seek.html [ Failure ]
 media/video-fullscreeen-only-controls.html [ Failure ]
-media/video-fullscreeen-only-playback.html [ Failure ]
 media/video-initially-hidden-volume-slider-up.html [ Failure ]
-media/video-play-audio-require-user-gesture.html [ Failure ]
 media/video-trackmenu-selection.html [ Failure ]
 media/video-volume.html [ Failure ]
 
@@ -2685,3 +2680,12 @@ webkit.org/b/163009 media/modern-media-controls/icon-button/icon-button-active-s
 webkit.org/b/163093 fast/text/variations/advances.html [ Failure ]
 
 webkit.org/b/162647 http/tests/xmlhttprequest/onabort-response-getters.html [ Pass Failure ]
+
+# Media tests cannot tap play button on iOS.
+webkit.org/b/163291 media/require-user-gesture-to-load-video.html
+webkit.org/b/163291 media/video-controls-transformed.html [ Failure ]
+webkit.org/b/163291 media/video-controls-visible-audio-only.html [ Failure ]
+webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
+webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
+webkit.org/b/163291 media/video-play-require-user-gesture.html
+

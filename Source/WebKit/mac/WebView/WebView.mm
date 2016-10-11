@@ -903,6 +903,12 @@ static bool shouldConvertInvalidURLsToBlank()
     return shouldConvertInvalidURLsToBlank;
 }
 
+static bool shouldRequireUserGestureToLoadVideo()
+{
+    static bool shouldRequireUserGestureToLoadVideo = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
+    return shouldRequireUserGestureToLoadVideo;
+}
+
 #if ENABLE(GAMEPAD)
 static void WebKitInitializeGamepadProviderIfNecessary()
 {
@@ -2370,6 +2376,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     BOOL mediaPlaybackRequiresUserGesture = [preferences mediaPlaybackRequiresUserGesture];
     settings.setVideoPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences videoPlaybackRequiresUserGesture]);
     settings.setAudioPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture || [preferences audioPlaybackRequiresUserGesture]);
+    settings.setRequiresUserGestureToLoadVideo(shouldRequireUserGestureToLoadVideo());
     settings.setMainContentUserGestureOverrideEnabled([preferences overrideUserGestureRequirementForMainContent]);
     settings.setAllowsInlineMediaPlayback([preferences mediaPlaybackAllowsInline]);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen([preferences allowsInlineMediaPlaybackAfterFullscreen]);

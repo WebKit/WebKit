@@ -1,3 +1,23 @@
+2016-10-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps
+        https://bugs.webkit.org/show_bug.cgi?id=163244
+        <rdar://problem/27250015>
+
+        Reviewed by Jer Noble.
+
+        Adds a new setting to toggle requiring a user gesture to load a video (enabled by default).
+        Disable this setting for apps built against iOS 9 or earlier.
+
+        Tests: media/loadedmetadata-fires-without-user-gesture-when-setRequiresUserGestureToLoadVideo-false.html
+               media/require-user-gesture-to-load-video.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Only require a user gesture to load a video
+        when Settings::requiresUserGestureToLoadVideo() is true.
+        * page/Settings.cpp: Enable setting requiresUserGestureToLoadVideo by default.
+        * page/Settings.in: Add setting, requiresUserGestureToLoadVideo.
+
 2016-10-11  Sam Weinig  <sam@webkit.org>
 
         Fix the iOS build.

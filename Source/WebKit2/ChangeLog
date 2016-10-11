@@ -1,3 +1,23 @@
+2016-10-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps
+        https://bugs.webkit.org/show_bug.cgi?id=163244
+        <rdar://problem/27250015>
+
+        Reviewed by Jer Noble.
+
+        Enable or disable the Setting::requiresUserGestureToLoadVideo() in WebKit depending on the
+        version of iOS SDK that the app was linked against. We require a user gesture to begin
+        loading a video as of iOS 10.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (shouldRequireUserGestureToLoadVideo): Added.
+        (-[WKWebView _initializeWithConfiguration:]): Set the requiresUserGestureToLoadVideo preference.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Modified to pass the WebKit requiresUserGestureToLoadVideo
+        preference to WebCore.
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead networking code
