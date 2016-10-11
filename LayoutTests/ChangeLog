@@ -1,3 +1,16 @@
+2016-10-11  Dean Jackson  <dino@apple.com>
+
+        color-gamut media query shouldn't ASSERT on invalid values
+        https://bugs.webkit.org/show_bug.cgi?id=163303
+        <rdar://problem/28724566>
+
+        Reviewed by Simon Fraser.
+
+        Add a 'none' test.
+
+        * fast/media/mq-color-gamut-expected.html:
+        * fast/media/mq-color-gamut.html:
+
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
         Update MediaStream events to stop using legacy [ConstructorTemplate=Event]
