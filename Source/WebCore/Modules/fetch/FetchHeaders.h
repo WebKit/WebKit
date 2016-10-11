@@ -30,13 +30,11 @@
 
 #if ENABLE(FETCH_API)
 
+#include "ExceptionOr.h"
 #include "HTTPHeaderMap.h"
 #include <wtf/HashTraits.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
-
-typedef int ExceptionCode;
 
 class FetchHeaders : public RefCounted<FetchHeaders> {
 public:
@@ -48,17 +46,16 @@ public:
         Response
     };
 
-    static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders(guard)); }
-    static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders(headers.m_guard, headers.m_headers)); }
+    static Ref<FetchHeaders> create(Guard guard = Guard::None) { return adoptRef(*new FetchHeaders { guard }); }
+    static Ref<FetchHeaders> create(const FetchHeaders& headers) { return adoptRef(*new FetchHeaders { headers }); }
 
-    void append(const String& name, const String& value, ExceptionCode&);
-    void remove(const String&, ExceptionCode&);
-    String get(const String&, ExceptionCode&) const;
-    bool has(const String&, ExceptionCode&) const;
-    void set(const String& name, const String& value, ExceptionCode&);
+    ExceptionOr<void> append(const String& name, const String& value);
+    ExceptionOr<void> remove(const String&);
+    ExceptionOr<String> get(const String&) const;
+    ExceptionOr<bool> has(const String&) const;
+    ExceptionOr<void> set(const String& name, const String& value);
 
     void fill(const FetchHeaders*);
-
     void filterAndFill(const HTTPHeaderMap&, Guard);
 
     String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }
@@ -71,10 +68,10 @@ public:
 
     private:
         Ref<FetchHeaders> m_headers;
-        size_t m_currentIndex = 0;
+        size_t m_currentIndex { 0 };
         Vector<String> m_keys;
     };
-    Iterator createIterator() { return Iterator(*this); }
+    Iterator createIterator() { return Iterator { *this }; }
 
     const HTTPHeaderMap& internalHeaders() const { return m_headers; }
 
@@ -82,11 +79,18 @@ public:
 
 private:
     FetchHeaders(Guard guard) : m_guard(guard) { }
-    FetchHeaders(Guard guard, const HTTPHeaderMap& headers) : m_guard(guard), m_headers(headers) { }
+    FetchHeaders(const FetchHeaders&);
 
     Guard m_guard;
     HTTPHeaderMap m_headers;
 };
+
+inline FetchHeaders::FetchHeaders(const FetchHeaders& other)
+    : RefCounted()
+    , m_guard(other.m_guard)
+    , m_headers(other.m_headers)
+{
+}
 
 inline void FetchHeaders::setGuard(Guard guard)
 {

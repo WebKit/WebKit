@@ -261,30 +261,23 @@ ExceptionOr<Ref<FetchHeaders>> FetchRequest::initializeWith(FetchRequest& input,
     return initializeOptions(init);
 }
 
-void FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request, ExceptionCode& ec)
+ExceptionOr<void> FetchRequest::setBody(JSC::ExecState& execState, JSC::JSValue body, FetchRequest* request)
 {
     if (!body.isNull()) {
-        if (!methodCanHaveBody(m_internalRequest)) {
-            ec = TypeError;
-            return;
-        }
-
+        if (!methodCanHaveBody(m_internalRequest))
+            return Exception { TypeError };
         ASSERT(scriptExecutionContext());
         extractBody(*scriptExecutionContext(), execState, body);
-        if (isBodyNull()) {
-            ec = TypeError;
-            return;
-        }
+        if (isBodyNull())
+            return Exception { TypeError };
     } else if (request && !request->isBodyNull()) {
-        if (!methodCanHaveBody(m_internalRequest)) {
-            ec = TypeError;
-            return;
-        }
-
+        if (!methodCanHaveBody(m_internalRequest))
+            return Exception { TypeError };
         m_body = WTFMove(request->m_body);
         request->setDisturbed();
     }
     updateContentType();
+    return { };
 }
 
 String FetchRequest::referrer() const
@@ -316,12 +309,10 @@ ResourceRequest FetchRequest::internalRequest() const
     return request;
 }
 
-RefPtr<FetchRequest> FetchRequest::clone(ScriptExecutionContext& context, ExceptionCode& ec)
+ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& context)
 {
-    if (isDisturbedOrLocked()) {
-        ec = TypeError;
-        return nullptr;
-    }
+    if (isDisturbedOrLocked())
+        return Exception { TypeError };
 
     auto clone = adoptRef(*new FetchRequest(context, Nullopt, FetchHeaders::create(m_headers.get()), FetchRequest::InternalRequest(m_internalRequest)));
     clone->cloneBody(*this);

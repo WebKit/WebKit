@@ -34,16 +34,16 @@
     InterfaceName=Headers,
     JSBuiltinConstructor,
     PrivateIdentifier,
-    PublicIdentifier]
-interface FetchHeaders {
-    [MayThrowLegacyException] void append(DOMString name, DOMString value);
-    [MayThrowLegacyException, ImplementedAs=remove] void delete(DOMString name);
-    [MayThrowLegacyException] DOMString? get(DOMString name);
-    [MayThrowLegacyException] boolean has(DOMString name);
-    [MayThrowLegacyException] void set(DOMString name, DOMString value);
+    PublicIdentifier,
+] interface FetchHeaders {
+    [MayThrowException] void append(DOMString name, DOMString value);
+    [MayThrowException, ImplementedAs=remove] void delete(DOMString name);
+    [MayThrowException] DOMString? get(DOMString name);
+    [MayThrowException] boolean has(DOMString name);
+    [MayThrowException] void set(DOMString name, DOMString value);
 
     [EnabledAtRuntime=DOMIterator] iterable<DOMString, DOMString>;
 
-    [PrivateIdentifier, MayThrowLegacyException, ImplementedAs=append] void appendFromJS(DOMString name, DOMString value);
-    [PrivateIdentifier, ImplementedAs=fill] void fillFromJS(FetchHeaders? headers);
+    [ImplementedAs=append, MayThrowException, PrivateIdentifier] void appendFromJS(DOMString name, DOMString value);
+    [ImplementedAs=fill, PrivateIdentifier] void fillFromJS(FetchHeaders? headers);
 };

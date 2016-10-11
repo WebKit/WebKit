@@ -1,3 +1,48 @@
+2016-10-10  Darin Adler  <darin@apple.com>
+
+        Move Fetch from legacy to new DOM exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163195
+
+        Reviewed by Chris Dumez.
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::canWriteHeader): Use ExceptionOr.
+        (WebCore::FetchHeaders::append): Ditto.
+        (WebCore::FetchHeaders::remove): Ditto.
+        (WebCore::FetchHeaders::get): Ditto.
+        (WebCore::FetchHeaders::has): Ditto.
+        (WebCore::FetchHeaders::set): Ditto.
+        (WebCore::FetchHeaders::filterAndFill): Ditto.
+        (WebCore::FetchHeaders::Iterator::next): Got rid of unneeded code to
+        clear out m_keys after the last call to next, since it will be deleted
+        as soon as the iterator is deleted.
+
+        * Modules/fetch/FetchHeaders.h: Use pragma once. Use ExceptionOr.
+
+        * Modules/fetch/FetchHeaders.idl: Move to non-legacy exceptions.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody): Use ExceptionOr.
+        (WebCore::FetchRequest::clone): Ditto.
+
+        * Modules/fetch/FetchRequest.h: Use pragma once. Use ExceptionOr.
+
+        * Modules/fetch/FetchRequest.idl: Move to non-legacy exceptions.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::redirect): Use ExceptionOr.
+        (WebCore::FetchResponse::setStatus): Ditto.
+
+        * Modules/fetch/FetchResponse.h: Use ExceptionOr.
+
+        * Modules/fetch/FetchResponse.idl: Move to non-legacy exceptions.
+
+        * bindings/js/JSDOMBinding.h: Added implementation of toJSNullableString.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Call toJSNullableString and toJSString for
+        functions that return ExceptionOr<String>.
+
 2016-10-10  Nan Wang  <n_wang@apple.com>
 
         AX: Expose invalid status for input types with that information

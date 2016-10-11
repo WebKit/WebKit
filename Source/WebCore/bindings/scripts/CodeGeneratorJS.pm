@@ -5041,7 +5041,9 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsStringType($type)) {
         AddToImplIncludes("URL.h", $conditional);
+        return "toJSNullableString($stateReference, throwScope, $value)" if $isNullable && $mayThrowException;
         return "jsStringOrNull($statePointer, $value)" if $isNullable;
+        return "toJSString($stateReference, throwScope, $value)" if $mayThrowException;
         AddToImplIncludes("<runtime/JSString.h>", $conditional);
         return "jsStringWithCache($statePointer, $value)";
     }

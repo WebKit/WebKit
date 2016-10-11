@@ -44,8 +44,7 @@ enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin"
     JSBuiltinConstructor,
     PrivateIdentifier,
     PublicIdentifier,
-]
-interface FetchRequest {
+] interface FetchRequest {
     readonly attribute DOMString method;
     readonly attribute DOMString url;
     readonly attribute FetchHeaders headers;
@@ -60,10 +59,11 @@ interface FetchRequest {
     readonly attribute RequestRedirect redirect;
     readonly attribute DOMString integrity;
 
-    [NewObject, CallWith=ScriptExecutionContext, MayThrowLegacyException] FetchRequest clone();
+    [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchRequest clone();
 
     [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(FetchRequest input, Dictionary init);
     [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(DOMString input, Dictionary init);
-    [CallWith=ScriptState, MayThrowLegacyException, PrivateIdentifier] void setBody(any body, FetchRequest? request);
+    [CallWith=ScriptState, MayThrowException, PrivateIdentifier] void setBody(any body, FetchRequest? request);
 };
+
 FetchRequest implements FetchBody;

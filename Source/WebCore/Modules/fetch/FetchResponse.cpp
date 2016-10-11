@@ -52,32 +52,27 @@ Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
     return response;
 }
 
-RefPtr<FetchResponse> FetchResponse::redirect(ScriptExecutionContext& context, const String& url, int status, ExceptionCode& ec)
+ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& context, const String& url, int status)
 {
     // FIXME: Tighten the URL parsing algorithm according https://url.spec.whatwg.org/#concept-url-parser.
     URL requestURL = context.completeURL(url);
-    if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty()) {
-        ec = TypeError;
-        return nullptr;
-    }
-    if (!isRedirectStatus(status)) {
-        ec = RangeError;
-        return nullptr;
-    }
+    if (!requestURL.isValid() || !requestURL.user().isEmpty() || !requestURL.pass().isEmpty())
+        return Exception { TypeError };
+    if (!isRedirectStatus(status))
+        return Exception { RangeError };
     auto redirectResponse = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return WTFMove(redirectResponse);
 }
 
-void FetchResponse::setStatus(int status, const String& statusText, ExceptionCode& ec)
+ExceptionOr<void> FetchResponse::setStatus(int status, const String& statusText)
 {
-    if (!isValidReasonPhrase(statusText)) {
-        ec = TypeError;
-        return;
-    }
+    if (!isValidReasonPhrase(statusText))
+        return Exception { TypeError };
     m_response.setHTTPStatusCode(status);
     m_response.setHTTPStatusText(statusText);
+    return { };
 }
 
 void FetchResponse::initializeWith(JSC::ExecState& execState, JSC::JSValue body)

@@ -948,6 +948,15 @@ template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state,
     return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
 }
 
+inline JSC::JSValue toJSNullableString(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<String>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return jsStringOrNull(&state, value.releaseReturnValue());
+}
+
 template<typename T> inline JSC::JSValue toJSNumber(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
 {
     if (UNLIKELY(value.hasException())) {
