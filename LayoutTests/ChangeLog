@@ -1,3 +1,11 @@
+2016-10-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip tests added with r207155 that rely on touch events.
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
         Update CloseEvent to stop using legacy [ConstructorTemplate=Event]
