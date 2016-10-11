@@ -1,3 +1,23 @@
+2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] HashTable's rehash is not compatible to Ref<T> and ASan
+        https://bugs.webkit.org/show_bug.cgi?id=161763
+
+        Reviewed by Mark Lam.
+
+        If we move an object, the location which the moved object used should not be touched anymore.
+        HashTable::rehash performs WTFMove for the object that resides in the old table.
+        However, after moving it, we accidentally touch this location by using `!isEmptyOrDeletedBucket(table[i])`
+        in HashTable::deallocateTable. And it causes ASan crashing if we use Ref<> for HashTable's key or value.
+
+        In this patch, we call the destructor right after moving the object. And HashTable::rehash just calls
+        fastFree since all the objects in the old table are already moved and destructed.
+        And we also change HashTable::deallocate to destruct only live objects. Calling destructors for empty objects
+        is meaningless. And according to the Ref<>'s comment, empty object is not designed to be destructed.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::deallocateTable):
+
 2016-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         Heap::isMarked() shouldn't pay the price of concurrent lazy flipping

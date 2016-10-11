@@ -1153,7 +1153,7 @@ namespace WTF {
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType* table, unsigned size)
     {
         for (unsigned i = 0; i < size; ++i) {
-            if (!isDeletedBucket(table[i]))
+            if (!isEmptyOrDeletedBucket(table[i]))
                 table[i].~ValueType();
         }
         fastFree(table);
@@ -1203,6 +1203,7 @@ namespace WTF {
             }
 
             Value* reinsertedEntry = reinsert(WTFMove(oldTable[i]));
+            oldTable[i].~ValueType();
             if (std::addressof(oldTable[i]) == entry) {
                 ASSERT(!newEntry);
                 newEntry = reinsertedEntry;
@@ -1211,7 +1212,7 @@ namespace WTF {
 
         m_deletedCount = 0;
 
-        deallocateTable(oldTable, oldTableSize);
+        fastFree(oldTable);
 
         internalCheckTableConsistency();
         return newEntry;
