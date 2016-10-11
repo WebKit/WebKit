@@ -23,15 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProtectionSpaceCocoa_h
-#define ProtectionSpaceCocoa_h
+#pragma once
 
 #include "ProtectionSpaceBase.h"
 #include <wtf/RetainPtr.h>
-
-#if USE(CFNETWORK)
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
-#endif
 
 OBJC_CLASS NSURLProtectionSpace;
 
@@ -47,9 +42,6 @@ public:
 
     ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
-#if USE(CFNETWORK)
-    explicit ProtectionSpace(CFURLProtectionSpaceRef);
-#endif
     WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
@@ -58,9 +50,6 @@ public:
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
 
-#if USE(CFNETWORK)
-    CFURLProtectionSpaceRef cfSpace() const;
-#endif
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
 
 private:
@@ -70,5 +59,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ProtectionSpaceCocoa_h

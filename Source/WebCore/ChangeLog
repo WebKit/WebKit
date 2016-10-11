@@ -1,3 +1,167 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        There are no more Cocoa platforms using CFURLConnection.
+        USE(CFNETWORK) is being replaced by USE(CFURLCONNECTION) and it is only used on the AppleWin port.
+
+        No change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCorePrefix.h:
+        * loader/DocumentLoader.h:
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/cf/ResourceLoaderCFNet.cpp:
+        * loader/cocoa/SubresourceLoaderCocoa.mm:
+        (WebCore::SubresourceLoader::willCacheResponse): Deleted.
+        * loader/mac/DocumentLoaderMac.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponse): Deleted.
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        (WebCore::Page::addSchedulePair):
+        (WebCore::Page::removeSchedulePair):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge):
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::create): Deleted.
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::WebCoreNSURLAuthenticationChallengeClient): Deleted.
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ProtectionSpace.h:
+        * platform/network/ProtectionSpaceBase.cpp:
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::willCacheResponse):
+        (WebCore::ResourceHandleClient::shouldCacheResponse):
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::createCF):
+        (WebCore::core):
+        * platform/network/cf/AuthenticationCF.h:
+        * platform/network/cf/AuthenticationChallenge.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+        (WebCore::CredentialStorage::saveToPersistentStorage): Deleted.
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        * platform/network/cf/LoaderRunLoopCF.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStorage):
+        * platform/network/cf/ProtectionSpaceCFNet.cpp:
+        * platform/network/cf/ProtectionSpaceCFNet.h:
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::shouldSniffConnectionProperty):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::schedule): Deleted.
+        (WebCore::ResourceHandle::unschedule): Deleted.
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::encodingRequiresPlatformData):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::findCFURLRequestCopyContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setStorageSession):
+        (WebCore::findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction): Deleted.
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        * platform/network/cf/SynchronousLoaderClientCFNet.cpp:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupConnectionScheduling):
+        (WebCore::adjustMIMETypeIfNecessary):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::willCacheResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cocoa/CredentialCocoa.h:
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::Credential::Credential): Deleted.
+        (WebCore::Credential::cfCredential): Deleted.
+        * platform/network/cocoa/ProtectionSpaceCocoa.h:
+        * platform/network/cocoa/ProtectionSpaceCocoa.mm:
+        (WebCore::ProtectionSpace::ProtectionSpace): Deleted.
+        (WebCore::ProtectionSpace::cfSpace): Deleted.
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::nsURLRequest):
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        (WebCore::ResourceResponse::nsURLResponse): Deleted.
+        (WebCore::ResourceResponse::ResourceResponse): Deleted.
+        * platform/network/ios/QuickLook.h:
+        * platform/network/ios/QuickLook.mm:
+        (-[WebQuickLookHandleAsDelegate initWithConnectionDelegate:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveDataArray:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveData:lengthReceived:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connectionDidFinishLoading:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate connection:didFailWithError:]): Deleted.
+        (-[WebQuickLookHandleAsDelegate detachHandle]): Deleted.
+        (WebCore::QuickLookHandle::create): Deleted.
+        (WebCore::QuickLookHandle::cfResponse): Deleted.
+        * platform/network/ios/ResourceHandleIOS.mm: Removed.
+        * platform/network/ios/ResourceRequestIOS.mm: Removed.
+        * platform/network/mac/AuthenticationMac.mm:
+        (-[WebCoreAuthenticationClientAsChallengeSender setCFChallenge:]): Deleted.
+        (-[WebCoreAuthenticationClientAsChallengeSender cfChallenge]): Deleted.
+        (WebCore::core): Deleted.
+        (WebCore::mac): Deleted.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookieStorage):
+        (WebCore::addCookie):
+        * platform/network/mac/CredentialStorageMac.mm:
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        * platform/network/mac/ResourceErrorMac.mm:
+        (NSErrorFromCFError): Deleted.
+        (WebCore::ResourceError::ResourceError): Deleted.
+        (WebCore::ResourceError::nsError): Deleted.
+        (WebCore::ResourceError::operator NSError *): Deleted.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::continueWillCacheResponse):
+        (WebCore::ResourceHandle::getConnectionTimingData): Deleted.
+        * platform/network/mac/ResourceRequestMac.mm: Removed.
+        * platform/network/mac/SynchronousLoaderClient.mm:
+        (WebCore::SynchronousLoaderClient::platformBadResponseError):
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (WebCore::synthesizeRedirectResponseIfNecessary):
+        * platform/win/TemporaryLinkStubs.cpp:
+        * testing/js/WebCoreTestSupportPrefix.h:
+
 2016-10-10  Sam Weinig  <sam@webkit.org>
 
         Use IDLTypes in more places

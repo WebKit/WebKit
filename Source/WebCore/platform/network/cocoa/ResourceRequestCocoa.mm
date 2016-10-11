@@ -53,14 +53,8 @@ namespace WebCore {
 NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
     updatePlatformRequest(bodyPolicy);
-#if USE(CFNETWORK)
-    if (!m_nsRequest)
-        const_cast<ResourceRequest*>(this)->updateNSURLRequest();
-#endif
     return [[m_nsRequest.get() retain] autorelease];
 }
-
-#if !USE(CFNETWORK)
 
 CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
@@ -213,8 +207,6 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
     updatePlatformRequest();
     m_nsRequest = adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
-
-#endif // USE(CFNETWORK)
 
 } // namespace WebCore
 

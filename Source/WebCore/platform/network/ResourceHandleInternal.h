@@ -33,7 +33,7 @@
 #include "AuthenticationChallenge.h"
 #include "Timer.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include "ResourceHandleCFURLConnectionDelegate.h"
 #include <CFNetwork/CFURLConnectionPriv.h>
 #endif
@@ -61,7 +61,7 @@ OBJC_CLASS NSURLAuthenticationChallenge;
 OBJC_CLASS NSURLConnection;
 #endif
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
@@ -83,7 +83,7 @@ namespace WebCore {
             , m_defersLoading(defersLoading)
             , m_shouldContentSniff(shouldContentSniff)
             , m_usesAsyncCallbacks(client && client->usesAsyncCallbacks())
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
             , m_currentRequest(request)
 #endif
 #if USE(CURL)
@@ -131,19 +131,19 @@ namespace WebCore {
         bool m_defersLoading;
         bool m_shouldContentSniff;
         bool m_usesAsyncCallbacks;
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
         RetainPtr<CFURLConnectionRef> m_connection;
         ResourceRequest m_currentRequest;
         RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
 #endif
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
+#if PLATFORM(COCOA)
         RetainPtr<NSURLConnection> m_connection;
         RetainPtr<id> m_delegate;
 #endif
 #if PLATFORM(COCOA)
         bool m_startWhenScheduled;
 #endif
-#if PLATFORM(COCOA) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
         RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(CURL)

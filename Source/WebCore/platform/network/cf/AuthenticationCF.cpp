@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AuthenticationCF.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "AuthenticationChallenge.h"
 #include "AuthenticationClient.h"
@@ -51,18 +51,8 @@ AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protecti
 {
 }
 
-AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallenge,
-                                                 AuthenticationClient* authenticationClient)
-#if PLATFORM(COCOA)
-    : AuthenticationChallengeBase(ProtectionSpace(CFURLAuthChallengeGetProtectionSpace(cfChallenge)),
-                                  Credential(CFURLAuthChallengeGetProposedCredential(cfChallenge)),
-#else
-    : AuthenticationChallengeBase(core(CFURLAuthChallengeGetProtectionSpace(cfChallenge)),
-                                  core(CFURLAuthChallengeGetProposedCredential(cfChallenge)),
-#endif
-                                  CFURLAuthChallengeGetPreviousFailureCount(cfChallenge),
-                                  (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(cfChallenge),
-                                  CFURLAuthChallengeGetError(cfChallenge))
+AuthenticationChallenge::AuthenticationChallenge(CFURLAuthChallengeRef cfChallenge, AuthenticationClient* authenticationClient)
+    : AuthenticationChallengeBase(core(CFURLAuthChallengeGetProtectionSpace(cfChallenge)), core(CFURLAuthChallengeGetProposedCredential(cfChallenge)), CFURLAuthChallengeGetPreviousFailureCount(cfChallenge), (CFURLResponseRef)CFURLAuthChallengeGetFailureResponse(cfChallenge), CFURLAuthChallengeGetError(cfChallenge))
     , m_authenticationClient(authenticationClient)
     , m_cfChallenge(cfChallenge)
 {
@@ -93,21 +83,11 @@ CFURLAuthChallengeRef createCF(const AuthenticationChallenge& coreChallenge)
 {
     // FIXME: Why not cache CFURLAuthChallengeRef in m_cfChallenge? Foundation counterpart does that.
 
-#if PLATFORM(COCOA)
-    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, coreChallenge.protectionSpace().cfSpace(), coreChallenge.proposedCredential().cfCredential(),
-#else
     RetainPtr<CFURLCredentialRef> credential = adoptCF(createCF(coreChallenge.proposedCredential()));
     RetainPtr<CFURLProtectionSpaceRef> protectionSpace = adoptCF(createCF(coreChallenge.protectionSpace()));
 
-    CFURLAuthChallengeRef result = CFURLAuthChallengeCreate(0, protectionSpace.get(), credential.get(),
-#endif
-                                        coreChallenge.previousFailureCount(),
-                                        coreChallenge.failureResponse().cfURLResponse(),
-                                        coreChallenge.error());
-    return result;
+    return CFURLAuthChallengeCreate(nullptr, protectionSpace.get(), credential.get(), coreChallenge.previousFailureCount(), coreChallenge.failureResponse().cfURLResponse(), coreChallenge.error());
 }
-
-#if PLATFORM(WIN)
 
 CFURLCredentialRef createCF(const Credential& coreCredential)
 {
@@ -290,8 +270,7 @@ ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
                            CFURLProtectionSpaceGetRealm(cfSpace),
                            scheme);
 }
-#endif // PLATFORM(WIN)
 
 };
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

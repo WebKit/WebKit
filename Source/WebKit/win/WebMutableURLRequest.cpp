@@ -40,7 +40,7 @@
 #include <WebCore/CertificateCFWin.h>
 #endif
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLRequestPriv.h>
 #endif
 
@@ -382,7 +382,7 @@ HRESULT WebMutableURLRequest::mutableCopy(_COM_Outptr_opt_ IWebMutableURLRequest
     if (!result)
         return E_POINTER;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFMutableURLRequestRef> mutableRequest = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest(UpdateHTTPBody)));
     *result = createInstance(ResourceRequest(mutableRequest.get()));
     return S_OK;

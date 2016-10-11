@@ -28,7 +28,7 @@
 #include "WebKit.h"
 #include <wtf/HashSet.h>
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLDownloadPriv.h>
 #endif
 

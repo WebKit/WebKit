@@ -403,7 +403,7 @@ public:
     RemoteAXObjectRef accessibilityRemoteObject() override { return nullptr; }
     NSCachedURLResponse* willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse* response) const override { return response; }
 #endif
-#if PLATFORM(WIN) && USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     bool shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long) override { return true; }
 #endif

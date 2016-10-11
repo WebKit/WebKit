@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebError_h
-#define WebError_h
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
@@ -66,10 +65,8 @@ public:
 private:
     ULONG m_refCount { 0 };
     COMPtr<IPropertyBag> m_userInfo;
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFDictionaryRef> m_cfErrorUserInfoDict;
 #endif
     WebCore::ResourceError m_error;
 };
-
-#endif

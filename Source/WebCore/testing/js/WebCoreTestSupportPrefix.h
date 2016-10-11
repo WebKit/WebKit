@@ -120,9 +120,7 @@
 #define OBSOLETE_COLORSYNC_API
 #endif
 #endif
-#if USE(CFNETWORK)
-/* Windows doesn't include CFNetwork.h via CoreServices.h, so we do
-   it explicitly here to make Windows more consistent with Mac. */
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFNetwork.h>
 // On Windows, dispatch.h needs to be included before certain CFNetwork headers.
 #include <dispatch/dispatch.h>

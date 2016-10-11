@@ -109,10 +109,6 @@
 #import <VideoToolbox/VideoToolbox.h>
 #endif
 
-#if USE(CFNETWORK)
-#include "CFNSURLConnectionSPI.h"
-#endif
-
 #import "CoreVideoSoftLink.h"
 
 namespace std {
@@ -370,58 +366,6 @@ static dispatch_queue_t globalPullDelegateQueue()
     });
     return globalQueue;
 }
-#endif
-
-#if USE(CFNETWORK)
-class WebCoreNSURLAuthenticationChallengeClient : public RefCounted<WebCoreNSURLAuthenticationChallengeClient>, public AuthenticationClient {
-public:
-    static RefPtr<WebCoreNSURLAuthenticationChallengeClient> create(NSURLAuthenticationChallenge *challenge)
-    {
-        return adoptRef(new WebCoreNSURLAuthenticationChallengeClient(challenge));
-    }
-
-    using RefCounted<WebCoreNSURLAuthenticationChallengeClient>::ref;
-    using RefCounted<WebCoreNSURLAuthenticationChallengeClient>::deref;
-
-private:
-    WebCoreNSURLAuthenticationChallengeClient(NSURLAuthenticationChallenge *challenge)
-        : m_challenge(challenge)
-    {
-        ASSERT(m_challenge);
-    }
-
-    void refAuthenticationClient() override { ref(); }
-    void derefAuthenticationClient() override { deref(); }
-
-    void receivedCredential(const AuthenticationChallenge&, const Credential& credential) override
-    {
-        [[m_challenge sender] useCredential:credential.nsCredential() forAuthenticationChallenge:m_challenge.get()];
-    }
-
-    void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&) override
-    {
-        [[m_challenge sender] continueWithoutCredentialForAuthenticationChallenge:m_challenge.get()];
-    }
-
-    void receivedCancellation(const AuthenticationChallenge&) override
-    {
-        [[m_challenge sender] cancelAuthenticationChallenge:m_challenge.get()];
-    }
-
-    void receivedRequestToPerformDefaultHandling(const AuthenticationChallenge&) override
-    {
-        if ([[m_challenge sender] respondsToSelector:@selector(performDefaultHandlingForAuthenticationChallenge:)])
-            [[m_challenge sender] performDefaultHandlingForAuthenticationChallenge:m_challenge.get()];
-    }
-
-    void receivedChallengeRejection(const AuthenticationChallenge&) override
-    {
-        if ([[m_challenge sender] respondsToSelector:@selector(rejectProtectionSpaceAndContinueWithChallenge:)])
-            [[m_challenge sender] rejectProtectionSpaceAndContinueWithChallenge:m_challenge.get()];
-    }
-
-    RetainPtr<NSURLAuthenticationChallenge> m_challenge;
-};
 #endif
 
 void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistrar registrar)
@@ -1797,15 +1741,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
 
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge* nsChallenge)
 {
-#if USE(CFNETWORK)
-    RefPtr<WebCoreNSURLAuthenticationChallengeClient> client = WebCoreNSURLAuthenticationChallengeClient::create(nsChallenge);
-    RetainPtr<CFURLAuthChallengeRef> cfChallenge = adoptCF([nsChallenge _createCFAuthChallenge]);
-    AuthenticationChallenge challenge(cfChallenge.get(), client.get());
-#else
-    AuthenticationChallenge challenge(nsChallenge);
-#endif
-
-    return player()->shouldWaitForResponseToAuthenticationChallenge(challenge);
+    return player()->shouldWaitForResponseToAuthenticationChallenge(AuthenticationChallenge(nsChallenge));
 }
 
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)

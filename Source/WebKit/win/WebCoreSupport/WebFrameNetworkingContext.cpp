@@ -34,7 +34,7 @@
 #include <WebCore/Settings.h>
 #include <wtf/NeverDestroyed.h>
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
@@ -47,7 +47,7 @@ static String& identifierBase()
     return base;
 }
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(WebKitCookieStorageAcceptPolicy policy)
 {
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = NetworkStorageSession::defaultStorageSession().cookieStorage())
@@ -67,7 +67,7 @@ void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(c
 
 NetworkStorageSession& WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     ASSERT(isMainThread());
 
     if (auto privateSession = NetworkStorageSession::storageSession(SessionID::legacyPrivateSessionID()))

@@ -123,7 +123,7 @@ struct WebProcessCreationParameters {
 
     double defaultRequestTimeoutInterval;
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
+#if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
 #endif
 

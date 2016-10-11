@@ -2021,7 +2021,6 @@
 		514C764F0CE9234E007EF3CD /* FormDataStreamMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76450CE9234E007EF3CD /* FormDataStreamMac.mm */; };
 		514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */; };
 		514C76510CE9234E007EF3CD /* ResourceHandleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */; };
-		514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */; };
 		514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C76580CE923A1007EF3CD /* CredentialBase.cpp */; };
 		514C766E0CE923A1007EF3CD /* Credential.h in Headers */ = {isa = PBXBuildFile; fileRef = 514C76590CE923A1007EF3CD /* Credential.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 514C765A0CE923A1007EF3CD /* FormData.cpp */; };
@@ -2808,7 +2807,6 @@
 		7D4C96DD1AD4483500365A50 /* JSFetchHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */; };
 		7D741BDA177226AA00859170 /* CSSValueKeywords.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 6565814809D13043000E61D7 /* CSSValueKeywords.h */; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
-		7E428CE513E3407F003B661C /* ResourceHandleIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */; };
 		7E46F6FA1627A2CA00062223 /* JSOESElementIndexUint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */; };
 		7E46F6FB1627A2CA00062223 /* JSOESElementIndexUint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */; };
 		7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2826,7 +2824,6 @@
 		7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E66E23216D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h */; };
 		7E66E23417E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E66E23217E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h */; };
 		7E7DE1FD195CEF260035363B /* ResourceRequestCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E7DE1FC195CEF260035363B /* ResourceRequestCocoa.mm */; };
-		7E7DE202195CEFCD0035363B /* ResourceRequestIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E7DE201195CEFCD0035363B /* ResourceRequestIOS.mm */; };
 		7E8FADC4199A95B100714968 /* SubresourceLoaderCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E8FADC3199A95B100714968 /* SubresourceLoaderCocoa.mm */; };
 		7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */; };
 		7E99AF530B13846468FB01A5 /* WindowFocusAllowedIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E99AF540B13846468FB01A5 /* WindowFocusAllowedIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2847,7 +2844,6 @@
 		7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */; };
 		7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845712D26E3800E79415 /* ResourceError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */; };
-		7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */; };
 		7EE6846D12D26E3800E79415 /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845A12D26E3800E79415 /* ResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7EE6846E12D26E3800E79415 /* ResourceRequestCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845B12D26E3800E79415 /* ResourceRequestCFNet.cpp */; };
 		7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9065,7 +9061,6 @@
 		514C76450CE9234E007EF3CD /* FormDataStreamMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FormDataStreamMac.mm; sourceTree = "<group>"; };
 		514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceErrorMac.mm; sourceTree = "<group>"; };
 		514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleMac.mm; sourceTree = "<group>"; };
-		514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestMac.mm; sourceTree = "<group>"; };
 		514C76580CE923A1007EF3CD /* CredentialBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialBase.cpp; sourceTree = "<group>"; };
 		514C76590CE923A1007EF3CD /* Credential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Credential.h; sourceTree = "<group>"; };
 		514C765A0CE923A1007EF3CD /* FormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormData.cpp; sourceTree = "<group>"; };
@@ -9949,7 +9944,6 @@
 		7D4C96D81AD4483500365A50 /* JSFetchHeaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchHeaders.cpp; sourceTree = "<group>"; };
 		7D4C96D91AD4483500365A50 /* JSFetchHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFetchHeaders.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
-		7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceHandleIOS.mm; sourceTree = "<group>"; };
 		7E46F6F81627A2C900062223 /* JSOESElementIndexUint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESElementIndexUint.cpp; sourceTree = "<group>"; };
 		7E46F6F91627A2C900062223 /* JSOESElementIndexUint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESElementIndexUint.h; sourceTree = "<group>"; };
 		7E474E1B12494DC900235364 /* SQLiteDatabaseTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteDatabaseTrackerClient.h; sourceTree = "<group>"; };
@@ -9967,7 +9961,6 @@
 		7E66E23216D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureATC.h; sourceTree = "<group>"; };
 		7E66E23217E6EB6C00F7E7FF /* WebGLCompressedTexturePVRTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTexturePVRTC.h; sourceTree = "<group>"; };
 		7E7DE1FC195CEF260035363B /* ResourceRequestCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestCocoa.mm; sourceTree = "<group>"; };
-		7E7DE201195CEFCD0035363B /* ResourceRequestIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourceRequestIOS.mm; sourceTree = "<group>"; };
 		7E8FADC3199A95B100714968 /* SubresourceLoaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SubresourceLoaderCocoa.mm; sourceTree = "<group>"; };
 		7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowFocusAllowedIndicator.cpp; sourceTree = "<group>"; };
 		7E99AF540B13846468FB01A5 /* WindowFocusAllowedIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowFocusAllowedIndicator.h; sourceTree = "<group>"; };
@@ -9990,7 +9983,6 @@
 		7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderRunLoopCF.h; sourceTree = "<group>"; };
 		7EE6845712D26E3800E79415 /* ResourceError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceError.h; sourceTree = "<group>"; };
 		7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceErrorCF.cpp; sourceTree = "<group>"; };
-		7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845A12D26E3800E79415 /* ResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequest.h; sourceTree = "<group>"; };
 		7EE6845B12D26E3800E79415 /* ResourceRequestCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceRequestCFNet.cpp; sourceTree = "<group>"; };
 		7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequestCFNet.h; sourceTree = "<group>"; };
@@ -16241,8 +16233,6 @@
 				442AF7A7102CDDEA008FD4D3 /* QuickLook.h */,
 				442AF7A8102CDDEA008FD4D3 /* QuickLook.mm */,
 				A10DBF4618F92317000D70C6 /* QuickLookHandleClient.h */,
-				7E428CE413E3407F003B661C /* ResourceHandleIOS.mm */,
-				7E7DE201195CEFCD0035363B /* ResourceRequestIOS.mm */,
 				44A20DB80F84166C00B3E1FE /* WebCoreURLResponseIOS.h */,
 				444D4E210F708B2E003158E0 /* WebCoreURLResponseIOS.mm */,
 			);
@@ -17157,7 +17147,6 @@
 				1A7FA6470DDA3CBA0028F8A5 /* NetworkStateNotifierMac.cpp */,
 				514C76460CE9234E007EF3CD /* ResourceErrorMac.mm */,
 				514C76470CE9234E007EF3CD /* ResourceHandleMac.mm */,
-				514C76490CE9234E007EF3CD /* ResourceRequestMac.mm */,
 				E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */,
 				1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */,
 				1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */,
@@ -21021,7 +21010,6 @@
 				1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */,
 				7EE6845712D26E3800E79415 /* ResourceError.h */,
 				7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */,
-				7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */,
 				26FAE4C81852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp */,
 				26FAE4C91852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.h */,
 				26C15CF41857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp */,
@@ -29930,11 +29918,9 @@
 				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
 				514C76500CE9234E007EF3CD /* ResourceErrorMac.mm in Sources */,
 				514C76780CE923A1007EF3CD /* ResourceHandle.cpp in Sources */,
-				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
 				26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */,
 				26C15CF61857E15D00F15C03 /* ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp in Sources */,
 				E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */,
-				7E428CE513E3407F003B661C /* ResourceHandleIOS.mm in Sources */,
 				514C76510CE9234E007EF3CD /* ResourceHandleMac.mm in Sources */,
 				93E227E30AF589AD00D48324 /* ResourceLoader.cpp in Sources */,
 				7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */,
@@ -29947,8 +29933,6 @@
 				514C767C0CE923A1007EF3CD /* ResourceRequestBase.cpp in Sources */,
 				7EE6846E12D26E3800E79415 /* ResourceRequestCFNet.cpp in Sources */,
 				7E7DE1FD195CEF260035363B /* ResourceRequestCocoa.mm in Sources */,
-				7E7DE202195CEFCD0035363B /* ResourceRequestIOS.mm in Sources */,
-				514C76530CE9234E007EF3CD /* ResourceRequestMac.mm in Sources */,
 				514C767E0CE923A1007EF3CD /* ResourceResponseBase.cpp in Sources */,
 				7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */,
 				A1F78D0C1C25424C00245446 /* ResourceResponseCocoa.mm in Sources */,

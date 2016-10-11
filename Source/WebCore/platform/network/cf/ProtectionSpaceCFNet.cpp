@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProtectionSpaceCFNet.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "AuthenticationCF.h"
 #include <CFNetwork/CFURLProtectionSpacePriv.h>
@@ -42,4 +42,4 @@ bool ProtectionSpace::receivesCredentialSecurely() const
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

@@ -23,15 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebDownload_h
-#define WebDownload_h
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLDownloadPriv.h>
 #elif USE(CURL)
 #include <WebCore/CurlDownload.h>
@@ -84,7 +83,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE continueWithoutCredentialForAuthenticationChallenge(_In_opt_ IWebURLAuthenticationChallenge*);
     virtual HRESULT STDMETHODCALLTYPE useCredential(_In_opt_ IWebURLCredential*, _In_opt_ IWebURLAuthenticationChallenge*);
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     // CFURLDownload Callbacks
     void didStart();
     CFURLRequestRef willSendRequest(CFURLRequestRef, CFURLResponseRef);
@@ -109,7 +108,7 @@ protected:
 
     WTF::String m_destination;
     WTF::String m_bundlePath;
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFURLDownloadRef> m_download;
 #elif USE(CURL)
     RefPtr<WebCore::CurlDownload> m_download;
@@ -123,6 +122,3 @@ protected:
     int m_received;
 #endif
 };
-
-
-#endif

@@ -31,7 +31,7 @@
 
 OBJC_CLASS NSURLRequest;
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 typedef const struct _CFURLRequest* CFURLRequestRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
@@ -61,13 +61,7 @@ public:
     {
     }
     
-#if USE(CFNETWORK)
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
-    void updateNSURLRequest();
-    void clearOrUpdateNSURLRequest();
-#endif
-
+#if USE(CFURLCONNECTION)
     ResourceRequest(CFURLRequestRef cfRequest)
         : ResourceRequestBase()
         , m_cfRequest(cfRequest)
@@ -84,11 +78,7 @@ public:
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);
 
 #if PLATFORM(COCOA)
-#if USE(CFNETWORK)
-    bool encodingRequiresPlatformData() const { return m_httpBody || m_cfRequest; }
-#else
     bool encodingRequiresPlatformData() const { return m_httpBody || m_nsRequest; }
-#endif
     WEBCORE_EXPORT NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 
     WEBCORE_EXPORT static CFStringRef isUserInitiatedKey();
@@ -105,7 +95,7 @@ public:
     void setDomainForCachePartition(const String& domain) { m_cachePartition = partitionName(domain); }
 #endif
 
-#if PLATFORM(COCOA) || USE(CFNETWORK)
+#if PLATFORM(COCOA) || USE(CFURLCONNECTION)
     WEBCORE_EXPORT CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
     void setStorageSession(CFURLStorageSessionRef);
 #endif
@@ -125,7 +115,7 @@ private:
 
     void doPlatformSetAsIsolatedCopy(const ResourceRequest&);
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFURLRequestRef> m_cfRequest;
 #endif
 #if PLATFORM(COCOA)

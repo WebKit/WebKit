@@ -79,11 +79,7 @@ public:
     void didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef) override;
 #endif
 #if PLATFORM(COCOA)
-#if USE(CFNETWORK)
-    void willCacheResponseAsync(WebCore::ResourceHandle*, CFCachedURLResponseRef) override;
-#else
     void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) override;
-#endif
 #endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

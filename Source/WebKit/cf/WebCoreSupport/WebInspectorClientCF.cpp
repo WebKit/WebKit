@@ -27,8 +27,8 @@
 // before including any other files. Failing to include config.h will leave
 // USE_CF undefined, causing build failures in this
 // file. But Mac doesn't have a config.h for WebKit, so we can't include the
-// Windows one here. For now we can just define USE_CF and
-// USE_CFNETWORK manually, but we need a better long-term solution.
+// Windows one here. For now we can just define USE_CF manually,
+// but we need a better long-term solution.
 #ifndef USE_CF
 #define USE_CF 1
 #endif

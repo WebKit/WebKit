@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebCoreResourceHandleAsDelegate.h"
 
-#if !USE(CFNETWORK)
-
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "Logging.h"
@@ -270,6 +268,3 @@ using namespace WebCore;
 }
 
 @end
-
-#endif // !USE(CFNETWORK)
-

@@ -33,7 +33,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -135,7 +135,7 @@ HRESULT WebError::localizedDescription(__deref_opt_out BSTR* result)
 
     *result = BString(m_error.localizedDescription()).release();
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     if (!*result) {
         if (int code = m_error.errorCode())
             *result = BString(wkCFNetworkErrorGetLocalizedDescription(code)).release();
@@ -219,7 +219,7 @@ HRESULT WebError::sslPeerCertificate(_Out_ ULONG_PTR* result)
         return E_POINTER;
     *result = 0;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     if (!m_cfErrorUserInfoDict) {
         // copy userinfo from CFErrorRef
         CFErrorRef cfError = m_error;

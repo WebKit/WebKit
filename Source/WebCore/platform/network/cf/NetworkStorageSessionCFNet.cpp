@@ -38,6 +38,8 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
+// FIXME: This file is mostly Cocoa code, not CFNetwork code. This code should be moved.
+
 namespace WebCore {
 
 static bool cookieStoragePartitioningEnabled;
@@ -93,11 +95,11 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
     if (m_platformSession)
         return adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, m_platformSession.get()));
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     return _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
 #else
     // When using NSURLConnection, we also use its shared cookie storage.
-    return 0;
+    return nullptr;
 #endif
 }
 

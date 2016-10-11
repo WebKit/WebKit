@@ -1,3 +1,12 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
 2016-08-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove unused includes of wtf headers

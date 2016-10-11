@@ -28,7 +28,7 @@
 #include "ResourceResponseBase.h"
 #include <wtf/RetainPtr.h>
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include "CFNetworkSPI.h"
 #endif
 
@@ -43,16 +43,13 @@ public:
     {
     }
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     ResourceResponse(CFURLResponseRef cfResponse)
         : m_initLevel(Uninitialized)
         , m_cfResponse(cfResponse)
     {
         m_isNull = !cfResponse;
     }
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT ResourceResponse(NSURLResponse *);
-#endif
 #else
     ResourceResponse(NSURLResponse *nsResponse)
         : m_initLevel(Uninitialized)
@@ -84,7 +81,7 @@ public:
          */
     }
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     WEBCORE_EXPORT CFURLResponseRef cfURLResponse() const;
 #endif
 #if PLATFORM(COCOA)
@@ -108,10 +105,9 @@ private:
 
     unsigned m_initLevel : 3;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
-#endif
-#if PLATFORM(COCOA)
+#elif PLATFORM(COCOA)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
 };

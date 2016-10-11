@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SynchronousLoaderClient.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "AuthenticationChallenge.h"
 #include "ResourceHandle.h"
@@ -48,4 +48,4 @@ ResourceError SynchronousLoaderClient::platformBadResponseError()
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

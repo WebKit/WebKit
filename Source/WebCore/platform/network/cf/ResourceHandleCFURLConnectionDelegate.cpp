@@ -26,20 +26,13 @@
 #include "config.h"
 #include "ResourceHandleCFURLConnectionDelegate.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "CFNetworkSPI.h"
 #include "FormDataStreamCFNet.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
-
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#endif
-
-#if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
 
 namespace WebCore {
 
@@ -218,4 +211,4 @@ CFURLConnectionClient_V6 ResourceHandleCFURLConnectionDelegate::makeConnectionCl
 
 } // namespace WebCore.
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

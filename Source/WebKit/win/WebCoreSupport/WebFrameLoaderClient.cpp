@@ -974,7 +974,7 @@ void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL&
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     Frame* coreFrame = core(m_webFrame);
     if (!coreFrame)
         return;

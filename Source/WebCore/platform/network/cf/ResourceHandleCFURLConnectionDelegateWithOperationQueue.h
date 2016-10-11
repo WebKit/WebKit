@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ResourceHandleCFURLConnectionDelegateWithOperationQueue_h
-#define ResourceHandleCFURLConnectionDelegateWithOperationQueue_h
+#pragma once
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "ResourceHandleCFURLConnectionDelegate.h"
 #include <CFNetwork/CFNetwork.h>
@@ -80,6 +79,4 @@ private:
 
 } // namespace WebCore.
 
-#endif // USE(CFNETWORK)
-
-#endif // ResourceHandleCFURLConnectionDelegateWithOperationQueue_h
+#endif // USE(CFURLCONNECTION)

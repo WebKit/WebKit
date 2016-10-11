@@ -29,8 +29,6 @@
 #include "config.h"
 #include "SchedulePair.h"
 
-#if !USE(CFNETWORK)
-
 namespace WTF {
 
 SchedulePair::SchedulePair(NSRunLoop* runLoop, CFStringRef mode)
@@ -42,5 +40,3 @@ SchedulePair::SchedulePair(NSRunLoop* runLoop, CFStringRef mode)
 }
 
 } // namespace
-
-#endif

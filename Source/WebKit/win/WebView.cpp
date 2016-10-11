@@ -178,7 +178,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -497,7 +497,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
 
     String cacheDirectory;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFURLCacheRef> cfurlCache = adoptCF(CFURLCacheCopySharedURLCache());
     RetainPtr<CFStringRef> cfurlCacheDirectory = adoptCF(wkCopyFoundationCacheDirectory(0));
     if (!cfurlCacheDirectory) {
@@ -551,7 +551,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         // Memory cache capacity (in bytes)
         cacheMemoryCapacity = 0;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
         // Foundation disk cache capacity (in bytes)
         cacheDiskCapacity = CFURLCacheDiskCapacity(cfurlCache.get());
 #endif
@@ -675,7 +675,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     memoryCache.setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
     PageCache::singleton().setMaxSize(pageCacheSize);
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     // Don't shrink a big disk cache, since that would cause churn.
     cacheDiskCapacity = max(cacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()));
 
@@ -1547,7 +1547,7 @@ void WebView::closeWindow()
 
 bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 {
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     // On the Mac there's an about URL protocol implementation but Windows CFNetwork doesn't have that.
     if (request.url().protocolIs("about"))
         return true;
@@ -5261,7 +5261,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-#if PLATFORM(WIN) || USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     if (enabled)
         WebFrameNetworkingContext::ensurePrivateBrowsingSession();
     else
@@ -5560,7 +5560,7 @@ HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences* preferences
     if (FAILED(hr))
         return hr;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(acceptPolicy);
 #endif
 

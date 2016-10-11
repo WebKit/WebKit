@@ -141,7 +141,7 @@ HRESULT WebURLAuthenticationChallenge::initWithProtectionSpace(_In_opt_ IWebURLP
 
     // FIXME: After we change AuthenticationChallenge to use "ResourceHandle" as the abstract "Sender" or "Source of this Auth Challenge", then we'll
     // construct the AuthenticationChallenge with that as obtained from the webSender
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     m_authenticationChallenge = AuthenticationChallenge(webSpace->protectionSpace(), webCredential->credential(),
                                     previousFailureCount, webResponse->resourceResponse(), webError->resourceError());
 #endif
@@ -162,7 +162,7 @@ HRESULT WebURLAuthenticationChallenge::initWithAuthenticationChallenge(_In_opt_ 
     if (!webSender)
         return E_NOINTERFACE;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     m_authenticationChallenge = AuthenticationChallenge(webChallenge->authenticationChallenge().cfURLAuthChallengeRef(), webSender->authenticationClient());
 
     return S_OK;

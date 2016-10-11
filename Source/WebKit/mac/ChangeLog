@@ -1,3 +1,21 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        * Misc/WebDownload.mm:
+        (-[WebDownload _initWithLoadingCFURLConnection:request:response:delegate:proxy:]): Deleted.
+        * Misc/WebDownloadInternal.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]):
+        * WebView/WebView.mm:
+        (-[WebView scheduleInRunLoop:forMode:]):
+        (-[WebView unscheduleFromRunLoop:forMode:]):
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option

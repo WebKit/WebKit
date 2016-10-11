@@ -1,3 +1,13 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::scheduleLoad):
+
 2016-10-06  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix when building with Direct2D.

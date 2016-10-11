@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderRunLoopCF_h
-#define LoaderRunLoopCF_h
+#pragma once
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 typedef struct __CFRunLoop* CFRunLoopRef;
 
@@ -36,6 +35,4 @@ CFRunLoopRef loaderRunLoop();
 
 }
 
-#endif // USE(CFNETWORK)
-
-#endif // LoaderRunLoop_h
+#endif // USE(CFURLCONNECTION)

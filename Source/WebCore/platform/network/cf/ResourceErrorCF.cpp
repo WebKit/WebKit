@@ -26,16 +26,13 @@
 #include "config.h"
 #include "ResourceError.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "URL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
-#include <wtf/RetainPtr.h>
-
-#if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
@@ -218,4 +215,4 @@ ResourceError::operator CFStreamError() const
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

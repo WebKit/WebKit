@@ -58,16 +58,6 @@
 #import <wtf/text/Base64.h>
 #import <wtf/text/CString.h>
 
-#if USE(CFNETWORK)
-#if USE(APPLE_INTERNAL_SDK)
-#import <CFNetwork/CFURLConnectionPriv.h>
-#endif
-typedef struct _CFURLConnection* CFURLConnectionRef;
-extern "C" {
-CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
-}
-#endif // USE(CFNETWORK)
-
 #if PLATFORM(IOS)
 #import "CFNetworkSPI.h"
 #import "RuntimeApplicationChecks.h"
@@ -89,8 +79,6 @@ using namespace WebCore;
 @end
 
 namespace WebCore {
-    
-#if !USE(CFNETWORK)
     
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
@@ -329,8 +317,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         [d->m_connection setDefersCallbacks:defers];
 }
 
-#if !USE(CFNETWORK)
-
 void ResourceHandle::schedule(SchedulePair& pair)
 {
     NSRunLoop *runLoop = pair.nsRunLoop();
@@ -348,8 +334,6 @@ void ResourceHandle::unschedule(SchedulePair& pair)
     if (NSRunLoop *runLoop = pair.nsRunLoop())
         [d->m_connection.get() unscheduleFromRunLoop:runLoop forMode:(NSString *)pair.mode()];
 }
-
-#endif
 
 id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage)
 {
@@ -730,26 +714,13 @@ void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 
     [(id)delegate() continueWillCacheResponse:response];
 }
-    
-#endif // !USE(CFNETWORK)
-    
-#if ENABLE(WEB_TIMING)
 
-#if USE(CFNETWORK)
-    
-void ResourceHandle::getConnectionTimingData(CFURLConnectionRef connection, NetworkLoadTiming& timing)
-{
-    copyTimingData((__bridge NSDictionary*)adoptCF(_CFURLConnectionCopyTimingData(connection)).get(), timing);
-}
-    
-#else
+#if ENABLE(WEB_TIMING)
     
 void ResourceHandle::getConnectionTimingData(NSURLConnection *connection, NetworkLoadTiming& timing)
 {
     copyTimingData([connection _timingData], timing);
 }
-    
-#endif
     
 #endif // ENABLE(WEB_TIMING)
 

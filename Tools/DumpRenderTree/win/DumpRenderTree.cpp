@@ -61,7 +61,7 @@
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #endif
@@ -1287,7 +1287,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     return webView;
 }
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 RetainPtr<CFURLCacheRef> sharedCFURLCache()
 {
 #ifndef DEBUG_ALL
@@ -1465,7 +1465,7 @@ int main(int argc, const char* argv[])
     if (FAILED(webView->mainFrame(&frame)))
         return -7;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     RetainPtr<CFURLCacheRef> urlCache = sharedCFURLCache();
     CFURLCacheRemoveAllCachedResponses(urlCache.get());
 #endif

@@ -154,7 +154,7 @@ void ResourceHandle::clearClient()
     d->m_client = nullptr;
 }
 
-#if !PLATFORM(COCOA) && !USE(CFNETWORK) && !USE(SOUP)
+#if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP)
 // ResourceHandle never uses async client calls on these platforms yet.
 void ResourceHandle::continueWillSendRequest(ResourceRequest&&)
 {

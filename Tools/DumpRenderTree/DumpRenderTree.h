@@ -26,13 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTree_h
-#define DumpRenderTree_h
-
-// FIXME: Remove this when all platforms are using config.h
-#ifndef Config_H
-#include <wtf/Platform.h>
-#endif
+#pragma once
 
 #if PLATFORM(COCOA)
 #include "DumpRenderTreeMac.h"
@@ -45,6 +39,7 @@
 #endif
 
 #include <string>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 
 #if !OS(OPENBSD)
@@ -71,5 +66,3 @@ struct TestCommand {
 };
 
 TestCommand parseInputLine(const std::string&);
-
-#endif // DumpRenderTree_h

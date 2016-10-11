@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProtectionSpaceCFNet_h
-#define ProtectionSpaceCFNet_h
+#pragma once
 
-#if !PLATFORM(WIN) || !USE(CFNETWORK)
-#error This header should only be included when targeting Windows and using CFNetwork.
+#if !PLATFORM(WIN) || !USE(CFURLCONNECTION)
+#error This header should only be included when targeting Windows and using CFURLConnection.
 #endif
 
 #include "ProtectionSpaceBase.h"
@@ -48,5 +47,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ProtectionSpaceCFNet_h

@@ -1,3 +1,31 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=163263
+
+        Reviewed by Daniel Bates.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm: Removed.
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        (WebKit::NetworkLoad::willCacheResponseAsync): Deleted.
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::receivedCredential):
+        (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+        (WebKit::AuthenticationManager::receivedCancellation):
+        (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+        (WebKit::AuthenticationManager::receivedChallengeRejection):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-10-11  Anders Carlsson  <andersca@apple.com>
 
         Move no longer used functions to WKDeprecatedFunctions.cpp

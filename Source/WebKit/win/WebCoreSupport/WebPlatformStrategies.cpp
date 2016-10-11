@@ -33,7 +33,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformCookieJar.h>
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

@@ -713,14 +713,8 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
             return;
         }
     }
-    // Only these platforms provide a way to continue without credentials.
-    // If we can't continue with credentials, we need to cancel the load altogether.
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(CURL) || PLATFORM(GTK) || PLATFORM(EFL)
     challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
     ASSERT(!m_handle || !m_handle->hasAuthenticationChallenge());
-#else
-    didFail(blockedError());
-#endif
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -747,7 +741,7 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
     cancel();
 }
 
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
+#if PLATFORM(COCOA)
 
 void ResourceLoader::schedule(SchedulePair& pair)
 {

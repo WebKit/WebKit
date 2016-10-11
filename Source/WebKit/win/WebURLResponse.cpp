@@ -35,7 +35,7 @@
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -406,7 +406,7 @@ HRESULT WebURLResponse::sslPeerCertificate(_Out_ ULONG_PTR* result)
         return E_POINTER;
     *result = 0;
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     CFDictionaryRef dict = certificateDictionary();
     if (!dict)
         return E_FAIL;
@@ -475,7 +475,7 @@ const ResourceResponse& WebURLResponse::resourceResponse() const
     return m_response;
 }
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 CFDictionaryRef WebURLResponse::certificateDictionary() const
 {
     if (m_SSLCertificateInfo)

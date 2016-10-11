@@ -23,16 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CredentialCocoa_h
-#define CredentialCocoa_h
+#pragma once
 
 #include "CredentialBase.h"
 #include <Security/SecBase.h>
 #include <wtf/RetainPtr.h>
-
-#if USE(CFNETWORK)
-#include "CFNetworkSPI.h"
-#endif
 
 OBJC_CLASS NSURLCredential;
 
@@ -52,18 +47,12 @@ public:
 
     Credential(const Credential&, CredentialPersistence);
 
-#if USE(CFNETWORK)
-    explicit Credential(CFURLCredentialRef);
-#endif
     WEBCORE_EXPORT explicit Credential(NSURLCredential *);
 
     WEBCORE_EXPORT bool isEmpty() const;
 
     bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(m_nsCredential.get()); }
 
-#if USE(CFNETWORK)
-    CFURLCredentialRef cfCredential() const;
-#endif
     WEBCORE_EXPORT NSURLCredential *nsCredential() const;
 
     static bool platformCompare(const Credential&, const Credential&);
@@ -75,5 +64,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CredentialCocoa_h

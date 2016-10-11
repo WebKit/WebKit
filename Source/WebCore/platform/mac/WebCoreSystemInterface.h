@@ -77,14 +77,6 @@ typedef struct _NSRect NSRect;
 #include <CoreGraphics/CoreGraphics.h>
 #endif
 
-#if USE(CFNETWORK)
-typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
-typedef struct _CFURLCredential* WKCFURLCredentialRef;
-typedef struct _CFURLRequest* CFMutableURLRequestRef;
-typedef const struct _CFURLRequest* CFURLRequestRef;
-#endif
-
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS CALayer;

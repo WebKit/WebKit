@@ -26,7 +26,7 @@
 #include "config.h"
 #include "LoaderRunLoopCF.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <limits>
@@ -87,4 +87,4 @@ CFRunLoopRef loaderRunLoop()
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

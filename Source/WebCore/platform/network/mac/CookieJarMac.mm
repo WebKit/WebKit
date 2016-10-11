@@ -27,19 +27,12 @@
 #import "PlatformCookieJar.h"
 
 #import "CFNetworkSPI.h"
-#import "NetworkStorageSession.h"
-#import "WebCoreSystemInterface.h"
-#import <wtf/BlockObjCExceptions.h>
-
-namespace WebCore {
-static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession&);
-}
-
-#if !USE(CFNETWORK)
-
 #import "Cookie.h"
 #import "CookieStorage.h"
+#import "NetworkStorageSession.h"
 #import "URL.h"
+#import "WebCoreSystemInterface.h"
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/Optional.h>
 #import <wtf/text/StringBuilder.h>
 
@@ -191,6 +184,7 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     NSURL *cookieURL = url;
     NSDictionary *headerFields = [NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"];
 
+    // FIXME: Is this needed on iOS, too?
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     NSArray *unfilteredCookies = [NSHTTPCookie _parsedCookiesWithResponseHeaderFields:headerFields forURL:cookieURL];
 #else
@@ -260,6 +254,15 @@ void deleteCookie(const NetworkStorageSession& session, const URL& url, const St
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession& session)
+{
+    auto cookieStorage = session.cookieStorage();
+    if (!cookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cookieStorage)
+        return [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    
+    return [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorage.get()] autorelease];
+}
+
 void addCookie(const NetworkStorageSession& session, const URL& url, const Cookie& cookie)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -280,12 +283,10 @@ void addCookie(const NetworkStorageSession& session, const URL& url, const Cooki
         NSHTTPCookieExpires: [NSDate dateWithTimeIntervalSince1970:cookie.expires / 1000.0],
     }];
 
-#if !USE(CFNETWORK)
     if (!cookieStorage) {
         [WebCore::cookieStorage(session) setCookie:httpCookie];
         return;
     }
-#endif // !USE(CFNETWORK)
 
     CFHTTPCookieStorageSetCookie(cookieStorage.get(), [httpCookie _CFHTTPCookie]);
 
@@ -307,21 +308,6 @@ void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<Strin
 void deleteAllCookies(const NetworkStorageSession& session)
 {
     wkDeleteAllHTTPCookies(session.cookieStorage().get());
-}
-
-}
-
-#endif // !USE(CFNETWORK)
-
-namespace WebCore {
-
-static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession& session)
-{
-    auto cookieStorage = session.cookieStorage();
-    if (!cookieStorage || [NSHTTPCookieStorage sharedHTTPCookieStorage]._cookieStorage == cookieStorage)
-        return [NSHTTPCookieStorage sharedHTTPCookieStorage];
-
-    return [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorage.get()] autorelease];
 }
 
 void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
@@ -352,7 +338,6 @@ void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vecto
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }
-
 
 void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point timePoint)
 {

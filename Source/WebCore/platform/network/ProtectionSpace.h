@@ -23,12 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ProtectionSpace_h
-#define ProtectionSpace_h
+#pragma once
 
 #if PLATFORM(COCOA)
 #include "ProtectionSpaceCocoa.h"
-#elif USE(CFNETWORK)
+#elif USE(CFURLCONNECTION)
 #include "ProtectionSpaceCFNet.h"
 #else
 
@@ -50,5 +49,3 @@ public:
 } // namespace WebCore
 
 #endif
-
-#endif // ProtectionSpace_h

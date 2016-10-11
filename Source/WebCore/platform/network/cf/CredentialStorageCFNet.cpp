@@ -26,23 +26,14 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "AuthenticationCF.h"
 #include "CFNetworkSPI.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
-#include <wtf/RetainPtr.h>
-
-#if PLATFORM(COCOA)
-#include "WebCoreSystemInterface.h"
-#elif PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
-#endif
-
-#if PLATFORM(IOS)
-#include <CFNetwork/CFURLCredentialStorage.h>
-#endif
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
     
@@ -54,29 +45,11 @@ static inline CFURLCredentialRef copyCredentialFromProtectionSpace(CFURLProtecti
 
 Credential CredentialStorage::getFromPersistentStorage(const ProtectionSpace& protectionSpace)
 {
-#if PLATFORM(COCOA)
-    auto credentialCF = adoptCF(copyCredentialFromProtectionSpace(protectionSpace.cfSpace()));
-    return Credential(credentialCF.get());
-#else
     auto protectionSpaceCF = adoptCF(createCF(protectionSpace));
     auto credentialCF = adoptCF(copyCredentialFromProtectionSpace(protectionSpaceCF.get()));
     return core(credentialCF.get());
-#endif
 }
-
-#if PLATFORM(IOS)
-void CredentialStorage::saveToPersistentStorage(const ProtectionSpace& protectionSpace, const Credential& credential)
-{
-    RetainPtr<CFURLCredentialStorageRef> storageCF = adoptCF(CFURLCredentialStorageCreate(0));
-
-    if (credential.persistence() == CredentialPersistenceNone) {
-        Credential sessionCredential(credential, CredentialPersistenceForSession);
-        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), sessionCredential.cfCredential(), protectionSpace.cfSpace());
-    } else
-        CFURLCredentialStorageSetDefaultCredentialForProtectionSpace(storageCF.get(), credential.cfCredential(), protectionSpace.cfSpace());
-}
-#endif
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

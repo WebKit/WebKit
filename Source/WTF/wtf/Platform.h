@@ -559,10 +559,6 @@
 
 #if PLATFORM(IOS)
 
-#if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000
-#define USE_CFNETWORK 1
-#endif
-
 #define HAVE_NETWORK_EXTENSION 1
 #define HAVE_READLINE 1
 #define USE_UIKIT_EDITING 1
@@ -592,10 +588,10 @@
 #endif
 
 #if PLATFORM(WIN) && !USE(WINGDI) && !PLATFORM(WIN_CAIRO)
-#define USE_CFNETWORK 1
+#define USE_CFURLCONNECTION 1
 #endif
 
-#if USE(CFNETWORK) || PLATFORM(COCOA)
+#if USE(CFURLCONNECTION) || PLATFORM(COCOA)
 #define USE_CFURLCACHE 1
 #endif
 
@@ -950,9 +946,6 @@
 #if PLATFORM(COCOA)
 #define USE_PROTECTION_SPACE_AUTH_CALLBACK 1
 #endif
-
-/* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
-#define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
 #if PLATFORM(COCOA) && HAVE(ACCESSIBILITY)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1

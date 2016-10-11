@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AuthenticationCF_h
-#define AuthenticationCF_h
+#pragma once
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include <CFNetwork/CFURLCredentialPriv.h>
 
@@ -40,20 +39,10 @@ class Credential;
 class ProtectionSpace;
 
 CFURLAuthChallengeRef createCF(const AuthenticationChallenge&);
-#if PLATFORM(WIN)
 CFURLCredentialRef createCF(const Credential&);
 CFURLProtectionSpaceRef createCF(const ProtectionSpace&);
-#endif
-
-#if PLATFORM(COCOA)
-AuthenticationChallenge core(CFURLAuthChallengeRef);
-#endif
-#if PLATFORM(WIN)
 Credential core(CFURLCredentialRef);
 ProtectionSpace core(CFURLProtectionSpaceRef);
-#endif
 }
 
-#endif // USE(CFNETWORK)
-
-#endif // AuthenticationCF_h
+#endif // USE(CFURLCONNECTION)

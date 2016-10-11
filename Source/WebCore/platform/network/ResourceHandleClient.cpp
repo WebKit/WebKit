@@ -62,7 +62,7 @@ void ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync(ResourceHa
 }
 #endif
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, CFCachedURLResponseRef response)
 {
     handle->continueWillCacheResponse(response);

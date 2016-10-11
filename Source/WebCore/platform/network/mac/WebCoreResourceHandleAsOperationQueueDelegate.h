@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCoreResourceHandleAsOperationQueueDelegate_h
-#define WebCoreResourceHandleAsOperationQueueDelegate_h
-
-#if !USE(CFNETWORK)
+#pragma once
 
 #include "WebCoreResourceHandleAsDelegate.h"
 #include <dispatch/dispatch.h>
@@ -58,6 +55,3 @@ class ResourceHandle;
 @interface WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate : WebCoreResourceHandleAsOperationQueueDelegate
 
 @end
-
-#endif // !USE(CFNETWORK)
-#endif // WebCoreResourceHandleAsOperationQueueDelegate_h

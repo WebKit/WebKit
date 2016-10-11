@@ -40,11 +40,6 @@
 
 #import "WebTypesInternal.h"
 
-#if USE(CFNETWORK)
-#import <CFNetwork/CFNetwork.h>
-#import <CFNetwork/CFURLConnection.h>
-#endif
-
 using namespace WebCore;
 
 @class NSURLConnectionDelegateProxy;
@@ -60,14 +55,6 @@ using namespace WebCore;
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate
              directory:(NSString *)directory;
-
-#if USE(CFNETWORK)
-- (id)_initWithLoadingCFURLConnection:(CFURLConnectionRef)connection
-                              request:(CFURLRequestRef)request
-                             response:(CFURLResponseRef)response
-                             delegate:(id)delegate
-                                proxy:(NSURLConnectionDelegateProxy *)proxy;
-#endif
 
 @end
 
@@ -230,18 +217,6 @@ using namespace WebCore;
     [self _setRealDelegate:delegate];
     return [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
 }
-
-#if USE(CFNETWORK)
-- (id)_initWithLoadingCFURLConnection:(CFURLConnectionRef)connection
-                              request:(CFURLRequestRef)request
-                             response:(CFURLResponseRef)response
-                             delegate:(id)delegate
-                                proxy:(NSURLConnectionDelegateProxy *)proxy
-{
-    [self _setRealDelegate:delegate];
-    return [super _initWithLoadingCFURLConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
-}
-#endif
 
 - (id)_initWithRequest:(NSURLRequest *)request
               delegate:(id)delegate

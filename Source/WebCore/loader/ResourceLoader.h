@@ -143,7 +143,7 @@ public:
 
     const LoadTiming& loadTiming() { return m_loadTiming; }
 
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
+#if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
     void unschedule(WTF::SchedulePair&);
 #endif
@@ -163,11 +163,8 @@ protected:
 
     const ResourceLoaderOptions& options() { return m_options; }
 
-#if PLATFORM(COCOA) && !USE(CFNETWORK)
+#if PLATFORM(COCOA)
     NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse*) override;
-#endif
-#if PLATFORM(COCOA) && USE(CFNETWORK)
-    CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif
 
     virtual void willSendRequestInternal(ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -208,7 +205,7 @@ private:
 #if PLATFORM(IOS)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) override;
 #endif
-#if PLATFORM(WIN) && USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
 #endif

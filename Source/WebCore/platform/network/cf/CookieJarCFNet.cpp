@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformCookieJar.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "CFNetworkSPI.h"
 #include "Cookie.h"
@@ -255,4 +255,4 @@ void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::sy
 
 } // namespace WebCore
 
-#endif // USE(CFNETWORK)
+#endif // USE(CFURLCONNECTION)

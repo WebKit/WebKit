@@ -26,12 +26,13 @@
 #include "config.h"
 #include "SynchronousResourceHandleCFURLConnectionDelegate.h"
 
-#if USE(CFNETWORK)
+#if USE(CFURLCONNECTION)
 
 #include "AuthenticationCF.h"
 #include "AuthenticationChallenge.h"
 #include "LoaderRunLoopCF.h"
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
@@ -39,20 +40,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include "CFNetworkSPI.h"
-#include "WebCoreSystemInterface.h"
-#include "WebCoreURLResponse.h"
-#endif // PLATFORM(COCOA)
-
-#if PLATFORM(IOS)
-#include "WebCoreThread.h"
-#endif // PLATFORM(IOS)
-
-#if PLATFORM(WIN)
-#include "MIMETypeRegistry.h"
-#endif // PLATFORM(WIN)
 
 namespace WebCore {
 
@@ -63,20 +50,11 @@ SynchronousResourceHandleCFURLConnectionDelegate::SynchronousResourceHandleCFURL
 
 void SynchronousResourceHandleCFURLConnectionDelegate::setupRequest(CFMutableURLRequestRef request)
 {
-#if PLATFORM(IOS)
-    CFURLRequestSetShouldStartSynchronously(request, 1);
-#endif
 }
 
 void SynchronousResourceHandleCFURLConnectionDelegate::setupConnectionScheduling(CFURLConnectionRef connection)
 {
-#if PLATFORM(WIN)
     CFURLConnectionScheduleWithCurrentMessageQueue(connection);
-#elif PLATFORM(IOS)
-    CFURLConnectionScheduleWithRunLoop(connection, WebThreadRunLoop(), kCFRunLoopDefaultMode);
-#else
-    CFURLConnectionScheduleWithRunLoop(connection, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-#endif
     CFURLConnectionScheduleDownloadWithRunLoop(connection, loaderRunLoop(), kCFRunLoopDefaultMode);
 }
 
@@ -103,7 +81,6 @@ CFURLRequestRef SynchronousResourceHandleCFURLConnectionDelegate::willSendReques
     return newCFRequest;
 }
 
-#if !PLATFORM(COCOA)
 static void setDefaultMIMEType(CFURLResponseRef response)
 {
     static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString().leakRef();
@@ -133,7 +110,6 @@ static void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
     if (result != originalResult)
         CFURLResponseSetMIMEType(cfResponse, result.get());
 }
-#endif // !PLATFORM(COCOA)
 
 void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)
 {
@@ -142,21 +118,6 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
     if (!m_handle->client())
         return;
 
-#if PLATFORM(COCOA)
-    // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-    auto msg = CFURLResponseGetHTTPResponse(cfResponse);
-    int statusCode = msg ? CFHTTPMessageGetResponseStatusCode(msg) : 0;
-
-    if (statusCode != 304) {
-        bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequest::Requester::Main;
-        adjustMIMETypeIfNecessary(cfResponse, isMainResourceLoad);
-    }
-
-#if !PLATFORM(IOS)
-    if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
-        CFURLResponseSetMIMEType(cfResponse, CFSTR("text/html"));
-#endif // !PLATFORM(IOS)
-#else
     if (!CFURLResponseGetMIMEType(cfResponse))
         adjustMIMETypeIfNecessary(cfResponse);
 
@@ -165,7 +126,6 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
         ASSERT(!m_handle->shouldContentSniff());
         setDefaultMIMEType(cfResponse);
     }
-#endif
 
 #if USE(QUICK_LOOK)
     m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, this, cfResponse));
@@ -174,11 +134,7 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 #endif
     
     ResourceResponse resourceResponse(cfResponse);
-#if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
-    ResourceHandle::getConnectionTimingData(connection, resourceResponse.networkLoadTiming());
-#else
     UNUSED_PARAM(connection);
-#endif
     
     m_handle->client()->didReceiveResponse(m_handle, WTFMove(resourceResponse));
 }
@@ -224,7 +180,6 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didFail(CFErrorRef error)
 
 CFCachedURLResponseRef SynchronousResourceHandleCFURLConnectionDelegate::willCacheResponse(CFCachedURLResponseRef cachedResponse)
 {
-#if PLATFORM(WIN)
     // Workaround for <rdar://problem/6300990> Caching does not respect Vary HTTP header.
     // FIXME: WebCore cache has issues with Vary, too (bug 58797, bug 71509).
     CFURLResponseRef wrappedResponse = CFCachedURLResponseGetWrappedResponse(cachedResponse);
@@ -234,16 +189,8 @@ CFCachedURLResponseRef SynchronousResourceHandleCFURLConnectionDelegate::willCac
         if (varyValue)
             return 0;
     }
-#endif // PLATFORM(WIN)
-
-#if PLATFORM(WIN)
     if (m_handle->client() && !m_handle->client()->shouldCacheResponse(m_handle, cachedResponse))
         return 0;
-#else
-    CFCachedURLResponseRef newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
-    if (newResponse != cachedResponse)
-        return newResponse;
-#endif
 
     CFRetain(cachedResponse);
     return cachedResponse;
@@ -280,14 +227,7 @@ Boolean SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtection
 
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace(handle=%p (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-#if PLATFORM(IOS)
-    ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace);
-    if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown)
-        return false;
-    return m_handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
-#else
     return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
-#endif
 }
 #endif // USE(PROTECTION_SPACE_AUTH_CALLBACK)
 
