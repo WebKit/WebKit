@@ -17,9 +17,8 @@
  */
 
 #include "config.h"
-#include "DataObjectGtk.h"
+#include "SelectionData.h"
 
-#include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -33,23 +32,13 @@ static void replaceNonBreakingSpaceWithSpace(String& str)
     str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
-const HashMap<String, String>& DataObjectGtk::unknownTypes() const
-{
-    return m_unknownTypeData;
-}
-
-void DataObjectGtk::setText(const String& newText)
+void SelectionData::setText(const String& newText)
 {
     m_text = newText;
     replaceNonBreakingSpaceWithSpace(m_text);
 }
 
-void DataObjectGtk::setMarkup(const String& newMarkup)
-{
-    m_markup = newMarkup;
-}
-
-void DataObjectGtk::setURIList(const String& uriListString)
+void SelectionData::setURIList(const String& uriListString)
 {
     m_uriList = uriListString;
 
@@ -90,7 +79,7 @@ void DataObjectGtk::setURIList(const String& uriListString)
     }
 }
 
-void DataObjectGtk::setURL(const URL& url, const String& label)
+void SelectionData::setURL(const URL& url, const String& label)
 {
     m_url = url;
     m_uriList = url;
@@ -110,17 +99,7 @@ void DataObjectGtk::setURL(const URL& url, const String& label)
     setMarkup(markup.toString());
 }
 
-void DataObjectGtk::clearText()
-{
-    m_text = emptyString();
-}
-
-void DataObjectGtk::clearMarkup()
-{
-    m_markup = emptyString();
-}
-
-String DataObjectGtk::urlLabel() const
+const String& SelectionData::urlLabel() const
 {
     if (hasText())
         return text();
@@ -128,24 +107,25 @@ String DataObjectGtk::urlLabel() const
     if (hasURL())
         return url();
 
-    return String();
+    return emptyString();
 }
 
-void DataObjectGtk::clearAllExceptFilenames()
+void SelectionData::clearAllExceptFilenames()
 {
-    m_text = emptyString();
-    m_markup = emptyString();
-    m_uriList = emptyString();
-    m_url = URL();
-    m_image = nullptr;
+    clearText();
+    clearMarkup();
+    clearURIList();
+    clearURL();
+    clearImage();
+
     m_unknownTypeData.clear();
     m_canSmartReplace = false;
 }
 
-void DataObjectGtk::clearAll()
+void SelectionData::clearAll()
 {
     clearAllExceptFilenames();
     m_filenames.clear();
 }
 
-}
+} // namespace WebCore

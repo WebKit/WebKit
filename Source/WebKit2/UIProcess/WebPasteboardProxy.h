@@ -42,10 +42,7 @@ namespace WebKit {
 
 class WebFrameProxy;
 class WebProcessProxy;
-
-#if PLATFORM(GTK)
-class PasteboardContent;
-#endif
+struct WebSelectionData;
 
 class WebPasteboardProxy : public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebPasteboardProxy);
@@ -92,8 +89,8 @@ private:
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif
 #if PLATFORM(GTK)
-    void writeToClipboard(const String& pasteboardName, const PasteboardContent&);
-    void readFromClipboard(const String& pasteboardName, PasteboardContent&);
+    void writeToClipboard(const String& pasteboardName, const WebSelectionData&);
+    void readFromClipboard(const String& pasteboardName, WebSelectionData&);
 
     WebFrameProxy* m_primarySelectionOwner { nullptr };
     WebFrameProxy* m_frameWritingToClipboard { nullptr };

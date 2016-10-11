@@ -21,12 +21,10 @@
 #include "WebEditorClient.h"
 
 #include "PlatformKeyboardEvent.h"
-#include <WebCore/DataObjectGtk.h>
 #include <WebCore/Document.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
-#include <WebCore/FrameDestructionObserver.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/markup.h>

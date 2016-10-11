@@ -26,31 +26,28 @@
 #include "config.h"
 #include "WebPasteboardProxy.h"
 
-#include "PasteboardContent.h"
 #include "WebFrameProxy.h"
+#include "WebSelectionData.h"
 #include <WebCore/PlatformPasteboard.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/TemporaryChange.h>
-#include <wtf/text/StringHash.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const PasteboardContent& pasteboardContent)
+void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const WebSelectionData& selection)
 {
     TemporaryChange<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, m_primarySelectionOwner);
-    PlatformPasteboard(pasteboardName).writeToClipboard(pasteboardContent.dataObject.get(), [this] {
+    PlatformPasteboard(pasteboardName).writeToClipboard(selection.selectionData, [this] {
         if (m_frameWritingToClipboard == m_primarySelectionOwner)
             return;
         setPrimarySelectionOwner(nullptr);
     });
 }
 
-void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, PasteboardContent& pasteboardContent)
+void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, WebSelectionData& selection)
 {
-    pasteboardContent = PasteboardContent(PlatformPasteboard(pasteboardName).readFromClipboard());
+    selection = WebSelectionData(PlatformPasteboard(pasteboardName).readFromClipboard());
 }
 
 void WebPasteboardProxy::setPrimarySelectionOwner(WebFrameProxy* frame)

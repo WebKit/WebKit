@@ -1,3 +1,59 @@
+2016-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename DataObjectGtk as SelectionData
+        https://bugs.webkit.org/show_bug.cgi?id=162380
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformGTK.cmake:
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (IPC::ArgumentCoder<SelectionData>::encode):
+        (IPC::ArgumentCoder<SelectionData>::decode):
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/gtk/WebSelectionData.cpp: Renamed from Source/WebKit2/Shared/gtk/PasteboardContent.cpp.
+        (WebKit::WebSelectionData::WebSelectionData):
+        (WebKit::WebSelectionData::encode):
+        (WebKit::WebSelectionData::decode):
+        * Shared/gtk/WebSelectionData.h: Renamed from Source/WebKit2/Shared/gtk/PasteboardContent.h.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::startDrag):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::DroppingContext::DroppingContext):
+        (WebKit::DragAndDropHandler::startDrag):
+        (WebKit::DragAndDropHandler::fillDragData):
+        (WebKit::DragAndDropHandler::finishDrag):
+        (WebKit::DragAndDropHandler::dropDataSelection):
+        (WebKit::DragAndDropHandler::dragEntered):
+        (WebKit::DragAndDropHandler::dragDataSelection):
+        (WebKit::DragAndDropHandler::dragMotion):
+        (WebKit::DragAndDropHandler::dragLeave):
+        (WebKit::DragAndDropHandler::drop):
+        * UIProcess/gtk/DragAndDropHandler.h:
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        (WebKit::WebPasteboardProxy::writeToClipboard):
+        (WebKit::WebPasteboardProxy::readFromClipboard):
+        (WebKit::WebPasteboardProxy::setPrimarySelectionOwner): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::writeToClipboard):
+        (WebKit::WebPlatformStrategies::readFromClipboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-09-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Clean up DataObjectGtk handling

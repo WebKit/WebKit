@@ -70,11 +70,11 @@ list(APPEND WebKit2_SOURCES
     Shared/gtk/NativeWebMouseEventGtk.cpp
     Shared/gtk/NativeWebTouchEventGtk.cpp
     Shared/gtk/NativeWebWheelEventGtk.cpp
-    Shared/gtk/PasteboardContent.cpp
     Shared/gtk/PrintInfoGtk.cpp
     Shared/gtk/ProcessExecutablePathGtk.cpp
     Shared/gtk/WebContextMenuItemGtk.cpp
     Shared/gtk/WebEventFactory.cpp
+    Shared/gtk/WebSelectionData.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp
 

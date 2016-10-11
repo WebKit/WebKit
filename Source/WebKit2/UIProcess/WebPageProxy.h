@@ -807,7 +807,7 @@ public:
 #endif
 #endif
 #if PLATFORM(GTK)
-    void startDrag(PasteboardContent&&, uint64_t dragOperation, const ShareableBitmap::Handle& dragImage);
+    void startDrag(WebSelectionData&&, uint64_t dragOperation, const ShareableBitmap::Handle& dragImage);
 #endif
 #endif
 

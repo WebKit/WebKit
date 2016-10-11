@@ -70,7 +70,7 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "PasteboardContent.h"
+#include "WebSelectionData.h"
 #endif
 
 using namespace WebCore;
@@ -346,17 +346,17 @@ long WebPlatformStrategies::changeCount()
 #if PLATFORM(GTK)
 // PasteboardStrategy
 
-void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const DataObjectGtk& dataObject)
+void WebPlatformStrategies::writeToClipboard(const String& pasteboardName, const SelectionData& selection)
 {
-    PasteboardContent pasteboardContent(dataObject);
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, pasteboardContent), 0);
+    WebSelectionData selectionData(selection);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPasteboardProxy::WriteToClipboard(pasteboardName, selectionData), 0);
 }
 
-Ref<DataObjectGtk> WebPlatformStrategies::readFromClipboard(const String& pasteboardName)
+Ref<SelectionData> WebPlatformStrategies::readFromClipboard(const String& pasteboardName)
 {
-    PasteboardContent pasteboardContent;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFromClipboard(pasteboardName), Messages::WebPasteboardProxy::ReadFromClipboard::Reply(pasteboardContent), 0);
-    return WTFMove(pasteboardContent.dataObject);
+    WebSelectionData selection;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadFromClipboard(pasteboardName), Messages::WebPasteboardProxy::ReadFromClipboard::Reply(selection), 0);
+    return WTFMove(selection.selectionData);
 }
 
 #endif // PLATFORM(GTK)

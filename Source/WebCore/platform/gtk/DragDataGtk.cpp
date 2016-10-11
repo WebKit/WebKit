@@ -17,7 +17,7 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "DataObjectGtk.h"
+#include "SelectionData.h"
 
 namespace WebCore {
 

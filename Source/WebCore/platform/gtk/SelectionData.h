@@ -26,46 +26,52 @@
 
 namespace WebCore {
 
-class DataObjectGtk : public RefCounted<DataObjectGtk> {
+class SelectionData : public RefCounted<SelectionData> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<DataObjectGtk> create()
+    static Ref<SelectionData> create()
     {
-        return adoptRef(*new DataObjectGtk);
+        return adoptRef(*new SelectionData);
     }
 
+    void setText(const String&);
+    const String& text() const { return m_text; }
+    bool hasText() const { return !m_text.isEmpty(); }
+    void clearText() { m_text = emptyString(); }
+
+    void setMarkup(const String& newMarkup) { m_markup = newMarkup; }
+    const String& markup() const { return m_markup; }
+    bool hasMarkup() const { return !m_markup.isEmpty(); }
+    void clearMarkup() { m_markup = emptyString(); }
+
+    void setURL(const URL&, const String&);
     const URL& url() const { return m_url; }
+    const String& urlLabel() const;
+    bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
+    void clearURL() { m_url = URL(); }
+
+    void setURIList(const String&);
     const String& uriList() const { return m_uriList; }
     const Vector<String>& filenames() const { return m_filenames; }
-    Image* image() const { return m_image.get(); }
-    void setImage(Image* newImage) { m_image = newImage; }
-    void setURL(const URL&, const String&);
-    bool hasUnknownTypeData() const { return !m_unknownTypeData.isEmpty(); }
-    bool hasText() const { return !m_text.isEmpty(); }
-    bool hasMarkup() const { return !m_markup.isEmpty(); }
     bool hasURIList() const { return !m_uriList.isEmpty(); }
-    bool hasURL() const { return !m_url.isEmpty() && m_url.isValid(); }
     bool hasFilenames() const { return !m_filenames.isEmpty(); }
-    bool hasImage() const { return m_image; }
-    bool canSmartReplace() const { return m_canSmartReplace; }
     void clearURIList() { m_uriList = emptyString(); }
-    void clearURL() { m_url = URL(); }
+
+    void setImage(Image* newImage) { m_image = newImage; }
+    Image* image() const { return m_image.get(); }
+    bool hasImage() const { return m_image; }
     void clearImage() { m_image = nullptr; }
 
-    String text() const { return m_text; }
-    String markup() const { return m_markup; }
-    String unknownTypeData(const String& type) const { return m_unknownTypeData.get(type); }
-    const HashMap<String, String>& unknownTypes() const;
-    void setText(const String&);
-    void setMarkup(const String&);
     void setUnknownTypeData(const String& type, const String& data) { m_unknownTypeData.set(type, data); }
-    void setURIList(const String&);
-    void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
-    String urlLabel() const;
+    String unknownTypeData(const String& type) const { return m_unknownTypeData.get(type); }
+    const HashMap<String, String>& unknownTypes() const { return m_unknownTypeData; }
+    bool hasUnknownTypeData() const { return !m_unknownTypeData.isEmpty(); }
 
-    void clearAllExceptFilenames();
+    void setCanSmartReplace(bool canSmartReplace) { m_canSmartReplace = canSmartReplace; }
+    bool canSmartReplace() const { return m_canSmartReplace; }
+
     void clearAll();
-    void clearText();
-    void clearMarkup();
+    void clearAllExceptFilenames();
 
 private:
     String m_text;
@@ -78,4 +84,4 @@ private:
     bool m_canSmartReplace { false };
 };
 
-}
+} // namespace WebCore

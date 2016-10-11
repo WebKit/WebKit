@@ -28,7 +28,6 @@
 #include "Editor.h"
 
 #include "CachedImage.h"
-#include "DataObjectGtk.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "HTMLEmbedElement.h"
@@ -41,6 +40,7 @@
 #include "RenderImage.h"
 #include "SVGElement.h"
 #include "SVGImageElement.h"
+#include "SelectionData.h"
 #include "XLinkNames.h"
 #include "markup.h"
 
@@ -53,16 +53,16 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
     if (!pasteboard.hasData())
         return nullptr;
 
-    const auto& dataObject = pasteboard.dataObject();
-    if (dataObject.hasMarkup() && frame.document())
-        return createFragmentFromMarkup(*frame.document(), dataObject.markup(), emptyString(), DisallowScriptingAndPluginContent);
+    const auto& selection = pasteboard.selectionData();
+    if (selection.hasMarkup() && frame.document())
+        return createFragmentFromMarkup(*frame.document(), selection.markup(), emptyString(), DisallowScriptingAndPluginContent);
 
     if (!allowPlainText)
         return nullptr;
 
-    if (dataObject.hasText()) {
+    if (selection.hasText()) {
         chosePlainText = true;
-        return createFragmentFromText(range, dataObject.text());
+        return createFragmentFromText(range, selection.text());
     }
 
     return nullptr;

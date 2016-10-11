@@ -29,12 +29,10 @@
 #if ENABLE(DRAG_SUPPORT)
 
 #include "WebPageProxy.h"
-#include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardHelper.h>
-#include <gtk/gtk.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -49,9 +47,8 @@ DragAndDropHandler::DragAndDropHandler(WebPageProxy& page)
 
 DragAndDropHandler::DroppingContext::DroppingContext(GdkDragContext* gdkContext, const IntPoint& position)
     : gdkContext(gdkContext)
-    , dataObject(DataObjectGtk::create())
     , lastMotionPosition(position)
-    , dropHappened(false)
+    , selectionData(SelectionData::create())
 {
 }
 
@@ -108,14 +105,14 @@ static inline DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction
     return static_cast<DragOperation>(action);
 }
 
-void DragAndDropHandler::startDrag(Ref<DataObjectGtk>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
+void DragAndDropHandler::startDrag(Ref<SelectionData>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
 {
 #if GTK_CHECK_VERSION(3, 16, 0)
-    m_draggingDataObject = WTFMove(selection);
-    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*m_draggingDataObject);
+    m_draggingSelectionData = WTFMove(selection);
+    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForSelectionData(*m_draggingSelectionData);
 #else
-    RefPtr<DataObjectGtk> dataObject = WTFMove(selection);
-    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForDataObject(*dataObject);
+    RefPtr<SelectionData> selectionData = WTFMove(selection);
+    GRefPtr<GtkTargetList> targetList = PasteboardHelper::singleton().targetListForSelectionData(*selectionData);
 #endif
 
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
@@ -132,7 +129,7 @@ void DragAndDropHandler::startDrag(Ref<DataObjectGtk>&& selection, DragOperation
 #else
     // We don't have gtk_drag_cancel() in GTK+ < 3.16, so we use the old code.
     // See https://bugs.webkit.org/show_bug.cgi?id=138468
-    m_draggingDataObjects.set(context, WTFMove(dataObject));
+    m_draggingSelectionDataMap.set(context, WTFMove(selectionData));
 #endif
 
     if (dragImage) {
@@ -152,11 +149,11 @@ void DragAndDropHandler::fillDragData(GdkDragContext* context, GtkSelectionData*
     if (m_dragContext.get() != context)
         return;
 
-    ASSERT(m_draggingDataObject);
-    PasteboardHelper::singleton().fillSelectionData(selectionData, info, *m_draggingDataObject);
+    ASSERT(m_draggingSelectionData);
+    PasteboardHelper::singleton().fillSelectionData(*m_draggingSelectionData, info, selectionData);
 #else
-    if (DataObjectGtk* dataObject = m_draggingDataObjects.get(context))
-        PasteboardHelper::singleton().fillSelectionData(selectionData, info, *dataObject);
+    if (auto* selection = m_draggingSelectionDataMap.get(context))
+        PasteboardHelper::singleton().fillSelectionData(*selection, info, selectionData);
 #endif
 }
 
@@ -168,13 +165,13 @@ void DragAndDropHandler::finishDrag(GdkDragContext* context)
     if (m_dragContext.get() != context)
         return;
 
-    if (!m_draggingDataObject)
+    if (!m_draggingSelectionData)
         return;
 
     m_dragContext = nullptr;
-    m_draggingDataObject = nullptr;
+    m_draggingSelectionData = nullptr;
 #else
-    if (!m_draggingDataObjects.remove(context))
+    if (!m_draggingSelectionDataMap.remove(context))
         return;
 #endif
 
@@ -186,14 +183,14 @@ void DragAndDropHandler::finishDrag(GdkDragContext* context)
     m_page.dragEnded(IntPoint(x, y), IntPoint(xRoot, yRoot), gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
 }
 
-DataObjectGtk* DragAndDropHandler::dataObjectForDropData(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info, IntPoint& position)
+SelectionData* DragAndDropHandler::dropDataSelection(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info, IntPoint& position)
 {
     DroppingContext* droppingContext = m_droppingContexts.get(context);
     if (!droppingContext)
         return nullptr;
 
     droppingContext->pendingDataRequests--;
-    PasteboardHelper::singleton().fillDataObjectFromDropData(selectionData, info, *droppingContext->dataObject);
+    PasteboardHelper::singleton().fillSelectionData(selectionData, info, droppingContext->selectionData);
     if (droppingContext->pendingDataRequests)
         return nullptr;
 
@@ -202,24 +199,24 @@ DataObjectGtk* DragAndDropHandler::dataObjectForDropData(GdkDragContext* context
     position = droppingContext->lastMotionPosition;
 
     // If there are no more pending requests, start sending dragging data to WebCore.
-    return droppingContext->dataObject.get();
+    return droppingContext->selectionData.ptr();
 }
 
 void DragAndDropHandler::dragEntered(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info, unsigned time)
 {
     IntPoint position;
-    DataObjectGtk* dataObject = dataObjectForDropData(context, selectionData, info, position);
-    if (!dataObject)
+    auto* selection = dropDataSelection(context, selectionData, info, position);
+    if (!selection)
         return;
 
-    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(selection, position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     m_page.resetCurrentDragInformation();
     m_page.dragEntered(dragData);
     DragOperation operation = m_page.currentDragOperation();
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
 
-DataObjectGtk* DragAndDropHandler::requestDragData(GdkDragContext* context, const IntPoint& position, unsigned time)
+SelectionData* DragAndDropHandler::dragDataSelection(GdkDragContext* context, const IntPoint& position, unsigned time)
 {
     std::unique_ptr<DroppingContext>& droppingContext = m_droppingContexts.add(context, nullptr).iterator->value;
     if (!droppingContext) {
@@ -237,16 +234,16 @@ DataObjectGtk* DragAndDropHandler::requestDragData(GdkDragContext* context, cons
     if (droppingContext->pendingDataRequests > 0)
         return nullptr;
 
-    return droppingContext->dataObject.get();
+    return droppingContext->selectionData.ptr();
 }
 
 void DragAndDropHandler::dragMotion(GdkDragContext* context, const IntPoint& position, unsigned time)
 {
-    DataObjectGtk* dataObject = requestDragData(context, position, time);
-    if (!dataObject)
+    auto* selection = dragDataSelection(context, position, time);
+    if (!selection)
         return;
 
-    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(selection, position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     m_page.dragUpdated(dragData);
     DragOperation operation = m_page.currentDragOperation();
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
@@ -275,7 +272,7 @@ void DragAndDropHandler::dragLeave(GdkDragContext* context)
             // Don't call dragExited if we have just received a drag-drop signal. This
             // happens in the case of a successful drop onto the view.
             const IntPoint& position = droppingContext->lastMotionPosition;
-            DragData dragData(droppingContext->dataObject.get(), position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), DragOperationNone);
+            DragData dragData(droppingContext->selectionData.ptr(), position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), DragOperationNone);
             m_page.dragExited(dragData);
             m_page.resetCurrentDragInformation();
         }
@@ -292,11 +289,7 @@ bool DragAndDropHandler::drop(GdkDragContext* context, const IntPoint& position,
 
     droppingContext->dropHappened = true;
 
-    DataObjectGtk* dataObject = droppingContext->dataObject.get();
-    if (!dataObject)
-        return false;
-
-    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(droppingContext->selectionData.ptr(), position, convertWidgetPointToScreenPoint(m_page.viewWidget(), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     SandboxExtension::Handle handle;
     SandboxExtension::HandleArray sandboxExtensionForUpload;
     m_page.performDragOperation(dragData, String(), handle, sandboxExtensionForUpload);

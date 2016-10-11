@@ -50,9 +50,9 @@ typedef struct IDataObject* DragDataRef;
 #include <wtf/text/WTFString.h>
 #elif PLATFORM(GTK)
 namespace WebCore {
-class DataObjectGtk;
+class SelectionData;
 }
-typedef WebCore::DataObjectGtk* DragDataRef;
+typedef WebCore::SelectionData* DragDataRef;
 #elif PLATFORM(EFL) || PLATFORM(IOS)
 typedef void* DragDataRef;
 #endif

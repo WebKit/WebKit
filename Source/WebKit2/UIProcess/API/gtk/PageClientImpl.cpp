@@ -254,7 +254,7 @@ void PageClientImpl::didChangeContentSize(const IntSize& size)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void PageClientImpl::startDrag(Ref<DataObjectGtk>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
+void PageClientImpl::startDrag(Ref<SelectionData>&& selection, DragOperation dragOperation, RefPtr<ShareableBitmap>&& dragImage)
 {
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
     webkitWebViewBaseDragAndDropHandler(webView).startDrag(WTFMove(selection), dragOperation, WTFMove(dragImage));

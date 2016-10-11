@@ -214,9 +214,8 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "PasteboardContent.h"
 #include "WebPrintOperationGtk.h"
-#include <WebCore/DataObjectGtk.h>
+#include "WebSelectionData.h"
 #include <gtk/gtk.h>
 #endif
 
@@ -3361,14 +3360,14 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 #if ENABLE(DRAG_SUPPORT)
 
 #if PLATFORM(GTK)
-void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, PasteboardContent&& selection, uint32_t flags)
+void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&& selection, uint32_t flags)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0));
         return;
     }
 
-    DragData dragData(selection.dataObject.ptr(), clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
+    DragData dragData(selection.selectionData.ptr(), clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
     switch (action) {
     case DragControllerActionEntered: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);

@@ -33,14 +33,11 @@
 namespace WebCore {
 
 class Color;
+class SelectionData;
 class SharedBuffer;
 class URL;
 struct PasteboardImage;
 struct PasteboardWebContent;
-
-#if PLATFORM(GTK)
-class DataObjectGtk;
-#endif
 
 class PasteboardStrategy {
 public:
@@ -73,8 +70,8 @@ public:
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif
 #if PLATFORM(GTK)
-    virtual void writeToClipboard(const String& pasteboardName, const DataObjectGtk&) = 0;
-    virtual Ref<DataObjectGtk> readFromClipboard(const String& pasteboardName) = 0;
+    virtual void writeToClipboard(const String& pasteboardName, const SelectionData&) = 0;
+    virtual Ref<SelectionData> readFromClipboard(const String& pasteboardName) = 0;
 #endif // PLATFORM(GTK)
 protected:
     virtual ~PasteboardStrategy()
