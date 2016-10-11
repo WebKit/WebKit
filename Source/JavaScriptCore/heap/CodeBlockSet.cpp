@@ -107,16 +107,17 @@ bool CodeBlockSet::contains(const LockHolder&, void* candidateCodeBlock)
     return m_oldCodeBlocks.contains(codeBlock) || m_newCodeBlocks.contains(codeBlock) || m_currentlyExecuting.contains(codeBlock);
 }
 
-void CodeBlockSet::writeBarrierCurrentlyExecutingCodeBlocks(Heap* heap)
+void CodeBlockSet::writeBarrierCurrentlyExecuting(Heap* heap)
 {
     LockHolder locker(&m_lock);
     if (verbose)
         dataLog("Remembering ", m_currentlyExecuting.size(), " code blocks.\n");
     for (CodeBlock* codeBlock : m_currentlyExecuting)
         heap->writeBarrier(codeBlock);
+}
 
-    // It's safe to clear this set because we won't delete the CodeBlocks
-    // in it until the next GC, and we'll recompute it at that time.
+void CodeBlockSet::clearCurrentlyExecuting()
+{
     m_currentlyExecuting.clear();
 }
 

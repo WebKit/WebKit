@@ -27,10 +27,35 @@
 
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
+#include "MarkedSpace.h"
 
 namespace JSC {
 
-inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, const HeapCell* cell)
+inline unsigned MarkedBlock::Handle::cellsPerBlock()
+{
+    return MarkedSpace::blockPayload / cellSize();
+}
+
+inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVersion)
+{
+    // This returns true if any of these is true:
+    // - We just created the block and so the bits are clear already.
+    // - This block has objects marked during the last GC, and so its version was up-to-date just
+    //   before the current collection did beginMarking(). This means that any objects that have 
+    //   their mark bit set are valid objects that were never deleted, and so are candidates for
+    //   marking in any conservative scan. Using our jargon, they are "live".
+    // - We did ~2^32 collections and rotated the version back to null, so we needed to hard-reset
+    //   everything. If the marks had been stale, we would have cleared them. So, we can be sure that
+    //   any set mark bit reflects objects marked during last GC, i.e. "live" objects.
+    // It would be absurd to use this method when not collecting, since this special "one version
+    // back" state only makes sense when we're in a concurrent collection and have to be
+    // conservative.
+    ASSERT(space()->isMarking());
+    return m_markingVersion == MarkedSpace::nullVersion
+        || MarkedSpace::nextVersion(m_markingVersion) == markingVersion;
+}
+
+inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, bool isMarking, const HeapCell* cell)
 {
     ASSERT(!isFreeListed());
     
@@ -39,22 +64,36 @@ inline bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, const HeapCe
             return true;
     }
     
-    MarkedBlock& block = this->block();
-    
     if (allocator()->isAllocated(this))
         return true;
     
-    if (block.areMarksStale(markingVersion))
-        return false;
+    MarkedBlock& block = this->block();
+    
+    if (block.areMarksStale()) {
+        if (!isMarking)
+            return false;
+        if (!block.marksConveyLivenessDuringMarking(markingVersion))
+            return false;
+    }
 
-    return block.isMarked(cell);
+    return block.m_marks.get(block.atomNumber(cell));
 }
 
-inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, const void* p)
+inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, bool isMarking, const void* p)
 {
     if (!m_block->isAtom(p))
         return false;
-    return isLive(markingVersion, static_cast<const HeapCell*>(p));
+    return isLive(markingVersion, isMarking, static_cast<const HeapCell*>(p));
+}
+
+inline bool MarkedBlock::Handle::isNewlyAllocatedStale() const
+{
+    return m_newlyAllocatedVersion != space()->newlyAllocatedVersion();
+}
+
+inline bool MarkedBlock::Handle::hasAnyNewlyAllocated()
+{
+    return !isNewlyAllocatedStale();
 }
 
 template <typename Functor>
@@ -87,9 +126,19 @@ inline IterationStatus MarkedBlock::Handle::forEachDeadCell(const Functor& funct
     return IterationStatus::Continue;
 }
 
-inline void MarkedBlock::resetMarkingVersion()
+inline Heap* MarkedBlock::heap() const
 {
-    m_markingVersion = MarkedSpace::nullVersion;
+    return &vm()->heap;
+}
+
+inline MarkedSpace* MarkedBlock::space() const
+{
+    return &heap()->objectSpace();
+}
+
+inline MarkedSpace* MarkedBlock::Handle::space() const
+{
+    return &heap()->objectSpace();
 }
 
 } // namespace JSC

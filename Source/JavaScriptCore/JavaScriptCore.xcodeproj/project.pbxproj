@@ -445,6 +445,7 @@
 		0F64B2791A7957B2006E4E66 /* CallEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F64B2771A7957B2006E4E66 /* CallEdge.cpp */; };
 		0F64B27A1A7957B2006E4E66 /* CallEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64B2781A7957B2006E4E66 /* CallEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F64EAF31C4ECD0600621E9B /* AirArgInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */; };
+		0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */; };
 		0F666EC0183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC1183566F900D017F1 /* FullBytecodeLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F666EC61835672B00D017F1 /* DFGAvailability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F666EC21835672B00D017F1 /* DFGAvailability.cpp */; };
@@ -2709,6 +2710,7 @@
 		0F64B2771A7957B2006E4E66 /* CallEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallEdge.cpp; sourceTree = "<group>"; };
 		0F64B2781A7957B2006E4E66 /* CallEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallEdge.h; sourceTree = "<group>"; };
 		0F64EAF21C4ECD0600621E9B /* AirArgInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirArgInlines.h; path = b3/air/AirArgInlines.h; sourceTree = "<group>"; };
+		0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeBlockSetInlines.h; sourceTree = "<group>"; };
 		0F666EBE183566F900D017F1 /* BytecodeLivenessAnalysisInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeLivenessAnalysisInlines.h; sourceTree = "<group>"; };
 		0F666EBF183566F900D017F1 /* FullBytecodeLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullBytecodeLiveness.h; sourceTree = "<group>"; };
 		0F666EC21835672B00D017F1 /* DFGAvailability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAvailability.cpp; path = dfg/DFGAvailability.cpp; sourceTree = "<group>"; };
@@ -5325,6 +5327,7 @@
 				0F1C3DD91BBCE09E00E523E4 /* CellState.h */,
 				0FD8A31117D4326C00CA2C40 /* CodeBlockSet.cpp */,
 				0FD8A31217D4326C00CA2C40 /* CodeBlockSet.h */,
+				0F664CE71DA304ED00B00A11 /* CodeBlockSetInlines.h */,
 				146B14DB12EB5B12001BEC1B /* ConservativeRoots.cpp */,
 				149DAAF212EB559D0083B12B /* ConservativeRoots.h */,
 				2A7A58EE1808A4C40020BDF7 /* DeferGC.cpp */,
@@ -7960,6 +7963,7 @@
 				BC18C41C0E16F5CD00B34460 /* JSCallbackObjectFunctions.h in Headers */,
 				657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */,
 				A7D801A91880D6A80026C39B /* JSCBuiltins.h in Headers */,
+				0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
 				0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */,

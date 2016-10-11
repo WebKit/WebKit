@@ -1,3 +1,98 @@
+2016-10-06  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedBlock should know what objects are live during marking
+        https://bugs.webkit.org/show_bug.cgi?id=162309
+
+        Reviewed by Geoffrey Garen.
+        
+        It used to be that we would forget which objects are live the moment we started collection.
+        That's because the flip at the beginning clears all mark bits.
+        
+        But we already have a facility for tracking objects that are live-but-not-marked. It's called
+        newlyAllocated. So, instead of clearing mark bits, we want to just transfer them to
+        newlyAllocated. Then we want to clear all newlyAllocated after GC.
+        
+        This implements such an approach, along with a versioning optimization for newlyAllocated.
+        Instead of walking the whole heap to clear newlyAllocated bits at the end of the GC, we bump
+        the newlyAllocatedVersion, which causes MarkedBlock to treat newlyAllocated as if it was
+        clear.
+        
+        We could have even avoided allocating newlyAllocated in most cases, since empirically most
+        blocks are either completely empty or completely full. An earlier version of this patch did
+        this, but it was not better than this patch. In fact, it seemed to actually be worse for PLT
+        and membuster.
+        
+        To validate this change, we now run the conservative scan after the beginMarking flip. And it
+        totally works!
+        
+        This is a huge step towards concurrent GC. It means that we ought to be able to run the
+        allocator while marking. Since we already separately made it possible to run the barrier
+        while marking, this means that we're pretty much ready for some serious concurrency action.
+        
+        This appears to be perf-neutral and space-neutral.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlockSet::mark): Deleted.
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::writeBarrierCurrentlyExecuting):
+        (JSC::CodeBlockSet::clearCurrentlyExecuting):
+        (JSC::CodeBlockSet::writeBarrierCurrentlyExecutingCodeBlocks): Deleted.
+        * heap/CodeBlockSet.h:
+        * heap/CodeBlockSetInlines.h: Added.
+        (JSC::CodeBlockSet::mark):
+        * heap/ConservativeRoots.cpp:
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::writeBarrierCurrentlyExecutingCodeBlocks):
+        (JSC::Heap::clearCurrentlyExecutingCodeBlocks):
+        * heap/Heap.h:
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::isPagedOut):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::Handle):
+        (JSC::MarkedBlock::Handle::sweepHelperSelectHasNewlyAllocated):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::resetAllocated):
+        (JSC::MarkedBlock::resetMarks):
+        (JSC::MarkedBlock::setNeedsDestruction):
+        (JSC::MarkedBlock::Handle::didAddToAllocator):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::isLiveCell):
+        (JSC::MarkedBlock::clearMarks): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::newlyAllocatedVersion):
+        (JSC::MarkedBlock::Handle::hasAnyNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::Handle::clearNewlyAllocated): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::cellsPerBlock):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::isLiveCell):
+        (JSC::MarkedBlock::Handle::isNewlyAllocatedStale):
+        (JSC::MarkedBlock::Handle::hasAnyNewlyAllocatedWithSweep):
+        (JSC::MarkedBlock::Handle::hasAnyNewlyAllocated):
+        (JSC::MarkedBlock::heap):
+        (JSC::MarkedBlock::space):
+        (JSC::MarkedBlock::Handle::space):
+        (JSC::MarkedBlock::resetMarkingVersion): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::endMarking):
+        (JSC::MarkedSpace::clearNewlyAllocated): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::nextVersion):
+        (JSC::MarkedSpace::newlyAllocatedVersion):
+        (JSC::MarkedSpace::markingVersion): Deleted.
+        * runtime/SamplingProfiler.cpp:
+
 2016-10-11  Mark Lam  <mark.lam@apple.com>
 
         Array.prototype.concat should not modify frozen objects.

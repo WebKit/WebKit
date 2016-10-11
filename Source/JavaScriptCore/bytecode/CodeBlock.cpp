@@ -36,6 +36,7 @@
 #include "BytecodeLivenessAnalysis.h"
 #include "BytecodeUseDef.h"
 #include "CallLinkStatus.h"
+#include "CodeBlockSet.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
 #include "DFGDriver.h"

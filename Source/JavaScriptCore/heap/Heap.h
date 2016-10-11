@@ -349,7 +349,6 @@ private:
     void snapshotUnswept();
     void deleteSourceProviderCaches();
     void notifyIncrementalSweeper();
-    void writeBarrierCurrentlyExecutingCodeBlocks();
     void prepareForAllocation();
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();

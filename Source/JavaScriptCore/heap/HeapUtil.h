@@ -51,6 +51,9 @@ public:
     {
         const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
         
+        ASSERT(heap.objectSpace().isMarking());
+        static const bool isMarking = true;
+        
         char* pointer = static_cast<char*>(passedPointer);
         
         // It could point to a large allocation.
@@ -85,7 +88,7 @@ public:
                 && set.contains(previousCandidate)
                 && previousCandidate->handle().cellKind() == HeapCell::Auxiliary) {
                 previousPointer = static_cast<char*>(previousCandidate->handle().cellAlign(previousPointer));
-                if (previousCandidate->handle().isLiveCell(markingVersion, previousPointer))
+                if (previousCandidate->handle().isLiveCell(markingVersion, isMarking, previousPointer))
                     func(previousPointer);
             }
         }
@@ -99,7 +102,7 @@ public:
             return;
         
         auto tryPointer = [&] (void* pointer) {
-            if (candidate->handle().isLiveCell(markingVersion, pointer))
+            if (candidate->handle().isLiveCell(markingVersion, isMarking, pointer))
                 func(pointer);
         };
     

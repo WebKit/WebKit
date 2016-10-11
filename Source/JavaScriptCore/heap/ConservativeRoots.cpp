@@ -27,7 +27,7 @@
 #include "ConservativeRoots.h"
 
 #include "CodeBlock.h"
-#include "CodeBlockSet.h"
+#include "CodeBlockSetInlines.h"
 #include "HeapInlines.h"
 #include "HeapUtil.h"
 #include "JITStubRoutineSet.h"

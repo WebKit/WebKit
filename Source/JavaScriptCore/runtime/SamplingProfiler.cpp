@@ -30,6 +30,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "CodeBlockSet.h"
 #include "Executable.h"
 #include "HeapInlines.h"
 #include "HeapIterationScope.h"

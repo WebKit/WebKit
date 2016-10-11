@@ -53,11 +53,8 @@ bool MarkedAllocator::isPagedOut(double deadline)
     unsigned itersSinceLastTimeCheck = 0;
     for (size_t index = 0; index < m_blocks.size(); ++index) {
         MarkedBlock::Handle* block = m_blocks[index];
-        if (block) {
-            // Forces us to touch the memory of the block, but has no semantic effect.
-            if (block->areMarksStale())
-                block->block().resetMarkingVersion();
-        }
+        if (block)
+            block->block().updateNeedsDestruction();
         ++itersSinceLastTimeCheck;
         if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
             double currentTime = WTF::monotonicallyIncreasingTime();
@@ -436,7 +433,8 @@ void MarkedAllocator::sweep()
 {
     m_unswept.forEachSetBit(
         [&] (size_t index) {
-            m_blocks[index]->sweep();
+            MarkedBlock::Handle* block = m_blocks[index];
+            block->sweep();
         });
 }
 

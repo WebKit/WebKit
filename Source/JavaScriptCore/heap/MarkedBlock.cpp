@@ -54,6 +54,7 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap)
 
 MarkedBlock::Handle::Handle(Heap& heap, void* blockSpace)
     : m_weakSet(heap.vm(), CellContainer())
+    , m_newlyAllocatedVersion(MarkedSpace::nullVersion)
 {
     m_block = new (NotNull, blockSpace) MarkedBlock(*heap.vm(), *this);
     
@@ -125,7 +126,7 @@ FreeList MarkedBlock::Handle::specializedSweep()
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (emptyMode == NotEmpty
             && ((marksMode == MarksNotStale && block.m_marks.get(i))
-                || (newlyAllocatedMode == HasNewlyAllocated && m_newlyAllocated->get(i)))) {
+                || (newlyAllocatedMode == HasNewlyAllocated && m_newlyAllocated.get(i)))) {
             isEmpty = false;
             continue;
         }
@@ -148,7 +149,7 @@ FreeList MarkedBlock::Handle::specializedSweep()
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
-        m_newlyAllocated = nullptr;
+        m_newlyAllocatedVersion = MarkedSpace::nullVersion;
 
     FreeList result = FreeList::list(head, count * cellSize());
     if (sweepMode == SweepToFreeList)
@@ -207,7 +208,7 @@ FreeList MarkedBlock::Handle::sweepHelperSelectEmptyMode(SweepMode sweepMode)
 template<MarkedBlock::Handle::EmptyMode emptyMode, DestructionMode destructionMode, MarkedBlock::Handle::ScribbleMode scribbleMode>
 FreeList MarkedBlock::Handle::sweepHelperSelectHasNewlyAllocated(SweepMode sweepMode)
 {
-    if (m_newlyAllocated)
+    if (hasAnyNewlyAllocated())
         return sweepHelperSelectSweepMode<emptyMode, destructionMode, scribbleMode, HasNewlyAllocated>(sweepMode);
     return sweepHelperSelectSweepMode<emptyMode, destructionMode, scribbleMode, DoesNotHaveNewlyAllocated>(sweepMode);
 }
@@ -275,8 +276,8 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
     // allocated from our free list are not currently marked, so we need another
     // way to tell what's live vs dead. 
     
-    ASSERT(!m_newlyAllocated);
-    m_newlyAllocated = std::make_unique<WTF::Bitmap<atomsPerBlock>>();
+    m_newlyAllocated.clearAll();
+    m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
 
     SetNewlyAllocatedFunctor functor(this);
     forEachCell(functor);
@@ -295,10 +296,12 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList)
 void MarkedBlock::Handle::lastChanceToFinalize()
 {
     allocator()->setIsAllocated(this, false);
-    m_block->clearMarks();
+    m_block->m_marks.clearAll();
+    m_block->clearHasAnyMarked();
+    m_block->m_markingVersion = heap()->objectSpace().markingVersion();
     m_weakSet.lastChanceToFinalize();
-
-    clearNewlyAllocated();
+    m_newlyAllocated.clearAll();
+    m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
     sweep();
 }
 
@@ -307,7 +310,7 @@ FreeList MarkedBlock::Handle::resumeAllocating()
     ASSERT(!allocator()->isAllocated(this));
     ASSERT(!isFreeListed());
 
-    if (!m_newlyAllocated) {
+    if (!hasAnyNewlyAllocated()) {
         // This means we had already exhausted the block when we stopped allocation.
         return FreeList();
     }
@@ -346,24 +349,56 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion)
 {
     ASSERT(vm()->heap.objectSpace().isMarking());
     LockHolder locker(m_lock);
-    if (areMarksStale(markingVersion)) {
-        clearMarks(markingVersion);
-        // This means we're the first ones to mark any object in this block.
-        handle().allocator()->atomicSetAndCheckIsMarkingNotEmpty(&handle(), true);
+    if (!areMarksStale(markingVersion))
+        return;
+    
+    if (handle().allocator()->isAllocated(&handle())
+        || !marksConveyLivenessDuringMarking(markingVersion)) {
+        // We already know that the block is full and is already recognized as such, or that the
+        // block did not survive the previous GC. So, we can clear mark bits the old fashioned
+        // way. Note that it's possible for such a block to have newlyAllocated with an up-to-
+        // date version! If it does, then we want to leave the newlyAllocated alone, since that
+        // means that we had allocated in this previously empty block but did not fill it up, so
+        // we created a newlyAllocated.
+        m_marks.clearAll();
+    } else {
+        HeapVersion newlyAllocatedVersion = space()->newlyAllocatedVersion();
+        if (handle().m_newlyAllocatedVersion == newlyAllocatedVersion) {
+            // Merge the contents of marked into newlyAllocated. If we get the full set of bits
+            // then invalidate newlyAllocated and set allocated.
+            handle().m_newlyAllocated.mergeAndClear(m_marks);
+        } else {
+            // Replace the contents of newlyAllocated with marked. If we get the full set of
+            // bits then invalidate newlyAllocated and set allocated.
+            handle().m_newlyAllocated.setAndClear(m_marks);
+        }
+        handle().m_newlyAllocatedVersion = newlyAllocatedVersion;
     }
-}
-
-void MarkedBlock::clearMarks()
-{
-    clearMarks(vm()->heap.objectSpace().markingVersion());
-}
-
-void MarkedBlock::clearMarks(HeapVersion markingVersion)
-{
-    m_marks.clearAll();
     clearHasAnyMarked();
     WTF::storeStoreFence();
     m_markingVersion = markingVersion;
+    
+    // This means we're the first ones to mark any object in this block.
+    handle().allocator()->atomicSetAndCheckIsMarkingNotEmpty(&handle(), true);
+}
+
+void MarkedBlock::Handle::resetAllocated()
+{
+    m_newlyAllocated.clearAll();
+    m_newlyAllocatedVersion = MarkedSpace::nullVersion;
+}
+
+void MarkedBlock::resetMarks()
+{
+    // We want aboutToMarkSlow() to see what the mark bits were after the last collection. It uses
+    // the version number to distinguish between the marks having already been stale before
+    // beginMarking(), or just stale now that beginMarking() bumped the version. If we have a version
+    // wraparound, then we will call this method before resetting the version to null. When the
+    // version is null, aboutToMarkSlow() will assume that the marks were not stale as of before
+    // beginMarking(). Hence the need to whip the marks into shape.
+    if (areMarksStale())
+        m_marks.clearAll();
+    m_markingVersion = MarkedSpace::nullVersion;
 }
 
 #if !ASSERT_DISABLED
@@ -425,6 +460,11 @@ void MarkedBlock::Handle::removeFromAllocator()
     m_allocator->removeBlock(this);
 }
 
+void MarkedBlock::updateNeedsDestruction()
+{
+    m_needsDestruction = handle().needsDestruction();
+}
+
 void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t index)
 {
     ASSERT(m_index == std::numeric_limits<size_t>::max());
@@ -442,10 +482,9 @@ void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t i
     if (m_attributes.cellKind != HeapCell::JSCell)
         RELEASE_ASSERT(m_attributes.destruction == DoesNotNeedDestruction);
     
-    block().m_needsDestruction = needsDestruction();
+    block().updateNeedsDestruction();
     
-    unsigned cellsPerBlock = MarkedSpace::blockPayload / cellSize;
-    double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock);
+    double markCountBias = -(Options::minMarkedBlockUtilization() * cellsPerBlock());
     
     // The mark count bias should be comfortably within this range.
     RELEASE_ASSERT(markCountBias > static_cast<double>(std::numeric_limits<int16_t>::min()));
@@ -466,12 +505,12 @@ void MarkedBlock::Handle::didRemoveFromAllocator()
 
 bool MarkedBlock::Handle::isLive(const HeapCell* cell)
 {
-    return isLive(vm()->heap.objectSpace().markingVersion(), cell);
+    return isLive(space()->markingVersion(), space()->isMarking(), cell);
 }
 
 bool MarkedBlock::Handle::isLiveCell(const void* p)
 {
-    return isLiveCell(vm()->heap.objectSpace().markingVersion(), p);
+    return isLiveCell(space()->markingVersion(), space()->isMarking(), p);
 }
 
 } // namespace JSC

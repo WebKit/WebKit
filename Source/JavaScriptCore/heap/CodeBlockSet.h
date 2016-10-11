@@ -71,7 +71,9 @@ public:
     
     // Add all currently executing CodeBlocks to the remembered set to be 
     // re-scanned during the next collection.
-    void writeBarrierCurrentlyExecutingCodeBlocks(Heap*);
+    void writeBarrierCurrentlyExecuting(Heap*);
+
+    void clearCurrentlyExecuting();
 
     bool contains(const LockHolder&, void* candidateCodeBlock);
     Lock& getLock() { return m_lock; }

@@ -191,8 +191,6 @@ void SlotVisitor::setMarkedAndAppendToMarkStack(JSCell* cell)
     validate(cell);
 #endif
     
-    //dataLog("    Marking ", RawPointer(cell), "\n");
-    
     if (cell->isLargeAllocation())
         setMarkedAndAppendToMarkStack(cell->largeAllocation(), cell);
     else

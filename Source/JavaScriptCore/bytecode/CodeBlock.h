@@ -35,7 +35,6 @@
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeBlockHash.h"
-#include "CodeBlockSet.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
@@ -76,6 +75,7 @@
 namespace JSC {
 
 class BytecodeLivenessAnalysis;
+class CodeBlockSet;
 class ExecState;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
@@ -1309,38 +1309,6 @@ inline Register& ExecState::uncheckedR(VirtualRegister reg)
 inline void CodeBlock::clearVisitWeaklyHasBeenCalled()
 {
     m_visitWeaklyHasBeenCalled.store(false, std::memory_order_relaxed);
-}
-
-inline void CodeBlockSet::mark(const LockHolder& locker, void* candidateCodeBlock)
-{
-    ASSERT(m_lock.isLocked());
-    // We have to check for 0 and -1 because those are used by the HashMap as markers.
-    uintptr_t value = reinterpret_cast<uintptr_t>(candidateCodeBlock);
-    
-    // This checks for both of those nasty cases in one go.
-    // 0 + 1 = 1
-    // -1 + 1 = 0
-    if (value + 1 <= 1)
-        return;
-
-    CodeBlock* codeBlock = static_cast<CodeBlock*>(candidateCodeBlock); 
-    if (!m_oldCodeBlocks.contains(codeBlock) && !m_newCodeBlocks.contains(codeBlock))
-        return;
-
-    mark(locker, codeBlock);
-}
-
-inline void CodeBlockSet::mark(const LockHolder&, CodeBlock* codeBlock)
-{
-    if (!codeBlock)
-        return;
-
-    // Try to recover gracefully if we forget to execute a barrier for a
-    // CodeBlock that does value profiling. This is probably overkill, but we
-    // have always done it.
-    Heap::heap(codeBlock)->writeBarrier(codeBlock);
-
-    m_currentlyExecuting.add(codeBlock);
 }
 
 template <typename Functor> inline void ScriptExecutable::forEachCodeBlock(Functor&& functor)

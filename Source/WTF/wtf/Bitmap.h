@@ -27,16 +27,7 @@
 
 namespace WTF {
 
-enum BitmapAtomicMode {
-    // This makes concurrentTestAndSet behave just like testAndSet.
-    BitmapNotAtomic,
-
-    // This makes concurrentTestAndSet use compareAndSwap, so that it's
-    // atomic even when used concurrently.
-    BitmapAtomic
-};
-
-template<size_t bitmapSize, BitmapAtomicMode atomicMode = BitmapNotAtomic, typename WordType = uint32_t>
+template<size_t bitmapSize, typename WordType = uint32_t>
 class Bitmap {
     WTF_MAKE_FAST_ALLOCATED;
     
@@ -59,8 +50,8 @@ public:
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
-    int64_t findRunOfZeros(size_t) const;
-    size_t count(size_t = 0) const;
+    int64_t findRunOfZeros(size_t runLength) const;
+    size_t count(size_t start = 0) const;
     size_t isEmpty() const;
     size_t isFull() const;
     
@@ -70,6 +61,9 @@ public:
     
     template<typename Func>
     void forEachSetBit(const Func&) const;
+    
+    void mergeAndClear(Bitmap&);
+    void setAndClear(Bitmap&);
     
     bool operator==(const Bitmap&) const;
     bool operator!=(const Bitmap&) const;
@@ -90,26 +84,26 @@ private:
     std::array<WordType, words> bits;
 };
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline Bitmap<bitmapSize, atomicMode, WordType>::Bitmap()
+template<size_t bitmapSize, typename WordType>
+inline Bitmap<bitmapSize, WordType>::Bitmap()
 {
     clearAll();
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::get(size_t n) const
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::get(size_t n) const
 {
     return !!(bits[n / wordSize] & (one << (n % wordSize)));
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::set(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::set(size_t n)
 {
     bits[n / wordSize] |= (one << (n % wordSize));
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::set(size_t n, bool value)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::set(size_t n, bool value)
 {
     if (value)
         set(n);
@@ -117,8 +111,8 @@ inline void Bitmap<bitmapSize, atomicMode, WordType>::set(size_t n, bool value)
         clear(n);
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::testAndSet(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::testAndSet(size_t n)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
@@ -127,8 +121,8 @@ inline bool Bitmap<bitmapSize, atomicMode, WordType>::testAndSet(size_t n)
     return result;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::testAndClear(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::testAndClear(size_t n)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
@@ -137,14 +131,9 @@ inline bool Bitmap<bitmapSize, atomicMode, WordType>::testAndClear(size_t n)
     return result;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::concurrentTestAndSet(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::concurrentTestAndSet(size_t n)
 {
-    if (atomicMode == BitmapNotAtomic)
-        return testAndSet(n);
-
-    ASSERT(atomicMode == BitmapAtomic);
-    
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* wordPtr = bits.data() + index;
@@ -157,14 +146,9 @@ inline bool Bitmap<bitmapSize, atomicMode, WordType>::concurrentTestAndSet(size_
     return false;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::concurrentTestAndClear(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::concurrentTestAndClear(size_t n)
 {
-    if (atomicMode == BitmapNotAtomic)
-        return testAndClear(n);
-
-    ASSERT(atomicMode == BitmapAtomic);
-    
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* wordPtr = bits.data() + index;
@@ -177,28 +161,28 @@ inline bool Bitmap<bitmapSize, atomicMode, WordType>::concurrentTestAndClear(siz
     return true;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::clear(size_t n)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::clear(size_t n)
 {
     bits[n / wordSize] &= ~(one << (n % wordSize));
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::clearAll()
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::clearAll()
 {
     memset(bits.data(), 0, sizeof(bits));
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline size_t Bitmap<bitmapSize, atomicMode, WordType>::nextPossiblyUnset(size_t start) const
+template<size_t bitmapSize, typename WordType>
+inline size_t Bitmap<bitmapSize, WordType>::nextPossiblyUnset(size_t start) const
 {
     if (!~bits[start / wordSize])
         return ((start / wordSize) + 1) * wordSize;
     return start + 1;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline int64_t Bitmap<bitmapSize, atomicMode, WordType>::findRunOfZeros(size_t runLength) const
+template<size_t bitmapSize, typename WordType>
+inline int64_t Bitmap<bitmapSize, WordType>::findRunOfZeros(size_t runLength) const
 {
     if (!runLength) 
         runLength = 1; 
@@ -217,8 +201,8 @@ inline int64_t Bitmap<bitmapSize, atomicMode, WordType>::findRunOfZeros(size_t r
     return -1;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline size_t Bitmap<bitmapSize, atomicMode, WordType>::count(size_t start) const
+template<size_t bitmapSize, typename WordType>
+inline size_t Bitmap<bitmapSize, WordType>::count(size_t start) const
 {
     size_t result = 0;
     for ( ; (start % wordSize); ++start) {
@@ -230,8 +214,8 @@ inline size_t Bitmap<bitmapSize, atomicMode, WordType>::count(size_t start) cons
     return result;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline size_t Bitmap<bitmapSize, atomicMode, WordType>::isEmpty() const
+template<size_t bitmapSize, typename WordType>
+inline size_t Bitmap<bitmapSize, WordType>::isEmpty() const
 {
     for (size_t i = 0; i < words; ++i)
         if (bits[i])
@@ -239,8 +223,8 @@ inline size_t Bitmap<bitmapSize, atomicMode, WordType>::isEmpty() const
     return true;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline size_t Bitmap<bitmapSize, atomicMode, WordType>::isFull() const
+template<size_t bitmapSize, typename WordType>
+inline size_t Bitmap<bitmapSize, WordType>::isFull() const
 {
     for (size_t i = 0; i < words; ++i)
         if (~bits[i])
@@ -248,30 +232,30 @@ inline size_t Bitmap<bitmapSize, atomicMode, WordType>::isFull() const
     return true;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::merge(const Bitmap& other)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::merge(const Bitmap& other)
 {
     for (size_t i = 0; i < words; ++i)
         bits[i] |= other.bits[i];
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::filter(const Bitmap& other)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::filter(const Bitmap& other)
 {
     for (size_t i = 0; i < words; ++i)
         bits[i] &= other.bits[i];
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::exclude(const Bitmap& other)
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::exclude(const Bitmap& other)
 {
     for (size_t i = 0; i < words; ++i)
         bits[i] &= ~other.bits[i];
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
+template<size_t bitmapSize, typename WordType>
 template<typename Func>
-inline void Bitmap<bitmapSize, atomicMode, WordType>::forEachSetBit(const Func& func) const
+inline void Bitmap<bitmapSize, WordType>::forEachSetBit(const Func& func) const
 {
     for (size_t i = 0; i < words; ++i) {
         WordType word = bits[i];
@@ -286,8 +270,26 @@ inline void Bitmap<bitmapSize, atomicMode, WordType>::forEachSetBit(const Func& 
     }
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::operator==(const Bitmap& other) const
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::mergeAndClear(Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i) {
+        bits[i] |= other.bits[i];
+        other.bits[i] = 0;
+    }
+}
+
+template<size_t bitmapSize, typename WordType>
+inline void Bitmap<bitmapSize, WordType>::setAndClear(Bitmap& other)
+{
+    for (size_t i = 0; i < words; ++i) {
+        bits[i] = other.bits[i];
+        other.bits[i] = 0;
+    }
+}
+
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::operator==(const Bitmap& other) const
 {
     for (size_t i = 0; i < words; ++i) {
         if (bits[i] != other.bits[i])
@@ -296,14 +298,14 @@ inline bool Bitmap<bitmapSize, atomicMode, WordType>::operator==(const Bitmap& o
     return true;
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline bool Bitmap<bitmapSize, atomicMode, WordType>::operator!=(const Bitmap& other) const
+template<size_t bitmapSize, typename WordType>
+inline bool Bitmap<bitmapSize, WordType>::operator!=(const Bitmap& other) const
 {
     return !(*this == other);
 }
 
-template<size_t bitmapSize, BitmapAtomicMode atomicMode, typename WordType>
-inline unsigned Bitmap<bitmapSize, atomicMode, WordType>::hash() const
+template<size_t bitmapSize, typename WordType>
+inline unsigned Bitmap<bitmapSize, WordType>::hash() const
 {
     unsigned result = 0;
     for (size_t i = 0; i < words; ++i)

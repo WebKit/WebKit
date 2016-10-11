@@ -65,13 +65,13 @@ public:
     static const size_t numSizeClasses = largeCutoff / sizeStep;
     
     static const HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
-    static const HeapVersion initialVersion = 1; // The version that the heap starts out with.
+    static const HeapVersion initialVersion = 2; // The version that the heap starts out with. Set to make sure that nextVersion(nullVersion) != initialVersion.
     
-    HeapVersion nextVersion(HeapVersion version)
+    static HeapVersion nextVersion(HeapVersion version)
     {
         version++;
         if (version == nullVersion)
-            version++;
+            version = initialVersion;
         return version;
     }
     
@@ -171,6 +171,7 @@ public:
     bool isPagedOut(double deadline);
     
     HeapVersion markingVersion() const { return m_markingVersion; }
+    HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }
 
     const Vector<LargeAllocation*>& largeAllocations() const { return m_largeAllocations; }
     unsigned largeAllocationsNurseryOffset() const { return m_largeAllocationsNurseryOffset; }
@@ -217,6 +218,7 @@ private:
 
     Heap* m_heap;
     HeapVersion m_markingVersion { initialVersion };
+    HeapVersion m_newlyAllocatedVersion { initialVersion };
     size_t m_capacity;
     bool m_isIterating;
     bool m_isMarking { false };
