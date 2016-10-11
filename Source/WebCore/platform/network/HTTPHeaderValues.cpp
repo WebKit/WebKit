@@ -44,6 +44,18 @@ const String& formURLEncodedContentType()
     return contentType;
 }
 
+const String& noCache()
+{
+    static NeverDestroyed<const String> value(ASCIILiteral("no-cache"));
+    return value;
+}
+
+const String& maxAge0()
+{
+    static NeverDestroyed<const String> value(ASCIILiteral("max-age=0"));
+    return value;
+}
+
 }
 
 }

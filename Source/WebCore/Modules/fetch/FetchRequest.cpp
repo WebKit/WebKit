@@ -98,6 +98,8 @@ static Optional<Exception> setCache(FetchOptions& options, const String& cache)
         options.cache = FetchOptions::Cache::NoCache;
     else if (cache == "force-cache")
         options.cache = FetchOptions::Cache::ForceCache;
+    else if (cache == "only-if-cached")
+        options.cache = FetchOptions::Cache::OnlyIfCached;
     else
         return Exception { TypeError, ASCIILiteral("Bad cache mode value.") };
     return Nullopt;
@@ -194,6 +196,9 @@ static Optional<Exception> buildOptions(FetchRequest::InternalRequest& request, 
         if (exception)
             return exception;
     }
+
+    if (request.options.cache == FetchOptions::Cache::OnlyIfCached && request.options.mode != FetchOptions::Mode::SameOrigin)
+        return Exception { TypeError, ASCIILiteral("only-if-cached cache option requires fetch mode to be same-origin.")  };
 
     if (init.get("redirect", value)) {
         exception = setRedirect(request.options, value);

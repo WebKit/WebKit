@@ -464,6 +464,17 @@ void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
         m_platformRequestUpdated = false;
 }
 
+void ResourceRequestBase::addHTTPHeaderFieldIfNotPresent(HTTPHeaderName name, const String& value)
+{
+    updateResourceRequest();
+
+    if (!m_httpHeaderFields.addIfNotPresent(name, value))
+        return;
+
+    if (url().protocolIsInHTTPFamily())
+        m_platformRequestUpdated = false;
+}
+
 void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& value)
 {
     updateResourceRequest();
@@ -477,13 +488,18 @@ void ResourceRequestBase::addHTTPHeaderField(HTTPHeaderName name, const String& 
 void ResourceRequestBase::addHTTPHeaderField(const String& name, const String& value)
 {
     updateResourceRequest();
-    
+
     m_httpHeaderFields.add(name, value);
-    
+
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
-    
+
+bool ResourceRequestBase::hasHTTPHeaderField(HTTPHeaderName headerName) const
+{
+    return m_httpHeaderFields.contains(headerName);
+}
+
 void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 {
     updateResourceRequest();

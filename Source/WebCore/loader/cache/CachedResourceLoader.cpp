@@ -51,6 +51,7 @@
 #include "FrameLoaderClient.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTTPHeaderValues.h"
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
@@ -663,6 +664,49 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     // FIXME: Decide whether to support client hints
 }
 
+static inline void updateRequestAccordingCacheMode(CachedResourceRequest& request)
+{
+    if (request.options().cache == FetchOptions::Cache::Default
+            && (request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
+                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
+                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfUnmodifiedSince)
+                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfMatch)
+                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfRange)))
+        request.setCacheModeToNoStore();
+
+    switch (request.options().cache) {
+    case FetchOptions::Cache::NoCache:
+        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
+        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+        break;
+    case FetchOptions::Cache::NoStore:
+        request.setCachingPolicy(CachingPolicy::DisallowCaching);
+        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
+        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        break;
+    case FetchOptions::Cache::Reload:
+        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
+        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        break;
+    case FetchOptions::Cache::Default:
+        break;
+    case FetchOptions::Cache::ForceCache:
+        request.mutableResourceRequest().setCachePolicy(ReturnCacheDataElseLoad);
+        break;
+    case FetchOptions::Cache::OnlyIfCached:
+        request.mutableResourceRequest().setCachePolicy(ReturnCacheDataDontLoad);
+        break;
+    }
+}
+
+void CachedResourceLoader::updateHTTPRequestHeaders(CachedResourceRequest& resourceRequest)
+{
+    // Implementing steps 10 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    updateRequestAccordingCacheMode(resourceRequest);
+}
+
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
     if (Document* document = this->document())
@@ -719,6 +763,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     LoadTiming loadTiming;
     loadTiming.markStartTimeAndFetchStart();
 #endif
+
+    if (request.resourceRequest().url().protocolIsInHTTPFamily())
+        updateHTTPRequestHeaders(request);
 
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching() && memoryCache.disabled()) {
@@ -844,7 +891,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
 CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest&& request)
 {
     auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID()));
+    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID())
+        || request.options().cache == FetchOptions::Cache::NoCache || request.options().cache == FetchOptions::Cache::NoStore || request.options().cache == FetchOptions::Cache::Reload);
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
@@ -897,6 +945,12 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (!existingResource)
         return Load;
 
+    if (cachedResourceRequest.options().cache == FetchOptions::Cache::NoStore)
+        return Load;
+
+    if (cachedResourceRequest.options().cache == FetchOptions::Cache::Reload)
+        return Reload;
+
     // We already have a preload going for this URL.
     if (forPreload == ForPreload::Yes && existingResource->isPreloaded())
         return Use;
@@ -931,9 +985,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (defer == DeferOption::DeferredByClient)
         return Reload;
 
-    // Don't reload resources while pasting.
-    if (m_allowStaleResources)
+    // Don't reload resources while pasting or if cache mode allows stale resources.
+    if (m_allowStaleResources || cachedResourceRequest.options().cache == FetchOptions::Cache::ForceCache || cachedResourceRequest.options().cache == FetchOptions::Cache::OnlyIfCached)
         return Use;
+
+    ASSERT(cachedResourceRequest.options().cache == FetchOptions::Cache::Default || cachedResourceRequest.options().cache == FetchOptions::Cache::NoCache);
 
     // Always use preloads.
     if (existingResource->isPreloaded())

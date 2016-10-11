@@ -311,16 +311,17 @@ private:
     bool allChildrenAreComplete() const; // immediate children, not all descendants
 
     void checkTimerFired();
-    
+
     void loadSameDocumentItem(HistoryItem&);
     void loadDifferentDocumentItem(HistoryItem&, FrameLoadType, FormSubmissionCacheLoadPolicy);
-    
+
     void loadProvisionalItemFromCachedPage();
 
     void updateFirstPartyForCookies();
     void setFirstPartyForCookies(const URL&);
-    
+
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType, bool isMainResource);
+    ResourceRequestCachePolicy defaultRequestCachingPolicy(const ResourceRequest&, FrameLoadType, bool isMainResource);
 
     void clearProvisionalLoad();
     void transitionToCommitted(CachedPage*);

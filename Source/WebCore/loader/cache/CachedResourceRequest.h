@@ -60,6 +60,8 @@ public:
     RefPtr<SecurityOrigin> releaseOrigin() { return WTFMove(m_origin); }
     SecurityOrigin* origin() const { return m_origin.get(); }
 
+    void setCacheModeToNoStore() { m_options.cache = FetchOptions::Cache::NoStore; }
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;

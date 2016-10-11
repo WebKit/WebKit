@@ -108,6 +108,7 @@ void EventSource::connect()
     options.credentials = m_withCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     options.preflightPolicy = PreventPreflight;
     options.mode = FetchOptions::Mode::Cors;
+    options.cache = FetchOptions::Cache::NoStore;
     options.dataBufferingPolicy = DoNotBufferData;
     options.contentSecurityPolicyEnforcement = scriptExecutionContext()->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective;
 

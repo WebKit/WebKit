@@ -1,3 +1,50 @@
+2016-10-11  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Support Request cache mode
+        https://bugs.webkit.org/show_bug.cgi?id=162281
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated test.
+
+        Added support for only-if-cached mode at Request level.
+
+        Added support for cache mode at CachedResourceLoader, by setting HTTP headers and ResourceRequest cache policy
+        based on https://fetch.spec.whatwg.org/#concept-request-cache-mode and https://fetch.spec.whatwg.org/#http-network-or-cache-fetch.
+
+        Disabled default cache policy computation (done in FrameLoader) when cache mode is different from the default.
+        Activated no-store cache mode for EventSource as per https://html.spec.whatwg.org/#the-eventsource-interface.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::setCache): Adding support for only-if-cached.
+        (WebCore::buildOptions): Throw if only-if-cached and fetch mode is not same-origin.
+        * loader/FetchOptions.h: Adding support for only-if-cached.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultRequestCachingPolicy): Introduced to ease readability.
+        (WebCore::FrameLoader::addExtraFieldsToRequest): Updating cache policy only if request has the default cache policy.
+        This allows bypassing the default behavior for fetch cache mode different from "default".
+        * loader/FrameLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::updateRequestAccordingCacheMode): Introduced to set headers and request cache policy according fetch cache mode.
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Ensure bypassing the memory cache in no-store and reload cases.
+        We reload in case of cache mode=reload to refresh the meory cache entry.
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::setCacheModeToNoStore):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect): Use no-store cache mode as per https://html.spec.whatwg.org/#the-eventsource-interface.
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::addIfNotPresent): Helper routine.
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/HTTPHeaderValues.cpp:
+        * platform/network/HTTPHeaderValues.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::addHTTPHeaderFieldIfNotPresent):
+        (WebCore::ResourceRequestBase::addHTTPHeaderField):
+        (WebCore::ResourceRequestBase::hasHTTPHeaderField):
+        * platform/network/ResourceRequestBase.h:
+
 2016-10-10  Antti Koivisto  <antti@apple.com>
 
         Stop copying author shadow pseudo rules into shadow tree style resolver

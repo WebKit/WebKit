@@ -103,6 +103,11 @@ void HTTPHeaderMap::add(const String& name, const String& value)
     add(headerName, value);
 }
 
+bool HTTPHeaderMap::addIfNotPresent(HTTPHeaderName headerName, const String& value)
+{
+    return m_commonHeaders.add(headerName, value).isNewEntry;
+}
+
 bool HTTPHeaderMap::contains(const String& name) const
 {
     HTTPHeaderName headerName;

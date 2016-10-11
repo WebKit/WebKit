@@ -154,6 +154,7 @@ private:
     enum class ForPreload { Yes, No };
     enum class DeferOption { NoDefer, DeferredByClient };
 
+    void updateHTTPRequestHeaders(CachedResourceRequest&);
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, DeferOption = DeferOption::NoDefer);
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);

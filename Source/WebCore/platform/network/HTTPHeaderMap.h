@@ -141,6 +141,7 @@ public:
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
     void add(HTTPHeaderName, const String& value);
+    bool addIfNotPresent(HTTPHeaderName, const String&);
     bool contains(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 

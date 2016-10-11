@@ -1,3 +1,14 @@
+2016-10-11  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Support Request cache mode
+        https://bugs.webkit.org/show_bug.cgi?id=162281
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt: Rebasing test now that more tests are passing.
+        * web-platform-tests/fetch/api/request/request-error-expected.txt:
+        * web-platform-tests/fetch/api/request/request-error.html: Adding test to ensure only-if-cached is used with same-origin fetch mode.
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Add support for languagechange event

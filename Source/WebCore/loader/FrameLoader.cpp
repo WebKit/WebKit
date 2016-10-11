@@ -2562,36 +2562,14 @@ void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
     addHTTPUpgradeInsecureRequestsIfNeeded(request);
 }
 
-void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource)
+ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const ResourceRequest& request, FrameLoadType loadType, bool isMainResource)
 {
-    Page* page = frame().page();
-    bool cachingDisabled = page && page->isResourceCachingDisabled();
-
-    if (cachingDisabled)
-        request.setCachePolicy(ReloadIgnoringCacheData);
-
-    // Don't set the cookie policy URL if it's already been set.
-    // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
-    if (request.firstPartyForCookies().isEmpty()) {
-        if (mainResource && m_frame.isMainFrame())
-            request.setFirstPartyForCookies(request.url());
-        else if (Document* document = m_frame.document())
-            request.setFirstPartyForCookies(document->firstPartyForCookies());
-    }
-
-    // The remaining modifications are only necessary for HTTP and HTTPS.
-    if (!request.url().isEmpty() && !request.url().protocolIsInHTTPFamily())
-        return;
-
-    applyUserAgent(request);
-
-    if (cachingDisabled) {
-        // Cache policy was already set above in the non-HTTP-specific code.
-        loadType = FrameLoadType::ReloadFromOrigin;
-    } else if (!mainResource) {
+    if (m_overrideCachePolicyForTesting)
+        return m_overrideCachePolicyForTesting.value();
+    if (!isMainResource) {
         if (request.isConditional())
-            request.setCachePolicy(ReloadIgnoringCacheData);
-        else if (documentLoader()->isLoadingInAPISense()) {
+            return ReloadIgnoringCacheData;
+        if (documentLoader()->isLoadingInAPISense()) {
             // If we inherit cache policy from a main resource, we use the DocumentLoader's
             // original request cache policy for two reasons:
             // 1. For POST requests, we mutate the cache policy for the main resource,
@@ -2602,22 +2580,41 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
             ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader()->originalRequest().cachePolicy();
             // Back-forward navigations try to load main resource from cache only to avoid re-submitting form data, and start over (with a warning dialog) if that fails.
             // This policy is set on initial request too, but should not be inherited.
-            ResourceRequestCachePolicy subresourceCachePolicy = (mainDocumentOriginalCachePolicy == ReturnCacheDataDontLoad) ? ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;
-            request.setCachePolicy(subresourceCachePolicy);
-        } else
-            request.setCachePolicy(UseProtocolCachePolicy);
-
+            return (mainDocumentOriginalCachePolicy == ReturnCacheDataDontLoad) ? ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;
+        }
     // FIXME: Other FrameLoader functions have duplicated code for setting cache policy of main request when reloading.
     // It seems better to manage it explicitly than to hide the logic inside addExtraFieldsToRequest().
     } else if (loadType == FrameLoadType::Reload || loadType == FrameLoadType::ReloadFromOrigin || request.isConditional())
+        return ReloadIgnoringCacheData;
+
+    return UseProtocolCachePolicy;
+}
+
+void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool isMainResource)
+{
+    // Don't set the cookie policy URL if it's already been set.
+    // But make sure to set it on all requests regardless of protocol, as it has significance beyond the cookie policy (<rdar://problem/6616664>).
+    if (request.firstPartyForCookies().isEmpty()) {
+        if (isMainResource && m_frame.isMainFrame())
+            request.setFirstPartyForCookies(request.url());
+        else if (Document* document = m_frame.document())
+            request.setFirstPartyForCookies(document->firstPartyForCookies());
+    }
+
+    Page* page = frame().page();
+    bool hasSpecificCachePolicy = request.cachePolicy() != UseProtocolCachePolicy;
+
+    if (page && page->isResourceCachingDisabled()) {
         request.setCachePolicy(ReloadIgnoringCacheData);
+        loadType = FrameLoadType::ReloadFromOrigin;
+    } else if (!hasSpecificCachePolicy)
+        request.setCachePolicy(defaultRequestCachingPolicy(request, loadType, isMainResource));
 
-    if (m_overrideCachePolicyForTesting)
-        request.setCachePolicy(m_overrideCachePolicyForTesting.value());
-    if (m_overrideResourceLoadPriorityForTesting)
-        request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
+    // The remaining modifications are only necessary for HTTP and HTTPS.
+    if (!request.url().isEmpty() && !request.url().protocolIsInHTTPFamily())
+        return;
 
-    if (request.cachePolicy() == ReloadIgnoringCacheData) {
+    if (!hasSpecificCachePolicy && request.cachePolicy() == ReloadIgnoringCacheData) {
         if (loadType == FrameLoadType::Reload)
             request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "max-age=0");
         else if (loadType == FrameLoadType::ReloadFromOrigin) {
@@ -2626,7 +2623,12 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadTyp
         }
     }
 
-    if (mainResource)
+    if (m_overrideResourceLoadPriorityForTesting)
+        request.setPriority(m_overrideResourceLoadPriorityForTesting.value());
+
+    applyUserAgent(request);
+
+    if (isMainResource)
         request.setHTTPAccept(defaultAcceptHeader);
 
     // Make sure we send the Origin header.

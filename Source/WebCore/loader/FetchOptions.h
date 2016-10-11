@@ -43,7 +43,7 @@ struct FetchOptions {
     enum class Credentials { Omit, SameOrigin, Include };
     Credentials credentials { Credentials::Omit };
 
-    enum class Cache { Default, NoStore, Reload, NoCache, ForceCache };
+    enum class Cache { Default, NoStore, Reload, NoCache, ForceCache, OnlyIfCached };
     Cache cache { Cache::Default };
 
     enum class Redirect { Follow, Error, Manual };
