@@ -33,16 +33,16 @@
 
 namespace WebCore {
 
-struct MediaStreamEventInit : public EventInit {
-    RefPtr<MediaStream> stream;
-};
-
 class MediaStreamEvent : public Event {
 public:
     virtual ~MediaStreamEvent();
 
     static Ref<MediaStreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStream>&&);
-    static Ref<MediaStreamEvent> createForBindings(const AtomicString& type, const MediaStreamEventInit& initializer);
+
+    struct Init : EventInit {
+        RefPtr<MediaStream> stream;
+    };
+    static Ref<MediaStreamEvent> create(const AtomicString& type, const Init& initializer, IsTrusted = IsTrusted::No);
 
     MediaStream* stream() const;
 
@@ -50,7 +50,7 @@ public:
 
 private:
     MediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStream>&&);
-    MediaStreamEvent(const AtomicString& type, const MediaStreamEventInit&);
+    MediaStreamEvent(const AtomicString& type, const Init&, IsTrusted);
 
     RefPtr<MediaStream> m_stream;
 };

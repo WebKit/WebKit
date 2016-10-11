@@ -30,10 +30,19 @@
 
 [
     Conditional=WEB_RTC,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional RTCTrackEventInit eventInitDict),
 ] interface RTCTrackEvent : Event {
-   [InitializedByEventConstructor] readonly attribute RTCRtpReceiver receiver;
-   [InitializedByEventConstructor] readonly attribute MediaStreamTrack track;
+   [InitializedByEventConstructor] readonly attribute RTCRtpReceiver? receiver;
+   [InitializedByEventConstructor] readonly attribute MediaStreamTrack? track;
    [InitializedByEventConstructor] readonly attribute sequence<MediaStream> streams;
-   [InitializedByEventConstructor] readonly attribute RTCRtpTransceiver transceiver;
+   [InitializedByEventConstructor] readonly attribute RTCRtpTransceiver? transceiver;
+};
+
+dictionary RTCTrackEventInit : EventInit {
+    sequence<MediaStream> streams = [];
+
+    // FIXME: The specification says that these members should be required and non-nullable.
+    RTCRtpReceiver? receiver = null;
+    MediaStreamTrack? track = null;
+    RTCRtpTransceiver? transceiver = null;
 };

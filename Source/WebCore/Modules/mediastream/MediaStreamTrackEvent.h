@@ -34,16 +34,16 @@ namespace WebCore {
 
 class MediaStreamTrack;
 
-struct MediaStreamTrackEventInit : public EventInit {
-    RefPtr<MediaStreamTrack> track;
-};
-
 class MediaStreamTrackEvent : public Event {
 public:
     virtual ~MediaStreamTrackEvent();
 
     static Ref<MediaStreamTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStreamTrack>&&);
-    static Ref<MediaStreamTrackEvent> createForBindings(const AtomicString& type, const MediaStreamTrackEventInit& initializer);
+
+    struct Init : EventInit {
+        RefPtr<MediaStreamTrack> track;
+    };
+    static Ref<MediaStreamTrackEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
 
     MediaStreamTrack* track() const;
 
@@ -52,7 +52,7 @@ public:
 
 private:
     MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStreamTrack>&&);
-    MediaStreamTrackEvent(const AtomicString& type, const MediaStreamTrackEventInit&);
+    MediaStreamTrackEvent(const AtomicString& type, const Init&, IsTrusted);
 
     RefPtr<MediaStreamTrack> m_track;
 };

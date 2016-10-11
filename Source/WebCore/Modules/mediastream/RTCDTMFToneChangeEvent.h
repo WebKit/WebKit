@@ -33,16 +33,17 @@
 
 namespace WebCore {
 
-struct RTCDTMFToneChangeEventInit : public EventInit {
-    String tone;
-};
-
 class RTCDTMFToneChangeEvent : public Event {
 public:
     virtual ~RTCDTMFToneChangeEvent();
 
     static Ref<RTCDTMFToneChangeEvent> create(const String& tone);
-    static Ref<RTCDTMFToneChangeEvent> createForBindings(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer);
+
+    struct Init : EventInit {
+        String tone;
+    };
+
+    static Ref<RTCDTMFToneChangeEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
 
     const String& tone() const;
 
@@ -50,7 +51,7 @@ public:
 
 private:
     explicit RTCDTMFToneChangeEvent(const String& tone);
-    explicit RTCDTMFToneChangeEvent(const RTCDTMFToneChangeEventInit&);
+    RTCDTMFToneChangeEvent(const AtomicString& type, const Init&, IsTrusted);
 
     String m_tone;
 };

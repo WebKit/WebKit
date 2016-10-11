@@ -28,8 +28,11 @@
 
 [
     Conditional=MEDIA_STREAM,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional OverconstrainedErrorEventInit eventInitDict),
 ] interface OverconstrainedErrorEvent : Event {
-   [InitializedByEventConstructor] readonly attribute OverconstrainedError? error;
+    readonly attribute OverconstrainedError? error;
 };
 
+dictionary OverconstrainedErrorEventInit : EventInit {
+    OverconstrainedError? error = null;
+};

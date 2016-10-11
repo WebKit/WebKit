@@ -24,8 +24,12 @@
 
 [
     Conditional=MEDIA_STREAM,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional MediaStreamTrackEventInit eventInitDict),
 ] interface MediaStreamTrackEvent : Event {
-   [InitializedByEventConstructor] readonly attribute MediaStreamTrack track;
+    readonly attribute MediaStreamTrack? track;
 };
 
+dictionary MediaStreamTrackEventInit : EventInit {
+    // FIXME: The specification says that this member should be required and non-nullable.
+    MediaStreamTrack? track = null;
+};

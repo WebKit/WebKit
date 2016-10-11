@@ -37,9 +37,9 @@ Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& typ
     return adoptRef(*new MediaStreamTrackEvent(type, canBubble, cancelable, WTFMove(track)));
 }
 
-Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::createForBindings(const AtomicString& type, const MediaStreamTrackEventInit& initializer)
+Ref<MediaStreamTrackEvent> MediaStreamTrackEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MediaStreamTrackEvent(type, initializer));
+    return adoptRef(*new MediaStreamTrackEvent(type, initializer, isTrusted));
 }
 
 MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<MediaStreamTrack>&& track)
@@ -48,8 +48,8 @@ MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, bool canB
 {
 }
 
-MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, const MediaStreamTrackEventInit& initializer)
-    : Event(type, initializer)
+MediaStreamTrackEvent::MediaStreamTrackEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_track(initializer.track)
 {
 }

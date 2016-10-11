@@ -35,8 +35,8 @@
         shouldBeEqualToString("new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError('fred', 'unsupported constraint') }).error.message", "unsupported constraint");
 
         shouldBeUndefined("new OverconstrainedErrorEvent('eventType', { error: null }).reason");
-        shouldBeNull("new OverconstrainedErrorEvent('eventType', { error: 'fake error' }).error", null);
-        shouldBeNull("new OverconstrainedErrorEvent('eventType', { error: [] }).error", null);
+        shouldThrowErrorName("new OverconstrainedErrorEvent('eventType', { error: 'fake error' })", "TypeError");
+        shouldThrowErrorName("new OverconstrainedErrorEvent('eventType', { error: [] })", "TypeError");
 
         // All initializers are passed.
         shouldBe("new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError() }).bubbles", "true");

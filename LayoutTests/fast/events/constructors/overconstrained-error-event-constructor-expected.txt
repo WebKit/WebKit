@@ -15,8 +15,8 @@ PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedErro
 PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError('width') }).error.constraint is "width"
 PASS new OverconstrainedErrorEvent('eventType', { error: new OverconstrainedError('fred', 'unsupported constraint') }).error.message is "unsupported constraint"
 PASS new OverconstrainedErrorEvent('eventType', { error: null }).reason is undefined.
-PASS new OverconstrainedErrorEvent('eventType', { error: 'fake error' }).error is null
-PASS new OverconstrainedErrorEvent('eventType', { error: [] }).error is null
+PASS new OverconstrainedErrorEvent('eventType', { error: 'fake error' }) threw exception TypeError: Type error.
+PASS new OverconstrainedErrorEvent('eventType', { error: [] }) threw exception TypeError: Type error.
 PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError() }).bubbles is true
 PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError() }).cancelable is true
 PASS new OverconstrainedErrorEvent('eventType', { bubbles: true, cancelable: true, error: new OverconstrainedError('bogus') }).error.constraint is "bogus"

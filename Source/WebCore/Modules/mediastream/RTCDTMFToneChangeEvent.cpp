@@ -37,10 +37,9 @@ Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const String& tone)
     return adoptRef(*new RTCDTMFToneChangeEvent(tone));
 }
 
-Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::createForBindings(const AtomicString& type, const RTCDTMFToneChangeEventInit& initializer)
+Ref<RTCDTMFToneChangeEvent> RTCDTMFToneChangeEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    ASSERT_UNUSED(type, type == eventNames().tonechangeEvent);
-    return adoptRef(*new RTCDTMFToneChangeEvent(initializer));
+    return adoptRef(*new RTCDTMFToneChangeEvent(type, initializer, isTrusted));
 }
 
 RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const String& tone)
@@ -49,8 +48,8 @@ RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const String& tone)
 {
 }
 
-RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const RTCDTMFToneChangeEventInit& initializer)
-    : Event(eventNames().tonechangeEvent, initializer)
+RTCDTMFToneChangeEvent::RTCDTMFToneChangeEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_tone(initializer.tone)
 {
 }

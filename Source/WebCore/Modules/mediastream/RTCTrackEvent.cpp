@@ -45,9 +45,9 @@ Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, bool canBubbl
     return adoptRef(*new RTCTrackEvent(type, canBubble, cancelable, WTFMove(receiver), WTFMove(track), WTFMove(streams), WTFMove(transceiver)));
 }
 
-Ref<RTCTrackEvent> RTCTrackEvent::createForBindings(const AtomicString& type, const RTCTrackEventInit& initializer)
+Ref<RTCTrackEvent> RTCTrackEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new RTCTrackEvent(type, initializer));
+    return adoptRef(*new RTCTrackEvent(type, initializer, isTrusted));
 }
 
 RTCTrackEvent::RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&& receiver, RefPtr<MediaStreamTrack>&& track, Vector<RefPtr<MediaStream>>&& streams, RefPtr<RTCRtpTransceiver>&& transceiver)
@@ -59,8 +59,8 @@ RTCTrackEvent::RTCTrackEvent(const AtomicString& type, bool canBubble, bool canc
 {
 }
 
-RTCTrackEvent::RTCTrackEvent(const AtomicString& type, const RTCTrackEventInit& initializer)
-    : Event(type, initializer)
+RTCTrackEvent::RTCTrackEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_receiver(initializer.receiver)
     , m_track(initializer.track)
     , m_streams(initializer.streams)

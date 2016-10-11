@@ -45,17 +45,17 @@ class RTCRtpTransceiver;
 
 typedef Vector<RefPtr<MediaStream>> MediaStreamArray;
 
-struct RTCTrackEventInit : public EventInit {
-    RefPtr<RTCRtpReceiver> receiver;
-    RefPtr<MediaStreamTrack> track;
-    MediaStreamArray streams;
-    RefPtr<RTCRtpTransceiver> transceiver;
-};
-
 class RTCTrackEvent : public Event {
 public:
     static Ref<RTCTrackEvent> create(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&, MediaStreamArray&&, RefPtr<RTCRtpTransceiver>&&);
-    static Ref<RTCTrackEvent> createForBindings(const AtomicString& type, const RTCTrackEventInit&);
+
+    struct Init : EventInit {
+        RefPtr<RTCRtpReceiver> receiver;
+        RefPtr<MediaStreamTrack> track;
+        MediaStreamArray streams;
+        RefPtr<RTCRtpTransceiver> transceiver;
+    };
+    static Ref<RTCTrackEvent> create(const AtomicString& type, const Init&, IsTrusted = IsTrusted::No);
 
     RTCRtpReceiver* receiver() const { return m_receiver.get(); }
     MediaStreamTrack* track() const  { return m_track.get(); }
@@ -66,7 +66,7 @@ public:
 
 private:
     RTCTrackEvent(const AtomicString& type, bool canBubble, bool cancelable, RefPtr<RTCRtpReceiver>&&, RefPtr<MediaStreamTrack>&&, MediaStreamArray&&, RefPtr<RTCRtpTransceiver>&&);
-    RTCTrackEvent(const AtomicString& type, const RTCTrackEventInit&);
+    RTCTrackEvent(const AtomicString& type, const Init&, IsTrusted);
 
     RefPtr<RTCRtpReceiver> m_receiver;
     RefPtr<MediaStreamTrack> m_track;

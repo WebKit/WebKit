@@ -19,15 +19,13 @@ PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancela
 PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true }).track is null
 
 *** Bubbles and cancelable true, invalid track ***
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).bubbles is true
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).cancelable is true
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).track is null
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }) threw exception TypeError: Type error.
 
 *** Initialize 'track' with a invalid values ***
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 }).track is null
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 'string' }).track is null
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject }).track is null
-PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document }).track is null
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 'string' }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject }) threw exception TypeError: Type error.
+PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document }) threw exception TypeError: Type error.
 
 *** Bubbles and cancelable true, valid track ***
 PASS new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).bubbles is true

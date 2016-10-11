@@ -36,10 +36,6 @@
 
 namespace WebCore {
 
-struct OverconstrainedErrorEventInit : public EventInit {
-    RefPtr<OverconstrainedError> error;
-};
-
 class OverconstrainedErrorEvent : public Event {
 public:
     virtual ~OverconstrainedErrorEvent() { }
@@ -49,9 +45,13 @@ public:
         return adoptRef(*new OverconstrainedErrorEvent(type, canBubble, cancelable, error));
     }
 
-    static Ref<OverconstrainedErrorEvent> createForBindings(const AtomicString& type, const OverconstrainedErrorEventInit& initializer)
+    struct Init : EventInit {
+        RefPtr<OverconstrainedError> error;
+    };
+
+    static Ref<OverconstrainedErrorEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new OverconstrainedErrorEvent(type, initializer));
+        return adoptRef(*new OverconstrainedErrorEvent(type, initializer, isTrusted));
     }
 
     OverconstrainedError* error() const { return m_error.get(); }
@@ -63,8 +63,8 @@ private:
         , m_error(error)
     {
     }
-    OverconstrainedErrorEvent(const AtomicString& type, const OverconstrainedErrorEventInit& initializer)
-        : Event(type, initializer)
+    OverconstrainedErrorEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_error(initializer.error)
     {
     }

@@ -33,16 +33,14 @@
                 shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true }).track");
     
                 debug("<br>*** Bubbles and cancelable true, invalid track ***");
-                shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).bubbles", "true");
-                shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).cancelable", "true");
-                shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack }).track");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: MediaStreamTrack })", "TypeError");
     
                 debug("<br>*** Initialize 'track' with a invalid values ***");
-                shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 }).track");
-                shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: \'string\' }).track");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: 10 })", "TypeError");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: \'string\' })", "TypeError");
                 emptyObject = { };
-                shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject }).track");
-                shouldBeNull("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document }).track");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: emptyObject })", "TypeError");
+                shouldThrowErrorName("new MediaStreamTrackEvent('MediaStreamTrackEvent', { track: document })", "TypeError");
 
                 debug("<br>*** Bubbles and cancelable true, valid track ***");
                 shouldBe("new MediaStreamTrackEvent('MediaStreamTrackEvent', { bubbles: true, cancelable: true, track: mediaStreamTrack }).bubbles", "true");
