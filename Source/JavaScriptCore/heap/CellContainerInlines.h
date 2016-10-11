@@ -73,7 +73,7 @@ inline WeakSet& CellContainer::weakSet() const
     return markedBlock().weakSet();
 }
 
-inline void CellContainer::flipIfNecessary(uint64_t heapVersion)
+inline void CellContainer::flipIfNecessary(HeapVersion heapVersion)
 {
     if (!isLargeAllocation())
         markedBlock().flipIfNecessary(heapVersion);

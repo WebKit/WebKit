@@ -42,6 +42,8 @@ class HeapIterationScope;
 class LLIntOffsetsExtractor;
 class WeakSet;
 
+typedef uint32_t HeapVersion;
+
 class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
@@ -62,6 +64,8 @@ public:
     static const size_t largeCutoff = (blockPayload / 2) & ~(sizeStep - 1);
 
     static const size_t numSizeClasses = largeCutoff / sizeStep;
+    
+    static const HeapVersion initialVersion = 42;  // This can be any value, including random garbage, so long as it's consistent for the lifetime of the process.
     
     static size_t sizeClassToIndex(size_t size)
     {
@@ -151,7 +155,7 @@ public:
 
     bool isPagedOut(double deadline);
     
-    uint64_t version() const { return m_version; }
+    HeapVersion version() const { return m_version; }
 
     const Vector<MarkedBlock::Handle*>& blocksWithNewObjects() const { return m_blocksWithNewObjects; }
     
@@ -189,7 +193,7 @@ private:
     Subspace m_auxiliarySpace;
 
     Heap* m_heap;
-    uint64_t m_version { 42 }; // This can start at any value, including random garbage values.
+    HeapVersion m_version { initialVersion };
     size_t m_capacity;
     bool m_isIterating;
     MarkedBlockSet m_blocks;

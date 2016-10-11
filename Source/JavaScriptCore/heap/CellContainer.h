@@ -34,6 +34,8 @@ class LargeAllocation;
 class MarkedBlock;
 class WeakSet;
 
+typedef uint32_t HeapVersion;
+
 // This is how we abstract over either MarkedBlock& or LargeAllocation&. Put things in here as you
 // find need for them.
 
@@ -71,7 +73,7 @@ public:
         return *bitwise_cast<LargeAllocation*>(m_encodedPointer - isLargeAllocationBit);
     }
     
-    void flipIfNecessary(uint64_t heapVersion);
+    void flipIfNecessary(HeapVersion);
     void flipIfNecessary();
     
     bool isMarked() const;

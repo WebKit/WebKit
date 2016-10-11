@@ -46,6 +46,8 @@ template<typename T> class Weak;
 class WeakReferenceHarvester;
 template<typename T> class WriteBarrierBase;
 
+typedef uint32_t HeapVersion;
+
 class SlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);
     WTF_MAKE_FAST_ALLOCATED;
@@ -160,7 +162,7 @@ private:
     size_t m_visitCount;
     bool m_isInParallelMode;
     
-    uint64_t m_version;
+    HeapVersion m_version;
     
     Heap& m_heap;
 

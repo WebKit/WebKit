@@ -1,3 +1,41 @@
+2016-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Heap version should be 32-bit
+        https://bugs.webkit.org/show_bug.cgi?id=161751
+
+        Reviewed by Mark Lam.
+        
+        32-bit devices are probably getting hurt by the 64-bit version number. The reason why I made
+        it 64-bit initially is so that I wouldn't have to worry about wrap-around. But wrap-around is
+        easy to handle.
+
+        * heap/CellContainer.h:
+        * heap/CellContainerInlines.h:
+        (JSC::CellContainer::flipIfNecessary):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::ConservativeRoots::genericAddSpan):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::testAndSetMarked):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::flipIfNecessary):
+        (JSC::MarkedBlock::flipIfNecessaryConcurrently):
+        (JSC::MarkedBlock::Handle::flipIfNecessary):
+        (JSC::MarkedBlock::Handle::flipIfNecessaryConcurrently):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::flip):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::version):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        * heap/SlotVisitor.h:
+
 2016-09-08  Mark Lam  <mark.lam@apple.com>
 
         Add support for a ternary sub32 emitter for ARM64 and 32-bit ARM.

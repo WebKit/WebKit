@@ -51,7 +51,7 @@ private:
     static const size_t nonInlineCapacity = 8192 / sizeof(HeapCell*);
     
     template<typename MarkHook>
-    void genericAddPointer(void*, int64_t heapVersion, TinyBloomFilter, MarkHook&);
+    void genericAddPointer(void*, HeapVersion, TinyBloomFilter, MarkHook&);
 
     template<typename MarkHook>
     void genericAddSpan(void*, void* end, MarkHook&);

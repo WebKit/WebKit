@@ -101,7 +101,7 @@ public:
 
     static bool isLive(const void*);
     static bool isMarked(const void*);
-    static bool testAndSetMarked(int64_t, const void*);
+    static bool testAndSetMarked(HeapVersion, const void*);
     static void setMarked(const void*);
     
     static size_t cellSize(const void*);
