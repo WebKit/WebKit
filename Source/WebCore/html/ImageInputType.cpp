@@ -109,6 +109,9 @@ RenderPtr<RenderElement> ImageInputType::createInputRenderer(RenderStyle&& style
 
 void ImageInputType::altAttributeChanged()
 {
+    if (!is<RenderImage>(element().renderer()))
+        return;
+
     auto* renderer = downcast<RenderImage>(element().renderer());
     if (!renderer)
         return;

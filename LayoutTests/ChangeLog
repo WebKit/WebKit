@@ -1,3 +1,14 @@
+2016-09-12  Zalan Bujtas  <zalan@apple.com>
+
+        Input type object and the associated render can go out of sync.
+        https://bugs.webkit.org/show_bug.cgi?id=161871
+        <rdar://problem/28178094>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/assert-on-input-type-change-expected.txt: Added.
+        * fast/forms/assert-on-input-type-change.html: Added.
+
 2016-09-10  Chris Dumez  <cdumez@apple.com>
 
         It is possible for Document::m_frame pointer to become stale
