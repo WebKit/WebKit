@@ -1,3 +1,21 @@
+2016-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Update UIRequestEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163288
+
+        Reviewed by Darin Adler.
+
+        Update UIRequestEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a constructor as in the specification:
+        - https://dvcs.w3.org/hg/IndieUI/raw-file/default/src/indie-ui-events.html#UIRequestEvent
+
+        * Modules/indieui/UIRequestEvent.cpp:
+        (WebCore::UIRequestEvent::create):
+        (WebCore::UIRequestEvent::UIRequestEvent):
+        (WebCore::UIRequestEvent::createForBindings): Deleted.
+        * Modules/indieui/UIRequestEvent.h:
+        * Modules/indieui/UIRequestEvent.idl:
+
 2016-10-11  Dean Jackson  <dino@apple.com>
 
         Implement prefers-reduced-motion media query
