@@ -163,17 +163,17 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     return slot.getValue(exec, index);
 }
 
-static ALWAYS_INLINE void putLength(ExecState* exec, JSObject* obj, JSValue value)
+static ALWAYS_INLINE void putLength(ExecState* exec, VM& vm, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
-    obj->methodTable()->put(obj, exec, exec->propertyNames().length, value, slot);
+    obj->methodTable()->put(obj, exec, vm.propertyNames->length, value, slot);
 }
 
-static ALWAYS_INLINE void setLength(ExecState* exec, JSObject* obj, unsigned value)
+static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsigned value)
 {
     if (isJSArray(obj))
         jsCast<JSArray*>(obj)->setLength(exec, value);
-    putLength(exec, obj, jsNumber(value));
+    putLength(exec, vm, obj, jsNumber(value));
 }
 
 inline bool speciesWatchpointsValid(ExecState* exec, JSObject* thisObject)
@@ -679,7 +679,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
 
     JSValue result;
     if (length == 0) {
-        putLength(exec, thisObj, jsNumber(length));
+        putLength(exec, vm, thisObj, jsNumber(length));
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, length - 1);
@@ -688,7 +688,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
             throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
-        putLength(exec, thisObj, jsNumber(length - 1));
+        putLength(exec, vm, thisObj, jsNumber(length - 1));
     }
     return JSValue::encode(result);
 }
@@ -724,7 +724,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     }
     
     JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(exec->argumentCount()));
-    putLength(exec, thisObj, newLength);
+    putLength(exec, vm, thisObj, newLength);
     return JSValue::encode(newLength);
 }
 
@@ -826,13 +826,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
 
     JSValue result;
     if (length == 0) {
-        putLength(exec, thisObj, jsNumber(length));
+        putLength(exec, vm, thisObj, jsNumber(length));
         result = jsUndefined();
     } else {
         result = thisObj->getIndex(exec, 0);
         shift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 1, 0, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        putLength(exec, thisObj, jsNumber(length - 1));
+        putLength(exec, vm, thisObj, jsNumber(length - 1));
     }
     return JSValue::encode(result);
 }
@@ -876,7 +876,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         if (v)
             result->putDirectIndex(exec, n, v);
     }
-    setLength(exec, result, n);
+    setLength(exec, vm, result, n);
     return JSValue::encode(result);
 }
 
@@ -906,8 +906,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
 
-        setLength(exec, result, 0);
-        setLength(exec, thisObj, length);
+        setLength(exec, vm, result, 0);
+        setLength(exec, vm, thisObj, length);
         return JSValue::encode(result);
     }
 
@@ -972,7 +972,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
-    setLength(exec, thisObj, length - deleteCount + additionalArgs);
+    setLength(exec, vm, thisObj, length - deleteCount + additionalArgs);
     return JSValue::encode(result);
 }
 
@@ -998,7 +998,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     JSValue result = jsNumber(length + nrArgs);
-    putLength(exec, thisObj, result);
+    putLength(exec, vm, thisObj, result);
     return JSValue::encode(result);
 }
 

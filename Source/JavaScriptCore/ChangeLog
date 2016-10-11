@@ -1,5 +1,24 @@
 2016-10-10  Mark Lam  <mark.lam@apple.com>
 
+        Change ArrayPrototype.cpp's putLength() and setLength() to take a VM& so that we can use vm.propertyNames.
+        https://bugs.webkit.org/show_bug.cgi?id=163260
+
+        Reviewed by Saam Barati.
+
+        In all cases where we call these, we already have the VM& anyway.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putLength):
+        (JSC::setLength):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+
+2016-10-10  Mark Lam  <mark.lam@apple.com>
+
         Rename the StrictModeReadonlyPropertyWriteError string to ReadonlyPropertyWriteError.
         https://bugs.webkit.org/show_bug.cgi?id=163239
 
