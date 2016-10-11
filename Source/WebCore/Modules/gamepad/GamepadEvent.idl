@@ -24,10 +24,15 @@
  */
 
 [
-    EnabledAtRuntime=Gamepads,
     Conditional=GAMEPAD,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, GamepadEventInit eventInitDict),
+    EnabledAtRuntime=Gamepads,
 ] interface GamepadEvent : Event {
-    [InitializedByEventConstructor] readonly attribute Gamepad gamepad;
+    readonly attribute Gamepad? gamepad;
 };
 
+dictionary GamepadEventInit : EventInit {
+    // The specification says this member should be required and non-nullable.
+    // However, this does not match the behavior of Chrome or Firefox.
+    Gamepad? gamepad = null;
+};

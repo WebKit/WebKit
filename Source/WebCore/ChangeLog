@@ -1,3 +1,21 @@
+2016-10-10  Chris Dumez  <cdumez@apple.com>
+
+        Update GamepadEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163243
+
+        Reviewed by Darin Adler.
+
+        Update GamepadEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a proper constructor as in the specification:
+        - https://w3c.github.io/gamepad/#gamepadevent-interface
+
+        * Modules/gamepad/GamepadEvent.cpp:
+        (WebCore::GamepadEvent::GamepadEvent):
+        * Modules/gamepad/GamepadEvent.h:
+        (WebCore::GamepadEvent::create):
+        (WebCore::GamepadEvent::~GamepadEvent): Deleted.
+        * Modules/gamepad/GamepadEvent.idl:
+
 2016-10-10  Darin Adler  <darin@apple.com>
 
         Move Fetch from legacy to new DOM exceptions

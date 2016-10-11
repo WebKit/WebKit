@@ -35,8 +35,8 @@ GamepadEvent::GamepadEvent(const AtomicString& eventType, Gamepad& gamepad)
 {
 }
 
-GamepadEvent::GamepadEvent(const AtomicString& eventType, const GamepadEventInit& initializer)
-    : Event(eventType, initializer)
+GamepadEvent::GamepadEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : Event(eventType, initializer, isTrusted)
     , m_gamepad(initializer.gamepad)
 {
 }
