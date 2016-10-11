@@ -26,6 +26,7 @@
 #ifndef PlatformPasteboard_h
 #define PlatformPasteboard_h
 
+#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>

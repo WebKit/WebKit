@@ -26,6 +26,7 @@
 #define PasteboardHelper_h
 
 #include "GRefPtrGtk.h"
+#include <functional>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
