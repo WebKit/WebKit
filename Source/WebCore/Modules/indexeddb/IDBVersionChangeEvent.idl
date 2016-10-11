@@ -23,11 +23,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This should be exposed to workers as well.
 [
     Conditional=INDEXED_DATABASE,
     EnabledAtRuntime=IndexedDB,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict),
 ] interface IDBVersionChangeEvent : Event {
     [InitializedByEventConstructor] readonly attribute unsigned long long oldVersion;
     [InitializedByEventConstructor] readonly attribute unsigned long long? newVersion;
+};
+
+dictionary IDBVersionChangeEventInit : EventInit {
+    unsigned long long oldVersion = 0;
+    unsigned long long? newVersion = null;
 };

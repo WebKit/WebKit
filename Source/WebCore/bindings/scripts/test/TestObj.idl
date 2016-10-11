@@ -433,6 +433,7 @@ dictionary TestDictionary {
     TestEnumType enumerationValueWithEmptyStringDefault = "";
     DOMString stringWithDefault = "defaultString";
     DOMString stringWithoutDefault;
+    DOMString? nullableStringWithDefault = null;
     boolean booleanWithDefault = false;
     boolean booleanWithoutDefault;
     sequence<DOMString> sequenceOfStrings;
@@ -456,6 +457,7 @@ dictionary TestDictionary {
     long long largeIntegerWithDefault = 0;
     unsigned long long unsignedLargeInteger;
     unsigned long long unsignedLargeIntegerWithDefault = 0;
+    long? nullableIntegerWithDefault = null;
     Node? nullableNode = null;
     any anyValue;
     any anyValueWithNullDefault = null;

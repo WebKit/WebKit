@@ -39,6 +39,7 @@ template<typename T, typename Enable = void> struct Converter;
 
 template<typename T> T convert(JSC::ExecState&, JSC::JSValue);
 template<typename T> EnableIfIntegralType<T> convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
+template<typename T> EnableIfIntegralType<Optional<T>> convertNullable(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration);
 template<typename T> EnableIfFloatingPointType<T> convert(JSC::ExecState&, JSC::JSValue, ShouldAllowNonFinite);
 
 template<typename T> Optional<T> convertDictionary(JSC::ExecState&, JSC::JSValue);
@@ -61,6 +62,11 @@ template<typename T> T convert(JSC::ExecState& state, JSC::JSValue value)
 template<typename T> inline EnableIfIntegralType<T> convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
 {
     return Converter<T>::convert(state, value, configuration);
+}
+
+template<typename T> inline EnableIfIntegralType<T, Optional<T>> convertNullable(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration)
+{
+    return value.isUndefinedOrNull() ? Optional<T>() : Converter<T>::convert(state, value, configuration);
 }
 
 template<typename T> inline EnableIfFloatingPointType<T> convert(JSC::ExecState& state, JSC::JSValue value, ShouldAllowNonFinite allow)

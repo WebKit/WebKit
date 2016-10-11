@@ -41,8 +41,8 @@ IDBVersionChangeEvent::IDBVersionChangeEvent(const IDBResourceIdentifier& reques
         m_newVersion = Nullopt;
 }
 
-IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomicString& name, const IDBVersionChangeEventInit& init)
-    : Event(name, false /*canBubble*/, false /*cancelable*/)
+IDBVersionChangeEvent::IDBVersionChangeEvent(const AtomicString& name, const Init& init, IsTrusted isTrusted)
+    : Event(name, init, isTrusted)
     , m_oldVersion(init.oldVersion)
     , m_newVersion(init.newVersion)
 {

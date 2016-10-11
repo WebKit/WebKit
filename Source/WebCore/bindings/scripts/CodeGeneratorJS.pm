@@ -974,22 +974,25 @@ sub GenerateDefaultValue
 {
     my ($interface, $member) = @_;
 
-    my $value = $member->default;
+    my $defaultValue = $member->default;
 
     if ($codeGenerator->IsEnumType($member->type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
         # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
         my $className = GetEnumerationClassName($member->type, $interface);
-        my $enumerationValueName = GetEnumerationValueName(substr($value, 1, -1));
-        $value = $className . "::" . $enumerationValueName;
+        my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
+        return $className . "::" . $enumerationValueName;
     }
-    if ($value eq "null") {
-        $value = $member->type eq "any" ? "jsNull()" : "nullptr";
+    if ($defaultValue eq "null") {
+        return "jsNull()" if $member->type eq "any";
+        return "nullptr" if $codeGenerator->IsWrapperType($member->type);
+        return "String()" if $codeGenerator->IsStringType($member->type);
+        return "Nullopt";
     }
-    $value = "{ }" if $value eq "[]";
-    $value = "jsUndefined()" if $value eq "undefined";
+    return "{ }" if $defaultValue eq "[]";
+    return "jsUndefined()" if $defaultValue eq "undefined";
 
-    return $value;
+    return $defaultValue;
 }
 
 sub ShouldAllowNonFiniteForFloatingPointType
@@ -1131,7 +1134,8 @@ sub GenerateDictionaryImplementationContent
                 $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             } else {
                 my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
-                $result .= "        result.$key = convert<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+                my $convertFunction = $member->isNullable ? "convertNullable" : "convert";
+                $result .= "        result.$key = $convertFunction<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
                 $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             }
             # Value is undefined.

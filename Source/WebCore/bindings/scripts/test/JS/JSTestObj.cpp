@@ -550,12 +550,24 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         result.largeIntegerWithDefault = 0;
+    JSValue nullableIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
+    if (!nullableIntegerWithDefaultValue.isUndefined()) {
+        result.nullableIntegerWithDefault = convertNullable<int32_t>(state, nullableIntegerWithDefaultValue, NormalConversion);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.nullableIntegerWithDefault = Nullopt;
     JSValue nullableNodeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableNode"));
     if (!nullableNodeValue.isUndefined()) {
         result.nullableNode = convertWrapperType<Node, JSNode>(state, nullableNodeValue, IsNullable::Yes);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         result.nullableNode = nullptr;
+    JSValue nullableStringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
+    if (!nullableStringWithDefaultValue.isUndefined()) {
+        result.nullableStringWithDefault = convertNullable<String>(state, nullableStringWithDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.nullableStringWithDefault = String();
     JSValue restrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
     if (!restrictedDoubleValue.isUndefined()) {
         result.restrictedDouble = convert<double>(state, restrictedDoubleValue, ShouldAllowNonFinite::No);

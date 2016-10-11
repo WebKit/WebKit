@@ -33,11 +33,6 @@
 
 namespace WebCore {
 
-struct IDBVersionChangeEventInit : public EventInit {
-    uint64_t oldVersion { 0 };
-    Optional<uint64_t> newVersion;
-};
-
 class IDBVersionChangeEvent final : public Event {
 public:
     static Ref<IDBVersionChangeEvent> create(uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType)
@@ -50,9 +45,14 @@ public:
         return adoptRef(*new IDBVersionChangeEvent(requestIdentifier, oldVersion, newVersion, eventType));
     }
 
-    static Ref<IDBVersionChangeEvent> createForBindings(const AtomicString& type, const IDBVersionChangeEventInit& initializer)
+    struct Init : EventInit {
+        uint64_t oldVersion { 0 };
+        Optional<uint64_t> newVersion;
+    };
+
+    static Ref<IDBVersionChangeEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new IDBVersionChangeEvent(type, initializer));
+        return adoptRef(*new IDBVersionChangeEvent(type, initializer, isTrusted));
     }
 
     const IDBResourceIdentifier& requestIdentifier() const { return m_requestIdentifier; }
@@ -64,7 +64,7 @@ public:
 
 private:
     IDBVersionChangeEvent(const IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion, const AtomicString& eventType);
-    IDBVersionChangeEvent(const AtomicString&, const IDBVersionChangeEventInit&);
+    IDBVersionChangeEvent(const AtomicString&, const Init&, IsTrusted);
 
     EventInterface eventInterface() const;
 

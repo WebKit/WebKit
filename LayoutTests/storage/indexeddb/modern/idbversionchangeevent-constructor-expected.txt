@@ -19,6 +19,11 @@ PASS event.newVersion is 17
 event = new IDBVersionChangeEvent('bar', { oldVersion: 43876528735628, newVersion: 0 });
 PASS event.oldVersion is 43876528735628
 PASS event.newVersion is 0
+event = new IDBVersionChangeEvent('bar', { bubbles: true, cancelable: true, composed: true });
+PASS event.type is "bar"
+PASS event.bubbles is true
+PASS event.cancelable is true
+PASS event.composed is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

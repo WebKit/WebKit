@@ -35,6 +35,12 @@ evalAndLog("event = new IDBVersionChangeEvent('bar', { oldVersion: 4387652873562
 shouldBeEqualToNumber("event.oldVersion", 43876528735628);
 shouldBeEqualToNumber("event.newVersion", 0);
 
+evalAndLog("event = new IDBVersionChangeEvent('bar', { bubbles: true, cancelable: true, composed: true });");
+shouldBeEqualToString("event.type", "bar");
+shouldBeTrue("event.bubbles");
+shouldBeTrue("event.cancelable");
+shouldBeTrue("event.composed");
+
 finishJSTest();
 
 </script>
