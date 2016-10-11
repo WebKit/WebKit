@@ -154,28 +154,37 @@ void lowerToAirForTesting(Procedure& proc)
     Air::validate(proc.code());
 }
 
-void checkUsesInstruction(Compilation& compilation, const char* text)
+template<typename Func>
+void checkDisassembly(Compilation& compilation, const Func& func, CString failText)
 {
     CString disassembly = compilation.disassembly();
-    if (strstr(disassembly.data(), text))
+    if (func(disassembly.data()))
         return;
-
+    
     crashLock.lock();
-    dataLog("Bad lowering!  Expected to find ", text, " but didn't:\n");
+    dataLog("Bad lowering!  ", failText, "\n");
     dataLog(disassembly);
     CRASH();
 }
 
+void checkUsesInstruction(Compilation& compilation, const char* text)
+{
+    checkDisassembly(
+        compilation,
+        [&] (const char* disassembly) -> bool {
+            return strstr(disassembly, text);
+        },
+        toCString("Expected to find ", text, " but didnt!"));
+}
+
 void checkDoesNotUseInstruction(Compilation& compilation, const char* text)
 {
-    CString disassembly = compilation.disassembly();
-    if (!strstr(disassembly.data(), text))
-        return;
-
-    crashLock.lock();
-    dataLog("Bad lowering!  Did not expected to find ", text, " but it's there:\n");
-    dataLog(disassembly);
-    CRASH();
+    checkDisassembly(
+        compilation,
+        [&] (const char* disassembly) -> bool {
+            return !strstr(disassembly, text);
+        },
+        toCString("Did not expected to find ", text, " but it's there!"));
 }
 
 template<typename Type>
@@ -13381,6 +13390,275 @@ void testPinRegisters()
     go(false);
 }
 
+void testX86LeaAddAddShlLeft()
+{
+    // Add(Add(Shl(@x, $c), @y), $d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<Value>(
+                proc, Shl, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                root->appendNew<Const32Value>(proc, Origin(), 2)),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 100));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea 0x64(%rdi,%rsi,4), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + (2 << 2)) + 100);
+}
+
+void testX86LeaAddAddShlRight()
+{
+    // Add(Add(@x, Shl(@y, $c)), $d)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+            root->appendNew<Value>(
+                proc, Shl, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                root->appendNew<Const32Value>(proc, Origin(), 2))),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 100));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea 0x64(%rdi,%rsi,4), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + (2 << 2)) + 100);
+}
+
+void testX86LeaAddAdd()
+{
+    // Add(Add(@x, @y), $c)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<Value>(
+            proc, Add, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
+        root->appendNew<ConstPtrValue>(proc, Origin(), 100));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkDisassembly(
+        *code,
+        [&] (const char* disassembly) -> bool {
+            return strstr(disassembly, "lea 0x64(%rdi,%rsi), %rax")
+                || strstr(disassembly, "lea 0x64(%rsi,%rdi), %rax");
+        },
+        "Expected to find something like lea 0x64(%rdi,%rsi), %rax but didn't!");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), (1 + 2) + 100);
+}
+
+void testX86LeaAddShlRight()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 2)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea (%rdi,%rsi,4), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 2));
+}
+
+void testX86LeaAddShlLeftScale1()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 0)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkDisassembly(
+        *code,
+        [&] (const char* disassembly) -> bool {
+            return strstr(disassembly, "lea (%rdi,%rsi), %rax")
+                || strstr(disassembly, "lea (%rsi,%rdi), %rax");
+        },
+        "Expected to find something like lea (%rdi,%rsi), %rax but didn't!");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
+}
+
+void testX86LeaAddShlLeftScale2()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 1)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea (%rdi,%rsi,2), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 1));
+}
+
+void testX86LeaAddShlLeftScale4()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 2)),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea (%rdi,%rsi,4), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 2));
+}
+
+void testX86LeaAddShlLeftScale8()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 3)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    checkUsesInstruction(*code, "lea (%rdi,%rsi,8), %rax");
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 3));
+}
+
+void testAddShl32()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 32)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (static_cast<intptr_t>(2) << static_cast<intptr_t>(32)));
+}
+
+void testAddShl64()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 64)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + 2);
+}
+
+void testAddShl65()
+{
+    // Add(Shl(@x, $c), @y)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* result = root->appendNew<Value>(
+        proc, Add, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+            root->appendNew<Const32Value>(proc, Origin(), 65)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    
+    auto code = compile(proc);
+    CHECK_EQ(invoke<intptr_t>(*code, 1, 2), 1 + (2 << 1));
+}
+
+void testReduceStrengthReassociation(bool flip)
+{
+    // Add(Add(@x, $c), @y) -> Add(Add(@x, @y), $c)
+    // and
+    // Add(@y, Add(@x, $c)) -> Add(Add(@x, @y), $c)
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    
+    Value* innerAdd = root->appendNew<Value>(
+        proc, Add, Origin(), arg1,
+        root->appendNew<ConstPtrValue>(proc, Origin(), 42));
+    
+    Value* outerAdd;
+    if (flip)
+        outerAdd = root->appendNew<Value>(proc, Add, Origin(), arg2, innerAdd);
+    else
+        outerAdd = root->appendNew<Value>(proc, Add, Origin(), innerAdd, arg2);
+    
+    root->appendNew<Value>(proc, Return, Origin(), outerAdd);
+    
+    proc.resetReachability();
+
+    if (shouldBeVerbose()) {
+        dataLog("IR before reduceStrength:\n");
+        dataLog(proc);
+    }
+    
+    reduceStrength(proc);
+    
+    if (shouldBeVerbose()) {
+        dataLog("IR after reduceStrength:\n");
+        dataLog(proc);
+    }
+    
+    CHECK_EQ(root->last()->opcode(), Return);
+    CHECK_EQ(root->last()->child(0)->opcode(), Add);
+    CHECK(root->last()->child(0)->child(1)->isIntPtr(42));
+    CHECK_EQ(root->last()->child(0)->child(0)->opcode(), Add);
+    CHECK(
+        (root->last()->child(0)->child(0)->child(0) == arg1 && root->last()->child(0)->child(0)->child(1) == arg2) ||
+        (root->last()->child(0)->child(0)->child(0) == arg2 && root->last()->child(0)->child(0)->child(1) == arg1));
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -14801,23 +15079,6 @@ void run(const char* filter)
     RUN(testPatchpointTerminalReturnValue(true));
     RUN(testPatchpointTerminalReturnValue(false));
     
-    if (isX86()) {
-        RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
-        RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));
-        RUN(testBranchBitAndImmFusion(Trunc, Int32, 1, Air::BranchTest32, Air::Arg::Tmp));
-        RUN(testBranchBitAndImmFusion(Trunc, Int32, 0xff, Air::BranchTest32, Air::Arg::Tmp));
-        RUN(testBranchBitAndImmFusion(Load8S, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load8Z, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
-        RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
-        
-    }
-
-    if (isARM64()) {
-        RUN(testTernarySubInstructionSelection(Identity, Int64, Air::Sub64));
-        RUN(testTernarySubInstructionSelection(Trunc, Int32, Air::Sub32));
-    }
-
     RUN(testMemoryFence());
     RUN(testStoreFence());
     RUN(testLoadFence());
@@ -14829,7 +15090,36 @@ void run(const char* filter)
     RUN(testMoveConstants());
     RUN(testPCOriginMapDoesntInsertNops());
     RUN(testPinRegisters());
+    RUN(testReduceStrengthReassociation(true));
+    RUN(testReduceStrengthReassociation(false));
+    RUN(testAddShl32());
+    RUN(testAddShl64());
+    RUN(testAddShl65());
     
+    if (isX86()) {
+        RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
+        RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));
+        RUN(testBranchBitAndImmFusion(Trunc, Int32, 1, Air::BranchTest32, Air::Arg::Tmp));
+        RUN(testBranchBitAndImmFusion(Trunc, Int32, 0xff, Air::BranchTest32, Air::Arg::Tmp));
+        RUN(testBranchBitAndImmFusion(Load8S, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
+        RUN(testBranchBitAndImmFusion(Load8Z, Int32, 1, Air::BranchTest8, Air::Arg::Addr));
+        RUN(testBranchBitAndImmFusion(Load, Int32, 1, Air::BranchTest32, Air::Arg::Addr));
+        RUN(testBranchBitAndImmFusion(Load, Int64, 1, Air::BranchTest32, Air::Arg::Addr));
+        RUN(testX86LeaAddAddShlLeft());
+        RUN(testX86LeaAddAddShlRight());
+        RUN(testX86LeaAddAdd());
+        RUN(testX86LeaAddShlRight());
+        RUN(testX86LeaAddShlLeftScale1());
+        RUN(testX86LeaAddShlLeftScale2());
+        RUN(testX86LeaAddShlLeftScale4());
+        RUN(testX86LeaAddShlLeftScale8());
+    }
+
+    if (isARM64()) {
+        RUN(testTernarySubInstructionSelection(Identity, Int64, Air::Sub64));
+        RUN(testTernarySubInstructionSelection(Trunc, Int32, Air::Sub32));
+    }
+
     if (tasks.isEmpty())
         usage();
 

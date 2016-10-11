@@ -1358,10 +1358,17 @@ public:
     }
 #endif
 
-    void lea(Address address, RegisterID dest)
+    void lea32(Address address, RegisterID dest)
     {
-        addPtr(TrustedImm32(address.offset), address.base, dest);
+        add32(TrustedImm32(address.offset), address.base, dest);
     }
+
+#if CPU(X86_64) || CPU(ARM64)
+    void lea64(Address address, RegisterID dest)
+    {
+        add64(TrustedImm32(address.offset), address.base, dest);
+    }
+#endif // CPU(X86_64) || CPU(ARM64)
 
     bool shouldBlind(Imm32 imm)
     {

@@ -482,19 +482,56 @@ private:
         switch (m_value->opcode()) {
         case Add:
             handleCommutativity();
-
-            // Turn this: Add(Add(value, constant1), constant2)
-            // Into this: Add(value, constant1 + constant2)
+            
             if (m_value->child(0)->opcode() == Add && isInt(m_value->type())) {
+                // Turn this: Add(Add(value, constant1), constant2)
+                // Into this: Add(value, constant1 + constant2)
                 Value* newSum = m_value->child(1)->addConstant(m_proc, m_value->child(0)->child(1));
                 if (newSum) {
                     m_insertionSet.insertValue(m_index, newSum);
                     m_value->child(0) = m_value->child(0)->child(0);
                     m_value->child(1) = newSum;
                     m_changed = true;
+                    break;
+                }
+                
+                // Turn this: Add(Add(value, constant), otherValue)
+                // Into this: Add(Add(value, otherValue), constant)
+                if (!m_value->child(1)->hasInt() && m_value->child(0)->child(1)->hasInt()) {
+                    Value* value = m_value->child(0)->child(0);
+                    Value* constant = m_value->child(0)->child(1);
+                    Value* otherValue = m_value->child(1);
+                    // This could create duplicate code if Add(value, constant) is used elsewhere.
+                    // However, we already model adding a constant as if it was free in other places
+                    // so let's just roll with it. The alternative would mean having to do good use
+                    // counts, which reduceStrength() currently doesn't have.
+                    m_value->child(0) =
+                        m_insertionSet.insert<Value>(
+                            m_index, Add, m_value->origin(), value, otherValue);
+                    m_value->child(1) = constant;
+                    m_changed = true;
+                    break;
                 }
             }
-
+            
+            // Turn this: Add(otherValue, Add(value, constant))
+            // Into this: Add(Add(value, otherValue), constant)
+            if (isInt(m_value->type())
+                && !m_value->child(0)->hasInt()
+                && m_value->child(1)->opcode() == Add
+                && m_value->child(1)->child(1)->hasInt()) {
+                Value* value = m_value->child(1)->child(0);
+                Value* constant = m_value->child(1)->child(1);
+                Value* otherValue = m_value->child(0);
+                // This creates a duplicate add. That's dangerous but probably fine, see above.
+                m_value->child(0) =
+                    m_insertionSet.insert<Value>(
+                        m_index, Add, m_value->origin(), value, otherValue);
+                m_value->child(1) = constant;
+                m_changed = true;
+                break;
+            }
+            
             // Turn this: Add(constant1, constant2)
             // Into this: constant1 + constant2
             if (Value* constantAdd = m_value->child(0)->addConstant(m_proc, m_value->child(1))) {

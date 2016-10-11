@@ -300,8 +300,13 @@ x86: X86Div32 UZD:G:32, UZD:G:32, U:G:32
 x86_64: X86Div64 UZD:G:64, UZD:G:64, U:G:64
     Tmp*, Tmp*, Tmp
 
-Lea UA:G:Ptr, D:G:Ptr
+Lea32 UA:G:32, D:G:32
     Addr, Tmp
+    x86: Index, Tmp as x86Lea32
+
+Lea64 UA:G:64, D:G:64
+    Addr, Tmp
+    x86: Index, Tmp as x86Lea64
 
 And32 U:G:32, U:G:32, ZD:G:32
     Tmp, Tmp, Tmp

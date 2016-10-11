@@ -399,7 +399,8 @@ private:
     // short, you should avoid this by using the pattern matcher to match patterns.
     void commitInternal(Value* value)
     {
-        m_locked.add(value);
+        if (value)
+            m_locked.add(value);
     }
 
     bool crossesInterference(Value* value)
@@ -1798,6 +1799,148 @@ private:
             },
             false);
     }
+    
+    bool tryAppendLea()
+    {
+        Air::Opcode leaOpcode = tryOpcodeForType(Lea32, Lea64, m_value->type());
+        if (!isValidForm(leaOpcode, Arg::Index, Arg::Tmp))
+            return false;
+        
+        // This lets us turn things like this:
+        //
+        //     Add(Add(@x, Shl(@y, $2)), $100)
+        //
+        // Into this:
+        //
+        //     lea 100(%rdi,%rsi,4), %rax
+        //
+        // We have a choice here between committing the internal bits of an index or sharing
+        // them. There are solid arguments for both.
+        //
+        // Sharing: The word on the street is that the cost of a lea is one cycle no matter
+        // what it does. Every experiment I've ever seen seems to confirm this. So, sharing
+        // helps us in situations where Wasm input did this:
+        //
+        //     x = a[i].x;
+        //     y = a[i].y;
+        //
+        // With sharing we would do:
+        //
+        //     leal (%a,%i,4), %tmp
+        //     cmp (%size, %tmp)
+        //     ja _fail
+        //     movl (%base, %tmp), %x
+        //     leal 4(%a,%i,4), %tmp
+        //     cmp (%size, %tmp)
+        //     ja _fail
+        //     movl (%base, %tmp), %y
+        //
+        // In the absence of sharing, we may find ourselves needing separate registers for
+        // the innards of the index. That's relatively unlikely to be a thing due to other
+        // optimizations that we already have, but it could happen
+        //
+        // Committing: The worst case is that there is a complicated graph of additions and
+        // shifts, where each value has multiple uses. In that case, it's better to compute
+        // each one separately from the others since that way, each calculation will use a
+        // relatively nearby tmp as its input. That seems uncommon, but in those cases,
+        // committing is a clear winner: it would result in a simple interference graph
+        // while sharing would result in a complex one. Interference sucks because it means
+        // more time in IRC and it means worse code.
+        //
+        // It's not super clear if any of these corner cases would ever arise. Committing
+        // has the benefit that it's easier to reason about, and protects a much darker
+        // corner case (more interference).
+                
+        // Here are the things we want to match:
+        // Add(Add(@x, @y), $c)
+        // Add(Shl(@x, $c), @y)
+        // Add(@x, Shl(@y, $c))
+        // Add(Add(@x, Shl(@y, $c)), $d)
+        // Add(Add(Shl(@x, $c), @y), $d)
+        //
+        // Note that if you do Add(Shl(@x, $c), $d) then we will treat $d as a non-constant and
+        // force it to materialize. You'll get something like this:
+        //
+        // movl $d, %tmp
+        // leal (%tmp,%x,1<<c), %result
+        //
+        // Which is pretty close to optimal and has the nice effect of being able to handle large
+        // constants gracefully.
+        
+        Value* innerAdd = nullptr;
+        
+        Value* value = m_value;
+        
+        // We're going to consume Add(Add(_), $c). If we succeed at consuming it then we have these
+        // patterns left (i.e. in the Add(_)):
+        //
+        // Add(Add(@x, @y), $c)
+        // Add(Add(@x, Shl(@y, $c)), $d)
+        // Add(Add(Shl(@x, $c), @y), $d)
+        //
+        // Otherwise we are looking at these patterns:
+        //
+        // Add(Shl(@x, $c), @y)
+        // Add(@x, Shl(@y, $c))
+        //
+        // This means that the subsequent code only has to worry about three patterns:
+        //
+        // Add(Shl(@x, $c), @y)
+        // Add(@x, Shl(@y, $c))
+        // Add(@x, @y) (only if offset != 0)
+        int32_t offset = 0;
+        if (value->child(1)->isRepresentableAs<int32_t>()
+            && canBeInternal(value->child(0))
+            && value->child(0)->opcode() == Add) {
+            innerAdd = value->child(0);
+            offset = value->child(1)->asInt32();
+            value = value->child(0);
+        }
+        
+        auto tryShl = [&] (Value* shl, Value* other) -> bool {
+            if (shl->opcode() != Shl)
+                return false;
+            if (!canBeInternal(shl))
+                return false;
+            if (!shl->child(1)->hasInt32())
+                return false;
+            unsigned logScale = shl->child(1)->asInt32();
+            if (m_value->type() == Int32)
+                logScale &= 31;
+            else
+                logScale &= 63;
+            // Use 64-bit math to perform the shift so that <<32 does the right thing.
+            int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
+            if (!isRepresentableAs<int32_t>(bigScale))
+                return false;
+            unsigned scale = static_cast<int32_t>(bigScale);
+            if (!Arg::isValidIndexForm(scale, offset))
+                return false;
+            
+            ASSERT(!m_locked.contains(shl->child(0)));
+            ASSERT(!m_locked.contains(other));
+            
+            append(leaOpcode, Arg::index(tmp(other), tmp(shl->child(0)), scale, offset), tmp(m_value));
+            commitInternal(innerAdd);
+            commitInternal(shl);
+            return true;
+        };
+        
+        if (tryShl(value->child(0), value->child(1)))
+            return true;
+        if (tryShl(value->child(1), value->child(0)))
+            return true;
+        
+        // The remaining pattern is just:
+        // Add(@x, @y) (only if offset != 0)
+        if (!offset)
+            return false;
+        ASSERT(!m_locked.contains(value->child(0)));
+        ASSERT(!m_locked.contains(value->child(1)));
+        append(leaOpcode, Arg::index(tmp(value->child(0)), tmp(value->child(1)), 1, offset), tmp(m_value));
+        commitInternal(innerAdd);
+        return true;
+    }
 
     void lower()
     {
@@ -1834,9 +1977,11 @@ private:
         }
 
         case Add: {
+            if (tryAppendLea())
+                return;
+            
             Air::Opcode multiplyAddOpcode = tryOpcodeForType(MultiplyAdd32, MultiplyAdd64, m_value->type());
-            if (multiplyAddOpcode != Air::Oops
-                && isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            if (isValidForm(multiplyAddOpcode, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 Value* left = m_value->child(0);
                 Value* right = m_value->child(1);
                 if (!imm(right) || m_valueToTmp[right]) {
@@ -1846,7 +1991,7 @@ private:
 
                         Value* multiplyLeft = left->child(0);
                         Value* multiplyRight = left->child(1);
-                        if (m_locked.contains(multiplyLeft) || m_locked.contains(multiplyRight))
+                        if (canBeInternal(multiplyLeft) || canBeInternal(multiplyRight))
                             return false;
 
                         append(multiplyAddOpcode, tmp(multiplyLeft), tmp(multiplyRight), tmp(right), tmp(m_value));
@@ -2215,7 +2360,7 @@ private:
 
         case SlotBase: {
             append(
-                Lea,
+                pointerType() == Int64 ? Lea64 : Lea32,
                 Arg::stack(m_stackToStack.get(m_value->as<SlotBaseValue>()->slot())),
                 tmp(m_value));
             return;

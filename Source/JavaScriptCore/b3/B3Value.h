@@ -225,7 +225,7 @@ public:
     float asFloat() const;
 
     bool hasNumber() const;
-    template<typename T> bool representableAs() const;
+    template<typename T> bool isRepresentableAs() const;
     template<typename T> T asNumber() const;
 
     // Booleans in B3 are Const32(0) or Const32(1). So this is true if the type is Int32 and the only

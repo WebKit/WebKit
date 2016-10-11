@@ -186,17 +186,17 @@ inline bool Value::isNegativeZero() const
 }
 
 template<typename T>
-inline bool Value::representableAs() const
+inline bool Value::isRepresentableAs() const
 {
     switch (opcode()) {
     case Const32:
-        return isRepresentableAs<T>(asInt32());
+        return B3::isRepresentableAs<T>(asInt32());
     case Const64:
-        return isRepresentableAs<T>(asInt64());
+        return B3::isRepresentableAs<T>(asInt64());
     case ConstDouble:
-        return isRepresentableAs<T>(asDouble());
+        return B3::isRepresentableAs<T>(asDouble());
     case ConstFloat:
-        return isRepresentableAs<T>(asFloat());
+        return B3::isRepresentableAs<T>(asFloat());
     default:
         return false;
     }
