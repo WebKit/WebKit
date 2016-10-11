@@ -495,6 +495,8 @@ public:
     enum class UserInterfaceLayoutDirection { LTR, RTL };
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);
 
+    bool userPrefersReducedMotion() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

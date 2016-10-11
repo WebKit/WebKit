@@ -115,6 +115,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
     , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
+    , m_forcedPrefersReducedMotionValue(settings.forcedPrefersReducedMotionValue())
 {
 }
 
@@ -194,6 +195,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setUserInterfaceDirectionPolicy(m_userInterfaceDirectionPolicy);
     settings.setSystemLayoutDirection(m_systemLayoutDirection);
     settings.setPdfImageCachingPolicy(m_pdfImageCachingPolicy);
+    settings.setForcedPrefersReducedMotionValue(m_forcedPrefersReducedMotionValue);
     Settings::setAllowsAnySSLCertificate(false);
 }
 
@@ -677,6 +679,33 @@ void InternalSettings::setVariationFontsEnabled(bool enabled, ExceptionCode& ec)
     UNUSED_PARAM(enabled);
     UNUSED_PARAM(ec);
 #endif
+}
+
+InternalSettings::ForcedPrefersReducedMotionValue InternalSettings::forcedPrefersReducedMotionValue() const
+{
+    switch (settings()->forcedPrefersReducedMotionValue()) {
+    case Settings::ForcedPrefersReducedMotionValue::System:
+        return InternalSettings::ForcedPrefersReducedMotionValue::System;
+    case Settings::ForcedPrefersReducedMotionValue::On:
+        return InternalSettings::ForcedPrefersReducedMotionValue::On;
+    case Settings::ForcedPrefersReducedMotionValue::Off:
+        return InternalSettings::ForcedPrefersReducedMotionValue::Off;
+    }
+}
+
+void InternalSettings::setForcedPrefersReducedMotionValue(InternalSettings::ForcedPrefersReducedMotionValue value)
+{
+    switch (value) {
+    case InternalSettings::ForcedPrefersReducedMotionValue::System:
+        settings()->setForcedPrefersReducedMotionValue(Settings::ForcedPrefersReducedMotionValue::System);
+        break;
+    case InternalSettings::ForcedPrefersReducedMotionValue::On:
+        settings()->setForcedPrefersReducedMotionValue(Settings::ForcedPrefersReducedMotionValue::On);
+        break;
+    case InternalSettings::ForcedPrefersReducedMotionValue::Off:
+        settings()->setForcedPrefersReducedMotionValue(Settings::ForcedPrefersReducedMotionValue::Off);
+        break;
+    }
 }
 
 // If you add to this list, make sure that you update the Backup class for test reproducability!

@@ -69,6 +69,7 @@
     macro(monochrome, "monochrome") \
     macro(orientation, "orientation") \
     macro(pointer, "pointer") \
+    macro(prefersReducedMotion, "prefers-reduced-motion") \
     macro(resolution, "resolution") \
     macro(transform2d, "-webkit-transform-2d") \
     macro(transform3d, "-webkit-transform-3d") \

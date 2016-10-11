@@ -34,6 +34,8 @@ class ThemeIOS : public ThemeCocoa {
 public:
     ThemeIOS() { }
     virtual ~ThemeIOS() { }
+
+    bool userPrefersReducedMotion() const override;
 };
 
 } // namespace WebCore

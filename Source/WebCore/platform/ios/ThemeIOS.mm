@@ -28,8 +28,12 @@
 
 #import "GraphicsContext.h"
 #import "ScrollView.h"
+#import "SoftLinking.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK(UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), ())
 
 using namespace std;
 
@@ -41,6 +45,11 @@ Theme* platformTheme()
 {
     static NeverDestroyed<ThemeIOS> themeIOS;
     return &themeIOS.get();
+}
+
+bool ThemeIOS::userPrefersReducedMotion() const
+{
+    return UIAccessibilityIsReduceMotionEnabled();
 }
 
 }

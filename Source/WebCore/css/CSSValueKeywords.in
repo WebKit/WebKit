@@ -1304,6 +1304,9 @@ last
 p3
 rec2020
 
+// prefers-reduced-motion
+reduce
+
 #if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
 // auto-repeat
 auto-fill

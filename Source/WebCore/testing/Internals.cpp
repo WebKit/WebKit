@@ -3378,4 +3378,11 @@ void Internals::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection use
     page->setUserInterfaceLayoutDirection(userInterfaceLayoutDirection == UserInterfaceLayoutDirection::LTR ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL);
 }
 
+#if !PLATFORM(COCOA)
+bool Internals::userPrefersReducedMotion() const
+{
+    return false;
+}
+#endif
+
 } // namespace WebCore

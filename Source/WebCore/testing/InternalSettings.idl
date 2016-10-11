@@ -24,6 +24,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum ForcedPrefersReducedMotionValue { "system", "on", "off" };
+
 [
     NoInterfaceObject,
     JSGenerateToJSObject,
@@ -88,6 +90,8 @@
 
     [MayThrowLegacyException] boolean variationFontsEnabled();
     [MayThrowLegacyException] void setVariationFontsEnabled(boolean enabled);
+
+    attribute ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue;
 
     void setInputEventsEnabled(boolean enabled);
 };

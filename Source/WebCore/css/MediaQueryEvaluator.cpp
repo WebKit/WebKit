@@ -49,6 +49,7 @@
 #include "Screen.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "Theme.h"
 #include <wtf/HashMap.h>
 
 #if ENABLE(3D_TRANSFORMS)
@@ -653,6 +654,25 @@ static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, F
 static bool anyPointerEvaluate(CSSValue* value, const CSSToLengthConversionData& cssToLengthConversionData, Frame& frame, MediaFeaturePrefix prefix)
 {
     return pointerEvaluate(value, cssToLengthConversionData, frame, prefix);
+}
+
+static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
+{
+#if USE(NEW_THEME)
+    bool userPrefersReducedMotion = platformTheme()->userPrefersReducedMotion();
+#else
+    bool userPrefersReducedMotion = false;
+#endif
+
+    if (frame.settings().forcedPrefersReducedMotionValue() == Settings::ForcedPrefersReducedMotionValue::On)
+        userPrefersReducedMotion = true;
+    else if (frame.settings().forcedPrefersReducedMotionValue() == Settings::ForcedPrefersReducedMotionValue::Off)
+        userPrefersReducedMotion = false;
+
+    if (!value)
+        return userPrefersReducedMotion;
+
+    return downcast<CSSPrimitiveValue>(*value).getValueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueDefault);
 }
 
 // Use this function instead of calling add directly to avoid inlining.

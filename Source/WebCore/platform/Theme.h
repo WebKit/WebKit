@@ -110,6 +110,8 @@ public:
 
     virtual void drawNamedImage(const String&, GraphicsContext&, const FloatRect&) const;
 
+    virtual bool userPrefersReducedMotion() const { return false; }
+
     // This method is called once, from RenderTheme::adjustDefaultStyleSheet(), to let each platform adjust
     // the default CSS rules in html.css.
     static String defaultStyleSheet();

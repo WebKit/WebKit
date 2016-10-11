@@ -1,3 +1,19 @@
+2016-10-11  Dean Jackson  <dino@apple.com>
+
+        Implement prefers-reduced-motion media query
+        https://bugs.webkit.org/show_bug.cgi?id=163250
+        <rdar://problem/28704129>
+
+        Reviewed by Simon Fraser.
+
+        One test checks the system value. The other test overrides
+        the system values to make sure as much as possible is working.
+
+        * fast/media/mq-prefers-reduced-motion-expected.html: Added.
+        * fast/media/mq-prefers-reduced-motion-forced-value-expected.html: Added.
+        * fast/media/mq-prefers-reduced-motion-forced-value.html: Added.
+        * fast/media/mq-prefers-reduced-motion.html: Added.
+
 2016-10-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip tests added with r207155 that rely on touch events.

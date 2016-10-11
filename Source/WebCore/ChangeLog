@@ -1,3 +1,63 @@
+2016-10-11  Dean Jackson  <dino@apple.com>
+
+        Implement prefers-reduced-motion media query
+        https://bugs.webkit.org/show_bug.cgi?id=163250
+        <rdar://problem/28704129>
+
+        Reviewed by Simon Fraser.
+
+        Implement the prefers-reduced-motion media query, as
+        described in https://github.com/w3c/csswg-drafts/issues/442.
+
+        Tests: fast/media/mq-prefers-reduced-motion-forced-value.html
+               fast/media/mq-prefers-reduced-motion.html
+
+        * Configurations/WebCoreTestSupport.xcconfig: Link against AppKit and UIKit.
+
+        * css/CSSValueKeywords.in: New keyword for "reduce".
+
+        * css/MediaFeatureNames.h: Add prefers-reduced-motion.
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersReducedMotionEvaluate):
+        * css/MediaQueryExp.cpp:
+        (WebCore::featureWithValidIdent):
+        (WebCore::isFeatureValidWithoutValue):
+
+        * platform/Theme.h: New API to detect the system accessibility settings.
+        (WebCore::Theme::userPrefersReducedMotion):
+        * platform/ios/ThemeIOS.h:
+        * platform/ios/ThemeIOS.mm:
+        (WebCore::ThemeIOS::userPrefersReducedMotion):
+        * platform/mac/ThemeMac.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::userPrefersReducedMotion):
+
+        * testing/Internals.cpp: Expose the same API to internals, so that
+        a test can examine the value too.
+        (WebCore::Internals::userPrefersReducedMotion):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/Internals.mm:
+        (WebCore::Internals::userPrefersReducedMotion):
+
+        * page/Settings.h: New setting to override the system value...
+        * page/Settings.in:
+
+        * testing/InternalSettings.cpp: ... plumbed through internals.
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::forcedPrefersReducedMotionValue):
+        (WebCore::InternalSettings::setForcedPrefersReducedMotionValue):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::userPrefersReducedMotion):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * testing/Internals.mm:
+        (WebCore::Internals::userPrefersReducedMotion):
+
+
 2016-10-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Annotate DOM API with CEReactions

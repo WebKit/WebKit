@@ -50,9 +50,10 @@ static inline bool featureWithValidIdent(const AtomicString& mediaFeature)
     || mediaFeature == MediaFeatureNames::anyPointer
     || mediaFeature == MediaFeatureNames::hover
     || mediaFeature == MediaFeatureNames::invertedColors
-    || mediaFeature == MediaFeatureNames::pointer;
+    || mediaFeature == MediaFeatureNames::pointer
+    || mediaFeature == MediaFeatureNames::prefersReducedMotion;
 }
-    
+
 static inline bool featureWithValidDensity(const String& mediaFeature, const CSSParserToken& token)
 {
     if ((token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPPX && token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPI && token.unitType() != CSSPrimitiveValue::UnitTypes::CSS_DPCM) || token.numericValue() <= 0)
@@ -228,6 +229,7 @@ static inline bool isFeatureValidWithoutValue(const AtomicString& mediaFeature)
         || mediaFeature == MediaFeatureNames::viewMode
 #endif
         || mediaFeature == MediaFeatureNames::pointer
+        || mediaFeature == MediaFeatureNames::prefersReducedMotion
         || mediaFeature == MediaFeatureNames::devicePixelRatio
         || mediaFeature == MediaFeatureNames::resolution
         || mediaFeature == MediaFeatureNames::videoPlayableInline;

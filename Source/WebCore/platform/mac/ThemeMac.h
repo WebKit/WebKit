@@ -55,6 +55,8 @@ public:
     void paint(ControlPart, ControlStates&, GraphicsContext&, const FloatRect&, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor) override;
     void inflateControlPaintRect(ControlPart, const ControlStates&, FloatRect&, float zoomFactor) const override;
 
+    bool userPrefersReducedMotion() const override;
+
     // FIXME: Once RenderThemeMac is converted over to use Theme then this can be internal to ThemeMac.
     static NSView* ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
     static void setFocusRingClipRect(const FloatRect&);

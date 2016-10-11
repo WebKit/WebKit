@@ -115,6 +115,7 @@ public:
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;
+        Settings::ForcedPrefersReducedMotionValue m_forcedPrefersReducedMotionValue;
     };
 
     static Ref<InternalSettings> create(Page* page)
@@ -173,6 +174,10 @@ public:
     void setSystemLayoutDirection(const String& direction, ExceptionCode&);
     bool variationFontsEnabled(ExceptionCode&);
     void setVariationFontsEnabled(bool, ExceptionCode&);
+
+    enum class ForcedPrefersReducedMotionValue { System, On, Off };
+    ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue() const;
+    void setForcedPrefersReducedMotionValue(ForcedPrefersReducedMotionValue);
 
     static void setAllowsAnySSLCertificate(bool);
 
