@@ -1,3 +1,12 @@
+2016-09-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the ENABLE(WEBASSEMBLY) build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=161685
+
+        Unreviewed buildfix.
+
+        * wasm/JSWASMModule.cpp:
+
 2016-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r205462): Lot of leaks
