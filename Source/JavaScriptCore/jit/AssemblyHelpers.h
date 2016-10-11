@@ -1427,8 +1427,15 @@ public:
         if (allocator)
             add32(TrustedImm32(-allocator->cellSize()), resultGPR, scratchGPR);
         else {
-            move(resultGPR, scratchGPR);
-            sub32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+            if (isX86()) {
+                move(resultGPR, scratchGPR);
+                sub32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+            } else {
+                // FIXME: We need a 3-operand sub, and ARM totally has it!
+                load32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+                neg32(scratchGPR);
+                add32(resultGPR, scratchGPR);
+            }
         }
         negPtr(resultGPR);
         store32(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + OBJECT_OFFSETOF(FreeList, remaining)));
