@@ -298,8 +298,6 @@ RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue);
 RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue);
 
 template<typename T, typename JSType> Vector<Ref<T>> toRefNativeArray(JSC::ExecState&, JSC::JSValue);
-template<typename T, typename JSType, typename VectorType = Vector<RefPtr<T>>> VectorType toRefPtrNativeArray(JSC::ExecState&, JSC::JSValue);
-template<typename T> Vector<T> toNativeArray(JSC::ExecState&, JSC::JSValue);
 bool hasIteratorMethod(JSC::ExecState&, JSC::JSValue);
 
 bool shouldAllowAccessToNode(JSC::ExecState*, Node*);
@@ -835,51 +833,6 @@ template<typename T, typename JST> inline Vector<Ref<T>> toRefNativeArray(JSC::E
             result.append(*object);
         } else
             throwArrayElementTypeError(*state, scope);
-    });
-    return result;
-}
-
-template<typename T, typename JST, typename VectorType> VectorType toRefPtrNativeArray(JSC::ExecState& state, JSC::JSValue value)
-{
-    JSC::VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!value.isObject()) {
-        throwSequenceTypeError(state, scope);
-        return { };
-    }
-
-    VectorType result;
-    forEachInIterable(&state, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        if (jsValue.inherits(JST::info()))
-            result.append(JST::toWrapped(jsValue));
-        else
-            throwArrayElementTypeError(*state, scope);
-    });
-    return result;
-}
-
-template<typename T> Vector<T> toNativeArray(JSC::ExecState& exec, JSC::JSValue value)
-{
-    JSC::VM& vm = exec.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!value.isObject()) {
-        throwSequenceTypeError(exec, scope);
-        return Vector<T>();
-    }
-
-    Vector<T> result;
-    forEachInIterable(&exec, value, [&result](JSC::VM& vm, JSC::ExecState* state, JSC::JSValue jsValue) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        T convertedValue;
-        bool success = NativeValueTraits<T>::nativeValue(*state, jsValue, convertedValue);
-        ASSERT_UNUSED(scope, scope.exception() || success);
-        if (!success)
-            return;
-        result.append(convertedValue);
     });
     return result;
 }

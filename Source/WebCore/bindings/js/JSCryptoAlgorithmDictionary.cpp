@@ -169,7 +169,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createAesKeyGenParams(ExecSta
     JSValue lengthValue = getProperty(&state, value.getObject(), "length");
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    result->length = convert<uint16_t>(state, lengthValue, EnforceRange);
+    result->length = convert<IDLUnsignedShort>(state, lengthValue, EnforceRange);
 
     return WTFMove(result);
 }
@@ -236,7 +236,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecSta
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     // FIXME: Why no EnforceRange? Filed as <https://www.w3.org/Bugs/Public/show_bug.cgi?id=23779>.
-    result->modulusLength = convert<uint32_t>(state, modulusLengthValue, NormalConversion);
+    result->modulusLength = convert<IDLUnsignedLong>(state, modulusLengthValue, NormalConversion);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSValue publicExponentValue = getProperty(&state, value.getObject(), "publicExponent");

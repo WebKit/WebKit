@@ -142,7 +142,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
         auto observedAttributesValue = constructor->get(&state, Identifier::fromString(&state, "observedAttributes"));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (!observedAttributesValue.isUndefined()) {
-            auto observedAttributes = convert<Vector<String>>(state, observedAttributesValue);
+            auto observedAttributes = convert<IDLSequence<IDLDOMString>>(state, observedAttributesValue);
             RETURN_IF_EXCEPTION(scope, JSValue());
             elementInterface->setAttributeChangedCallback(attributeChangedCallback, observedAttributes);
         }

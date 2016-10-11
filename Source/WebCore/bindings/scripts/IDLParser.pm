@@ -144,7 +144,7 @@ struct( Token => {
 
 struct( Typedef => {
     extendedAttributes => '$', # Extended attributes
-    type => '$', # Type of data
+    idlType => '$', # Type of data
 });
 
 # Maps 'typedef name' -> Typedef
@@ -421,7 +421,7 @@ sub applyTypedefs
                 if (exists $typedefs{$constant->type}) {
                     my $typedef = $typedefs{$constant->type};
                     $self->assertNoExtendedAttributesInTypedef($constant->type, __LINE__);
-                    $constant->type($typedef->type);
+                    $constant->type($typedef->idlType->name);
                 }
             }
             foreach my $attribute (@{$definition->attributes}) {
@@ -441,36 +441,88 @@ sub applyTypedefs
     }
 }
 
+sub cloneType
+{
+    my $self = shift;
+    my $type = shift;
+
+    my $clonedType = domType->new();
+    $clonedType->name($type->name);
+    $clonedType->isNullable($type->isNullable);
+    $clonedType->isUnion($type->isUnion);
+    foreach my $subtype (@{$type->subtypes}) {
+        push(@{$clonedType->subtypes}, $self->cloneType($subtype));
+    }
+
+    return $clonedType;
+}
+
 sub applyTypedefsForSignature
 {
     my $self = shift;
     my $signature = shift;
 
-    if (!defined ($signature->type)) {
+    if (!defined ($signature->idlType)) {
         return;
     }
 
-    my $type = $signature->type;
-    $type =~ s/[\?\[\]]+$//g;
-    my $typeSuffix = $signature->type;
-    $typeSuffix =~ s/^[^\?\[\]]+//g;
-    if (exists $typedefs{$type}) {
-        my $typedef = $typedefs{$type};
-        $signature->type($typedef->type . $typeSuffix);
-        copyExtendedAttributes($signature->extendedAttributes, $typedef->extendedAttributes);
-    }
+    my $typeName = $signature->idlType->name;
 
     # Handle union types, sequences and etc.
-    foreach my $name (%typedefs) {
-        if (!exists $typedefs{$name}) {
-            next;
+    # FIXME: This should be recursive.
+    my $numberOfSubtypes = scalar @{$signature->idlType->subtypes};
+    if ($numberOfSubtypes) {
+        my $typeUpdated = 0;
+    
+        for my $i (0..$numberOfSubtypes - 1) {
+            my $subtype = @{$signature->idlType->subtypes}[$i];
+            my $subtypeName = $subtype->name;
+
+            if (exists $typedefs{$subtypeName}) {
+                my $typedef = $typedefs{$subtypeName};
+
+                my $clonedType = $self->cloneType($typedef->idlType);
+                
+                # Retain nullability from the original type.
+                $clonedType->isNullable($subtype->isNullable);
+                
+                @{$signature->idlType->subtypes}[$i] = $clonedType;
+                
+                $typeUpdated = 1;
+            }
         }
-        my $typedef = $typedefs{$name};
-        my $regex = '\\b' . $name . '\\b';
-        my $replacement = $typedef->type;
-        my $type = $signature->type;
-        $type =~ s/($regex)/$replacement/g;
-        $signature->type($type);
+
+        # FIXME: This can be removed when we use domTypes in the CodeGenerators everywhere.
+        if ($typeUpdated) {
+            my $subtype = @{$signature->idlType->subtypes}[0];
+            my $subtypeName = $subtype->name;
+
+            if ($signature->idlType->name =~ /^sequence</) {
+                $signature->idlType->name("sequence<${subtypeName}>");
+                $signature->type($signature->idlType->name);
+            }
+            if ($signature->idlType->name =~ /^FrozenArray</) {
+                $signature->idlType->name("FrozenArray<${subtypeName}>");
+                $signature->type($signature->idlType->name);
+            }
+        }
+    
+        return;
+    }
+
+    if (exists $typedefs{$typeName}) {
+        my $typedef = $typedefs{$typeName};
+
+        my $clonedType = $self->cloneType($typedef->idlType);
+        
+        # Retain nullability from the original type.
+        $clonedType->isNullable($signature->idlType->isNullable);
+
+        $signature->idlType($clonedType);
+        $signature->type($clonedType->name);
+        $signature->isNullable($clonedType->isNullable);
+
+        copyExtendedAttributes($signature->extendedAttributes, $typedef->extendedAttributes);
     }
 }
 
@@ -920,13 +972,13 @@ sub parseTypedef
         $typedef->extendedAttributes($self->parseExtendedAttributeListAllowEmpty());
 
         my $type = $self->parseType();
-        $typedef->type($type->name);
+        $typedef->idlType($type);
 
         my $nameToken = $self->getToken();
         $self->assertTokenType($nameToken, IdentifierToken);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         my $name = $nameToken->value();
-        die "typedef redefinition for " . $name . " at " . $self->{Line} if (exists $typedefs{$name} && $typedef->type ne $typedefs{$name}->type);
+        die "typedef redefinition for " . $name . " at " . $self->{Line} if (exists $typedefs{$name} && $typedef->idlType->name ne $typedefs{$name}->idlType->name);
         $typedefs{$name} = $typedef;
         return;
     }
@@ -1314,6 +1366,7 @@ sub parseOperationOrIterator
         my $next = $self->nextToken();
         if ($next->type() == IdentifierToken || $next->value() eq "(") {
             my $operation = $self->parseOperationRest($extendedAttributeList);
+            $operation->signature->idlType($returnType);
             $operation->signature->type($returnType->name);
             $operation->signature->isNullable($returnType->isNullable);
 
@@ -1335,6 +1388,7 @@ sub parseSpecialOperation
         my $returnType = $self->parseReturnType();
         my $interface = $self->parseOperationRest($extendedAttributeList);
         if (defined ($interface)) {
+            $interface->signature->idlType($returnType);
             $interface->signature->type($returnType->name);
             $interface->signature->isNullable($returnType->isNullable);
             $interface->signature->specials(\@specials);

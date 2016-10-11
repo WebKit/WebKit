@@ -9,10 +9,10 @@ PASS localStream.getVideoTracks().length is 1
 PASS typeof MediaStream === 'function' is true
 PASS checkIdAttribute(localStream.id) is true
 PASS new MediaStream(document) threw exception TypeError: Type error.
-PASS new MediaStream([document]) threw exception TypeError: Invalid Array element type.
-PASS new MediaStream([stream.getAudioTracks()[0], document]) threw exception TypeError: Invalid Array element type.
-PASS new MediaStream([null]) threw exception TypeError: Invalid Array element type.
-PASS new MediaStream([undefined]) threw exception TypeError: Invalid Array element type.
+PASS new MediaStream([document]) threw exception TypeError: Type error.
+PASS new MediaStream([stream.getAudioTracks()[0], document]) threw exception TypeError: Type error.
+PASS new MediaStream([null]) threw exception TypeError: Type error.
+PASS new MediaStream([undefined]) threw exception TypeError: Type error.
 PASS new MediaStream(null) threw exception TypeError: Type error.
 PASS new MediaStream(undefined) threw exception TypeError: Type error.
 

@@ -29,7 +29,7 @@
  */
 
 // This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
+// changes in its output.
 
 [
     Constructor(STRING hello, TEST_CALLBACK testCallback),
@@ -47,6 +47,10 @@
     ULONGLONG methodWithSequenceArg(sequence<SCRIPT_VALUE> sequenceArg);
 
     void nullableSequenceArg(SEQUENCE_OF_STRINGS? sequenceArg);
+    void sequenceOfNullablesArg(sequence<STRING?> sequenceArg);
+    void nullableSequenceOfNullablesArg(SEQUENCE_OF_NULLABLE_STRINGS? sequenceArg);
+
+    void unionArg(UNION_STRING_LONG unionArg);
 
     void funcWithClamp(ULONGLONG_CLAMP arg1, optional ULONGLONG_CLAMP arg2);
 
@@ -70,11 +74,14 @@ typedef unsigned long long         ULONGLONG;
 typedef [Clamp] unsigned long long ULONGLONG_CLAMP;
 typedef SerializedScriptValue      SCRIPT_VALUE;
 typedef sequence<long>             SEQUENCE_OF_LONGS;
+typedef long?                      NULLABLE_LONG;
 typedef SVGPoint                   SVGPOINT;
 typedef DOMString                  STRING;
 typedef sequence<DOMString>        SEQUENCE_OF_STRINGS;
+typedef sequence<DOMString?>       SEQUENCE_OF_NULLABLE_STRINGS;
 typedef TestCallback               TEST_CALLBACK;
 typedef TestSubObjConstructor      T;
 typedef Int32Array                 ARRAY;
 typedef DOMException               E;
 typedef TestEventTarget            TEST_EVENT_TARGET;
+typedef (DOMString or long)        UNION_STRING_LONG;

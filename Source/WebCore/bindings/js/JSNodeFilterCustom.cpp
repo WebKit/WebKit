@@ -61,7 +61,7 @@ uint16_t JSNodeFilter::acceptNode(Node* node)
         return NodeFilter::FILTER_REJECT;
     }
 
-    uint16_t result = convert<uint16_t>(*state, value, NormalConversion);
+    auto result = convert<IDLUnsignedShort>(*state, value, NormalConversion);
     RETURN_IF_EXCEPTION(scope, NodeFilter::FILTER_REJECT);
 
     return result;

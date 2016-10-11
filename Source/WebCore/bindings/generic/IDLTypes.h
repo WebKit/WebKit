@@ -130,4 +130,7 @@ struct IsIDLDictionary : public std::integral_constant<bool, WTF::IsTemplate<T, 
 template <typename T>
 struct IsIDLNumber : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLNumber, T>::value> { };
 
+template <typename T>
+struct IsIDLInteger : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLInteger, T>::value> { };
+
 } // namespace WebCore

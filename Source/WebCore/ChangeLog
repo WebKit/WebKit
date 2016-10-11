@@ -1,3 +1,140 @@
+2016-10-10  Sam Weinig  <sam@webkit.org>
+
+        Use IDLTypes in more places
+        https://bugs.webkit.org/show_bug.cgi?id=163247
+
+        Reviewed by Darin Adler.
+
+        Switch JS -> Native type conversions to use convert<IDLType>(...) rather
+        than convert<NativeType>(...). This allows us to differentiate things like
+        conversion from JSValue to DOMString vs. JSValue to USVString which have different
+        rules.
+
+        * bindings/generic/IDLTypes.h:
+        Add predicate for integer types.
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::idbKeyPathFromValue):
+        * bindings/js/JSApplePaySessionCustom.cpp:
+        (WebCore::JSApplePaySession::completeShippingMethodSelection):
+        (WebCore::JSApplePaySession::completeShippingContactSelection):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesKeyGenParams):
+        (WebCore::createRsaKeyGenParams):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::getCSSCanvasContext):
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint):
+        (WebCore::toDecision):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        Switch to new convert<IDLType> style.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toRefPtrNativeArray): Deleted.
+        (WebCore::toNativeArray): Deleted.
+        These can now be called as convert<IDLSequence<IDLInterface<T>>> and convert<IDLType> respectively.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLNullable<T>>::convert):
+        (WebCore::Converter<IDLBoolean>::convert):
+        (WebCore::Converter<IDLInterface<T>>::convert):
+        (WebCore::Converter<IDLByte>::convert):
+        (WebCore::Converter<IDLOctet>::convert):
+        (WebCore::Converter<IDLShort>::convert):
+        (WebCore::Converter<IDLUnsignedShort>::convert):
+        (WebCore::Converter<IDLLong>::convert):
+        (WebCore::Converter<IDLUnsignedLong>::convert):
+        (WebCore::Converter<IDLLongLong>::convert):
+        (WebCore::Converter<IDLUnsignedLongLong>::convert):
+        (WebCore::Converter<IDLFloat>::convert):
+        (WebCore::Converter<IDLUnrestrictedFloat>::convert):
+        (WebCore::Converter<IDLDouble>::convert):
+        (WebCore::Converter<IDLUnrestrictedDouble>::convert):
+        (WebCore::Converter<IDLDOMString>::convert):
+        (WebCore::Converter<IDLUSVString>::convert):
+        (WebCore::Detail::ArrayConverter::convert):
+        (WebCore::Converter<IDLSequence<T>>::convert):
+        (WebCore::Converter<IDLFrozenArray<T>>::convert):
+        (WebCore::Converter<IDLDictionary<T>>::convert):
+        (WebCore::Converter<IDLEnumeration<T>>::convert):
+        (WebCore::Detail::VariadicConverterBase::convert):
+        (WebCore::Detail::VariadicConverterBase<IDLInterface<T>>::convert):
+        (WebCore::convertVariadicArguments):
+        (WebCore::convertWrapperType): Deleted.
+        (WebCore::convertWrapperTypeSequence): Deleted.
+        (WebCore::Converter<bool>::convert): Deleted.
+        (WebCore::Converter<String>::convert): Deleted.
+        (WebCore::Converter<Vector<T>>::convert): Deleted.
+        (WebCore::Converter<int8_t>::convert): Deleted.
+        (WebCore::Converter<uint8_t>::convert): Deleted.
+        (WebCore::Converter<int16_t>::convert): Deleted.
+        (WebCore::Converter<uint16_t>::convert): Deleted.
+        (WebCore::Converter<int32_t>::convert): Deleted.
+        (WebCore::Converter<uint32_t>::convert): Deleted.
+        (WebCore::Converter<int64_t>::convert): Deleted.
+        (WebCore::Converter<uint64_t>::convert): Deleted.
+        Switch Converter to be specialized on IDLTypes. Add support for IDLNullable, IDLSequence, and IDLFrozenArray.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetFlattenedMemberTypes): Deleted.
+        (GetNumberOfNullableMemberTypes): Deleted.
+        (GetIDLUnionMemberTypes): Deleted.
+        (GetBaseIDLType): Deleted.
+        (GetIDLType): Deleted.
+        Move IDLType conversion logic to CodeGeneratorJS so it can use GetEnumerationClassName and GetDictionaryClassName.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToImplIncludesForIDLType):
+        Add support for sequences, FrozenArrays and external dictionaries.
+
+        (GenerateEnumerationsImplementationContent):
+        (GenerateEnumerationsHeaderContent):
+        Change the name of parse<enum> and convert<enum> to parseEnumeration<enum> and convertEnumeration<enum>
+        to make them more consistent with dictionary conversion specialization and not interfere with the convert
+        function specialization.
+
+        (GenerateDictionaryImplementationContent):
+        Simplify by using convert<IDLType>.
+
+        (GetFlattenedMemberTypes):
+        (GetNumberOfNullableMemberTypes):
+        (GetIDLUnionMemberTypes):
+        (GetBaseIDLType):
+        (GetIDLType):
+        Moved from CodeGenerator.pm
+
+        (IsHandledByDOMConvert):
+        (JSValueToNative):
+        Start switching JSValueToNative over to using convert<IDLType>. Use IsHandledByDOMConvert as a predicate
+        for what is supported.
+
+        * bindings/scripts/IDLParser.pm:
+        (applyTypedefs):
+        (cloneType):
+        (applyTypedefsForSignature):
+        (parseTypedef):
+        (parseOperationOrIterator):
+        (parseSpecialOperation):
+        Make typedefs work with aggregate types (unions, sequences and FrozenArrays).
+
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results.
+
+        * bindings/scripts/test/TestTypedefs.idl:
+        Add additional tests for typedefs that use unions and sequences.
+
+        * testing/InternalSettings.idl:
+        Change the name of a parameter to avoid a name collision.
+
 2016-10-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Fixed compilation with !ENABLE(SVG_FONTS)

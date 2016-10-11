@@ -264,8 +264,18 @@ sub AddToImplIncludesForIDLType
         return;
     }
 
+    if ($codeGenerator->IsSequenceOrFrozenArrayType($idlType->name)) {
+        AddToImplIncludesForIDLType(@{$idlType->subtypes}[0], $conditional);
+        return;
+    }
+
+    if ($codeGenerator->IsExternalDictionaryType($idlType->name)) {
+        AddToImplIncludes("JS" . $idlType->name . ".h", $conditional);
+        return;
+    }
+
     if ($codeGenerator->IsWrapperType($idlType->name)) {
-        AddToImplIncludes("JS" . $idlType->name . ".h");
+        AddToImplIncludes("JS" . $idlType->name . ".h", $conditional);
         return;
     }
 }
@@ -881,7 +891,7 @@ sub GenerateEnumerationsImplementationContent
         # FIXME: Change to take VM& instead of ExecState&.
         # FIXME: Consider using toStringOrNull to make exception checking faster.
         # FIXME: Consider finding a more efficient way to match against all the strings quickly.
-        $result .= "template<> Optional<$className> parse<$className>(ExecState& state, JSValue value)\n";
+        $result .= "template<> Optional<$className> parseEnumeration<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
         $result .= "    auto stringValue = value.toWTFString(&state);\n";
         foreach my $value (@{$enumeration->values}) {
@@ -899,11 +909,11 @@ sub GenerateEnumerationsImplementationContent
         # FIXME: A little ugly to have this be a side effect instead of a return value.
         AddToImplIncludes("JSDOMConvert.h");
 
-        $result .= "template<> $className convert<$className>(ExecState& state, JSValue value)\n";
+        $result .= "template<> $className convertEnumeration<$className>(ExecState& state, JSValue value)\n";
         $result .= "{\n";
         $result .= "    VM& vm = state.vm();\n";
         $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-        $result .= "    auto result = parse<$className>(state, value);\n";
+        $result .= "    auto result = parseEnumeration<$className>(state, value);\n";
         $result .= "    if (UNLIKELY(!result)) {\n";
         $result .= "        throwTypeError(&state, throwScope);\n";
         $result .= "        return { };\n";
@@ -948,8 +958,8 @@ sub GenerateEnumerationsHeaderContent
         $result .= "    static JSC::JSString* arrayJSValue(JSC::ExecState* state, JSDOMGlobalObject*, $className value) { return jsStringWithCache(state, value); }\n";
         $result .= "};\n\n";
 
-        $result .= "template<> Optional<$className> parse<$className>(JSC::ExecState&, JSC::JSValue);\n";
-        $result .= "template<> $className convert<$className>(JSC::ExecState&, JSC::JSValue);\n";
+        $result .= "template<> Optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
+        $result .= "template<> $className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
         $result .= "template<> const char* expectedEnumerationValues<$className>();\n\n";
 
         $result .= "#endif\n\n" if $conditionalString;
@@ -1098,9 +1108,10 @@ sub GenerateDictionaryImplementationContent
         # For each dictionary member member declared on dictionary, in lexicographical order:
         my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
         foreach my $member (@sortedMembers) {
-            $member->default("undefined") if $member->type eq "any" and !defined($member->default); # Use undefined as default value for member of type 'any' unless specified otherwise.
+            $member->default("undefined") if $member->idlType->name eq "any" and !defined($member->default); # Use undefined as default value for member of type 'any' unless specified otherwise.
 
-            my $type = $member->type;
+            my $idlType = $member->idlType;
+            AddToImplIncludesForIDLType($idlType);
 
             # 5.1. Let key be the identifier of member.
             my $key = $member->name;
@@ -1108,36 +1119,21 @@ sub GenerateDictionaryImplementationContent
             # 5.2. Let value be an ECMAScript value, depending on Type(V):
             $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
 
-            my $nativeType = GetNativeTypeFromSignature($interface, $member);
+            my $IDLType = GetIDLType($interface, $idlType);
 
             # 5.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
-            # FIXME: Eventually we will want this to share a lot more code with JSValueToNative.
-            if ($codeGenerator->IsWrapperType($type)) {
-                AddToImplIncludes("JS${type}.h");
-                die "Dictionary members of non-nullable wrapper types must be marked as required" if !$member->isNullable && $member->isOptional;
-                my $nullableParameter = $member->isNullable ? "IsNullable::Yes" : "IsNullable::No";
-                $result .= "        result.$key = convertWrapperType<$type, JS${type}>(state, ${key}Value, $nullableParameter);\n";
+
+            # FIXME: We should figure out a way to merge these two cases.
+            if ($codeGenerator->IsDictionaryType($idlType->name)) {
+                $result .= "        auto ${key}Optional = convert<${IDLType}>(state, ${key}Value);\n";
                 $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
-            } elsif ($codeGenerator->IsDictionaryType($type)) {
-                my $nativeType = GetNativeType($interface, $type);
-                $result .= "        Optional<${nativeType}> $key = convertDictionary<${nativeType}>(state, ${key}Value).value();\n";
-                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
-                $result .= "        result.$key = $key.value();\n";
-            } elsif ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
-                my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
-                if ($codeGenerator->IsWrapperType($innerType)) {
-                    $result .= "        result.$key = convertWrapperTypeSequence<$innerType, JS$innerType, $nativeType>(state, ${key}Value);\n";
-                } else {
-                    $result .= "        result.$key = convert<${nativeType}>(state, ${key}Value);\n";
-                }
-                $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
+                $result .= "        result.$key = ${key}Optional.value();\n";
             } else {
-                my $conversionRuleWithLeadingComma = GenerateConversionRuleWithLeadingComma($interface, $member);
-                my $convertFunction = $member->isNullable ? "convertNullable" : "convert";
-                $result .= "        result.$key = $convertFunction<${nativeType}>(state, ${key}Value${conversionRuleWithLeadingComma});\n";
+                $result .= "        result.$key = convert<${IDLType}>(state, ${key}Value);\n";
                 $result .= "        RETURN_IF_EXCEPTION(throwScope, Nullopt);\n";
             }
+
             # Value is undefined.
             # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if ($member->isOptional && defined $member->default) {
@@ -2123,7 +2119,7 @@ END
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrCallbackFunctionParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isFunction()");
 
-            # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in toNativeArray and toRefPtrNativeArray.
+            # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in convert<IDLSequence<T>>(...).
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
             &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)");
 
@@ -4176,7 +4172,7 @@ sub GenerateParametersCheck
             $implIncludes{"JSDOMConvert.h"} = 1;
             AddToImplIncludesForIDLType($idlType, $function->signature->extendedAttributes->{Conditional});
         
-            my $metaType = $codeGenerator->GetIDLType($interface, $idlType);
+            my $metaType = GetIDLType($interface, $idlType);
             push(@$outputArray, "    auto $name = convertVariadicArguments<$metaType>(*state, $argumentIndex);\n");
             push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
 
@@ -4215,7 +4211,7 @@ sub GenerateParametersCheck
                 $indent = "    ";
             }
 
-            push(@$outputArray, "$indent    $defineOptionalValue = parse<$className>(*state, ${name}Value);\n");
+            push(@$outputArray, "$indent    $defineOptionalValue = parseEnumeration<$className>(*state, ${name}Value);\n");
             push(@$outputArray, "$indent    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
             push(@$outputArray, "$indent    if (UNLIKELY(!$optionalValue))\n");
             push(@$outputArray, "$indent        return throwArgumentMustBeEnumError(*state, throwScope, $argumentIndex, \"$name\", \"$visibleInterfaceName\", $quotedFunctionName, expectedEnumerationValues<$className>());\n");
@@ -4821,6 +4817,99 @@ sub GetNativeVectorType
     return "Vector<" . GetNativeVectorInnerType($innerType) . ">";
 }
 
+# http://heycam.github.io/webidl/#dfn-flattened-union-member-types
+sub GetFlattenedMemberTypes
+{
+    my ($idlUnionType) = @_;
+
+    my @flattenedMemberTypes = ();
+
+    foreach my $memberType (@{$idlUnionType->subtypes}) {
+        if ($memberType->isUnion) {
+            push(@flattenedMemberTypes, GetFlattenedMemberTypes($memberType));
+        } else {
+            push(@flattenedMemberTypes, $memberType);
+        }
+    }
+
+    return @flattenedMemberTypes;
+}
+
+# http://heycam.github.io/webidl/#dfn-number-of-nullable-member-types
+sub GetNumberOfNullableMemberTypes
+{
+    my ($idlUnionType) = @_;
+
+    my $count = 0;
+
+    foreach my $memberType (@{$idlUnionType->subtypes}) {
+        $count++ if $memberType->isNullable;
+        $count += GetNumberOfNullableMemberTypes($memberType) if $memberType->isUnion;
+    }
+
+    return $count;
+}
+
+sub GetIDLUnionMemberTypes
+{
+    my ($interface, $idlUnionType) = @_;
+
+    my $numberOfNullableMembers = GetNumberOfNullableMemberTypes($idlUnionType);
+    assert("Union types must only have 0 or 1 nullable types.") if $numberOfNullableMembers > 1;
+
+    my @idlUnionMemberTypes = ();
+
+    push(@idlUnionMemberTypes, "IDLNull") if $numberOfNullableMembers == 1;
+
+    foreach my $memberType (GetFlattenedMemberTypes($idlUnionType)) {
+        push(@idlUnionMemberTypes, GetBaseIDLType($interface, $memberType));
+    }
+
+    return @idlUnionMemberTypes;
+}
+
+sub GetBaseIDLType
+{
+    my ($interface, $idlType) = @_;
+
+    my %IDLTypes = (
+        "any" => "IDLAny",
+        "boolean" => "IDLBoolean",
+        "byte" => "IDLByte",
+        "octet" => "IDLOctet",
+        "short" => "IDLShort",
+        "unsigned short" => "IDLUnsignedShort",
+        "long" => "IDLLong",
+        "unsigned long" => "IDLUnsignedLong",
+        "long long" => "IDLLongLong",
+        "unsigned long long" => "IDLUnsignedLongLong",
+        "float" => "IDLFloat",
+        "unrestricted float" => "IDLUnrestrictedFloat",
+        "double" => "IDLDouble",
+        "unrestricted double" => "IDLUnrestrictedDouble",
+        "DOMString" => "IDLDOMString",
+        "ByteString" => "IDLByteString",
+        "USVString" => "IDLUSVString",
+    );
+
+    return $IDLTypes{$idlType->name} if exists $IDLTypes{$idlType->name};
+    return "IDLEnumeration<" . GetEnumerationClassName($idlType->name, $interface) . ">" if $codeGenerator->IsEnumType($idlType->name);
+    return "IDLDictionary<" . GetDictionaryClassName($idlType->name, $interface) . ">" if $codeGenerator->IsDictionaryType($idlType->name);
+    return "IDLSequence<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsSequenceType($idlType->name);
+    return "IDLFrozenArray<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsFrozenArrayType($idlType->name);
+    return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $idlType)) . ">" if $idlType->isUnion;
+    return "IDLInterface<" . $idlType->name . ">";
+}
+
+sub GetIDLType
+{
+    my ($interface, $idlType) = @_;
+
+    my $baseIDLType = GetBaseIDLType($interface, $idlType);
+    return "IDLNullable<" . $baseIDLType . ">" if $idlType->isNullable;
+    return $baseIDLType;
+}
+
 sub GetNativeType
 {
     my ($interface, $type) = @_;
@@ -4925,18 +5014,40 @@ sub GetIntegerConversionConfiguration
     return "NormalConversion";
 }
 
+sub IsHandledByDOMConvert
+{
+    my $idlType = shift;
+
+    return 1 if $idlType->isUnion;
+    return 1 if $idlType->name eq "any";
+    return 1 if $idlType->name eq "boolean";
+    return 1 if $codeGenerator->IsIntegerType($idlType->name);
+    return 1 if $codeGenerator->IsFloatingPointType($idlType->name);
+    return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
+    return 1 if $codeGenerator->IsDictionaryType($idlType->name);
+    return 0;
+}
+
 # Returns (convertString, mayThrowException).
 sub JSValueToNative
 {
     my ($interface, $signature, $value, $conditional) = @_;
 
     my $type = $signature->type;
+    my $idlType = $signature->idlType;
 
-    if ($codeGenerator->IsIntegerType($type)) {
-        my $nativeType = GetNativeType($interface, $type);
-        my $conversionType = GetIntegerConversionConfiguration($signature);
+    if (IsHandledByDOMConvert($idlType)) {
         AddToImplIncludes("JSDOMConvert.h");
-        return ("convert<$nativeType>(*state, $value, $conversionType)", 1);
+        AddToImplIncludesForIDLType($idlType, $conditional);
+
+        my $IDLType = GetIDLType($interface, $idlType);
+
+        if ($codeGenerator->IsIntegerType($type)) {
+            my $conversionType = GetIntegerConversionConfiguration($signature);
+            return ("convert<$IDLType>(*state, $value, $conversionType)", 1);
+        }
+
+        return ("convert<$IDLType>(*state, $value)", 1);
     }
 
     if ($type eq "DOMString") {
@@ -4965,35 +5076,9 @@ sub JSValueToNative
         return ("Dictionary(state, $value)", 0);
     }
 
-    if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
-        my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
-        if ($codeGenerator->IsRefPtrType($innerType)) {
-            AddToImplIncludes("JS${innerType}.h");
-            return ("toRefPtrNativeArray<${innerType}, JS${innerType}>(*state, $value)", 1);
-        }
-        return ("toNativeArray<" . GetNativeVectorInnerType($innerType) . ">(*state, $value)", 1);
-    }
-
-    return ($value, 0) if $type eq "any";
-
-    return ("$value.toBoolean(state)", 1) if $type eq "boolean";
-
-    if ($codeGenerator->IsFloatingPointType($type)) {
-        AddToImplIncludes("JSDOMConvert.h");
-        my $allowNonFinite = ShouldAllowNonFiniteForFloatingPointType($type) ? "ShouldAllowNonFinite::Yes" : "ShouldAllowNonFinite::No";
-        my $nativeType = GetNativeType($interface, $type);
-        return ("convert<$nativeType>(*state, $value, $allowNonFinite)", 1);
-    }
-
     return ("valueToDate(state, $value)", 1) if $type eq "Date";
-
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);
-    return ("parse<" . GetEnumerationClassName($type, $interface) . ">(*state, $value)", 1) if $codeGenerator->IsEnumType($type);
-    if ($codeGenerator->IsDictionaryType($type)) {
-        my $dictionary = $codeGenerator->GetDictionaryByName($type);
-        AddToImplIncludes("JS$type.h", $conditional) if $codeGenerator->IsExternalDictionaryType($type);
-        return ("convertDictionary<" . GetDictionaryClassName($type, $interface) . ">(*state, $value)", 1);
-    }
+    return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">(*state, $value)", 1) if $codeGenerator->IsEnumType($type);
 
     AddToImplIncludes("JS$type.h", $conditional);
 

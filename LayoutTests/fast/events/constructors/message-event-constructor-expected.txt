@@ -81,7 +81,7 @@ PASS new MessageEvent('eventType', { ports: [channel.port1, channel.port2, chann
 PASS new MessageEvent('eventType', { ports: [channel.port1, channel.port2, channel2.port1] }).ports[2] is channel2.port1
 PASS new MessageEvent('eventType', { ports: [] }).ports is []
 PASS new MessageEvent('eventType', { ports: undefined }).ports is []
-PASS new MessageEvent('eventType', { ports: [1, 2, 3] }).ports[2] threw exception TypeError: Invalid Array element type.
+PASS new MessageEvent('eventType', { ports: [1, 2, 3] }).ports[2] threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { ports: test_object }).ports threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { ports: document }).ports threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { ports: null }).ports threw exception TypeError: Value is not a sequence.

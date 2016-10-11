@@ -61,7 +61,7 @@
 
     // Editing, forms
     [MayThrowLegacyException] void setEditingBehavior(DOMString behavior);
-    [MayThrowLegacyException] void setShouldConvertPositionStyleOnCopy(boolean convert);
+    [MayThrowLegacyException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
     void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
     [MayThrowLegacyException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
