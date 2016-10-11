@@ -83,21 +83,31 @@ PassRefPtr<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType 
     return nullptr;
 }
 
+bool ScrollingStateTree::nodeTypeAndParentMatch(ScrollingStateNode& node, ScrollingNodeType nodeType, ScrollingNodeID parentID) const
+{
+    if (node.nodeType() != nodeType)
+        return false;
+
+    ScrollingStateNode* parent = stateNodeForID(parentID);
+    if (!parent)
+        return true;
+
+    return node.parent() == parent;
+}
+
 ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
 {
     ASSERT(newNodeID);
+
     if (ScrollingStateNode* node = stateNodeForID(newNodeID)) {
-        if (!parentID)
+        if (nodeTypeAndParentMatch(*node, nodeType, parentID))
             return newNodeID;
+        
+        // If the type has changed, we need to destroy and recreate the node with a new ID.
+        if (nodeType != node->nodeType())
+            newNodeID = m_scrollingCoordinator->uniqueScrollLayerID();
 
-        ScrollingStateNode* parent = stateNodeForID(parentID);
-        if (!parent)
-            return newNodeID;
-
-        if (node->parent() == parent)
-            return newNodeID;
-
-        // The node is being re-parented. To do that, we'll remove it, and then re-create a new node.
+        // The node is being re-parented. To do that, we'll remove it, and then create a new node.
         removeNodeAndAllDescendants(node, SubframeNodeRemoval::Orphan);
     }
 
@@ -236,7 +246,7 @@ void ScrollingStateTree::setRemovedNodes(HashSet<ScrollingNodeID> nodes)
     m_nodesRemovedSinceLastCommit = WTFMove(nodes);
 }
 
-ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID)
+ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID) const
 {
     if (!scrollLayerID)
         return 0;

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+    height: 2000px;
+}
+.masthead {
+    position: -webkit-sticky;
+    width: 200px;
+    height: 100px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.make-fixed .masthead {
+    position: fixed;
+}
+
+.fixed {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+}
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+            document.body.classList.add("make-fixed")
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+    
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<div class="masthead">This test should not assert in debug.
+    <div class="fixed">
+    </div>
+</div>
+</body>
+</html>
+
