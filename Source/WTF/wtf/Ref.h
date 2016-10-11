@@ -114,7 +114,7 @@ public:
         return *this;
     }
 
-    // Hash table deleted/empty values, which are only constructed and never copied or destroyed.
+    // Hash table deleted values, which are only constructed and never copied or destroyed.
     Ref(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
     static T* hashTableDeletedValue() { return reinterpret_cast<T*>(-1); }

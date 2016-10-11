@@ -1153,7 +1153,7 @@ namespace WTF {
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType* table, unsigned size)
     {
         for (unsigned i = 0; i < size; ++i) {
-            if (!isEmptyOrDeletedBucket(table[i]))
+            if (!isDeletedBucket(table[i]))
                 table[i].~ValueType();
         }
         fastFree(table);
@@ -1197,8 +1197,14 @@ namespace WTF {
 
         Value* newEntry = nullptr;
         for (unsigned i = 0; i != oldTableSize; ++i) {
-            if (isEmptyOrDeletedBucket(oldTable[i])) {
+            if (isDeletedBucket(oldTable[i])) {
                 ASSERT(std::addressof(oldTable[i]) != entry);
+                continue;
+            }
+
+            if (isEmptyBucket(oldTable[i])) {
+                ASSERT(std::addressof(oldTable[i]) != entry);
+                oldTable[i].~ValueType();
                 continue;
             }
 

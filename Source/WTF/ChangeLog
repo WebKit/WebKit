@@ -1,3 +1,16 @@
+2016-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] HashTable's rehash is not compatible to Ref<T> and ASan
+        https://bugs.webkit.org/show_bug.cgi?id=161763
+
+        Reviewed by Darin Adler.
+
+        Destructors of HashTable's empty values need to be called while ones of deleted values don't.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::deallocateTable):
+        * wtf/Ref.h:
+
 2016-09-09  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fixing a few JSC test failures.
