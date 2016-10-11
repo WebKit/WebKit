@@ -239,11 +239,9 @@ WebProcessPool::~WebProcessPool()
 
     m_messageReceiverMap.invalidate();
 
-    WebContextSupplementMap::const_iterator it = m_supplements.begin();
-    WebContextSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it) {
-        it->value->processPoolDestroyed();
-        it->value->clearProcessPool();
+    for (auto& supplement : m_supplements.values()) {
+        supplement->processPoolDestroyed();
+        supplement->clearProcessPool();
     }
 
     m_iconDatabase->invalidate();
@@ -415,10 +413,8 @@ void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessPr
     ASSERT(networkProcessProxy == m_networkProcess.get());
     m_didNetworkProcessCrash = true;
 
-    WebContextSupplementMap::const_iterator it = m_supplements.begin();
-    WebContextSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->processDidClose(networkProcessProxy);
+    for (auto& supplement : m_supplements.values())
+        supplement->processDidClose(networkProcessProxy);
 
     m_client.networkProcessDidCrash(this);
 
@@ -472,8 +468,8 @@ void WebProcessPool::databaseProcessCrashed(DatabaseProcessProxy* databaseProces
     ASSERT(m_databaseProcess);
     ASSERT(databaseProcessProxy == m_databaseProcess.get());
 
-    for (auto& supplement : m_supplements)
-        supplement.value->processDidClose(databaseProcessProxy);
+    for (auto& supplement : m_supplements.values())
+        supplement->processDidClose(databaseProcessProxy);
 
     m_client.databaseProcessDidCrash(this);
     m_databaseProcess = nullptr;

@@ -230,20 +230,16 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
-    NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
-    NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->initialize(parameters);
+    for (auto& supplement : m_supplements.values())
+        supplement->initialize(parameters);
 }
 
 void NetworkProcess::initializeConnection(IPC::Connection* connection)
 {
     ChildProcess::initializeConnection(connection);
 
-    NetworkProcessSupplementMap::const_iterator it = m_supplements.begin();
-    NetworkProcessSupplementMap::const_iterator end = m_supplements.end();
-    for (; it != end; ++it)
-        it->value->initializeConnection(connection);
+    for (auto& supplement : m_supplements.values())
+        supplement->initializeConnection(connection);
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()
