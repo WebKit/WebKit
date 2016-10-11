@@ -1220,6 +1220,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
             if (this._executionLineHandle) {
                 this._codeMirror.addLineClass(this._executionLineHandle, "wrap", WebInspector.TextEditor.ExecutionLineStyleClassName);
                 this._codeMirror.addLineClass(this._executionLineHandle, "wrap", "primary");
+                this._codeMirror.removeLineClass(this._executionLineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);
             }
         });
     }

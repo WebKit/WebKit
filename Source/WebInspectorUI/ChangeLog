@@ -1,3 +1,15 @@
+2016-10-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove line highlight on primary execution line while stepping because it is distracting
+        https://bugs.webkit.org/show_bug.cgi?id=163294
+        <rdar://problem/28721176>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._updateExecutionLine):
+        When setting the primary execution line, remove default line highlights.
+
 2016-10-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Revealed line not highlighted in TextEditor while debugger paused
