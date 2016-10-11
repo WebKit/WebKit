@@ -112,7 +112,7 @@ static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::Cu
 {
     StringBuilder builder;
 
-    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND key ");
+    builder.appendLiteral("SELECT rowid, key, value FROM IndexRecords WHERE indexID = ? AND objectStoreID = ? AND key ");
     if (!keyRange.lowerKey.isNull() && !keyRange.lowerOpen)
         builder.appendLiteral(">=");
     else
@@ -260,19 +260,26 @@ bool SQLiteIDBCursor::bindArguments()
 {
     LOG(IndexedDB, "Cursor is binding lower key '%s' and upper key '%s'", m_currentLowerKey.loggingString().utf8().data(), m_currentUpperKey.loggingString().utf8().data());
 
-    if (m_statement->bindInt64(1, m_boundID) != SQLITE_OK) {
+    int currentBindArgument = 1;
+
+    if (m_statement->bindInt64(currentBindArgument++, m_boundID) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument (bound ID)");
         return false;
     }
 
+    if (m_indexID != IDBIndexInfo::InvalidId && m_statement->bindInt64(currentBindArgument++, m_objectStoreID) != SQLITE_OK) {
+        LOG_ERROR("Could not bind object store id argument for an index cursor");
+        return false;
+    }
+
     RefPtr<SharedBuffer> buffer = serializeIDBKeyData(m_currentLowerKey);
-    if (m_statement->bindBlob(2, buffer->data(), buffer->size()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->data(), buffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (lower key)");
         return false;
     }
 
     buffer = serializeIDBKeyData(m_currentUpperKey);
-    if (m_statement->bindBlob(3, buffer->data(), buffer->size()) != SQLITE_OK) {
+    if (m_statement->bindBlob(currentBindArgument++, buffer->data(), buffer->size()) != SQLITE_OK) {
         LOG_ERROR("Could not create cursor statement (upper key)");
         return false;
     }

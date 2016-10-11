@@ -1,3 +1,16 @@
+2016-09-22  Brady Eidson  <beidson@apple.com>
+
+        IDBIndex.openCursor() matches indices on multiple object stores.
+        <rdar://problem/28434463> and https://bugs.webkit.org/show_bug.cgi?id=158833
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/multiple-objectstore-index-cursor-collision-expected.txt: Added.
+        * storage/indexeddb/modern/multiple-objectstore-index-cursor-collision-private-expected.txt: Added.
+        * storage/indexeddb/modern/multiple-objectstore-index-cursor-collision-private.html: Added.
+        * storage/indexeddb/modern/multiple-objectstore-index-cursor-collision.html: Added.
+        * storage/indexeddb/modern/resources/multiple-objectstore-index-cursor-collision.js: Added.
+
 2016-09-22  Daniel Bates  <dabates@apple.com>
 
         [XSS Auditor] HTML5 entities can bypass XSS Auditor
