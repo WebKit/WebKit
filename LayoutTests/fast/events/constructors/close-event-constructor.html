@@ -33,7 +33,7 @@ shouldBeEqualToString("new CloseEvent('eventType', { reason: 'koakuma' }).reason
 shouldBeEqualToString("new CloseEvent('eventType', { reason: '' }).reason", "");
 
 // Non-strings.
-shouldBeEqualToString("new CloseEvent('eventType', { reason: undefined }).reason", "undefined");
+shouldBeEqualToString("new CloseEvent('eventType', { reason: undefined }).reason", "");
 shouldBeEqualToString("new CloseEvent('eventType', { reason: null }).reason", "null");
 shouldBeEqualToString("new CloseEvent('eventType', { reason: false }).reason", "false");
 shouldBeEqualToString("new CloseEvent('eventType', { reason: true }).reason", "true");

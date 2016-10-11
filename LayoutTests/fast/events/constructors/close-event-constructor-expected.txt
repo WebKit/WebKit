@@ -16,7 +16,7 @@ PASS new CloseEvent('eventType', { wasClean: false }).wasClean is false
 PASS new CloseEvent('eventType', { wasClean: true }).wasClean is true
 PASS new CloseEvent('eventType', { reason: 'koakuma' }).reason is "koakuma"
 PASS new CloseEvent('eventType', { reason: '' }).reason is ""
-PASS new CloseEvent('eventType', { reason: undefined }).reason is "undefined"
+PASS new CloseEvent('eventType', { reason: undefined }).reason is ""
 PASS new CloseEvent('eventType', { reason: null }).reason is "null"
 PASS new CloseEvent('eventType', { reason: false }).reason is "false"
 PASS new CloseEvent('eventType', { reason: true }).reason is "true"

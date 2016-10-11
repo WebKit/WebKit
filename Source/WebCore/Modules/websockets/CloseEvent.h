@@ -36,12 +36,6 @@
 
 namespace WebCore {
 
-struct CloseEventInit : public EventInit {
-    bool wasClean { false };
-    unsigned short code { 0 };
-    String reason;
-};
-
 class CloseEvent : public Event {
 public:
     static Ref<CloseEvent> create(bool wasClean, unsigned short code, const String& reason)
@@ -49,9 +43,15 @@ public:
         return adoptRef(*new CloseEvent(wasClean, code, reason));
     }
 
-    static Ref<CloseEvent> createForBindings(const AtomicString& type, const CloseEventInit& initializer)
+    struct Init : EventInit {
+        bool wasClean { false };
+        unsigned short code { 0 };
+        String reason;
+    };
+
+    static Ref<CloseEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new CloseEvent(type, initializer));
+        return adoptRef(*new CloseEvent(type, initializer, isTrusted));
     }
 
     bool wasClean() const { return m_wasClean; }
@@ -70,8 +70,8 @@ private:
     {
     }
 
-    CloseEvent(const AtomicString& type, const CloseEventInit& initializer)
-        : Event(type, initializer)
+    CloseEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_wasClean(initializer.wasClean)
         , m_code(initializer.code)
         , m_reason(initializer.reason)
