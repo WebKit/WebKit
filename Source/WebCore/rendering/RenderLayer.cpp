@@ -232,8 +232,8 @@ public:
 #endif
     }
 
-    PassRefPtr<ClipRects> getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) { return m_clipRects[getIndex(clipRectsType, respectOverflow)]; }
-    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, PassRefPtr<ClipRects> clipRects) { m_clipRects[getIndex(clipRectsType, respectOverflow)] = clipRects; }
+    ClipRects* getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) { return m_clipRects[getIndex(clipRectsType, respectOverflow)].get(); }
+    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, RefPtr<ClipRects>&& clipRects) { m_clipRects[getIndex(clipRectsType, respectOverflow)] = WTFMove(clipRects); }
 
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
@@ -5405,46 +5405,49 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
     return resultLayer;
 }
 
-void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
+Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
 {
     ClipRectsType clipRectsType = clipRectsContext.clipRectsType;
     ASSERT(clipRectsType < NumCachedClipRectsTypes);
-    if (m_clipRectsCache && m_clipRectsCache->getClipRects(clipRectsType, clipRectsContext.respectOverflowClip)) {
-        ASSERT(clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
-        ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == clipRectsContext.overlayScrollbarSizeRelevancy);
+    if (m_clipRectsCache) {
+        if (auto* clipRects = m_clipRectsCache->getClipRects(clipRectsType, clipRectsContext.respectOverflowClip)) {
+            ASSERT(clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
+            ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == clipRectsContext.overlayScrollbarSizeRelevancy);
         
 #ifdef CHECK_CACHED_CLIP_RECTS
-        // This code is useful to check cached clip rects, but is too expensive to leave enabled in debug builds by default.
-        ClipRectsContext tempContext(clipRectsContext);
-        tempContext.clipRectsType = TemporaryClipRects;
-        ClipRects clipRects;
-        calculateClipRects(tempContext, clipRects);
-        ASSERT(clipRects == *m_clipRectsCache->getClipRects(clipRectsType, clipRectsContext.respectOverflowClip).get());
+            // This code is useful to check cached clip rects, but is too expensive to leave enabled in debug builds by default.
+            ClipRectsContext tempContext(clipRectsContext);
+            tempContext.clipRectsType = TemporaryClipRects;
+            ClipRects tempClipRects;
+            calculateClipRects(tempContext, tempClipRects);
+            ASSERT(tempClipRects == *clipRects);
 #endif
-        return; // We have the correct cached value.
+            return *clipRects; // We have the correct cached value.
+        }
     }
     
-    // For transformed layers, the root layer was shifted to be us, so there is no need to
-    // examine the parent.  We want to cache clip rects with us as the root.
-    RenderLayer* parentLayer = clipRectsContext.rootLayer != this ? parent() : nullptr;
-    if (parentLayer)
-        parentLayer->updateClipRects(clipRectsContext);
-
-    ClipRects clipRects;
-    calculateClipRects(clipRectsContext, clipRects);
-
     if (!m_clipRectsCache)
         m_clipRectsCache = std::make_unique<ClipRectsCache>();
-
-    if (parentLayer && parentLayer->clipRects(clipRectsContext) && clipRects == *parentLayer->clipRects(clipRectsContext))
-        m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, parentLayer->clipRects(clipRectsContext));
-    else
-        m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, ClipRects::create(clipRects));
-
 #ifndef NDEBUG
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
     m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = clipRectsContext.overlayScrollbarSizeRelevancy;
 #endif
+
+    RefPtr<ClipRects> parentClipRects;
+    // For transformed layers, the root layer was shifted to be us, so there is no need to
+    // examine the parent. We want to cache clip rects with us as the root.
+    if (auto* parentLayer = (clipRectsContext.rootLayer != this ? parent() : nullptr))
+        parentClipRects = parentLayer->updateClipRects(clipRectsContext);
+
+    auto clipRects = ClipRects::create();
+    calculateClipRects(clipRectsContext, clipRects);
+
+    if (parentClipRects && *parentClipRects == clipRects) {
+        m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, parentClipRects.copyRef());
+        return parentClipRects.releaseNonNull();
+    }
+    m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, clipRects.copyRef());
+    return clipRects;
 }
 
 bool RenderLayer::mapLayerClipRectsToFragmentationLayer(ClipRects& clipRects) const
@@ -5482,7 +5485,9 @@ bool RenderLayer::mapLayerClipRectsToFragmentationLayer(ClipRects& clipRects) co
 ClipRects* RenderLayer::clipRects(const ClipRectsContext& context) const
 {
     ASSERT(context.clipRectsType < NumCachedClipRectsTypes);
-    return m_clipRectsCache ? m_clipRectsCache->getClipRects(context.clipRectsType, context.respectOverflowClip).get() : nullptr;
+    if (!m_clipRectsCache)
+        return nullptr;
+    return m_clipRectsCache->getClipRects(context.clipRectsType, context.respectOverflowClip);
 }
 
 void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
@@ -5557,19 +5562,22 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
     }
 }
 
-void RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
+Ref<ClipRects> RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
-    if (renderer().isRenderNamedFlowThread() && mapLayerClipRectsToFragmentationLayer(clipRects))
-        return;
-
-    if (clipRectsContext.clipRectsType == TemporaryClipRects) {
-        parent()->calculateClipRects(clipRectsContext, clipRects);
-        return;
+    if (renderer().isRenderNamedFlowThread()) {
+        auto parentClipRects = ClipRects::create();
+        if (mapLayerClipRectsToFragmentationLayer(parentClipRects))
+            return parentClipRects;
     }
 
-    parent()->updateClipRects(clipRectsContext);
-    clipRects = *parent()->clipRects(clipRectsContext);
+    if (clipRectsContext.clipRectsType == TemporaryClipRects) {
+        auto parentClipRects = ClipRects::create();
+        parent()->calculateClipRects(clipRectsContext, parentClipRects);
+        return parentClipRects;
+    }
+
+    return parent()->updateClipRects(clipRectsContext);
 }
 
 static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, EPosition position)
@@ -5586,25 +5594,24 @@ static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRect
 ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
+    auto computeParentRects = [this, &clipRectsContext] () {
+        // If we cross into a different pagination context, then we can't rely on the cache.
+        // Just switch over to using TemporaryClipRects.
+        if (clipRectsContext.clipRectsType != TemporaryClipRects
+            && parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)) {
+            ClipRectsContext tempContext(clipRectsContext);
+            tempContext.clipRectsType = TemporaryClipRects;
+            return parentClipRects(tempContext);
+        }
+        return parentClipRects(clipRectsContext);
+    };
     
-    ClipRects parentRects;
-
-    // If we cross into a different pagination context, then we can't rely on the cache.
-    // Just switch over to using TemporaryClipRects.
-    if (clipRectsContext.clipRectsType != TemporaryClipRects && parent()->enclosingPaginationLayer(IncludeCompositedPaginatedLayers) != enclosingPaginationLayer(IncludeCompositedPaginatedLayers)) {
-        ClipRectsContext tempContext(clipRectsContext);
-        tempContext.clipRectsType = TemporaryClipRects;
-        parentClipRects(tempContext, parentRects);
-    } else
-        parentClipRects(clipRectsContext, parentRects);
-    
+    auto parentRects = computeParentRects();
     ClipRect backgroundClipRect = backgroundClipRectForPosition(parentRects, renderer().style().position());
     RenderView& view = renderer().view();
-
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
-    if (parentRects.fixed() && &clipRectsContext.rootLayer->renderer() == &view && !backgroundClipRect.isInfinite())
+    if (parentRects->fixed() && &clipRectsContext.rootLayer->renderer() == &view && !backgroundClipRect.isInfinite())
         backgroundClipRect.moveBy(view.frameView().scrollPositionForFixedPosition());
-
     return backgroundClipRect;
 }
 
@@ -6068,9 +6075,8 @@ void RenderLayer::clearClipRects(ClipRectsType typeToClear)
         m_clipRectsCache = nullptr;
     else {
         ASSERT(typeToClear < NumCachedClipRectsTypes);
-        RefPtr<ClipRects> dummy;
-        m_clipRectsCache->setClipRects(typeToClear, RespectOverflowClip, dummy);
-        m_clipRectsCache->setClipRects(typeToClear, IgnoreOverflowClip, dummy);
+        m_clipRectsCache->setClipRects(typeToClear, RespectOverflowClip, nullptr);
+        m_clipRectsCache->setClipRects(typeToClear, IgnoreOverflowClip, nullptr);
     }
 }
 
