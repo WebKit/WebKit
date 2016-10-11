@@ -107,6 +107,7 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
 // MARK: Interface type
 
 template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInterface<T>> {
+    using ReturnType = T*;
     using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
 
     static T* convert(JSC::ExecState& state, JSC::JSValue value)

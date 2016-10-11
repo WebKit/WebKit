@@ -1,3 +1,9 @@
+2016-10-11  Sam Weinig  <sam@webkit.org>
+
+        Fix the iOS build.
+
+        * bindings/js/JSDOMConvert.h:
+
 2016-10-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] Sandbox QuickLook previews
