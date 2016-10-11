@@ -1,3 +1,14 @@
+2016-09-19  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType] while loading guardian.co.uk
+        https://bugs.webkit.org/show_bug.cgi?id=162129
+        <rdar://problem/28353350>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/multicol/assert-on-cliprect-caching-when-paginated-expected.txt: Added.
+        * fast/multicol/assert-on-cliprect-caching-when-paginated.html: Added.
+
 2016-09-16  Chris Dumez  <cdumez@apple.com>
 
         Cancelling one frame's load cancels load in other frames that have the same URL as well
