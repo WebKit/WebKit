@@ -71,6 +71,7 @@ public:
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String&, RealtimeMediaSource::Type) override { return EmptyRealtimeMediaSource::create(); }
     void replaceSendSource(RealtimeMediaSource&, const String&) override { }
+    void replaceMutedRemoteSourceMid(const String&, const String&) override { };
 
     void stop() override { }
 };

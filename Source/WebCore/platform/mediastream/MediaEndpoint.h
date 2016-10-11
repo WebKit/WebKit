@@ -77,6 +77,7 @@ public:
 
     virtual Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) = 0;
     virtual void replaceSendSource(RealtimeMediaSource&, const String& mid) = 0;
+    virtual void replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid) = 0;
 
     virtual void stop() = 0;
 

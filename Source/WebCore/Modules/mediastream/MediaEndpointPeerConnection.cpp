@@ -303,7 +303,6 @@ static RealtimeMediaSourceMap createSourceMap(const MediaDescriptionVector& remo
         if (transceiver) {
             if (transceiver->hasSendingDirection() && transceiver->sender()->track())
                 sourceMap.set(transceiver->mid(), &transceiver->sender()->track()->source());
-            break;
         }
     }
 
@@ -500,9 +499,12 @@ void MediaEndpointPeerConnection::setRemoteDescriptionTask(RefPtr<RTCSessionDesc
                     return !current.stopped() && current.mid().isNull() && current.sender()->trackKind() == mediaDescription->type();
                 });
 
-                if (transceiver)
+                if (transceiver) {
+                    // This transceiver was created locally with a provisional mid. Its real mid will now be set by the remote
+                    // description so we need to update the mid of the transceiver's muted source to preserve the association.
                     transceiver->setMid(mediaDescription->mid());
-                else
+                    m_mediaEndpoint->replaceMutedRemoteSourceMid(transceiver->provisionalMid(), mediaDescription->mid());
+                } else
                     receiveOnlyFlag = true;
             }
 

@@ -1,3 +1,18 @@
+2016-10-10  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Alejandro G. Castro <alex@igalia.com>
+
+        WebRTC: Make MediaEndpointPeerConnection handle remotely assigned mids correctly
+        https://bugs.webkit.org/show_bug.cgi?id=163202
+
+        Reviewed by Eric Carlson.
+
+        Test the case when an RTCRtpTransceiver gets its mid assigned from a remote session
+        description.
+
+        * fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html: Added.
+        * platform/mac/TestExpectations:
+        Skip above test until the Mac port builds with WEB_RTC.
+
 2016-10-10  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
 
         [EFL] Skip imported/w3c/web-platform-tests for a while

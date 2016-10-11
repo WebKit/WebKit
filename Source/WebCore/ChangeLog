@@ -1,3 +1,48 @@
+2016-10-10  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Alejandro G. Castro <alex@igalia.com>
+
+        WebRTC: Make MediaEndpointPeerConnection handle remotely assigned mids correctly
+        https://bugs.webkit.org/show_bug.cgi?id=163202
+
+        Reviewed by Eric Carlson.
+
+        An RTCRtpTransceiver has a null mid until it's been associated with a
+        media description (with a mid) [1]. During that time, it's identified by
+        a provisional mid that might become its real mid, but the transceiver
+        can also get its mid assigned by a remote media description. In the
+        second case, the mid value is initially unknown. A transceiver's
+        RTCRtpSender must directly (synchronously in the script) provide a muted
+        remote source that is playable by, for example, a media element. This
+        source is initially registered in the MediaEndpoint (WebRTC backend)
+        with the transceiver's provisional mid. So, if the real mid is set by a
+        remote description, the registered mid must be updated to preserve the
+        association between the registered source and the transceiver.
+
+        [1] https://w3c.github.io/webrtc-pc/archives/20160913/webrtc.html#dom-rtcrtptransceiver-mid
+
+        Test: fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        Don't break after finding the first transceiver in the loop that builds the send source map.
+        Update the mid used to register the muted remote source if the a transceiver's mid gets
+        assigned by a remote media description.
+        (WebCore::createSourceMap):
+        (WebCore::MediaEndpointPeerConnection::setRemoteDescriptionTask):
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::updateReceiveConfiguration):
+        (WebCore::MockMediaEndpoint::updateSendConfiguration):
+        (WebCore::MockMediaEndpoint::createMutedRemoteSource):
+        (WebCore::MockMediaEndpoint::replaceMutedRemoteSourceMid):
+        (WebCore::MockMediaEndpoint::emulatePlatformEvent):
+        Add "unmute-remote-sources-by-mid" action that emulates data arriving on media descriptions
+        which unmutes the remote sources.
+        (WebCore::MockMediaEndpoint::updateConfigurationMids):
+        (WebCore::MockMediaEndpoint::unmuteRemoteSourcesByMid):
+        (WebCore::MockMediaEndpoint::unmuteTimerFired):
+        * platform/mock/MockMediaEndpoint.h:
+
 2016-10-10  Darin Adler  <darin@apple.com>
 
         Move audio module off of legacy exceptions

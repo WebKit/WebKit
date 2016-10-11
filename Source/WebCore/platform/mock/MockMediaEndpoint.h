@@ -59,26 +59,36 @@ public:
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) override;
     void replaceSendSource(RealtimeMediaSource&, const String& mid) override;
+    void replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid) override;
 
     void stop() override;
 
     void emulatePlatformEvent(const String& action) override;
 
 private:
+    void updateConfigurationMids(const MediaEndpointSessionConfiguration&);
+
     void dispatchFakeIceCandidates();
     void iceCandidateTimerFired();
 
     void stepIceTransportStates();
     void iceTransportTimerFired();
 
+    void unmuteRemoteSourcesByMid();
+    void unmuteTimerFired();
+
     MediaEndpointClient& m_client;
     Vector<String> m_mids;
+    HashMap<String, RefPtr<RealtimeMediaSource>> m_mutedRemoteSources;
 
     Vector<RefPtr<IceCandidate>> m_fakeIceCandidates;
     Timer m_iceCandidateTimer;
 
     Vector<std::pair<String, MediaEndpoint::IceTransportState>> m_iceTransportStateChanges;
     Timer m_iceTransportTimer;
+
+    Vector<String> m_midsOfSourcesToUnmute;
+    Timer m_unmuteTimer;
 };
 
 } // namespace WebCore

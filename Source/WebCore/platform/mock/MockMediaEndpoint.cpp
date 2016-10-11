@@ -37,6 +37,7 @@
 #include "MediaPayload.h"
 #include "MockRealtimeAudioSource.h"
 #include "MockRealtimeVideoSource.h"
+#include "RealtimeMediaSource.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -53,6 +54,7 @@ MockMediaEndpoint::MockMediaEndpoint(MediaEndpointClient& client)
     : m_client(client)
     , m_iceCandidateTimer(*this, &MockMediaEndpoint::iceCandidateTimerFired)
     , m_iceTransportTimer(*this, &MockMediaEndpoint::iceTransportTimerFired)
+    , m_unmuteTimer(*this, &MockMediaEndpoint::unmuteTimerFired)
 {
 }
 
@@ -163,20 +165,16 @@ MediaEndpoint::UpdateResult MockMediaEndpoint::updateReceiveConfiguration(MediaE
 {
     UNUSED_PARAM(isInitiator);
 
-    Vector<String> mids;
-    for (const RefPtr<PeerMediaDescription>& mediaDescription : configuration->mediaDescriptions())
-        mids.append(mediaDescription->mid());
-    m_mids.swap(mids);
-
+    updateConfigurationMids(*configuration);
     return UpdateResult::Success;
 }
 
 MediaEndpoint::UpdateResult MockMediaEndpoint::updateSendConfiguration(MediaEndpointSessionConfiguration* configuration, const RealtimeMediaSourceMap& sendSourceMap, bool isInitiator)
 {
-    UNUSED_PARAM(configuration);
     UNUSED_PARAM(sendSourceMap);
     UNUSED_PARAM(isInitiator);
 
+    updateConfigurationMids(*configuration);
     return UpdateResult::Success;
 }
 
@@ -188,19 +186,31 @@ void MockMediaEndpoint::addRemoteCandidate(IceCandidate& candidate, const String
     UNUSED_PARAM(password);
 }
 
-Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String&, RealtimeMediaSource::Type type)
+Ref<RealtimeMediaSource> MockMediaEndpoint::createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type type)
 {
-    if (type == RealtimeMediaSource::Audio)
-        return MockRealtimeAudioSource::createMuted("remote audio");
+    RefPtr<RealtimeMediaSource> source;
 
-    ASSERT(type == RealtimeMediaSource::Video);
-    return MockRealtimeVideoSource::createMuted("remote video");
+    switch (type) {
+    case RealtimeMediaSource::Audio: source = MockRealtimeAudioSource::createMuted("remote audio"); break;
+    case RealtimeMediaSource::Video: source = MockRealtimeVideoSource::createMuted("remote video"); break;
+    case RealtimeMediaSource::None:
+        ASSERT_NOT_REACHED();
+    }
+
+    m_mutedRemoteSources.set(mid, source);
+    return *source;
 }
 
 void MockMediaEndpoint::replaceSendSource(RealtimeMediaSource& newSource, const String& mid)
 {
     UNUSED_PARAM(newSource);
     UNUSED_PARAM(mid);
+}
+
+void MockMediaEndpoint::replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid)
+{
+    RefPtr<RealtimeMediaSource> remoteSource = m_mutedRemoteSources.take(oldMid);
+    m_mutedRemoteSources.set(newMid, WTFMove(remoteSource));
 }
 
 void MockMediaEndpoint::stop()
@@ -213,6 +223,16 @@ void MockMediaEndpoint::emulatePlatformEvent(const String& action)
         dispatchFakeIceCandidates();
     else if (action == "step-ice-transport-states")
         stepIceTransportStates();
+    else if (action == "unmute-remote-sources-by-mid")
+        unmuteRemoteSourcesByMid();
+}
+
+void MockMediaEndpoint::updateConfigurationMids(const MediaEndpointSessionConfiguration& configuration)
+{
+    Vector<String> mids;
+    for (const RefPtr<PeerMediaDescription>& mediaDescription : configuration.mediaDescriptions())
+        mids.append(mediaDescription->mid());
+    m_mids.swap(mids);
 }
 
 void MockMediaEndpoint::dispatchFakeIceCandidates()
@@ -314,6 +334,31 @@ void MockMediaEndpoint::iceTransportTimerFired()
     m_client.iceTransportStateChanged(stateChange.first, stateChange.second);
 
     m_iceTransportTimer.startOneShot(0);
+}
+
+void MockMediaEndpoint::unmuteRemoteSourcesByMid()
+{
+    if (m_mids.isEmpty())
+        return;
+
+    // Looking up each source by its mid, instead of simply iterating over the list of muted sources,
+    // emulates remote media arriving on a media description with a specific mid (RTCRtpTransceiver).
+
+    // Copy values in reverse order to maintain the original order while using takeLast()
+    for (int i = m_mids.size() - 1; i >= 0; --i)
+        m_midsOfSourcesToUnmute.append(m_mids[i]);
+
+    m_unmuteTimer.startOneShot(0);
+}
+
+void MockMediaEndpoint::unmuteTimerFired()
+{
+    RefPtr<RealtimeMediaSource> source = m_mutedRemoteSources.get(m_midsOfSourcesToUnmute.takeLast());
+    if (source)
+        source->setMuted(false);
+
+    if (!m_midsOfSourcesToUnmute.isEmpty())
+        m_unmuteTimer.startOneShot(0);
 }
 
 } // namespace WebCore
