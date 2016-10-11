@@ -85,16 +85,16 @@ void WorkerThreadableLoader::cancel()
 }
 
 struct LoaderTaskOptions {
-    LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, const SecurityOrigin&);
+    LoaderTaskOptions(const ThreadableLoaderOptions&, const String&, Ref<SecurityOrigin>&&);
     ThreadableLoaderOptions options;
     String referrer;
-    RefPtr<SecurityOrigin> origin;
+    Ref<SecurityOrigin> origin;
 };
 
-LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, const SecurityOrigin& origin)
+LoaderTaskOptions::LoaderTaskOptions(const ThreadableLoaderOptions& options, const String& referrer, Ref<SecurityOrigin>&& origin)
     : options(options, options.preflightPolicy, options.contentSecurityPolicyEnforcement, options.initiator.isolatedCopy(), options.opaqueResponse, options.sameOriginDataURLFlag)
     , referrer(referrer.isolatedCopy())
-    , origin(origin.isolatedCopy())
+    , origin(WTFMove(origin))
 {
 }
 
@@ -108,10 +108,11 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(securityOrigin);
     ASSERT(contentSecurityPolicy);
 
-    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(securityOrigin->isolatedCopy());
+    auto securityOriginCopy = securityOrigin->isolatedCopy();
+    auto contentSecurityPolicyCopy = std::make_unique<ContentSecurityPolicy>(securityOriginCopy);
     contentSecurityPolicyCopy->copyStateFrom(contentSecurityPolicy);
 
-    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), *securityOrigin);
+    auto optionsCopy = std::make_unique<LoaderTaskOptions>(options, request.httpReferrer().isNull() ? outgoingReferrer : request.httpReferrer(), WTFMove(securityOriginCopy));
 
     // Can we benefit from request being an r-value to create more efficiently its isolated copy?
     m_loaderProxy.postTaskToLoader([this, request = request.isolatedCopy(), options = WTFMove(optionsCopy), contentSecurityPolicyCopy = WTFMove(contentSecurityPolicyCopy)](ScriptExecutionContext& context) mutable {
