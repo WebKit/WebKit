@@ -106,6 +106,25 @@ PASS Intl.Collator.supportedLocalesOf('en-x') threw exception RangeError: invali
 PASS Intl.Collator.supportedLocalesOf('en-*') threw exception RangeError: invalid language tag: en-*.
 PASS Intl.Collator.supportedLocalesOf('en-') threw exception RangeError: invalid language tag: en-.
 PASS Intl.Collator.supportedLocalesOf('en--US') threw exception RangeError: invalid language tag: en--US.
+PASS Intl.Collator.supportedLocalesOf('de') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('de-DE') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('DE-de') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('cmn') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('cmn-Hans') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('CMN-hANS') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('cmn-hans-cn') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('es-419') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('es-419-u-nu-latn-cu-bob') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('i-klingon') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('cmn-hans-cn-t-ca-u-ca-x-t-u') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('enochian-enochian') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('de-gregory-u-ca-gregory') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('aa-a-foo-x-a-foo-bar') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('x-en-US-12345') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('x-12345-12345-en-US') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('x-en-US-12345-12345') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('x-en-u-foo') did not throw exception.
+PASS Intl.Collator.supportedLocalesOf('x-en-u-foo-u-bar') did not throw exception.
 PASS Intl.Collator.prototype.constructor is Intl.Collator
 PASS Intl.Collator.prototype.compare is an instance of Function
 PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get is an instance of Function
