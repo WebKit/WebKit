@@ -572,6 +572,8 @@
         return lineRects;
     });
 
+    let mac = WebInspector.Platform.name === "mac";
+
     CodeMirror.keyMap["default"] = {
         "Alt-Up": alterNumber.bind(null, 1),
         "Ctrl-Alt-Up": alterNumber.bind(null, 0.1),
@@ -585,7 +587,7 @@
         "Shift-Alt-PageDown": alterNumber.bind(null, -100),
         "Cmd-/": "toggleComment",
         "Shift-Tab": "indentLess",
-        fallthrough: "macDefault"
+        fallthrough: mac ? "macDefault" : "pcDefault"
     };
 
     // Register some extra MIME-types for CodeMirror. These are in addition to the
