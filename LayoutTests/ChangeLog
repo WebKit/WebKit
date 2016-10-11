@@ -1,3 +1,14 @@
+2016-09-22  Daniel Bates  <dabates@apple.com>
+
+        [XSS Auditor] Truncate data URLs at quotes
+        https://bugs.webkit.org/show_bug.cgi?id=161937
+
+        Reviewed by David Kilzer.
+
+        * http/tests/security/xssAuditor/resources/echo-property.pl:
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url4-expected.txt: Added.
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url4.html: Added.
+
 2016-09-20  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r204552): Athlete search on Strava gives bad rendering.
