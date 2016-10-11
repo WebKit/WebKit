@@ -1,0 +1,20 @@
+Testing the ButtonsContainer constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS defaultContainer.element.localName is "div"
+PASS defaultContainer.element.className.trim() is "buttons-container"
+PASS defaultContainer.margin is 0
+PASS defaultContainer.padding is 0
+PASS defaultContainer.buttons is []
+PASS containerWithParameters.element.localName is "div"
+PASS containerWithParameters.element.classList.contains('buttons-container') is true
+PASS containerWithParameters.element.classList.contains('foo') is true
+PASS containerWithParameters.margin is 10
+PASS containerWithParameters.padding is 20
+PASS containerWithParameters.buttons is buttons
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

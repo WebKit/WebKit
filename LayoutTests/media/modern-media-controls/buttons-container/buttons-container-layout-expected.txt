@@ -1,0 +1,17 @@
+Testing ButtonsContainer layout.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.children.length is 3
+PASS container.children[0] is tenPtWideButton
+PASS container.children[1] is twentyPtWideButton
+PASS container.children[2] is thirtyPtWideButton
+PASS tenPtWideButton.x is 20
+PASS twentyPtWideButton.x is 40
+PASS thirtyPtWideButton.x is 70
+PASS container.width is 120
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

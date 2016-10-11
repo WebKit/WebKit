@@ -39,8 +39,6 @@ class IconButton extends Button
 
         if (!!iconName)
             this.iconName = iconName;
-
-        this.size = { width: 0, height: 0 };
     }
 
     // Public

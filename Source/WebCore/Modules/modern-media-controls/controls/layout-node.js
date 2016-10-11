@@ -95,7 +95,7 @@ class LayoutNode
         if (this.needsLayout === flag)
             return;
 
-        this._needsLayout = true;
+        this._needsLayout = flag;
         this._updateDirtyState();
     }
 
@@ -167,7 +167,8 @@ class LayoutNode
             return this._parent.removeChild(this);
     }
 
-    markDirtyProperty(propertyName) {
+    markDirtyProperty(propertyName)
+    {
         const hadProperty = this._dirtyProperties.has(propertyName);
         this._dirtyProperties.add(propertyName);
 
@@ -217,17 +218,22 @@ class LayoutNode
 
     // Private
 
-    _markNodeManipulation(manipulation) {
+    _markNodeManipulation(manipulation)
+    {
         this._pendingDOMManipulation = manipulation;
         this._updateDirtyState();
     }
 
-    _updateDirtyState() {
+    _updateDirtyState()
+    {
         if (this.needsLayout) {
             dirtyNodes.add(this);
             scheduler.scheduleLayout(performScheduledLayout);
-        } else
-            dirtyNodes.delete(node);
+        } else {
+            dirtyNodes.delete(this);
+            if (dirtyNodes.size === 0)
+                scheduler.unscheduleLayout(performScheduledLayout);
+        }
     }
 
     _updateChildren()
@@ -255,15 +261,21 @@ LayoutNode.DOMManipulation = {
     Addition: 2
 };
 
-function performScheduledLayout() {
-    dirtyNodes.forEach(node => node.layout());
+function performScheduledLayout()
+{
+    dirtyNodes.forEach(node => {
+        node.needsLayout = false;
+        node.layout()
+    });
     dirtyNodes.clear();
+    scheduler.unscheduleLayout(performScheduledLayout);
 
     nodesRequiringChildrenUpdate.forEach(node => node._updateChildren());
     nodesRequiringChildrenUpdate.clear();
 }
 
-function elementFromString(elementString) {
+function elementFromString(elementString)
+{
     const element = document.createElement("div");
     element.innerHTML = elementString;
     return element.firstElementChild;

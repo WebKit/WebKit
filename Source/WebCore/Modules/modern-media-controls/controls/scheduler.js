@@ -19,6 +19,14 @@ const scheduler = new class
         this._requestFrameIfNeeded();
     }
 
+    unscheduleLayout(callback)
+    {
+        if (typeof callback !== "function")
+            return;
+
+        this._layoutCallbacks.delete(callback);
+    }
+
     // Private
 
     _requestFrameIfNeeded()
