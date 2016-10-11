@@ -67,6 +67,38 @@ interface UIScriptController {
     //              ]
     //          },
     //          {
+    //              "interpolate" : "linear",
+    //              "timestep" : 0.025,
+    //              "startEvent" : {
+    //                  "inputType" : "hand",
+    //                  "timeOffset" : 0.025,
+    //                  "touches" : [
+    //                      {
+    //                          "inputType" : "finger",
+    //                          "phase" : "began",
+    //                          "id" : 1,
+    //                          "x" : 100,
+    //                          "y" : 120,
+    //                          "pressure" : 0
+    //                      }
+    //                  ]
+    //              },
+    //              "endEvent" : {
+    //                  "inputType" : "hand",
+    //                  "timeOffset" : 3.0,
+    //                  "touches" : [
+    //                      {
+    //                          "inputType" : "finger",
+    //                          "phase" : "stationary",
+    //                          "id" : 1,
+    //                          "x" : 20,
+    //                          "y" : 40,
+    //                          "pressure" : 500
+    //                      }
+    //                  ]
+    //              }
+    //          },
+    //          {
     //              "inputType" : "hand",
     //              "timeOffset" : 0.002, // seconds relative to the first event
     //              "touches" : [

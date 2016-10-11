@@ -42,6 +42,10 @@ NSString* const HIDEventInputType = @"inputType";
 NSString* const HIDEventTimeOffsetKey = @"timeOffset";
 NSString* const HIDEventTouchesKey = @"touches";
 NSString* const HIDEventPhaseKey = @"phase";
+NSString* const HIDEventInterpolateKey = @"interpolate";
+NSString* const HIDEventTimestepKey = @"timestep";
+NSString* const HIDEventStartEventKey = @"startEvent";
+NSString* const HIDEventEndEventKey = @"endEvent";
 NSString* const HIDEventTouchIDKey = @"id";
 NSString* const HIDEventPressureKey = @"pressure";
 NSString* const HIDEventXKey = @"x";
@@ -54,7 +58,11 @@ NSString* const HIDEventInputTypeHand = @"hand";
 NSString* const HIDEventInputTypeFinger = @"finger";
 NSString* const HIDEventInputTypeStylus = @"stylus";
 
+NSString* const HIDEventInterpolationTypeLinear = @"linear";
+NSString* const HIDEventInterpolationTypeSimpleCurve = @"simpleCurve";
+
 NSString* const HIDEventPhaseBegan = @"began";
+NSString* const HIDEventPhaseStationary = @"stationary";
 NSString* const HIDEventPhaseMoved = @"moved";
 NSString* const HIDEventPhaseEnded = @"ended";
 NSString* const HIDEventPhaseCanceled = @"canceled";
@@ -69,6 +77,11 @@ static const NSUInteger maxTouchCount = 5;
 static const long nanosecondsPerSecond = 1e9;
 
 static int fingerIdentifiers[maxTouchCount] = { 2, 3, 4, 5, 1 };
+
+typedef enum {
+    InterpolationTypeLinear,
+    InterpolationTypeSimpleCurve,
+} InterpolationType;
 
 typedef enum {
     HandEventNull,
@@ -98,15 +111,27 @@ static CFTimeInterval secondsSinceAbsoluteTime(CFAbsoluteTime startTime)
     return (CFAbsoluteTimeGetCurrent() - startTime);
 }
 
-static double simpleDragCurve(double a, double b, double t)
+static double linearInterpolation(double a, double b, double t)
+{
+    return (a + (b - a) * t );
+}
+
+static double simpleCurveInterpolation(double a, double b, double t)
 {
     return (a + (b - a) * sin(sin(t * M_PI / 2) * t * M_PI / 2));
 }
 
-static CGPoint calculateNextLocation(CGPoint a, CGPoint b, CFTimeInterval t)
+
+static CGPoint calculateNextCurveLocation(CGPoint a, CGPoint b, CFTimeInterval t)
 {
-    return CGPointMake(simpleDragCurve(a.x, b.x, t), simpleDragCurve(a.y, b.y, t));
+    return CGPointMake(simpleCurveInterpolation(a.x, b.x, t), simpleCurveInterpolation(a.y, b.y, t));
 }
+
+typedef double(*pressureInterpolationFunction)(double, double, CFTimeInterval);
+static pressureInterpolationFunction interpolations[] = {
+    linearInterpolation,
+    simpleCurveInterpolation,
+};
 
 static void delayBetweenMove(int eventIndex, double elapsed)
 {
@@ -187,6 +212,9 @@ static UITouchPhase phaseFromString(NSString *string)
 {
     if ([string isEqualToString:HIDEventPhaseBegan])
         return UITouchPhaseBegan;
+    
+    if ([string isEqualToString:HIDEventPhaseStationary])
+        return UITouchPhaseStationary;
 
     if ([string isEqualToString:HIDEventPhaseMoved])
         return UITouchPhaseMoved;
@@ -200,20 +228,35 @@ static UITouchPhase phaseFromString(NSString *string)
     return UITouchPhaseStationary;
 }
 
+static InterpolationType interpolationFromString(NSString *string)
+{
+    if ([string isEqualToString:HIDEventInterpolationTypeLinear])
+        return InterpolationTypeLinear;
+    
+    if ([string isEqualToString:HIDEventInterpolationTypeSimpleCurve])
+        return InterpolationTypeSimpleCurve;
+    
+    return InterpolationTypeLinear;
+}
+
 - (IOHIDDigitizerEventMask)eventMaskFromEventInfo:(NSDictionary *)info
 {
+    IOHIDDigitizerEventMask eventMask = 0;
     NSArray *childEvents = info[HIDEventTouchesKey];
     for (NSDictionary *touchInfo in childEvents) {
         UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
         // If there are any new or ended events, mask includes touch.
         if (phase == UITouchPhaseBegan || phase == UITouchPhaseEnded || phase == UITouchPhaseCancelled)
-            return kIOHIDDigitizerEventTouch;
+            eventMask |= kIOHIDDigitizerEventTouch;
+        // If there are any pressure readings, set mask must include attribute
+        if ([touchInfo[HIDEventPressureKey] floatValue])
+            eventMask |= kIOHIDDigitizerEventAttribute;
     }
     
-    return 0;
+    return eventMask;
 }
 
-// Returns 1 for all events where the fingers are on the glass (everything but enced and canceled).
+// Returns 1 for all events where the fingers are on the glass (everything but ended and canceled).
 - (CFIndex)touchFromEventInfo:(NSDictionary *)info
 {
     NSArray *childEvents = info[HIDEventTouchesKey];
@@ -260,7 +303,7 @@ static UITouchPhase phaseFromString(NSString *string)
         IOHIDDigitizerEventMask childEventMask = 0;
 
         UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
-        if (phase != UITouchPhaseCancelled && phase != UITouchPhaseBegan && phase != UITouchPhaseEnded)
+        if (phase != UITouchPhaseCancelled && phase != UITouchPhaseBegan && phase != UITouchPhaseEnded && phase != UITouchPhaseStationary)
             childEventMask |= kIOHIDDigitizerEventPosition;
 
         if (phase == UITouchPhaseBegan || phase == UITouchPhaseEnded || phase == UITouchPhaseCancelled)
@@ -268,6 +311,9 @@ static UITouchPhase phaseFromString(NSString *string)
 
         if (phase == UITouchPhaseCancelled)
             childEventMask |= kIOHIDDigitizerEventCancel;
+        
+        if ([touchInfo[HIDEventPressureKey] floatValue])
+            childEventMask |= kIOHIDDigitizerEventAttribute;
 
         IOHIDEventRef subEvent = IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
             [touchInfo[HIDEventTouchIDKey] intValue],               // index
@@ -551,7 +597,7 @@ static UITouchPhase phaseFromString(NSString *string)
             if (!eventIndex)
                 startLocations[i] = _activePoints[i].point;
 
-            nextLocations[i] = calculateNextLocation(startLocations[i], newLocations[i], interval);
+            nextLocations[i] = calculateNextCurveLocation(startLocations[i], newLocations[i], interval);
         }
         [self _updateTouchPoints:nextLocations count:touchCount];
 
@@ -920,32 +966,109 @@ static inline uint32_t hidUsageCodeForCharacter(NSString *key)
     [self _sendHIDEvent:eventRef.get()];
 }
 
+- (NSArray *)interpolatedEvents:(NSDictionary *)interpolationsDictionary
+{
+    NSDictionary *startEvent = interpolationsDictionary[HIDEventStartEventKey];
+    NSDictionary *endEvent = interpolationsDictionary[HIDEventEndEventKey];
+    NSTimeInterval timeStep = [interpolationsDictionary[HIDEventTimestepKey] doubleValue];
+    InterpolationType interpolationType = interpolationFromString(interpolationsDictionary[HIDEventInterpolateKey]);
+    
+    NSMutableArray *interpolatedEvents = [NSMutableArray arrayWithObject:startEvent];
+    
+    NSTimeInterval startTime = [startEvent[HIDEventTimeOffsetKey] doubleValue];
+    NSTimeInterval endTime = [endEvent[HIDEventTimeOffsetKey] doubleValue];
+    NSTimeInterval time = startTime + timeStep;
+    
+    NSArray *startTouches = startEvent[HIDEventTouchesKey];
+    NSArray *endTouches = endEvent[HIDEventTouchesKey];
+    
+    while (time < endTime) {
+        NSMutableDictionary *newEvent = [endEvent mutableCopy];
+        double timeRatio = (time - startTime) / (endTime - startTime);
+        newEvent[HIDEventTimeOffsetKey] = [NSNumber numberWithDouble:(time)];
+        
+        NSEnumerator *startEnumerator = [startTouches objectEnumerator];
+        NSDictionary *startTouch;
+        NSMutableArray *newTouches = [NSMutableArray arrayWithCapacity:[endTouches count]];
+        while (startTouch = [startEnumerator nextObject])  {
+            NSEnumerator *endEnumerator = [endTouches objectEnumerator];
+            NSDictionary *endTouch = [endEnumerator nextObject];
+            NSInteger startTouchID = [startTouch[HIDEventTouchIDKey] integerValue];
+            
+            while (endTouch && ([endTouch[HIDEventTouchIDKey] integerValue] != startTouchID))
+                endTouch = [endEnumerator nextObject];
+            
+            if (endTouch) {
+                NSMutableDictionary *newTouch = [endTouch mutableCopy];
+                
+                if (newTouch[HIDEventXKey] != startTouch[HIDEventXKey])
+                    newTouch[HIDEventXKey] = @(interpolations[interpolationType]([startTouch[HIDEventXKey] doubleValue], [endTouch[HIDEventXKey] doubleValue], timeRatio));
+                
+                if (newTouch[HIDEventYKey] != startTouch[HIDEventYKey])
+                    newTouch[HIDEventYKey] = @(interpolations[interpolationType]([startTouch[HIDEventYKey] doubleValue], [endTouch[HIDEventYKey] doubleValue], timeRatio));
+                
+                if (newTouch[HIDEventPressureKey] != startTouch[HIDEventPressureKey])
+                    newTouch[HIDEventPressureKey] = @(interpolations[interpolationType]([startTouch[HIDEventPressureKey] doubleValue], [endTouch[HIDEventPressureKey] doubleValue], timeRatio));
+                
+                [newTouches addObject:newTouch];
+                [newTouch release];
+            } else
+                NSLog(@"Missing End Touch with ID: %ld", (long)startTouchID);
+        }
+        
+        newEvent[HIDEventTouchesKey] = newTouches;
+        
+        [interpolatedEvents addObject:newEvent];
+        [newEvent release];
+        time += timeStep;
+    }
+
+    return interpolatedEvents;
+}
+
+- (NSArray *)expandEvents:(NSArray *)events withStartTime:(CFAbsoluteTime)startTime
+{
+    NSMutableArray *expandedEvents = [NSMutableArray array];
+    for (NSDictionary *event in events) {
+        NSString *interpolate = event[HIDEventInterpolateKey];
+        // we have key events that we need to generate
+        if (interpolate) {
+            NSArray *newEvents = [self interpolatedEvents:event];
+            [expandedEvents addObjectsFromArray:[self expandEvents:newEvents withStartTime:startTime]];
+        } else
+            [expandedEvents addObject:event];
+    }
+    return expandedEvents;
+}
+
 - (void)eventDispatchThreadEntry:(NSDictionary *)threadData
 {
     NSDictionary *eventStream = threadData[@"eventInfo"];
     void (^completionBlock)() = threadData[@"completionBlock"];
-
+    
     NSArray *events = eventStream[TopLevelEventInfoKey];
     if (!events.count) {
         NSLog(@"No events found in event stream");
         return;
     }
-
+    
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     
-    for (NSDictionary *eventInfo in events) {
+    NSArray *expandedEvents = [self expandEvents:events withStartTime:startTime];
+    
+    for (NSDictionary *eventInfo in expandedEvents) {
         NSTimeInterval eventRelativeTime = [eventInfo[HIDEventTimeOffsetKey] doubleValue];
         CFAbsoluteTime targetTime = startTime + eventRelativeTime;
         
         CFTimeInterval waitTime = targetTime - CFAbsoluteTimeGetCurrent();
         if (waitTime > 0)
             [NSThread sleepForTimeInterval:waitTime];
-
+        
         dispatch_async(dispatch_get_main_queue(), ^ {
             [self dispatchEventWithInfo:eventInfo];
         });
     }
-
+    
     dispatch_async(dispatch_get_main_queue(), ^ {
         [self _sendMarkerHIDEventWithCompletionBlock:completionBlock];
     });

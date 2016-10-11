@@ -1,3 +1,35 @@
+2016-10-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Extend event stream to include interpolated events and add a force press test that uses that interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=163161
+
+        Reviewed by Simon Fraser.
+
+        Added functionality to the event stream to allow for interpolated events.
+        Can now do long press, as well as a better way to do drag and other time-based
+        events that require a large stream of descrete HID events.
+        Added a basic force touch test to demostrate this interpolation.
+        Also updated the script to allow for iPhone 7 specific tests, as force touch
+        needs to be on a device that had force touch.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSSimulatorPort):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (linearInterpolation):
+        (simpleCurveInterpolation):
+        (calculateNextCurveLocation):
+        (phaseFromString):
+        (interpolationFromString):
+        (-[HIDEventGenerator eventMaskFromEventInfo:]):
+        (-[HIDEventGenerator _createIOHIDEventWithInfo:]):
+        (-[HIDEventGenerator moveToPoints:touchCount:duration:]):
+        (-[HIDEventGenerator interpolatedEvents:]):
+        (-[HIDEventGenerator processEventsArray:withStartTime:]):
+        (-[HIDEventGenerator eventDispatchThreadEntry:]):
+        (simpleDragCurve): Deleted.
+        (calculateNextLocation): Deleted.
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should percent-encode non-ASCII and non-printable characters in fragment

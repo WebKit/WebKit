@@ -74,7 +74,7 @@ class IOSSimulatorPort(DarwinPort):
     DEFAULT_ARCHITECTURE = 'x86_64'
 
     DEFAULT_DEVICE_CLASS = 'iphone'
-    CUSTOM_DEVICE_CLASSES = ['ipad']
+    CUSTOM_DEVICE_CLASSES = ['ipad', 'iphone7']
     SDK = 'iphonesimulator'
 
     SIMULATOR_BUNDLE_ID = 'com.apple.iphonesimulator'
@@ -86,6 +86,7 @@ class IOSSimulatorPort(DarwinPort):
     DEVICE_CLASS_MAP = {
         'x86_64': {
             'iphone': 'iPhone 5s',
+            'iphone7': 'iPhone 7',
             'ipad': 'iPad Air'
         },
         'x86': {
