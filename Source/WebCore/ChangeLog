@@ -1,3 +1,9 @@
+2016-10-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix after r207140.
+
+        * PlatformAppleWin.cmake: Add missing compile file.
+
 2016-10-10  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Add initial Pattern handling implementation

@@ -88,6 +88,7 @@ if (${USE_DIRECT2D})
         platform/graphics/win/ImageDirect2D.cpp
         platform/graphics/win/NativeImageDirect2D.cpp
         platform/graphics/win/PathDirect2D.cpp
+        platform/graphics/win/PatternDirect2D.cpp
         platform/graphics/win/SimpleFontDataDirect2D.cpp
         platform/graphics/win/TextAnalyzerHelper.cpp
 
