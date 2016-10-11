@@ -110,6 +110,10 @@ private:
 
     unsigned m_initLevel : 3;
 
+#if USE(QUICK_LOOK)
+    bool m_isQuickLook { false };
+#endif
+
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
 #elif PLATFORM(COCOA)

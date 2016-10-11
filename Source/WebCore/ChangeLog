@@ -4,6 +4,16 @@
         https://bugs.webkit.org/show_bug.cgi?id=163240
         <rdar://problem/25961633>
 
+        Fix bad merge following r207151.
+
+        * platform/network/cf/ResourceResponse.h: Define m_isQuickLook.
+
+2016-10-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Sandbox QuickLook previews
+        https://bugs.webkit.org/show_bug.cgi?id=163240
+        <rdar://problem/25961633>
+
         Reviewed by Brent Fulgham.
 
         Use a unique origin for- and limit the capabilities of- QuickLook previews.
