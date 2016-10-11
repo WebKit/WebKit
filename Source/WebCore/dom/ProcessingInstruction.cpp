@@ -145,11 +145,8 @@ void ProcessingInstruction::checkStyleSheet()
             } else
 #endif
             {
-                CachedResourceRequest request(ResourceRequest(document().completeURL(href)));
                 String charset = attrs.get("charset");
-                if (charset.isEmpty())
-                    charset = document().charset();
-                request.setCharset(charset);
+                CachedResourceRequest request(document().completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), Nullopt, charset.isEmpty() ? document().charset() : WTFMove(charset));
 
                 m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request));
             }

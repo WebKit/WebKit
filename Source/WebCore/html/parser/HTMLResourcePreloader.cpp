@@ -43,7 +43,7 @@ URL PreloadRequest::completeURL(Document& document)
 CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
 {
     ASSERT(isMainThread());
-    CachedResourceRequest request(ResourceRequest(completeURL(document)));
+    CachedResourceRequest request(completeURL(document), CachedResourceLoader::defaultCachedResourceOptions());
     request.setInitiator(m_initiator);
     request.setAsPotentiallyCrossOrigin(m_crossOriginMode, document);
     return request;

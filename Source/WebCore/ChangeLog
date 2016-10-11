@@ -1,3 +1,26 @@
+2016-10-10  Youenn Fablet  <youenn@apple.com>
+
+        CachedResourceRequest constructor should be made more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=163210
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Refactoring to use one CachedResourceRequest constructor that will move its request and charset to improve efficiency.
+
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::PreloadRequest::resourceRequest):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        * loader/cache/CachedResourceRequest.h:
+
 2016-10-10  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Alejandro G. Castro <alex@igalia.com>
 
         WebRTC: Make MediaEndpointPeerConnection handle remotely assigned mids correctly

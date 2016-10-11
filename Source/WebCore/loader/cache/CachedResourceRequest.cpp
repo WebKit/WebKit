@@ -34,16 +34,9 @@
 
 namespace WebCore {
 
-CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const String& charset, Optional<ResourceLoadPriority> priority)
-    : m_resourceRequest(resourceRequest)
-    , m_charset(charset)
-    , m_options(CachedResourceLoader::defaultCachedResourceOptions())
-    , m_priority(priority)
-{
-}
-
-CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, Optional<ResourceLoadPriority> priority)
+CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, const ResourceLoaderOptions& options, Optional<ResourceLoadPriority> priority, String&& charset)
     : m_resourceRequest(WTFMove(resourceRequest))
+    , m_charset(WTFMove(charset))
     , m_options(options)
     , m_priority(priority)
 {

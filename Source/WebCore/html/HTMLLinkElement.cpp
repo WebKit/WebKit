@@ -228,7 +228,7 @@ void HTMLLinkElement::process()
         || (document().settings() && document().settings()->treatsAnyTextCSSLinkAsStylesheet() && m_type.containsIgnoringASCIICase("text/css"));
 
     if (m_disabledState != Disabled && treatAsStyleSheet && document().frame() && url.isValid()) {
-        AtomicString charset = attributeWithoutSynchronization(charsetAttr);
+        String charset = attributeWithoutSynchronization(charsetAttr);
         if (charset.isEmpty() && document().frame())
             charset = document().charset();
 
@@ -261,7 +261,7 @@ void HTMLLinkElement::process()
         Optional<ResourceLoadPriority> priority;
         if (!isActive)
             priority = ResourceLoadPriority::VeryLow;
-        CachedResourceRequest request(url, charset, priority);
+        CachedResourceRequest request(url, CachedResourceLoader::defaultCachedResourceOptions(), priority, WTFMove(charset));
         request.setInitiator(this);
 
         if (document().contentSecurityPolicy()->allowStyleWithNonce(attributeWithoutSynchronization(HTMLNames::nonceAttr))) {

@@ -40,8 +40,7 @@ class Document;
 
 class CachedResourceRequest {
 public:
-    explicit CachedResourceRequest(const ResourceRequest&, const String& charset = String(), Optional<ResourceLoadPriority> = Nullopt);
-    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = Nullopt);
+    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = Nullopt, String&& charset = String());
 
     ResourceRequest& mutableResourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
