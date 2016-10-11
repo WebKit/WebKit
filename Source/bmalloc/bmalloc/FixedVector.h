@@ -44,7 +44,7 @@ public:
 
     FixedVector();
 
-    const T* begin() const { return m_buffer.begin(); }
+    const T* begin() const { return &m_buffer[0]; }
     const T* end() const { return begin() + size(); }
 
     size_t size() const { return m_size; }
