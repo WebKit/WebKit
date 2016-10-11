@@ -1,3 +1,14 @@
+2016-10-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        The "Input Events" experimental feature runtime flag should not be on by default
+        https://bugs.webkit.org/show_bug.cgi?id=163278
+
+        Reviewed by Zalan Bujtas.
+
+        This was intended to be off by default.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option
