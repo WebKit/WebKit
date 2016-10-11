@@ -132,6 +132,7 @@ namespace WebCore {
     macro(keydown) \
     macro(keypress) \
     macro(keyup) \
+    macro(languagechange) \
     macro(levelchange) \
     macro(load) \
     macro(loadeddata) \

@@ -13,9 +13,7 @@ FAIL beforeprint assert_equals: expected (function) function "function f() {
 }" but got (undefined) undefined
 PASS beforeunload 
 PASS hashchange 
-FAIL languagechange assert_equals: expected (function) function "function f() {
-  return 0;
-}" but got (undefined) undefined
+PASS languagechange 
 PASS message 
 PASS offline 
 PASS online 
@@ -34,7 +32,7 @@ FAIL afterprint removal assert_equals: expected (object) null but got (undefined
 FAIL beforeprint removal assert_equals: expected (object) null but got (undefined) undefined
 PASS beforeunload removal 
 PASS hashchange removal 
-FAIL languagechange removal assert_equals: expected (object) null but got (undefined) undefined
+PASS languagechange removal 
 PASS message removal 
 PASS offline removal 
 PASS online removal 

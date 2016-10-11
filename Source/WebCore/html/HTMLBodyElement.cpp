@@ -113,6 +113,7 @@ HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMa
         &onfocusinAttr,
         &onfocusoutAttr,
         &onhashchangeAttr,
+        &onlanguagechangeAttr,
         &onloadAttr,
         &onmessageAttr,
         &onofflineAttr,

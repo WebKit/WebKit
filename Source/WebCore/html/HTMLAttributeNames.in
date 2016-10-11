@@ -224,6 +224,7 @@ onkeyup
 ongesturestart
 ongesturechange
 ongestureend
+onlanguagechange
 onload
 onloadeddata
 onloadedmetadata

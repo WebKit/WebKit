@@ -1351,7 +1351,7 @@ FAIL HTMLBodyElement interface: attribute onafterprint assert_true: The prototyp
 FAIL HTMLBodyElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
 PASS HTMLBodyElement interface: attribute onbeforeunload 
 PASS HTMLBodyElement interface: attribute onhashchange 
-FAIL HTMLBodyElement interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
+PASS HTMLBodyElement interface: attribute onlanguagechange 
 PASS HTMLBodyElement interface: attribute onmessage 
 PASS HTMLBodyElement interface: attribute onoffline 
 PASS HTMLBodyElement interface: attribute ononline 
@@ -1372,7 +1372,7 @@ FAIL HTMLBodyElement interface: document.createElement("body") must inherit prop
 FAIL HTMLBodyElement interface: document.createElement("body") must inherit property "onbeforeprint" with the proper type (7) assert_inherits: property "onbeforeprint" not found in prototype chain
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onbeforeunload" with the proper type (8) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onhashchange" with the proper type (9) 
-FAIL HTMLBodyElement interface: document.createElement("body") must inherit property "onlanguagechange" with the proper type (10) assert_inherits: property "onlanguagechange" not found in prototype chain
+PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onlanguagechange" with the proper type (10) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onmessage" with the proper type (11) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onoffline" with the proper type (12) 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "ononline" with the proper type (13) 
@@ -5039,7 +5039,7 @@ FAIL Window interface: attribute onafterprint assert_own_property: The global ob
 FAIL Window interface: attribute onbeforeprint assert_own_property: The global object must have a property "onbeforeprint" expected property "onbeforeprint" missing
 PASS Window interface: attribute onbeforeunload 
 PASS Window interface: attribute onhashchange 
-FAIL Window interface: attribute onlanguagechange assert_own_property: The global object must have a property "onlanguagechange" expected property "onlanguagechange" missing
+PASS Window interface: attribute onlanguagechange 
 PASS Window interface: attribute onmessage 
 PASS Window interface: attribute onoffline 
 PASS Window interface: attribute ononline 
@@ -5166,7 +5166,7 @@ FAIL Window interface: window must inherit property "onafterprint" with the prop
 FAIL Window interface: window must inherit property "onbeforeprint" with the proper type (99) assert_own_property: expected property "onbeforeprint" missing
 PASS Window interface: window must inherit property "onbeforeunload" with the proper type (100) 
 PASS Window interface: window must inherit property "onhashchange" with the proper type (101) 
-FAIL Window interface: window must inherit property "onlanguagechange" with the proper type (102) assert_own_property: expected property "onlanguagechange" missing
+PASS Window interface: window must inherit property "onlanguagechange" with the proper type (102) 
 PASS Window interface: window must inherit property "onmessage" with the proper type (103) 
 PASS Window interface: window must inherit property "onoffline" with the proper type (104) 
 PASS Window interface: window must inherit property "ononline" with the proper type (105) 
@@ -5717,7 +5717,7 @@ FAIL HTMLFrameSetElement interface: attribute onafterprint assert_true: The prot
 FAIL HTMLFrameSetElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
 PASS HTMLFrameSetElement interface: attribute onbeforeunload 
 PASS HTMLFrameSetElement interface: attribute onhashchange 
-FAIL HTMLFrameSetElement interface: attribute onlanguagechange assert_true: The prototype object must have a property "onlanguagechange" expected true got false
+PASS HTMLFrameSetElement interface: attribute onlanguagechange 
 PASS HTMLFrameSetElement interface: attribute onmessage 
 PASS HTMLFrameSetElement interface: attribute onoffline 
 PASS HTMLFrameSetElement interface: attribute ononline 
@@ -5734,7 +5734,7 @@ FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inhe
 FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeprint" with the proper type (3) assert_inherits: property "onbeforeprint" not found in prototype chain
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeunload" with the proper type (4) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onhashchange" with the proper type (5) 
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onlanguagechange" with the proper type (6) assert_inherits: property "onlanguagechange" not found in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onlanguagechange" with the proper type (6) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onmessage" with the proper type (7) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onoffline" with the proper type (8) 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "ononline" with the proper type (9) 

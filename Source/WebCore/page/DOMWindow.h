@@ -245,6 +245,8 @@ namespace WebCore {
         void postMessageTimerFired(PostMessageTimer&);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
 
+        void languagesChanged();
+
         void scrollBy(const ScrollToOptions&) const;
         void scrollBy(double x, double y) const;
         void scrollTo(const ScrollToOptions&) const;

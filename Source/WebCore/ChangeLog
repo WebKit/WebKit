@@ -1,5 +1,33 @@
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
+        Add support for languagechange event
+        https://bugs.webkit.org/show_bug.cgi?id=163222
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for languagechange event:
+        - https://html.spec.whatwg.org/#dom-navigator-languages
+
+        Firefox and Chrome already support this.
+
+        Test: fast/dom/window-languagechange-event.html
+
+        * dom/EventNames.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createWindowEventHandlerNameMap):
+        * page/DOMWindow.cpp:
+        (WebCore::languagesChangedCallback):
+        (WebCore::DOMWindow::DOMWindow):
+        (WebCore::DOMWindow::~DOMWindow):
+        (WebCore::DOMWindow::languagesChanged):
+        (WebCore::DOMWindow::canShowModalDialog): Deleted.
+        (WebCore::DOMWindow::removeEventListener): Deleted.
+        * page/DOMWindow.h:
+        * page/WindowEventHandlers.idl:
+
+2016-10-10  Chris Dumez  <cdumez@apple.com>
+
         Update GamepadEvent to stop using legacy [ConstructorTemplate=Event]
         https://bugs.webkit.org/show_bug.cgi?id=163243
 

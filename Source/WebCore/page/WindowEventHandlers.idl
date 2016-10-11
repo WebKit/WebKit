@@ -35,7 +35,7 @@
     // [WindowEventHandler] attribute EventHandler onbeforeprint;.
     [WindowEventHandler] attribute EventHandler onbeforeunload;
     [WindowEventHandler] attribute EventHandler onhashchange;
-    // [WindowEventHandler] attribute EventHandler onlanguagechange;.
+    [WindowEventHandler] attribute EventHandler onlanguagechange;
     [WindowEventHandler] attribute EventHandler onmessage;
     [WindowEventHandler] attribute EventHandler onoffline;
     [WindowEventHandler] attribute EventHandler ononline;

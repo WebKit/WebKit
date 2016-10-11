@@ -69,6 +69,7 @@
 #include "History.h"
 #include "InspectorInstrumentation.h"
 #include "JSMainThreadExecState.h"
+#include "Language.h"
 #include "Location.h"
 #include "MainFrame.h"
 #include "MediaQueryList.h"
@@ -392,6 +393,11 @@ bool DOMWindow::canShowModalDialog(const Frame* frame)
     return page ? page->chrome().canRunModal() : false;
 }
 
+static void languagesChangedCallback(void* context)
+{
+    static_cast<DOMWindow*>(context)->languagesChanged();
+}
+
 void DOMWindow::setCanShowModalDialogOverride(bool allow)
 {
     m_canShowModalDialogOverride = allow;
@@ -416,6 +422,8 @@ DOMWindow::DOMWindow(Document* document)
 {
     ASSERT(frame());
     ASSERT(DOMWindow::document());
+
+    addLanguageChangeObserver(this, &languagesChangedCallback);
 }
 
 void DOMWindow::didSecureTransitionTo(Document* document)
@@ -464,6 +472,8 @@ DOMWindow::~DOMWindow()
     if (m_gamepadEventListenerCount)
         GamepadManager::singleton().unregisterDOMWindow(this);
 #endif
+
+    removeLanguageChangeObserver(this);
 }
 
 DOMWindow* DOMWindow::toDOMWindow()
@@ -1886,6 +1896,12 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 #endif
 
     return true;
+}
+
+void DOMWindow::languagesChanged()
+{
+    if (auto* document = this->document())
+        document->enqueueWindowEvent(Event::create(eventNames().languagechangeEvent, false, false));
 }
 
 void DOMWindow::dispatchLoadEvent()
