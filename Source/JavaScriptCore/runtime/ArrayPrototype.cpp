@@ -1078,7 +1078,7 @@ static bool moveElements(ExecState* exec, VM& vm, JSArray* target, unsigned targ
         for (unsigned i = 0; i < sourceLength; ++i) {
             JSValue value = source->tryGetIndexQuickly(i);
             if (value) {
-                target->putDirectIndex(exec, targetOffset + i, value);
+                target->putDirectIndex(exec, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
                 RETURN_IF_EXCEPTION(scope, false);
             }
         }
@@ -1087,7 +1087,7 @@ static bool moveElements(ExecState* exec, VM& vm, JSArray* target, unsigned targ
             JSValue value = getProperty(exec, source, i);
             RETURN_IF_EXCEPTION(scope, false);
             if (value) {
-                target->putDirectIndex(exec, targetOffset + i, value);
+                target->putDirectIndex(exec, targetOffset + i, value, 0, PutDirectIndexShouldThrow);
                 RETURN_IF_EXCEPTION(scope, false);
             }
         }

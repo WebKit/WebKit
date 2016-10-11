@@ -117,14 +117,17 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
     AddResult result = add(array, i);
     SparseArrayEntry& entry = result.iterator->value;
 
-    // To save a separate find & add, we first always add to the sparse map.
-    // In the uncommon case that this is a new property, and the array is not
-    // extensible, this is not the right thing to have done - so remove again.
-    if (mode != PutDirectIndexLikePutDirect && result.isNewEntry && !array->isStructureExtensible()) {
-        remove(result.iterator);
-        return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
+    if (mode != PutDirectIndexLikePutDirect && !array->isStructureExtensible()) {
+        // To save a separate find & add, we first always add to the sparse map.
+        // In the uncommon case that this is a new property, and the array is not
+        // extensible, this is not the right thing to have done - so remove again.
+        if (result.isNewEntry) {
+            remove(result.iterator);
+            return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
+        }
+        if (entry.attributes & ReadOnly)
+            return reject(exec, mode == PutDirectIndexShouldThrow, ReadonlyPropertyWriteError);
     }
-
     entry.attributes = attributes;
     entry.set(exec->vm(), this, value);
     return true;
