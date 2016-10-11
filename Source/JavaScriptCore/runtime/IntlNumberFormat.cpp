@@ -198,6 +198,10 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
 
     // 13. Set numberFormat.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));
+    if (m_locale.isEmpty()) {
+        throwTypeError(&state, scope, ASCIILiteral("failed to initialize NumberFormat due to invalid locale"));
+        return;
+    }
 
     // 14. Set numberFormat.[[numberingSystem]] to the value of r.[[nu]].
     m_numberingSystem = result.get(ASCIILiteral("nu"));

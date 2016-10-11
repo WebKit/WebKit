@@ -1,5 +1,19 @@
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
+        https://bugs.webkit.org/show_bug.cgi?id=162139
+
+        Reviewed by Michael Catanzaro.
+
+        Handle the case of "C" locale passed by the user using "en-US" as default to match what
+        WTF::platformUserPreferredLanguages() does.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_preferred_languages): Remove the call to languageDidChange() because
+        overrideUserPreferredLanguages() already calls it, so we were actually notifying the observers twice.
+
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Improve performance when resizing a window with multiple web views in X11
         https://bugs.webkit.org/show_bug.cgi?id=162413
 

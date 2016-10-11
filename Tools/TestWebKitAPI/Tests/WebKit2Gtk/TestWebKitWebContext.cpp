@@ -465,7 +465,7 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
 
 static void testWebContextLanguages(WebViewTest* test, gconstpointer)
 {
-    static const char* expectedDefaultLanguage = "en";
+    static const char* expectedDefaultLanguage = "en-us";
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     size_t mainResourceDataSize = 0;
@@ -487,6 +487,32 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     mainResourceData = test->mainResourceData(mainResourceDataSize);
     g_assert_cmpuint(mainResourceDataSize, ==, strlen(expectedLanguages));
     g_assert(!strncmp(mainResourceData, expectedLanguages, mainResourceDataSize));
+
+    // When using the C locale, en-US should be used as default.
+    const char* cLanguage[] = { "C", nullptr };
+    webkit_web_context_set_preferred_languages(test->m_webContext.get(), cLanguage);
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    GUniquePtr<char> locale(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(locale.get(), ==, "en-US");
+
+    // When using the POSIX locale, en-US should be used as default.
+    const char* posixLanguage[] = { "POSIX", nullptr };
+    webkit_web_context_set_preferred_languages(test->m_webContext.get(), posixLanguage);
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(locale.get(), ==, "en-US");
+
+    // An invalid locale should throw an exception.
+    const char* invalidLanguage[] = { "A", nullptr };
+    webkit_web_context_set_preferred_languages(test->m_webContext.get(), invalidLanguage);
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("Intl.DateTimeFormat().resolvedOptions().locale", &error.outPtr());
+    g_assert(!javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)

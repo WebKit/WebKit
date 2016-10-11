@@ -1,3 +1,15 @@
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
+        https://bugs.webkit.org/show_bug.cgi?id=162139
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases to check the behavior when using the C locale and an invalid locale.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextLanguages):
+
 2016-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] HashTable's rehash is not compatible to Ref<T> and ASan

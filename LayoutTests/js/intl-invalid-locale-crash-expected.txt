@@ -1,0 +1,7 @@
+PASS new Intl.DateTimeFormat().resolvedOptions() threw exception TypeError: failed to initialize DateTimeFormat due to invalid locale.
+PASS new Intl.NumberFormat().resolvedOptions() threw exception TypeError: failed to initialize NumberFormat due to invalid locale.
+PASS new Intl.Collator().resolvedOptions() threw exception TypeError: failed to initialize Collator due to invalid locale.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

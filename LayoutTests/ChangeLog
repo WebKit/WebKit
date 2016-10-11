@@ -1,3 +1,13 @@
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
+        https://bugs.webkit.org/show_bug.cgi?id=162139
+
+        Reviewed by Michael Catanzaro.
+
+        * js/intl-invalid-locale-crash-expected.txt: Added.
+        * js/intl-invalid-locale-crash.html: Added.
+
 2016-09-22  Brady Eidson  <beidson@apple.com>
 
         IDBIndex.openCursor() matches indices on multiple object stores.

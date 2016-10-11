@@ -162,6 +162,9 @@ static Vector<String> searchLocaleData(const String&, size_t keyIndex)
 
 void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue optionsValue)
 {
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // 10.1.1 InitializeCollator (collator, locales, options) (ECMA-402 2.0)
     // 1. If collator has an [[initializedIntlObject]] internal slot with value true, throw a TypeError exception.
     // 2. Set collator.[[initializedIntlObject]] to true.
@@ -254,6 +257,10 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
 
     // 19. Set collator.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));
+    if (m_locale.isEmpty()) {
+        throwTypeError(&state, scope, ASCIILiteral("failed to initialize Collator due to invalid locale"));
+        return;
+    }
 
     // 20. Let k be 0.
     // 21. Let lenValue be Get(relevantExtensionKeys, "length").

@@ -455,6 +455,10 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
 
     // 13. Set dateTimeFormat.[[locale]] to the value of r.[[locale]].
     m_locale = resolved.get(vm.propertyNames->locale.string());
+    if (m_locale.isEmpty()) {
+        throwTypeError(&exec, scope, ASCIILiteral("failed to initialize DateTimeFormat due to invalid locale"));
+        return;
+    }
     // 14. Set dateTimeFormat.[[calendar]] to the value of r.[[ca]].
     m_calendar = resolved.get(ASCIILiteral("ca"));
     // Switch to preferred aliases.

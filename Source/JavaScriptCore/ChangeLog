@@ -1,3 +1,23 @@
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r194387): Crash on github.com in IntlDateTimeFormat::resolvedOptions in C locale
+        https://bugs.webkit.org/show_bug.cgi?id=162139
+
+        Reviewed by Michael Catanzaro.
+
+        The crash happens in unix ports because the resolved locale is empty when system locale is "C". IntlObject
+        considers any language tag with a size < 2 to be an invalid language, so "C" is not a valid language to resolve
+        the locale. We should ensure that WTF::platformUserPreferredLanguages() never returns invalid languages, but
+        that's not enough, because languages can be overriden from the public API, so we need to handle those cases and
+        throw exceptions instead of crashing.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator): Throw a exception when we fail to resolve the locale.
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat): Ditto.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat): Ditto.
+
 2016-09-20  Jonathan Bedard  <jbedard@apple.com>
 
         Undefined behavior: Left shift negative number
