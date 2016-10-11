@@ -1,3 +1,20 @@
+2016-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Update WebKitPlaybackTargetAvailabilityEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163265
+
+        Reviewed by Darin Adler.
+
+        Update WebKitPlaybackTargetAvailabilityEvent to stop using legacy
+        [ConstructorTemplate=Event] and use a regular constructor instead.
+
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent):
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.h:
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::createForBindings):
+        (WebCore::WebKitPlaybackTargetAvailabilityEvent::~WebKitPlaybackTargetAvailabilityEvent): Deleted.
+        * Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.idl:
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option

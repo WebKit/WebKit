@@ -26,8 +26,11 @@
 
 [
     Conditional=WIRELESS_PLAYBACK_TARGET,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional WebKitPlaybackTargetAvailabilityEventInit eventInitDict),
 ] interface WebKitPlaybackTargetAvailabilityEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString availability;
+    readonly attribute DOMString availability;
 };
 
+dictionary WebKitPlaybackTargetAvailabilityEventInit : EventInit {
+    DOMString availability = "";
+};

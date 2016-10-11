@@ -46,8 +46,8 @@ WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(con
 {
 }
 
-WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, const WebKitPlaybackTargetAvailabilityEventInit& initializer)
-    : Event(eventType, initializer)
+WebKitPlaybackTargetAvailabilityEvent::WebKitPlaybackTargetAvailabilityEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : Event(eventType, initializer, isTrusted)
     , m_availability(initializer.availability)
 {
 }
