@@ -1,3 +1,31 @@
+2016-10-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Add initial Pattern handling implementation
+        https://bugs.webkit.org/show_bug.cgi?id=163270
+
+        Reviewed by Simon Fraser.
+
+        Provide an implemenation of Patterns for Direct2D.
+
+        No new tests. Covered by fast/borders/border-image-01.html and others.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Pattern.h: Add D2D definitions.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::solidStrokeBrush): Use a more generic return type.
+        (WebCore::GraphicsContext::solidFillBrush): Ditto.
+        (WebCore::GraphicsContext::patternStrokeBrush): Added.
+        (WebCore::GraphicsContext::patternFillBrush): Added.
+        (WebCore::GraphicsContext::drawPattern): Provide D2D implementation.
+        (WebCore::GraphicsContext::applyStrokePattern): Ditto.
+        (WebCore::GraphicsContext::applyFillPattern): Ditto.
+        (WebCore::GraphicsContext::drawPath): Use stroke pattern if available.
+        (WebCore::GraphicsContext::fillPath): Use fill pattern if available.
+        (WebCore::GraphicsContext::strokePath): Use stroke pattern if available.
+        (WebCore::GraphicsContext::fillRect): Use fill pattern if available.
+        * platform/graphics/win/GraphicsContextPlatformPrivateDirect2D.h:
+        * platform/graphics/win/PatternDirect2D.cpp: Added.
+
 2016-10-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile fix.

@@ -84,6 +84,8 @@ public:
 
     COMPtr<ID2D1SolidColorBrush> m_solidStrokeBrush;
     COMPtr<ID2D1SolidColorBrush> m_solidFillBrush;
+    COMPtr<ID2D1BitmapBrush> m_patternStrokeBrush;
+    COMPtr<ID2D1BitmapBrush> m_patternFillBrush;
 
 private:
     void recomputeStrokeStyle();

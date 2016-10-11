@@ -555,8 +555,10 @@ public:
     WEBCORE_EXPORT bool didBeginDraw() const;
     D2D1_COLOR_F colorWithGlobalAlpha(const Color&) const;
 
-    ID2D1SolidColorBrush* solidStrokeBrush();
-    ID2D1SolidColorBrush* solidFillBrush();
+    ID2D1Brush* solidStrokeBrush() const;
+    ID2D1Brush* solidFillBrush() const;
+    ID2D1Brush* patternStrokeBrush() const;
+    ID2D1Brush* patternFillBrush() const;
 #endif
 #else // PLATFORM(WIN)
     bool shouldIncludeChildWindows() const { return false; }

@@ -415,14 +415,24 @@ D2D1_COLOR_F GraphicsContext::colorWithGlobalAlpha(const Color& color) const
     return D2D1::ColorF(color.rgb(), globalAlpha * colorAlpha);
 }
 
-ID2D1SolidColorBrush* GraphicsContext::solidStrokeBrush()
+ID2D1Brush* GraphicsContext::solidStrokeBrush() const
 {
     return m_data->m_solidStrokeBrush.get();
 }
 
-ID2D1SolidColorBrush* GraphicsContext::solidFillBrush()
+ID2D1Brush* GraphicsContext::solidFillBrush() const
 {
     return m_data->m_solidFillBrush.get();
+}
+
+ID2D1Brush* GraphicsContext::patternStrokeBrush() const
+{
+    return m_data->m_patternStrokeBrush.get();
+}
+
+ID2D1Brush* GraphicsContext::patternFillBrush() const
+{
+    return m_data->m_patternFillBrush.get();
 }
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
@@ -435,7 +445,51 @@ void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const
         return;
     }
 
-    notImplemented();
+    auto context = platformContext();
+    D2DContextStateSaver stateSaver(*m_data);
+
+    m_data->clip(destRect);
+
+    setPlatformCompositeOperation(op, blendMode);
+
+    auto bitmapBrushProperties = D2D1::BitmapBrushProperties();
+    bitmapBrushProperties.extendModeX = D2D1_EXTEND_MODE_WRAP;
+    bitmapBrushProperties.extendModeY = D2D1_EXTEND_MODE_WRAP;
+
+    // Create a brush transformation so we paint using the section of the image we care about.
+    AffineTransform transformation = patternTransform;
+    transformation.translate(destRect.location());
+
+    auto brushProperties = D2D1::BrushProperties();
+    brushProperties.transform = transformation;
+    brushProperties.opacity = 1.0f;
+
+    auto tileImage = image.nativeImageForCurrentFrame();
+
+    // If we only want a subset of the bitmap, we need to create a cropped bitmap image. According to the documentation,
+    // this does not allocate new bitmap memory.
+    if (image.width() > destRect.width() || image.height() > destRect.height()) {
+        float dpiX = 0;
+        float dpiY = 0;
+        tileImage->GetDpi(&dpiX, &dpiY);
+        auto bitmapProperties = D2D1::BitmapProperties(tileImage->GetPixelFormat(), dpiX, dpiY);
+        COMPtr<ID2D1Bitmap> subImage;
+        HRESULT hr = context->CreateBitmap(IntSize(tileRect.size()), bitmapProperties, &subImage);
+        if (SUCCEEDED(hr)) {
+            D2D1_RECT_U finishRect = IntRect(tileRect);
+            hr = subImage->CopyFromBitmap(nullptr, tileImage.get(), &finishRect);
+            if (SUCCEEDED(hr))
+                tileImage = subImage;
+        }
+    }
+
+    COMPtr<ID2D1BitmapBrush> patternBrush;
+    HRESULT hr = context->CreateBitmapBrush(tileImage.get(), &bitmapBrushProperties, &brushProperties, &patternBrush);
+
+    drawWithoutShadow(destRect, [this, destRect, patternBrush](ID2D1RenderTarget* renderTarget) {
+        const D2D1_RECT_F d2dRect = destRect;
+        renderTarget->FillRectangle(&d2dRect, patternBrush.get());
+    });
 }
 
 void GraphicsContext::clipToImageBuffer(ImageBuffer& buffer, const FloatRect& destRect)
@@ -700,8 +754,11 @@ void GraphicsContext::applyStrokePattern()
     if (paintingDisabled())
         return;
 
-    // Note: Because of the way Direct2D draws, we may not need this explicit context 'set stroke pattern' logic.
-    notImplemented();
+    auto context = platformContext();
+    AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
+
+    const float patternAlpha = 1;
+    m_data->m_patternStrokeBrush = adoptCOM(m_state.strokePattern->createPlatformPattern(context, patternAlpha, userToBaseCTM));
 }
 
 void GraphicsContext::applyFillPattern()
@@ -709,8 +766,11 @@ void GraphicsContext::applyFillPattern()
     if (paintingDisabled())
         return;
 
-    // Note: Because of the way Direct2D draws, we may not need this explicit context 'set fill pattern' logic.
-    notImplemented();
+    auto context = platformContext();
+    AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
+
+    const float patternAlpha = 1;
+    m_data->m_patternFillBrush = adoptCOM(m_state.fillPattern->createPlatformPattern(context, patternAlpha, userToBaseCTM));
 }
 
 void GraphicsContext::drawPath(const Path& path)
@@ -747,7 +807,8 @@ void GraphicsContext::drawPath(const Path& path)
 
     auto rect = path.fastBoundingRect();
     drawWithoutShadow(rect, [this, &path](ID2D1RenderTarget* renderTarget) {
-        renderTarget->DrawGeometry(path.platformPath(), solidStrokeBrush(), strokeThickness(), m_data->strokeStyle());
+        auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
+        renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
 }
 
@@ -870,7 +931,8 @@ void GraphicsContext::fillPath(const Path& path)
 
     FloatRect contextRect(FloatPoint(), context->GetSize());
     drawWithoutShadow(contextRect, [this, &pathToFill](ID2D1RenderTarget* renderTarget) {
-        renderTarget->FillGeometry(pathToFill.get(), solidFillBrush());
+        auto brush = m_state.fillPattern ? patternFillBrush() : solidFillBrush();
+        renderTarget->FillGeometry(pathToFill.get(), brush);
     });
 }
 
@@ -912,7 +974,8 @@ void GraphicsContext::strokePath(const Path& path)
 
     FloatRect contextRect(FloatPoint(), context->GetSize());
     drawWithoutShadow(contextRect, [this, &path](ID2D1RenderTarget* renderTarget) {
-        renderTarget->DrawGeometry(path.platformPath(), solidStrokeBrush(), strokeThickness(), m_data->strokeStyle());
+        auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
+        renderTarget->DrawGeometry(path.platformPath(), brush, strokeThickness(), m_data->strokeStyle());
     });
 }
 
@@ -958,7 +1021,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     drawWithoutShadow(rect, [this, rect](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
-        renderTarget->FillRectangle(&d2dRect, solidFillBrush());
+        auto brush = m_state.fillPattern ? patternFillBrush() : solidFillBrush();
+        renderTarget->FillRectangle(&d2dRect, brush);
     });
 }
 
