@@ -1210,7 +1210,7 @@ static size_t convertUTF16EntityToUTF8(const UChar* utf16Entity, size_t numberOf
         return 0;
 
     // Even though we must pass the length, libxml expects the entity string to be null terminated.
-    ASSERT(target > originalTarget + 1);
+    ASSERT(target >= originalTarget + 1);
     *target = '\0';
     return target - originalTarget;
 }
@@ -1308,6 +1308,7 @@ static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* 
         || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
+        || (extId == "-//W3C//DTD MathML 2.0//EN")
         || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
         || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN")
         || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"))
