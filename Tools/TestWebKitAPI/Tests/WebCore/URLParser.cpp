@@ -331,6 +331,10 @@ TEST_F(URLParserTest, Basic)
     checkURL("aA://", {"aa", "", "", "", 0, "//", "", "", "aa://"});
     checkURL(utf16String(u"foo://host/#ПП\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "foo://host/#%D0%9F%D0%9F%07 a</"});
     checkURL(utf16String(u"foo://host/#\u0007 a</"), {"foo", "", "", "host", 0, "/", "", "%07 a</", "foo://host/#%07 a</"});
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"}, testTabsValueForSurrogatePairs);
+    checkURL(utf16String(u"http://host/path#💩\t💩"), {"http", "", "", "host", 0, "/path", "", "%F0%9F%92%A9%F0%9F%92%A9", "http://host/path#%F0%9F%92%A9%F0%9F%92%A9"}, testTabsValueForSurrogatePairs);
+    checkURL(utf16String(u"http://host/#ПП\u0007 a</"), {"http", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "http://host/#%D0%9F%D0%9F%07 a</"});
+    checkURL(utf16String(u"http://host/#\u0007 a</"), {"http", "", "", "host", 0, "/", "", "%07 a</", "http://host/#%07 a</"});
 
     // This disagrees with the web platform test for http://:@www.example.com but agrees with Chrome and URL::parse,
     // and Firefox fails the web platform test differently. Maybe the web platform test ought to be changed.
@@ -456,6 +460,7 @@ TEST_F(URLParserTest, ParseRelative)
     checkRelativeURL("  ", "http://host/path?query#fra#gment", {"http", "", "", "host", 0, "/path", "query", "", "http://host/path?query"});
     checkRelativeURL(" \a ", "http://host/#fragment", {"http", "", "", "host", 0, "/", "", "", "http://host/"});
     checkRelativeURL("foo://", "http://example.org/foo/bar", {"foo", "", "", "", 0, "//", "", "", "foo://"});
+    checkRelativeURL(utf16String(u"#β"), "http://example.org/foo/bar", {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
 
     // The checking of slashes in SpecialAuthoritySlashes needed to get this to pass contradicts what is in the spec,
     // but it is included in the web platform tests.
@@ -630,9 +635,6 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("file://[0:a:0:0:b:c:0:0]/path",
         {"file", "", "", "[0:a::b:c:0:0]", 0, "/path", "", "", "file://[0:a::b:c:0:0]/path"},
         {"file", "", "", "[0:a:0:0:b:c:0:0]", 0, "/path", "", "", "file://[0:a:0:0:b:c:0:0]/path"});
-    checkRelativeURLDifferences(utf16String(u"#β"), "http://example.org/foo/bar",
-        {"http", "", "", "example.org", 0, "/foo/bar", "", utf16String(u"β"), utf16String(u"http://example.org/foo/bar#β")},
-        {"http", "", "", "example.org", 0, "/foo/bar", "", "%CE%B2", "http://example.org/foo/bar#%CE%B2"});
     checkURLDifferences("http://",
         {"", "", "", "", 0, "", "", "", "http://"},
         {"http", "", "", "", 0, "/", "", "", "http:/"});
@@ -769,12 +771,6 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("notspecial://@test@test@example:800\\path@end",
         {"notspecial", "@test@test@example", "800\\path", "end", 0, "/", "", "", "notspecial://%40test%40test%40example:800%5Cpath@end/"},
         {"", "", "", "", 0, "", "", "", "notspecial://@test@test@example:800\\path@end"});
-    checkURLDifferences(utf16String(u"http://host?ß😍#ß😍"),
-        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")},
-        {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", "http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D"}, testTabsValueForSurrogatePairs);
-    checkURLDifferences(utf16String(u"http://host/path#💩\t💩"),
-        {"http", "", "", "host", 0, "/path", "", utf16String(u"💩💩"), utf16String(u"http://host/path#💩💩")},
-        {"http", "", "", "host", 0, "/path", "", "%F0%9F%92%A9%F0%9F%92%A9", "http://host/path#%F0%9F%92%A9%F0%9F%92%A9"});
     checkURLDifferences("http://%48OsT",
         {"http", "", "", "host", 0, "/", "", "", "http://host/"},
         {"http", "", "", "%48ost", 0, "/", "", "", "http://%48ost/"});
@@ -1060,12 +1056,6 @@ TEST_F(URLParserTest, DefaultPort)
     checkURLDifferences("file://:0/path",
         {"", "", "", "", 0, "", "", "", "file://:0/path"},
         {"file", "", "", "", 0, "/path", "", "", "file://:0/path"});
-    checkURLDifferences(utf16String(u"http://host/#ПП\u0007 a</"),
-        {"http", "", "", "host", 0, "/", "", utf16String(u"ПП\u0007 a</"), utf16String(u"http://host/#ПП\u0007 a</")},
-        {"http", "", "", "host", 0, "/", "", "%D0%9F%D0%9F%07 a</", "http://host/#%D0%9F%D0%9F%07 a</"});
-    checkURLDifferences(utf16String(u"http://host/#\u0007 a</"),
-        {"http", "", "", "host", 0, "/", "", "\a a</", "http://host/#\a a</"},
-        {"http", "", "", "host", 0, "/", "", "%07 a</", "http://host/#%07 a</"});
 }
     
 static void shouldFail(const String& urlString)
@@ -1224,8 +1214,7 @@ static void checkURL(const String& urlString, const String& baseURLString, const
 
 TEST_F(URLParserTest, QueryEncoding)
 {
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, testTabsValueForSurrogatePairs);
-    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", utf16String(u"ß😍"), utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#ß😍")}, testTabsValueForSurrogatePairs);
+    checkURL(utf16String(u"http://host?ß😍#ß😍"), UTF8Encoding(), {"http", "", "", "host", 0, "/", "%C3%9F%F0%9F%98%8D", "%C3%9F%F0%9F%98%8D", utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D")}, testTabsValueForSurrogatePairs);
 
     TextEncoding latin1(String("latin1"));
     checkURL("http://host/?query with%20spaces", latin1, {"http", "", "", "host", 0, "/", "query%20with%20spaces", "", "http://host/?query%20with%20spaces"});

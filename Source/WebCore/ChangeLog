@@ -1,5 +1,30 @@
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should percent-encode non-ASCII and non-printable characters in fragment
+        https://bugs.webkit.org/show_bug.cgi?id=163287
+
+        Reviewed by Brady Eidson.
+
+        Based on discussion in https://github.com/whatwg/url/issues/150
+        If that discussion decides to keep the spec as-is (which keeps non-ASCII characters in the fragment
+        to match IE and Edge's behavior, which Chrome has followed for special schemes) then we can revert
+        this change later after enabling the URL parser.  Making this change keeps behavior matching Safari
+        and Firefox, as well as Chrome's handling of non-special schemes, such as data URLs.
+
+        Covered by updated API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::appendToASCIIBuffer):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::syntaxViolation):
+        (WebCore::URLParser::currentPosition):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::fragmentSyntaxViolation): Deleted.
+        * platform/URLParser.h:
+        No more non-ASCII characters in canonicalized URLs.
+
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
         Remove dead networking code
         https://bugs.webkit.org/show_bug.cgi?id=163263
 

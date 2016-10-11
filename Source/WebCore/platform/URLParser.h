@@ -51,8 +51,6 @@ public:
 private:
     URL m_url;
     Vector<LChar> m_asciiBuffer;
-    Vector<UChar> m_unicodeFragmentBuffer;
-    bool m_didSeeUnicodeFragmentCodePoint { false };
     bool m_urlIsSpecial { false };
     bool m_hostHasPercentOrNonASCII { false };
     String m_inputString;
@@ -73,7 +71,6 @@ private:
     void advance(CodePointIterator<CharacterType>&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> bool takesTwoAdvancesUntilEnd(CodePointIterator<CharacterType>);
     template<typename CharacterType> void syntaxViolation(const CodePointIterator<CharacterType>&);
-    template<typename CharacterType> void fragmentSyntaxViolation(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> bool isPercentEncodedDot(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool isWindowsDriveLetter(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool isSingleDotPathSegment(CodePointIterator<CharacterType>);

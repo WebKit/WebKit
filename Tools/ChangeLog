@@ -1,5 +1,15 @@
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
+        URLParser should percent-encode non-ASCII and non-printable characters in fragment
+        https://bugs.webkit.org/show_bug.cgi?id=163287
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
         Remove dead networking code
         https://bugs.webkit.org/show_bug.cgi?id=163263
 

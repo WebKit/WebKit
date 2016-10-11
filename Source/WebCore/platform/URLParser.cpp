@@ -462,7 +462,6 @@ ALWAYS_INLINE bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterTy
 
 ALWAYS_INLINE void URLParser::appendToASCIIBuffer(UChar32 codePoint)
 {
-    ASSERT(m_unicodeFragmentBuffer.isEmpty());
     ASSERT(isASCII(codePoint));
     if (UNLIKELY(m_didSeeSyntaxViolation))
         m_asciiBuffer.append(codePoint);
@@ -470,7 +469,6 @@ ALWAYS_INLINE void URLParser::appendToASCIIBuffer(UChar32 codePoint)
 
 ALWAYS_INLINE void URLParser::appendToASCIIBuffer(const char* characters, size_t length)
 {
-    ASSERT(m_unicodeFragmentBuffer.isEmpty());
     if (UNLIKELY(m_didSeeSyntaxViolation))
         m_asciiBuffer.append(characters, length);
 }
@@ -829,7 +827,6 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
     syntaxViolation(iterator);
 
     m_asciiBuffer.clear();
-    m_unicodeFragmentBuffer.clear();
     copyASCIIStringUntil(base.m_string, urlLengthUntilPart(base, part));
     switch (part) {
     case URLPart::FragmentEnd:
@@ -1018,7 +1015,6 @@ void URLParser::syntaxViolation(const CodePointIterator<CharacterType>& iterator
     m_didSeeSyntaxViolation = true;
     
     ASSERT(m_asciiBuffer.isEmpty());
-    ASSERT(m_unicodeFragmentBuffer.isEmpty());
     size_t codeUnitsToCopy = iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
     RELEASE_ASSERT(codeUnitsToCopy <= m_inputString.length());
     m_asciiBuffer.reserveCapacity(m_inputString.length());
@@ -1026,30 +1022,6 @@ void URLParser::syntaxViolation(const CodePointIterator<CharacterType>& iterator
         ASSERT(isASCII(m_inputString[i]));
         m_asciiBuffer.uncheckedAppend(m_inputString[i]);
     }
-}
-
-template<typename CharacterType>
-void URLParser::fragmentSyntaxViolation(const CodePointIterator<CharacterType>& iterator)
-{
-    ASSERT(m_didSeeUnicodeFragmentCodePoint);
-    if (m_didSeeSyntaxViolation)
-        return;
-    m_didSeeSyntaxViolation = true;
-
-    ASSERT(m_asciiBuffer.isEmpty());
-    ASSERT(m_unicodeFragmentBuffer.isEmpty());
-    size_t codeUnitsToCopy = iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
-    size_t asciiCodeUnitsToCopy = m_url.m_queryEnd;
-    size_t unicodeCodeUnitsToCopy = codeUnitsToCopy - asciiCodeUnitsToCopy;
-    RELEASE_ASSERT(codeUnitsToCopy <= m_inputString.length());
-    m_asciiBuffer.reserveCapacity(asciiCodeUnitsToCopy);
-    for (size_t i = 0; i < asciiCodeUnitsToCopy; ++i) {
-        ASSERT(isASCII(m_inputString[i]));
-        m_asciiBuffer.uncheckedAppend(m_inputString[i]);
-    }
-    m_unicodeFragmentBuffer.reserveCapacity(m_inputString.length() - asciiCodeUnitsToCopy);
-    for (size_t i = asciiCodeUnitsToCopy; i < asciiCodeUnitsToCopy + unicodeCodeUnitsToCopy; ++i)
-        m_unicodeFragmentBuffer.uncheckedAppend(m_inputString[i]);
 }
 
 void URLParser::failure()
@@ -1111,10 +1083,8 @@ ALWAYS_INLINE StringView URLParser::parsedDataView(size_t start, size_t length)
 template<typename CharacterType>
 ALWAYS_INLINE size_t URLParser::currentPosition(const CodePointIterator<CharacterType>& iterator)
 {
-    if (UNLIKELY(m_didSeeSyntaxViolation)) {
-        ASSERT(m_unicodeFragmentBuffer.isEmpty());
+    if (UNLIKELY(m_didSeeSyntaxViolation))
         return m_asciiBuffer.size();
-    }
     
     return iterator.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
 }
@@ -1160,7 +1130,6 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     URL_PARSER_LOG("Parsing URL <%s> base <%s> encoding <%s>", String(input, length).utf8().data(), base.string().utf8().data(), encoding.name());
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
-    ASSERT(m_unicodeFragmentBuffer.isEmpty());
     
     bool isUTF8Encoding = encoding == UTF8Encoding();
     Vector<UChar> queryBuffer;
@@ -1811,35 +1780,9 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             } while (!c.atEnd());
             break;
         case State::Fragment:
-            do {
-                URL_PARSER_LOG("State Fragment");
-                if (!c.atEnd() && isTabOrNewline(*c)) {
-                    if (m_didSeeUnicodeFragmentCodePoint)
-                        fragmentSyntaxViolation(c);
-                    else
-                        syntaxViolation(c);
-                    ++c;
-                    continue;
-                }
-                if (!m_didSeeUnicodeFragmentCodePoint && isASCII(*c)) {
-                    if (m_urlIsSpecial)
-                        appendToASCIIBuffer(*c);
-                    else
-                        utf8PercentEncode<isInSimpleEncodeSet>(c);
-                } else {
-                    if (m_urlIsSpecial) {
-                        m_didSeeUnicodeFragmentCodePoint = true;
-                        if (UNLIKELY(m_didSeeSyntaxViolation))
-                            appendCodePoint(m_unicodeFragmentBuffer, *c);
-                        else {
-                            ASSERT(m_asciiBuffer.isEmpty());
-                            ASSERT(m_unicodeFragmentBuffer.isEmpty());
-                        }
-                    } else
-                        utf8PercentEncode<isInSimpleEncodeSet>(c);
-                }
-                ++c;
-            } while (!c.atEnd());
+            URL_PARSER_LOG("State Fragment");
+            utf8PercentEncode<isInSimpleEncodeSet>(c);
+            ++c;
             break;
         }
     }
@@ -2043,28 +1986,16 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_fragmentEnd = m_url.m_queryEnd;
         break;
     case State::Fragment:
-        {
-            LOG_FINAL_STATE("Fragment");
-            size_t length = m_didSeeSyntaxViolation ? m_asciiBuffer.size() + m_unicodeFragmentBuffer.size() : c.codeUnitsSince(reinterpret_cast<const CharacterType*>(m_inputBegin));
-            m_url.m_fragmentEnd = length;
-            break;
-        }
+        LOG_FINAL_STATE("Fragment");
+        m_url.m_fragmentEnd = currentPosition(c);
+        break;
     }
 
     if (LIKELY(!m_didSeeSyntaxViolation)) {
         m_url.m_string = m_inputString;
         ASSERT(m_asciiBuffer.isEmpty());
-        ASSERT(m_unicodeFragmentBuffer.isEmpty());
-    } else if (!m_didSeeUnicodeFragmentCodePoint) {
-        ASSERT(m_unicodeFragmentBuffer.isEmpty());
+    } else
         m_url.m_string = String::adopt(WTFMove(m_asciiBuffer));
-    } else {
-        Vector<UChar> buffer;
-        buffer.reserveInitialCapacity(m_asciiBuffer.size() + m_unicodeFragmentBuffer.size());
-        buffer.appendVector(m_asciiBuffer);
-        buffer.appendVector(m_unicodeFragmentBuffer);
-        m_url.m_string = String::adopt(WTFMove(buffer));
-    }
     m_url.m_isValid = true;
     URL_PARSER_LOG("Parsed URL <%s>", m_url.m_string.utf8().data());
 }
