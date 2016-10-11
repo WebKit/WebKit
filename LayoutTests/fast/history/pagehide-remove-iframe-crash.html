@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<iframe srcdoc="<body></body>"></iframe>
+<script>
+description("Tests that we do not crash when deleting a subframe from the pagehide event handler.");
+jsTestIsAsync = true;
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        finishJSTest();
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+    // Remove subframe in pagehide event handler.
+    var frame = document.getElementsByTagName("iframe")[0];
+    subFrameDoc = frame.contentDocument;
+    document.body.removeChild(frame);
+    frame = null;
+    gc();
+}, false);
+
+onload = function() {
+   var frame = document.getElementsByTagName("iframe")[0];
+   frame.addEventListener("touchstart", function() { });
+   frame.addEventListener("click", function() { });
+   frame.contentDocument.body.addEventListener("touchstart", function() { });
+   frame.contentDocument.body.addEventListener("click", function() { });
+
+   setTimeout(function() {
+       // Force a back navigation back to this page.
+       window.location.href = "resources/page-cache-helper.html";
+   }, 0);
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
