@@ -131,7 +131,6 @@ RenderImage::RenderImage(Element& element, RenderStyle&& style, StyleImage* styl
     , m_imageDevicePixelRatio(imageDevicePixelRatio)
 {
     updateAltText();
-    imageResource().initialize(this);
     if (is<HTMLImageElement>(element))
         m_hasShadowControls = downcast<HTMLImageElement>(element).hasShadowControls();
 }
@@ -140,7 +139,6 @@ RenderImage::RenderImage(Document& document, RenderStyle&& style, StyleImage* st
     : RenderReplaced(document, WTFMove(style), IntSize())
     , m_imageResource(styleImage ? std::make_unique<RenderImageResourceStyleImage>(*styleImage) : std::make_unique<RenderImageResource>())
 {
-    imageResource().initialize(this);
 }
 
 RenderImage::~RenderImage()
@@ -199,6 +197,13 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
 
     setIntrinsicSize(imageSize);
     return ImageSizeChangeForAltText;
+}
+
+void RenderImage::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
+{
+    if (!hasInitializedStyle())
+        imageResource().initialize(this);
+    RenderReplaced::styleWillChange(diff, newStyle);
 }
 
 void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

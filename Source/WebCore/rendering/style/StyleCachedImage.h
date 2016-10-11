@@ -69,6 +69,7 @@ private:
     StyleCachedImage(CSSValue&);
 
     Ref<CSSValue> m_cssValue;
+    bool m_isPending { true };
     mutable float m_scaleFactor { 1 };
     mutable CachedResourceHandle<CachedImage> m_cachedImage;
 };

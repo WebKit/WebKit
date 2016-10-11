@@ -66,6 +66,7 @@
 #include "SVGRenderSupport.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StylePendingResources.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StackStats.h>
@@ -150,6 +151,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style.contentData();
     if (contentData && !contentData->next() && is<ImageContentData>(*contentData) && !element.isPseudoElement()) {
+        Style::loadPendingResources(style, element.document(), &element);
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
@@ -363,6 +365,8 @@ void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const Shap
 
 void RenderElement::initializeStyle()
 {
+    Style::loadPendingResources(m_style, document(), element());
+
     styleWillChange(StyleDifferenceNewStyle, style());
 
     m_hasInitializedStyle = true;
@@ -401,6 +405,8 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     diff = std::max(diff, minimalStyleDifference);
 
     diff = adjustStyleDifference(diff, contextSensitiveProperties);
+
+    Style::loadPendingResources(style, document(), element());
 
     styleWillChange(diff, style);
 
@@ -1571,13 +1577,17 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const PseudoS
 
     auto& styleResolver = element()->styleResolver();
 
+    std::unique_ptr<RenderStyle> style;
     if (pseudoStyleRequest.pseudoId == FIRST_LINE_INHERITED) {
-        auto result = styleResolver.styleForElement(*element(), parentStyle).renderStyle;
-        result->setStyleType(FIRST_LINE_INHERITED);
-        return result;
-    }
+        style = styleResolver.styleForElement(*element(), parentStyle).renderStyle;
+        style->setStyleType(FIRST_LINE_INHERITED);
+    } else
+        style = styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
 
-    return styleResolver.pseudoStyleForElement(*element(), pseudoStyleRequest, *parentStyle);
+    if (style)
+        Style::loadPendingResources(*style, document(), element());
+
+    return style;
 }
 
 Color RenderElement::selectionColor(int colorProperty) const

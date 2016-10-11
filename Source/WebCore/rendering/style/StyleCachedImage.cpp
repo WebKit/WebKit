@@ -40,8 +40,11 @@ StyleCachedImage::StyleCachedImage(CSSValue& cssValue)
     m_isCachedImage = true;
 
     // CSSImageValue doesn't get invalidated so we can grab the CachedImage immediately if it exists.
-    if (is<CSSImageValue>(m_cssValue))
+    if (is<CSSImageValue>(m_cssValue)) {
         m_cachedImage = downcast<CSSImageValue>(m_cssValue.get()).cachedImage();
+        if (m_cachedImage)
+            m_isPending = false;
+    }
 }
 
 StyleCachedImage::~StyleCachedImage()
@@ -66,7 +69,8 @@ bool StyleCachedImage::operator==(const StyleImage& other) const
 
 void StyleCachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
-    ASSERT(isPending());
+    ASSERT(m_isPending);
+    m_isPending = false;
 
     if (is<CSSImageValue>(m_cssValue)) {
         auto& imageValue = downcast<CSSImageValue>(m_cssValue.get());
@@ -106,7 +110,7 @@ bool StyleCachedImage::canRender(const RenderObject* renderer, float multiplier)
 
 bool StyleCachedImage::isPending() const
 {
-    return !m_cachedImage;
+    return m_isPending;
 }
 
 bool StyleCachedImage::isLoaded() const
@@ -169,6 +173,7 @@ void StyleCachedImage::setContainerSizeForRenderer(const RenderElement* renderer
 
 void StyleCachedImage::addClient(RenderElement* renderer)
 {
+    ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
     m_cachedImage->addClient(renderer);
@@ -176,6 +181,7 @@ void StyleCachedImage::addClient(RenderElement* renderer)
 
 void StyleCachedImage::removeClient(RenderElement* renderer)
 {
+    ASSERT(!m_isPending);
     if (!m_cachedImage)
         return;
     m_cachedImage->removeClient(renderer);
@@ -183,6 +189,7 @@ void StyleCachedImage::removeClient(RenderElement* renderer)
 
 RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
 {
+    ASSERT(!m_isPending);
     if (!m_cachedImage)
         return nullptr;
     return m_cachedImage->imageForRenderer(renderer);
