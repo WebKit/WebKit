@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-cairo_subpixel_order_t convertFontConfigSubpixelOrder(int fontConfigOrder)
+static cairo_subpixel_order_t convertFontConfigSubpixelOrder(int fontConfigOrder)
 {
     switch (fontConfigOrder) {
     case FC_RGBA_RGB:
@@ -60,7 +60,7 @@ cairo_subpixel_order_t convertFontConfigSubpixelOrder(int fontConfigOrder)
     return CAIRO_SUBPIXEL_ORDER_DEFAULT;
 }
 
-cairo_hint_style_t convertFontConfigHintStyle(int fontConfigStyle)
+static cairo_hint_style_t convertFontConfigHintStyle(int fontConfigStyle)
 {
     switch (fontConfigStyle) {
     case FC_HINT_NONE:
@@ -75,7 +75,7 @@ cairo_hint_style_t convertFontConfigHintStyle(int fontConfigStyle)
     return CAIRO_HINT_STYLE_NONE;
 }
 
-void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcPattern* pattern)
+static void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcPattern* pattern)
 {
     FcBool booleanResult;
     int integerResult;
