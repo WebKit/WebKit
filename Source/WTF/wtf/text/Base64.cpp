@@ -92,7 +92,7 @@ static const char base64URLDecMap[128] = {
     0x31, 0x32, 0x33, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet, nonAlphabet
 };
 
-static inline void base64EncodeInternal(const char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy, const char (&encodeMap)[64])
+static inline void base64EncodeInternal(const unsigned char* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy, const char (&encodeMap)[64])
 {
     out.clear();
     if (!len)
@@ -160,29 +160,29 @@ static inline void base64EncodeInternal(const char* data, unsigned len, Vector<c
 String base64Encode(const void* data, unsigned length, Base64EncodePolicy policy)
 {
     Vector<char> result;
-    base64EncodeInternal(static_cast<const char*>(data), length, result, policy, base64EncMap);
+    base64EncodeInternal(static_cast<const unsigned char*>(data), length, result, policy, base64EncMap);
     return String(result.data(), result.size());
 }
 
 void base64Encode(const void* data, unsigned len, Vector<char>& out, Base64EncodePolicy policy)
 {
-    base64EncodeInternal(static_cast<const char*>(data), len, out, policy, base64EncMap);
+    base64EncodeInternal(static_cast<const unsigned char*>(data), len, out, policy, base64EncMap);
 }
 
 String base64URLEncode(const void* data, unsigned length)
 {
     Vector<char> result;
-    base64EncodeInternal(static_cast<const char*>(data), length, result, Base64URLPolicy, base64URLEncMap);
+    base64EncodeInternal(static_cast<const unsigned char*>(data), length, result, Base64URLPolicy, base64URLEncMap);
     return String(result.data(), result.size());
 }
 
 void base64URLEncode(const void* data, unsigned len, Vector<char>& out)
 {
-    base64EncodeInternal(static_cast<const char*>(data), len, out, Base64URLPolicy, base64URLEncMap);
+    base64EncodeInternal(static_cast<const unsigned char*>(data), len, out, Base64URLPolicy, base64URLEncMap);
 }
 
 template<typename T>
-static inline bool base64DecodeInternal(const T* data, unsigned length, Vector<char>& out, unsigned options, const char (&decodeMap)[128])
+static inline bool base64DecodeInternal(const T* data, unsigned length, SignedOrUnsignedCharVectorAdapter& out, unsigned options, const char (&decodeMap)[128])
 {
     out.clear();
     if (!length)

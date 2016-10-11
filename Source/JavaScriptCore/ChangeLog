@@ -1,3 +1,15 @@
+2016-09-20  Jonathan Bedard  <jbedard@apple.com>
+
+        Undefined behavior: Left shift negative number
+        https://bugs.webkit.org/show_bug.cgi?id=161866
+
+        Reviewed by Keith Miller.
+
+        Left shifting a negative number is undefined behavior in C/C++, although most implementations do define it. Explicitly clarifying the intended behavior due to shifting negative number in some cases.
+
+        * dfg/DFGAbstractHeap.h:
+        (JSC::DFG::AbstractHeap::encode): Explicitly cast signed integer for left shift.
+
 2016-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         jsc.cpp should call initializeMainThread() to make sure that GC thread assertions work

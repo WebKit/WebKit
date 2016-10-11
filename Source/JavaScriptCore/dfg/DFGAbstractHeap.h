@@ -298,7 +298,7 @@ private:
     {
         int64_t kindAsInt = static_cast<int64_t>(kind);
         ASSERT(kindAsInt < (1 << topShift));
-        return kindAsInt | (payload.isTop() << topShift) | (payload.valueImpl() << valueShift);
+        return kindAsInt | (static_cast<uint64_t>(payload.isTop()) << topShift) | (bitwise_cast<uint64_t>(payload.valueImpl()) << valueShift);
     }
     
     // The layout of the value is:
