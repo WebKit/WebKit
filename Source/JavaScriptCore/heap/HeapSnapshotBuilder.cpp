@@ -66,7 +66,7 @@ void HeapSnapshotBuilder::buildSnapshot()
 void HeapSnapshotBuilder::appendNode(JSCell* cell)
 {
     ASSERT(m_profiler.activeSnapshotBuilder() == this);
-    ASSERT(Heap::isMarked(cell));
+    ASSERT(Heap::isMarkedConcurrently(cell));
 
     if (hasExistingNodeForCell(cell))
         return;
