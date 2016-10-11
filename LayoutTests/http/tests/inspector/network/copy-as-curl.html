@@ -92,7 +92,7 @@ function test()
                 let resource = event.data.resource;
                 let curl = resource.generateCURLCommand().split(" \\\n");
 
-                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\\\'with\\$special\\\\{1\.\.20\\\\}chars\\\\\\[\\\\\\]%20.html") !== null, "Command should contain valid POSIX escaped URL.");
+                InspectorTest.expectThat(curl[0].match("https?://.*?/resources/url\\\\'with\\$special%7B1\.\.20%7Dchars\\\\\\[\\\\\\]%20.html") !== null, "Command should contain valid POSIX escaped URL.");
             })
             .then(resolve, reject);
 

@@ -19,13 +19,13 @@ e = document.getElementById('test');
 computedStyle = window.getComputedStyle(e, null);
 
 e.style.listStyle = "circle outside url(dummy://test.png)";
-shouldBe("computedStyle.getPropertyValue('list-style')", "'circle outside url(dummy://test.png)'");
+shouldBe("computedStyle.getPropertyValue('list-style')", "'circle outside url(dummy://test.png/)'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').toString()", "'[object CSSValueList]'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').length", "3");
-shouldBe("computedStyle.getPropertyCSSValue('list-style').cssText", "'circle outside url(dummy://test.png)'");
+shouldBe("computedStyle.getPropertyCSSValue('list-style').cssText", "'circle outside url(dummy://test.png/)'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue()", "'circle'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue()", "'outside'");
-shouldBe("computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue()", "'dummy://test.png'");
+shouldBe("computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue()", "'dummy://test.png/'");
 
 e.style.listStyle = ""
 e.style.listStyle = "a b c";
@@ -59,13 +59,13 @@ e.style.listStyle = "";
 e.style.listStyleType = "circle";
 e.style.listStylePosition = "outside";
 e.style.listStyleImage = "url(dummy://test.png)";
-shouldBe("computedStyle.getPropertyValue('list-style')", "'circle outside url(dummy://test.png)'");
+shouldBe("computedStyle.getPropertyValue('list-style')", "'circle outside url(dummy://test.png/)'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').toString()", "'[object CSSValueList]'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').length", "3");
-shouldBe("computedStyle.getPropertyCSSValue('list-style').cssText", "'circle outside url(dummy://test.png)'");
+shouldBe("computedStyle.getPropertyCSSValue('list-style').cssText", "'circle outside url(dummy://test.png/)'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').item(0).getStringValue()", "'circle'");
 shouldBe("computedStyle.getPropertyCSSValue('list-style').item(1).getStringValue()", "'outside'");
-shouldBe("computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue()", "'dummy://test.png'");
+shouldBe("computedStyle.getPropertyCSSValue('list-style').item(2).getStringValue()", "'dummy://test.png/'");
 
 document.body.removeChild(testContainer);
 

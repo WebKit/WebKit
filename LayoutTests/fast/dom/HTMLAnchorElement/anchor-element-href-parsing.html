@@ -54,7 +54,7 @@ shouldBe("breakDownURL('file:///Users/darin')", "'protocol=file:, pathname=/User
 shouldBe("breakDownURL('data:text/html,<b>foo</b>')", "'protocol=data:, pathname=text/html,<b>foo</b>, origin=null'");
 shouldBe("breakDownURL('http://a:b@c:1/e/f?g%h')", "'protocol=http:, hostname=c, host=c:1, port=1, pathname=/e/f, search=?g%h, origin=http://c:1'");
 
-shouldBe("breakDownURL('http://ex%61mple.com/')", "'protocol=http:, host=ex%61mple.com, pathname=/, origin=http://ex%61mple.com'");
-shouldBe("breakDownURL('http://ex%2fmple.com/')", "'protocol=http:, host=ex%2fmple.com, pathname=/, origin=http://ex%2fmple.com'");
+shouldBe("breakDownURL('http://ex%61mple.com/')", "'protocol=http:, host=example.com, pathname=/, origin=http://example.com, toString=http://example.com/'");
+shouldBe("breakDownURL('http://ex%2fmple.com/')", "'protocol=:, origin=null'");
 
 </script>

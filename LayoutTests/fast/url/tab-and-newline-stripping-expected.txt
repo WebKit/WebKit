@@ -17,7 +17,12 @@ PASS canonicalize('\tht\ntps\r://www.example.com/') is 'https://www.example.com/
 PASS canonicalize('\tfi\nle\r:///var/tmp') is 'file:///var/tmp'
 PASS canonicalize('file://\n/v\tar\r/\ttm\np\r') is 'file:///var/tmp'
 PASS canonicalize('http://\n12\r7\t.0.0.1\t/') is 'http://127.0.0.1/'
-PASS canonicalize('http://\n[\r200\t1\r:\t5:\n:042:44::0370:7334\r]\t/') is 'http://[2001:5::042:44::0370:7334]/'
+FAIL canonicalize('http://\n[\r200\t1\r:\t5:\n:042:44::0370:7334\r]\t/') should be http://[2001:5::042:44::0370:7334]/. Was http://
+[
+200	1
+:	5:
+:042:44::0370:7334
+]	/.
 PASS canonicalize('http://\tlo\ncalhost\r') is 'http://localhost/'
 PASS canonicalize('\t/\n/\rsch\teme\n/relative\r') is 'file://scheme/relative'
 PASS canonicalize('\t/\npa\rth\t/\nabsolute\r') is 'file:///path/absolute'

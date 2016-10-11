@@ -9,7 +9,7 @@ test	file:///BASE/test		/BASE/test
 //test	file://test/	test	/
 ///	file:///		/
 ///test	file:///test		/test
-file:	file:///BASE/		/BASE/
+file:	file:///BASE/:///		/
 file:test	file:///BASE/test		/BASE/test
 file:/	file:///		/
 file:/test	file:///test		/test
@@ -20,11 +20,11 @@ file:///test	file:///test		/test
 file://localhost	file:///		/
 file://localhost/	file:///		/
 file://localhost/test	file:///test		/test
-http:	http:/		/
-http:/	http:/		/
-http://	http:/		/
-http:///	http:/		/
-http:////	http:/		/
+http:	http:		
+http:/	http:/		
+http://	http://		
+http:///	http:///		
+http:////	http:////		
 http:webkit.org	http://webkit.org/	webkit.org	/
 http:/webkit.org	http://webkit.org/	webkit.org	/
 http://webkit.org	http://webkit.org/	webkit.org	/
@@ -41,6 +41,6 @@ x-webkit:test	x-webkit:test		test
 x-webkit:/	x-webkit:/		/
 x-webkit:/test	x-webkit:/test		/test
 x-webkit://	x-webkit://		//
-x-webkit://test	x-webkit://test	test	
+x-webkit://test	x-webkit://test/	test	/
 x-webkit:///	x-webkit:///		///
 x-webkit:///test	x-webkit:///test		///test

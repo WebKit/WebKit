@@ -2786,7 +2786,7 @@ bool URLParser::internalValuesConsistent(const URL& url)
     // It should be able to be deduced from m_isValid and m_string.length() to save memory.
 }
 
-static bool urlParserEnabled = false;
+static bool urlParserEnabled = true;
 
 void URLParser::setEnabled(bool enabled)
 {

@@ -1,0 +1,7 @@
+main frame - willPerformClientRedirectToURL: http://A=a%25B=b 
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - didCancelClientRedirectForFrame
+Tests that we do not redirect to an invalid URL initiated by JavaScript. This test PASSED if you see an entry in the dumped frame load callbacks of the form: "willPerformClientRedirectToURL: http://A=a%B=b" followed by "didCancelClientRedirectForFrame".
+
+Note, this test must be run in DumpRenderTree.

@@ -10,8 +10,8 @@ PASS a.href is 'file:///path/testurl.html#hash_value'
 '?' in hash value
 PASS a.href is 'http://www.mydomain.com/path/testurl.html#hash?value'
 '#' in hash value, and illegal characters in hostname
-PASS a.href = "https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle" threw exception TypeError: Type error.
-PASS a.href is 'https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle'
+PASS a.href = "https://ww w.my\"d(){}|~om?ain#com/path/testurl.html#middle" threw exception TypeError: Type error.
+PASS a.href is 'https://ww w.my\"d(){}|~om?ain#com/path/testurl.html#middle'
 Set hash to null
 PASS a.href is 'https://www.mydomain.com/path/testurl.html#null'
 Set hash to empty string

@@ -15,7 +15,7 @@ function runTest()
     }
 
     var subframeLocation = window.location + "";
-    subframeLocation = subframeLocation.replace(/file:\/\/\//, "file://:1/");
+    subframeLocation = subframeLocation.replace(/file:\/\/\//, "file://host:1/");
     subframeLocation = subframeLocation.replace(/file-URL-with-port-number/, "resources/empty-subframe");
     var subframe = document.getElementById("subframe");
     subframe.onload = subframeLoaded;

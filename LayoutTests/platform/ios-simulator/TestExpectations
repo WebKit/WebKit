@@ -2215,6 +2215,9 @@ platform/ios-simulator/ios/accessibility/set-value.html [ Failure ]
 platform/ios-simulator/ios/fast/css/webkit-overflow-scrolling-parsing.html [ Failure ]
 svg/custom/bug78807.svg [ Failure ]
 
+webkit.org/b/163127 http/tests/quicklook/secure-document-with-subresources.html [ Skip ]
+webkit.org/b/163127 accessibility/text-marker/character-offset-visible-position-conversion-hang.html [ Skip ]
+
 fast/filter-image/background-filter-image.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/han-generic-font-families.html [ ImageOnlyFailure ]

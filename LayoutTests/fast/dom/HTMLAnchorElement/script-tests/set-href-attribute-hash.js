@@ -20,9 +20,9 @@ shouldBe("a.href", "'http://www.mydomain.com/path/testurl.html#hash?value'");
 // The expected behavior should change when character table is updated.
 // IE8 and Firefox3.5.2 don't consider these characters as illegal.
 debug("'#' in hash value, and illegal characters in hostname");
-a.href = "https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle";
+a.href = "https://www.m y\"d(){}|~om?ain#com/path/testurl.html#middle";
 a.hash = "#hash#value";
-shouldBe("a.href", "'https://www.my\"d(){}|~om?ain#com/path/testurl.html#middle'");
+shouldBe("a.href", "'https://www.m y\"d(){}|~om?ain#com/path/testurl.html#middle'");
 
 debug("Set hash to null");
 a.href = "https://www.mydomain.com/path/testurl.html#middle";

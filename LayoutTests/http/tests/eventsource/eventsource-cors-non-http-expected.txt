@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: EventSource cannot load ftp://127.0.0.1. Cross origin requests are only supported for HTTP.
+CONSOLE MESSAGE: EventSource cannot load ftp://127.0.0.1/. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: EventSource cannot load motd. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: EventSource cannot load localhost:8080/. Cross origin requests are only supported for HTTP.
 CONSOLE MESSAGE: EventSource cannot load tel:1234. Cross origin requests are only supported for HTTP.

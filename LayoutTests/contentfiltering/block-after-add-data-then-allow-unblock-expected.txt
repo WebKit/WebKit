@@ -13,7 +13,7 @@ frame "<!--framePath //<!--frame0-->-->" - didFailProvisionalLoadWithError
 frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
-frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock 
+frame "<!--framePath //<!--frame0-->-->" - willPerformClientRedirectToURL: x-apple-content-filter://mock-unblock/ 
 frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
 frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
 frame "<!--framePath //<!--frame0-->-->" - didCancelClientRedirectForFrame

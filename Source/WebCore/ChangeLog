@@ -1,3 +1,17 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Enable URLParser by default
+        https://bugs.webkit.org/show_bug.cgi?id=162660
+        <rdar://28601706>
+
+        Reviewed by Sam Weinig.
+
+        Covered by updates to many LayoutTests.
+
+        * platform/URLParser.cpp:
+        Make the default value true for URLParser::enabled.
+        This is the most impactful and well-documented one-line change I've ever written.
+
 2016-10-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps

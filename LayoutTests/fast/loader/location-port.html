@@ -25,7 +25,7 @@
 
     function checkTest1() {
         var internalFrame = document.getElementById ('internal');
-        shouldBe('internalFrame.contentWindow.location.port == "88"', true);
+        shouldBe('internalFrame.contentWindow.location.port == ""', true);
 
         internalFrame.contentWindow.location.port = "";
         setTimeout(checkTest2, 300);
@@ -41,7 +41,7 @@
 
     function checkTest3() {
         var internalFrame = document.getElementById ('internal');
-        shouldBe('internalFrame.contentWindow.location.port == "80"', true);
+        shouldBe('internalFrame.contentWindow.location.port == ""', true);
 
         internalFrame.contentWindow.location.port = 0;
         setTimeout(checkTest4, 300);
@@ -49,7 +49,7 @@
 
     function checkTest4() {
         var internalFrame = document.getElementById ('internal');
-        shouldBe('internalFrame.contentWindow.location.host', ':0');
+        shouldBe('internalFrame.contentWindow.location.host', '');
 
         if (window.testRunner)
             testRunner.notifyDone();

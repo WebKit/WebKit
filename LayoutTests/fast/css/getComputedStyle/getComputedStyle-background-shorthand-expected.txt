@@ -22,16 +22,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) repeat scroll 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) repeat scroll 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) repeat scroll 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'scroll'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -41,16 +41,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat scroll 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat scroll 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat scroll 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'scroll'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -60,16 +60,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 0% 0% / auto padding-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 0% 0% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -79,16 +79,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / auto padding-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / auto padding-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / auto padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -98,16 +98,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover padding-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover padding-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover padding-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -117,16 +117,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'padding-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box border-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover content-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box border-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover content-box border-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -136,16 +136,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'content-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'border-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box padding-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover content-box padding-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png) no-repeat fixed 100% 100% / cover content-box padding-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(255, 0, 0) url(dummy://test.png/) no-repeat fixed 100% 100% / cover content-box padding-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'no-repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'
@@ -155,16 +155,16 @@ PASS computedStyle.getPropertyCSSValue('background').item(1).item(0).getStringVa
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(1).getStringValue() is 'content-box'
 PASS computedStyle.getPropertyCSSValue('background').item(1).item(2).getStringValue() is 'padding-box'
 PASS checkComputedStyleValue() is true
-PASS computedStyle.getPropertyValue('background') is 'rgb(0, 128, 0) url(dummy://test.png) repeat fixed 45% 50% / contain border-box padding-box'
+PASS computedStyle.getPropertyValue('background') is 'rgb(0, 128, 0) url(dummy://test.png/) repeat fixed 45% 50% / contain border-box padding-box'
 PASS computedStyle.getPropertyCSSValue('background').toString() is '[object CSSValueList]'
-PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(0, 128, 0) url(dummy://test.png) repeat fixed 45% 50% / contain border-box padding-box'
+PASS computedStyle.getPropertyCSSValue('background').cssText is 'rgb(0, 128, 0) url(dummy://test.png/) repeat fixed 45% 50% / contain border-box padding-box'
 PASS computedStyle.getPropertyCSSValue('background').length is 2
 PASS computedStyle.getPropertyCSSValue('background').item(0).length is 5
 PASS computedStyle.getPropertyCSSValue('background').item(1).length is 3
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
-PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png'
+PASS computedStyle.getPropertyCSSValue('background').item(0).item(1).getStringValue() is 'dummy://test.png/'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(2).getStringValue() is 'repeat'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(3).getStringValue() is 'fixed'
 PASS computedStyle.getPropertyCSSValue('background').item(0).item(4).toString() is '[object CSSValueList]'

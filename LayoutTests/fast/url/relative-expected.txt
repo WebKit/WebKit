@@ -13,8 +13,8 @@ PASS canonicalize('  .  ') is 'http://foo/'
 PASS canonicalize(' 	 ') is 'http://foo/bar'
 PASS canonicalize('http:path') is 'http://host/path'
 PASS canonicalize('http:path') is 'http://host/a/path'
-FAIL canonicalize('http:/path') should be http://host/path. Was http://path/.
-FAIL canonicalize('HTTP:/path') should be http://host/path. Was http:/path.
+PASS canonicalize('http:/path') is 'http://host/path'
+PASS canonicalize('HTTP:/path') is 'http://host/path'
 PASS canonicalize('https:host2') is 'https://host2/'
 PASS canonicalize('htto:/host2') is 'htto:/host2'
 PASS canonicalize('/b/c/d') is 'http://host/b/c/d'
@@ -54,7 +54,7 @@ PASS canonicalize('//another') is 'http://another/'
 PASS canonicalize('//another/path?query#ref') is 'http://another/path?query#ref'
 PASS canonicalize('///another/path') is 'http://another/path'
 PASS canonicalize('//Another\\path') is 'http://another/path'
-FAIL canonicalize('//') should be http:. Was http:/.
+FAIL canonicalize('//') should be http:. Was //.
 PASS canonicalize('\\/another/path') is 'http://another/path'
 PASS canonicalize('/\\Another\\path') is 'http://another/path'
 PASS successfullyParsed is true

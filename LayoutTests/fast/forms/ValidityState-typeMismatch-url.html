@@ -70,22 +70,11 @@ expectInvalid('----ftp://a');
 expectInvalid('scheme//a');
 expectInvalid('http://[v8.:::]/');
 
-// KURL's host name restriction is stricter than RFC 3986. KURLGoogle is not.
-i.value = 'http://www.g**gle.com'
-var strictHost = i.validity.typeMismatch;
-if (strictHost) {
-    expectInvalid('http:// www.google.com');
-    expectInvalid('http://www .google.com');
-    expectInvalid('http://www.&#10;google.&#13;com');
-    expectInvalid('http://host+');
-    expectInvalid('http://myurl!');
-} else {
-    expectValid('http:// www.google.com');
-    expectValid('http://www .google.com');
-    expectValid('http://www.&#10;google.&#13;com');
-    expectValid('http://host+');
-    expectValid('http://myurl!');
-}
+expectInvalid('http:// www.google.com');
+expectInvalid('http://www .google.com');
+expectValid('http://www.&#10;google.&#13;com');
+expectValid('http://host+');
+expectValid('http://myurl!');
 
 // Disabled
 expectValid('invalid', true);

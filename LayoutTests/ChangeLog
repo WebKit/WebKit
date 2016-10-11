@@ -1,3 +1,203 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Enable URLParser by default
+        https://bugs.webkit.org/show_bug.cgi?id=162660
+        <rdar://28601706>
+
+        Reviewed by Sam Weinig.
+
+        Many failing tests are now passing.
+
+        The tests in fast/url look like they are an old test suite, some of which we were failing.
+        We now pass many more of the tests.  Those results are updated.
+        Some URLs in the suite are invalid, and we now "fail" those tests.  Rather than update the
+        tests, I just changed the expectation to FAIL, which seems to be tolerable in this directory
+        because there were many tests whose result was FAIL.  Each such case is explained below.
+
+        * fast/dom/DOMURL/parsing-expected.txt:
+        * fast/dom/DOMURL/parsing.html:
+        Percent-encoded values in the host are supposed to be decoded according to the spec.
+        %2f decodes to '/' which is an invalid domain character.
+
+        * fast/dom/DOMURL/set-href-attribute-hash-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-hash.html:
+        Added a space to the domain (which is an invalid domain character and the others in this
+        test are not according to the spec) in order to continue to test that setting the hash of
+        an invalid URL does not change its href.
+
+        * fast/dom/DOMURL/set-href-attribute-protocol-expected.txt:
+        * fast/dom/DOMURL/set-href-attribute-protocol.html:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol-expected.txt:
+        * fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html:
+        "http:??bar" now canonicalizes to "http://??bar" instead of adding one slash.
+                
+        * fast/url/file-expected.txt:
+        * fast/url/file-http-base-expected.txt:
+        Updated results.  Many tests that were failing are now passing.
+        
+        * fast/url/anchor-expected.txt:
+        Percent-encoding of non-ASCII characters in fragments now matches Firefox.
+        
+        * fast/url/host-expected.txt:
+        Wide characters in the host such as http://%ef%bc%85%ef%bc%90%ef%bc%90.com/ should fail to parse.
+        This matches Chrome and the spec.
+        URLs with an empty host with a port should fail to parse.
+        This matches Chrome, Firefox, and the spec.
+        
+        * fast/url/host-lowercase-per-scheme-expected.txt:
+        According to spec, hosts of non-special URLs should be parsed the same as special URL hosts.
+        Different browsers seem to have the existing behavior for different reasons.
+        See https://github.com/whatwg/url/issues/148 and https://bugs.webkit.org/show_bug.cgi?id=162885
+
+        * fast/url/idna2003-expected.txt:
+        * fast/url/invalid-urls-utf8-expected.txt:
+        Host encoding is now done according to the spec.
+
+        * fast/url/invalid-idn-expected.txt:
+        Neither Chrome, Firefox, nor the spec change invalid hosts to about:blank.
+        
+        * fast/url/ipv4-expected.txt:
+        * fast/url/ipv6-expected.txt:
+        "http://[0:0::0:0:8:]/" should indeed be compressed to "http://[::8]/"
+        This kind of deterministic compression makes it so that two IPv6 addresses that are equal will
+        parse to URLs that are also equal, even if they are written differently.
+
+        * fast/url/path-expected.txt:
+        * fast/url/relative-expected.txt:
+        * fast/url/relative-win-expected.txt:
+        * fast/url/safari-extension-expected.txt:
+        Proper canonicalization of non-special hosts should be scheme://host/ or scheme:/// if there is no host.
+        safari-extension is not special.
+        Hosts should always be canonicalized to lowercase.
+        
+        * fast/url/segments-expected.txt:
+        * fast/url/segments-from-data-url-expected.txt:
+        The path of "foo://" should be "/" not "//".
+        Extra slashes immediately after scheme:// should be ignored.
+        URLs with no host but a port like "http:@:80/www.apple.com" are now invalid, matching Chrome, Firefox, and the spec.
+
+        * fast/url/segments-userinfo-vs-host-expected.txt:
+        '@' can be in the user.  If it is, it is percent encoded.  This matches Chrome and Firefox.
+        "foo://" has a path of "/" not "//"
+        Extra slashes after the scheme such as in "foo://///////" are now ignored according to spec.
+        
+        * fast/url/standard-url-expected.txt:
+        * fast/url/tab-and-newline-stripping-expected.txt:
+        http://[2001:5::042:44::0370:7334]/ is an invalid IPv6 address, so parsing it should fail.
+        It passed with URL::parse because we used to only check that the characters inside the []
+        were valid ipv6 characters, not that they made any sense or were in any kind of bounds.
+
+        * fast/url/url-credentials-escaping-expected.txt:
+        Credential encoding is now according to spec.
+        
+        * http/tests/appcache/resources/x-frame-options-prevents-framing-test.html:
+        http:/path1/path2 relative to http://host/path3 now canonicalizes to http://host/path1/path2
+        instead of http://path1/path2 so this test, which I believe was missing the second slash in error,
+        needs to be fixed.
+        
+        * imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt:
+        Having a '}' in the host of a URL used to be invalid and it is now percent-escaped, matching Chrome and the spec.
+        This test still passes on w3c-test.org.  We can look into why it is failing locally later.
+        See webkit.org/b/163127
+
+        * fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate-expected.txt:
+        * fast/loader/window-open-to-invalid-url-calls-policy-delegate-expected.txt:
+        http://HoSt is now being correctly interpreted as the host, and it is being punycode encoded if it's
+        non-ASCII and lowercased if it is.
+         
+        * fast/forms/ValidityState-typeMismatch-url.html:
+        * fast/forms/ValidityState-typeMismatch-url-expected.txt:
+        Spaces in the host are invalid.  This matches Firefox and the spec.
+        
+        * http/tests/inspector/network/copy-as-curl.html:
+        '{' and '}' are now percent encoded in the URL path.  This matches Firefox, Chrome, and the spec.
+        
+        * fast/loader/location-port.html:
+        * fast/loader/location-port-expected.txt:
+        parsing or setting ports in URLs with no host is no longer supported.  This matches Firefox and Chrome.
+        
+        * security/block-test-expected.txt:
+        * platform/mac/security/block-test-expected.txt:
+        out-of-bounds ports now cause parsing failures.
+        
+        * imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/failure-expected.txt:
+        "http://[]/" now fails to parse because it is an invalid IPv6 host.
+        
+        * fast/url/ipv6-expected.txt:
+        IPv4 addresses at the end of IPv6 addresses are now serialized as the equivalent hex value in IPv6 form.
+        This matches Chrome and the spec, and makes it so that equal IPv6 addresses written in different forms are equal.
+        
+        * fast/loader/url-parse-1-expected.txt:
+        Extra or missing slashes and spaces around scheme:// are now handled according to the spec.
+        
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt:
+        The non-standard apple logo character is represented here by its non-standard Latin1 representation, 0xF0.
+        It was encoded as 0xF0 UTF-8 then percent encoded, which is %EF%A3%BF.
+        It is now encoded as the UTF-8 then percent encoded representation of its unicode value, 0xF8FF which matches other browsers.
+        This test is still valid, because it still verifies that the URLs in r199590 are rejected, and they still are.
+        See webkit.org/b/163127
+
+        * http/tests/contentextensions/make-https-expected.txt:
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-response-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-response-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize.html:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+        * fast/css/getComputedStyle/computed-style-border-image-expected.txt:
+        * fast/css/getComputedStyle/computed-style-border-image.html:
+        * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt:
+        * fast/css/getComputedStyle/computed-style-cross-fade.html:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html:
+        URLs with non-special schemes and no slash after the host now do when canonicalized.
+        
+        * fast/css-generated-content/malformed-url.html:
+        This tested what happens when you have an invalid host.  | is now a valid host character.
+        I changed it to have a % in the host to test the same behavior.
+        
+        * fast/loader/window-open-to-invalid-url-disallowed.html:
+        * fast/loader/window-open-to-invalid-url-disallowed-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed.html:
+        * fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt:
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed.html:
+        * fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt:
+        "http://a=a&b=b" is no longer an invalid URL.  We used to consider the '&' character to be an invalid domain character
+        and we don't any more.  This matches Chrome, Firefox, and the spec.
+        To keep this test testing what happens if you have an invalid URL, I changed the '&' to a '%' which is an invalid domain character.
+        
+        * fast/loader/file-URL-with-port-number.html:
+        File URLs with a port but no host are now invalid, matching Chrome and Firefox.  File URLs with a port and a host are Ok, though.
+
+        * platform/ios-simulator-wk1/fast/loader: Added.
+        * platform/ios-simulator-wk1/fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt: Added.
+        * platform/ios-simulator-wk1/fast/loader/window-open-to-invalid-url-disallowed-expected.txt: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/XMLHttpRequest: Added.
+        * platform/ios-simulator-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt: Added.
+        * platform/mac-wk1/fast/loader: Added.
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-javascript-disallowed-expected.txt: Added.
+        * platform/mac-wk1/fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-expected.txt: Added.
+        * platform/mac-wk1/fast/loader/window-open-to-invalid-url-disallowed-expected.txt: Added.
+        * platform/mac-wk1/imported: Added.
+        * platform/mac-wk1/imported/w3c: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/XMLHttpRequest/send-network-error-sync-events.sub-expected.txt: Added.
+        * platform/mac/security/block-test-expected.txt:
+        Differences between the URLParser and NSURL's parser cause differences in output for WK1 where NSURLRequests are made without serializing WebCore::ResourceRequests.
+        In particular, '{' in the host is newly accepted as a valid URL by URLParser, but it is percent-encoded by NSURL's parser.
+        See rdar://problem/28701914
+
 2016-10-11  Daniel Bates  <dabates@apple.com>
 
         [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps
