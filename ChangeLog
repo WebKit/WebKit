@@ -1,3 +1,14 @@
+2016-10-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Direct2D] Compile fix.
+        https://bugs.webkit.org/show_bug.cgi?id=163273
+
+        Reviewed by Brent Fulgham.
+
+        Define USE_DIRECT2D.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+
 2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Add ENABLE_ENCRYPTED_MEDIA configuration option
