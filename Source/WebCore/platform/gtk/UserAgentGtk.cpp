@@ -122,7 +122,7 @@ static String buildUserAgentString(const UserAgentQuirks& quirks)
     uaString.appendLiteral("; ");
 
     if (quirks.contains(UserAgentQuirks::NeedsMacintoshPlatform))
-        uaString.appendLiteral("Intel Mac OS X");
+        uaString.appendLiteral("Intel Mac OS X 10_12");
     else
         uaString.append(platformVersionForUAString());
 
