@@ -1,3 +1,26 @@
+2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Improve performance when resizing a window with multiple web views in X11
+        https://bugs.webkit.org/show_bug.cgi?id=162413
+
+        Reviewed by Michael Catanzaro.
+
+        Resizing a window with a single way view performs good enough, but when adding more tabs, the performance
+        decreases a lot. This is because resize is a sync operation, and the UI process waits for the web process to
+        have a new update for the new size, while still draws the previous frame. This is needed for the visible web
+        view, to avoid flickering and artifacts while resizing, but for all other hidden web views, we don't really need
+        to block the UI process. This doesn't happen in Wayland, because in Wayland we never block the UI process while
+        waiting for web process update after a resize.
+
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState): Return early if the web
+        view is not visible.
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        (WebKit::AcceleratedBackingStoreX11::update): Only schedule a redraw on a damage event when the view is visible.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp:
+        (WebKit::AcceleratedSurfaceX11::AcceleratedSurfaceX11): Do a XSync right after creating the new pixmap.
+        (WebKit::AcceleratedSurfaceX11::resize): Ditto.
+
 2016-09-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename DataObjectGtk as SelectionData

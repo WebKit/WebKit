@@ -104,6 +104,7 @@ AcceleratedSurfaceX11::AcceleratedSurfaceX11(WebPage& webPage)
     XSelectInput(m_display, m_window.get(), NoEventMask);
     XCompositeRedirectWindow(m_display, m_window.get(), CompositeRedirectManual);
     m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
+    XSync(m_display, False);
 }
 
 AcceleratedSurfaceX11::~AcceleratedSurfaceX11()
@@ -129,6 +130,7 @@ bool AcceleratedSurfaceX11::resize(const IntSize& size)
     // Release the previous pixmap later to give some time to the UI process to update.
     RunLoop::main().dispatchAfter(std::chrono::seconds(5), [pixmap = WTFMove(m_pixmap)] { });
     m_pixmap = XCompositeNameWindowPixmap(m_display, m_window.get());
+    XSync(m_display, False);
     return true;
 }
 

@@ -155,7 +155,8 @@ void AcceleratedBackingStoreX11::update(const LayerTreeContext& layerTreeContext
     cairoSurfaceSetDeviceScale(m_surface.get(), deviceScaleFactor, deviceScaleFactor);
     m_damage = XDamageCreate(display, pixmap, XDamageReportNonEmpty);
     XDamageNotifier::singleton().add(m_damage.get(), [this] {
-        gtk_widget_queue_draw(m_webPage.viewWidget());
+        if (m_webPage.isViewVisible())
+            gtk_widget_queue_draw(m_webPage.viewWidget());
     });
 }
 
