@@ -1,3 +1,15 @@
+2016-09-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Toggling display: none on a parent element of a slot which shares style with its parent doesn't update the slot's visibility
+        https://bugs.webkit.org/show_bug.cgi?id=158421
+
+        Reviewed by Darin Adler.
+
+        Add a regression test now that the bug has been fixed by r206403.
+
+        * fast/shadow-dom/shadow-layout-after-toggling-display-slot-parent-expected.html: Added.
+        * fast/shadow-dom/shadow-layout-after-toggling-display-slot-parent.html: Added.
+
 2016-09-26  Antti Koivisto  <antti@apple.com>
 
         Input elements don't work inside shadow tree
