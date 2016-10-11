@@ -1,3 +1,13 @@
+2016-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Remove SSLPolicyFlags from SoupNetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=162906
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkProcessMainSoup.cpp:
+        (WebKit::NetworkProcessMainUnix):
+
 2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed typo fix

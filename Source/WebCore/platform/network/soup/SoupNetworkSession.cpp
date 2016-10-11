@@ -108,6 +108,8 @@ SoupNetworkSession::SoupNetworkSession(SoupCookieJar* cookieJar)
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
         SOUP_SESSION_ADD_FEATURE, cookieJar,
         SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
+        SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, TRUE,
+        SOUP_SESSION_SSL_STRICT, FALSE,
         nullptr);
 
 #if SOUP_CHECK_VERSION(2, 53, 92)
@@ -201,30 +203,6 @@ void SoupNetworkSession::clearCache(const String& cacheDirectory)
         if (g_file_test(filename.get(), G_FILE_TEST_IS_REGULAR))
             g_unlink(filename.get());
     }
-}
-
-void SoupNetworkSession::setSSLPolicy(SSLPolicy flags)
-{
-    g_object_set(m_soupSession.get(),
-        SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, flags & SSLUseSystemCAFile ? TRUE : FALSE,
-        SOUP_SESSION_SSL_STRICT, flags & SSLStrict ? TRUE : FALSE,
-        nullptr);
-}
-
-SoupNetworkSession::SSLPolicy SoupNetworkSession::sslPolicy() const
-{
-    gboolean useSystemCAFile, strict;
-    g_object_get(m_soupSession.get(),
-        SOUP_SESSION_SSL_USE_SYSTEM_CA_FILE, &useSystemCAFile,
-        SOUP_SESSION_SSL_STRICT, &strict,
-        nullptr);
-
-    SSLPolicy flags = 0;
-    if (useSystemCAFile)
-        flags |= SSLUseSystemCAFile;
-    if (strict)
-        flags |= SSLStrict;
-    return flags;
 }
 
 void SoupNetworkSession::setHTTPProxy(const char* httpProxy, const char* httpProxyExceptions)
