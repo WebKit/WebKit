@@ -76,8 +76,11 @@ private:
     void addElementStyleProperties(const StyleProperties*, bool isCacheable = true);
 
     void matchUARules(RuleSet*);
+    void matchAuthorShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
     void matchHostPseudoClassRules(MatchRequest&, StyleResolver::RuleRange&);
     void matchSlottedPseudoElementRules(MatchRequest&, StyleResolver::RuleRange&);
+
+    void collectMatchingShadowPseudoElementRules(const MatchRequest&, StyleResolver::RuleRange&);
     std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);

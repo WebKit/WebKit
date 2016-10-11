@@ -1,3 +1,33 @@
+2016-10-10  Antti Koivisto  <antti@apple.com>
+
+        Stop copying author shadow pseudo rules into shadow tree style resolver
+        https://bugs.webkit.org/show_bug.cgi?id=163232
+
+        Reviewed by Darin Adler.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+
+            If we are resolving a user agent shadow tree also look up pseudo element rules from the host scope author sheet.
+            This is needed to keep web exposed ::-webkit-foo pseudo elements working.
+
+        (WebCore::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+
+            Factor to a function.
+
+        * css/ElementRuleCollector.h:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::copyShadowPseudoElementRulesFrom): Deleted.
+        * css/RuleSet.h:
+        * dom/Document.cpp:
+        (WebCore::Document::userAgentShadowTreeStyleResolver):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateStyleResolver):
+
+            No need to awkwardly copy these rules anymore.
+
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
         Update IDBVersionChangeEvent to stop using legacy [ConstructorTemplate=Event]

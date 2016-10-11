@@ -404,14 +404,6 @@ void Scope::updateStyleResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets
         newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
         styleResolver.appendAuthorStyleSheets(newStyleSheets);
     }
-
-    if (!m_shadowRoot) {
-        auto& userAgentShadowTreeStyleResolver = m_document.userAgentShadowTreeStyleResolver();
-        userAgentShadowTreeStyleResolver.ruleSets().resetAuthorStyle();
-        auto& authorRuleSet = styleResolver.ruleSets().authorStyle();
-        if (authorRuleSet.hasShadowPseudoElementRules())
-            userAgentShadowTreeStyleResolver.ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(authorRuleSet);
-    }
 }
 
 const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector() const

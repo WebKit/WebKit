@@ -2144,15 +2144,8 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
 StyleResolver& Document::userAgentShadowTreeStyleResolver()
 {
-    if (!m_userAgentShadowTreeStyleResolver) {
+    if (!m_userAgentShadowTreeStyleResolver)
         m_userAgentShadowTreeStyleResolver = std::make_unique<StyleResolver>(*this);
-
-        // FIXME: Filter out shadow pseudo elements we don't want to expose to authors.
-        auto& documentAuthorStyle = styleScope().resolver().ruleSets().authorStyle();
-        if (documentAuthorStyle.hasShadowPseudoElementRules())
-            m_userAgentShadowTreeStyleResolver->ruleSets().authorStyle().copyShadowPseudoElementRulesFrom(documentAuthorStyle);
-    }
-
     return *m_userAgentShadowTreeStyleResolver;
 }
 

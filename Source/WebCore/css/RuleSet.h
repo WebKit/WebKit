@@ -192,7 +192,6 @@ public:
     unsigned ruleCount() const { return m_ruleCount; }
 
     bool hasShadowPseudoElementRules() const;
-    void copyShadowPseudoElementRulesFrom(const RuleSet&);
 
 private:
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&, const MediaQueryEvaluator& medium, StyleResolver*, bool hasDocumentSecurityOrigin, bool isInitiatingElementInUserAgentShadowTree, AddRuleFlags);
