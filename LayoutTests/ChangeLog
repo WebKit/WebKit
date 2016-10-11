@@ -1,3 +1,16 @@
+2016-10-10  Gyuyoung Kim  <gyuyoung.kim@navercorp.com>
+
+        [EFL] Skip imported/w3c/web-platform-tests for a while
+
+        Unreviewed EFL gardening.
+
+        Many imported/w3c/web-platform-tests have been failed, timeout, and crash.
+        So skip the tests until fixing all problems.
+
+        Additionally this patch removes duplciated tests.
+
+        * platform/efl/TestExpectations:
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Update WheelEvent / MouseEvent to stop using legacy [ConstructorTemplate=Event]
