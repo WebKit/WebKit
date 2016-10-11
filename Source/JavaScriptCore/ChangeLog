@@ -1,3 +1,49 @@
+2016-10-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] DOMJIT::Patchpoint should have a way to receive constant folded arguments
+        https://bugs.webkit.org/show_bug.cgi?id=163224
+
+        Reviewed by Filip Pizlo.
+
+        We use the GetGlobalObject DFG node to retrieve a global object from a DOM node.
+        This global object is necessary to check whether the world is normal before entering
+        the fast path of looking up the DOM wrapper cache.
+        We can sometimes constant-fold this GetGlobalObject. For example, if we performed
+        CheckStructure, the structure can offer the information about the possible result
+        of GetGlobalObject. By using this constant-folded global object, we can drop some
+        checks.
+
+        This patch introduces the way to tell the constant-folded values to DOMJIT::Patchpoint.
+        We pass DOMJIT::Value instead of DOMJIT::Reg as a parameter of DOMJIT::PatchpointParams.
+        This DOMJIT::Value is a pair of DOMJIT::Reg and JSValue. If the given parameter has a
+        constant value, this JSValue is filled with it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGDOMJITPatchpointParams.h:
+        (JSC::DFG::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        (JSC::DFG::SpeculativeJIT::compileCheckDOM):
+        * domjit/DOMJITPatchpointParams.h:
+        (JSC::DOMJIT::PatchpointParams::at):
+        (JSC::DOMJIT::PatchpointParams::operator[]):
+        (JSC::DOMJIT::PatchpointParams::PatchpointParams):
+        * domjit/DOMJITValue.h: Copied from Source/JavaScriptCore/dfg/DFGDOMJITPatchpointParams.h.
+        (JSC::DOMJIT::Value::Value):
+        (JSC::DOMJIT::Value::isGPR):
+        (JSC::DOMJIT::Value::isFPR):
+        (JSC::DOMJIT::Value::isJSValueRegs):
+        (JSC::DOMJIT::Value::gpr):
+        (JSC::DOMJIT::Value::fpr):
+        (JSC::DOMJIT::Value::jsValueRegs):
+        (JSC::DOMJIT::Value::reg):
+        (JSC::DOMJIT::Value::value):
+        * ftl/FTLDOMJITPatchpointParams.h:
+        (JSC::FTL::DOMJITPatchpointParams::DOMJITPatchpointParams):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+
 2016-10-10  Filip Pizlo  <fpizlo@apple.com>
 
         Air should be able to replace constant materializations with adds

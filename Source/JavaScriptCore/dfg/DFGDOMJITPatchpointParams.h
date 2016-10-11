@@ -35,7 +35,7 @@ class SpeculativeJIT;
 
 class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
 public:
-    DOMJITPatchpointParams(SpeculativeJIT* jit, Vector<DOMJIT::Reg>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+    DOMJITPatchpointParams(SpeculativeJIT* jit, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
         , m_jit(jit)
     {

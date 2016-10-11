@@ -59,13 +59,22 @@ void tryLookUpWrapperCache(CCallHelpers& jit, CCallHelpers::JumpList& failureCas
 }
 
 template<typename WrappedType, typename ToJSFunction>
-void toWrapper(CCallHelpers& jit, const JSC::DOMJIT::PatchpointParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function)
+void toWrapper(CCallHelpers& jit, const JSC::DOMJIT::PatchpointParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function, JSC::JSValue globalObjectConstant)
 {
     ASSERT(wrapped != result.payloadGPR());
     ASSERT(globalObject != result.payloadGPR());
     GPRReg payloadGPR = result.payloadGPR();
     CCallHelpers::JumpList slowCases;
-    slowCases.append(branchIfNotWorldIsNormal(jit, globalObject));
+
+    if (globalObjectConstant) {
+        if (!JSC::jsCast<JSDOMGlobalObject*>(globalObjectConstant)->worldIsNormal()) {
+            slowCases.append(jit.jump());
+            params.addSlowPathCall(slowCases, jit, function, result, globalObject, wrapped);
+            return;
+        }
+    } else
+        slowCases.append(branchIfNotWorldIsNormal(jit, globalObject));
+
     tryLookUpWrapperCache<WrappedType>(jit, slowCases, wrapped, payloadGPR);
     jit.boxCell(payloadGPR, result);
     params.addSlowPathCall(slowCases, jit, function, result, globalObject, wrapped);

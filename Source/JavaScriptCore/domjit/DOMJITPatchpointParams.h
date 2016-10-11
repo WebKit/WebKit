@@ -28,8 +28,8 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
-#include "DOMJITReg.h"
 #include "DOMJITSlowPathCalls.h"
+#include "DOMJITValue.h"
 #include "JITOperations.h"
 #include "RegisterSet.h"
 
@@ -41,13 +41,13 @@ public:
     virtual ~PatchpointParams() { }
 
     unsigned size() const { return m_regs.size(); }
-    const Reg& at(unsigned index) const { return m_regs[index]; }
-    const Reg& operator[](unsigned index) const { return at(index); }
+    const Value& at(unsigned index) const { return m_regs[index]; }
+    const Value& operator[](unsigned index) const { return at(index); }
 
     GPRReg gpScratch(unsigned index) const { return m_gpScratch[index]; }
     FPRReg fpScratch(unsigned index) const { return m_fpScratch[index]; }
 
-    PatchpointParams(Vector<Reg>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+    PatchpointParams(Vector<Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : m_regs(WTFMove(regs))
         , m_gpScratch(WTFMove(gpScratch))
         , m_fpScratch(WTFMove(fpScratch))
@@ -65,7 +65,7 @@ private:
     DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-    Vector<Reg> m_regs;
+    Vector<Value> m_regs;
     Vector<GPRReg> m_gpScratch;
     Vector<FPRReg> m_fpScratch;
 };

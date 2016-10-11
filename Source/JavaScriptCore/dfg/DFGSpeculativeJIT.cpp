@@ -7134,7 +7134,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;
-    Vector<DOMJIT::Reg> regs;
+    Vector<DOMJIT::Value> regs;
 
     // FIXME: patchpoint should have a way to tell this can reuse "base" register.
     // Teaching DFG about DOMJIT::Patchpoint clobber information is nice.
@@ -7143,8 +7143,8 @@ void SpeculativeJIT::compileCallDOM(Node* node)
     JSValueRegsTemporary result(this);
 
     regs.append(result.regs());
-    regs.append(globalObject.gpr());
-    regs.append(base.gpr());
+    regs.append(DOMJIT::Value(globalObject.gpr(), m_state.forNode(m_jit.graph().varArgChild(node, 0)).value()));
+    regs.append(DOMJIT::Value(base.gpr(), m_state.forNode(m_jit.graph().varArgChild(node, 1)).value()));
 #if USE(JSVALUE64)
     regs.append(static_cast<GPRReg>(GPRInfo::tagMaskRegister));
     regs.append(static_cast<GPRReg>(GPRInfo::tagTypeNumberRegister));
@@ -7165,11 +7165,11 @@ void SpeculativeJIT::compileCheckDOM(Node* node)
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;
-    Vector<DOMJIT::Reg> regs;
+    Vector<DOMJIT::Value> regs;
 
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseGPR = base.gpr();
-    regs.append(baseGPR);
+    regs.append(DOMJIT::Value(baseGPR, m_state.forNode(node->child1()).value()));
 
     Vector<GPRTemporary> gpTempraries;
     Vector<FPRTemporary> fpTempraries;

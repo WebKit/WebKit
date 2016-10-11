@@ -8739,14 +8739,15 @@ private:
         unsigned osrExitArgumentOffset = patchpoint->numChildren();
         OSRExitDescriptor* exitDescriptor = appendOSRExitDescriptor(jsValueValue(cell), m_node->child1().node());
         patchpoint->appendColdAnys(buildExitArguments(exitDescriptor, origin.forExit, jsValueValue(cell)));
+        JSValue child1Constant = m_state.forNode(m_node->child1()).value();
 
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 Vector<GPRReg> gpScratch;
                 Vector<FPRReg> fpScratch;
-                Vector<DOMJIT::Reg> regs;
+                Vector<DOMJIT::Value> regs;
 
-                regs.append(params[0].gpr());
+                regs.append(DOMJIT::Value(params[0].gpr(), child1Constant));
 
                 for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
                     gpScratch.append(params.gpScratch(i));
@@ -8785,19 +8786,21 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
+        JSValue child1Constant = m_state.forNode(m_graph.varArgChild(m_node, 0)).value();
+        JSValue child2Constant = m_state.forNode(m_graph.varArgChild(m_node, 1)).value();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
                 Vector<GPRReg> gpScratch;
                 Vector<FPRReg> fpScratch;
-                Vector<DOMJIT::Reg> regs;
+                Vector<DOMJIT::Value> regs;
 
                 // FIXME: patchpoint should have a way to tell this can reuse "base" register.
                 // Teaching DFG about DOMJIT::Patchpoint clobber information is nice.
                 regs.append(JSValueRegs(params[0].gpr()));
-                regs.append(params[1].gpr());
-                regs.append(params[2].gpr());
+                regs.append(DOMJIT::Value(params[1].gpr(), child1Constant));
+                regs.append(DOMJIT::Value(params[2].gpr(), child2Constant));
 
                 for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
                     gpScratch.append(params.gpScratch(i));

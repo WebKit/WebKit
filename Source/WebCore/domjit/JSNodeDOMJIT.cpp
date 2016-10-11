@@ -70,7 +70,7 @@ static Ref<DOMJIT::Patchpoint> createCallDOMForOffsetAccess(ptrdiff_t offset, Is
         jit.loadPtr(CCallHelpers::Address(scratch, offset), scratch);
         nullCases.append(jit.branchTestPtr(CCallHelpers::Zero, scratch));
 
-        DOMJITHelpers::toWrapper<WrappedNode>(jit, params, scratch, globalObject, result, toWrapperSlow<WrappedNode>);
+        DOMJITHelpers::toWrapper<WrappedNode>(jit, params, scratch, globalObject, result, toWrapperSlow<WrappedNode>, params[1].value());
         CCallHelpers::Jump done = jit.jump();
 
         nullCases.link(&jit);
