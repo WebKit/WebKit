@@ -13659,6 +13659,52 @@ void testReduceStrengthReassociation(bool flip)
         (root->last()->child(0)->child(0)->child(0) == arg2 && root->last()->child(0)->child(0)->child(1) == arg1));
 }
 
+void testLoadBaseIndexShift2()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<Value>(
+                proc, Add, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Value>(
+                    proc, Shl, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                    root->appendNew<Const32Value>(proc, Origin(), 2)))));
+    auto code = compile(proc);
+    if (isX86())
+        checkUsesInstruction(*code, "(%rdi,%rsi,4)");
+    int32_t value = 12341234;
+    char* ptr = bitwise_cast<char*>(&value);
+    for (unsigned i = 0; i < 10; ++i)
+        CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(2)) * i, i), 12341234);
+}
+
+void testLoadBaseIndexShift32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    root->appendNew<Value>(
+        proc, Return, Origin(),
+        root->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            root->appendNew<Value>(
+                proc, Add, Origin(),
+                root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
+                root->appendNew<Value>(
+                    proc, Shl, Origin(),
+                    root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1),
+                    root->appendNew<Const32Value>(proc, Origin(), 32)))));
+    auto code = compile(proc);
+    int32_t value = 12341234;
+    char* ptr = bitwise_cast<char*>(&value);
+    for (unsigned i = 0; i < 10; ++i)
+        CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(32)) * i, i), 12341234);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -15095,6 +15141,8 @@ void run(const char* filter)
     RUN(testAddShl32());
     RUN(testAddShl64());
     RUN(testAddShl65());
+    RUN(testLoadBaseIndexShift2());
+    RUN(testLoadBaseIndexShift32());
     
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

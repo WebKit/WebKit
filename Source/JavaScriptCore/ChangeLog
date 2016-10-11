@@ -1,3 +1,40 @@
+2016-10-11  Filip Pizlo  <fpizlo@apple.com>
+
+        B3->Air lowering needs the same defenses in effectiveAddr() that it has in tryAppendLea()
+        https://bugs.webkit.org/show_bug.cgi?id=163264
+
+        Reviewed by Mark Lam.
+        
+        When writing the lea patch (r207039), I was very careful about how I convert a Shl into a
+        BaseIndex scale. But I forgot to check if the older code for creating BaseIndexes for
+        effectiveAddr() got this right. It turns out that the older code missed the <<32 corner
+        case.
+        
+        It's sad that the two paths can't share all of their code, but it's somewhat inevitable due
+        to how matching an address and matching a lea have to do very different things. Matching a
+        lea means creating an instruction that is distinct from other instructions to do multiple
+        math operations at once. Matching an address means making some instruction do extra work
+        for free. Also, address matching can take advantage of the fact that the offset is already
+        associated with the memory operation by strength reduction - lea matching can't do this; it
+        has to figure out Add(@value, $const) on its own. This change makes the situation slightly
+        more sane by adding a scaleForShl() helper that handles this weird case. It's based on the
+        new Shl handling from r207039, and exposes it as an API for effectiveAddr() to use.
+        
+        The testLoadBaseIndexShift32() used to crash. I don't think that this case affects JS
+        content, since <<32 is such a bizarre outlier. I don't think we even have a path along
+        which the FTL would emit a 64-bit <<32. It probably won't even affect WebAssembly since
+        that uses 32-bit pointers, so we won't see 64-bit <<32 in effectiveAddr() there.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::scaleForShl):
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::tryAppendLea):
+        (JSC::B3::Air::LowerToAir::crossesInterference): Deleted.
+        * b3/testb3.cpp:
+        (JSC::B3::testLoadBaseIndexShift2):
+        (JSC::B3::testLoadBaseIndexShift32):
+        (JSC::B3::run):
+
 2016-10-11  Saam Barati  <sbarati@apple.com>
 
         ValueAdd should be constant folded if the operands are constant String,Primitive or Primitive,String

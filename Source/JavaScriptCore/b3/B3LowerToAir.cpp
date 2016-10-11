@@ -425,6 +425,28 @@ private:
         ASSERT_NOT_REACHED();
         return true;
     }
+    
+    Optional<unsigned> scaleForShl(Value* shl, int32_t offset, Optional<Arg::Width> width = Nullopt)
+    {
+        if (shl->opcode() != Shl)
+            return Nullopt;
+        if (!shl->child(1)->hasInt32())
+            return Nullopt;
+        unsigned logScale = shl->child(1)->asInt32();
+        if (shl->type() == Int32)
+            logScale &= 31;
+        else
+            logScale &= 63;
+        // Use 64-bit math to perform the shift so that <<32 does the right thing, but then switch
+        // to signed since that's what all of our APIs want.
+        int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
+        if (!isRepresentableAs<int32_t>(bigScale))
+            return Nullopt;
+        unsigned scale = static_cast<int32_t>(bigScale);
+        if (!Arg::isValidIndexForm(scale, offset, width))
+            return Nullopt;
+        return scale;
+    }
 
     // This turns the given operand into an address.
     Arg effectiveAddr(Value* address, int32_t offset, Arg::Width width)
@@ -447,18 +469,12 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                if (index->opcode() != Shl)
+                Optional<unsigned> scale = scaleForShl(index, offset, width);
+                if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
                     return Arg();
-                if (!index->child(1)->hasInt32())
-                    return Arg();
-                
-                unsigned scale = 1 << (index->child(1)->asInt32() & 31);
-                if (!Arg::isValidIndexForm(scale, offset, width))
-                    return Arg();
-
-                return Arg::index(tmp(base), tmp(index->child(0)), scale, offset);
+                return Arg::index(tmp(base), tmp(index->child(0)), *scale, offset);
             };
 
             if (Arg result = tryIndex(left, right))
@@ -1898,29 +1914,16 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            if (shl->opcode() != Shl)
+            Optional<unsigned> scale = scaleForShl(shl, offset);
+            if (!scale)
                 return false;
             if (!canBeInternal(shl))
-                return false;
-            if (!shl->child(1)->hasInt32())
-                return false;
-            unsigned logScale = shl->child(1)->asInt32();
-            if (m_value->type() == Int32)
-                logScale &= 31;
-            else
-                logScale &= 63;
-            // Use 64-bit math to perform the shift so that <<32 does the right thing.
-            int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
-            if (!isRepresentableAs<int32_t>(bigScale))
-                return false;
-            unsigned scale = static_cast<int32_t>(bigScale);
-            if (!Arg::isValidIndexForm(scale, offset))
                 return false;
             
             ASSERT(!m_locked.contains(shl->child(0)));
             ASSERT(!m_locked.contains(other));
             
-            append(leaOpcode, Arg::index(tmp(other), tmp(shl->child(0)), scale, offset), tmp(m_value));
+            append(leaOpcode, Arg::index(tmp(other), tmp(shl->child(0)), *scale, offset), tmp(m_value));
             commitInternal(innerAdd);
             commitInternal(shl);
             return true;
