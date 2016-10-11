@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+CONSOLE MESSAGE: Refused to load data:text/plain,FAIL did load cross-origin page. because it appears in neither the child-src directive nor the default-src directive of the Content Security Policy.
+This test verifies that loading a cross-origin iframe is blocked when created by a QuickLook preview of a Microsoft Word document. This test PASSED only if a security error is logged to the console.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Run test
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->/<!--frame0-->-->'
+--------
+

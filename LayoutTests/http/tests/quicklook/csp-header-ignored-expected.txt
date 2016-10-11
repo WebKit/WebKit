@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+Tests that a Content-Security-Policy HTTP header is ignored when delivered with a Microsoft Word document. This test PASSED if you see PASS below and there is no warning logged to the console. Otherwise, it FAILED.
+
+
+
+--------
+Frame: 'frame'
+--------
+PASS

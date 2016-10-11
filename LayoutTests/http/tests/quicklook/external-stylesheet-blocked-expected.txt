@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+CONSOLE MESSAGE: Refused to load data:text/css,body::after { content: 'FAIL'; } because it appears in neither the style-src directive nor the default-src directive of the Content Security Policy.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Run test

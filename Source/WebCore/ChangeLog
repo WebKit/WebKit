@@ -1,3 +1,46 @@
+2016-10-11  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Sandbox QuickLook previews
+        https://bugs.webkit.org/show_bug.cgi?id=163240
+        <rdar://problem/25961633>
+
+        Reviewed by Brent Fulgham.
+
+        Use a unique origin for- and limit the capabilities of- QuickLook previews.
+
+        Tests: http/tests/quicklook/at-import-stylesheet-blocked.html
+               http/tests/quicklook/base-url-blocked.html
+               http/tests/quicklook/cross-origin-iframe-blocked.html
+               http/tests/quicklook/csp-header-ignored.html
+               http/tests/quicklook/document-domain-is-empty-string.html
+               http/tests/quicklook/external-stylesheet-blocked.html
+               http/tests/quicklook/hide-referer-on-navigation.html
+               http/tests/quicklook/submit-form-blocked.html
+               http/tests/quicklook/top-navigation-blocked.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Call ContentSecurityPolicy::didReceiveHeader().
+        (WebCore::Document::processReferrerPolicy): Do not process referrer policy for QuickLook previews.
+        (WebCore::Document::initSecurityContext): Apply sandbox for QuickLook previews.
+        (WebCore::Document::shouldEnforceQuickLookSandbox): Added.
+        (WebCore::Document::applyQuickLookSandbox): Added.
+        * dom/Document.h:
+        * page/csp/ContentSecurityPolicy.h: Change accessibility of didReceiveHeader() from private to public.
+        (WebCore::ContentSecurityPolicy::processHTTPEquiv): Deleted.
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::isQuickLook): Added.
+        (WebCore::ResourceResponse::setIsQuickLook): Added.
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse): Modified to mark
+        resource response as a QuickLook preview, if appropriate. Also remove the name of the first argument
+        and the need to use UNUSED_PARAM(connection) as we no longer make use of the first argument
+        following r207151.
+        * platform/network/ios/QuickLook.mm:
+        (-[WebResourceLoaderQuickLookDelegate _sendDidReceiveResponseIfNecessary]): Ditto.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveResponse:]): Ditto. Fix style nits,
+        including renaming the function argument "r" to "resource" to better describe its purpose.
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix bindings tests after r207150.

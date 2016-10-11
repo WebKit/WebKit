@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 1: Viewport argument value "612;" for key "width" was truncated to its numeric prefix. Note that ';' is not a separator in viewport values. The list should be comma-separated.
+This test verifies that the HTTP referrer is hidden when navigating from a Microsoft Word QuickLook preview. This test PASSED only if nothing is printed below.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
