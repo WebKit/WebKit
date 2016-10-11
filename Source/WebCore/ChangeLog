@@ -1,3 +1,23 @@
+2016-10-10  Youenn Fablet  <youenn@apple.com>
+
+        Change HTTPHeaderValues from a struct to a namespace
+        https://bugs.webkit.org/show_bug.cgi?id=163203
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        * platform/network/HTTPHeaderValues.cpp:
+        (WebCore::HTTPHeaderValues::textPlainContentType):
+        (WebCore::HTTPHeaderValues::formURLEncodedContentType):
+        (WebCore::HTTPHeaderValues::TextPlainContentType): Deleted.
+        (WebCore::HTTPHeaderValues::FormURLEncodedContentType): Deleted.
+        * platform/network/HTTPHeaderValues.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
 2016-10-10  Chris Dumez  <cdumez@apple.com>
 
         Update WheelEvent / MouseEvent to stop using legacy [ConstructorTemplate=Event]

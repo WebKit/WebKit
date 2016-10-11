@@ -546,7 +546,7 @@ ExceptionOr<void> XMLHttpRequest::send(const String& body)
                 m_requestHeaders.set(HTTPHeaderName::ContentType, ASCIILiteral("application/x-www-form-urlencoded"));
             else
 #endif
-                m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::TextPlainContentType());
+                m_requestHeaders.set(HTTPHeaderName::ContentType, HTTPHeaderValues::textPlainContentType());
         } else {
             replaceCharsetInMediaType(contentType, "UTF-8");
             m_requestHeaders.set(HTTPHeaderName::ContentType, contentType);

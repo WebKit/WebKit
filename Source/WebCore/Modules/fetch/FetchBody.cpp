@@ -63,11 +63,11 @@ Optional<FetchBody> FetchBody::extract(ScriptExecutionContext& context, JSC::Exe
         return FetchBody(WTFMove(formData));
     }
     if (value.isString()) {
-        contentType = HTTPHeaderValues::TextPlainContentType();
+        contentType = HTTPHeaderValues::textPlainContentType();
         return FetchBody(value.toWTFString(&state));
     }
     if (value.inherits(JSURLSearchParams::info())) {
-        contentType = HTTPHeaderValues::FormURLEncodedContentType();
+        contentType = HTTPHeaderValues::formURLEncodedContentType();
         return FetchBody(*JSURLSearchParams::toWrapped(value));
     }
     if (value.inherits(JSReadableStream::info()))

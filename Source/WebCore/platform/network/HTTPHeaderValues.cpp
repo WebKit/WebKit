@@ -30,16 +30,20 @@
 
 namespace WebCore {
 
-const String& HTTPHeaderValues::TextPlainContentType()
+namespace HTTPHeaderValues {
+
+const String& textPlainContentType()
 {
     static NeverDestroyed<const String> contentType(ASCIILiteral("text/plain;charset=UTF-8"));
     return contentType;
 }
 
-const String& HTTPHeaderValues::FormURLEncodedContentType()
+const String& formURLEncodedContentType()
 {
     static NeverDestroyed<const String> contentType(ASCIILiteral("application/x-www-form-urlencoded;charset=UTF-8"));
     return contentType;
+}
+
 }
 
 }
