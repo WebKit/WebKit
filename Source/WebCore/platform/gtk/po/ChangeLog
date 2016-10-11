@@ -1,3 +1,12 @@
+2016-09-25  Benedikt M. Thoma  <gnome@thomba.net>
+
+        [GTK] German translation update
+        https://bugs.webkit.org/show_bug.cgi?id=152228
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * de.po:
+
 2016-09-18  Yuri Chornoivan  <yurchor@ukr.net>
 
         [GTK] [l10n] Updated Ukrainian translation of WebKitGTK+
