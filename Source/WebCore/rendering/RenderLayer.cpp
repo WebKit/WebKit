@@ -6003,34 +6003,35 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(this));
 #endif
 
+    auto computeLayersUnion = [this, &unionBounds, flags, descendantFlags] (const RenderLayer& childLayer) {
+        if (!(flags & IncludeCompositedDescendants) && childLayer.isComposited())
+            return;
+        LayoutRect childBounds = childLayer.calculateLayerBounds(this, childLayer.offsetFromAncestor(this), descendantFlags);
+        // Ignore child layer (and behave as if we had overflow: hidden) when it is positioned off the parent layer so much
+        // that we hit the max LayoutUnit value.
+        unionBounds.checkedUnite(childBounds);
+    };
+
     if (Vector<RenderLayer*>* negZOrderList = this->negZOrderList()) {
-        for (auto* curLayer : *negZOrderList) {
-            if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
-                LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, curLayer->offsetFromAncestor(this), descendantFlags);
-                unionBounds.unite(childUnionBounds);
-            }
-        }
+        for (auto* childLayer : *negZOrderList)
+            computeLayersUnion(*childLayer);
     }
 
     if (Vector<RenderLayer*>* posZOrderList = this->posZOrderList()) {
-        for (auto* curLayer : *posZOrderList) {
+        for (auto* childLayer : *posZOrderList) {
             // The RenderNamedFlowThread is ignored when we calculate the bounds of the RenderView.
-            if ((flags & IncludeCompositedDescendants || !curLayer->isComposited()) && !curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions()) {
-                LayoutRect childUnionBounds = curLayer->calculateLayerBounds(this, curLayer->offsetFromAncestor(this), descendantFlags);
-                unionBounds.unite(childUnionBounds);
-            }
+            if (childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
+                continue;
+            computeLayersUnion(*childLayer);
         }
     }
 
     if (Vector<RenderLayer*>* normalFlowList = this->normalFlowList()) {
-        for (auto* curLayer : *normalFlowList) {
+        for (auto* childLayer : *normalFlowList) {
             // RenderView will always return the size of the document, before reaching this point,
             // so there's no way we could hit a RenderNamedFlowThread here.
-            ASSERT(!curLayer->isFlowThreadCollectingGraphicsLayersUnderRegions());
-            if (flags & IncludeCompositedDescendants || !curLayer->isComposited()) {
-                LayoutRect curAbsBounds = curLayer->calculateLayerBounds(this, curLayer->offsetFromAncestor(this), descendantFlags);
-                unionBounds.unite(curAbsBounds);
-            }
+            ASSERT(!childLayer->isFlowThreadCollectingGraphicsLayersUnderRegions());
+            computeLayersUnion(*childLayer);
         }
     }
 
