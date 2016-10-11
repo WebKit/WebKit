@@ -1,3 +1,18 @@
+2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add ENABLE_ENCRYPTED_MEDIA configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=163219
+
+        Reviewed by Darin Adler.
+
+        Add the ENABLE_ENCRYPTED_MEDIA configuration option to the
+        CMake and MSVC build systems. It will be used to enable or
+        disable the new EME implementation at build-time.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2016-10-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r206972.

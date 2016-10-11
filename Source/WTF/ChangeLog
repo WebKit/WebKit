@@ -1,3 +1,13 @@
+2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add ENABLE_ENCRYPTED_MEDIA configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=163219
+
+        Reviewed by Darin Adler.
+
+        * wtf/FeatureDefines.h:
+        If undefined, define the ENABLE_ENCRYPTED_MEDIA option to 0.
+
 2016-10-10  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node accessors in DOMJIT

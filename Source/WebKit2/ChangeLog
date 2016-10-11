@@ -1,3 +1,14 @@
+2016-10-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        Add ENABLE_ENCRYPTED_MEDIA configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=163219
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add the ENABLE_ENCRYPTED_MEDIA configuration option. It will be used
+        to enable or disable the new EME implementation at build-time.
+
 2016-10-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: NetworkDataTask is leaked if download finishes in didReceiveResponse completion handler

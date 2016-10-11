@@ -251,6 +251,9 @@ my @features = (
     { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isEfl() || isGtk()), value => \$downloadAttributeSupport },
 
+    { option => "encrypted-media", desc => "Toggle EME support",
+      define => "ENABLE_ENCRYPTED_MEDIA", default => 0, value => \$fetchAPISupport },
+
     { option => "fetch-api", desc => "Toggle Fetch API support",
       define => "ENABLE_FETCH_API", default => 1, value => \$fetchAPISupport },
 
