@@ -1,3 +1,10 @@
+2016-10-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with USE_REDIRECTED_XCOMPOSITE_WINDOW disabled.
+
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing):
+
 2016-10-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Remove SSLPolicyFlags from SoupNetworkSession

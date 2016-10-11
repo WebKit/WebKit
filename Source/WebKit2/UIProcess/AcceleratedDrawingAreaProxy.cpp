@@ -270,7 +270,7 @@ void AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing(uint64_t 
         m_pendingNativeSurfaceHandleForCompositing = handle;
         return;
     }
-    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_webPageProxy.process().send(Messages::DrawingArea::SetNativeSurfaceHandleForCompositing(handle), m_webPageProxy.pageID(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void AcceleratedDrawingAreaProxy::destroyNativeSurfaceHandleForCompositing()
