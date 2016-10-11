@@ -1,3 +1,20 @@
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion when creating first WebCore::URL from non-main thread after r207162
+        https://bugs.webkit.org/show_bug.cgi?id=163304
+
+        Reviewed by Filip Pizlo.
+
+        This fixes assertions when running UserContentWorld.NormalWorld API tests.
+
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::buildBaseTextCodecMaps):
+        (WebCore::atomicCanonicalTextEncodingName):
+        The new URLParser requires a TextEncoding& in its constructor, which defaults to UTF8Encoding.
+        When creating the first TextEncoding in a process, it calls buildBaseTextCodecMaps which asserts
+        it's on the main thread because it initializes static variables.  Since we are getting a lock right 
+        after this call anyway, just put this function call inside the lock.
+
 2016-10-11  Dean Jackson  <dino@apple.com>
 
         color-gamut media query shouldn't ASSERT on invalid values
