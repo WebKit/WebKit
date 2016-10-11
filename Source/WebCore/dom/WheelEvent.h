@@ -32,17 +32,6 @@ namespace WebCore {
 
 class PlatformWheelEvent;
 
-struct WheelEventInit : public MouseEventInit {
-    WheelEventInit();
-
-    double deltaX;
-    double deltaY;
-    double deltaZ;
-    unsigned deltaMode;
-    int wheelDeltaX; // Deprecated.
-    int wheelDeltaY; // Deprecated.
-};
-
 class WheelEvent final : public MouseEvent {
 public:
     enum { TickMultiplier = 120 };
@@ -63,9 +52,18 @@ public:
         return adoptRef(*new WheelEvent);
     }
 
-    static Ref<WheelEvent> createForBindings(const AtomicString& type, const WheelEventInit& initializer)
+    struct Init : MouseEventInit {
+        double deltaX { 0 };
+        double deltaY { 0 };
+        double deltaZ { 0 };
+        unsigned deltaMode { DOM_DELTA_PIXEL };
+        int wheelDeltaX { 0 }; // Deprecated.
+        int wheelDeltaY { 0 }; // Deprecated.
+    };
+
+    static Ref<WheelEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new WheelEvent(type, initializer));
+        return adoptRef(*new WheelEvent(type, initializer, isTrusted));
     }
 
     WEBCORE_EXPORT void initWheelEvent(int rawDeltaX, int rawDeltaY, DOMWindow*,
@@ -96,7 +94,7 @@ public:
 
 private:
     WheelEvent();
-    WheelEvent(const AtomicString&, const WheelEventInit&);
+    WheelEvent(const AtomicString&, const Init&, IsTrusted);
     WheelEvent(const PlatformWheelEvent&, DOMWindow*);
 
     bool isWheelEvent() const override;

@@ -72,7 +72,7 @@ protected:
         const IntPoint& movementDelta,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
-    MouseRelatedEvent(const AtomicString& type, const MouseRelatedEventInit&);
+    MouseRelatedEvent(const AtomicString& type, const MouseRelatedEventInit&, IsTrusted = IsTrusted::No);
 
     void initCoordinates();
     void initCoordinates(const LayoutPoint& clientLocation);

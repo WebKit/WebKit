@@ -136,19 +136,19 @@ shouldBe("new MouseEvent('eventType', { relatedTarget: xhr }).relatedTarget", "x
 shouldBe("new MouseEvent('eventType', { relatedTarget: window }).relatedTarget", "window");
 
 // Invalid objects.
-shouldBe("new MouseEvent('eventType', { relatedTarget: testObject }).relatedTarget", "null");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: testObject })", "TypeError");
 shouldBe("new MouseEvent('eventType', { relatedTarget: undefined }).relatedTarget", "null");
 shouldBe("new MouseEvent('eventType', { relatedTarget: null }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: false }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: true }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: '' }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: 'chocolate' }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: 12345 }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: 18446744073709551615 }).relatedTarget", "null");
-shouldBe("new MouseEvent('eventType', { relatedTarget: NaN }).relatedTarget", "null");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: false })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: true })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: '' })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: 'chocolate' })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: 12345 })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: 18446744073709551615 })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: NaN })", "TypeError");
 // Note that valueOf() is not called, when the left hand side is evaluated.
-shouldBeFalse("new MouseEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv");
-shouldBe("new MouseEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget", "null");
+shouldThrowErrorName("new MouseEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } })", "TypeError");
+shouldThrowErrorName("new MouseEvent('eventType', { get relatedTarget() { return 123; } })", "TypeError");
 shouldThrow("new MouseEvent('eventType', { get relatedTarget() { throw 'MouseEvent Error'; } })");
 
 // All initializers are passed.

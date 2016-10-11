@@ -62,7 +62,7 @@ protected:
     {
     }
 
-    UIEventWithKeyState(const AtomicString& type, const EventModifierInit& initializer, IsTrusted isTrusted = IsTrusted::No)
+    UIEventWithKeyState(const AtomicString& type, const EventModifierInit& initializer, IsTrusted isTrusted)
         : UIEvent(type, initializer, isTrusted)
         , m_ctrlKey(initializer.ctrlKey)
         , m_altKey(initializer.altKey)

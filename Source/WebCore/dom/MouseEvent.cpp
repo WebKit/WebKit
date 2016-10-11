@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-Ref<MouseEvent> MouseEvent::createForBindings(const AtomicString& type, const MouseEventInit& initializer)
+Ref<MouseEvent> MouseEvent::create(const AtomicString& type, const MouseEventInit& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MouseEvent(type, initializer));
+    return adoptRef(*new MouseEvent(type, initializer, isTrusted));
 }
 
 Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
@@ -130,8 +130,8 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
     initCoordinates(IntPoint(clientX, clientY));
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer)
-    : MouseRelatedEvent(eventType, initializer)
+MouseEvent::MouseEvent(const AtomicString& eventType, const MouseEventInit& initializer, IsTrusted isTrusted)
+    : MouseRelatedEvent(eventType, initializer, isTrusted)
     , m_button(initializer.button == (unsigned short)-1 ? 0 : initializer.button)
     , m_buttonDown(initializer.button != (unsigned short)-1)
     , m_relatedTarget(initializer.relatedTarget)

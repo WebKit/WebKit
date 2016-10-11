@@ -71,8 +71,8 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
     init(isSimulated, windowLocation);
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseRelatedEventInit& initializer)
-    : UIEventWithKeyState(eventType, initializer)
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
+    : UIEventWithKeyState(eventType, initializer, isTrusted)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
 #if ENABLE(POINTER_LOCK)
     , m_movementDelta(IntPoint(0, 0))

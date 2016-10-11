@@ -18,23 +18,22 @@
  */
 
 [
-    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional MouseEventInit eventInitDict),
     DoNotCheckConstants,
 ] interface MouseEvent : UIEvent {
     [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_MOUSE_DOWN = 1;
     [Conditional=MOUSE_FORCE_EVENTS] const double WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN = 2;
 
-    [InitializedByEventConstructor] readonly attribute long screenX;
-    [InitializedByEventConstructor] readonly attribute long screenY;
-    [InitializedByEventConstructor] readonly attribute long clientX;
-    [InitializedByEventConstructor] readonly attribute long clientY;
-    [InitializedByEventConstructor] readonly attribute boolean ctrlKey;
-    [InitializedByEventConstructor] readonly attribute boolean shiftKey;
-    [InitializedByEventConstructor] readonly attribute boolean altKey;
-    [InitializedByEventConstructor] readonly attribute boolean metaKey;
-    [InitializedByEventConstructor] readonly attribute unsigned short button;
-    [InitializedByEventConstructor] readonly attribute EventTarget? relatedTarget;
+    readonly attribute long screenX;
+    readonly attribute long screenY;
+    readonly attribute long clientX;
+    readonly attribute long clientY;
+    readonly attribute boolean ctrlKey;
+    readonly attribute boolean shiftKey;
+    readonly attribute boolean altKey;
+    readonly attribute boolean metaKey;
+    readonly attribute unsigned short button;
+    readonly attribute EventTarget? relatedTarget;
     [Conditional=POINTER_LOCK] readonly attribute long movementX;
     [Conditional=POINTER_LOCK] readonly attribute long movementY;
     [Conditional=MOUSE_FORCE_EVENTS, ImplementedAs=force]readonly attribute double webkitForce;

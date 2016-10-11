@@ -23,19 +23,13 @@
 
 #pragma once
 
+#include "MouseEventInit.h"
 #include "MouseRelatedEvent.h"
 
 namespace WebCore {
 
 class DataTransfer;
 class PlatformMouseEvent;
-
-struct MouseEventInit : public MouseRelatedEventInit {
-    int clientX { 0 };
-    int clientY { 0 };
-    unsigned short button { 0 };
-    RefPtr<EventTarget> relatedTarget;
-};
 
 class MouseEvent : public MouseRelatedEvent {
 public:
@@ -67,7 +61,7 @@ public:
         return adoptRef(*new MouseEvent);
     }
 
-    static Ref<MouseEvent> createForBindings(const AtomicString& eventType, const MouseEventInit&);
+    static Ref<MouseEvent> create(const AtomicString& eventType, const MouseEventInit&, IsTrusted = IsTrusted::No);
 
     virtual ~MouseEvent();
 
@@ -115,7 +109,7 @@ protected:
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         unsigned short button, unsigned short syntheticClickType, PassRefPtr<EventTarget> relatedTarget);
 
-    MouseEvent(const AtomicString& type, const MouseEventInit&);
+    MouseEvent(const AtomicString& type, const MouseEventInit&, IsTrusted);
 
     MouseEvent();
 

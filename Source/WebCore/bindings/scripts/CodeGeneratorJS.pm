@@ -1711,6 +1711,13 @@ sub GenerateHeader
             my $currentInterface = shift;
             push(@ancestors, $currentInterface->name);
         }, 0);
+        for my $dictionary (@$dictionaries) {
+            my $parentDictionary = $dictionary->parent;
+            while (defined($parentDictionary)) {
+                push(@ancestors, $parentDictionary) if $codeGenerator->IsExternalDictionaryType($parentDictionary);
+                $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary)->parent;
+            }
+        }
         push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
         push(@depsContent, map { "$_.idl :\n" } @ancestors);
     }
@@ -4321,6 +4328,18 @@ sub GenerateDictionaryHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
     push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
     push(@headerContent, "} // namespace WebCore\n");
+    
+    # - Generate dependencies.
+    if ($writeDependencies) {
+        my @ancestors;
+        my $parentDictionary = $dictionary->parent;
+        while (defined($parentDictionary)) {
+            push(@ancestors, $parentDictionary) if $codeGenerator->IsExternalDictionaryType($parentDictionary);
+            $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary)->parent;
+        }
+        push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
+        push(@depsContent, map { "$_.idl :\n" } @ancestors);
+    }
 }
 
 sub GenerateDictionaryImplementation

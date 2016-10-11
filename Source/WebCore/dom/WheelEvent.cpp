@@ -35,16 +35,6 @@ inline static unsigned determineDeltaMode(const PlatformWheelEvent& event)
     return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::DOM_DELTA_PAGE : WheelEvent::DOM_DELTA_PIXEL;
 }
 
-WheelEventInit::WheelEventInit()
-    : deltaX(0)
-    , deltaY(0)
-    , deltaZ(0)
-    , deltaMode(WheelEvent::DOM_DELTA_PIXEL)
-    , wheelDeltaX(0)
-    , wheelDeltaY(0)
-{
-}
-
 WheelEvent::WheelEvent()
     : m_deltaX(0)
     , m_deltaY(0)
@@ -54,8 +44,8 @@ WheelEvent::WheelEvent()
 {
 }
 
-WheelEvent::WheelEvent(const AtomicString& type, const WheelEventInit& initializer)
-    : MouseEvent(type, initializer)
+WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : MouseEvent(type, initializer, isTrusted)
     , m_wheelDelta(initializer.wheelDeltaX ? initializer.wheelDeltaX : -initializer.deltaX, initializer.wheelDeltaY ? initializer.wheelDeltaY : -initializer.deltaY)
     , m_deltaX(initializer.deltaX ? initializer.deltaX : -initializer.wheelDeltaX)
     , m_deltaY(initializer.deltaY ? initializer.deltaY : -initializer.wheelDeltaY)

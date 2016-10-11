@@ -347,6 +347,7 @@
 #include "JSMessageEvent.cpp"
 #include "JSMessagePort.cpp"
 #include "JSMouseEvent.cpp"
+#include "JSMouseEventInit.cpp"
 #include "JSMutationEvent.cpp"
 #include "JSMutationObserver.cpp"
 #include "JSMutationRecord.cpp"
