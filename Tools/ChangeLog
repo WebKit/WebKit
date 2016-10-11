@@ -1,3 +1,17 @@
+2016-09-26  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] TestContextMenu is failing
+        https://bugs.webkit.org/show_bug.cgi?id=162569
+
+        We cannot use the MP3 file in the TestContextMenu, as it will not work
+        by default on most distributions (that don't have an MP3 codecs
+        installed). Change the test to use OGG file instead.
+
+        Reviewed by Michael Catanzaro.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu):
+
 2016-09-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r204163): [GTK] API test /webkit2/WebKitSecurityManager/file-xhr is failing
