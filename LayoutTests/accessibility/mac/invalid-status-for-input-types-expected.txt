@@ -1,0 +1,13 @@
+         
+This tests that we are exposing correct invalid status for different types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: AXInvalid is true.
+PASS: AXInvalid is false.
+PASS: AXInvalid is true.
+PASS: AXInvalid is false.
+PASS: AXInvalid is true.
+PASS: AXInvalid is false.
+

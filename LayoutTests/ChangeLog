@@ -1,3 +1,14 @@
+2016-10-10  Nan Wang  <n_wang@apple.com>
+
+        AX: Expose invalid status for input types with that information
+        https://bugs.webkit.org/show_bug.cgi?id=163252
+        <rdar://problem/28704409>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/invalid-status-for-input-types-expected.txt: Added.
+        * accessibility/mac/invalid-status-for-input-types.html: Added.
+
 2016-10-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking two media/modern-media-controls tests as failing.

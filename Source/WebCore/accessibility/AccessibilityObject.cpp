@@ -1909,8 +1909,19 @@ String AccessibilityObject::invalidStatus() const
     // aria-invalid can return false (default), grammar, spelling, or true.
     String ariaInvalid = stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_invalidAttr));
     
+    if (ariaInvalid.isEmpty()) {
+        // We should expose invalid status for input types.
+        Node* node = this->node();
+        if (node && is<HTMLInputElement>(*node)) {
+            HTMLInputElement& input = downcast<HTMLInputElement>(*node);
+            if (input.hasBadInput() || input.typeMismatch())
+                return trueValue;
+        }
+        return falseValue;
+    }
+    
     // If "false", "undefined" [sic, string value], empty, or missing, return "false".
-    if (ariaInvalid.isEmpty() || ariaInvalid == falseValue || ariaInvalid == undefinedValue)
+    if (ariaInvalid == falseValue || ariaInvalid == undefinedValue)
         return falseValue;
     // Besides true/false/undefined, the only tokens defined by WAI-ARIA 1.0...
     // ...for @aria-invalid are "grammar" and "spelling".
