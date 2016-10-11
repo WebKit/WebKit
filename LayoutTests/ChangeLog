@@ -1,3 +1,15 @@
+2016-09-26  Antti Koivisto  <antti@apple.com>
+
+        Input elements don't work inside shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=160427
+
+        Reviewed by Darin Adler.
+
+        * fast/shadow-dom/composed-tree-shadow-child-subtree-expected.txt: Added.
+        * fast/shadow-dom/composed-tree-shadow-child-subtree.html: Added.
+        * fast/shadow-dom/input-element-in-shadow-expected.html: Added.
+        * fast/shadow-dom/input-element-in-shadow.html: Added.
+
 2016-09-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !newRelayoutRoot.container() || is<RenderView>(newRelayoutRoot.container()) || !newRelayoutRoot.container()->needsLayout() while loading sohu.com
