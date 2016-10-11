@@ -1,3 +1,22 @@
+2016-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Move no longer used functions to WKDeprecatedFunctions.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=163290
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/c/WKDeprecatedFunctions.cpp:
+        (WKPageGroupAddUserContentFilter):
+        (WKPageGroupRemoveUserContentFilter):
+        (WKPageGroupRemoveAllUserContentFilters):
+        (WKContextSetProcessModel): Deleted.
+        * UIProcess/API/C/WKPageGroup.cpp:
+        (WKPageGroupRemoveAllUserScripts):
+        (WKPageGroupAddUserContentFilter): Deleted.
+        (WKPageGroupRemoveUserContentFilter): Deleted.
+        (WKPageGroupRemoveAllUserContentFilters): Deleted.
+        * UIProcess/API/C/WKPageGroup.h:
+
 2016-10-11  Konstantin Tokarev  <annulen@yandex.ru>
 
         Use modern for loops for iterating supplement maps

@@ -26,17 +26,25 @@
 #include "config.h"
 
 #include "APIDictionary.h"
+#include "APIUserContentExtension.h"
+#include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKContextPrivate.h"
 #include "WKMutableDictionary.h"
 #include "WKPreferencesRefPrivate.h"
-#include "WKSharedAPICast.h"
+#include "WebPageGroup.h"
 
 #if PLATFORM(MAC)
 #include "WKContextPrivateMac.h"
 #endif
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
+
+extern "C" {
+WK_EXPORT void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroup, WKUserContentFilterRef userContentFilter);
+WK_EXPORT void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroup, WKStringRef userContentFilterName);
+WK_EXPORT void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroup);
+}
 
 using namespace WebKit;
 
@@ -46,4 +54,34 @@ void WKContextSetUsesNetworkProcess(WKContextRef, bool)
 
 void WKContextSetProcessModel(WKContextRef, WKProcessModel)
 {
+}
+
+void WKPageGroupAddUserContentFilter(WKPageGroupRef pageGroupRef, WKUserContentFilterRef userContentFilterRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->addUserContentExtension(*toImpl(userContentFilterRef));
+#else
+    UNUSED_PARAM(pageGroupRef);
+    UNUSED_PARAM(userContentFilterRef);
+#endif
+}
+
+void WKPageGroupRemoveUserContentFilter(WKPageGroupRef pageGroupRef, WKStringRef userContentFilterNameRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->removeUserContentExtension(toWTFString(userContentFilterNameRef));
+#else
+    UNUSED_PARAM(pageGroupRef);
+    UNUSED_PARAM(userContentFilterNameRef);
+#endif
+}
+
+
+void WKPageGroupRemoveAllUserContentFilters(WKPageGroupRef pageGroupRef)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    toImpl(pageGroupRef)->removeAllUserContentExtensions();
+#else
+    UNUSED_PARAM(pageGroupRef);
+#endif
 }
