@@ -916,7 +916,7 @@ void Heap::addToRememberedSet(const JSCell* cell)
 {
     ASSERT(cell);
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
-    ASSERT(isBlack(cell->cellState()));
+    ASSERT(cell->cellState() == CellState::AnthraciteOrBlack);
     // Indicate that this object is grey and that it's one of the following:
     // - A re-greyed object during a concurrent collection.
     // - An old remembered object.
@@ -1552,7 +1552,7 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
         // In this case, the barrierThreshold is the tautological threshold, so from could still be
         // not black. But we can't know for sure until we fire off a fence.
         WTF::storeLoadFence();
-        if (!isBlack(from->cellState()))
+        if (from->cellState() != CellState::AnthraciteOrBlack)
             return;
     }
     

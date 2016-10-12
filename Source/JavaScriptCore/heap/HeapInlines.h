@@ -158,10 +158,10 @@ inline void Heap::reportExtraMemoryAllocated(size_t size)
         reportExtraMemoryAllocatedSlowCase(size);
 }
 
-inline void Heap::reportExtraMemoryVisited(JSCell* cell, size_t size)
+inline void Heap::reportExtraMemoryVisited(CellState oldState, size_t size)
 {
     // We don't want to double-count the extra memory that was reported in previous collections.
-    if (operationInProgress() == EdenCollection && cell->cellState() == CellState::OldBlack)
+    if (operationInProgress() == EdenCollection && oldState == CellState::OldGrey)
         return;
 
     size_t* counter = &m_extraMemorySize;
@@ -174,10 +174,10 @@ inline void Heap::reportExtraMemoryVisited(JSCell* cell, size_t size)
 }
 
 #if ENABLE(RESOURCE_USAGE)
-inline void Heap::reportExternalMemoryVisited(JSCell* cell, size_t size)
+inline void Heap::reportExternalMemoryVisited(CellState oldState, size_t size)
 {
     // We don't want to double-count the external memory that was reported in previous collections.
-    if (operationInProgress() == EdenCollection && cell->cellState() == CellState::OldBlack)
+    if (operationInProgress() == EdenCollection && oldState == CellState::OldGrey)
         return;
 
     size_t* counter = &m_externalMemorySize;

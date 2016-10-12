@@ -30,46 +30,32 @@
 namespace JSC {
 
 enum class CellState : uint8_t {
-    // The object is black for the first time during this GC.
-    NewBlack = 0,
-    
-    // The object is black for the Nth time during this full GC cycle (N > 1). An object may get to
-    // this state if it transitions from black back to grey during a concurrent GC, or because it
-    // wound up in the remembered set because of a generational barrier.
-    OldBlack = 1,
+    // The object is either currently being scanned (anthracite) or it has finished being scanned
+    // (black). It could be scanned for the first time this GC, or the Nth time - if it's anthracite
+    // then the SlotVisitor knows. We explicitly say "anthracite or black" to emphasize the fact that
+    // this is no guarantee that we have finished scanning the object, unless you also know that all
+    // SlotVisitors are done.
+    AnthraciteOrBlack = 0,
     
     // The object is in eden. During GC, this means that the object has not been marked yet.
-    NewWhite = 2,
+    NewWhite = 1,
 
     // The object is grey - i.e. it will be scanned - and this is the first time in this GC that we are
     // going to scan it. If this is an eden GC, this also means that the object is in eden.
-    NewGrey = 3,
+    NewGrey = 2,
 
     // The object is grey - i.e. it will be scanned - but it either belongs to old gen (if this is eden
     // GC) or it is grey a second time in this current GC (because a concurrent store barrier requested
     // re-greying).
-    OldGrey = 4
+    OldGrey = 3
 };
 
-static const unsigned blackThreshold = 1; // x <= blackThreshold means x is black.
+static const unsigned blackThreshold = 0; // x <= blackThreshold means x is AnthraciteOrBlack.
 static const unsigned tautologicalThreshold = 100; // x <= tautologicalThreshold is always true.
 
 inline bool isWithinThreshold(CellState cellState, unsigned threshold)
 {
     return static_cast<unsigned>(cellState) <= threshold;
-}
-
-inline bool isBlack(CellState cellState)
-{
-    return isWithinThreshold(cellState, blackThreshold);
-}
-
-inline CellState blacken(CellState cellState)
-{
-    if (cellState == CellState::NewGrey)
-        return CellState::NewBlack;
-    ASSERT(cellState == CellState::NewBlack || cellState == CellState::OldBlack || cellState == CellState::OldGrey);
-    return CellState::OldBlack;
 }
 
 } // namespace JSC

@@ -165,6 +165,7 @@ private:
 
     HeapSnapshotBuilder* m_heapSnapshotBuilder { nullptr };
     JSCell* m_currentCell { nullptr };
+    CellState m_oldCellState;
 
 public:
 #if !ASSERT_DISABLED

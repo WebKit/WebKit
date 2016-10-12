@@ -105,13 +105,13 @@ inline void SlotVisitor::addUnconditionalFinalizer(UnconditionalFinalizer* uncon
 
 inline void SlotVisitor::reportExtraMemoryVisited(size_t size)
 {
-    heap()->reportExtraMemoryVisited(m_currentCell, size);
+    heap()->reportExtraMemoryVisited(m_oldCellState, size);
 }
 
 #if ENABLE(RESOURCE_USAGE)
 inline void SlotVisitor::reportExternalMemoryVisited(size_t size)
 {
-    heap()->reportExternalMemoryVisited(m_currentCell, size);
+    heap()->reportExternalMemoryVisited(m_oldCellState, size);
 }
 #endif
 

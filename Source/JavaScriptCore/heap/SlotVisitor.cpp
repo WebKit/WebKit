@@ -228,6 +228,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
 {
     ASSERT(Heap::isMarkedConcurrently(cell));
     ASSERT(!cell->isZapped());
+    ASSERT(cell->cellState() == CellState::NewGrey || cell->cellState() == CellState::OldGrey);
     
     container.noteMarked();
     
@@ -293,7 +294,14 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     SetCurrentCellScope currentCellScope(*this, cell);
     
-    cell->setCellState(blacken(cell->cellState()));
+    m_oldCellState = cell->cellState();
+    
+    // There is no race here - the cell state cannot change right now. Grey objects can only be
+    // visited by one marking thread. Neither the barrier nor marking will change the state of an
+    // object that is already grey.
+    ASSERT(m_oldCellState == CellState::OldGrey || m_oldCellState == CellState::NewGrey);
+    
+    cell->setCellState(CellState::AnthraciteOrBlack);
     
     WTF::storeLoadFence();
     
@@ -318,7 +326,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     }
     
     if (UNLIKELY(m_heapSnapshotBuilder)) {
-        if (cell->cellState() != CellState::OldBlack)
+        if (m_oldCellState == CellState::NewGrey)
             m_heapSnapshotBuilder->appendNode(const_cast<JSCell*>(cell));
     }
 }

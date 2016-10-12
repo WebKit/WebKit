@@ -1,3 +1,54 @@
+2016-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        The blackening of CellState is a bad way of tracking if the object is being marked for the first time
+        https://bugs.webkit.org/show_bug.cgi?id=163343
+
+        Reviewed by Mark Lam.
+        
+        When I first added the concept of NewGrey/OldGrey, I had the SlotVisitor store the old cell
+        state in itself, so that it could use it to decide what to do for reportExtraMemoryVisited().
+        
+        Then I changed it in a recent commit, because I wanted the freedom to have SlotVisitor visit
+        multiple objects in tandem. But I never ended up using this capability. Still, I liked the
+        new way better: instead of the SlotVisitor rembemering the state-before-blackening, we would
+        make the object's state reflect whether it was black for the first time or not. That seemed
+        convenient.
+        
+        Unfortunately it's wrong. After we blacken the object, a concurrent barrier could instantly
+        grey it. Then we would forget that we are visiting this object for the first time.
+        Subsequent visits will think that they are not the first. So, we will fail to do the right
+        thing in reportExtraMemoryVisited().
+        
+        So, this reverts that change. This is a little more than just a revert, though. I've changed
+        the terminology a bit. For example, I got tired of reading Black and having to remind myself
+        that it really means that the object has begun being visited, instead of the more strict
+        meaning that implies that it has already been visited. We want to say that it's Black or
+        currently being scanned. I'm going to adopt Siebert's term for this: Anthracite [1]. So, our
+        black CellState is now called AnthraciteOrBlack.
+        
+        [1] https://pdfs.semanticscholar.org/7ae4/633265aead1f8835cf7966e179d02c2c8a4b.pdf
+
+        * heap/CellState.h:
+        (JSC::isBlack): Deleted.
+        (JSC::blacken): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::writeBarrierSlowPath):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::reportExtraMemoryVisited):
+        (JSC::SlotVisitor::reportExternalMemoryVisited):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+
 2016-10-12  Mark Lam  <mark.lam@apple.com>
 
         Rename variables in arrayProtoFuncSplice() to match names in the spec.

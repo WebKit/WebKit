@@ -409,7 +409,7 @@ const NotInitialization = 2
 const MarkedBlockSize = 16 * 1024
 const MarkedBlockMask = ~(MarkedBlockSize - 1)
 
-const BlackThreshold = 1
+const BlackThreshold = 0
 
 # Allocation constants
 if JSVALUE64
