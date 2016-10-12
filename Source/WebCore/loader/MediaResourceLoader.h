@@ -46,7 +46,7 @@ public:
     WEBCORE_EXPORT MediaResourceLoader(Document&, const String& crossOriginMode);
     WEBCORE_EXPORT virtual ~MediaResourceLoader();
 
-    RefPtr<PlatformMediaResource> requestResource(const ResourceRequest&, LoadOptions) override;
+    RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final;
     void removeResource(MediaResource&);
 
     Document* document() { return m_document; }

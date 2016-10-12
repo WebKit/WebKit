@@ -66,7 +66,7 @@ public:
 
     virtual ~PlatformMediaResourceLoader() { }
 
-    virtual RefPtr<PlatformMediaResource> requestResource(const ResourceRequest&, LoadOptions) = 0;
+    virtual RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) = 0;
 
 protected:
     PlatformMediaResourceLoader() { }
