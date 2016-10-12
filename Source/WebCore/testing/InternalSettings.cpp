@@ -691,6 +691,9 @@ InternalSettings::ForcedPrefersReducedMotionValue InternalSettings::forcedPrefer
     case Settings::ForcedPrefersReducedMotionValue::Off:
         return InternalSettings::ForcedPrefersReducedMotionValue::Off;
     }
+
+    ASSERT_NOT_REACHED();
+    return InternalSettings::ForcedPrefersReducedMotionValue::Off;
 }
 
 void InternalSettings::setForcedPrefersReducedMotionValue(InternalSettings::ForcedPrefersReducedMotionValue value)

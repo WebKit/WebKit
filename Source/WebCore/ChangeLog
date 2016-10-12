@@ -1,3 +1,10 @@
+2016-10-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed, EFL build fix because of r207173.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::forcedPrefersReducedMotionValue):
+
 2016-10-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Add the option to immediately decode an image frame and control its memory caching
