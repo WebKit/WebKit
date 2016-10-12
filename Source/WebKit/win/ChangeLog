@@ -1,3 +1,14 @@
+2016-10-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix after r207218.
+
+        The CQ-landed patch used the old USE(CFNETWORK) compiler guard.
+        It should be using USE(CFURLCONNECTION).
+
+        * WebCache.cpp:
+        (WebCache::cacheFolder):
+        (WebCache::setCacheFolder):
+
 2016-10-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Parallel DRTs are sharing preferences and cache.
