@@ -1,3 +1,18 @@
+2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add experimental support for the "formatForeColor" inputType
+        https://bugs.webkit.org/show_bug.cgi?id=163348
+        <rdar://problem/28739334>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a new test verifying that input events with inputType "formatForeColor" are dispatched when changing
+        foreground color, and that their data attributes are as expected.
+
+        * fast/events/input-events-forecolor-data-expected.txt: Added.
+        * fast/events/input-events-forecolor-data.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore

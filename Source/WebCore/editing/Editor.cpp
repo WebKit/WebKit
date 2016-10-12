@@ -132,6 +132,20 @@ static void dispatchInputEvent(Element& element, const AtomicString& inputType, 
         element.dispatchInputEvent();
 }
 
+static String inputEventDataForEditingStyleAndAction(EditingStyle& style, EditAction action)
+{
+    auto* properties = style.style();
+    if (!properties)
+        return { };
+
+    switch (action) {
+    case EditActionSetColor:
+        return properties->getPropertyValue(CSSPropertyColor);
+    default:
+        return { };
+    }
+}
+
 class ClearTextCommand : public DeleteSelectionCommand {
 public:
     ClearTextCommand(Document& document);
@@ -3107,8 +3121,9 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
     }
 
     String inputTypeName = inputTypeNameForEditingAction(editingAction);
+    String inputEventData = inputEventDataForEditingStyleAndAction(style, editingAction);
     auto* element = m_frame.selection().selection().rootEditableElement();
-    if (element && !dispatchBeforeInputEvent(*element, inputTypeName))
+    if (element && !dispatchBeforeInputEvent(*element, inputTypeName, inputEventData))
         return;
 
     // Calculate the current typing style.
@@ -3125,7 +3140,7 @@ void Editor::computeAndSetTypingStyle(EditingStyle& style, EditAction editingAct
         applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
 
     if (element)
-        dispatchInputEvent(*element, inputTypeName);
+        dispatchInputEvent(*element, inputTypeName, inputEventData);
 
     // Set the remaining style as the typing style.
     m_frame.selection().setTypingStyle(typingStyle);

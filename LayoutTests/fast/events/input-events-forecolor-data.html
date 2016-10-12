@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="editable" contenteditable onbeforeinput=handleInput(event) oninput=handleInput(event)></div>
+    <script type="text/javascript">
+        description("To manually test this, change the foreground color and check the resulting debug messages.");
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
+        document.getElementById("editable").focus();
+
+        if (window.testRunner) {
+            // FIXME: The value argument is passed twice here for compatibility with DumpRenderTree. We should address
+            // this if we require more editing tests that need to pass arguments to the editing command.
+            testRunner.execCommand("ForeColor", "rgb(255, 255, 255)", "rgb(255, 255, 255)");
+            testRunner.execCommand("ForeColor", "rgb(100, 255, 0)", "rgb(100, 255, 0)");
+            testRunner.execCommand("ForeColor", "rgb(0, 0, 0)", "rgb(0, 0, 0)");
+            testRunner.execCommand("ForeColor", "rgb(255, 0, 0)", "rgb(255, 0, 0)");
+        }
+
+        function handleInput(event)
+        {
+            debug(`event.type = ${event.type}`);
+            debug(`event.inputType = ${event.inputType}`);
+            debug(`event.data = ${event.data}`);
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -56,6 +56,8 @@ String inputTypeNameForEditingAction(EditAction action)
         return ASCIILiteral("formatSuperscript");
     case EditActionUnderline:
         return ASCIILiteral("formatUnderline");
+    case EditActionSetColor:
+        return ASCIILiteral("formatForeColor");
     case EditActionDrag:
         return ASCIILiteral("deleteByDrag");
     case EditActionCut:

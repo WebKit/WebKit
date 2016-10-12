@@ -1,0 +1,33 @@
+To manually test this, change the foreground color and check the resulting debug messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+event.type = beforeinput
+event.inputType = formatForeColor
+event.data = rgb(255, 255, 255)
+event.type = input
+event.inputType = formatForeColor
+event.data = rgb(255, 255, 255)
+event.type = beforeinput
+event.inputType = formatForeColor
+event.data = rgb(100, 255, 0)
+event.type = input
+event.inputType = formatForeColor
+event.data = rgb(100, 255, 0)
+event.type = beforeinput
+event.inputType = formatForeColor
+event.data = rgb(0, 0, 0)
+event.type = input
+event.inputType = formatForeColor
+event.data = rgb(0, 0, 0)
+event.type = beforeinput
+event.inputType = formatForeColor
+event.data = rgb(255, 0, 0)
+event.type = input
+event.inputType = formatForeColor
+event.data = rgb(255, 0, 0)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
