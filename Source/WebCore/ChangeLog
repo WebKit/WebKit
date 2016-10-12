@@ -1,3 +1,12 @@
+2016-10-12  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
+
+        [SOUP] trunk r207192 fails to compile due to missing std::function being unavailable (missing #include <functional>)
+        https://bugs.webkit.org/show_bug.cgi?id=163340
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/network/soup/SoupNetworkSession.h: Add missing #include <functional>
+
 2016-10-12  Brent Fulgham  <bfulgham@apple.com>
 
         [WebGL] Revise vertex array attribute checks to account for lazy memory allocation.
