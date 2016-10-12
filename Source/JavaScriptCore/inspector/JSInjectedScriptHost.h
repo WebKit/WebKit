@@ -65,6 +65,7 @@ public:
     JSC::JSValue subtype(JSC::ExecState*);
     JSC::JSValue functionDetails(JSC::ExecState*);
     JSC::JSValue getInternalProperties(JSC::ExecState*);
+    JSC::JSValue proxyTargetValue(JSC::ExecState*);
     JSC::JSValue weakMapSize(JSC::ExecState*);
     JSC::JSValue weakMapEntries(JSC::ExecState*);
     JSC::JSValue weakSetSize(JSC::ExecState*);
