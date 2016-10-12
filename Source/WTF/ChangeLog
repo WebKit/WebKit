@@ -1,3 +1,15 @@
+2016-10-11  Sam Weinig  <sam@webkit.org>
+
+        Optional's move-constructor and move-assignment operator don't disengage the value being moved from
+        https://bugs.webkit.org/show_bug.cgi?id=163309
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Optional.h:
+        (WTF::Optional::Optional):
+        (WTF::Optional::operator=):
+        Disengage 'other' on move-construction and move-assignment.
+
 2016-10-08  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedBlock should know what objects are live during marking

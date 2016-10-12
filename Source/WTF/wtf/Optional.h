@@ -71,8 +71,10 @@ public:
     Optional(Optional&& other)
         : m_isEngaged(other.m_isEngaged)
     {
-        if (m_isEngaged)
+        if (m_isEngaged) {
             new (NotNull, &m_value) T(WTFMove(*other.asPtr()));
+            other.m_isEngaged = false;
+        }
     }
 
     Optional(T&& value)
@@ -121,6 +123,7 @@ public:
         if (other.m_isEngaged) {
             new (NotNull, &m_value) T(WTFMove(*other.asPtr()));
             m_isEngaged = true;
+            other.m_isEngaged = false;
         }
         return *this;
     }

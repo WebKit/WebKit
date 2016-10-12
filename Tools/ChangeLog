@@ -1,3 +1,14 @@
+2016-10-11  Sam Weinig  <sam@webkit.org>
+
+        Optional's move-constructor and move-assignment operator don't disengage the value being moved from
+        https://bugs.webkit.org/show_bug.cgi?id=163309
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WTF/Optional.cpp:
+        (TestWebKitAPI::TEST):
+        Add tests for Optional's move-constructor and move-assignment operator.
+
 2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Now playing media sessions are always cleared for the active foreground tab
