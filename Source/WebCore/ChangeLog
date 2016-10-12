@@ -1,3 +1,65 @@
+2016-10-12  Zalan Bujtas  <zalan@apple.com>
+
+        Refactor LineLayoutState's float box handling.
+        https://bugs.webkit.org/show_bug.cgi?id=163286
+
+        Reviewed by David Hyatt.
+        
+        We keep track of float boxes both per line (RootInlineBox::m_floats) and
+        per flow block (LineLayoutState::m_floats) during layout.
+        As we lay out the lines and iterate through RootInlineBox::m_floats, we
+        increment LineLayoutState::m_floatIndex. This LineLayoutState::m_floatIndex is
+        later used to find the matching float box in the per-block-flow float list.
+        This logic works fine as long as the lists and the index manipulation are tightly coded.
+        However due to the complexity of the line/float layout code, this is no longer the case.
+
+        This patch makes float box handling more secure by changing this index based setup
+        to a list iterator. It helps to eliminate potential vector overflow issues.
+
+        LineLayoutState::FloatList (new class) keeps track of all the floats for the block flow.
+        It groups the float box related functions/members and provides an iterator interface to ensure safer
+        syncing between this and the line based floats.
+
+        No change in functionality.
+
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendFloatingObjectToLastLine):
+        (WebCore::repaintDirtyFloats):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloats):
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        (WebCore::RenderBlockFlow::checkFloatInCleanLine):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::determineEndPosition):
+        (WebCore::RenderBlockFlow::repaintDirtyFloats): Deleted.
+        (WebCore::RenderBlockFlow::checkFloatsInCleanLine): Deleted.
+        * rendering/line/LineLayoutState.h:
+        (WebCore::FloatWithRect::create):
+        (WebCore::FloatWithRect::renderer):
+        (WebCore::FloatWithRect::rect):
+        (WebCore::FloatWithRect::everHadLayout):
+        (WebCore::FloatWithRect::adjustRect):
+        (WebCore::FloatWithRect::FloatWithRect):
+        (WebCore::LineLayoutState::FloatList::append):
+        (WebCore::LineLayoutState::FloatList::setLastFloat):
+        (WebCore::LineLayoutState::FloatList::lastFloat):
+        (WebCore::LineLayoutState::FloatList::setLastCleanFloat):
+        (WebCore::LineLayoutState::FloatList::lastCleanFloat):
+        (WebCore::LineLayoutState::FloatList::floatWithRect):
+        (WebCore::LineLayoutState::FloatList::begin):
+        (WebCore::LineLayoutState::FloatList::end):
+        (WebCore::LineLayoutState::FloatList::find):
+        (WebCore::LineLayoutState::FloatList::isEmpty):
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::floatList):
+        (WebCore::LineLayoutState::lastFloat): Deleted.
+        (WebCore::LineLayoutState::setLastFloat): Deleted.
+        (WebCore::LineLayoutState::floats): Deleted.
+        (WebCore::LineLayoutState::floatIndex): Deleted.
+        (WebCore::LineLayoutState::setFloatIndex): Deleted.
+
 2016-10-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, fix Windows build break after r207182.

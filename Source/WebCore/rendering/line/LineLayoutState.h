@@ -36,33 +36,73 @@
 
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-struct FloatWithRect {
-    FloatWithRect(RenderBox& f)
-        : object(f)
-        , rect(LayoutRect(f.x() - f.marginLeft(), f.y() - f.marginTop(), f.width() + f.horizontalMarginExtent(), f.height() + f.verticalMarginExtent()))
-        , everHadLayout(f.everHadLayout())
+class FloatWithRect : public RefCounted<FloatWithRect> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<FloatWithRect> create(RenderBox& renderer)
+    {
+        return adoptRef(*new FloatWithRect(renderer));
+    }
+    
+    RenderBox& renderer() const { return m_renderer; }
+    LayoutRect rect() const { return m_rect; }
+    bool everHadLayout() const { return m_everHadLayout; }
+
+    void adjustRect(const LayoutRect& rect) { m_rect = rect; }
+
+private:
+    FloatWithRect() = default;
+    
+    FloatWithRect(RenderBox& renderer)
+        : m_renderer(renderer)
+        , m_rect(LayoutRect(renderer.x() - renderer.marginLeft(), renderer.y() - renderer.marginTop(), renderer.width() + renderer.horizontalMarginExtent(), renderer.height() + renderer.verticalMarginExtent()))
+        , m_everHadLayout(renderer.everHadLayout())
     {
     }
-
-    RenderBox& object;
-    LayoutRect rect;
-    bool everHadLayout;
+    
+    RenderBox& m_renderer;
+    LayoutRect m_rect;
+    bool m_everHadLayout { false };
 };
 
 // Like LayoutState for layout(), LineLayoutState keeps track of global information
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
 class LineLayoutState {
 public:
+    class FloatList {
+    public:
+        void append(Ref<FloatWithRect>&& floatWithRect)
+        {
+            m_floats.add(floatWithRect.copyRef());
+            m_floatWithRectMap.add(&floatWithRect->renderer(), WTFMove(floatWithRect));
+        }
+        void setLastFloat(FloatingObject* lastFloat) { m_lastFloat = lastFloat; }
+        FloatingObject* lastFloat() const { return m_lastFloat; }
+
+        void setLastCleanFloat(RenderBox& floatBox) { m_lastCleanFloat = &floatBox; }
+        RenderBox* lastCleanFloat() const { return m_lastCleanFloat; }
+
+        FloatWithRect* floatWithRect(RenderBox& floatBox) const { return m_floatWithRectMap.get(&floatBox); }
+
+        using Iterator = ListHashSet<Ref<FloatWithRect>>::iterator;
+        Iterator begin() { return m_floats.begin(); }
+        Iterator end() { return m_floats.end(); }
+        Iterator find(FloatWithRect& floatBoxWithRect) { return m_floats.find(floatBoxWithRect); }
+        bool isEmpty() const { return m_floats.isEmpty(); }
+
+    private:
+        ListHashSet<Ref<FloatWithRect>> m_floats;
+        HashMap<RenderBox*, Ref<FloatWithRect>> m_floatWithRectMap;
+        FloatingObject* m_lastFloat { nullptr };
+        RenderBox* m_lastCleanFloat { nullptr };
+    };
+
     LineLayoutState(const RenderBlockFlow& blockFlow, bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, RenderFlowThread* flowThread)
-        : m_endLineLogicalTop(0)
-        , m_endLine(0)
-        , m_lastFloat(0)
-        , m_floatIndex(0)
-        , m_adjustedLogicalLineTop(0)
-        , m_flowThread(flowThread)
+        : m_flowThread(flowThread)
         , m_repaintLogicalTop(repaintLogicalTop)
         , m_repaintLogicalBottom(repaintLogicalBottom)
         , m_marginInfo(blockFlow, blockFlow.borderAndPaddingBefore(), blockFlow.borderAndPaddingAfter() + blockFlow.scrollbarLogicalHeight())
@@ -81,14 +121,6 @@ public:
 
     RootInlineBox* endLine() const { return m_endLine; }
     void setEndLine(RootInlineBox* line) { m_endLine = line; }
-
-    FloatingObject* lastFloat() const { return m_lastFloat; }
-    void setLastFloat(FloatingObject* lastFloat) { m_lastFloat = lastFloat; }
-
-    Vector<FloatWithRect>& floats() { return m_floats; }
-
-    unsigned floatIndex() const { return m_floatIndex; }
-    void setFloatIndex(unsigned floatIndex) { m_floatIndex = floatIndex; }
 
     LayoutUnit adjustedLogicalLineTop() const { return m_adjustedLogicalLineTop; }
     void setAdjustedLogicalLineTop(LayoutUnit value) { m_adjustedLogicalLineTop = value; }
@@ -124,19 +156,18 @@ public:
     LayoutUnit& prevFloatBottomFromAnonymousInlineBlock() { return m_prevFloatBottomFromAnonymousInlineBlock; }
     LayoutUnit& maxFloatBottomFromAnonymousInlineBlock() { return m_maxFloatBottomFromAnonymousInlineBlock; }
 
+    FloatList& floatList() { return m_floatList; }
+
 private:
     LineInfo m_lineInfo;
     LayoutUnit m_endLineLogicalTop;
-    RootInlineBox* m_endLine;
-
-    FloatingObject* m_lastFloat;
-    Vector<FloatWithRect> m_floats;
-    unsigned m_floatIndex;
+    RootInlineBox* m_endLine { nullptr };
 
     LayoutUnit m_adjustedLogicalLineTop;
 
-    RenderFlowThread* m_flowThread;
+    RenderFlowThread* m_flowThread { nullptr };
 
+    FloatList m_floatList;
     // FIXME: Should this be a range object instead of two ints?
     LayoutUnit& m_repaintLogicalTop;
     LayoutUnit& m_repaintLogicalBottom;
