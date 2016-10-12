@@ -73,6 +73,11 @@ enum class GammaAndColorProfileOption {
     Ignored
 };
 
+enum class DecodingMode {
+    OnDemand,
+    Immediate
+};
+
 class ImageFrame {
     friend class ImageFrameCache;
 public:

@@ -82,10 +82,6 @@ public:
     ImageOrientation frameOrientationAtIndex(size_t);
     NativeImagePtr frameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
 
-#if USE(DIRECT2D)
-    void setRenderTarget(GraphicsContext&);
-#endif
-
 private:
     template<typename T, T (ImageDecoder::*functor)() const>
     T metadata(const T& defaultValue, Optional<T>* cachedValue = nullptr);

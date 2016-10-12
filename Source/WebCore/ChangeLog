@@ -1,3 +1,48 @@
+2016-10-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Add the option to immediately decode an image frame and control its memory caching
+        https://bugs.webkit.org/show_bug.cgi?id=163298
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes two things. (1) An option is added to immediately decode an
+        image frame. This can be done by adding kCGImageSourceShouldCacheImmediately
+        to the ImageSource options dictionary. (2) BitmapImage should also control
+        when the image frame is actually deleted from memory. This can be done by
+        calling CGImageSourceCreateThumbnailAtIndex(). CG does not keep a reference
+        to the returned CGImageRef.
+
+        * platform/graphics/ImageFrame.h: Adding the DecodingMode enum class.
+        Ideally this should be a member of ImageDecoder class. But since we
+        have three header files for ImageDecoder, this can be added here till
+        the three files combined in one header file.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::setRenderTarget): Deleted.
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setRenderTarget):
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::setRenderTarget): Deleted.
+        Unrelated change. The native image decoder is available from the ImageSource.
+        ImageSource::setTarget() does not need not to get it through ImageFrameCache.
+        
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::createImageSourceOptions): Clean this function by using CFMutableDictionary.
+        (WebCore::imageSourceOptions): Cache two default ImageSource options and create new
+        ones for the non default cases.
+
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Use the appropriate ImageSource function
+
+        * platform/graphics/cg/ImageDecoderCG.h:
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::createFrameImageAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+         Change functions' signature to include a DecodingMode argument.
+
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
         select.options may return too many option elements

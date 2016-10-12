@@ -137,7 +137,7 @@ namespace WebCore {
         
         float frameDurationAtIndex(size_t);
         
-        NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel);
+        NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, DecodingMode = DecodingMode::OnDemand);
 
         void setIgnoreGammaAndColorProfile(bool flag) { m_ignoreGammaAndColorProfile = flag; }
         bool ignoresGammaAndColorProfile() const { return m_ignoreGammaAndColorProfile; }

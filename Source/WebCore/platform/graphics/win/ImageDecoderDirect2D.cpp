@@ -192,7 +192,7 @@ void ImageDecoder::setRenderTarget(ID2D1RenderTarget* renderTarget)
     m_renderTarget = renderTarget;
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, DecodingMode) const
 {
     if (!m_nativeDecoder)
         return nullptr;

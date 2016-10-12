@@ -32,6 +32,7 @@
 #if USE(CG)
 #include "ImageDecoderCG.h"
 #elif USE(DIRECT2D)
+#include "GraphicsContext.h"
 #include "ImageDecoderDirect2D.h"
 #include <WinCodec.h>
 #else
@@ -113,6 +114,16 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     m_frameCache.setDecoder(m_decoder.get());
     return true;
 }
+
+#if USE(DIRECT2D)
+void ImageSource::setRenderTarget(GraphicsContext& context)
+{
+    if (!isDecoderAvailable())
+        return;
+
+    m_decoder->setRenderTarget(context.platformContext());
+}
+#endif
 
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
