@@ -1,5 +1,37 @@
 2016-10-11  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r203611. rdar://problem/28476958
+
+    2016-07-22  Daniel Bates  <dabates@apple.com>
+
+            CSP: object-src and plugin-types directives are not respected for plugin replacements
+            https://bugs.webkit.org/show_bug.cgi?id=159761
+            <rdar://problem/27365724>
+
+            Reviewed by Brent Fulgham.
+
+            Add layout tests to ensure that we apply the CSP object-src and plugin-types directives to content
+            that loads with either the QuickTime plugin replacement or YouTube plugin replacement.
+
+            * security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html: Added.
+            * security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html: Added.
+            * security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html: Added.
+            * security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type-expected.txt: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html: Added.
+            * security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html: Added.
+
+2016-10-11  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r203522. rdar://problem/28476959
 
     2016-07-21  Daniel Bates  <dabates@apple.com>
