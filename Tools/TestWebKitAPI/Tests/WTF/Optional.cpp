@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#include "Counters.h"
 #include <wtf/Optional.h>
 
 namespace TestWebKitAPI {
@@ -147,52 +146,5 @@ TEST(WTF_Optional, Inequality)
     EXPECT_TRUE(1 != unengaged1);
 }
 
-TEST(WTF_Optional, MoveConstructor)
-{
-    {
-        CopyMoveCounter::TestingScope scope;
-
-        Optional<CopyMoveCounter> optional(InPlace);
-
-        EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
-        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
-        EXPECT_EQ(0U, CopyMoveCounter::moveCount);
-
-        EXPECT_TRUE(static_cast<bool>(optional));
-    
-        Optional<CopyMoveCounter> movedTo(WTFMove(optional));
-
-        EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
-        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
-        EXPECT_EQ(1U, CopyMoveCounter::moveCount);
-
-        EXPECT_FALSE(static_cast<bool>(optional));
-        EXPECT_TRUE(static_cast<bool>(movedTo));
-    }
-}
-
-TEST(WTF_Optional, MoveAssignment)
-{
-    {
-        CopyMoveCounter::TestingScope scope;
-
-        Optional<CopyMoveCounter> optional(InPlace);
-
-        EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
-        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
-        EXPECT_EQ(0U, CopyMoveCounter::moveCount);
-
-        EXPECT_TRUE(static_cast<bool>(optional));
-    
-        Optional<CopyMoveCounter> movedTo = WTFMove(optional);
-
-        EXPECT_EQ(1U, CopyMoveCounter::constructionCount);
-        EXPECT_EQ(0U, CopyMoveCounter::copyCount);
-        EXPECT_EQ(1U, CopyMoveCounter::moveCount);
-
-        EXPECT_FALSE(static_cast<bool>(optional));
-        EXPECT_TRUE(static_cast<bool>(movedTo));
-    }
-}
 
 } // namespace TestWebKitAPI

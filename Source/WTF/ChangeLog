@@ -1,3 +1,16 @@
+2016-10-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207225.
+
+        This change causes debug tests to exit early with crashes.
+
+        Reverted changeset:
+
+        "Optional's move-constructor and move-assignment operator
+        don't disengage the value being moved from"
+        https://bugs.webkit.org/show_bug.cgi?id=163309
+        http://trac.webkit.org/changeset/207225
+
 2016-10-11  Sam Weinig  <sam@webkit.org>
 
         Optional's move-constructor and move-assignment operator don't disengage the value being moved from
