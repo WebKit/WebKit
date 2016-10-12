@@ -38,6 +38,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "Settings.h"
@@ -305,6 +306,11 @@ Node::InsertionNotificationRequest HTMLImageElement::insertedInto(ContainerNode&
         m_form = m_formSetByParser;
         m_formSetByParser = nullptr;
         m_form->registerImgElement(this);
+    }
+
+    if (m_form && rootElement() != m_form->rootElement()) {
+        m_form->removeImgElement(this);
+        m_form = nullptr;
     }
 
     if (!m_form) {
