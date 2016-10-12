@@ -1,3 +1,31 @@
+2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Now playing media sessions are always cleared for the active foreground tab
+        https://bugs.webkit.org/show_bug.cgi?id=163310
+        <rdar://problem/28573301>
+
+        Reviewed by Jer Noble.
+
+        Currently, we clear out Now Playing info whenever we set the visibility of Now Playing controls to Never. This
+        is incorrect, as the Now Playing session needs to still be active (just not visible) in this state. Instead, we
+        should not be taking the active/foregrounded-ness of a media session for Now Playing into account in
+        MediaElementSession::canShowControlsManager so that even if a media session is in the active/foreground tab, we
+        will update the Now Playing session with the latest info. However, when setting the visibility, we now check
+        and see if the session allows Now Playing visibility, and set the Now Playing visibility to Always or Never
+        depending on the answer.
+
+        Tweaked existing unit tests in NowPlayingControlsTests.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager):
+        (WebCore::MediaElementSession::allowsNowPlayingControlsVisibility):
+        (WebCore::MediaElementSession::pageAllowsNowPlayingControls): Deleted.
+        * html/MediaElementSession.h:
+        * platform/audio/PlatformMediaSession.h:
+        (WebCore::PlatformMediaSession::allowsNowPlayingControlsVisibility):
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::updateNowPlayingInfo):
+
 2016-10-12  Zalan Bujtas  <zalan@apple.com>
 
         Refactor LineLayoutState's float box handling.

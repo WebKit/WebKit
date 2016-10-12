@@ -125,6 +125,7 @@ public:
     double mostRecentUserInteractionTime() const;
 
     bool allowsPlaybackControlsForAutoplayingAudio() const;
+    bool allowsNowPlayingControlsVisibility() const override;
 
 private:
 
@@ -141,8 +142,6 @@ private:
 #endif
     bool updateIsMainContent() const;
     void mainContentCheckTimerFired();
-
-    bool pageAllowsNowPlayingControls() const;
 
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
