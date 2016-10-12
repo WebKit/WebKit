@@ -163,17 +163,24 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     return slot.getValue(exec, index);
 }
 
-static ALWAYS_INLINE void putLength(ExecState* exec, VM& vm, JSObject* obj, JSValue value)
+static ALWAYS_INLINE bool putLength(ExecState* exec, VM& vm, JSObject* obj, JSValue value)
 {
     PutPropertySlot slot(obj);
-    obj->methodTable()->put(obj, exec, vm.propertyNames->length, value, slot);
+    return obj->methodTable()->put(obj, exec, vm.propertyNames->length, value, slot);
 }
 
 static ALWAYS_INLINE void setLength(ExecState* exec, VM& vm, JSObject* obj, unsigned value)
 {
-    if (isJSArray(obj))
-        jsCast<JSArray*>(obj)->setLength(exec, value);
-    putLength(exec, vm, obj, jsNumber(value));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    static const bool throwException = true;
+    if (isJSArray(obj)) {
+        jsCast<JSArray*>(obj)->setLength(exec, value, throwException);
+        RETURN_IF_EXCEPTION(scope, void());
+    }
+    bool success = putLength(exec, vm, obj, jsNumber(value));
+    RETURN_IF_EXCEPTION(scope, void());
+    if (UNLIKELY(!success))
+        throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 inline bool speciesWatchpointsValid(ExecState* exec, JSObject* thisObject)
@@ -874,8 +881,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         JSValue v = getProperty(exec, thisObj, k);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (v)
-            result->putDirectIndex(exec, n, v);
+            result->putDirectIndex(exec, n, v, 0, PutDirectIndexShouldThrow);
     }
+    scope.release();
     setLength(exec, vm, result, n);
     return JSValue::encode(result);
 }
@@ -907,6 +915,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         }
 
         setLength(exec, vm, result, 0);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        scope.release();
         setLength(exec, vm, thisObj, length);
         return JSValue::encode(result);
     }
@@ -972,6 +982,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
+    scope.release();
     setLength(exec, vm, thisObj, length - deleteCount + additionalArgs);
     return JSValue::encode(result);
 }

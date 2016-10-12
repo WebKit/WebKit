@@ -1,3 +1,46 @@
+2016-10-12  Mark Lam  <mark.lam@apple.com>
+
+        Array.prototype.slice should not modify frozen objects.
+        https://bugs.webkit.org/show_bug.cgi?id=163338
+
+        Reviewed by Filip Pizlo.
+
+        1. The ES6 spec for Array.prototype.slice
+           (https://tc39.github.io/ecma262/#sec-array.prototype.slice) states that it uses
+           the CreateDataPropertyOrThrow()
+           (https://tc39.github.io/ecma262/#sec-createdatapropertyorthrow) to add items to
+           the result array.  The spec for CreateDataPropertyOrThrow states:
+
+           "This abstract operation creates a property whose attributes are set to the
+           same defaults used for properties created by the ECMAScript language assignment
+           operator. Normally, the property will not already exist. If it does exist and
+           is not configurable or if O is not extensible, [[DefineOwnProperty]] will
+           return false causing this operation to throw a TypeError exception."
+
+        2. Array.prototype.slice also uses a Set function
+           (https://tc39.github.io/ecma262/#sec-set-o-p-v-throw) to set the "length"
+           property and passes true for the Throw argument.  Ultimately, it ends up
+           calling the OrdinarySet function
+           (https://tc39.github.io/ecma262/#sec-ordinaryset) that will fail if the
+           property is not writable.  This failure should result in a TypeError being
+           thrown in Set.
+
+           Since the properties of frozen objects are not extensible, not configurable,
+           and not writeable, Array.prototype.slice should fail to write to the result
+           array if it is frozen.
+
+        If the source array being sliced has 1 or more elements, (1) will take effect
+        when we try to set the element in the non-writeable result obj.
+        If the source array being sliced has 0 elements, we will not set any elements and
+        (1) will not trigger.  Subsequently, (2) will take effect when we will try to
+        set the length of the result obj.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::putLength):
+        (JSC::setLength):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+
 2016-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         Remove JITWriteBarrier.h
