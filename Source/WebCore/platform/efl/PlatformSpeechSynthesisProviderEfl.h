@@ -65,7 +65,7 @@ private:
     int convertPitchToEspeakValue(float) const;
 
     espeak_VOICE* currentVoice() const;
-    String voiceName(PassRefPtr<PlatformSpeechSynthesisUtterance>) const;
+    String voiceName(PlatformSpeechSynthesisUtterance&) const;
     void fireSpeechEvent(SpeechEvent);
 
     bool m_isEngineStarted;

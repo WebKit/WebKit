@@ -30,7 +30,7 @@ namespace WebCore {
 
 class BatteryProviderEflClient {
 public:
-    virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>) = 0;
+    virtual void didChangeBatteryStatus(const AtomicString& eventType, RefPtr<BatteryStatus>&&) = 0;
 };
 
 } // namespace WebCore

@@ -1,3 +1,23 @@
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Stop using PassRefPtr in platform/efl
+        https://bugs.webkit.org/show_bug.cgi?id=163321
+
+        Reviewed by Laszlo Gombos.
+
+        Stop using PassRefPtr in platform/efl.
+
+        * platform/efl/BatteryProviderEfl.cpp:
+        (WebCore::batteryProperties):
+        (WebCore::BatteryProviderEfl::setBatteryStatus):
+        (WebCore::BatteryProviderEfl::dispatchEvent):
+        * platform/efl/BatteryProviderEfl.h:
+        * platform/efl/BatteryProviderEflClient.h:
+        * platform/efl/PlatformSpeechSynthesisProviderEfl.cpp:
+        (WebCore::PlatformSpeechSynthesisProviderEfl::voiceName):
+        (WebCore::PlatformSpeechSynthesisProviderEfl::speak):
+        * platform/efl/PlatformSpeechSynthesisProviderEfl.h:
+
 2016-10-12  Youenn Fablet  <youenn@apple.com>
 
         Attribute setter binding generated code should use more references

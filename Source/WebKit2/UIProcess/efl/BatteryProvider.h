@@ -49,7 +49,7 @@ private:
     explicit BatteryProvider(WKContextRef);
 
     // BatteryProviderEflClient interface.
-    virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);
+    virtual void didChangeBatteryStatus(const AtomicString& eventType, RefPtr<WebCore::BatteryStatus>&&);
 
     WKRetainPtr<WKBatteryManagerRef> m_batteryManager;
     WebCore::BatteryProviderEfl m_provider;

@@ -39,8 +39,10 @@ public:
     virtual void startUpdating();
     virtual void stopUpdating();
 
-    void setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus>);
+    void setBatteryStatus(Ref<BatteryStatus>&&);
     BatteryStatus* batteryStatus() const;
+
+    void dispatchEvent(const AtomicString& type);
 
 private:
     static void enumerateDevices(void* data, const Eldbus_Message*, Eldbus_Pending*);

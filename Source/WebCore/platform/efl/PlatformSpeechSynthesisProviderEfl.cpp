@@ -64,13 +64,13 @@ int PlatformSpeechSynthesisProviderEfl::convertPitchToEspeakValue(float pitch) c
     return pitch * 50;
 }
 
-String PlatformSpeechSynthesisProviderEfl::voiceName(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance) const
+String PlatformSpeechSynthesisProviderEfl::voiceName(PlatformSpeechSynthesisUtterance& utterance) const
 {
     if (!m_platformSpeechSynthesizer)
         return String();
 
-    if (!utterance->lang().isEmpty()) {
-        const String& language = utterance->lang();
+    if (!utterance.lang().isEmpty()) {
+        const String& language = utterance.lang();
         const Vector<RefPtr<PlatformSpeechSynthesisVoice>>& voiceList = m_platformSpeechSynthesizer->voiceList();
         for (const auto& voice : voiceList) {
             // Espeak adds an empty character at the beginning of the language
@@ -144,7 +144,7 @@ void PlatformSpeechSynthesisProviderEfl::speak(RefPtr<PlatformSpeechSynthesisUtt
     }
 
     m_utterance = WTFMove(utterance);
-    String voice = voiceName(m_utterance);
+    String voice = voiceName(*m_utterance);
     espeak_SetVoiceByName(voice.utf8().data());
     espeak_SetParameter(espeakRATE, convertRateToEspeakValue(m_utterance->rate()), 0);
     espeak_SetParameter(espeakVOLUME, convertVolumeToEspeakValue(m_utterance->volume()), 0);

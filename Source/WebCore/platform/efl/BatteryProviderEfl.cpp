@@ -124,15 +124,16 @@ static void batteryProperties(void* data, const Eldbus_Message* message, Eldbus_
         }
     }
 
-    RefPtr<BatteryStatus> batteryStatus = BatteryStatus::create(charging, chargingTime, dischargingTime, level / 100);
+    auto batteryStatus = BatteryStatus::create(charging, chargingTime, dischargingTime, level / 100);
+    client->setBatteryStatus(WTFMove(batteryStatus));
     if (chargingChanged)
-        client->setBatteryStatus(eventNames().chargingchangeEvent, batteryStatus);
+        client->dispatchEvent(eventNames().chargingchangeEvent);
     if (chargingTimeChanged)
-        client->setBatteryStatus(eventNames().chargingtimechangeEvent, batteryStatus);
+        client->dispatchEvent(eventNames().chargingtimechangeEvent);
     if (dischargingTimeChanged)
-        client->setBatteryStatus(eventNames().dischargingtimechangeEvent, batteryStatus);
+        client->dispatchEvent(eventNames().dischargingtimechangeEvent);
     if (levelChanged)
-        client->setBatteryStatus(eventNames().levelchangeEvent, batteryStatus);
+        client->dispatchEvent(eventNames().levelchangeEvent);
 }
 
 static void batteryPropertiesChanged(void* data, const Eldbus_Message*)
@@ -219,10 +220,14 @@ void BatteryProviderEfl::startUpdating()
     eldbus_proxy_call(m_proxy, "EnumerateDevices", enumerateDevices, this, -1, "");
 }
 
-void BatteryProviderEfl::setBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> batteryStatus)
+void BatteryProviderEfl::setBatteryStatus(Ref<BatteryStatus>&& batteryStatus)
 {
-    m_batteryStatus = batteryStatus;
-    m_client->didChangeBatteryStatus(eventType, m_batteryStatus);
+    m_batteryStatus = WTFMove(batteryStatus);
+}
+
+void BatteryProviderEfl::dispatchEvent(const AtomicString& type)
+{
+    m_client->didChangeBatteryStatus(type, m_batteryStatus.copyRef());
 }
 
 }

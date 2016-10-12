@@ -91,7 +91,7 @@ void BatteryProvider::stopUpdating()
     m_provider.stopUpdating();
 }
 
-void BatteryProvider::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> status)
+void BatteryProvider::didChangeBatteryStatus(const AtomicString& eventType, RefPtr<BatteryStatus>&& status)
 {
     WKRetainPtr<WKBatteryStatusRef> wkBatteryStatus = adoptWK(WKBatteryStatusCreate(status->charging(), status->chargingTime(), status->dischargingTime(), status->level()));
 
