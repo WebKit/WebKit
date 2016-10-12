@@ -2427,8 +2427,13 @@ void Document::clearAXObjectCache()
     m_axObjectCache = nullptr;
 }
 
+static bool hasEverCreatedAnAXObjectCache = false;
+
 AXObjectCache* Document::existingAXObjectCache() const
 {
+    if (!hasEverCreatedAnAXObjectCache)
+        return nullptr;
+
     Document& topDocument = this->topDocument();
     if (!topDocument.hasLivingRenderTree())
         return nullptr;
@@ -2451,8 +2456,10 @@ AXObjectCache* Document::axObjectCache() const
         return nullptr;
 
     ASSERT(&topDocument == this || !m_axObjectCache);
-    if (!topDocument.m_axObjectCache)
+    if (!topDocument.m_axObjectCache) {
         topDocument.m_axObjectCache = std::make_unique<AXObjectCache>(topDocument);
+        hasEverCreatedAnAXObjectCache = true;
+    }
     return topDocument.m_axObjectCache.get();
 }
 

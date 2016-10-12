@@ -1,3 +1,18 @@
+2016-10-12  Andreas Kling  <akling@apple.com>
+
+        Make Document::existingAXObjectCache() fast with accessibility disabled.
+        <https://webkit.org/b/163347>
+
+        Reviewed by Antti Koivisto.
+
+        Instruments says we were spending 2.3% of Dromaeo/dom-modify.html in this function,
+        traversing ancestors. Track whether we've ever had a cache, and use that knowledge
+        to return early if possible.
+
+        * dom/Document.cpp:
+        (WebCore::Document::existingAXObjectCache):
+        (WebCore::Document::axObjectCache):
+
 2016-10-12  Jeremy Huddleston Sequoia  <jeremyhu@apple.com>
 
         [SOUP] trunk r207192 fails to compile due to missing std::function being unavailable (missing #include <functional>)
