@@ -267,7 +267,7 @@ TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_cookies_delete)
     ASSERT_EQ(0, countHostnamesWithCookies(cookieManager));
 }
 
-TEST_F(EWK2CookieManagerTest, DISABLED_ewk_cookie_manager_permanent_storage)
+TEST_F(EWK2CookieManagerTest, ewk_cookie_manager_permanent_storage)
 {
     std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);

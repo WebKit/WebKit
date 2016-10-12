@@ -121,7 +121,7 @@ TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_async_icon_get)
     ewk_favicon_database_icon_change_callback_del(database, requestFaviconData);
 }
 
-TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_clear)
+TEST_F(EWK2FaviconDatabaseTest, DISABLED_ewk_favicon_database_clear)
 {
     std::unique_ptr<EWK2UnitTestServer> httpServer1 = std::make_unique<EWK2UnitTestServer>();
     httpServer1->run(serverCallback);
@@ -156,7 +156,7 @@ TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_clear)
 
     while (!data2.icon)
         ecore_main_loop_iterate();
-    
+
     ASSERT_TRUE(data2.icon);
     evas_object_unref(data2.icon);
 
