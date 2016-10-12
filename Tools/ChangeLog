@@ -1,3 +1,14 @@
+2016-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion after switching to URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=163350
+        rdar://problem/28739938
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        (TEST):
+
 2016-10-11  Sam Weinig  <sam@webkit.org>
 
         Optional's move-constructor and move-assignment operator don't disengage the value being moved from

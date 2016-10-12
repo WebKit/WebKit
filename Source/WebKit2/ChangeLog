@@ -1,3 +1,19 @@
+2016-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion after switching to URLParser
+        https://bugs.webkit.org/show_bug.cgi?id=163350
+        rdar://problem/28739938
+
+        Reviewed by Brady Eidson.
+        
+        Covered by a new API test.
+
+        * UIProcess/API/Cocoa/_WKUserStyleSheet.mm:
+        (-[_WKUserStyleSheet initWithSource:forMainFrameOnly:legacyWhitelist:legacyBlacklist:baseURL:userContentWorld:]):
+        The { } here is not understood by the compiler to mean WebCore::URL(), but rather the empty constructor for the enum ParsedURLStringTag.
+        We used to be unsafely trusting that the URL was valid and canonicalized, but with URLParser we are canonicalizing it,
+        and the assertion (url == m_string) in URL.cpp was failing.
+
 2016-10-12  Anders Carlsson  <andersca@apple.com>
 
         Remove an unused function

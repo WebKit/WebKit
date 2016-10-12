@@ -362,6 +362,12 @@ TEST(WKUserContentController, AddUserStyleSheetBeforeCreatingView)
     expectScriptEvaluatesToColor(webView.get(), backgroundColorScript, greenInRGB);
 }
 
+TEST(WKUserContentController, NonCanonicalizedURL)
+{
+    RetainPtr<_WKUserContentWorld> world = adoptNS([_WKUserContentWorld worldWithName:@"TestWorld"]);
+    RetainPtr<_WKUserStyleSheet> styleSheet = adoptNS([[_WKUserStyleSheet alloc] initWithSource:styleSheetSource forMainFrameOnly:NO legacyWhitelist:@[] legacyBlacklist:@[] baseURL:[[NSURL alloc] initWithString:@"http://CamelCase/"] userContentWorld:world.get()]);
+}
+
 TEST(WKUserContentController, AddUserStyleSheetAfterCreatingView)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
