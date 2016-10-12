@@ -4365,7 +4365,7 @@ sub GenerateDictionaryHeader
     # - Add default header template and header protection.
     push(@headerContentHeader, GenerateHeaderContentHeader($dictionary));
 
-    $headerIncludes{"$dictionaryName.h"} = 1;
+    $headerIncludes{"$className.h"} = 1;
     $headerIncludes{"JSDOMConvert.h"} = 1;
 
     push(@headerContent, "\nnamespace WebCore {\n\n");

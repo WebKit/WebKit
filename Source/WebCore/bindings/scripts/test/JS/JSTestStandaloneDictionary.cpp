@@ -26,7 +26,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-template<> Optional<TestStandaloneDictionary> convertDictionary<TestStandaloneDictionary>(ExecState& state, JSValue value)
+template<> Optional<DictionaryImplName> convertDictionary<DictionaryImplName>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -40,7 +40,7 @@ template<> Optional<TestStandaloneDictionary> convertDictionary<TestStandaloneDi
         throwTypeError(&state, throwScope);
         return Nullopt;
     }
-    TestStandaloneDictionary result;
+    DictionaryImplName result;
     JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
     if (!boolMemberValue.isUndefined()) {
         result.boolMember = convert<IDLBoolean>(state, boolMemberValue);

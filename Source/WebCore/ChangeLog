@@ -1,3 +1,23 @@
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Generated bindings include the wrong header when ImplementedAs is used on a dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=163352
+
+        Reviewed by Ryosuke Niwa.
+
+        Generated bindings include the wrong header when ImplementedAs is used
+        on a dictionary.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryHeader):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        (WebCore::convertDictionary<TestStandaloneDictionary>): Deleted.
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+
 2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore
