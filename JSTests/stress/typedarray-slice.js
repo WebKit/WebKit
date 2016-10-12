@@ -135,8 +135,38 @@ function testSpeciesWithSameBuffer(unused, constructor) {
         return false;
     });
 }
-
 shouldBeTrue("forEachTypedArray(subclasses, testSpeciesWithSameBuffer)");
 
+function testSpeciesWithTransferring(unused, constructor) {
+
+    let array = new constructor(10);
+    Object.defineProperty(constructor, Symbol.species, { get() {
+        transferArrayBuffer(array.buffer);
+        return undefined;
+    }, configurable: true });
+
+    try {
+        array.slice(0,1);
+        return false;
+    } catch (e) { }
+
+    array = new constructor(10);
+    Object.defineProperty(constructor, Symbol.species, { get() {
+        return function(len) {
+            let a = new constructor(len);
+            transferArrayBuffer(a.buffer);
+            return a;
+        }
+    }, configurable: true });
+
+    try {
+        array.slice(0,1);
+        return false;
+    } catch (e) { }
+
+    return true;
+}
+
+shouldBeTrue("forEachTypedArray(typedArrays, testSpeciesWithTransferring)");
 
 finishJSTest();
