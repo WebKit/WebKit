@@ -1,3 +1,22 @@
+2016-10-12  Youenn Fablet  <youenn@apple.com>
+
+        Attribute setter binding generated code should use more references
+        https://bugs.webkit.org/show_bug.cgi?id=163275
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+
 2016-10-11  Youenn Fablet  <youenn@apple.com>
 
         Refactor binding generated casted-this checks for methods

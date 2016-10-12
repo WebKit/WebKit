@@ -281,38 +281,38 @@ bool setJSTestGlobalObjectConstructor(ExecState* state, EncodedJSValue thisValue
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState&, JSTestGlobalObject&, JSValue, ThrowScope&);
 
 bool setJSTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectRegularAttributeFunction>(state, thisValue, encodedValue, "regularAttribute");
 }
 
-static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestGlobalObjectRegularAttributeFunction(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setRegularAttribute(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState&, JSTestGlobalObject&, JSValue, ThrowScope&);
 
 bool setJSTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectPublicAndPrivateAttributeFunction>(state, thisValue, encodedValue, "publicAndPrivateAttribute");
 }
 
-static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setPublicAndPrivateAttribute(WTFMove(nativeValue));
     return true;
@@ -320,19 +320,19 @@ static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeFunction(ExecSt
 
 
 #if ENABLE(TEST_FEATURE)
-static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState&, JSTestGlobalObject&, JSValue, ThrowScope&);
 
 bool setJSTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction>(state, thisValue, encodedValue, "publicAndPrivateConditionalAttribute");
 }
 
-static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunction(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue));
     return true;
@@ -341,19 +341,19 @@ static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeFunc
 #endif
 
 #if ENABLE(TEST_FEATURE)
-static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState*, JSTestGlobalObject*, JSValue, ThrowScope&);
+static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState&, JSTestGlobalObject&, JSValue, ThrowScope&);
 
 bool setJSTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestGlobalObject>::setAttribute<setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction>(state, thisValue, encodedValue, "enabledAtRuntimeAttribute");
 }
 
-static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState* state, JSTestGlobalObject* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeFunction(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
     return true;

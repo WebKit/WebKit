@@ -364,120 +364,120 @@ bool setJSTestTypedefsConstructor(ExecState* state, EncodedJSValue thisValue, En
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsUnsignedLongLongAttrFunction>(state, thisValue, encodedValue, "unsignedLongLongAttr");
 }
 
-static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsUnsignedLongLongAttrFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = convert<IDLUnsignedLongLong>(*state, value, NormalConversion);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLUnsignedLongLong>(state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsImmutableSerializedScriptValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsImmutableSerializedScriptValueFunction>(state, thisValue, encodedValue, "immutableSerializedScriptValue");
 }
 
-static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setImmutableSerializedScriptValue(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestTypedefsAttrWithGetterExceptionFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsAttrWithGetterExceptionFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsAttrWithGetterExceptionFunction>(state, thisValue, encodedValue, "attrWithGetterException");
 }
 
-static inline bool setJSTestTypedefsAttrWithGetterExceptionFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsAttrWithGetterExceptionFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = convert<IDLLong>(*state, value, NormalConversion);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLLong>(state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttrWithGetterException(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestTypedefsAttrWithSetterExceptionFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsAttrWithSetterExceptionFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsAttrWithSetterExceptionFunction>(state, thisValue, encodedValue, "attrWithSetterException");
 }
 
-static inline bool setJSTestTypedefsAttrWithSetterExceptionFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsAttrWithSetterExceptionFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
+    auto& impl = thisObject.wrapped();
     ExceptionCode ec = 0;
-    auto nativeValue = convert<IDLLong>(*state, value, NormalConversion);
+    auto nativeValue = convert<IDLLong>(state, value, NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, throwScope, ec);
+    setDOMException(&state, throwScope, ec);
     return true;
 }
 
 
-static inline bool setJSTestTypedefsStringAttrWithGetterExceptionFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsStringAttrWithGetterExceptionFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsStringAttrWithGetterExceptionFunction>(state, thisValue, encodedValue, "stringAttrWithGetterException");
 }
 
-static inline bool setJSTestTypedefsStringAttrWithGetterExceptionFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsStringAttrWithGetterExceptionFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setStringAttrWithGetterException(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestTypedefsStringAttrWithSetterExceptionFunction(ExecState*, JSTestTypedefs*, JSValue, ThrowScope&);
+static inline bool setJSTestTypedefsStringAttrWithSetterExceptionFunction(ExecState&, JSTestTypedefs&, JSValue, ThrowScope&);
 
 bool setJSTestTypedefsStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestTypedefs>::setAttribute<setJSTestTypedefsStringAttrWithSetterExceptionFunction>(state, thisValue, encodedValue, "stringAttrWithSetterException");
 }
 
-static inline bool setJSTestTypedefsStringAttrWithSetterExceptionFunction(ExecState* state, JSTestTypedefs* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestTypedefsStringAttrWithSetterExceptionFunction(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
+    auto& impl = thisObject.wrapped();
     ExceptionCode ec = 0;
-    auto nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setStringAttrWithSetterException(WTFMove(nativeValue), ec);
-    setDOMException(state, throwScope, ec);
+    setDOMException(&state, throwScope, ec);
     return true;
 }
 

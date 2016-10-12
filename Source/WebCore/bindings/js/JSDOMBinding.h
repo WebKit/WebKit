@@ -335,7 +335,7 @@ enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise };
 
 template<typename JSClass>
 struct BindingCaller {
-    using AttributeSetterFunction = bool(JSC::ExecState*, JSClass*, JSC::JSValue, JSC::ThrowScope&);
+    using AttributeSetterFunction = bool(JSC::ExecState&, JSClass&, JSC::JSValue, JSC::ThrowScope&);
     using AttributeGetterFunction = JSC::JSValue(JSC::ExecState&, JSClass&, JSC::ThrowScope&);
     using OperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSClass*, JSC::ThrowScope&);
     using PromiseOperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSClass*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
@@ -386,8 +386,7 @@ struct BindingCaller {
             ASSERT(JSClass::info());
             return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : false;
         }
-        // FIXME: We should refactor the binding generated code to use references for state and thisObject.
-        return setter(state, thisObject, JSC::JSValue::decode(encodedValue), throwScope);
+        return setter(*state, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
     }
 
     template<AttributeGetterFunction getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>

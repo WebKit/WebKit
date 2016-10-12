@@ -217,19 +217,19 @@ bool setJSTestNodeConstructor(ExecState* state, EncodedJSValue thisValue, Encode
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestNodeNameFunction(ExecState*, JSTestNode*, JSValue, ThrowScope&);
+static inline bool setJSTestNodeNameFunction(ExecState&, JSTestNode&, JSValue, ThrowScope&);
 
 bool setJSTestNodeName(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestNode>::setAttribute<setJSTestNodeNameFunction>(state, thisValue, encodedValue, "name");
 }
 
-static inline bool setJSTestNodeNameFunction(ExecState* state, JSTestNode* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestNodeNameFunction(ExecState& state, JSTestNode& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setName(WTFMove(nativeValue));
     return true;

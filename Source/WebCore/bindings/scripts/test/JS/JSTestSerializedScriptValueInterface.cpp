@@ -247,38 +247,38 @@ bool setJSTestSerializedScriptValueInterfaceConstructor(ExecState* state, Encode
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecState*, JSTestSerializedScriptValueInterface*, JSValue, ThrowScope&);
+static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecState&, JSTestSerializedScriptValueInterface&, JSValue, ThrowScope&);
 
 bool setJSTestSerializedScriptValueInterfaceValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::setAttribute<setJSTestSerializedScriptValueInterfaceValueFunction>(state, thisValue, encodedValue, "value");
 }
 
-static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecState* state, JSTestSerializedScriptValueInterface* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(ExecState*, JSTestSerializedScriptValueInterface*, JSValue, ThrowScope&);
+static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(ExecState&, JSTestSerializedScriptValueInterface&, JSValue, ThrowScope&);
 
 bool setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestSerializedScriptValueInterface>::setAttribute<setJSTestSerializedScriptValueInterfaceCachedValueFunction>(state, thisValue, encodedValue, "cachedValue");
 }
 
-static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(ExecState* state, JSTestSerializedScriptValueInterface* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = SerializedScriptValue::create(state, value, 0, 0);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setCachedValue(WTFMove(nativeValue));
     return true;

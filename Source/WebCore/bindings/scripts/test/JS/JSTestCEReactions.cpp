@@ -218,67 +218,67 @@ bool setJSTestCEReactionsConstructor(ExecState* state, EncodedJSValue thisValue,
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecState*, JSTestCEReactions*, JSValue, ThrowScope&);
+static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecState&, JSTestCEReactions&, JSValue, ThrowScope&);
 
 bool setJSTestCEReactionsAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsAttributeWithCEReactionsFunction>(state, thisValue, encodedValue, "attributeWithCEReactions");
 }
 
-static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecState* state, JSTestCEReactions* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithCEReactions(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(ExecState*, JSTestCEReactions*, JSValue, ThrowScope&);
+static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(ExecState&, JSTestCEReactions&, JSValue, ThrowScope&);
 
 bool setJSTestCEReactionsReflectAttributeWithCEReactions(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsReflectAttributeWithCEReactionsFunction>(state, thisValue, encodedValue, "reflectAttributeWithCEReactions");
 }
 
-static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(ExecState* state, JSTestCEReactions* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState*, JSTestCEReactions*, JSValue, ThrowScope&);
+static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState&, JSTestCEReactions&, JSValue, ThrowScope&);
 
 bool setJSTestCEReactionsStringifierAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestCEReactions>::setAttribute<setJSTestCEReactionsStringifierAttributeFunction>(state, thisValue, encodedValue, "stringifierAttribute");
 }
 
-static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState* state, JSTestCEReactions* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
-    Ref<TestCEReactionsStringifier> forwardedImpl = castedThis->wrapped().stringifierAttribute();
+    Ref<TestCEReactionsStringifier> forwardedImpl = thisObject.wrapped().stringifierAttribute();
     auto& impl = forwardedImpl.get();
-    auto nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;

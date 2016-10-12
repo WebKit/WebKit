@@ -194,18 +194,18 @@ bool setJSTestJSBuiltinConstructorConstructor(ExecState* state, EncodedJSValue t
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomFunction(ExecState*, JSTestJSBuiltinConstructor*, JSValue, ThrowScope&);
+static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomFunction(ExecState&, JSTestJSBuiltinConstructor&, JSValue, ThrowScope&);
 
 bool setJSTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestJSBuiltinConstructor>::setAttribute<setJSTestJSBuiltinConstructorTestAttributeRWCustomFunction>(state, thisValue, encodedValue, "testAttributeRWCustom");
 }
 
-static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomFunction(ExecState* state, JSTestJSBuiltinConstructor* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomFunction(ExecState& state, JSTestJSBuiltinConstructor& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    castedThis->setTestAttributeRWCustom(*state, value);
+    thisObject.setTestAttributeRWCustom(state, value);
     return true;
 }
 

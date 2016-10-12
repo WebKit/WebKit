@@ -361,80 +361,80 @@ bool setJSTestNondeterministicConstructor(ExecState* state, EncodedJSValue thisV
     return domObject->putDirect(state->vm(), state->propertyNames().constructor, value);
 }
 
-static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState&, JSTestNondeterministic&, JSValue, ThrowScope&);
 
 bool setJSTestNondeterministicNondeterministicWriteableAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicWriteableAttrFunction>(state, thisValue, encodedValue, "nondeterministicWriteableAttr");
 }
 
-static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestNondeterministicNondeterministicWriteableAttrFunction(ExecState& state, JSTestNondeterministic& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setNondeterministicWriteableAttr(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState&, JSTestNondeterministic&, JSValue, ThrowScope&);
 
 bool setJSTestNondeterministicNondeterministicExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicExceptionAttr");
 }
 
-static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestNondeterministicNondeterministicExceptionAttrFunction(ExecState& state, JSTestNondeterministic& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setNondeterministicExceptionAttr(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState&, JSTestNondeterministic&, JSValue, ThrowScope&);
 
 bool setJSTestNondeterministicNondeterministicGetterExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicGetterExceptionAttr");
 }
 
-static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestNondeterministicNondeterministicGetterExceptionAttrFunction(ExecState& state, JSTestNondeterministic& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
-    auto nativeValue = value.toWTFString(state);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setNondeterministicGetterExceptionAttr(WTFMove(nativeValue));
     return true;
 }
 
 
-static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState*, JSTestNondeterministic*, JSValue, ThrowScope&);
+static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState&, JSTestNondeterministic&, JSValue, ThrowScope&);
 
 bool setJSTestNondeterministicNondeterministicSetterExceptionAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return BindingCaller<JSTestNondeterministic>::setAttribute<setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction>(state, thisValue, encodedValue, "nondeterministicSetterExceptionAttr");
 }
 
-static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState* state, JSTestNondeterministic* castedThis, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestNondeterministicNondeterministicSetterExceptionAttrFunction(ExecState& state, JSTestNondeterministic& thisObject, JSValue value, ThrowScope& throwScope)
 {
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    auto& impl = castedThis->wrapped();
+    auto& impl = thisObject.wrapped();
     ExceptionCode ec = 0;
-    auto nativeValue = value.toWTFString(state);
+    auto nativeValue = value.toWTFString(&state);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setNondeterministicSetterExceptionAttr(WTFMove(nativeValue), ec);
-    setDOMException(state, throwScope, ec);
+    setDOMException(&state, throwScope, ec);
     return true;
 }
 
