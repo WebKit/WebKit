@@ -121,8 +121,10 @@ void HeapSnapshot::finalize()
     for (auto& node : m_nodes) {
         ASSERT(node.cell);
         ASSERT(!(reinterpret_cast<intptr_t>(node.cell) & CellToSweepTag));
-        if (previousCell)
+        if (node.cell == previousCell) {
+            dataLog("Seeing same cell twice: ", RawPointer(previousCell), "\n");
             ASSERT(node.cell != previousCell);
+        }
         previousCell = node.cell;
     }
 #endif

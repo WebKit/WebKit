@@ -237,9 +237,6 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
     m_bytesVisited += container.cellSize();
     
     m_stack.append(cell);
-
-    if (UNLIKELY(m_heapSnapshotBuilder))
-        m_heapSnapshotBuilder->appendNode(cell);
 }
 
 void SlotVisitor::markAuxiliary(const void* base)
@@ -318,6 +315,11 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
         // https://bugs.webkit.org/show_bug.cgi?id=162462
         cell->methodTable()->visitChildren(const_cast<JSCell*>(cell), *this);
         break;
+    }
+    
+    if (UNLIKELY(m_heapSnapshotBuilder)) {
+        if (cell->cellState() != CellState::OldBlack)
+            m_heapSnapshotBuilder->appendNode(const_cast<JSCell*>(cell));
     }
 }
 
