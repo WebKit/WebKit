@@ -34,15 +34,16 @@ namespace WebCore {
 class History;
 class SerializedScriptValue;
 
-struct PopStateEventInit : public EventInit {
-    Deprecated::ScriptValue state;
-};
-
 class PopStateEvent final : public Event {
 public:
     virtual ~PopStateEvent();
     static Ref<PopStateEvent> create(RefPtr<SerializedScriptValue>&&, PassRefPtr<History>);
-    static Ref<PopStateEvent> createForBindings(const AtomicString&, const PopStateEventInit&);
+
+    struct Init : EventInit {
+        JSC::JSValue state;
+    };
+
+    static Ref<PopStateEvent> create(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted = IsTrusted::No);
     static Ref<PopStateEvent> createForBindings();
 
     JSC::JSValue state() const { return m_state; }
@@ -56,7 +57,7 @@ public:
 
 private:
     PopStateEvent() = default;
-    PopStateEvent(const AtomicString&, const PopStateEventInit&);
+    PopStateEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
     explicit PopStateEvent(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
 
     Deprecated::ScriptValue m_state;

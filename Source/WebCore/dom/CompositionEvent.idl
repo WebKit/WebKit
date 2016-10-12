@@ -24,11 +24,10 @@
  */
 
 [
-    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional CompositionEventInit eventInitDict),
 ] interface CompositionEvent : UIEvent {
 
-    [InitializedByEventConstructor] readonly attribute DOMString data;
+    readonly attribute DOMString data;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initCompositionEvent(optional DOMString typeArg = "undefined",
@@ -39,3 +38,6 @@
 
 };
 
+dictionary CompositionEventInit : UIEventInit {
+    DOMString data = "";
+};

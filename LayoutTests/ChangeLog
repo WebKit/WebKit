@@ -1,3 +1,35 @@
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Update remaining DOM events to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163319
+
+        Reviewed by Darin Adler.
+
+        Rebaseline several existing tests to reflect minor behavior changes:
+        - We now properly use the default member value when an explicit undefined
+          is passed.
+        - We throw more exceptions when bad input is passed.
+        - Exception messages are sometimes slightly different.
+
+        * fast/events/constructors/before-load-event-constructor-expected.txt:
+        * fast/events/constructors/before-load-event-constructor.html:
+        * fast/events/constructors/composition-event-constructor-expected.txt:
+        * fast/events/constructors/composition-event-constructor.html:
+        * fast/events/constructors/error-event-constructor-expected.txt:
+        * fast/events/constructors/error-event-constructor.html:
+        * fast/events/constructors/focus-event-constructor-expected.txt:
+        * fast/events/constructors/focus-event-constructor.html:
+        * fast/events/constructors/hash-change-event-constructor-expected.txt:
+        * fast/events/constructors/hash-change-event-constructor.html:
+        * fast/events/constructors/pop-state-event-constructor-expected.txt:
+        * fast/events/constructors/pop-state-event-constructor.html:
+        * fast/events/constructors/transition-event-constructor-expected.txt:
+        * fast/events/constructors/transition-event-constructor.html:
+        * fast/events/constructors/webkit-animation-event-constructor-expected.txt:
+        * fast/events/constructors/webkit-animation-event-constructor.html:
+        * fast/events/constructors/webkit-transition-event-constructor-expected.txt:
+        * fast/events/constructors/webkit-transition-event-constructor.html:
+
 2016-10-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Mark url tests to failure

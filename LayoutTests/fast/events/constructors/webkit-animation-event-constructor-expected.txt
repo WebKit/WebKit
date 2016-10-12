@@ -13,7 +13,7 @@ PASS new WebKitAnimationEvent('eventType', { cancelable: false }).cancelable is 
 PASS new WebKitAnimationEvent('eventType', { cancelable: true }).cancelable is true
 PASS new WebKitAnimationEvent('eventType', { animationName: 'doremi' }).animationName is "doremi"
 PASS new WebKitAnimationEvent('eventType', { animationName: '' }).animationName is ""
-PASS new WebKitAnimationEvent('eventType', { animationName: undefined }).animationName is "undefined"
+PASS new WebKitAnimationEvent('eventType', { animationName: undefined }).animationName is ""
 PASS new WebKitAnimationEvent('eventType', { animationName: null }).animationName is "null"
 PASS new WebKitAnimationEvent('eventType', { animationName: false }).animationName is "false"
 PASS new WebKitAnimationEvent('eventType', { animationName: true }).animationName is "true"
@@ -28,19 +28,19 @@ PASS new WebKitAnimationEvent('eventType', { elapsedTime: 0 }).elapsedTime is 0
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: 123.45 }).elapsedTime is 123.45
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: -123.45 }).elapsedTime is -123.45
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: 18446744073709551615 }).elapsedTime is 18446744073709551615
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: NaN }).elapsedTime is NaN
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: Infinity }).elapsedTime is Infinity
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: -Infinity }).elapsedTime is -Infinity
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: undefined }).elapsedTime is NaN
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: NaN }).elapsedTime threw exception TypeError: The provided value is non-finite.
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: Infinity }).elapsedTime threw exception TypeError: The provided value is non-finite.
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: -Infinity }).elapsedTime threw exception TypeError: The provided value is non-finite.
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: undefined }).elapsedTime is 0
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: null }).elapsedTime is 0
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: false }).elapsedTime is 0
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: true }).elapsedTime is 1
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: '' }).elapsedTime is 0
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: 'doremi' }).elapsedTime is NaN
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: 'doremi' }).elapsedTime threw exception TypeError: The provided value is non-finite.
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: [] }).elapsedTime is 0
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: [123.45] }).elapsedTime is 123.45
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime is NaN
-PASS new WebKitAnimationEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime is NaN
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime threw exception TypeError: The provided value is non-finite.
+PASS new WebKitAnimationEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime threw exception TypeError: The provided value is non-finite.
 PASS new WebKitAnimationEvent('eventType', { elapsedTime: {valueOf: function () { return 123.45 } } }).elapsedTime is 123.45
 PASS new WebKitAnimationEvent('eventType', { bubbles: true, cancelable: true, animationName: 'doremi', elapsedTime: 123.45 }).bubbles is true
 PASS new WebKitAnimationEvent('eventType', { bubbles: true, cancelable: true, animationName: 'doremi', elapsedTime: 123.45 }).cancelable is true

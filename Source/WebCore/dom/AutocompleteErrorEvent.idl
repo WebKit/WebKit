@@ -24,9 +24,12 @@
 
 [
     Conditional=REQUEST_AUTOCOMPLETE,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional AutocompleteErrorEventInit eventInitDict),
     JSGenerateToJSObject
 ] interface AutocompleteErrorEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString reason;
+    readonly attribute DOMString reason;
 };
 
+dictionary AutocompleteErrorEventInit : EventInit {
+    DOMString reason = "";
+};

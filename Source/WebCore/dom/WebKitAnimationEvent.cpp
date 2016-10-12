@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const WebKitAnimationEventInit& initializer)
-    : Event(type, initializer)
+WebKitAnimationEvent::WebKitAnimationEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_animationName(initializer.animationName)
     , m_elapsedTime(initializer.elapsedTime)
 {

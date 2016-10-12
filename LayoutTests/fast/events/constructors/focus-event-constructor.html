@@ -57,19 +57,19 @@ shouldBe("new FocusEvent('eventType', { relatedTarget: xhr }).relatedTarget", "x
 shouldBe("new FocusEvent('eventType', { relatedTarget: window }).relatedTarget", "window");
 
 // Invalid objects.
-shouldBe("new FocusEvent('eventType', { relatedTarget: testObject }).relatedTarget", "null");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: testObject })", "TypeError");
 shouldBe("new FocusEvent('eventType', { relatedTarget: undefined }).relatedTarget", "null");
 shouldBe("new FocusEvent('eventType', { relatedTarget: null }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: false }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: true }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: '' }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: 'chocolate' }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: 12345 }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: 18446744073709551615 }).relatedTarget", "null");
-shouldBe("new FocusEvent('eventType', { relatedTarget: NaN }).relatedTarget", "null");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: false })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: true })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: '' })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: 'chocolate' })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: 12345 })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: 18446744073709551615 })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: NaN })", "TypeError");
 // Note that valueOf() is not called, when the left hand side is evaluated.
-shouldBeFalse("new FocusEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } }).relatedTarget == testDiv");
-shouldBe("new FocusEvent('eventType', { get relatedTarget() { return 123; } }).relatedTarget", "null");
+shouldThrowErrorName("new FocusEvent('eventType', { relatedTarget: {valueOf: function () { return testDiv; } } })", "TypeError");
+shouldThrowErrorName("new FocusEvent('eventType', { get relatedTarget() { return 123; } })", "TypeError");
 shouldThrow("new FocusEvent('eventType', { get relatedTarget() { throw 'FocusEvent Error'; } })");
 
 // All initializers are passed.

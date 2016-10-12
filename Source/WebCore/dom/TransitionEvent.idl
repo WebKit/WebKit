@@ -25,10 +25,15 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional TransitionEventInit transitionEventInitDict),
 ] interface TransitionEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString propertyName;
-    [InitializedByEventConstructor] readonly attribute unrestricted double elapsedTime;
-    [InitializedByEventConstructor] readonly attribute DOMString pseudoElement;
+    readonly attribute DOMString propertyName;
+    readonly attribute double elapsedTime;
+    readonly attribute DOMString pseudoElement;
 };
 
+dictionary TransitionEventInit : EventInit {
+    DOMString propertyName = "";
+    double elapsedTime = 0.0;
+    DOMString pseudoElement = "";
+};

@@ -12,7 +12,7 @@ PASS new PopStateEvent('eventType', { cancelable: false }).cancelable is false
 PASS new PopStateEvent('eventType', { cancelable: true }).cancelable is true
 PASS new PopStateEvent('eventType', { state: object1 }).state is object1
 PASS new PopStateEvent('eventType', { state: document }).state is document
-PASS new PopStateEvent('eventType', { state: undefined }).state is undefined
+PASS new PopStateEvent('eventType', { state: undefined }).state is null
 PASS new PopStateEvent('eventType', { state: null }).state is null
 PASS new PopStateEvent('eventType', { state: false }).state is false
 PASS new PopStateEvent('eventType', { state: true }).state is true

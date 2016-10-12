@@ -25,8 +25,13 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional PopStateEventInit eventInitDict),
+    ConstructorCallWith=ScriptState,
 ] interface PopStateEvent : Event {
-    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any state;
+    [CachedAttribute, CustomGetter] readonly attribute any state;
+};
+
+dictionary PopStateEventInit : EventInit {
+    any state = null;
 };
 

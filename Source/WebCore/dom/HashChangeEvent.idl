@@ -19,7 +19,7 @@
 
 // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional HashChangeEventInit eventInitDict),
 ] interface HashChangeEvent : Event {
     // FIXME: Using "undefined" as default parameter value is wrong.
     void initHashChangeEvent(optional DOMString type = "undefined",
@@ -27,7 +27,12 @@
                              optional boolean cancelable = false,
                              optional USVString oldURL = "undefined",
                              optional USVString newURL = "undefined");
-    [InitializedByEventConstructor] readonly attribute USVString oldURL;
-    [InitializedByEventConstructor] readonly attribute USVString newURL;
+
+    readonly attribute USVString oldURL;
+    readonly attribute USVString newURL;
 };
 
+dictionary HashChangeEventInit : EventInit {
+    USVString oldURL = "";
+    USVString newURL = "";
+};

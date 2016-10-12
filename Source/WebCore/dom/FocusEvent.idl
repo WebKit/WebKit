@@ -24,8 +24,11 @@
  */
 
 [
-    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional FocusEventInit eventInitDict),
 ] interface FocusEvent : UIEvent {
-    [InitializedByEventConstructor] readonly attribute EventTarget relatedTarget;
+    readonly attribute EventTarget? relatedTarget;
+};
+
+dictionary FocusEventInit : UIEventInit {
+    EventTarget? relatedTarget = null;
 };

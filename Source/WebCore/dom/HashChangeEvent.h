@@ -26,11 +26,6 @@
 
 namespace WebCore {
 
-struct HashChangeEventInit : public EventInit {
-    String oldURL;
-    String newURL;
-};
-
 class HashChangeEvent final : public Event {
 public:
     static Ref<HashChangeEvent> create(const String& oldURL, const String& newURL)
@@ -43,9 +38,14 @@ public:
         return adoptRef(*new HashChangeEvent);
     }
 
-    static Ref<HashChangeEvent> createForBindings(const AtomicString& type, const HashChangeEventInit& initializer)
+    struct Init : EventInit {
+        String oldURL;
+        String newURL;
+    };
+
+    static Ref<HashChangeEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new HashChangeEvent(type, initializer));
+        return adoptRef(*new HashChangeEvent(type, initializer, isTrusted));
     }
 
     void initHashChangeEvent(const AtomicString& eventType, bool canBubble, bool cancelable, const String& oldURL, const String& newURL)
@@ -76,8 +76,8 @@ private:
     {
     }
 
-    HashChangeEvent(const AtomicString& type, const HashChangeEventInit& initializer)
-        : Event(type, initializer)
+    HashChangeEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_oldURL(initializer.oldURL)
         , m_newURL(initializer.newURL)
     {

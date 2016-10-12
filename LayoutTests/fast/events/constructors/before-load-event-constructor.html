@@ -29,7 +29,7 @@ shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: 'doremi' }).url",
 shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: '' }).url", "");
 
 // Non-strings.
-shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: undefined }).url", "undefined");
+shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: undefined }).url", "");
 shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: null }).url", "null");
 shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: false }).url", "false");
 shouldBeEqualToString("new BeforeLoadEvent('eventType', { url: true }).url", "true");

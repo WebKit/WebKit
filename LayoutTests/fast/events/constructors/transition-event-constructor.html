@@ -29,7 +29,7 @@ shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: 'doremi'
 shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: '' }).propertyName", "");
 
 // Non-strings.
-shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: undefined }).propertyName", "undefined");
+shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: undefined }).propertyName", "");
 shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: null }).propertyName", "null");
 shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: false }).propertyName", "false");
 shouldBeEqualToString("new TransitionEvent('eventType', { propertyName: true }).propertyName", "true");
@@ -47,9 +47,9 @@ shouldBe("new TransitionEvent('eventType', { elapsedTime: 0 }).elapsedTime", "0"
 shouldBe("new TransitionEvent('eventType', { elapsedTime: 123.45 }).elapsedTime", "123.45");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: -123.45 }).elapsedTime", "-123.45");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: 18446744073709551615 }).elapsedTime", "18446744073709551615");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: NaN }).elapsedTime", "NaN");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: Infinity }).elapsedTime", "Infinity");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: -Infinity }).elapsedTime", "-Infinity");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: NaN }).elapsedTime", "TypeError");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: Infinity }).elapsedTime", "TypeError");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: -Infinity }).elapsedTime", "TypeError");
 
 // pseudoElement is passed.
 // Strings.
@@ -57,16 +57,16 @@ shouldBeEqualToString("new TransitionEvent('eventType', { pseudoElement: '::befo
 shouldBeEqualToString("new TransitionEvent('eventType', { pseudoElement: '' }).pseudoElement", "");
 
 // Non-numeric values.
-shouldBe("new TransitionEvent('eventType', { elapsedTime: undefined }).elapsedTime", "NaN");
+shouldBe("new TransitionEvent('eventType', { elapsedTime: undefined }).elapsedTime", "0");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: null }).elapsedTime", "0");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: false }).elapsedTime", "0");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: true }).elapsedTime", "1");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: '' }).elapsedTime", "0");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: 'doremi' }).elapsedTime", "NaN");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: 'doremi' }).elapsedTime", "TypeError");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: [] }).elapsedTime", "0");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: [123.45] }).elapsedTime", "123.45");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime", "NaN");
-shouldBe("new TransitionEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime", "NaN");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: [123.45, 678.90] }).elapsedTime", "TypeError");
+shouldThrowErrorName("new TransitionEvent('eventType', { elapsedTime: {doremi: 123.45} }).elapsedTime", "TypeError");
 shouldBe("new TransitionEvent('eventType', { elapsedTime: {valueOf: function () { return 123.45 } } }).elapsedTime", "123.45");
 
 // All initializers are passed.

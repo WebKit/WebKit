@@ -25,7 +25,7 @@ shouldBe("new PopStateEvent('eventType', { cancelable: true }).cancelable", "tru
 var object1 = {nyannyan: 123};
 shouldBe("new PopStateEvent('eventType', { state: object1 }).state", "object1");
 shouldBe("new PopStateEvent('eventType', { state: document }).state", "document");
-shouldBe("new PopStateEvent('eventType', { state: undefined }).state", "undefined");
+shouldBe("new PopStateEvent('eventType', { state: undefined }).state", "null");
 shouldBe("new PopStateEvent('eventType', { state: null }).state", "null");
 shouldBe("new PopStateEvent('eventType', { state: false }).state", "false");
 shouldBe("new PopStateEvent('eventType', { state: true }).state", "true");

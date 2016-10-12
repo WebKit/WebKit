@@ -30,7 +30,7 @@ shouldBe("new ErrorEvent('eventType', { cancelable: true }).cancelable", "true")
     shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": '' })." + attr, "");
 
     // Non-strings.
-    shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": undefined })." + attr, "undefined");
+    shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": undefined })." + attr, "");
     shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": null })." + attr, "null");
     shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": false })." + attr, "false");
     shouldBeEqualToString("new ErrorEvent('eventType', { " + attr + ": true })." + attr, "true");
@@ -82,7 +82,7 @@ shouldBe("new ErrorEvent('eventType', { colno: 4294967294 }).colno", "4294967294
 shouldBe("new ErrorEvent('eventType', { colno: 4294967295 }).colno", "4294967295");
 
 // error is passed.
-shouldBe("new ErrorEvent('eventType', { error: undefined }).error", "undefined");
+shouldBe("new ErrorEvent('eventType', { error: undefined }).error", "null");
 shouldBe("new ErrorEvent('eventType', { error: null }).error", "null");
 shouldBe("new ErrorEvent('eventType', { error: '' }).error", "''");
 shouldBe("new ErrorEvent('eventType', { error: '12345' }).error", "'12345'");

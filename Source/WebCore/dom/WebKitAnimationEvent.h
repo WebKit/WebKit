@@ -30,20 +30,21 @@
 
 namespace WebCore {
 
-struct WebKitAnimationEventInit : public EventInit {
-    String animationName;
-    double elapsedTime { 0.0 };
-};
-
 class WebKitAnimationEvent final : public Event {
 public:
     static Ref<WebKitAnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
     {
         return adoptRef(*new WebKitAnimationEvent(type, animationName, elapsedTime));
     }
-    static Ref<WebKitAnimationEvent> createForBindings(const AtomicString& type, const WebKitAnimationEventInit& initializer)
+
+    struct Init : EventInit {
+        String animationName;
+        double elapsedTime { 0.0 };
+    };
+
+    static Ref<WebKitAnimationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new WebKitAnimationEvent(type, initializer));
+        return adoptRef(*new WebKitAnimationEvent(type, initializer, isTrusted));
     }
 
     virtual ~WebKitAnimationEvent();
@@ -55,7 +56,7 @@ public:
 
 private:
     WebKitAnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime);
-    WebKitAnimationEvent(const AtomicString&, const WebKitAnimationEventInit&);
+    WebKitAnimationEvent(const AtomicString&, const Init&, IsTrusted);
 
     String m_animationName;
     double m_elapsedTime;

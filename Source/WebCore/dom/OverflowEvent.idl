@@ -24,14 +24,19 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional OverflowEventInit eventInitDict),
 ] interface OverflowEvent : Event {
     const unsigned short HORIZONTAL = 0;
     const unsigned short VERTICAL   = 1;
     const unsigned short BOTH       = 2;
     
-    [InitializedByEventConstructor] readonly attribute unsigned short orient;
-    [InitializedByEventConstructor] readonly attribute boolean horizontalOverflow;
-    [InitializedByEventConstructor] readonly attribute boolean verticalOverflow;
+    readonly attribute unsigned short orient;
+    readonly attribute boolean horizontalOverflow;
+    readonly attribute boolean verticalOverflow;
 };
 
+dictionary OverflowEventInit : EventInit {
+    unsigned short orient = 0;
+    boolean horizontalOverflow = false;
+    boolean verticalOverflow = false;
+};

@@ -14,7 +14,7 @@ PASS new ErrorEvent('eventType', { cancelable: false }).cancelable is false
 PASS new ErrorEvent('eventType', { cancelable: true }).cancelable is true
 PASS new ErrorEvent('eventType', { message: 'melancholy' }).message is "melancholy"
 PASS new ErrorEvent('eventType', { message: '' }).message is ""
-PASS new ErrorEvent('eventType', { message: undefined }).message is "undefined"
+PASS new ErrorEvent('eventType', { message: undefined }).message is ""
 PASS new ErrorEvent('eventType', { message: null }).message is "null"
 PASS new ErrorEvent('eventType', { message: false }).message is "false"
 PASS new ErrorEvent('eventType', { message: true }).message is "true"
@@ -27,7 +27,7 @@ PASS new ErrorEvent('eventType', { message: {melancholy: 12345} }).message is "[
 PASS new ErrorEvent('eventType', { message: {valueOf: function () { return 'melancholy'; } } }).message is "[object Object]"
 PASS new ErrorEvent('eventType', { filename: 'melancholy' }).filename is "melancholy"
 PASS new ErrorEvent('eventType', { filename: '' }).filename is ""
-PASS new ErrorEvent('eventType', { filename: undefined }).filename is "undefined"
+PASS new ErrorEvent('eventType', { filename: undefined }).filename is ""
 PASS new ErrorEvent('eventType', { filename: null }).filename is "null"
 PASS new ErrorEvent('eventType', { filename: false }).filename is "false"
 PASS new ErrorEvent('eventType', { filename: true }).filename is "true"
@@ -64,7 +64,7 @@ PASS new ErrorEvent('eventType', { colno: 0 }).colno is 0
 PASS new ErrorEvent('eventType', { colno: 1 }).colno is 1
 PASS new ErrorEvent('eventType', { colno: 4294967294 }).colno is 4294967294
 PASS new ErrorEvent('eventType', { colno: 4294967295 }).colno is 4294967295
-PASS new ErrorEvent('eventType', { error: undefined }).error is undefined
+PASS new ErrorEvent('eventType', { error: undefined }).error is null
 PASS new ErrorEvent('eventType', { error: null }).error is null
 PASS new ErrorEvent('eventType', { error: '' }).error is ''
 PASS new ErrorEvent('eventType', { error: '12345' }).error is '12345'

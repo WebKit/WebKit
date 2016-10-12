@@ -30,19 +30,6 @@
 
 namespace WebCore {
 
-struct SecurityPolicyViolationEventInit : public EventInit {
-    String documentURI;
-    String referrer;
-    String blockedURI;
-    String violatedDirective;
-    String effectiveDirective;
-    String originalPolicy;
-    String sourceFile;
-    unsigned short statusCode { 0 };
-    int lineNumber { 0 };
-    int columnNumber { 0 };
-};
-
 class SecurityPolicyViolationEvent final : public Event {
 public:
     static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, bool canBubble, bool cancelable, const String& documentURI, const String& referrer, const String& blockedURI, const String& violatedDirective, const String& effectiveDirective, const String& originalPolicy, const String& sourceFile, unsigned short statusCode, int lineNumber, int columnNumber)
@@ -55,9 +42,22 @@ public:
         return adoptRef(*new SecurityPolicyViolationEvent());
     }
 
-    static Ref<SecurityPolicyViolationEvent> createForBindings(const AtomicString& type, const SecurityPolicyViolationEventInit& initializer)
+    struct Init : EventInit {
+        String documentURI;
+        String referrer;
+        String blockedURI;
+        String violatedDirective;
+        String effectiveDirective;
+        String originalPolicy;
+        String sourceFile;
+        unsigned short statusCode { 0 };
+        int lineNumber { 0 };
+        int columnNumber { 0 };
+    };
+
+    static Ref<SecurityPolicyViolationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new SecurityPolicyViolationEvent(type, initializer));
+        return adoptRef(*new SecurityPolicyViolationEvent(type, initializer, isTrusted));
     }
 
     const String& documentURI() const { return m_documentURI; }
@@ -93,8 +93,8 @@ private:
     {
     }
 
-    SecurityPolicyViolationEvent(const AtomicString& type, const SecurityPolicyViolationEventInit& initializer)
-        : Event(type, initializer)
+    SecurityPolicyViolationEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_documentURI(initializer.documentURI)
         , m_referrer(initializer.referrer)
         , m_blockedURI(initializer.blockedURI)

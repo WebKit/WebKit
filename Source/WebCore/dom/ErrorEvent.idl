@@ -30,13 +30,21 @@
  */
 
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional ErrorEventInit eventInitDict),
+    ConstructorCallWith=ScriptState,
     Exposed=(Window,Worker),
 ] interface ErrorEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString message;
-    [InitializedByEventConstructor] readonly attribute USVString filename;
-    [InitializedByEventConstructor] readonly attribute unsigned long lineno;
-    [InitializedByEventConstructor] readonly attribute unsigned long colno;
-    [InitializedByEventConstructor, CustomGetter] readonly attribute any error;
+    readonly attribute DOMString message;
+    readonly attribute USVString filename;
+    readonly attribute unsigned long lineno;
+    readonly attribute unsigned long colno;
+    [CustomGetter] readonly attribute any error;
 };
 
+dictionary ErrorEventInit : EventInit {
+    DOMString message = "";
+    USVString filename = "";
+    unsigned long lineno = 0;
+    unsigned long colno = 0;
+    any error = null;
+};

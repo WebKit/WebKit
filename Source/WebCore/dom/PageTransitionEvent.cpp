@@ -36,8 +36,8 @@ PageTransitionEvent::PageTransitionEvent(const AtomicString& type, bool persiste
 {
 }
 
-PageTransitionEvent::PageTransitionEvent(const AtomicString& type, const PageTransitionEventInit& initializer)
-    : Event(type, initializer)
+PageTransitionEvent::PageTransitionEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_persisted(initializer.persisted)
 {
 }

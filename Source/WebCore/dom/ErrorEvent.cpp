@@ -40,13 +40,13 @@ using namespace JSC;
 
 namespace WebCore {
 
-ErrorEvent::ErrorEvent(const AtomicString& type, const ErrorEventInit& initializer)
-    : Event(type, initializer)
+ErrorEvent::ErrorEvent(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_message(initializer.message)
     , m_fileName(initializer.filename)
     , m_lineNumber(initializer.lineno)
     , m_columnNumber(initializer.colno)
-    , m_error(initializer.error)
+    , m_error(state.vm(), initializer.error)
 {
 }
 

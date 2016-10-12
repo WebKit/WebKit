@@ -13,7 +13,7 @@ PASS new HashChangeEvent('eventType', { cancelable: false }).cancelable is false
 PASS new HashChangeEvent('eventType', { cancelable: true }).cancelable is true
 PASS new HashChangeEvent('eventType', { oldURL: 'doremi' }).oldURL is "doremi"
 PASS new HashChangeEvent('eventType', { oldURL: '' }).oldURL is ""
-PASS new HashChangeEvent('eventType', { oldURL: undefined }).oldURL is "undefined"
+PASS new HashChangeEvent('eventType', { oldURL: undefined }).oldURL is ""
 PASS new HashChangeEvent('eventType', { oldURL: null }).oldURL is "null"
 PASS new HashChangeEvent('eventType', { oldURL: false }).oldURL is "false"
 PASS new HashChangeEvent('eventType', { oldURL: true }).oldURL is "true"
@@ -26,7 +26,7 @@ PASS new HashChangeEvent('eventType', { oldURL: {doremi: 12345} }).oldURL is "[o
 PASS new HashChangeEvent('eventType', { oldURL: {valueOf: function () { return 'doremi'; } } }).oldURL is "[object Object]"
 PASS new HashChangeEvent('eventType', { newURL: 'doremi' }).newURL is "doremi"
 PASS new HashChangeEvent('eventType', { newURL: '' }).newURL is ""
-PASS new HashChangeEvent('eventType', { newURL: undefined }).newURL is "undefined"
+PASS new HashChangeEvent('eventType', { newURL: undefined }).newURL is ""
 PASS new HashChangeEvent('eventType', { newURL: null }).newURL is "null"
 PASS new HashChangeEvent('eventType', { newURL: false }).newURL is "false"
 PASS new HashChangeEvent('eventType', { newURL: true }).newURL is "true"

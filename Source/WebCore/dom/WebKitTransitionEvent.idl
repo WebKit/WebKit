@@ -24,10 +24,15 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional WebKitTransitionEventInit eventInitDict),
 ] interface WebKitTransitionEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString propertyName;
-    [InitializedByEventConstructor] readonly attribute unrestricted double elapsedTime;
-    [InitializedByEventConstructor] readonly attribute DOMString pseudoElement;
+    readonly attribute DOMString propertyName;
+    readonly attribute double elapsedTime;
+    readonly attribute DOMString pseudoElement;
 };
 
+dictionary WebKitTransitionEventInit : EventInit {
+    DOMString propertyName = "";
+    double elapsedTime = 0;
+    DOMString pseudoElement = "";
+};

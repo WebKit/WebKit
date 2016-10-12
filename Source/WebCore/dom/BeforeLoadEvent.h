@@ -32,10 +32,6 @@
 
 namespace WebCore {
 
-struct BeforeLoadEventInit : public EventInit {
-    String url;
-};
-
 class BeforeLoadEvent final : public Event {
 public:
     static Ref<BeforeLoadEvent> create(const String& url)
@@ -43,9 +39,13 @@ public:
         return adoptRef(*new BeforeLoadEvent(url));
     }
 
-    static Ref<BeforeLoadEvent> createForBindings(const AtomicString& type, const BeforeLoadEventInit& initializer)
+    struct Init : EventInit {
+        String url;
+    };
+
+    static Ref<BeforeLoadEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new BeforeLoadEvent(type, initializer));
+        return adoptRef(*new BeforeLoadEvent(type, initializer, isTrusted));
     }
 
     const String& url() const { return m_url; }
@@ -59,8 +59,8 @@ private:
     {
     }
 
-    BeforeLoadEvent(const AtomicString& type, const BeforeLoadEventInit& initializer)
-        : Event(type, initializer)
+    BeforeLoadEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+        : Event(type, initializer, isTrusted)
         , m_url(initializer.url)
     {
     }

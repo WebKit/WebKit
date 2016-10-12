@@ -25,8 +25,11 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional BeforeLoadEventInit eventInitDict)
 ] interface BeforeLoadEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString url;
+    readonly attribute DOMString url;
 };
 
+dictionary BeforeLoadEventInit : EventInit {
+    DOMString url = "";
+};

@@ -39,14 +39,6 @@
 
 namespace WebCore {
 
-struct ErrorEventInit : public EventInit {
-    String message;
-    String filename;
-    unsigned lineno { 0 };
-    unsigned colno { 0 };
-    Deprecated::ScriptValue error;
-};
-
 class ErrorEvent final : public Event {
 public:
     static Ref<ErrorEvent> create(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error)
@@ -54,9 +46,17 @@ public:
         return adoptRef(*new ErrorEvent(message, fileName, lineNumber, columnNumber, error));
     }
 
-    static Ref<ErrorEvent> createForBindings(const AtomicString& type, const ErrorEventInit& initializer)
+    struct Init : EventInit {
+        String message;
+        String filename;
+        unsigned lineno { 0 };
+        unsigned colno { 0 };
+        JSC::JSValue error;
+    };
+
+    static Ref<ErrorEvent> create(JSC::ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new ErrorEvent(type, initializer));
+        return adoptRef(*new ErrorEvent(state, type, initializer, isTrusted));
     }
 
     virtual ~ErrorEvent();
@@ -72,7 +72,7 @@ public:
 
 private:
     ErrorEvent(const String& message, const String& fileName, unsigned lineNumber, unsigned columnNumber, const Deprecated::ScriptValue& error);
-    ErrorEvent(const AtomicString&, const ErrorEventInit&);
+    ErrorEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
 
     RefPtr<SerializedScriptValue> trySerializeError(JSC::ExecState&);
 

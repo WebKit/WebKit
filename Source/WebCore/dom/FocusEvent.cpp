@@ -46,8 +46,8 @@ FocusEvent::FocusEvent(const AtomicString& type, bool canBubble, bool cancelable
 {
 }
 
-FocusEvent::FocusEvent(const AtomicString& type, const FocusEventInit& initializer)
-    : UIEvent(type, initializer)
+FocusEvent::FocusEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : UIEvent(type, initializer, isTrusted)
     , m_relatedTarget(initializer.relatedTarget)
 {
 }

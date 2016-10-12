@@ -32,10 +32,6 @@
 
 namespace WebCore {
 
-struct AutocompleteErrorEventInit : public EventInit {
-    String reason;
-};
-
 class AutocompleteErrorEvent final : public Event {
 public:
     static Ref<AutocompleteErrorEvent> create()
@@ -48,9 +44,13 @@ public:
         return adoptRef(*new AutocompleteErrorEvent(reason));
     }
 
-    static Ref<AutocompleteErrorEvent> create(const AtomicString& eventType, const AutocompleteErrorEventInit& initializer)
+    struct Init : EventInit {
+        String reason;
+    };
+
+    static Ref<AutocompleteErrorEvent> create(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new AutocompleteErrorEvent(eventType, initializer));
+        return adoptRef(*new AutocompleteErrorEvent(eventType, initializer, isTrusted));
     }
 
     const String& reason() const { return m_reason; }
@@ -66,8 +66,8 @@ private:
     {
     }
 
-    AutocompleteErrorEvent(const AtomicString& eventType, const AutocompleteErrorEventInit& initializer)
-        : Event(eventType, initializer)
+    AutocompleteErrorEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
+        : Event(eventType, initializer, isTrusted)
         , m_reason(initializer.reason)
     {
     }

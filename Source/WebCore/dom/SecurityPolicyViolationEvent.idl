@@ -24,16 +24,29 @@
  */
 
 [
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional SecurityPolicyViolationEventInit eventInitDict),
 ] interface SecurityPolicyViolationEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString documentURI;
-    [InitializedByEventConstructor] readonly attribute DOMString referrer;
-    [InitializedByEventConstructor] readonly attribute DOMString blockedURI;
-    [InitializedByEventConstructor] readonly attribute DOMString violatedDirective;
-    [InitializedByEventConstructor] readonly attribute DOMString effectiveDirective;
-    [InitializedByEventConstructor] readonly attribute DOMString originalPolicy;
-    [InitializedByEventConstructor] readonly attribute DOMString sourceFile;
-    [InitializedByEventConstructor] readonly attribute unsigned short statusCode;
-    [InitializedByEventConstructor] readonly attribute long lineNumber;
-    [InitializedByEventConstructor] readonly attribute long columnNumber;
+    readonly attribute USVString documentURI;
+    readonly attribute DOMString referrer;
+    readonly attribute USVString blockedURI;
+    readonly attribute DOMString violatedDirective;
+    readonly attribute DOMString effectiveDirective;
+    readonly attribute DOMString originalPolicy;
+    readonly attribute USVString sourceFile;
+    readonly attribute unsigned short statusCode;
+    readonly attribute long lineNumber;
+    readonly attribute long columnNumber;
+};
+
+dictionary SecurityPolicyViolationEventInit : EventInit {
+    USVString documentURI = "";
+    DOMString referrer = "";
+    USVString blockedURI = "";
+    DOMString violatedDirective = "";
+    DOMString effectiveDirective = "";
+    DOMString originalPolicy = "";
+    USVString sourceFile = "";
+    unsigned short statusCode = 0;
+    long lineNumber = 0;
+    long columnNumber = 0;
 };

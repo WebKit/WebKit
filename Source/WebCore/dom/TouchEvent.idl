@@ -25,11 +25,11 @@
 
 [
     Conditional=TOUCH_EVENTS,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional TouchEventInit eventInitDict),
 ] interface TouchEvent : UIEvent {
-    [InitializedByEventConstructor] readonly attribute TouchList touches;
-    [InitializedByEventConstructor] readonly attribute TouchList targetTouches;
-    [InitializedByEventConstructor] readonly attribute TouchList changedTouches;
+    readonly attribute TouchList touches;
+    readonly attribute TouchList targetTouches;
+    readonly attribute TouchList changedTouches;
     readonly attribute boolean ctrlKey;
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;
@@ -49,4 +49,10 @@
                         optional boolean altKey = false,
                         optional boolean shiftKey = false,
                         optional boolean metaKey = false);
+};
+
+dictionary TouchEventInit : UIEventInit {
+    TouchList? touches = null;
+    TouchList? targetTouches = null;
+    TouchList? changedTouches = null;
 };

@@ -53,7 +53,7 @@ shouldBeEqualToString("new CompositionEvent('eventType', { data: 'koakuma' }).da
 shouldBeEqualToString("new CompositionEvent('eventType', { data: '' }).data", "");
 
 // Non-strings.
-shouldBeEqualToString("new CompositionEvent('eventType', { data: undefined }).data", "undefined");
+shouldBeEqualToString("new CompositionEvent('eventType', { data: undefined }).data", "");
 shouldBeEqualToString("new CompositionEvent('eventType', { data: null }).data", "null");
 shouldBeEqualToString("new CompositionEvent('eventType', { data: false }).data", "false");
 shouldBeEqualToString("new CompositionEvent('eventType', { data: true }).data", "true");

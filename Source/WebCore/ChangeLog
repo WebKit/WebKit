@@ -1,5 +1,67 @@
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Update remaining DOM events to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163319
+
+        Reviewed by Darin Adler.
+
+        Update remaining DOM events to stop using legacy [ConstructorTemplate=Event]
+        and use regular constructors instead.
+
+        No new tests, updated existing tests.
+
+        * dom/AutocompleteErrorEvent.h:
+        * dom/AutocompleteErrorEvent.idl:
+        * dom/BeforeLoadEvent.h:
+        * dom/BeforeLoadEvent.idl:
+        * dom/CompositionEvent.cpp:
+        (WebCore::CompositionEvent::CompositionEvent):
+        * dom/CompositionEvent.h:
+        * dom/CompositionEvent.idl:
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::ErrorEvent):
+        * dom/ErrorEvent.h:
+        * dom/ErrorEvent.idl:
+        * dom/FocusEvent.cpp:
+        (WebCore::FocusEvent::FocusEvent):
+        * dom/FocusEvent.h:
+        * dom/FocusEvent.idl:
+        * dom/HashChangeEvent.h:
+        * dom/HashChangeEvent.idl:
+        * dom/OverflowEvent.cpp:
+        (WebCore::OverflowEvent::OverflowEvent):
+        * dom/OverflowEvent.h:
+        * dom/OverflowEvent.idl:
+        * dom/PageTransitionEvent.cpp:
+        (WebCore::PageTransitionEvent::PageTransitionEvent):
+        * dom/PageTransitionEvent.h:
+        * dom/PageTransitionEvent.idl:
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent):
+        (WebCore::PopStateEvent::create):
+        * dom/PopStateEvent.h:
+        * dom/PopStateEvent.idl:
+        * dom/SecurityPolicyViolationEvent.h:
+        * dom/SecurityPolicyViolationEvent.idl:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        * dom/TouchEvent.h:
+        * dom/TouchEvent.idl:
+        * dom/TransitionEvent.cpp:
+        (WebCore::TransitionEvent::TransitionEvent):
+        * dom/TransitionEvent.h:
+        * dom/TransitionEvent.idl:
+        * dom/WebKitAnimationEvent.cpp:
+        (WebCore::WebKitAnimationEvent::WebKitAnimationEvent):
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitAnimationEvent.idl:
+        * dom/WebKitTransitionEvent.cpp:
+        (WebCore::WebKitTransitionEvent::WebKitTransitionEvent):
+        * dom/WebKitTransitionEvent.h:
+        * dom/WebKitTransitionEvent.idl:
+
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
         Stop using PassRefPtr in platform/efl
         https://bugs.webkit.org/show_bug.cgi?id=163321
 

@@ -29,7 +29,7 @@ shouldBe("new HashChangeEvent('eventType', { cancelable: true }).cancelable", "t
     shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": '' })." + attr, "");
 
     // Non-strings.
-    shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": undefined })." + attr, "undefined");
+    shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": undefined })." + attr, "");
     shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": null })." + attr, "null");
     shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": false })." + attr, "false");
     shouldBeEqualToString("new HashChangeEvent('eventType', { " + attr + ": true })." + attr, "true");

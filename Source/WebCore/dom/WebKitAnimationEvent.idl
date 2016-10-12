@@ -24,9 +24,13 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional WebKitAnimationEventInit eventInitDict),
 ] interface WebKitAnimationEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString animationName;
-    [InitializedByEventConstructor] readonly attribute unrestricted double elapsedTime;
+    readonly attribute DOMString animationName;
+    readonly attribute double elapsedTime;
 };
 
+dictionary WebKitAnimationEventInit : EventInit {
+    DOMString animationName = "";
+    double elapsedTime = 0;
+};
