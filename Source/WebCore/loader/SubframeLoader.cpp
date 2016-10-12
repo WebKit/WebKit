@@ -108,7 +108,21 @@ bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mime
     return shouldUsePlugin(completedURL, mimeType, false, useFallback);
 }
 
-bool SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
+bool SubframeLoader::isPluginContentAllowedByContentSecurityPolicy(HTMLPlugInImageElement& pluginElement, const URL& url, const String& mimeType) const
+{
+    if (!document())
+        return true;
+
+    ASSERT(document()->contentSecurityPolicy());
+    const ContentSecurityPolicy& contentSecurityPolicy = *document()->contentSecurityPolicy();
+
+    String declaredMimeType = document()->isPluginDocument() && document()->ownerElement() ?
+        document()->ownerElement()->attributeWithoutSynchronization(HTMLNames::typeAttr) : pluginElement.attributeWithoutSynchronization(HTMLNames::typeAttr);
+    bool isInUserAgentShadowTree = pluginElement.isInUserAgentShadowTree();
+    return contentSecurityPolicy.allowObjectFromSource(url, isInUserAgentShadowTree) && contentSecurityPolicy.allowPluginType(mimeType, declaredMimeType, url, isInUserAgentShadowTree);
+}
+
+bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement& pluginElement, const URL& url, const String& mimeType)
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(mimeType)) {
         if (!m_frame.settings().isJavaEnabled())
@@ -123,6 +137,12 @@ bool SubframeLoader::pluginIsLoadable(const URL& url, const String& mimeType)
 
         if (!document()->securityOrigin()->canDisplay(url)) {
             FrameLoader::reportLocalLoadFailed(&m_frame, url.string());
+            return false;
+        }
+
+        if (!isPluginContentAllowedByContentSecurityPolicy(pluginElement, url, mimeType)) {
+            RenderEmbeddedObject* renderer = pluginElement.renderEmbeddedObject();
+            renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
             return false;
         }
 
@@ -141,7 +161,7 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement& ownerElement, const U
     if ((!allowPlugins() && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType)))
         return false;
 
-    if (!pluginIsLoadable(url, mimeType))
+    if (!pluginIsLoadable(ownerElement, url, mimeType))
         return false;
 
     ASSERT(ownerElement.hasTagName(objectTag) || ownerElement.hasTagName(embedTag));
@@ -220,6 +240,12 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement& ownerElement, const S
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
         logPluginRequest(document()->page(), mimeType, completedURL, success);
         return success;
+    }
+
+    if (!isPluginContentAllowedByContentSecurityPolicy(ownerElement, completedURL, mimeType)) {
+        RenderEmbeddedObject* renderer = ownerElement.renderEmbeddedObject();
+        renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
+        return false;
     }
 
     // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,

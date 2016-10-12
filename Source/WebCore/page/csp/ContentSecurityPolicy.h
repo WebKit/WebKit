@@ -156,8 +156,8 @@ public:
     void setUpgradeInsecureRequests(bool);
     bool upgradeInsecureRequests() const { return m_upgradeInsecureRequests; }
     enum class InsecureRequestType { Load, FormSubmission, Navigation };
-    void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType) const;
-    void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType) const;
+    void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType);
+    void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType);
 
     HashSet<RefPtr<SecurityOrigin>>&& takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);

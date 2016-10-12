@@ -3119,8 +3119,6 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     if (!mainFrame)
         return;
 
-    mainFrame->loader().forceSandboxFlags(frame->loader().effectiveSandboxFlags());
-
     if (frameName != "_blank")
         mainFrame->tree().setName(frameName);
 

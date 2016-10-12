@@ -1,34 +1,3 @@
-2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
-
-        Merge r204868. rdar://problem/28216263
-
-    2016-08-23  Keith Miller  <keith_miller@apple.com>
-
-            %TypedArray%.prototype.slice needs to check that the source and destination have not been detached.
-            https://bugs.webkit.org/show_bug.cgi?id=161031
-            <rdar://problem/27937019>
-
-            Reviewed by Geoffrey Garen.
-
-            * stress/typedarray-slice.js:
-            (get let):
-            (get try):
-            (testSpeciesWithTransferring):
-
-2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
-
-        Merge r204612. rdar://problem/28216278
-
-    2016-08-18  Mark Lam  <mark.lam@apple.com>
-
-            ScopedArguments is using the wrong owner object for a write barrier.
-            https://bugs.webkit.org/show_bug.cgi?id=160976
-            <rdar://problem/27328506>
-
-            Reviewed by Keith Miller.
-
-            * stress/scoped-arguments-write-barrier-should-be-on-scope-object.js: Added.
-
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204403. rdar://problem/27991568

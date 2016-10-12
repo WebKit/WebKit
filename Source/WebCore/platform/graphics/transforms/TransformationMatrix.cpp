@@ -1501,11 +1501,8 @@ void TransformationMatrix::blend2(const TransformationMatrix& from, double progr
 {
     Decomposed2Type fromDecomp;
     Decomposed2Type toDecomp;
-    if (!from.decompose2(fromDecomp) || !decompose2(toDecomp)) {
-        if (progress < 0.5)
-            *this = from;
-        return;
-    }
+    from.decompose2(fromDecomp);
+    decompose2(toDecomp);
 
     // If x-axis of one is flipped, and y-axis of the other, convert to an unflipped rotation.
     if ((fromDecomp.scaleX < 0 && toDecomp.scaleY < 0) || (fromDecomp.scaleY < 0 && toDecomp.scaleX < 0)) {
@@ -1544,11 +1541,8 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
 {
     Decomposed4Type fromDecomp;
     Decomposed4Type toDecomp;
-    if (!from.decompose4(fromDecomp) || !decompose4(toDecomp)) {
-        if (progress < 0.5)
-            *this = from;
-        return;
-    }
+    from.decompose4(fromDecomp);
+    decompose4(toDecomp);
 
     blendFloat(fromDecomp.scaleX, toDecomp.scaleX, progress);
     blendFloat(fromDecomp.scaleY, toDecomp.scaleY, progress);

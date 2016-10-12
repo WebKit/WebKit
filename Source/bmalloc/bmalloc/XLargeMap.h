@@ -36,7 +36,7 @@ class XLargeMap {
 public:
     void add(const XLargeRange&);
     XLargeRange remove(size_t alignment, size_t);
-    Vector<XLargeRange>& ranges() { return m_free; }
+    XLargeRange removePhysical();
 
 private:
     Vector<XLargeRange> m_free;

@@ -294,7 +294,7 @@ public:
     bool decompose4(Decomposed4Type&) const;
     void recompose4(const Decomposed4Type&);
 
-    WEBCORE_EXPORT void blend(const TransformationMatrix& from, double progress);
+    void blend(const TransformationMatrix& from, double progress);
     void blend2(const TransformationMatrix& from, double progress);
     void blend4(const TransformationMatrix& from, double progress);
 

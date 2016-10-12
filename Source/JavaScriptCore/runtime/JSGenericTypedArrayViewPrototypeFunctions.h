@@ -69,13 +69,8 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     if (exec->hadException())
         return nullptr;
 
-    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(result)) {
-        if (!view->isNeutered())
-            return view;
-
-        throwTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
-        return nullptr;
-    }
+    if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(result))
+        return view;
 
     throwTypeError(exec, ASCIILiteral("species constructor did not return a TypedArray View"));
     return nullptr;
@@ -445,10 +440,6 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewProtoFuncSlice(ExecState* exec
     });
     if (exec->hadException())
         return JSValue::encode(JSValue());
-
-    ASSERT(!result->isNeutered());
-    if (thisObject->isNeutered())
-        return throwVMTypeError(exec, typedArrayBufferHasBeenDetachedErrorMessage);
 
     // We return early here since we don't allocate a backing store if length is 0 and memmove does not like nullptrs
     if (!length)

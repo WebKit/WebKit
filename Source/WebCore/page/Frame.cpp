@@ -217,8 +217,8 @@ Frame::~Frame()
 
     disconnectOwnerElement();
 
-    while (auto* destructionObserver = m_destructionObservers.takeAny())
-        destructionObserver->frameDestroyed();
+    for (auto& observer : m_destructionObservers)
+        observer->frameDestroyed();
 
     if (!isMainFrame())
         m_mainFrame.selfOnlyDeref();
