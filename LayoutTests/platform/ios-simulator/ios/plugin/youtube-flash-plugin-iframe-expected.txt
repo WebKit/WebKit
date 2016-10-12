@@ -16,11 +16,11 @@ PASS elinkEmbed.tagName is "EMBED"
 PASS objectEmbed.tagName is "EMBED"
 PASS objectNoEmbed.tagName is "OBJECT"
 PASS document.querySelectorAll("iframe").length is 1
-PASS internals.shadowPseudoId(normalEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS internals.shadowPseudoId(normalEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS normalEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
-PASS internals.shadowPseudoId(objectEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS internals.shadowPseudoId(objectEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS objectEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
-PASS internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild) is "-apple-youtube-shadow-iframe"
+PASS internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild) is "-webkit-plugin-replacement"
 PASS objectNoEmbedShadowRoot.firstChild.firstChild.tagName is "IFRAME"
 Normal Embed:
 
