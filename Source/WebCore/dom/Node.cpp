@@ -814,19 +814,15 @@ bool Document::shouldInvalidateNodeListAndCollectionCaches(const QualifiedName* 
 
 void Document::invalidateNodeListAndCollectionCaches(const QualifiedName* attrName)
 {
-#if !ASSERT_DISABLED
-    m_inInvalidateNodeListAndCollectionCaches = true;
-#endif
-    HashSet<LiveNodeList*> lists = WTFMove(m_listsInvalidatedAtDocument);
-    m_listsInvalidatedAtDocument.clear();
+    Vector<LiveNodeList*, 8> lists;
+    copyToVector(m_listsInvalidatedAtDocument, lists);
     for (auto* list : lists)
         list->invalidateCacheForAttribute(attrName);
-    HashSet<HTMLCollection*> collections = WTFMove(m_collectionsInvalidatedAtDocument);
+
+    Vector<HTMLCollection*, 8> collections;
+    copyToVector(m_collectionsInvalidatedAtDocument, collections);
     for (auto* collection : collections)
         collection->invalidateCacheForAttribute(attrName);
-#if !ASSERT_DISABLED
-    m_inInvalidateNodeListAndCollectionCaches = false;
-#endif
 }
 
 void Node::invalidateNodeListAndCollectionCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)

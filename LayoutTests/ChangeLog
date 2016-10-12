@@ -1,5 +1,21 @@
 2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206975. rdar://problem/28545012
+
+    2016-10-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r165103): labels list doesn't get invalidated when other lists are invalidated at document level
+            https://bugs.webkit.org/show_bug.cgi?id=163145
+
+            Reviewed by Darin Adler.
+
+            Added a regression test.
+
+            * fast/dom/NodeList/form-labels-length-expected.txt: Added.
+            * fast/dom/NodeList/form-labels-length.html: Added.
+
+2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206280. rdar://problem/28476953
 
     2016-09-22  Brady Eidson  <beidson@apple.com>

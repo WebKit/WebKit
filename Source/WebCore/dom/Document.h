@@ -1585,10 +1585,6 @@ private:
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
     HashSet<HTMLCollection*> m_collectionsInvalidatedAtDocument;
-#if !ASSERT_DISABLED
-    bool m_inInvalidateNodeListAndCollectionCaches;
-#endif
-
     unsigned m_nodeListAndCollectionCounts[numNodeListInvalidationTypes];
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;
