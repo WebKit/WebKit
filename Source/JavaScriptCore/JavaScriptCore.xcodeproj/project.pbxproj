@@ -2096,6 +2096,7 @@
 		E33F50851B8437A000413856 /* JSInternalPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50831B8437A000413856 /* JSInternalPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33F50871B8449EF00413856 /* JSInternalPromiseConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33F50861B8449EF00413856 /* JSInternalPromiseConstructor.lut.h */; };
 		E354622B1B6065D100545386 /* ConstructAbility.h in Headers */ = {isa = PBXBuildFile; fileRef = E354622A1B6065D100545386 /* ConstructAbility.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMPatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E355F3521B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */; };
 		E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */; };
 		E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */; };
@@ -4399,6 +4400,7 @@
 		E33F50861B8449EF00413856 /* JSInternalPromiseConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternalPromiseConstructor.lut.h; sourceTree = "<group>"; };
 		E33F50881B844A1A00413856 /* InternalPromiseConstructor.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InternalPromiseConstructor.js; sourceTree = "<group>"; };
 		E354622A1B6065D100545386 /* ConstructAbility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructAbility.h; sourceTree = "<group>"; };
+		E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMPatchpoint.h; sourceTree = "<group>"; };
 		E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleLoaderPrototype.cpp; sourceTree = "<group>"; };
 		E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderPrototype.h; sourceTree = "<group>"; };
 		E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationObject.cpp; sourceTree = "<group>"; };
@@ -7195,6 +7197,7 @@
 		E3FF752D1D9CE9EA00C7E16D /* domjit */ = {
 			isa = PBXGroup;
 			children = (
+				E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */,
 				E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */,
 				E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */,
 				E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */,
@@ -8072,6 +8075,7 @@
 				A7C1EAF017987AB600299DB2 /* CLoopStackInlines.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
 				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
+				E3555B8A1DAE03A500F36921 /* DOMJITCallDOMPatchpoint.h in Headers */,
 				70EC0EC31AA0D7DA00B6AAFA /* JSStringIterator.h in Headers */,
 				0F070A471D543A8B006E7232 /* CellContainer.h in Headers */,
 				2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */,

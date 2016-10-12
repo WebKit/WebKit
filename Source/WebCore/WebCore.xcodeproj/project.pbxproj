@@ -6143,6 +6143,7 @@
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
 		E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */; };
 		E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3150EA51DA7218D00194012 /* DOMJITHelpers.h */; };
+		E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D049931DADC04500718F3C /* NodeConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38838981BAD145F00D62EE3 /* ScriptModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */; };
 		E38838991BAD145F00D62EE3 /* ScriptModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */; };
 		E3B2F0EB1D7F4C9D00B0C9D1 /* LoadableClassicScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B2F0E31D7F35EC00B0C9D1 /* LoadableClassicScript.cpp */; };
@@ -13784,6 +13785,7 @@
 		E3B2F0E71D7F35EC00B0C9D1 /* LoadableScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableScript.h; sourceTree = "<group>"; };
 		E3B2F0E81D7F35EC00B0C9D1 /* LoadableScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableScriptClient.h; sourceTree = "<group>"; };
 		E3B2F0E91D7F3D3C00B0C9D1 /* LoadableScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableScript.cpp; sourceTree = "<group>"; };
+		E3D049931DADC04500718F3C /* NodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstants.h; sourceTree = "<group>"; };
 		E3FA38611D716E7600AA5950 /* PendingScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PendingScriptClient.h; sourceTree = "<group>"; };
 		E401C27417CE53EC00C41A35 /* ElementIteratorAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIteratorAssertions.h; sourceTree = "<group>"; };
 		E401E0A31C3C0B8300F34D10 /* StyleChange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleChange.h; sourceTree = "<group>"; };
@@ -23275,6 +23277,7 @@
 				63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */,
 				E43105B716750F0C00DB2FB8 /* NodeTraversal.cpp */,
 				E43105BA16750F1600DB2FB8 /* NodeTraversal.h */,
+				E3D049931DADC04500718F3C /* NodeConstants.h */,
 				9382AAB10D8C386100F357A6 /* NodeWithIndex.h */,
 				E46B41F81CB24E70008F11DE /* NoEventDispatchAssertion.h */,
 				8369E58F1AFDD0300087DF68 /* NonDocumentTypeChildNode.idl */,
@@ -25847,6 +25850,7 @@
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
 				5EA3D6DF1C859D7F00300BBB /* MockMediaEndpoint.h in Headers */,
 				CDF2B0131820540600F2B424 /* MockMediaPlayerMediaSource.h in Headers */,
+				E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */,
 				CDF2B0151820540600F2B424 /* MockMediaSourcePrivate.h in Headers */,
 				07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */,
 				07D6A4F01BECF2D200174146 /* MockRealtimeMediaSource.h in Headers */,

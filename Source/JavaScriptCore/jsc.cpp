@@ -620,12 +620,13 @@ public:
             return patchpoint;
         }
 
-        Ref<DOMJIT::Patchpoint> callDOM() override
+        Ref<DOMJIT::CallDOMPatchpoint> callDOM() override
         {
-            Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
+            Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
+            patchpoint->requireGlobalObject = false;
             patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
-                GPRReg dom = params[2].gpr();
+                GPRReg dom = params[1].gpr();
 
                 params.addSlowPathCall(jit.jump(), jit, static_cast<EncodedJSValue(*)(ExecState*, void*)>([](ExecState*, void* pointer) {
                     return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));

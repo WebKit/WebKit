@@ -1170,6 +1170,40 @@ sub GenerateDictionariesImplementationContent
     return $result;
 }
 
+sub GetJSTypeForNode
+{
+    my ($codeGenerator, $interface) = @_;
+
+    if ($codeGenerator->InheritsInterface($interface, "Document")) {
+        return "JSDocumentWrapperType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "DocumentFragment")) {
+        return "JSDocumentFragmentNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "DocumentType")) {
+        return "JSDocumentTypeNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "ProcessingInstruction")) {
+        return "JSProcessingInstructionNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "CDATASection")) {
+        return "JSCDATASectionNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "Attr")) {
+        return "JSAttrNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "Comment")) {
+        return "JSCommentNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "Text")) {
+        return "JSTextNodeType";
+    }
+    if ($codeGenerator->InheritsInterface($interface, "Element")) {
+        return "JSElementType";
+    }
+    return "JSNodeType";
+}
+
 sub GenerateHeader
 {
     my ($object, $interface, $enumerations, $dictionaries) = @_;
@@ -1368,12 +1402,9 @@ sub GenerateHeader
     push(@headerContent, "    {\n");
     if (IsDOMGlobalObject($interface)) {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info());\n");
-    } elsif ($codeGenerator->InheritsInterface($interface, "Document")) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSDocumentWrapperType), StructureFlags), info());\n");
-    } elsif ($codeGenerator->InheritsInterface($interface, "Element")) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSElementType), StructureFlags), info());\n");
     } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSNodeType), StructureFlags), info());\n");
+        my $type = GetJSTypeForNode($codeGenerator, $interface);
+        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info());\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info());\n");
     }
@@ -1669,7 +1700,7 @@ sub GenerateHeader
             push(@headerContent, "    $domJITClassName();\n");
             push(@headerContent, "#if ENABLE(JIT)\n");
             push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> checkDOM() override;\n");
-            push(@headerContent, "    Ref<JSC::DOMJIT::Patchpoint> callDOM() override;\n");
+            push(@headerContent, "    Ref<JSC::DOMJIT::CallDOMPatchpoint> callDOM() override;\n");
             push(@headerContent, "#endif\n");
             push(@headerContent, "};\n\n");
         }

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "JSDOMGlobalObject.h"
+#include "NodeConstants.h"
 #include <runtime/JSDestructibleObject.h>
 
 namespace WebCore {
@@ -29,10 +30,25 @@ namespace WebCore {
 class JSDOMWindow;
 class ScriptExecutionContext;
 
-static const uint8_t JSDOMWrapperType = JSC::LastJSCObjectType + 1;
-static const uint8_t JSNodeType = JSC::LastJSCObjectType + 2;
-static const uint8_t JSDocumentWrapperType = JSC::LastJSCObjectType + 3;
-static const uint8_t JSElementType = JSC::LastJSCObjectType + 4;
+// We encode Node type into JSType. The format is the following.
+// offset | 7 | 6 5 4 | 3 2 1 0  |
+// value  | 1 | Kind  | NodeType |
+static const uint8_t JSNodeTypeMask                  = 0b00001111;
+
+static const uint8_t JSDOMWrapperType                = 0b10000000;
+static const uint8_t JSNodeType                      = 0b10010000;
+static const uint8_t JSTextNodeType                  = JSNodeType | NodeConstants::TEXT_NODE;
+static const uint8_t JSProcessingInstructionNodeType = JSNodeType | NodeConstants::PROCESSING_INSTRUCTION_NODE;
+static const uint8_t JSDocumentTypeNodeType          = JSNodeType | NodeConstants::DOCUMENT_TYPE_NODE;
+static const uint8_t JSDocumentFragmentNodeType      = JSNodeType | NodeConstants::DOCUMENT_FRAGMENT_NODE;
+static const uint8_t JSDocumentWrapperType           = JSNodeType | NodeConstants::DOCUMENT_NODE;
+static const uint8_t JSCommentNodeType               = JSNodeType | NodeConstants::COMMENT_NODE;
+static const uint8_t JSCDATASectionNodeType          = JSNodeType | NodeConstants::CDATA_SECTION_NODE;
+static const uint8_t JSAttrNodeType                  = JSNodeType | NodeConstants::ATTRIBUTE_NODE;
+static const uint8_t JSElementType                   = 0b10100000 | NodeConstants::ELEMENT_NODE;
+
+static_assert(JSDOMWrapperType > JSC::LastJSCObjectType, "JSC::JSType offers the highest bit.");
+static_assert(NodeConstants::LastNodeType <= JSNodeTypeMask, "NodeType should be represented in 4bit.");
 
 class JSDOMObject : public JSC::JSDestructibleObject {
 public:

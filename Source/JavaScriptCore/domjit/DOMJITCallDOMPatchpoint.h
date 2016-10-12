@@ -27,46 +27,26 @@
 
 #if ENABLE(JIT)
 
-#include "CCallHelpers.h"
+#include "DOMJITPatchpoint.h"
 #include "RegisterSet.h"
 
 namespace JSC { namespace DOMJIT {
 
-class PatchpointParams;
-
-typedef CCallHelpers::JumpList PatchpointGeneratorFunction(CCallHelpers&, const PatchpointParams&);
-typedef SharedTask<PatchpointGeneratorFunction> PatchpointGenerator;
-
-// DOMJIT patchpoint is the way to inject an opaque code generator into DFG and FTL.
-// While B3::Patchpoint is self-contained about its compilation information,
-// DOMJIT::Patchpoint depends on which DFG Node invokes. For example, CheckDOM will
-// link returned failureCases to BadType OSRExit, but this information is offered
-// from CheckDOM DFG Node, not from this patchpoint. This patchpoint mainly focuses
-// on injecting a snippet generator that can tell register usage and can be used
-// in both DFG and FTL.
-class Patchpoint : public ThreadSafeRefCounted<Patchpoint> {
+class CallDOMPatchpoint : public Patchpoint {
 public:
-    static Ref<Patchpoint> create()
+    static Ref<CallDOMPatchpoint> create()
     {
-        return adoptRef(*new Patchpoint());
+        return adoptRef(*new CallDOMPatchpoint());
     }
 
-    template<typename Functor>
-    void setGenerator(const Functor& functor)
-    {
-        m_generator = createSharedTask<PatchpointGeneratorFunction>(functor);
-    }
-
-    RefPtr<PatchpointGenerator> generator() const { return m_generator; }
-
-    uint8_t numGPScratchRegisters { 0 };
-    uint8_t numFPScratchRegisters { 0 };
-
-protected:
-    Patchpoint() = default;
+    // To look up DOMWrapper cache, GlobalObject is required.
+    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
+    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
+    // https://bugs.webkit.org/show_bug.cgi?id=162980
+    bool requireGlobalObject { true };
 
 private:
-    RefPtr<PatchpointGenerator> m_generator;
+    CallDOMPatchpoint() = default;
 };
 
 } }

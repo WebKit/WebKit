@@ -85,4 +85,9 @@ ALWAYS_INLINE JSNode* jsNodeCast(JSC::JSValue value)
     return value.asCell()->type() >= JSNodeType ? JSC::jsCast<JSNode*>(value) : nullptr;
 }
 
+ALWAYS_INLINE JSC::JSValue JSNode::nodeType(JSC::ExecState&) const
+{
+    return JSC::jsNumber(static_cast<uint8_t>(type()) & JSNodeTypeMask);
+}
+
 } // namespace WebCore

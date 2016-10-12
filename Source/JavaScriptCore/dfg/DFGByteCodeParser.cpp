@@ -2687,12 +2687,19 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
         return false;
     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), thisNode);
 
+    Ref<DOMJIT::Patchpoint> checkDOMPatchpoint = domJIT->checkDOM();
+    m_graph.m_domJITPatchpoints.append(checkDOMPatchpoint.ptr());
     // We do not need to emit CheckCell thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
-    addToGraph(CheckDOM, OpInfo(domJIT), OpInfo(domJIT->thisClassInfo()), thisNode);
-    Node* globalObject = addToGraph(GetGlobalObject, thisNode);
-    addVarArgChild(globalObject); // GlobalObject of thisNode is always used to create a DOMWrapper.
+    addToGraph(CheckDOM, OpInfo(checkDOMPatchpoint.ptr()), OpInfo(domJIT->thisClassInfo()), thisNode);
+
+    Ref<DOMJIT::CallDOMPatchpoint> callDOMPatchpoint = domJIT->callDOM();
+    m_graph.m_domJITPatchpoints.append(callDOMPatchpoint.ptr());
+    if (callDOMPatchpoint->requireGlobalObject) {
+        Node* globalObject = addToGraph(GetGlobalObject, thisNode);
+        addVarArgChild(globalObject); // GlobalObject of thisNode is always used to create a DOMWrapper.
+    }
     addVarArgChild(thisNode);
-    set(VirtualRegister(resultOperand), addToGraph(Node::VarArg, CallDOM, OpInfo(domJIT), OpInfo(prediction)));
+    set(VirtualRegister(resultOperand), addToGraph(Node::VarArg, CallDOM, OpInfo(callDOMPatchpoint.ptr()), OpInfo(prediction)));
     return true;
 }
 

@@ -1,3 +1,12 @@
+2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=163245
+
+        Reviewed by Filip Pizlo.
+
+        * js/dom/domjit-accessor-node-type.html: Added.
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         Update more events to stop using legacy [ConstructorTemplate=Event]

@@ -25,40 +25,28 @@
 
 #pragma once
 
-#include "DOMJITCallDOMPatchpoint.h"
-#include "PropertySlot.h"
-#include "PutPropertySlot.h"
-#include "SpeculatedType.h"
+namespace WebCore {
 
-namespace JSC { namespace DOMJIT {
+struct NodeConstants {
+    enum NodeType {
+        ELEMENT_NODE = 1,
+        ATTRIBUTE_NODE = 2,
+        TEXT_NODE = 3,
+        CDATA_SECTION_NODE = 4,
+        PROCESSING_INSTRUCTION_NODE = 7,
+        COMMENT_NODE = 8,
+        DOCUMENT_NODE = 9,
+        DOCUMENT_TYPE_NODE = 10,
+        DOCUMENT_FRAGMENT_NODE = 11,
+    };
 
-class GetterSetter {
-public:
-    typedef PropertySlot::GetValueFunc CustomGetter;
-    typedef PutPropertySlot::PutValueFunc CustomSetter;
+    enum DeprecatedNodeType {
+        ENTITY_REFERENCE_NODE = 5,
+        ENTITY_NODE = 6,
+        NOTATION_NODE = 12,
+    };
 
-    GetterSetter(CustomGetter getter, CustomSetter setter, const ClassInfo* classInfo)
-        : m_getter(getter)
-        , m_setter(setter)
-        , m_thisClassInfo(classInfo)
-    {
-    }
-
-    virtual ~GetterSetter() { }
-
-    CustomGetter getter() const { return m_getter; }
-    CustomSetter setter() const { return m_setter; }
-    const ClassInfo* thisClassInfo() const { return m_thisClassInfo; }
-
-#if ENABLE(JIT)
-    virtual Ref<DOMJIT::CallDOMPatchpoint> callDOM() = 0;
-    virtual Ref<DOMJIT::Patchpoint> checkDOM() = 0;
-#endif
-
-private:
-    CustomGetter m_getter;
-    CustomSetter m_setter;
-    const ClassInfo* m_thisClassInfo;
+    static const uint8_t LastNodeType = NOTATION_NODE;
 };
 
-} }
+} // namespace WebCore::NodeType

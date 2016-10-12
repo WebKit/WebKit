@@ -8724,7 +8724,7 @@ private:
     {
         LValue cell = lowCell(m_node->child1());
 
-        RefPtr<DOMJIT::Patchpoint> domJIT = m_node->domJIT()->checkDOM();
+        DOMJIT::Patchpoint* domJIT = m_node->checkDOMPatchpoint();
 
         PatchpointValue* patchpoint = m_out.patchpoint(Void);
         patchpoint->appendSomeRegister(cell);
@@ -8769,13 +8769,25 @@ private:
 
     void compileCallDOM()
     {
-        LValue globalObject = lowCell(m_graph.varArgChild(m_node, 0));
-        LValue cell = lowCell(m_graph.varArgChild(m_node, 1));
+        DOMJIT::CallDOMPatchpoint* domJIT = m_node->callDOMPatchpoint();
+        int childIndex = 0;
 
-        RefPtr<DOMJIT::Patchpoint> domJIT = m_node->domJIT()->callDOM();
+        LValue globalObject;
+        JSValue globalObjectConstant;
+        if (domJIT->requireGlobalObject) {
+            Edge& globalObjectEdge = m_graph.varArgChild(m_node, childIndex++);
+            globalObject = lowCell(globalObjectEdge);
+            globalObjectConstant = m_state.forNode(globalObjectEdge).value();
+        }
+
+        Edge& baseEdge = m_graph.varArgChild(m_node, childIndex++);
+        LValue base = lowCell(baseEdge);
+        JSValue baseConstant = m_state.forNode(baseEdge).value();
+
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
-        patchpoint->appendSomeRegister(globalObject);
-        patchpoint->appendSomeRegister(cell);
+        if (domJIT->requireGlobalObject)
+            patchpoint->appendSomeRegister(globalObject);
+        patchpoint->appendSomeRegister(base);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -8786,8 +8798,6 @@ private:
 
         State* state = &m_ftlState;
         Node* node = m_node;
-        JSValue child1Constant = m_state.forNode(m_graph.varArgChild(m_node, 0)).value();
-        JSValue child2Constant = m_state.forNode(m_graph.varArgChild(m_node, 1)).value();
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -8796,11 +8806,11 @@ private:
                 Vector<FPRReg> fpScratch;
                 Vector<DOMJIT::Value> regs;
 
-                // FIXME: patchpoint should have a way to tell this can reuse "base" register.
-                // Teaching DFG about DOMJIT::Patchpoint clobber information is nice.
+                int childIndex = 1;
                 regs.append(JSValueRegs(params[0].gpr()));
-                regs.append(DOMJIT::Value(params[1].gpr(), child1Constant));
-                regs.append(DOMJIT::Value(params[2].gpr(), child2Constant));
+                if (domJIT->requireGlobalObject)
+                    regs.append(DOMJIT::Value(params[childIndex++].gpr(), globalObjectConstant));
+                regs.append(DOMJIT::Value(params[childIndex++].gpr(), baseConstant));
 
                 for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
                     gpScratch.append(params.gpScratch(i));

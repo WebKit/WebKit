@@ -50,9 +50,9 @@ EncodedJSValue toWrapperSlow(JSC::ExecState* exec, JSC::JSGlobalObject* globalOb
 }
 
 template<typename WrappedNode>
-static Ref<DOMJIT::Patchpoint> createCallDOMForOffsetAccess(ptrdiff_t offset, IsContainerGuardRequirement isContainerGuardRequirement)
+static Ref<DOMJIT::CallDOMPatchpoint> createCallDOMForOffsetAccess(ptrdiff_t offset, IsContainerGuardRequirement isContainerGuardRequirement)
 {
-    Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
+    Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
     patchpoint->numGPScratchRegisters = 1;
     patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
         JSValueRegs result = params[0].jsValueRegs();
@@ -98,7 +98,7 @@ Ref<DOMJIT::Patchpoint> NodeFirstChildDOMJIT::checkDOM()
     return checkNode();
 }
 
-Ref<DOMJIT::Patchpoint> NodeFirstChildDOMJIT::callDOM()
+Ref<DOMJIT::CallDOMPatchpoint> NodeFirstChildDOMJIT::callDOM()
 {
     return createCallDOMForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::firstChildMemoryOffset(), IsContainerGuardRequirement::Required);
 }
@@ -109,7 +109,7 @@ Ref<DOMJIT::Patchpoint> NodeLastChildDOMJIT::checkDOM()
     return checkNode();
 }
 
-Ref<DOMJIT::Patchpoint> NodeLastChildDOMJIT::callDOM()
+Ref<DOMJIT::CallDOMPatchpoint> NodeLastChildDOMJIT::callDOM()
 {
     return createCallDOMForOffsetAccess<Node>(CAST_OFFSET(Node*, ContainerNode*) + ContainerNode::lastChildMemoryOffset(), IsContainerGuardRequirement::Required);
 }
@@ -120,7 +120,7 @@ Ref<DOMJIT::Patchpoint> NodeNextSiblingDOMJIT::checkDOM()
     return checkNode();
 }
 
-Ref<DOMJIT::Patchpoint> NodeNextSiblingDOMJIT::callDOM()
+Ref<DOMJIT::CallDOMPatchpoint> NodeNextSiblingDOMJIT::callDOM()
 {
     return createCallDOMForOffsetAccess<Node>(Node::nextSiblingMemoryOffset(), IsContainerGuardRequirement::NotRequired);
 }
@@ -131,7 +131,7 @@ Ref<DOMJIT::Patchpoint> NodePreviousSiblingDOMJIT::checkDOM()
     return checkNode();
 }
 
-Ref<DOMJIT::Patchpoint> NodePreviousSiblingDOMJIT::callDOM()
+Ref<DOMJIT::CallDOMPatchpoint> NodePreviousSiblingDOMJIT::callDOM()
 {
     return createCallDOMForOffsetAccess<Node>(Node::previousSiblingMemoryOffset(), IsContainerGuardRequirement::NotRequired);
 }
@@ -142,9 +142,30 @@ Ref<DOMJIT::Patchpoint> NodeParentNodeDOMJIT::checkDOM()
     return checkNode();
 }
 
-Ref<DOMJIT::Patchpoint> NodeParentNodeDOMJIT::callDOM()
+Ref<DOMJIT::CallDOMPatchpoint> NodeParentNodeDOMJIT::callDOM()
 {
     return createCallDOMForOffsetAccess<ContainerNode>(Node::parentNodeMemoryOffset(), IsContainerGuardRequirement::NotRequired);
+}
+
+// Node#nodeType.
+Ref<DOMJIT::Patchpoint> NodeNodeTypeDOMJIT::checkDOM()
+{
+    return checkNode();
+}
+
+Ref<DOMJIT::CallDOMPatchpoint> NodeNodeTypeDOMJIT::callDOM()
+{
+    Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
+    patchpoint->requireGlobalObject = false;
+    patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg node = params[1].gpr();
+        jit.load8(CCallHelpers::Address(node, JSC::JSCell::typeInfoTypeOffset()), result.payloadGPR());
+        jit.and32(CCallHelpers::TrustedImm32(JSNodeTypeMask), result.payloadGPR());
+        jit.boxInt32(result.payloadGPR(), result);
+        return CCallHelpers::JumpList();
+    });
+    return patchpoint;
 }
 
 }

@@ -46,7 +46,7 @@
     // FIXME: the spec says this can also raise on retrieval.
     [CEReactions, SetterMayThrowLegacyException] attribute DOMString? nodeValue;
 
-    readonly attribute unsigned short nodeType;
+    [DOMJIT, CustomGetter] readonly attribute unsigned short nodeType;
     [DOMJIT] readonly attribute Node? parentNode;
     readonly attribute NodeList childNodes;
     [DOMJIT] readonly attribute Node? firstChild;

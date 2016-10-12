@@ -1,3 +1,48 @@
+2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=163245
+
+        Reviewed by Filip Pizlo.
+
+        We reserve the highest bit of JSC::JSType for extensions outside JSC.
+        JSC does not use JSType bits so many: only 52 types are defined.
+
+        And we extend CallDOM patchpoint to claim that it does not require a global object.
+        This global object is used to generate a DOM wrapper. However, nodeType does not require
+        it since it just returns integer. In the future, we will extend CallDOM to claim
+        its result type. And we can decide this `requireGlobalObject` condition automatically
+        according to the result type.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCheckDOMPatchpoint):
+        (JSC::DFG::Node::checkDOMPatchpoint):
+        (JSC::DFG::Node::hasCallDOMPatchpoint):
+        (JSC::DFG::Node::callDOMPatchpoint):
+        (JSC::DFG::Node::hasDOMJIT): Deleted.
+        (JSC::DFG::Node::domJIT): Deleted.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        (JSC::DFG::SpeculativeJIT::compileCheckDOM):
+        * domjit/DOMJITCallDOMPatchpoint.h: Copied from Source/JavaScriptCore/domjit/DOMJITGetterSetter.h.
+        (JSC::DOMJIT::CallDOMPatchpoint::create):
+        * domjit/DOMJITGetterSetter.h:
+        * domjit/DOMJITPatchpoint.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * jsc.cpp:
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/JSType.h:
+
 2016-10-12  Keith Miller  <keith_miller@apple.com>
 
         Handle non-function, non-undefined comparator in Array.prototype.sort

@@ -59,7 +59,8 @@
 namespace JSC {
 
 namespace DOMJIT {
-class GetterSetter;
+class Patchpoint;
+class CallDOMPatchpoint;
 }
 
 namespace Profiler {
@@ -2314,15 +2315,26 @@ public:
         return m_opInfo.as<BasicBlockLocation*>();
     }
 
-    bool hasDOMJIT() const
+    bool hasCheckDOMPatchpoint() const
     {
-        return op() == CheckDOM || op() == CallDOM;
+        return op() == CheckDOM;
     }
 
-    DOMJIT::GetterSetter* domJIT()
+    DOMJIT::Patchpoint* checkDOMPatchpoint()
     {
-        ASSERT(hasDOMJIT());
-        return m_opInfo.as<DOMJIT::GetterSetter*>();
+        ASSERT(hasCheckDOMPatchpoint());
+        return m_opInfo.as<DOMJIT::Patchpoint*>();
+    }
+
+    bool hasCallDOMPatchpoint() const
+    {
+        return op() == CallDOM;
+    }
+
+    DOMJIT::CallDOMPatchpoint* callDOMPatchpoint()
+    {
+        ASSERT(hasCallDOMPatchpoint());
+        return m_opInfo.as<DOMJIT::CallDOMPatchpoint*>();
     }
 
     bool hasClassInfo() const

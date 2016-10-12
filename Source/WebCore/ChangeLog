@@ -1,3 +1,55 @@
+2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=163245
+
+        Reviewed by Filip Pizlo.
+
+        Node.nodeType accessor is so frequently called. For example, jQuery's $ function uses
+        this to distinguish DOM objects from the other JS objects. So every time you call `$(dom)`,
+        nodeType accessor is called. In addition to that, jQuery's prev, next, parent etc. also uses
+        this `nodeType`. And Ember.js also uses it. And ... So this function is super critical for DOM
+        performance.
+
+        The challenge is that there is no room for putting NodeType into C++ Node class. Node class
+        has a 32bit field to store some data. However, these bits are already exhausted. Extending
+        Node class is unacceptable since it significantly enlarges memory consumption of WebKit (Node
+        is everywhere!). Unfortunately, current Node::nodeType is implemented as a virtual function
+        even though this function is frequently called from JS world.
+
+        Interestingly, we already store some duplicate data in JSObject, JSC::JSType. WebCore already
+        extends it with JSElementType, JSNodeType, and JSDocumentWrapperType. And these types are
+        corresponding to specific NodeTypes. For example, JSElementType should have ELEMENT_NODE type.
+
+        This patch further extends this JSC::JSType in WebCore side safely. We embed NodeType bits into
+        JSC::JSType. This design offers significantly faster nodeType implementation. Furthermore, it
+        makes DOMJIT easy for nodeType accessor.
+
+        Even without the IC change[1], Dromaeo dom-query shows 8 - 10% improvement,
+        1452.96 runs/s vs 1578.56 runs/s. We can expect that this improvement will be applied to the
+        other benchmarks / real applications when the IC change is landed.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=163226
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWrapper.h:
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::JSNode::nodeType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetJSTypeForNode):
+        (GenerateHeader):
+        * dom/Node.idl:
+        * dom/NodeConstants.h: Copied from Source/JavaScriptCore/domjit/DOMJITGetterSetter.h.
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::createCallDOMForOffsetAccess):
+        (WebCore::NodeFirstChildDOMJIT::callDOM):
+        (WebCore::NodeLastChildDOMJIT::callDOM):
+        (WebCore::NodeNextSiblingDOMJIT::callDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::callDOM):
+        (WebCore::NodeParentNodeDOMJIT::callDOM):
+        (WebCore::NodeNodeTypeDOMJIT::checkDOM):
+        (WebCore::NodeNodeTypeDOMJIT::callDOM):
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         Update more events to stop using legacy [ConstructorTemplate=Event]
