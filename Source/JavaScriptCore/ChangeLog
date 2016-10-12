@@ -1,3 +1,11 @@
+2016-10-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix for GCC 4.9 after r207186.
+        https://bugs.webkit.org/show_bug.cgi?id=163255
+
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::Entry::Entry):
+
 2016-10-11  Saam Barati  <sbarati@apple.com>
 
         HasOwnPropertyCache needs to ref the UniquedStringImpls it sees

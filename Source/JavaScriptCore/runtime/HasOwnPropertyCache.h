@@ -44,6 +44,13 @@ public:
 
         Entry() = default;
 
+        Entry(RefPtr<UniquedStringImpl> impl, StructureID structureID, bool result)
+            : impl(impl)
+            , structureID(structureID)
+            , result(result)
+        {
+        }
+
         Entry& operator=(Entry&& other)
         {
             impl = WTFMove(other.impl);
