@@ -76,16 +76,4 @@ void XLargeMap::add(const XLargeRange& range)
     m_free.push(merged);
 }
 
-XLargeRange XLargeMap::removePhysical()
-{
-    auto it = std::find_if(m_free.begin(), m_free.end(), [](const XLargeRange& range) {
-        return range.physicalSize();
-    });
-
-    if (it == m_free.end())
-        return XLargeRange();
-
-    return m_free.pop(it);
-}
-
 } // namespace bmalloc
