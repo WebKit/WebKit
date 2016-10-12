@@ -1,3 +1,35 @@
+2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r204091. rdar://problem/28476960
+
+    2016-08-03  Geoffrey Garen  <ggaren@apple.com>
+
+            [bmalloc] Merging of XLargeRanges can leak the upper range
+            https://bugs.webkit.org/show_bug.cgi?id=160403
+
+            Reviewed by Michael Saboff.
+
+            * bmalloc/Heap.cpp:
+            (bmalloc::Heap::scavengeLargeObjects): Don't use removePhysical().
+            Recorded physical size is a performance optimization. It is not the
+            truth. So it might be zero even if a range contains physical pages.
+
+            Instead, iterate each range in the map unconditionally.
+
+            The map can shrink when we release the lock, so we must clamp our
+            iterator each time through the loop.
+
+            The map can grow when we release the lock, but we don't care because
+            growth restarts the scavenger from the beginning.
+
+            * bmalloc/XLargeMap.cpp:
+            (bmalloc::XLargeMap::removePhysical): Deleted. Not used anymore.
+
+            * bmalloc/XLargeMap.h:
+            (bmalloc::XLargeMap::ranges): Added direct access for the sake of
+            scavengeLargeObjects. (This violates our naming conventions -- I'll do
+            a rename in a follow-up patch.)
+
 2016-07-13  Enrica Casucci  <enrica@apple.com>
 
         Update supported platforms in xcconfig files to match the sdk names.
