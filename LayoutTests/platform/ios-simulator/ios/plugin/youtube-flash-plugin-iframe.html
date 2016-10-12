@@ -20,7 +20,7 @@ function Test()
         objectEmbed = document.getElementById('object-embed');
         objectNoEmbed = document.getElementById('object-no-embed');
 
-        // Test we don't change any embe/object tag to iframe.
+        // Test we don't change any embed/object tag to iframe.
         shouldBe('normalEmbed.tagName', '"EMBED"');
         shouldBe('elinkEmbed.tagName', '"EMBED"');
         shouldBe('objectEmbed.tagName', '"EMBED"');
@@ -31,15 +31,15 @@ function Test()
 
         // Test we have the shadow root and the iframe player.
         normalEmbedShadowRoot = internals.shadowRoot(normalEmbed);
-        shouldBe('internals.shadowPseudoId(normalEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('internals.shadowPseudoId(normalEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('normalEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         objectEmbedShadowRoot = internals.shadowRoot(objectEmbed);
-        shouldBe('internals.shadowPseudoId(objectEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('internals.shadowPseudoId(objectEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('objectEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         objectNoEmbedShadowRoot = internals.shadowRoot(objectNoEmbed);
-        shouldBe('internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild)', '"-apple-youtube-shadow-iframe"');
+        shouldBe('internals.shadowPseudoId(objectNoEmbedShadowRoot.firstChild)', '"-webkit-plugin-replacement"');
         shouldBe('objectNoEmbedShadowRoot.firstChild.firstChild.tagName', '"IFRAME"');
 
         var successfullyParsed = true;
