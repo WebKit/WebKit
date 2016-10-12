@@ -1,3 +1,32 @@
+2016-10-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove JITWriteBarrier.h
+        https://bugs.webkit.org/show_bug.cgi?id=163334
+
+        Reviewed by Mark Lam.
+        
+        I guess that the idea of JITWriteBarrier was to make sure that if you slap some heap pointer
+        bits into machine code, then you better execute a barrier on the code block. But it's a
+        complicated piece of code, and I can never remember how it quite works. These days it looks
+        vestigial, particularly since only the CallLinkInfo patchable callee immediate uses it. It's
+        not really necessary to have something like this, since our convention is that any pointer
+        stored in machine code must always be shadowed in the GC heap. I think that convention has
+        won by overwhelming majority, so we should finally remove JITWriteBarrier.
+        
+        A practical outcome of this change is that it makes it easier to implement DirectCall ICs,
+        which will have to store the callee in the CallLinkInfo but not in the machine code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/AbstractMacroAssembler.h:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::setCallee): Deleted.
+        (JSC::CallLinkInfo::clearCallee): Deleted.
+        * heap/SlotVisitor.h:
+        * jit/JITWriteBarrier.h: Removed.
+
 2016-10-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix for GCC 4.9 after r207186.

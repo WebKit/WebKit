@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 #include "CallMode.h"
 #include "CodeLocation.h"
 #include "CodeSpecializationKind.h"
-#include "JITWriteBarrier.h"
 #include "JSFunction.h"
 #include "PolymorphicCallStubRoutine.h"
 #include "WriteBarrier.h"
@@ -158,15 +157,9 @@ public:
         return m_hotPathOther;
     }
 
-    void setCallee(VM& vm, CodeLocationDataLabelPtr location, JSCell* owner, JSFunction* callee)
-    {
-        m_callee.set(vm, location, owner, callee);
-    }
+    void setCallee(VM&, JSCell*, JSFunction* callee);
 
-    void clearCallee()
-    {
-        m_callee.clear();
-    }
+    void clearCallee();
 
     JSFunction* callee()
     {
@@ -314,7 +307,7 @@ private:
     CodeLocationNearCall m_callReturnLocation;
     CodeLocationDataLabelPtr m_hotPathBegin;
     CodeLocationNearCall m_hotPathOther;
-    JITWriteBarrier<JSFunction> m_callee;
+    WriteBarrier<JSFunction> m_callee;
     WriteBarrier<JSFunction> m_lastSeenCallee;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
     RefPtr<JITStubRoutine> m_slowStub;

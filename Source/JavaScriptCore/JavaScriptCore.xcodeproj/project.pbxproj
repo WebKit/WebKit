@@ -1769,7 +1769,6 @@
 		A767B5B617A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */; };
 		A76C51761182748D00715B05 /* JSInterfaceJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = A76C51741182748D00715B05 /* JSInterfaceJIT.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A76F279415F13C9600517D67 /* UnlinkedCodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */; };
-		A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */ = {isa = PBXBuildFile; fileRef = A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77A423D17A0BBFD00A8DB81 /* DFGAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */; };
 		A77A423E17A0BBFD00A8DB81 /* DFGAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */; };
 		A77A423F17A0BBFD00A8DB81 /* DFGClobberize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77A423817A0BBFD00A8DB81 /* DFGClobberize.cpp */; };
@@ -4077,7 +4076,6 @@
 		A767B5B317A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGLoopPreHeaderCreationPhase.cpp; path = dfg/DFGLoopPreHeaderCreationPhase.cpp; sourceTree = "<group>"; };
 		A767B5B417A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGLoopPreHeaderCreationPhase.h; path = dfg/DFGLoopPreHeaderCreationPhase.h; sourceTree = "<group>"; };
 		A76C51741182748D00715B05 /* JSInterfaceJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInterfaceJIT.h; sourceTree = "<group>"; };
-		A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWriteBarrier.h; sourceTree = "<group>"; };
 		A77A423617A0BBFD00A8DB81 /* DFGAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAbstractHeap.cpp; path = dfg/DFGAbstractHeap.cpp; sourceTree = "<group>"; };
 		A77A423717A0BBFD00A8DB81 /* DFGAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractHeap.h; path = dfg/DFGAbstractHeap.h; sourceTree = "<group>"; };
 		A77A423817A0BBFD00A8DB81 /* DFGClobberize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGClobberize.cpp; path = dfg/DFGClobberize.cpp; sourceTree = "<group>"; };
@@ -5279,7 +5277,6 @@
 				0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */,
 				DC0184171D10C1870057B053 /* JITWorklist.cpp */,
 				DC0184181D10C1870057B053 /* JITWorklist.h */,
-				A76F54A213B28AAB00EF2BCE /* JITWriteBarrier.h */,
 				A76C51741182748D00715B05 /* JSInterfaceJIT.h */,
 				792CB3471C4EED5C00D13AF3 /* PCToCodeOriginMap.cpp */,
 				792CB3481C4EED5C00D13AF3 /* PCToCodeOriginMap.h */,
@@ -7945,7 +7942,6 @@
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,
 				0FC712E317CD8793008CC93C /* JITToDFGDeferredCompilationCallback.h in Headers */,
-				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				840480131021A1D9008E7F01 /* JSAPIValueWrapper.h in Headers */,
 				C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */,
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,

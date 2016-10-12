@@ -37,7 +37,6 @@ class GCThreadSharedData;
 class Heap;
 class HeapCell;
 class HeapSnapshotBuilder;
-template<typename T> class JITWriteBarrier;
 class MarkedBlock;
 class UnconditionalFinalizer;
 template<typename T> class Weak;

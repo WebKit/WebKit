@@ -566,7 +566,7 @@ void linkFor(
     VM* vm = callerCodeBlock->vm();
     
     ASSERT(!callLinkInfo.isLinked());
-    callLinkInfo.setCallee(exec->callerFrame()->vm(), callLinkInfo.hotPathBegin(), callerCodeBlock, callee);
+    callLinkInfo.setCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
     callLinkInfo.setLastSeenCallee(exec->callerFrame()->vm(), callerCodeBlock, callee);
     if (shouldDumpDisassemblyFor(callerCodeBlock))
         dataLog("Linking call in ", *callerCodeBlock, " at ", callLinkInfo.codeOrigin(), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");

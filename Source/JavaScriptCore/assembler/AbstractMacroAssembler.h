@@ -52,7 +52,6 @@ struct OSRExit;
 template <class AssemblerType, class MacroAssemblerType>
 class AbstractMacroAssembler {
 public:
-    friend class JITWriteBarrierBase;
     typedef AbstractMacroAssembler<AssemblerType, MacroAssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
 
