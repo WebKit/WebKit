@@ -1,3 +1,17 @@
+2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r204612. rdar://problem/28216278
+
+    2016-08-18  Mark Lam  <mark.lam@apple.com>
+
+            ScopedArguments is using the wrong owner object for a write barrier.
+            https://bugs.webkit.org/show_bug.cgi?id=160976
+            <rdar://problem/27328506>
+
+            Reviewed by Keith Miller.
+
+            * stress/scoped-arguments-write-barrier-should-be-on-scope-object.js: Added.
+
 2016-09-09  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r204403. rdar://problem/27991568
