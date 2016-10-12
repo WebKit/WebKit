@@ -9,8 +9,9 @@
 @media (color-gamut: p3) {
 #b { background-color: blue; }
 }
-@media (color-gamut: none) {
-#b { background-color: blue; }
+/* reduced is not a valid color space */
+@media (color-gamut: reduced) {
+#c { background-color: blue; }
 }
 </style>
 </head>
