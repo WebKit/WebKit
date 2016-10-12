@@ -1,3 +1,13 @@
+2016-10-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Mark url tests to failure
+
+        Unreviewed EFL gardening on Oct. 12th.
+
+        URL tests have been failed since r207162.
+
+        * platform/efl/TestExpectations:
+
 2016-10-11  Dean Jackson  <dino@apple.com>
 
         Fix a typo in the test.
