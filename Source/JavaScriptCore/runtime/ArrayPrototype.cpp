@@ -921,33 +921,33 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         return JSValue::encode(result);
     }
 
-    unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
+    unsigned actualStart = argumentClampedIndexFromStartOrEnd(exec, 0, length);
 
-    unsigned deleteCount = length - begin;
+    unsigned actualDeleteCount = length - actualStart;
     if (exec->argumentCount() > 1) {
-        double deleteDouble = exec->uncheckedArgument(1).toInteger(exec);
-        if (deleteDouble < 0)
-            deleteCount = 0;
-        else if (deleteDouble > length - begin)
-            deleteCount = length - begin;
+        double deleteCount = exec->uncheckedArgument(1).toInteger(exec);
+        if (deleteCount < 0)
+            actualDeleteCount = 0;
+        else if (deleteCount > length - actualStart)
+            actualDeleteCount = length - actualStart;
         else
-            deleteCount = static_cast<unsigned>(deleteDouble);
+            actualDeleteCount = static_cast<unsigned>(deleteCount);
     }
 
-    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, deleteCount);
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, actualDeleteCount);
     if (speciesResult.first == SpeciesConstructResult::Exception)
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
     if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))
-        result = asArray(thisObj)->fastSlice(*exec, begin, deleteCount);
+        result = asArray(thisObj)->fastSlice(*exec, actualStart, actualDeleteCount);
 
     if (!result) {
         if (speciesResult.first == SpeciesConstructResult::CreatedObject) {
             result = speciesResult.second;
             
-            for (unsigned k = 0; k < deleteCount; ++k) {
-                JSValue v = getProperty(exec, thisObj, k + begin);
+            for (unsigned k = 0; k < actualDeleteCount; ++k) {
+                JSValue v = getProperty(exec, thisObj, k + actualStart);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 if (UNLIKELY(!v))
                     continue;
@@ -955,12 +955,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
             }
         } else {
-            result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
+            result = JSArray::tryCreateUninitialized(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), actualDeleteCount);
             if (!result)
                 return JSValue::encode(throwOutOfMemoryError(exec, scope));
             
-            for (unsigned k = 0; k < deleteCount; ++k) {
-                JSValue v = getProperty(exec, thisObj, k + begin);
+            for (unsigned k = 0; k < actualDeleteCount; ++k) {
+                JSValue v = getProperty(exec, thisObj, k + actualStart);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
                 if (UNLIKELY(!v))
                     continue;
@@ -969,21 +969,21 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         }
     }
 
-    unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);
-    if (additionalArgs < deleteCount) {
-        shift<JSArray::ShiftCountForSplice>(exec, thisObj, begin, deleteCount, additionalArgs, length);
+    unsigned itemCount = std::max<int>(exec->argumentCount() - 2, 0);
+    if (itemCount < actualDeleteCount) {
+        shift<JSArray::ShiftCountForSplice>(exec, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    } else if (additionalArgs > deleteCount) {
-        unshift<JSArray::ShiftCountForSplice>(exec, thisObj, begin, deleteCount, additionalArgs, length);
+    } else if (itemCount > actualDeleteCount) {
+        unshift<JSArray::ShiftCountForSplice>(exec, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    for (unsigned k = 0; k < additionalArgs; ++k) {
-        thisObj->putByIndexInline(exec, k + begin, exec->uncheckedArgument(k + 2), true);
+    for (unsigned k = 0; k < itemCount; ++k) {
+        thisObj->putByIndexInline(exec, k + actualStart, exec->uncheckedArgument(k + 2), true);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
     scope.release();
-    setLength(exec, vm, thisObj, length - deleteCount + additionalArgs);
+    setLength(exec, vm, thisObj, length - actualDeleteCount + itemCount);
     return JSValue::encode(result);
 }
 

@@ -1,3 +1,16 @@
+2016-10-12  Mark Lam  <mark.lam@apple.com>
+
+        Rename variables in arrayProtoFuncSplice() to match names in the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=163354
+
+        Reviewed by Saam Barati.
+
+        This will make it easier to see whether the code matches the spec or not.
+        Ref: https://tc39.github.io/ecma262/#sec-array.prototype.splice
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+
 2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT][JSC] Explore the way to embed nodeType into JSC::JSType in WebCore
