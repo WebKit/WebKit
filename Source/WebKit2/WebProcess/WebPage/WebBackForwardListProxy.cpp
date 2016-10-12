@@ -221,12 +221,6 @@ void WebBackForwardListProxy::close()
     m_page = nullptr;
 }
 
-bool WebBackForwardListProxy::isActive()
-{
-    // FIXME: Should check the the list is enabled and has non-zero capacity.
-    return true;
-}
-
 void WebBackForwardListProxy::clear()
 {
     m_page->send(Messages::WebPageProxy::BackForwardClear());

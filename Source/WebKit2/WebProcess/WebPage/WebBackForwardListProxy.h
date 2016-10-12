@@ -57,8 +57,6 @@ private:
     int backListCount() override;
     int forwardListCount() override;
 
-    virtual bool isActive();
-
     void close() override;
 
 #if PLATFORM(IOS)
