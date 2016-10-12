@@ -1,0 +1,4 @@
+Blocked access to external URL http://[]/
+
+PASS Script src with an invalid URL 
+

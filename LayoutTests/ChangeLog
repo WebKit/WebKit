@@ -1,3 +1,26 @@
+2016-10-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Tests that fail since the new URLParser has been enabled on r207162.
+        https://bugs.webkit.org/show_bug.cgi?id=163335
+
+        Unreviewed gardening.
+
+        Rebaseline 12 tests that don't look like real failures, and report the other 36 that look as such.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css-generated-content/malformed-url-expected.txt: Added.
+        * platform/gtk/fast/loader/redirect-to-invalid-url-using-javascript-calls-policy-delegate-expected.txt: Added.
+        * platform/gtk/fast/loader/redirect-to-invalid-url-using-meta-refresh-calls-policy-delegate-expected.txt: Added.
+        * platform/gtk/fast/loader/url-parse-1-expected.txt: Added.
+        * platform/gtk/fast/loader/window-open-to-invalid-url-calls-policy-delegate-expected.txt: Added.
+        * platform/gtk/fast/url/invalid-idn-expected.txt: Added.
+        * platform/gtk/fast/url/segments-userinfo-vs-host-expected.txt: Added.
+        * platform/gtk/fast/url/tab-and-newline-stripping-expected.txt: Added.
+        * platform/gtk/fast/url/url-credentials-escaping-expected.txt: Added.
+        * platform/gtk/http/tests/eventsource/eventsource-cors-non-http-expected.txt: Added.
+        * platform/gtk/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/fetch-src/failure-expected.txt: Added.
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         Update remaining DOM events to stop using legacy [ConstructorTemplate=Event]
