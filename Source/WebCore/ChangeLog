@@ -1,3 +1,49 @@
+2016-10-12  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Sliders: scrubber and volume
+        https://bugs.webkit.org/show_bug.cgi?id=163328
+        <rdar://problem/28733838>
+
+        Reviewed by Dean Jackson.
+
+        We add a new Slider class that provides a custom slider backed by an
+        invisible <input type="range"> element and a fill underlay to provide
+        a custom color between the left edge of the slider and the slider thumb.
+        As the slider's value changes, a UI delegate receives messages to track
+        such changes.
+
+        Tests: media/modern-media-controls/scrubber/scrubber.html
+               media/modern-media-controls/slider/slider-constructor.html
+               media/modern-media-controls/slider/slider-fill.html
+               media/modern-media-controls/slider/slider-styles.html
+               media/modern-media-controls/volume-slider/volume-slider-value.html
+               media/modern-media-controls/volume-slider/volume-slider.html
+
+        * Modules/modern-media-controls/controls/scrubber.css: Added.
+        (.scrubber.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/scrubber.js: Added.
+        (Scrubber):
+        * Modules/modern-media-controls/controls/slider.css: Added.
+        (.slider):
+        (.slider > input,):
+        (.slider > .fill):
+        (.slider > input):
+        (.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/slider.js: Added.
+        (Slider.prototype.get value):
+        (Slider.prototype.set value):
+        (Slider.prototype.get width):
+        (Slider.prototype.set width):
+        (Slider.prototype.handleEvent):
+        (Slider.prototype.commitProperty):
+        (Slider.prototype._handleInputEvent):
+        (Slider.prototype._handleChangeEvent):
+        (Slider.prototype._updateFill):
+        * Modules/modern-media-controls/controls/volume-slider.css: Added.
+        (.volume.slider > input::-webkit-slider-thumb):
+        * Modules/modern-media-controls/controls/volume-slider.js: Added.
+        (VolumeSlider):
+
 2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add experimental support for the "formatForeColor" inputType

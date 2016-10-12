@@ -1,3 +1,30 @@
+2016-10-12  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Sliders: scrubber and volume
+        https://bugs.webkit.org/show_bug.cgi?id=163328
+        <rdar://problem/28733838>
+
+        Reviewed by Dean Jackson.
+
+        Testing the properties of the new Slider class and its subclasses.
+
+        * media/modern-media-controls/resources/media-controls-utils.js: Added.
+        (rgba):
+        (shouldBeEqualToRGBAColor):
+        * media/modern-media-controls/scrubber/scrubber-expected.txt: Added.
+        * media/modern-media-controls/scrubber/scrubber.html: Added.
+        * media/modern-media-controls/slider/slider-constructor-expected.txt: Added.
+        * media/modern-media-controls/slider/slider-constructor.html: Added.
+        * media/modern-media-controls/slider/slider-fill-expected.txt: Added.
+        * media/modern-media-controls/slider/slider-fill.html: Added.
+        * media/modern-media-controls/slider/slider-styles-expected.txt: Added.
+        * media/modern-media-controls/slider/slider-styles.html: Added.
+        * media/modern-media-controls/volume-slider/volume-slider-expected.txt: Added.
+        * media/modern-media-controls/volume-slider/volume-slider-value-expected.txt: Added.
+        * media/modern-media-controls/volume-slider/volume-slider-value.html: Added.
+        * media/modern-media-controls/volume-slider/volume-slider.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add experimental support for the "formatForeColor" inputType
