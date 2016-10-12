@@ -28,8 +28,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import atexit
-import os
+import glob
 import logging
+import os
 import re
 import sys
 import time
@@ -346,11 +347,21 @@ class WinPort(ApplePort):
     def delete_sem_locks(self):
         os.system("rm -rf /dev/shm/sem.*")
 
+    def delete_preference_files(self):
+        try:
+            preferences_files = self._filesystem.join(os.environ['APPDATA'], "Apple Computer/Preferences", "com.apple.DumpRenderTree*")
+            filelist = glob.glob(preferences_files)
+            for file in filelist:
+                self._filesystem.remove(file)
+        except:
+            _log.warn("Failed to delete preference files.")
+
     def setup_test_run(self, device_class=None):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
         self.prevent_error_dialogs()
         self.delete_sem_locks()
+        self.delete_preference_files()
         super(WinPort, self).setup_test_run(device_class)
 
     def clean_up_test_run(self):

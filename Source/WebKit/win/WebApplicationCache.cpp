@@ -28,6 +28,7 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "MarshallingHelpers.h"
+#include "WebPreferences.h"
 #include "WebSecurityOrigin.h"
 #include <wtf/RetainPtr.h>
 #include <WebCore/ApplicationCache.h>
@@ -68,7 +69,7 @@ static String applicationCachePath()
     String path = localUserSpecificStorageDirectory();
 
 #if USE(CF)
-    auto cacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, kCFPreferencesCurrentApplication));
+    auto cacheDirectoryPreference = adoptCF(CFPreferencesCopyAppValue(WebKitLocalCacheDefaultsKey, WebPreferences::applicationId()));
     if (cacheDirectoryPreference && CFStringGetTypeID() == CFGetTypeID(cacheDirectoryPreference.get()))
         path = static_cast<CFStringRef>(cacheDirectoryPreference.get());
 #endif

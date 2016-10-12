@@ -33,6 +33,7 @@
 #include "COMPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebNotificationCenter.h"
+#include "WebPreferences.h"
 #include "WebSecurityOrigin.h"
 
 #include <WebCore/BString.h>
@@ -420,7 +421,7 @@ void WebDatabaseManager::dispatchDidModifyDatabase(SecurityOrigin* origin, const
 static WTF::String databasesDirectory()
 {
 #if USE(CF)
-    RetainPtr<CFPropertyListRef> directoryPref = adoptCF(CFPreferencesCopyAppValue(WebDatabaseDirectoryDefaultsKey, kCFPreferencesCurrentApplication));
+    RetainPtr<CFPropertyListRef> directoryPref = adoptCF(CFPreferencesCopyAppValue(WebDatabaseDirectoryDefaultsKey, WebPreferences::applicationId()));
     if (directoryPref && (CFStringGetTypeID() == CFGetTypeID(directoryPref.get())))
         return static_cast<CFStringRef>(directoryPref.get());
 #endif
