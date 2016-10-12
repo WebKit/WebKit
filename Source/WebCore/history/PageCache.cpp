@@ -373,11 +373,11 @@ static String pruningReasonToDiagnosticLoggingKey(PruningReason pruningReason)
     return emptyString();
 }
 
-static void setInPageCache(Page& page, bool isInPageCache)
+static void setPageCacheState(Page& page, Document::PageCacheState pageCacheState)
 {
     for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document())
-            document->setInPageCache(isInPageCache);
+            document->setPageCacheState(pageCacheState);
     }
 }
 
@@ -407,8 +407,7 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
     if (!page || !canCache(*page))
         return;
 
-    // Make sure all the documents know they are being added to the PageCache.
-    setInPageCache(*page, true);
+    setPageCacheState(*page, Document::AboutToEnterPageCache);
 
     // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
     // before the page enters the page cache, while we still can dispatch DOM blur/focus events.
@@ -421,9 +420,11 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
     // Check that the page is still page-cacheable after firing the pagehide event. The JS event handlers
     // could have altered the page in a way that could prevent caching.
     if (!canCache(*page)) {
-        setInPageCache(*page, false);
+        setPageCacheState(*page, Document::NotInPageCache);
         return;
     }
+
+    setPageCacheState(*page, Document::InPageCache);
 
     // Make sure we no longer fire any JS events past this point.
     NoEventDispatchAssertion assertNoEventDispatch;

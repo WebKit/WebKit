@@ -1,5 +1,23 @@
 2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r205786. rdar://problem/28476956
+
+    2016-09-10  Chris Dumez  <cdumez@apple.com>
+
+            It is possible for Document::m_frame pointer to become stale
+            https://bugs.webkit.org/show_bug.cgi?id=161812
+            <rdar://problem/27745023>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test that crashes on both Mac and iOS due to using a stale
+            Document::m_frame pointer.
+
+            * fast/history/pagehide-remove-iframe-crash-expected.txt: Added.
+            * fast/history/pagehide-remove-iframe-crash.html: Added.
+
+2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r205190. rdar://problem/28545010
 
     2016-08-30  Youenn Fablet  <youenn@apple.com>
