@@ -35,7 +35,7 @@
 
 #if USE(CURL)
 #include <WebCore/CurlCacheManager.h>
-#elif USE(CFNETWORK)
+#elif USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
