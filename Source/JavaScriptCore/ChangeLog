@@ -1,3 +1,23 @@
+2016-10-11  Saam Barati  <sbarati@apple.com>
+
+        HasOwnPropertyCache needs to ref the UniquedStringImpls it sees
+        https://bugs.webkit.org/show_bug.cgi?id=163255
+
+        Reviewed by Geoffrey Garen.
+
+        The cache needs to be responsible for ensuring that things
+        in the cache stay alive. Before, it wasn't doing this, and
+        that was wrong.
+
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::Entry::operator=):
+        (JSC::HasOwnPropertyCache::operator delete):
+        (JSC::HasOwnPropertyCache::create):
+        (JSC::HasOwnPropertyCache::get):
+        (JSC::HasOwnPropertyCache::tryAdd):
+        (JSC::HasOwnPropertyCache::clear):
+        (JSC::HasOwnPropertyCache::zeroBuffer):
+
 2016-10-06  Filip Pizlo  <fpizlo@apple.com>
 
         MarkedBlock should know what objects are live during marking
