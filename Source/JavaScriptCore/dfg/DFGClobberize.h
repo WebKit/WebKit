@@ -236,6 +236,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(JSObject_butterfly);
         ArrayMode mode = node->arrayMode();
         switch (mode.type()) {
+        case Array::ForceExit: {
+            write(SideState);
+            return;
+        }
         case Array::Int32: {
             if (mode.isInBounds()) {
                 read(Butterfly_publicLength);
