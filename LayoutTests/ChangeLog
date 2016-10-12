@@ -1,3 +1,12 @@
+2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, add expected file for new test after r207239
+        https://bugs.webkit.org/show_bug.cgi?id=163245
+
+        Add an "expected.txt" file.
+
+        * js/dom/domjit-accessor-node-type-expected.txt: Added.
+
 2016-10-12  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Sliders: scrubber and volume
