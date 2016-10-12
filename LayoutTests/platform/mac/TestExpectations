@@ -1475,3 +1475,8 @@ webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled.html [ Pas
 webkit.org/b/156070 storage/indexeddb/modern/abort-requests-cancelled-private.html [ Pass Timeout ]
 
 webkit.org/b/116621 fast/replaced/preferred-widths.html [ Pass Failure ]
+
+webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size-iframe.html [ Skip ]
+webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
+webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
+webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
