@@ -1,5 +1,21 @@
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
+        Update AnimationEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163312
+
+        Reviewed by Ryosuke Niwa.
+
+        Update AnimationEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a regular constructor as in the specification:
+        - https://drafts.csswg.org/css-animations/#interface-animationevent
+
+        * dom/AnimationEvent.cpp:
+        (WebCore::AnimationEvent::AnimationEvent):
+        * dom/AnimationEvent.h:
+        * dom/AnimationEvent.idl:
+
+2016-10-11  Chris Dumez  <cdumez@apple.com>
+
         Update DeviceProximityEvent to stop using legacy [ConstructorTemplate=Event]
         https://bugs.webkit.org/show_bug.cgi?id=163311
 

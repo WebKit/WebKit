@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-AnimationEvent::AnimationEvent(const AtomicString& type, const AnimationEventInit& initializer)
-    : Event(type, initializer)
+AnimationEvent::AnimationEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_animationName(initializer.animationName)
     , m_elapsedTime(initializer.elapsedTime)
 {

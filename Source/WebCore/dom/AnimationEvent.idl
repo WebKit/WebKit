@@ -24,9 +24,20 @@
  */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional AnimationEventInit animationEventInitDict),
 ] interface AnimationEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString animationName;
-    [InitializedByEventConstructor] readonly attribute unrestricted double elapsedTime;
+    readonly attribute DOMString animationName;
+    readonly attribute double elapsedTime;
+
+    // FIXME: This is not supported yet.
+    // readonly attribute DOMString pseudoElement;
+};
+
+dictionary AnimationEventInit : EventInit {
+    DOMString animationName = "";
+    double elapsedTime = 0.0;
+
+    // FIXME: This is not supported yet.
+    // DOMString pseudoElement = "";
 };
 

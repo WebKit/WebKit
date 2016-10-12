@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-struct AnimationEventInit : public EventInit {
-    String animationName;
-    double elapsedTime { 0 };
-};
-
 class AnimationEvent final : public Event {
 public:
     static Ref<AnimationEvent> create(const AtomicString& type, const String& animationName, double elapsedTime)
@@ -42,9 +37,14 @@ public:
         return adoptRef(*new AnimationEvent(type, animationName, elapsedTime));
     }
 
-    static Ref<AnimationEvent> createForBindings(const AtomicString& type, const AnimationEventInit& initializer)
+    struct Init : EventInit {
+        String animationName;
+        double elapsedTime { 0 };
+    };
+
+    static Ref<AnimationEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new AnimationEvent(type, initializer));
+        return adoptRef(*new AnimationEvent(type, initializer, isTrusted));
     }
 
     virtual ~AnimationEvent();
@@ -56,7 +56,7 @@ public:
 
 private:
     AnimationEvent(const AtomicString& type, const String& animationName, double elapsedTime);
-    AnimationEvent(const AtomicString&, const AnimationEventInit&);
+    AnimationEvent(const AtomicString&, const Init&, IsTrusted);
 
     String m_animationName;
     double m_elapsedTime;
