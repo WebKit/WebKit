@@ -46,6 +46,7 @@
 #import <ImageIO/CGImageSourcePrivate.h>
 #else
 const CFStringRef kCGImageSourceSubsampleFactor = CFSTR("kCGImageSourceSubsampleFactor");
+const CFStringRef kCGImageSourceShouldCacheImmediately = CFSTR("kCGImageSourceShouldCacheImmediately");
 #endif
 
 namespace WebCore {

@@ -1,3 +1,9 @@
+2016-10-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed, fix Windows build break after r207182.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         Update remaining DOM events to stop using legacy [ConstructorTemplate=Event]
