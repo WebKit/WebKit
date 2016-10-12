@@ -1,6 +1,16 @@
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Update API test expectation after r207162.
+       ​https://bugs.webkit.org/show_bug.cgi?id=162660
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLNavigationActionDelegate webView:didFailProvisionalNavigation:withError:]):
+        Like r207167 but with a WebKit2 test.
+        "https://www.example.com<>/" was an invalid URL with the old URL parser, is now valid with URLParser but not with NSURL's parser.
+
+2016-10-11  Alex Christensen  <achristensen@webkit.org>
+
+        Update API test expectation after r207162.
         https://bugs.webkit.org/show_bug.cgi?id=162660
 
         * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
