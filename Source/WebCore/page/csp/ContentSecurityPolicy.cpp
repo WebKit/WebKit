@@ -765,14 +765,14 @@ bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
 #endif
 }
 
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType)
+void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(ResourceRequest& request, InsecureRequestType requestType) const
 {
     URL url = request.url();
     upgradeInsecureRequestIfNeeded(url, requestType);
     request.setURL(url);
 }
 
-void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType)
+void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureRequestType requestType) const
 {
     if (!url.protocolIs("http") && !url.protocolIs("ws"))
         return;
