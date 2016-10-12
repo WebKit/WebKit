@@ -1,3 +1,111 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Emit DebugHooks uniformly with pause locations instead of having separate pause locations and op_debug emits
+        https://bugs.webkit.org/show_bug.cgi?id=162809
+
+        Reviewed by Geoffrey Garen.
+
+        Change how BytecodeGeneration emits debug hooks to be more consistent.
+        Previously most nodes individually generated their own debug hook
+        and we asserted that it matched a breakpoint location identified
+        by the parser. This could get out of sync, or nodes could forget to
+        emit debug hooks expected by the parser.
+        
+        With this change, we always check and emit a debug hook for any
+        node. The default behavior is for BytecodeGenerator::emitNode
+        to emit the debug hook when emitting the node itself. This covers
+        the majority of cases (statements).
+
+        There are a few exceptions where we continue to need to customize
+        emitting debug hooks:
+
+            1. Nodes with emitBytecodeInConditionContext
+                - non-Expression nodes customize how they emit their children
+                - constants conditions may emit nothing, but we had recorded a breakpoint location so emit a debug hook
+                - always emit one debug hook in case we recorded a breakpoint location, but avoid emitting multiple
+                  in nodes which may call up to the ExpressionNode::emitBytecodeInConditionContext base impl.
+            2. Specialized Debug Hooks
+                - such as hooks for Program start/end, debugger statements, etc.
+            3. Debug Hooks in for..of / for..in that don't correspond to re-emitting nodes
+                - such as pausing on the assignment expression inside these loops
+
+        The majority of nodes no longer have custom emits.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNodeInTailPosition):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        By default, when emitting a node check if we should also emit an op_debug for it.
+        This default DebugHook is WillExecuteStatement, which is a normal pause point.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstantNode::emitBytecodeInConditionContext):
+        (JSC::LogicalNotNode::emitBytecodeInConditionContext):
+        (JSC::BinaryOpNode::emitBytecodeInConditionContext):
+        (JSC::LogicalOpNode::emitBytecodeInConditionContext):
+        The parser would have generated a pause location for these conditions
+        no matter what constant folding and re-writing these nodes may perform.
+        So, when emitting these nodes in condition context check if they need
+        emit their own debug hook.
+
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::DeclarationStatement::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        No longer need to custom emit debug hooks. The default emitNode will handle these.
+
+        (JSC::ForInNode::emitBytecode):
+        Include extra debug hooks the user expects to return back to the assignment
+        expression in the loop header before starting the body again. The same is done
+        for for..of with emitEnumeration.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createExportDefaultDeclaration):
+        (JSC::ASTBuilder::createExportLocalDeclaration):
+        These are no longer needed to fake-satisfy assertions. We never wanted to
+        emit debug hooks for these inner statements because the export statement
+        will already have the debug hooks.
+
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        Include the correct location where the declaration starts.
+
+        (JSC::ASTBuilder::breakpointLocation):
+        Simplify to a general implementation for Node.
+
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        Ignore the new extra parameter.
+
+        * parser/Nodes.h:
+        (JSC::Node::needsDebugHook):
+        (JSC::Node::setNeedsDebugHook):
+        (JSC::ExpressionNode::needsDebugHook): Deleted.
+        (JSC::ExpressionNode::setNeedsDebugHook): Deleted.
+        (JSC::StatementNode::isEmptyStatement): Deleted.
+        (JSC::StatementNode::needsDebugHook): Deleted.
+        (JSC::StatementNode::setNeedsDebugHook): Deleted.
+        Move debug hook logic into the base Node class.
+
+        (JSC::StatementNode::isDebuggerStatement):
+        Provide a way to distinguish a debugger statement.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseForStatement):
+        Provide the location before the declaration starts.
+
 2016-10-12  Mark Lam  <mark.lam@apple.com>
 
         Array.prototype.slice should not modify frozen objects.

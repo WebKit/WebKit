@@ -4,9 +4,9 @@
 <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../resources/log-pause-location.js"></script>
 <script>
-function a() {
-    return 1;
-}
+var truthy = true;
+function a() { return 1; }
+
 
 function entryWhile() {
     let i = 2;
@@ -53,7 +53,7 @@ function entryForOf() {
 function entryWhileBreakContinue() {
     let i = 0;
     debugger;
-    while (true) {
+    while (truthy) {
         ++i;
         if (i === 1)
             continue;
@@ -117,7 +117,8 @@ function test()
         expression: "setTimeout(entryTraditionalFor)",
         steps: [
             "over",
-                "over", // complete: let i = 0; i < 2
+                "over", // complete: let i = 0
+                "over", // complete: i < 2
                 "over", // complete: a()
                 "over", // complete: ++i
                 "over", // complete: i < 2 [i=1]
@@ -169,6 +170,7 @@ function test()
         expression: "setTimeout(entryForIn)",
         steps: [
             "over",
+                "over", // complete: (o)
                 "over", // complete: let property in o [key1]
                 "over", // complete: a()
                 "over", // complete: let property in o [key2]
@@ -184,6 +186,7 @@ function test()
         expression: "setTimeout(entryForOf)",
         steps: [
             "over",
+                "over", // complete (arr)
                 "over", // complete: let value of arr [1]
                 "over", // complete: a()
                 "over", // complete: let value of arr [2]

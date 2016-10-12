@@ -559,7 +559,7 @@ public:
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
+    StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTokenLocation&, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
     {
         ForInNode* result = new (m_parserArena) ForInNode(location, lhs, iter, statements, lexicalVariables);
         result->setLoc(start, end, location.startOffset, location.lineStartOffset);
@@ -567,13 +567,13 @@ public:
         return result;
     }
     
-    StatementNode* createForInLoop(const JSTokenLocation& location, DestructuringPatternNode* pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
+    StatementNode* createForInLoop(const JSTokenLocation& location, DestructuringPatternNode* pattern, ExpressionNode* iter, StatementNode* statements, const JSTokenLocation& declLocation, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
     {
-        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(location, pattern, 0);
-        return createForInLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end, lexicalVariables);
+        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(declLocation, pattern, nullptr);
+        return createForInLoop(location, lexpr, iter, statements, declLocation, eStart, eDivot, eEnd, start, end, lexicalVariables);
     }
     
-    StatementNode* createForOfLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
+    StatementNode* createForOfLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, const JSTokenLocation&, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
     {
         ForOfNode* result = new (m_parserArena) ForOfNode(location, lhs, iter, statements, lexicalVariables);
         result->setLoc(start, end, location.startOffset, location.lineStartOffset);
@@ -581,10 +581,10 @@ public:
         return result;
     }
     
-    StatementNode* createForOfLoop(const JSTokenLocation& location, DestructuringPatternNode* pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
+    StatementNode* createForOfLoop(const JSTokenLocation& location, DestructuringPatternNode* pattern, ExpressionNode* iter, StatementNode* statements, const JSTokenLocation& declLocation, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end, VariableEnvironment& lexicalVariables)
     {
-        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(location, pattern, 0);
-        return createForOfLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end, lexicalVariables);
+        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(declLocation, pattern, nullptr);
+        return createForOfLoop(location, lexpr, iter, statements, declLocation, eStart, eDivot, eEnd, start, end, lexicalVariables);
     }
 
     bool isBindingNode(const DestructuringPattern& pattern)
@@ -752,21 +752,11 @@ public:
 
     StatementNode* createExportDefaultDeclaration(const JSTokenLocation& location, StatementNode* declaration, const Identifier& localName)
     {
-        // We need to mark the inner statement as needing a debug hook (so that when the statement is generated we don't
-        // assert when generating an op_debug for it) without recording a breakpoint location because the export statement
-        // itself will get the breakpoint location. This will be eliminated by:
-        // <https://webkit.org/b/162809> Emit DebugHooks uniformly with pause locations instead of having separate pause locations and op_debug emits
-        declaration->setNeedsDebugHook();
         return new (m_parserArena) ExportDefaultDeclarationNode(location, declaration, localName);
     }
 
     StatementNode* createExportLocalDeclaration(const JSTokenLocation& location, StatementNode* declaration)
     {
-        // We need to mark the inner statement as needing a debug hook (so that when the statement is generated we don't
-        // assert when generating an op_debug for it) without recording a breakpoint location because the export statement
-        // itself will get the breakpoint location. This will be eliminated by:
-        // <https://webkit.org/b/162809> Emit DebugHooks uniformly with pause locations instead of having separate pause locations and op_debug emits
-        declaration->setNeedsDebugHook();
         return new (m_parserArena) ExportLocalDeclarationNode(location, declaration);
     }
 
@@ -983,16 +973,10 @@ public:
         node->setStartOffset(offset);
     }
 
-    JSTextPosition breakpointLocation(StatementNode* statement)
+    JSTextPosition breakpointLocation(Node* node)
     {
-        statement->setNeedsDebugHook();
-        return statement->position();
-    }
-
-    JSTextPosition breakpointLocation(ExpressionNode* expr)
-    {
-        expr->setNeedsDebugHook();
-        return expr->position();
+        node->setNeedsDebugHook();
+        return node->position();
     }
 
     void propagateArgumentsUse() { usesArguments(); }

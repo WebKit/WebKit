@@ -386,6 +386,8 @@ namespace JSC {
                 emitThrowExpressionTooDeepException();
                 return;
             }
+            if (UNLIKELY(n->needsDebugHook()))
+                emitDebugHook(n);
             n->emitBytecode(*this, dst);
         }
 
@@ -411,6 +413,8 @@ namespace JSC {
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             if (UNLIKELY(!m_vm->isSafeToRecurse()))
                 return emitThrowExpressionTooDeepException();
+            if (UNLIKELY(n->needsDebugHook()))
+                emitDebugHook(n);
             return n->emitBytecode(*this, dst);
         }
 
@@ -430,7 +434,6 @@ namespace JSC {
                 emitThrowExpressionTooDeepException();
                 return;
             }
-
             n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
         }
 
@@ -684,7 +687,7 @@ namespace JSC {
         void emitDebugHook(DebugHookType, const JSTextPosition&);
         void emitDebugHook(DebugHookType, unsigned line, unsigned charOffset, unsigned lineStart);
         void emitDebugHook(StatementNode*);
-        void emitDebugHook(ExpressionNode*, DebugHookType);
+        void emitDebugHook(ExpressionNode*);
         void emitWillLeaveCallFrameDebugHook();
 
         bool isInFinallyBlock() { return m_finallyDepth > 0; }

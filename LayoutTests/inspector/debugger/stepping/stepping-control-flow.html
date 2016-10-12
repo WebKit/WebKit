@@ -4,29 +4,29 @@
 <script src="../../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="../resources/log-pause-location.js"></script>
 <script>
-function a() {
-    return 1;
-}
+// We may want to allow constants to eliminate branches. Use vars for existing tests and have constant specific tests.
+var value = 1;
+var truthy = true;
+var falsey = false;
+function a() { return value; }
+function b() { return value; }
 
-function b() {
-    return 2;
-}
 
 function entryIfSingleStatement() {
     debugger;
-    if (true)
+    if (truthy)
         a();
-    if (false)
+    if (falsey)
         a();
 }
 
 function entryIfMultiStatement() {
     debugger;
-    if (true) {
+    if (truthy) {
         a();
         a();
     }
-    if (false) {
+    if (falsey) {
         a();
         a();
     }
@@ -34,11 +34,11 @@ function entryIfMultiStatement() {
 
 function entryIfElse() {
     debugger;
-    if (true)
+    if (truthy)
         a();
     else
         a();
-    if (false)
+    if (falsey)
         a();
     else
         a();
@@ -46,16 +46,16 @@ function entryIfElse() {
 
 function entryIfElseChain() {
     debugger;
-    if (false)
+    if (falsey)
         a();
-    else if (true)
+    else if (truthy)
         a();
     else
         a();
 
-    if (false)
+    if (falsey)
         a();
-    else if (false)
+    else if (falsey)
         a();
     else
         a();
@@ -68,11 +68,44 @@ function entryIfWithCall() {
 }
 
 function entryTernary() {
-    let t = () => true;
-    let f = () => false;
+    let t = () => truthy;
+    let f = () => falsey;
     debugger;
     let x = t() ? a() : b();
     let y = f() ? a() : b();
+}
+
+function entryIfConstantBranch() {
+    debugger;
+    if (true)
+        a();
+    if (false)
+        a();
+    if (0)
+        a();
+    if (null)
+        a();
+}
+
+function entryIfWithLogicalOperation() {
+    debugger;
+    if (true && a() && a())
+        b();
+}
+
+function entryIfWithBinaryOperation() {
+    let i = a();
+    debugger;
+    if (i < 2)
+        b();
+}
+
+function entryIfWithNotOperation() {
+    debugger;
+    if (!false)
+        a();
+    if (!!true)
+        a();
 }
 
 // ---------
@@ -193,6 +226,62 @@ function test()
                 "out", // out of f - before b()
                 "in",  // into b
                 "out", // out of b - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.ConstantBranch",
+        description: "Should pause for constant branches.",
+        expression: "setTimeout(entryIfConstantBranch)",
+        steps: [
+            "over",
+                "over", // (true)
+                "over", // a()
+                "over", // (false)
+                "over", // (0)
+                "over", // (null)
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithLogicalOperation",
+        description: "Should always pause for a condition with logical operations.",
+        expression: "setTimeout(entryIfWithLogicalOperation)",
+        steps: [
+            "over",
+                "in",   // into a()
+                "out",  // out of a() - before a()
+                "in",   // into a()
+                "out",  // out of a() - before b()
+                "over", // b() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithBinaryOperation",
+        description: "Should always pause for a condition with logical operations.",
+        expression: "setTimeout(entryIfWithBinaryOperation)",
+        steps: [
+            "over",
+                "in",    // i < 2 [true]
+                "over",  // over b() - leaving entry
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithNotOperation",
+        description: "Should always pause for a condition that is a not operation.",
+        expression: "setTimeout(entryIfWithNotOperation)",
+        steps: [
+            "over",
+                "in",   // !false
+                "over", // a()
+                "in",   // !!truth
+                "over", // a() - leaving entry
             "resume",
         ]
     });

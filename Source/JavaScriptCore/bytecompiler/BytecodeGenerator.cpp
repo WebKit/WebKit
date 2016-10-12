@@ -3504,14 +3504,16 @@ void BytecodeGenerator::emitDebugHook(DebugHookType debugHookType, unsigned line
 
 void BytecodeGenerator::emitDebugHook(StatementNode* statement)
 {
-    RELEASE_ASSERT(statement->needsDebugHook());
+    // DebuggerStatementNode will output its own special debug hook.
+    if (statement->isDebuggerStatement())
+        return;
+
     emitDebugHook(WillExecuteStatement, statement->position());
 }
 
-void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, DebugHookType debugHookType)
+void BytecodeGenerator::emitDebugHook(ExpressionNode* expr)
 {
-    RELEASE_ASSERT(expr->needsDebugHook());
-    emitDebugHook(debugHookType, expr->position());
+    emitDebugHook(WillExecuteStatement, expr->position());
 }
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()
@@ -4202,7 +4204,7 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
         if (forLoopNode) {
             RELEASE_ASSERT(forLoopNode->isForOfNode());
             prepareLexicalScopeForNextForLoopIteration(forLoopNode, forLoopSymbolTable);
-            emitDebugHook(forLoopNode->expr(), WillExecuteStatement);
+            emitDebugHook(forLoopNode->lexpr());
         }
 
         {

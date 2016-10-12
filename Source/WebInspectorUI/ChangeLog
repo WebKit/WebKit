@@ -1,5 +1,18 @@
 2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Emit DebugHooks uniformly with pause locations instead of having separate pause locations and op_debug emits
+        https://bugs.webkit.org/show_bug.cgi?id=162809
+
+        Reviewed by Geoffrey Garen.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        When pausing on the variable assignment inside for..of and for..in don't just
+        highlight "var foo" but include the right hand side "var foo in ..." or
+        "var foo of ...".
+
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Whole program sometimes highlighted instead of just first statement
         https://bugs.webkit.org/show_bug.cgi?id=163300
         <rdar://problem/28723162>

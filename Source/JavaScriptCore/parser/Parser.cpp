@@ -1186,6 +1186,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
     handleProductionOrFail(OPENPAREN, "(", "start", "for-loop header");
     int nonLHSCount = m_parserState.nonLHSCount;
     int declarations = 0;
+    JSTokenLocation declLocation(tokenLocation());
     JSTextPosition declsStart;
     JSTextPosition declsEnd;
     TreeExpression decls = 0;
@@ -1280,12 +1281,12 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
         gatherLexicalVariablesIfNecessary();
         TreeStatement result;
         if (isOfEnumeration)
-            result = context.createForOfLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+            result = context.createForOfLoop(location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
         else {
             if (isVarDeclaraton && forInInitializer)
-                result = context.createForInLoop(location, decls, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+                result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
             else
-                result = context.createForInLoop(location, forInTarget, expr, statement, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
+                result = context.createForInLoop(location, forInTarget, expr, statement, declLocation, declsStart, inLocation, exprEnd, startLine, endLine, *lexicalVariables);
         }
         popLexicalScopeIfNecessary();
         return result;
@@ -1372,17 +1373,17 @@ enumerationLoop:
     if (pattern) {
         ASSERT(!decls);
         if (isOfEnumeration)
-            result = context.createForOfLoop(location, pattern, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+            result = context.createForOfLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
         else 
-            result = context.createForInLoop(location, pattern, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+            result = context.createForInLoop(location, pattern, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
 
         popLexicalScopeIfNecessary();
         return result;
     }
     if (isOfEnumeration)
-        result = context.createForOfLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+        result = context.createForOfLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
     else
-        result = context.createForInLoop(location, decls, expr, statement, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
+        result = context.createForInLoop(location, decls, expr, statement, declLocation, declsStart, declsEnd, exprEnd, startLine, endLine, *lexicalVariables);
     popLexicalScopeIfNecessary();
     return result;
 }

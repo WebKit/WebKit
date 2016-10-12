@@ -7,40 +7,40 @@ EXPRESSION: setTimeout(entryIfSingleStatement)
 STEPS: over, over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryIfSingleStatement:16:5
-     12    }
+     12    
      13    
      14    function entryIfSingleStatement() {
  ->  15        |debugger;
-     16        if (true)
+     16        if (truthy)
      17            a();
-     18        if (false)
+     18        if (falsey)
 
 ACTION: step-over
 PAUSE AT entryIfSingleStatement:17:9
      13    
      14    function entryIfSingleStatement() {
      15        debugger;
- ->  16        if (|true)
+ ->  16        if (|truthy)
      17            a();
-     18        if (false)
+     18        if (falsey)
      19            a();
 
 ACTION: step-over
 PAUSE AT entryIfSingleStatement:18:9
      14    function entryIfSingleStatement() {
      15        debugger;
-     16        if (true)
+     16        if (truthy)
  ->  17            |a();
-     18        if (false)
+     18        if (falsey)
      19            a();
      20    }
 
 ACTION: step-over
 PAUSE AT entryIfSingleStatement:19:9
      15        debugger;
-     16        if (true)
+     16        if (truthy)
      17            a();
- ->  18        if (|false)
+ ->  18        if (|falsey)
      19            a();
      20    }
      21    
@@ -48,7 +48,7 @@ PAUSE AT entryIfSingleStatement:19:9
 ACTION: step-over
 PAUSE AT entryIfSingleStatement:21:2
      17            a();
-     18        if (false)
+     18        if (falsey)
      19            a();
  ->  20    }|
      21    
@@ -68,7 +68,7 @@ PAUSE AT entryIfMultiStatement:24:5
      21    
      22    function entryIfMultiStatement() {
  ->  23        |debugger;
-     24        if (true) {
+     24        if (truthy) {
      25            a();
      26            a();
 
@@ -77,7 +77,7 @@ PAUSE AT entryIfMultiStatement:25:9
      21    
      22    function entryIfMultiStatement() {
      23        debugger;
- ->  24        if (|true) {
+ ->  24        if (|truthy) {
      25            a();
      26            a();
      27        }
@@ -86,20 +86,20 @@ ACTION: step-over
 PAUSE AT entryIfMultiStatement:26:9
      22    function entryIfMultiStatement() {
      23        debugger;
-     24        if (true) {
+     24        if (truthy) {
  ->  25            |a();
      26            a();
      27        }
-     28        if (false) {
+     28        if (falsey) {
 
 ACTION: step-over
 PAUSE AT entryIfMultiStatement:27:9
      23        debugger;
-     24        if (true) {
+     24        if (truthy) {
      25            a();
  ->  26            |a();
      27        }
-     28        if (false) {
+     28        if (falsey) {
      29            a();
 
 ACTION: step-over
@@ -107,7 +107,7 @@ PAUSE AT entryIfMultiStatement:29:9
      25            a();
      26            a();
      27        }
- ->  28        if (|false) {
+ ->  28        if (|falsey) {
      29            a();
      30            a();
      31        }
@@ -135,7 +135,7 @@ PAUSE AT entryIfElse:36:5
      33    
      34    function entryIfElse() {
  ->  35        |debugger;
-     36        if (true)
+     36        if (truthy)
      37            a();
      38        else
 
@@ -144,7 +144,7 @@ PAUSE AT entryIfElse:37:9
      33    
      34    function entryIfElse() {
      35        debugger;
- ->  36        if (|true)
+ ->  36        if (|truthy)
      37            a();
      38        else
      39            a();
@@ -153,25 +153,25 @@ ACTION: step-over
 PAUSE AT entryIfElse:38:9
      34    function entryIfElse() {
      35        debugger;
-     36        if (true)
+     36        if (truthy)
  ->  37            |a();
      38        else
      39            a();
-     40        if (false)
+     40        if (falsey)
 
 ACTION: step-over
 PAUSE AT entryIfElse:41:9
      37            a();
      38        else
      39            a();
- ->  40        if (|false)
+ ->  40        if (|falsey)
      41            a();
      42        else
      43            a();
 
 ACTION: step-over
 PAUSE AT entryIfElse:44:9
-     40        if (false)
+     40        if (falsey)
      41            a();
      42        else
  ->  43            |a();
@@ -202,35 +202,35 @@ PAUSE AT entryIfElseChain:48:5
      45    
      46    function entryIfElseChain() {
  ->  47        |debugger;
-     48        if (false)
+     48        if (falsey)
      49            a();
-     50        else if (true)
+     50        else if (truthy)
 
 ACTION: step-over
 PAUSE AT entryIfElseChain:49:9
      45    
      46    function entryIfElseChain() {
      47        debugger;
- ->  48        if (|false)
+ ->  48        if (|falsey)
      49            a();
-     50        else if (true)
+     50        else if (truthy)
      51            a();
 
 ACTION: step-over
 PAUSE AT entryIfElseChain:51:14
      47        debugger;
-     48        if (false)
+     48        if (falsey)
      49            a();
- ->  50        else if (|true)
+ ->  50        else if (|truthy)
      51            a();
      52        else
      53            a();
 
 ACTION: step-over
 PAUSE AT entryIfElseChain:52:9
-     48        if (false)
+     48        if (falsey)
      49            a();
-     50        else if (true)
+     50        else if (truthy)
  ->  51            |a();
      52        else
      53            a();
@@ -241,24 +241,24 @@ PAUSE AT entryIfElseChain:56:9
      52        else
      53            a();
      54    
- ->  55        if (|false)
+ ->  55        if (|falsey)
      56            a();
-     57        else if (false)
+     57        else if (falsey)
      58            a();
 
 ACTION: step-over
 PAUSE AT entryIfElseChain:58:14
      54    
-     55        if (false)
+     55        if (falsey)
      56            a();
- ->  57        else if (|false)
+ ->  57        else if (|falsey)
      58            a();
      59        else
      60            a();
 
 ACTION: step-over
 PAUSE AT entryIfElseChain:61:9
-     57        else if (false)
+     57        else if (falsey)
      58            a();
      59        else
  ->  60            |a();
@@ -321,7 +321,7 @@ PAUSE AT entryIfWithCall:68:2
  ->  67    }|
      68    
      69    function entryTernary() {
-     70        let t = () => true;
+     70        let t = () => truthy;
 
 ACTION: resume
 RESUMED
@@ -351,14 +351,14 @@ PAUSE AT entryIfWithCall:66:9
      68    
 
 ACTION: step-in
-PAUSE AT a:8:5
-      4    <script src="../resources/log-pause-location.js"></script>
-      5    <script>
-      6    function a() {
- ->   7        |return 1;
-      8    }
-      9    
-     10    function b() {
+PAUSE AT a:11:16
+      7    var value = 1;
+      8    var truthy = true;
+      9    var falsey = false;
+ ->  10    function a() { |return value; }
+     11    function b() { return value; }
+     12    
+     13    
 
 ACTION: step-out
 PAUSE AT entryIfWithCall:66:16
@@ -371,14 +371,14 @@ PAUSE AT entryIfWithCall:66:16
      68    
 
 ACTION: step-in
-PAUSE AT a:8:5
-      4    <script src="../resources/log-pause-location.js"></script>
-      5    <script>
-      6    function a() {
- ->   7        |return 1;
-      8    }
-      9    
-     10    function b() {
+PAUSE AT a:11:16
+      7    var value = 1;
+      8    var truthy = true;
+      9    var falsey = false;
+ ->  10    function a() { |return value; }
+     11    function b() { return value; }
+     12    
+     13    
 
 ACTION: step-out
 PAUSE AT entryIfWithCall:67:9
@@ -398,7 +398,7 @@ PAUSE AT entryIfWithCall:68:2
  ->  67    }|
      68    
      69    function entryTernary() {
-     70        let t = () => true;
+     70        let t = () => truthy;
 
 ACTION: resume
 RESUMED
@@ -410,8 +410,8 @@ STEPS: over, over, over, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTernary:73:5
      69    function entryTernary() {
-     70        let t = () => true;
-     71        let f = () => false;
+     70        let t = () => truthy;
+     71        let f = () => falsey;
  ->  72        |debugger;
      73        let x = t() ? a() : b();
      74        let y = f() ? a() : b();
@@ -419,8 +419,8 @@ PAUSE AT entryTernary:73:5
 
 ACTION: step-over
 PAUSE AT entryTernary:74:5
-     70        let t = () => true;
-     71        let f = () => false;
+     70        let t = () => truthy;
+     71        let f = () => falsey;
      72        debugger;
  ->  73        |let x = t() ? a() : b();
      74        let y = f() ? a() : b();
@@ -429,13 +429,13 @@ PAUSE AT entryTernary:74:5
 
 ACTION: step-over
 PAUSE AT entryTernary:75:5
-     71        let f = () => false;
+     71        let f = () => falsey;
      72        debugger;
      73        let x = t() ? a() : b();
  ->  74        |let y = f() ? a() : b();
      75    }
      76    
-     77    // ---------
+     77    function entryIfConstantBranch() {
 
 ACTION: step-over
 PAUSE AT entryTernary:76:2
@@ -444,8 +444,8 @@ PAUSE AT entryTernary:76:2
      74        let y = f() ? a() : b();
  ->  75    }|
      76    
-     77    // ---------
-     78    
+     77    function entryIfConstantBranch() {
+     78        debugger;
 
 ACTION: resume
 RESUMED
@@ -457,8 +457,8 @@ STEPS: over, in, out, in, out, in, out, in, out, resume
 PAUSED (debugger-statement)
 PAUSE AT entryTernary:73:5
      69    function entryTernary() {
-     70        let t = () => true;
-     71        let f = () => false;
+     70        let t = () => truthy;
+     71        let f = () => falsey;
  ->  72        |debugger;
      73        let x = t() ? a() : b();
      74        let y = f() ? a() : b();
@@ -466,8 +466,8 @@ PAUSE AT entryTernary:73:5
 
 ACTION: step-over
 PAUSE AT entryTernary:74:5
-     70        let t = () => true;
-     71        let f = () => false;
+     70        let t = () => truthy;
+     71        let f = () => falsey;
      72        debugger;
  ->  73        |let x = t() ? a() : b();
      74        let y = f() ? a() : b();
@@ -479,15 +479,15 @@ PAUSE AT t:71:19
      67    }
      68    
      69    function entryTernary() {
- ->  70        let t = () => |true;
-     71        let f = () => false;
+ ->  70        let t = () => |truthy;
+     71        let f = () => falsey;
      72        debugger;
      73        let x = t() ? a() : b();
 
 ACTION: step-out
 PAUSE AT entryTernary:74:19
-     70        let t = () => true;
-     71        let f = () => false;
+     70        let t = () => truthy;
+     71        let f = () => falsey;
      72        debugger;
  ->  73        let x = t() ? |a() : b();
      74        let y = f() ? a() : b();
@@ -495,52 +495,52 @@ PAUSE AT entryTernary:74:19
      76    
 
 ACTION: step-in
-PAUSE AT a:8:5
-      4    <script src="../resources/log-pause-location.js"></script>
-      5    <script>
-      6    function a() {
- ->   7        |return 1;
-      8    }
-      9    
-     10    function b() {
+PAUSE AT a:11:16
+      7    var value = 1;
+      8    var truthy = true;
+      9    var falsey = false;
+ ->  10    function a() { |return value; }
+     11    function b() { return value; }
+     12    
+     13    
 
 ACTION: step-out
 PAUSE AT entryTernary:75:5
-     71        let f = () => false;
+     71        let f = () => falsey;
      72        debugger;
      73        let x = t() ? a() : b();
  ->  74        |let y = f() ? a() : b();
      75    }
      76    
-     77    // ---------
+     77    function entryIfConstantBranch() {
 
 ACTION: step-in
 PAUSE AT f:72:19
      68    
      69    function entryTernary() {
-     70        let t = () => true;
- ->  71        let f = () => |false;
+     70        let t = () => truthy;
+ ->  71        let f = () => |falsey;
      72        debugger;
      73        let x = t() ? a() : b();
      74        let y = f() ? a() : b();
 
 ACTION: step-out
 PAUSE AT entryTernary:75:25
-     71        let f = () => false;
+     71        let f = () => falsey;
      72        debugger;
      73        let x = t() ? a() : b();
  ->  74        let y = f() ? a() : |b();
      75    }
      76    
-     77    // ---------
+     77    function entryIfConstantBranch() {
 
 ACTION: step-in
-PAUSE AT b:12:5
-      8    }
-      9    
-     10    function b() {
- ->  11        |return 2;
-     12    }
+PAUSE AT b:12:16
+      8    var truthy = true;
+      9    var falsey = false;
+     10    function a() { return value; }
+ ->  11    function b() { |return value; }
+     12    
      13    
      14    function entryIfSingleStatement() {
 
@@ -551,8 +551,276 @@ PAUSE AT entryTernary:76:2
      74        let y = f() ? a() : b();
  ->  75    }|
      76    
-     77    // ---------
-     78    
+     77    function entryIfConstantBranch() {
+     78        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.ConstantBranch
+EXPRESSION: setTimeout(entryIfConstantBranch)
+STEPS: over, over, over, over, over, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfConstantBranch:79:5
+     75    }
+     76    
+     77    function entryIfConstantBranch() {
+ ->  78        |debugger;
+     79        if (true)
+     80            a();
+     81        if (false)
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:80:9
+     76    
+     77    function entryIfConstantBranch() {
+     78        debugger;
+ ->  79        if (|true)
+     80            a();
+     81        if (false)
+     82            a();
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:81:9
+     77    function entryIfConstantBranch() {
+     78        debugger;
+     79        if (true)
+ ->  80            |a();
+     81        if (false)
+     82            a();
+     83        if (0)
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:82:9
+     78        debugger;
+     79        if (true)
+     80            a();
+ ->  81        if (|false)
+     82            a();
+     83        if (0)
+     84            a();
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:84:9
+     80            a();
+     81        if (false)
+     82            a();
+ ->  83        if (|0)
+     84            a();
+     85        if (null)
+     86            a();
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:86:9
+     82            a();
+     83        if (0)
+     84            a();
+ ->  85        if (|null)
+     86            a();
+     87    }
+     88    
+
+ACTION: step-over
+PAUSE AT entryIfConstantBranch:88:2
+     84            a();
+     85        if (null)
+     86            a();
+ ->  87    }|
+     88    
+     89    function entryIfWithLogicalOperation() {
+     90        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithLogicalOperation
+EXPRESSION: setTimeout(entryIfWithLogicalOperation)
+STEPS: over, in, out, in, out, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithLogicalOperation:91:5
+     87    }
+     88    
+     89    function entryIfWithLogicalOperation() {
+ ->  90        |debugger;
+     91        if (true && a() && a())
+     92            b();
+     93    }
+
+ACTION: step-over
+PAUSE AT entryIfWithLogicalOperation:92:9
+     88    
+     89    function entryIfWithLogicalOperation() {
+     90        debugger;
+ ->  91        if (|true && a() && a())
+     92            b();
+     93    }
+     94    
+
+ACTION: step-in
+PAUSE AT a:11:16
+      7    var value = 1;
+      8    var truthy = true;
+      9    var falsey = false;
+ ->  10    function a() { |return value; }
+     11    function b() { return value; }
+     12    
+     13    
+
+ACTION: step-out
+PAUSE AT entryIfWithLogicalOperation:92:24
+     88    
+     89    function entryIfWithLogicalOperation() {
+     90        debugger;
+ ->  91        if (true && a() && |a())
+     92            b();
+     93    }
+     94    
+
+ACTION: step-in
+PAUSE AT a:11:16
+      7    var value = 1;
+      8    var truthy = true;
+      9    var falsey = false;
+ ->  10    function a() { |return value; }
+     11    function b() { return value; }
+     12    
+     13    
+
+ACTION: step-out
+PAUSE AT entryIfWithLogicalOperation:93:9
+     89    function entryIfWithLogicalOperation() {
+     90        debugger;
+     91        if (true && a() && a())
+ ->  92            |b();
+     93    }
+     94    
+     95    function entryIfWithBinaryOperation() {
+
+ACTION: step-over
+PAUSE AT entryIfWithLogicalOperation:94:2
+     90        debugger;
+     91        if (true && a() && a())
+     92            b();
+ ->  93    }|
+     94    
+     95    function entryIfWithBinaryOperation() {
+     96        let i = a();
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithBinaryOperation
+EXPRESSION: setTimeout(entryIfWithBinaryOperation)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithBinaryOperation:98:5
+     94    
+     95    function entryIfWithBinaryOperation() {
+     96        let i = a();
+ ->  97        |debugger;
+     98        if (i < 2)
+     99            b();
+    100    }
+
+ACTION: step-over
+PAUSE AT entryIfWithBinaryOperation:99:9
+     95    function entryIfWithBinaryOperation() {
+     96        let i = a();
+     97        debugger;
+ ->  98        if (|i < 2)
+     99            b();
+    100    }
+    101    
+
+ACTION: step-in
+PAUSE AT entryIfWithBinaryOperation:100:9
+     96        let i = a();
+     97        debugger;
+     98        if (i < 2)
+ ->  99            |b();
+    100    }
+    101    
+    102    function entryIfWithNotOperation() {
+
+ACTION: step-over
+PAUSE AT entryIfWithBinaryOperation:101:2
+     97        debugger;
+     98        if (i < 2)
+     99            b();
+ -> 100    }|
+    101    
+    102    function entryIfWithNotOperation() {
+    103        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithNotOperation
+EXPRESSION: setTimeout(entryIfWithNotOperation)
+STEPS: over, in, over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithNotOperation:104:5
+    100    }
+    101    
+    102    function entryIfWithNotOperation() {
+ -> 103        |debugger;
+    104        if (!false)
+    105            a();
+    106        if (!!true)
+
+ACTION: step-over
+PAUSE AT entryIfWithNotOperation:105:9
+    101    
+    102    function entryIfWithNotOperation() {
+    103        debugger;
+ -> 104        if (|!false)
+    105            a();
+    106        if (!!true)
+    107            a();
+
+ACTION: step-in
+PAUSE AT entryIfWithNotOperation:106:9
+    102    function entryIfWithNotOperation() {
+    103        debugger;
+    104        if (!false)
+ -> 105            |a();
+    106        if (!!true)
+    107            a();
+    108    }
+
+ACTION: step-over
+PAUSE AT entryIfWithNotOperation:107:9
+    103        debugger;
+    104        if (!false)
+    105            a();
+ -> 106        if (|!!true)
+    107            a();
+    108    }
+    109    
+
+ACTION: step-in
+PAUSE AT entryIfWithNotOperation:108:9
+    104        if (!false)
+    105            a();
+    106        if (!!true)
+ -> 107            |a();
+    108    }
+    109    
+    110    // ---------
+
+ACTION: step-over
+PAUSE AT entryIfWithNotOperation:109:2
+    105            a();
+    106        if (!!true)
+    107            a();
+ -> 108    }|
+    109    
+    110    // ---------
+    111    
 
 ACTION: resume
 RESUMED

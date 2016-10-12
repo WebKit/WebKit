@@ -1,3 +1,19 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Emit DebugHooks uniformly with pause locations instead of having separate pause locations and op_debug emits
+        https://bugs.webkit.org/show_bug.cgi?id=162809
+
+        Reviewed by Geoffrey Garen.
+
+        * inspector/debugger/stepping/stepping-control-flow-expected.txt:
+        * inspector/debugger/stepping/stepping-control-flow.html:
+        Add new tests for stepping through conditional expressions with constants,
+        logical operations, binary operations, and unary negations.
+
+        * inspector/debugger/stepping/stepping-loops-expected.txt:
+        * inspector/debugger/stepping/stepping-loops.html:
+        Update tests for changes in stepping behavior in for loops.
+
 2016-10-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Tests that fail since the new URLParser has been enabled on r207162.

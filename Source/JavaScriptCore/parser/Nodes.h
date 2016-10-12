@@ -145,9 +145,13 @@ namespace JSC {
         void setEndOffset(int offset) { m_endOffset = offset; }
         void setStartOffset(int offset) { m_position.offset = offset; }
 
+        bool needsDebugHook() const { return m_needsDebugHook; }
+        void setNeedsDebugHook() { m_needsDebugHook = true; }
+
     protected:
         JSTextPosition m_position;
         int m_endOffset;
+        bool m_needsDebugHook { false };
     };
 
     class ExpressionNode : public Node {
@@ -191,12 +195,8 @@ namespace JSC {
 
         ResultType resultDescriptor() const { return m_resultType; }
 
-        bool needsDebugHook() { return m_needsDebugHook; }
-        void setNeedsDebugHook() { m_needsDebugHook = true; }
-
     private:
         ResultType m_resultType;
-        bool m_needsDebugHook { false };
     };
 
     class StatementNode : public Node {
@@ -213,6 +213,7 @@ namespace JSC {
         void setNext(StatementNode* next) { m_next = next; }
 
         virtual bool isEmptyStatement() const { return false; }
+        virtual bool isDebuggerStatement() const { return false; }
         virtual bool isFunctionNode() const { return false; }
         virtual bool isReturnNode() const { return false; }
         virtual bool isExprStatement() const { return false; }
@@ -224,13 +225,9 @@ namespace JSC {
         virtual bool isModuleDeclarationNode() const { return false; }
         virtual bool isForOfNode() const { return false; }
 
-        bool needsDebugHook() { return m_needsDebugHook; }
-        void setNeedsDebugHook() { m_needsDebugHook = true; }
-
     protected:
         StatementNode* m_next;
         int m_lastLine;
-        bool m_needsDebugHook { false };
     };
 
     class VariableEnvironmentNode : public ParserArenaDeletable {
@@ -1366,6 +1363,8 @@ namespace JSC {
     class DebuggerStatementNode : public StatementNode {
     public:
         DebuggerStatementNode(const JSTokenLocation&);
+
+        bool isDebuggerStatement() const override { return true; }
         
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1473,6 +1472,7 @@ namespace JSC {
 
         EnumerationNode(const JSTokenLocation&, ExpressionNode*, ExpressionNode*, StatementNode*, VariableEnvironment&);
 
+        ExpressionNode* lexpr() const { return m_lexpr; }
         ExpressionNode* expr() const { return m_expr; }
 
     protected:
