@@ -1,3 +1,22 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Whole program sometimes highlighted instead of just first statement
+        https://bugs.webkit.org/show_bug.cgi?id=163300
+        <rdar://problem/28723162>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        Avoid highlighting the entire program by skipping a Program type Node.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.setExecutionLineAndColumn):
+        Avoid unnecessary work before content has loaded.
+
+        (WebInspector.TextEditor.prototype.currentPositionToOriginalOffset):
+        Avoid unnecessary indirection to get the CodeMirror editor.
+
 2016-10-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove line highlight on primary execution line while stepping because it is distracting
