@@ -1,3 +1,14 @@
+2016-10-12  Keith Miller  <keith_miller@apple.com>
+
+        Handle non-function, non-undefined comparator in Array.prototype.sort
+        https://bugs.webkit.org/show_bug.cgi?id=163085
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore/test/Array/array_sort.baseline-jsc:
+        * stress/array-sort-bad-comparator.js: Added.
+        (test):
+
 2016-10-12  Mark Lam  <mark.lam@apple.com>
 
         Array.prototype.slice should not modify frozen objects.

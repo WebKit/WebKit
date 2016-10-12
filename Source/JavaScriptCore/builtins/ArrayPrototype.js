@@ -606,28 +606,14 @@ function sort(comparator)
         return dst;
     }
 
-    function comparatorSort(array, comparator)
+    function comparatorSort(array, length, comparator)
     {
-        var length = array.length >>> 0;
-
-        // For compatibility with Firefox and Chrome, do nothing observable
-        // to the target array if it has 0 or 1 sortable properties.
-        if (length < 2)
-            return;
-
         var valueCount = compact(array, length);
         mergeSort(array, valueCount, comparator);
     }
 
-    function stringSort(array)
+    function stringSort(array, length)
     {
-        var length = array.length >>> 0;
-
-        // For compatibility with Firefox and Chrome, do nothing observable
-        // to the target array if it has 0 or 1 sortable properties.
-        if (length < 2)
-            return;
-
         var valueCount = compact(array, length);
 
         var strings = @newArrayWithSize(valueCount);
@@ -640,15 +626,21 @@ function sort(comparator)
     if (this == null)
         @throwTypeError("Array.prototype.sort requires that |this| not be null or undefined");
 
-    if (typeof this == "string")
-        @throwTypeError("Attempted to assign to readonly property.");
-
     var array = @Object(this);
 
+    var length = array.length >>> 0;
+
+    // For compatibility with Firefox and Chrome, do nothing observable
+    // to the target array if it has 0 or 1 sortable properties.
+    if (length < 2)
+        return array;
+
     if (typeof comparator == "function")
-        comparatorSort(array, comparator);
+        comparatorSort(array, length, comparator);
+    else if (comparator === @undefined)
+        stringSort(array, length);
     else
-        stringSort(array);
+        @throwTypeError("Array.prototype.sort requires the comparsion function be a function or undefined");
 
     return array;
 }

@@ -1,3 +1,15 @@
+2016-10-12  Keith Miller  <keith_miller@apple.com>
+
+        Handle non-function, non-undefined comparator in Array.prototype.sort
+        https://bugs.webkit.org/show_bug.cgi?id=163085
+
+        Reviewed by Yusuke Suzuki.
+
+        * builtins/ArrayPrototype.js:
+        (sort.comparatorSort):
+        (sort.stringSort):
+        (sort):
+
 2016-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r207179): ASSERTION FAILED: node.cell != previousCell
