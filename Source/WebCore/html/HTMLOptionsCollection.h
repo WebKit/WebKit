@@ -70,7 +70,14 @@ inline HTMLOptionElement* HTMLOptionsCollection::namedItem(const AtomicString& n
 
 inline bool HTMLOptionsCollection::elementMatches(Element& element) const
 {
-    return element.hasTagName(HTMLNames::optionTag);
+    if (!element.hasTagName(HTMLNames::optionTag))
+        return false;
+
+    if (element.parentNode() == &selectElement())
+        return true;
+
+    ASSERT(element.parentNode());
+    return element.parentNode()->hasTagName(HTMLNames::optgroupTag) && element.parentNode()->parentNode() == &selectElement();
 }
 
 } // namespace WebCore

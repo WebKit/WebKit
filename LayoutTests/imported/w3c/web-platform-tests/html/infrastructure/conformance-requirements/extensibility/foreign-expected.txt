@@ -1,0 +1,7 @@
+User agents must treat elements and attributes that they do not understand as semantically neutral; leaving them in the DOM (for DOM processors), and styling them according to CSS (for CSS processors), but not inferring any meaning from them.
+
+Foobar
+Running test...
+
+PASS foreign content 
+

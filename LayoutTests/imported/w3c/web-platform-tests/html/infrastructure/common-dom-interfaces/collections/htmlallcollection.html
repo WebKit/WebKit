@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html id="root">
+<head>
+<title>HTMLAllCollection Tests</title>
+<link rel="author" title="Dan Druta" href="mailto:dan.druta@att.com"/>
+<link rel="help" href="2.7.2.1 - Common Infrastructure/Common DOM Interfaces/Collections/HTMLAllCollection"/>
+<meta name="flags" content="TOKENS" />
+<meta name="assert" content="TEST ASSERTION"/>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body id="tags">
+<img src="../../../../images/green.png" name="picture">
+<a name="foo"></a>
+<a name="foo"></a>
+<script>
+test(function(){ assert_equals(document.all.length,14)}, "Test for HTMLAllCollection size");
+
+test(function(){ assert_equals(document.all.item(0).tagName,"HTML")}, "Test lookup by index using ()");
+
+test(function(){ assert_equals(document.all[0].tagName,"HTML")}, "Test lookup by index using []");
+
+test(function(){ assert_equals(document.all.item("picture").nodeName,"IMG")}, "Test lookup IMG by name");
+
+test(function(){ assert_equals(document.all.namedItem("picture").nodeName,"IMG")}, "Test lookup IMG by namedItem ");
+
+test(function(){ assert_equals(document.all("picture").nodeName,"IMG")}, "Test lookup IMG in collection using ()");
+
+test(function(){ assert_equals(document.all["picture"].nodeName,"IMG")}, "Test lookup IMG in collection using []");
+
+test(function(){ assert_equals(document.all.picture.nodeName,"IMG")}, "Test lookup IMG in collection using .");
+
+test(function(){ assert_equals(document.all.tags.id,"tags")}, "Test lookup tags in collection using .");
+
+test(function() {
+  assert_equals(document.all["root"], document.documentElement);
+}, "Should find root element too");
+
+test(function() {
+  assert_equals(document.all["foo"].length, 2);
+}, "Should find both anchors and produce a list");
+
+test
+</script>
+<div id="log"></div>
+</body>
+</html>

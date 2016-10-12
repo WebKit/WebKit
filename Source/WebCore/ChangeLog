@@ -1,3 +1,25 @@
+2016-10-11  Chris Dumez  <cdumez@apple.com>
+
+        select.options may return too many option elements
+        https://bugs.webkit.org/show_bug.cgi?id=163296
+
+        Reviewed by Ryosuke Niwa.
+
+        select.options may return too many option elements. We're only supposed
+        to return the option element children of the select element, and the
+        option element children of all the optgroup element children of the
+        select element, in tree order:
+        - https://html.spec.whatwg.org/#dom-select-options
+        - https://html.spec.whatwg.org/#concept-select-option-list
+
+        Firefox and Chrome agrees with the specification. However, WebKit was
+        returning all the option elements that are descendants of the select
+        element.
+
+        Test: imported/w3c/web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmloptionscollection.html
+
+        * html/HTMLOptionsCollection.h:
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion when creating first WebCore::URL from non-main thread after r207162

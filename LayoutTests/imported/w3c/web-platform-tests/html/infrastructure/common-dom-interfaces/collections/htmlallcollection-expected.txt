@@ -1,0 +1,14 @@
+
+
+PASS Test for HTMLAllCollection size 
+PASS Test lookup by index using () 
+PASS Test lookup by index using [] 
+PASS Test lookup IMG by name 
+PASS Test lookup IMG by namedItem  
+PASS Test lookup IMG in collection using () 
+PASS Test lookup IMG in collection using [] 
+PASS Test lookup IMG in collection using . 
+FAIL Test lookup tags in collection using . assert_equals: expected (string) "tags" but got (undefined) undefined
+PASS Should find root element too 
+FAIL Should find both anchors and produce a list undefined is not an object (evaluating 'document.all["foo"].length')
+
