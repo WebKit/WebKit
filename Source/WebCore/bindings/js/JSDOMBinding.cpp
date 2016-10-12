@@ -978,6 +978,17 @@ EncodedJSValue throwThisTypeError(JSC::ExecState& state, JSC::ThrowScope& scope,
     return throwTypeError(state, scope, makeThisTypeErrorMessage(interfaceName, functionName));
 }
 
+JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise& promise, const char* interfaceName, const char* methodName)
+{
+    promise.reject(TypeError, makeThisTypeErrorMessage(interfaceName, methodName));
+    return JSValue::encode(jsUndefined());
+}
+
+JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState& state, const char* interfaceName, const char* methodName)
+{
+    return createRejectedPromiseWithTypeError(state, makeThisTypeErrorMessage(interfaceName, methodName));
+}
+
 void callFunctionWithCurrentArguments(JSC::ExecState& state, JSC::JSObject& thisObject, JSC::JSFunction& function)
 {
     JSC::CallData callData;

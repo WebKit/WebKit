@@ -128,9 +128,14 @@ void JSTestCEReactionsStringifier::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactionsStringifier::~JSTestCEReactionsStringifier();
 }
 
-inline JSTestCEReactionsStringifier* JSTestCEReactionsStringifier::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestCEReactionsStringifier* BindingCaller<JSTestCEReactionsStringifier>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestCEReactionsStringifier*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestCEReactionsStringifier* BindingCaller<JSTestCEReactionsStringifier>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestCEReactionsStringifier*>(state.thisValue());
 }
 
 static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState&, JSTestCEReactionsStringifier&, ThrowScope& throwScope);
@@ -200,16 +205,17 @@ JSValue JSTestCEReactionsStringifier::getConstructor(VM& vm, const JSGlobalObjec
     return getDOMConstructor<JSTestCEReactionsStringifierConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringCaller(JSC::ExecState*, JSTestCEReactionsStringifier*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestCEReactionsStringifierPrototypeFunctionToString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestCEReactionsStringifier>::callOperation<jsTestCEReactionsStringifierPrototypeFunctionToStringCaller>(state, "toString");
+}
+
+static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionToStringCaller(JSC::ExecState* state, JSTestCEReactionsStringifier* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestCEReactionsStringifier*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestCEReactionsStringifier", "toString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCEReactionsStringifier::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.value());
     return JSValue::encode(result);

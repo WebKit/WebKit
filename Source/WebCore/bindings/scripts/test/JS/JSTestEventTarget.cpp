@@ -158,6 +158,11 @@ bool JSTestEventTarget::getOwnPropertySlotByIndex(JSObject* object, ExecState* s
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
 }
 
+template<> inline JSTestEventTarget* BindingCaller<JSTestEventTarget>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestEventTarget*>(state.thisValue());
+}
+
 EncodedJSValue jsTestEventTargetConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
@@ -200,16 +205,17 @@ JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalOb
     return getDOMConstructor<JSTestEventTargetConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemCaller(JSC::ExecState*, JSTestEventTarget*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestEventTarget>::callOperation<jsTestEventTargetPrototypeFunctionItemCaller>(state, "item");
+}
+
+static inline JSC::EncodedJSValue jsTestEventTargetPrototypeFunctionItemCaller(JSC::ExecState* state, JSTestEventTarget* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestEventTarget*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestEventTarget", "item");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestEventTarget::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));

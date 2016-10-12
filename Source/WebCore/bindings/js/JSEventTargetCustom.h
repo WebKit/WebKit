@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSEventTargetCustom_h
-#define JSEventTargetCustom_h
+#pragma once
 
+#include "DOMWindow.h"
 #include "JSDOMBinding.h"
 
 namespace WebCore {
@@ -50,6 +50,26 @@ private:
 
 std::unique_ptr<JSEventTargetWrapper> jsEventTargetCast(JSC::JSValue thisValue);
 
-} // namespace WebCore
+template<> struct BindingCaller<JSEventTarget> {
+    using OperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSEventTargetWrapper*, JSC::ThrowScope&);
 
-#endif // JSEventTargetCustom_h
+    template<OperationCallerFunction operationCaller>
+    static JSC::EncodedJSValue callOperation(JSC::ExecState* state, const char* operationName)
+    {
+        ASSERT(state);
+        auto throwScope = DECLARE_THROW_SCOPE(state->vm());
+
+        auto thisObject = jsEventTargetCast(state->thisValue().toThis(state, JSC::NotStrictMode));
+        if (UNLIKELY(!thisObject))
+            return throwThisTypeError(*state, throwScope, "EventTarget", operationName);
+
+        if (auto* window = thisObject->wrapped().toDOMWindow()) {
+            if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window, ThrowSecurityError))
+                return JSC::JSValue::encode(JSC::jsUndefined());
+        }
+
+        return operationCaller(state, thisObject.get(), throwScope);
+    }
+};
+
+} // namespace WebCore

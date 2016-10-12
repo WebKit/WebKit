@@ -66,6 +66,7 @@ class JSFunction;
 namespace WebCore {
 
 class CachedScript;
+class DeferredPromise;
 class DOMWindow;
 class Frame;
 class URL;
@@ -135,6 +136,8 @@ WEBCORE_EXPORT JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState&, JSC::Th
 WEBCORE_EXPORT JSC::EncodedJSValue throwThisTypeError(JSC::ExecState&, JSC::ThrowScope&, const char* interfaceName, const char* functionName);
 
 WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState&, const char* interfaceName, const char* attributeName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise&, const char* interfaceName, const char* operationName);
+WEBCORE_EXPORT JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState&, const char* interfaceName, const char* operationName);
 
 WEBCORE_EXPORT JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject&, const JSC::ClassInfo*);
 WEBCORE_EXPORT JSC::Structure* cacheDOMStructure(JSDOMGlobalObject&, JSC::Structure*, const JSC::ClassInfo*);
@@ -334,13 +337,51 @@ template<typename JSClass>
 struct BindingCaller {
     using AttributeSetterFunction = bool(JSC::ExecState*, JSClass*, JSC::JSValue, JSC::ThrowScope&);
     using AttributeGetterFunction = JSC::JSValue(JSC::ExecState&, JSClass&, JSC::ThrowScope&);
+    using OperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSClass*, JSC::ThrowScope&);
+    using PromiseOperationCallerFunction = JSC::EncodedJSValue(JSC::ExecState*, JSClass*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
+
+    static JSClass* castForAttribute(JSC::ExecState&, JSC::EncodedJSValue);
+    static JSClass* castForOperation(JSC::ExecState&);
+
+    template<PromiseOperationCallerFunction operationCaller>
+    static JSC::EncodedJSValue callPromiseOperation(JSC::ExecState* state, Ref<DeferredPromise>&& promise, const char* operationName)
+    {
+        ASSERT(state);
+        auto throwScope = DECLARE_THROW_SCOPE(state->vm());
+        auto* thisObject = castForOperation(*state);
+        if (UNLIKELY(!thisObject)) {
+            ASSERT(JSClass::info());
+            return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
+        }
+        ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
+        // FIXME: We should refactor the binding generated code to use references for state and thisObject.
+        return operationCaller(state, thisObject, WTFMove(promise), throwScope);
+    }
+
+    template<OperationCallerFunction operationCaller, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue callOperation(JSC::ExecState* state, const char* operationName)
+    {
+        ASSERT(state);
+        auto throwScope = DECLARE_THROW_SCOPE(state->vm());
+        auto* thisObject = castForOperation(*state);
+        if (UNLIKELY(!thisObject)) {
+            ASSERT(JSClass::info());
+            if (shouldThrow == CastedThisErrorBehavior::Throw)
+                return throwThisTypeError(*state, throwScope, JSClass::info()->className, operationName);
+            // For custom promise-returning operations
+            return rejectPromiseWithThisTypeError(*state, JSClass::info()->className, operationName);
+        }
+        ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
+        // FIXME: We should refactor the binding generated code to use references for state and thisObject.
+        return operationCaller(state, thisObject, throwScope);
+    }
 
     template<AttributeSetterFunction setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static bool setAttribute(JSC::ExecState* state, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, const char* attributeName)
     {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
-        auto* thisObject = JSClass::castForAttribute(state, thisValue);
+        auto* thisObject = castForAttribute(*state, thisValue);
         if (UNLIKELY(!thisObject)) {
             ASSERT(JSClass::info());
             return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(*state, throwScope, JSClass::info()->className, attributeName) : false;
@@ -354,7 +395,7 @@ struct BindingCaller {
     {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
-        auto* thisObject = JSClass::castForAttribute(state, thisValue);
+        auto* thisObject = castForAttribute(*state, thisValue);
         if (UNLIKELY(!thisObject)) {
             ASSERT(JSClass::info());
             if (shouldThrow == CastedThisErrorBehavior::Throw)

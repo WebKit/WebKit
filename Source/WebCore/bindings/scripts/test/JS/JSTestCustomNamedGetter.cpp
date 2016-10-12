@@ -158,6 +158,11 @@ bool JSTestCustomNamedGetter::getOwnPropertySlotByIndex(JSObject* object, ExecSt
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
 }
 
+template<> inline JSTestCustomNamedGetter* BindingCaller<JSTestCustomNamedGetter>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestCustomNamedGetter*>(state.thisValue());
+}
+
 EncodedJSValue jsTestCustomNamedGetterConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
@@ -187,16 +192,17 @@ JSValue JSTestCustomNamedGetter::getConstructor(VM& vm, const JSGlobalObject* gl
     return getDOMConstructor<JSTestCustomNamedGetterConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller(JSC::ExecState*, JSTestCustomNamedGetter*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestCustomNamedGetterPrototypeFunctionAnotherFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestCustomNamedGetter>::callOperation<jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller>(state, "anotherFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnotherFunctionCaller(JSC::ExecState* state, JSTestCustomNamedGetter* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestCustomNamedGetter*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestCustomNamedGetter", "anotherFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCustomNamedGetter::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));

@@ -49,7 +49,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSTestCEReactionsStringifier* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
 protected:
     JSTestCEReactionsStringifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCEReactionsStringifier>&&);
 

@@ -410,9 +410,14 @@ void JSTestInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestInterface::~JSTestInterface();
 }
 
-inline JSTestInterface* JSTestInterface::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestInterface* BindingCaller<JSTestInterface>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestInterface*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestInterface* BindingCaller<JSTestInterface>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestInterface*>(state.thisValue());
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
@@ -837,16 +842,17 @@ JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObje
 }
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionImplementsMethod1Caller>(state, "implementsMethod1");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod1Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "implementsMethod1");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     auto& impl = castedThis->wrapped();
     impl.implementsMethod1();
     return JSValue::encode(jsUndefined());
@@ -855,16 +861,17 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod1(E
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionImplementsMethod2Caller>(state, "implementsMethod2");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod2Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "implementsMethod2");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -886,16 +893,17 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod2(E
 #endif
 
 #if ENABLE(Condition22) || ENABLE(Condition23)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionImplementsMethod3(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionImplementsMethod3Caller>(state, "implementsMethod3");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMethod3Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "implementsMethod3");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->implementsMethod3(*state));
 }
 
@@ -914,16 +922,17 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfaceConstructorFunctionImplementsMethod4
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionSupplementalMethod1Caller>(state, "supplementalMethod1");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod1Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "supplementalMethod1");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     auto& impl = castedThis->wrapped();
     WebCore::TestSupplemental::supplementalMethod1(impl);
     return JSValue::encode(jsUndefined());
@@ -932,16 +941,17 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod1
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionSupplementalMethod2Caller>(state, "supplementalMethod2");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod2Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "supplementalMethod2");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -963,16 +973,17 @@ EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod2
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Caller(JSC::ExecState*, JSTestInterface*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestInterfacePrototypeFunctionSupplementalMethod3(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestInterface>::callOperation<jsTestInterfacePrototypeFunctionSupplementalMethod3Caller>(state, "supplementalMethod3");
+}
+
+static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMethod3Caller(JSC::ExecState* state, JSTestInterface* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestInterface*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestInterface", "supplementalMethod3");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestInterface::info());
     return JSValue::encode(castedThis->supplementalMethod3(*state));
 }
 

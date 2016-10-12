@@ -53,7 +53,6 @@ public:
 
     static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode = JSC::EnumerationMode());
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSTestObj* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);

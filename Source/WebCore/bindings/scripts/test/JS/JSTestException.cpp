@@ -132,7 +132,7 @@ void JSTestException::destroy(JSC::JSCell* cell)
     thisObject->JSTestException::~JSTestException();
 }
 
-inline JSTestException* JSTestException::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestException* BindingCaller<JSTestException>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestException*>(JSValue::decode(thisValue));
 }

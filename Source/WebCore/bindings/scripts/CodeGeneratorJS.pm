@@ -1432,8 +1432,6 @@ sub GenerateHeader
 
     # Attribute and function enums
     if ($numAttributes > 0) {
-        push(@headerContent, "    static ${className}* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);\n");
-
         foreach (@{$interface->attributes}) {
             my $attribute = $_;
             $numCustomAttributes++ if HasCustomGetter($attribute->signature->extendedAttributes);
@@ -2926,19 +2924,29 @@ sub GenerateImplementation
         my $castingFunction = $interface->extendedAttributes->{"CustomProxyToJSObject"} ? "to${className}" : GetCastingHelperForThisObject($interface);
         # FIXME: Remove ImplicitThis keyword as it is no longer defined by WebIDL spec and is only used in DOMWindow.
         if ($interface->extendedAttributes->{"ImplicitThis"}) {
-            push(@implContent, "inline ${className}* ${className}::castForAttribute(ExecState* state, EncodedJSValue thisValue)\n");
+            push(@implContent, "template<> inline ${className}* BindingCaller<${className}>::castForAttribute(ExecState& state, EncodedJSValue thisValue)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    JSValue decodedThisValue = JSValue::decode(thisValue);\n");
+            push(@implContent, "    auto decodedThisValue = JSValue::decode(thisValue);\n");
             push(@implContent, "    if (decodedThisValue.isUndefinedOrNull())\n");
-            push(@implContent, "        decodedThisValue = state->thisValue().toThis(state, NotStrictMode);\n");
-            push(@implContent, "    return $castingFunction(decodedThisValue);\n");
+            push(@implContent, "        decodedThisValue = state.thisValue().toThis(&state, NotStrictMode);\n");
+            push(@implContent, "    return $castingFunction(decodedThisValue);");
             push(@implContent, "}\n\n");
         } else {
-            push(@implContent, "inline ${className}* ${className}::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)\n");
+            push(@implContent, "template<> inline ${className}* BindingCaller<${className}>::castForAttribute(ExecState&, EncodedJSValue thisValue)\n");
             push(@implContent, "{\n");
             push(@implContent, "    return $castingFunction(JSValue::decode(thisValue));\n");
             push(@implContent, "}\n\n");
         }
+    }
+
+    if ($numFunctions > 0 && $interfaceName ne "EventTarget") {
+        # FIXME: Make consistent castForAttibute and castForOperation in case of CustomProxyToJSObject.
+        my $castingFunction = $interface->extendedAttributes->{"CustomProxyToJSObject"} ? "to${className}" : GetCastingHelperForThisObject($interface);
+        my $thisValue = $interface->extendedAttributes->{"CustomProxyToJSObject"} ? "state.thisValue().toThis(&state, NotStrictMode)" : "state.thisValue()";
+        push(@implContent, "template<> inline ${className}* BindingCaller<${className}>::castForOperation(ExecState& state)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    return $castingFunction($thisValue);\n");
+        push(@implContent, "}\n\n");
     }
 
     $numAttributes = $numAttributes + 1 if NeedsConstructorProperty($interface);
@@ -3556,6 +3564,13 @@ sub GenerateImplementation
 
             AddToImplIncludes("JSDOMPromise.h") if IsReturningPromise($function);
 
+            if (!$function->isStatic) {
+                my $classParameterType = $className eq "JSEventTarget" ? "JSEventTargetWrapper*" : "${className}*";
+                my $optionalPromiseParameter = (IsReturningPromise($function) && !$isCustom) ? " Ref<DeferredPromise>&&," : "";
+                push(@implContent, "static inline JSC::EncodedJSValue ${functionName}Caller(JSC::ExecState*, ${classParameterType},${optionalPromiseParameter} JSC::ThrowScope&);\n");
+                push(@implContent, "\n");
+            }
+
             if (IsReturningPromise($function) && !$isCustom) {
                 my $scope = $interface->extendedAttributes->{Exposed} ? "WindowOrWorker" : "WindowOnly";
                 push(@implContent, <<END);
@@ -3577,10 +3592,6 @@ END
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
-            push(@implContent, "    VM& vm = state->vm();\n");
-            push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-            push(@implContent, "    UNUSED_PARAM(throwScope);\n");
-
             if ($function->signature->extendedAttributes->{CEReactions}) {
                 push(@implContent, "#if ENABLE(CUSTOM_ELEMENTS)\n");
                 push(@implContent, "    CustomElementReactionStack customElementReactionStack;\n");
@@ -3593,6 +3604,10 @@ END
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
                     push(@implContent, "    return JSValue::encode(${className}::" . $functionImplementationName . "(state));\n");
                 } else {
+                    push(@implContent, "    VM& vm = state->vm();\n");
+                    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+                    push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
                     push(@implContent, "    ExceptionCode ec = 0;\n") if $mayThrowLegacyException;
@@ -3601,8 +3616,28 @@ END
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interface);
                 }
             } else {
-                my $shouldRejectCastedThis = $isCustom && IsReturningPromise($function);
-                GenerateFunctionCastedThis($interface, $className, $function, $shouldRejectCastedThis);
+                my $methodName = $function->signature->name;
+                if (IsReturningPromise($function) && !$isCustom) {
+                    push(@implContent, "    return BindingCaller<$className>::callPromiseOperation<${functionName}Caller>(state, WTFMove(promise), \"${methodName}\");\n");
+                    push(@implContent, "}\n");
+                    push(@implContent, "\n");
+                    push(@implContent, "static inline JSC::EncodedJSValue ${functionName}Caller(JSC::ExecState* state, ${className}* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)\n");
+                } else {
+                    my $classParameterType = $className eq "JSEventTarget" ? "JSEventTargetWrapper*" : "${className}*";
+                    my $templateParameters = "${functionName}Caller";
+                    # FIXME: We need this specific handling for custom promise-returning functions.
+                    # It would be better to have the casted-this code calling the promise-specific code.
+                    $templateParameters .= ", CastedThisErrorBehavior::RejectPromise" if IsReturningPromise($function);
+
+                    push(@implContent, "    return BindingCaller<$className>::callOperation<${templateParameters}>(state, \"${methodName}\");\n");
+                    push(@implContent, "}\n");
+                    push(@implContent, "\n");
+                    push(@implContent, "static inline JSC::EncodedJSValue ${functionName}Caller(JSC::ExecState* state, ${classParameterType} castedThis, JSC::ThrowScope& throwScope)\n");
+                }
+
+                push(@implContent, "{\n");
+                push(@implContent, "    UNUSED_PARAM(state);\n");
+                push(@implContent, "    UNUSED_PARAM(throwScope);\n");
 
                 if ($interface->extendedAttributes->{CheckSecurity} and !$function->signature->extendedAttributes->{DoNotCheckSecurity}) {
                     if ($interfaceName eq "DOMWindow") {
@@ -3624,15 +3659,6 @@ END
                         push(@implContent, "    }\n");
                         push(@implContent, "    $svgPropertyType& podImpl = impl.propertyReference();\n");
                         $implIncludes{"ExceptionCode.h"} = 1;
-                    }
-
-                    # EventTarget needs to do some extra checks if castedThis is a JSDOMWindow.
-                    if ($interface->name eq "EventTarget") {
-                        $implIncludes{"DOMWindow.h"} = 1;
-                        push(@implContent, "    if (auto* window = castedThis->wrapped().toDOMWindow()) {\n");
-                        push(@implContent, "        if (!window->frame() || !BindingSecurity::shouldAllowAccessToDOMWindow(state, *window, ThrowSecurityError))\n");
-                        push(@implContent, "            return JSValue::encode(jsUndefined());\n");
-                        push(@implContent, "    }\n");
                     }
 
                     GenerateArgumentsCountCheck(\@implContent, $function, $interface);
@@ -3913,39 +3939,6 @@ sub GenerateSerializerFunction
     }
     push(@implContent, "    return JSValue::encode(result);\n");
     push(@implContent, "}\n\n");
-}
-
-sub GenerateFunctionCastedThis
-{
-    my ($interface, $className, $function, $shouldRejectPromise) = @_;
-
-    if ($interface->extendedAttributes->{CustomProxyToJSObject}) {
-        push(@implContent, "    $className* castedThis = to${className}(state->thisValue().toThis(state, NotStrictMode));\n");
-        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-        push(@implContent, "        return throwVMTypeError(state, throwScope);\n");
-    } else {
-        push(@implContent, "    JSValue thisValue = state->thisValue();\n");
-        my $castingHelper = GetCastingHelperForThisObject($interface);
-        my $interfaceName = $interface->name;
-        if ($interfaceName eq "EventTarget") {
-            # We allow calling the EventTarget API without an explicit 'this' value and fall back to using the global object instead.
-            # As of early 2016, this matches Firefox and Chrome's behavior.
-            push(@implContent, "    auto castedThis = $castingHelper(thisValue.toThis(state, NotStrictMode));\n");
-        } else {
-            push(@implContent, "    auto castedThis = $castingHelper(thisValue);\n");
-        }
-
-        my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-        my $domFunctionName = $function->signature->name;
-        push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-        if ($shouldRejectPromise) {
-            push(@implContent, "        return createRejectedPromiseWithTypeError(*state, makeThisTypeErrorMessage(\"$visibleInterfaceName\", \"$domFunctionName\"));\n");
-        } else {
-            push(@implContent, "        return throwThisTypeError(*state, throwScope, \"$visibleInterfaceName\", \"$domFunctionName\");\n");
-        }
-    }
-
-    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n") unless $interface->name eq "EventTarget";
 }
 
 sub GenerateCallWithUsingReferences

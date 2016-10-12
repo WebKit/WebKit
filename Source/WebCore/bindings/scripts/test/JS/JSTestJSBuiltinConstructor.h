@@ -46,7 +46,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSTestJSBuiltinConstructor* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
 
 

@@ -136,9 +136,14 @@ void JSTestCEReactions::destroy(JSC::JSCell* cell)
     thisObject->JSTestCEReactions::~JSTestCEReactions();
 }
 
-inline JSTestCEReactions* JSTestCEReactions::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestCEReactions*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestCEReactions* BindingCaller<JSTestCEReactions>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestCEReactions*>(state.thisValue());
 }
 
 static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&, JSTestCEReactions&, ThrowScope& throwScope);
@@ -285,19 +290,20 @@ JSValue JSTestCEReactions::getConstructor(VM& vm, const JSGlobalObject* globalOb
     return getDOMConstructor<JSTestCEReactionsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState*, JSTestCEReactions*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestCEReactionsPrototypeFunctionMethodWithCEReactions(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
 #if ENABLE(CUSTOM_ELEMENTS)
     CustomElementReactionStack customElementReactionStack;
 #endif
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestCEReactions*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestCEReactions", "methodWithCEReactions");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestCEReactions::info());
+    return BindingCaller<JSTestCEReactions>::callOperation<jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller>(state, "methodWithCEReactions");
+}
+
+static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCEReactionsCaller(JSC::ExecState* state, JSTestCEReactions* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     impl.methodWithCEReactions();
     return JSValue::encode(jsUndefined());

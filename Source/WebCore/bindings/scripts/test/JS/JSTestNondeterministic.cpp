@@ -143,9 +143,14 @@ void JSTestNondeterministic::destroy(JSC::JSCell* cell)
     thisObject->JSTestNondeterministic::~JSTestNondeterministic();
 }
 
-inline JSTestNondeterministic* JSTestNondeterministic::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestNondeterministic* BindingCaller<JSTestNondeterministic>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestNondeterministic*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestNondeterministic* BindingCaller<JSTestNondeterministic>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestNondeterministic*>(state.thisValue());
 }
 
 static inline JSValue jsTestNondeterministicNondeterministicReadonlyAttrGetter(ExecState&, JSTestNondeterministic&, ThrowScope& throwScope);
@@ -439,16 +444,17 @@ JSValue JSTestNondeterministic::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestNondeterministicConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunctionCaller(JSC::ExecState*, JSTestNondeterministic*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNondeterministic>::callOperation<jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunctionCaller>(state, "nondeterministicZeroArgFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestNondeterministicPrototypeFunctionNondeterministicZeroArgFunctionCaller(JSC::ExecState* state, JSTestNondeterministic* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestNondeterministic*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestNondeterministic", "nondeterministicZeroArgFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNondeterministic::info());
     auto& impl = castedThis->wrapped();
     JSValue result;
 #if ENABLE(WEB_REPLAY)

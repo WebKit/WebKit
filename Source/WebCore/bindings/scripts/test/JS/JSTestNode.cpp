@@ -167,9 +167,14 @@ JSObject* JSTestNode::prototype(VM& vm, JSGlobalObject* globalObject)
     return getDOMPrototype<JSTestNode>(vm, globalObject);
 }
 
-inline JSTestNode* JSTestNode::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestNode* BindingCaller<JSTestNode>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestNode*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestNode* BindingCaller<JSTestNode>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestNode*>(state.thisValue());
 }
 
 static inline JSValue jsTestNodeNameGetter(ExecState&, JSTestNode&, ThrowScope& throwScope);
@@ -236,6 +241,8 @@ JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
     return getDOMConstructor<JSTestNodeConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState*, JSTestNode*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
+
 static EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState*, Ref<DeferredPromise>&&);
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecState* state)
@@ -246,14 +253,13 @@ EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionTestWorkerPromise(ExecSt
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromisePromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestNode>::callPromiseOperation<jsTestNodePrototypeFunctionTestWorkerPromiseCaller>(state, WTFMove(promise), "testWorkerPromise");
+}
+
+static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCaller(JSC::ExecState* state, JSTestNode* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestNode*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestNode", "testWorkerPromise");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
     auto& impl = castedThis->wrapped();
     impl.testWorkerPromise(WTFMove(promise));
     return JSValue::encode(jsUndefined());

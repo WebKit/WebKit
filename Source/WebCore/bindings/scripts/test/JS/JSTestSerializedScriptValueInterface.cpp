@@ -132,7 +132,7 @@ void JSTestSerializedScriptValueInterface::destroy(JSC::JSCell* cell)
     thisObject->JSTestSerializedScriptValueInterface::~JSTestSerializedScriptValueInterface();
 }
 
-inline JSTestSerializedScriptValueInterface* JSTestSerializedScriptValueInterface::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestSerializedScriptValueInterface* BindingCaller<JSTestSerializedScriptValueInterface>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestSerializedScriptValueInterface*>(JSValue::decode(thisValue));
 }

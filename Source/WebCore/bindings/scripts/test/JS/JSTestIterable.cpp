@@ -129,6 +129,11 @@ void JSTestIterable::destroy(JSC::JSCell* cell)
     thisObject->JSTestIterable::~JSTestIterable();
 }
 
+template<> inline JSTestIterable* BindingCaller<JSTestIterable>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestIterable*>(state.thisValue());
+}
+
 EncodedJSValue jsTestIterableConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();

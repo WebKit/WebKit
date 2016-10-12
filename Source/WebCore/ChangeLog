@@ -1,5 +1,69 @@
 2016-10-11  Youenn Fablet  <youenn@apple.com>
 
+        Refactor binding generated casted-this checks for methods
+        https://bugs.webkit.org/show_bug.cgi?id=163198
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests and binding rebased tests..
+
+        Introducing BindingCaller::callMethod and callPromiseMethod to encapsulate casted-this checks for methods.
+        This is supported for all methods except seralizer and iterators methods.
+
+        Introduced castForMethod similarly to castForAttribute.
+        Moved this from static methods of JSClass to static methods of BindingCaller<JSClass>
+        This allows removing the corresponding declarations from JSClass header file.
+
+        Note the difference of handling thisValue between the two in case of CustomProxyToJSObject.
+        This should be made more consistent.
+
+        In case of bad casted this check, CustomProxyToJSObject objects will throw a TypeError with an error message like other methods.
+        Before the patch, a TypeError without error message was thrown.
+
+        EventTarget being different, added a specialization of BindingCaller for it.
+        This allows also removing some binding generated code dedicated to EventTarget.
+        A similar approach might also be done for CustomProxyToJSObject objects to further simplify the binding generator.
+
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::rejectPromiseWithThisTypeError):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::BindingCaller::callPromiseMethod):
+        (WebCore::BindingCaller::callMethod):
+        * bindings/js/JSEventTargetCustom.h:
+        (WebCore::BindingCaller<JSEventTarget>::callMethod):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GenerateFunctionCastedThis): Deleted.
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.h:
+
+2016-10-11  Youenn Fablet  <youenn@apple.com>
+
         MediaResourceLoader::requestResource should take a ResourceRequest&& as input
         https://bugs.webkit.org/show_bug.cgi?id=160397
 

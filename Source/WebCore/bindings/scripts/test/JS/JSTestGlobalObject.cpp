@@ -177,9 +177,14 @@ void JSTestGlobalObject::destroy(JSC::JSCell* cell)
     thisObject->JSTestGlobalObject::~JSTestGlobalObject();
 }
 
-inline JSTestGlobalObject* JSTestGlobalObject::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestGlobalObject* BindingCaller<JSTestGlobalObject>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestGlobalObject*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestGlobalObject* BindingCaller<JSTestGlobalObject>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestGlobalObject*>(state.thisValue());
 }
 
 static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState&, JSTestGlobalObject&, ThrowScope& throwScope);
@@ -361,16 +366,17 @@ JSValue JSTestGlobalObject::getConstructor(VM& vm, const JSGlobalObject* globalO
     return getDOMConstructor<JSTestGlobalObjectConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOperationCaller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionRegularOperationCaller>(state, "regularOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionRegularOperationCaller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestGlobalObject*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestGlobalObject", "regularOperation");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestGlobalObject::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -381,16 +387,17 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionRegularOperation(
 }
 
 #if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Caller>(state, "enabledAtRuntimeOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestGlobalObject*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestGlobalObject", "enabledAtRuntimeOperation");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestGlobalObject::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -403,16 +410,17 @@ static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
 #endif
 
 #if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Caller>(state, "enabledAtRuntimeOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestGlobalObject*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestGlobalObject", "enabledAtRuntimeOperation");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestGlobalObject::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -446,16 +454,17 @@ EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeO
 #endif
 
 #if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller(JSC::ExecState*, JSTestGlobalObject*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller>(state, "testPrivateFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestGlobalObject*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestGlobalObject", "testPrivateFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestGlobalObject::info());
     auto& impl = castedThis->wrapped();
     impl.testPrivateFunction();
     return JSValue::encode(jsUndefined());

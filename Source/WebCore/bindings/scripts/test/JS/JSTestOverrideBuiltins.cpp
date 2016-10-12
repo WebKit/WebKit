@@ -156,6 +156,11 @@ bool JSTestOverrideBuiltins::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
 }
 
+template<> inline JSTestOverrideBuiltins* BindingCaller<JSTestOverrideBuiltins>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestOverrideBuiltins*>(state.thisValue());
+}
+
 EncodedJSValue jsTestOverrideBuiltinsConstructor(ExecState* state, EncodedJSValue thisValue, PropertyName)
 {
     VM& vm = state->vm();
@@ -196,16 +201,17 @@ JSValue JSTestOverrideBuiltins::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestOverrideBuiltinsConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState*, JSTestOverrideBuiltins*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestOverrideBuiltinsPrototypeFunctionNamedItem(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestOverrideBuiltins>::callOperation<jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller>(state, "namedItem");
+}
+
+static inline JSC::EncodedJSValue jsTestOverrideBuiltinsPrototypeFunctionNamedItemCaller(JSC::ExecState* state, JSTestOverrideBuiltins* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestOverrideBuiltins*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestOverrideBuiltins", "namedItem");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestOverrideBuiltins::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));

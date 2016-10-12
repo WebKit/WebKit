@@ -178,7 +178,7 @@ void JSTestEventConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestEventConstructor::~JSTestEventConstructor();
 }
 
-inline JSTestEventConstructor* JSTestEventConstructor::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestEventConstructor* BindingCaller<JSTestEventConstructor>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestEventConstructor*>(JSValue::decode(thisValue));
 }

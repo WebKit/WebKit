@@ -132,7 +132,7 @@ void JSattribute::destroy(JSC::JSCell* cell)
     thisObject->JSattribute::~JSattribute();
 }
 
-inline JSattribute* JSattribute::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSattribute* BindingCaller<JSattribute>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSattribute*>(JSValue::decode(thisValue));
 }

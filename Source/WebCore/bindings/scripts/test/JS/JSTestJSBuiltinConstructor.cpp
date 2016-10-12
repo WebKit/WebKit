@@ -132,9 +132,14 @@ void JSTestJSBuiltinConstructor::destroy(JSC::JSCell* cell)
     thisObject->JSTestJSBuiltinConstructor::~JSTestJSBuiltinConstructor();
 }
 
-inline JSTestJSBuiltinConstructor* JSTestJSBuiltinConstructor::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestJSBuiltinConstructor* BindingCaller<JSTestJSBuiltinConstructor>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestJSBuiltinConstructor*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestJSBuiltinConstructor* BindingCaller<JSTestJSBuiltinConstructor>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestJSBuiltinConstructor*>(state.thisValue());
 }
 
 static inline JSValue jsTestJSBuiltinConstructorTestAttributeCustomGetter(ExecState&, JSTestJSBuiltinConstructor&, ThrowScope& throwScope);
@@ -210,16 +215,17 @@ JSValue JSTestJSBuiltinConstructor::getConstructor(VM& vm, const JSGlobalObject*
     return getDOMConstructor<JSTestJSBuiltinConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
+static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionCaller(JSC::ExecState*, JSTestJSBuiltinConstructor*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestJSBuiltinConstructor>::callOperation<jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionCaller>(state, "testCustomFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestJSBuiltinConstructorPrototypeFunctionTestCustomFunctionCaller(JSC::ExecState* state, JSTestJSBuiltinConstructor* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestJSBuiltinConstructor*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestJSBuiltinConstructor", "testCustomFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestJSBuiltinConstructor::info());
     return JSValue::encode(castedThis->testCustomFunction(*state));
 }
 

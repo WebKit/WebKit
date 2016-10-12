@@ -49,7 +49,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSTestNondeterministic* castForAttribute(JSC::ExecState*, JSC::EncodedJSValue);
 protected:
     JSTestNondeterministic(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNondeterministic>&&);
 

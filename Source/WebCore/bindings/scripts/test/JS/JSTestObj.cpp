@@ -1697,9 +1697,14 @@ bool JSTestObj::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, un
     return Base::getOwnPropertySlotByIndex(thisObject, state, index, slot);
 }
 
-inline JSTestObj* JSTestObj::castForAttribute(JSC::ExecState*, EncodedJSValue thisValue)
+template<> inline JSTestObj* BindingCaller<JSTestObj>::castForAttribute(ExecState&, EncodedJSValue thisValue)
 {
     return jsDynamicCast<JSTestObj*>(JSValue::decode(thisValue));
+}
+
+template<> inline JSTestObj* BindingCaller<JSTestObj>::castForOperation(ExecState& state)
+{
+    return jsDynamicCast<JSTestObj*>(state.thisValue());
 }
 
 static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState&, JSTestObj&, ThrowScope& throwScope);
@@ -4670,16 +4675,17 @@ JSValue JSTestObj::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 }
 
 #if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Caller>(state, "enabledAtRuntimeOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "enabledAtRuntimeOperation");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4692,16 +4698,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
 #endif
 
 #if ENABLE(TEST_FEATURE)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Caller>(state, "enabledAtRuntimeOperation");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "enabledAtRuntimeOperation");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4734,31 +4741,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionEnabledAtRuntimeOperation
 }
 #endif
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVoidMethodCaller>(state, "voidMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "voidMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.voidMethod();
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVoidMethodWithArgsCaller>(state, "voidMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVoidMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "voidMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4773,31 +4782,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVoidMethodWithArgs(ExecSt
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionByteMethodCaller>(state, "byteMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "byteMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.byteMethod());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionByteMethodWithArgsCaller>(state, "byteMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "byteMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4812,31 +4823,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionByteMethodWithArgs(ExecSt
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOctetMethodCaller>(state, "octetMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "octetMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.octetMethod());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOctetMethodWithArgsCaller>(state, "octetMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "octetMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4851,31 +4864,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOctetMethodWithArgs(ExecS
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionLongMethodCaller>(state, "longMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "longMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.longMethod());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionLongMethodWithArgsCaller>(state, "longMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "longMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4890,31 +4905,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionLongMethodWithArgs(ExecSt
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionObjMethodCaller>(state, "objMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "objMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), impl.objMethod());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionObjMethodWithArgsCaller>(state, "objMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionObjMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "objMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 3))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4929,31 +4946,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionObjMethodWithArgs(ExecSta
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjInstanceFunctionUnforgeableMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjInstanceFunctionUnforgeableMethodCaller>(state, "unforgeableMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "unforgeableMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsNumber(impl.unforgeableMethod());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringCaller>(state, "methodWithArgTreatingNullAsEmptyString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithArgTreatingNullAsEmptyStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithArgTreatingNullAsEmptyString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4963,16 +4982,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithArgTreatingNull
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameter(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterCaller>(state, "methodWithXPathNSResolverParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithXPathNSResolverParameter");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -4984,16 +5004,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithXPathNSResolver
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionNullableStringMethodCaller>(state, "nullableStringMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "nullableStringMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringOrNull(state, impl.nullableStringMethod());
     return JSValue::encode(result);
@@ -5008,16 +5029,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMet
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecialMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecialMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionNullableStringSpecialMethodCaller>(state, "nullableStringSpecialMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecialMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "nullableStringSpecialMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5027,16 +5049,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionNullableStringSpecialMeth
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithEnumArgCaller>(state, "methodWithEnumArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithEnumArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithEnumArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5051,16 +5074,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithEnumArg(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgCaller>(state, "methodWithOptionalEnumArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalEnumArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto enumArgValue = state->argument(0);
     Optional<TestObj::EnumType> enumArg;
@@ -5074,16 +5098,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValue(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueCaller>(state, "methodWithOptionalEnumArgAndDefaultValue");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalEnumArgAndDefaultValueCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalEnumArgAndDefaultValue");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto enumArgValue = state->argument(0);
     TestObj::EnumType enumArg;
@@ -5100,16 +5125,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalEnumArg
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsCaller>(state, "methodThatRequiresAllArgsAndThrows");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrowsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodThatRequiresAllArgsAndThrows");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5125,16 +5151,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodThatRequiresAllArgs
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithUSVStringArgCaller>(state, "methodWithUSVStringArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithUSVStringArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5144,16 +5171,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArg(Ex
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNullableUSVStringArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgCaller>(state, "methodWithNullableUSVStringArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNullableUSVStringArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNullableUSVStringArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5163,16 +5191,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNullableUSVStri
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringCaller>(state, "methodWithUSVStringArgTreatingNullAsEmptyString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUSVStringArgTreatingNullAsEmptyStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithUSVStringArgTreatingNullAsEmptyString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5182,16 +5211,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUSVStringArgTre
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionSerializedValueCaller>(state, "serializedValue");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "serializedValue");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5201,16 +5231,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSerializedValue(ExecState
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOptionsObjectCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOptionsObjectCaller>(state, "optionsObject");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOptionsObjectCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "optionsObject");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5220,61 +5251,65 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithException(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithExceptionCaller>(state, "methodWithException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     propagateException(*state, throwScope, impl.methodWithException());
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningLongCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningLong(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithExceptionReturningLongCaller>(state, "methodWithExceptionReturningLong");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningLongCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithExceptionReturningLong");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJSNumber(*state, throwScope, impl.methodWithExceptionReturningLong());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithExceptionReturningObject(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectCaller>(state, "methodWithExceptionReturningObject");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionReturningObjectCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithExceptionReturningObject");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(*state, *castedThis->globalObject(), throwScope, impl.methodWithExceptionReturningObject());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithLegacyExceptionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithLegacyException(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithLegacyExceptionCaller>(state, "methodWithLegacyException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithLegacyExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithLegacyException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.methodWithLegacyException(ec);
@@ -5282,42 +5317,45 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithLegacyException
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionCustomMethodCaller>(state, "customMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "customMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethod(*state));
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodWithArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionCustomMethodWithArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionCustomMethodWithArgsCaller>(state, "customMethodWithArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionCustomMethodWithArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "customMethodWithArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->customMethodWithArgs(*state));
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionPrivateMethodCaller>(state, "privateMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "privateMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5327,16 +5365,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* 
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPublicAndPrivateMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionPublicAndPrivateMethodCaller>(state, "publicAndPrivateMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "publicAndPrivateMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5346,16 +5385,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPublicAndPrivateMethod(Ex
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAddEventListenerCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionAddEventListenerCaller>(state, "addEventListener");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAddEventListenerCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "addEventListener");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5370,16 +5410,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAddEventListener(ExecStat
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionRemoveEventListenerCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionRemoveEventListenerCaller>(state, "removeEventListener");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionRemoveEventListenerCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "removeEventListener");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5394,47 +5435,50 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionRemoveEventListener(ExecS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoid(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptStateVoidCaller>(state, "withScriptStateVoid");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptStateVoid");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.withScriptStateVoid(*state);
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObj(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptStateObjCaller>(state, "withScriptStateObj");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptStateObj");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptStateObj(*state));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidExceptionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidException(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptStateVoidExceptionCaller>(state, "withScriptStateVoidException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateVoidExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptStateVoidException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.withScriptStateVoidException(*state, ec);
@@ -5442,16 +5486,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateVoidExcept
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjExceptionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjException(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptStateObjExceptionCaller>(state, "withScriptStateObjException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptStateObjExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptStateObjException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     JSValue result = toJS(state, castedThis->globalObject(), impl.withScriptStateObjException(*state, ec));
@@ -5461,16 +5506,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptStateObjExcepti
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContext(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptExecutionContextCaller>(state, "withScriptExecutionContext");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptExecutionContext");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
@@ -5479,16 +5525,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptState(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateCaller>(state, "withScriptExecutionContextAndScriptState");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptExecutionContextAndScriptState");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
@@ -5497,16 +5544,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjException(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionCaller>(state, "withScriptExecutionContextAndScriptStateObjException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateObjExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptExecutionContextAndScriptStateObjException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
@@ -5519,16 +5567,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpaces(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesCaller>(state, "withScriptExecutionContextAndScriptStateWithSpaces");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptExecutionContextAndScriptStateWithSpacesCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptExecutionContextAndScriptStateWithSpaces");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
@@ -5538,32 +5587,34 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptExecutionContex
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackCaller>(state, "withScriptArgumentsAndCallStack");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withScriptArgumentsAndCallStack");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     RefPtr<Inspector::ScriptArguments> scriptArguments(Inspector::createScriptArguments(state, 0));
     impl.withScriptArgumentsAndCallStack(WTFMove(scriptArguments));
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgumentCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDocumentArgument(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithDocumentArgumentCaller>(state, "withDocumentArgument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithDocumentArgumentCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withDocumentArgument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto* context = jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())->scriptExecutionContext();
     if (!context)
@@ -5574,16 +5625,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDocumentArgument(Exec
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithCallerDocumentArgument(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller>(state, "withCallerDocumentArgument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentArgumentCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withCallerDocumentArgument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto* document = callerDOMWindow(state).document();
     if (!document)
@@ -5592,31 +5644,33 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithCallerDocumentArgumen
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithCallerWindowArgument(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller>(state, "withCallerWindowArgument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgumentCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "withCallerWindowArgument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.withCallerWindowArgument(callerDOMWindow(state));
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalArgCaller>(state, "methodWithOptionalArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto opt = state->argument(0).isUndefined() ? Optional<int32_t>() : convert<IDLLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5624,16 +5678,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValue(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueCaller>(state, "methodWithOptionalArgAndDefaultValue");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalArgAndDefaultValueCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalArgAndDefaultValue");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto opt = state->argument(0).isUndefined() ? 666 : convert<IDLLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5641,16 +5696,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArgAndD
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgCaller>(state, "methodWithNonOptionalArgAndOptionalArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNonOptionalArgAndOptionalArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5662,16 +5718,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsCaller>(state, "methodWithNonOptionalArgAndTwoOptionalArgs");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgsCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNonOptionalArgAndTwoOptionalArgs");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -5685,16 +5742,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalStringCaller>(state, "methodWithOptionalString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? String() : state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5702,16 +5760,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalString(
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringCaller>(state, "methodWithOptionalUSVString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalUSVString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? String() : valueToUSVString(state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5719,16 +5778,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVStri
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringCaller>(state, "methodWithOptionalAtomicString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalAtomicString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? nullAtom : state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5736,16 +5796,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValue(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueCaller>(state, "methodWithOptionalStringAndDefaultValue");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringAndDefaultValueCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalStringAndDefaultValue");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? ASCIILiteral("foo") : state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5753,16 +5814,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringA
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValue(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueCaller>(state, "methodWithOptionalAtomicStringAndDefaultValue");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringAndDefaultValueCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalAtomicStringAndDefaultValue");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? AtomicString("foo", AtomicString::ConstructFromLiteral) : state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5770,16 +5832,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsNull(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullCaller>(state, "methodWithOptionalStringIsNull");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsNullCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalStringIsNull");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? String() : state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5787,16 +5850,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefined(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedCaller>(state, "methodWithOptionalStringIsUndefined");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsUndefinedCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalStringIsUndefined");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5804,16 +5868,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNull(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullCaller>(state, "methodWithOptionalAtomicStringIsNull");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalAtomicStringIsNull");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? nullAtom : state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5821,16 +5886,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringCaller>(state, "methodWithOptionalStringIsEmptyString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalStringIsEmptyStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalStringIsEmptyString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? emptyString() : state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5838,16 +5904,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalStringI
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringCaller>(state, "methodWithOptionalUSVStringIsEmptyString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUSVStringIsEmptyStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalUSVStringIsEmptyString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? emptyString() : valueToUSVString(state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5855,16 +5922,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUSVStri
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringCaller>(state, "methodWithOptionalAtomicStringIsEmptyString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalAtomicStringIsEmptyString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto str = state->argument(0).isUndefined() ? emptyAtom : state->uncheckedArgument(0).toString(state)->toAtomicString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5872,16 +5940,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAtomicS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaN(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNCaller>(state, "methodWithOptionalDoubleIsNaN");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalDoubleIsNaNCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalDoubleIsNaN");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = convert<IDLUnrestrictedDouble>(*state, state->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5889,16 +5958,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalDoubleI
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaN(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNCaller>(state, "methodWithOptionalFloatIsNaN");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalFloatIsNaNCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalFloatIsNaN");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = convert<IDLUnrestrictedFloat>(*state, state->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5906,16 +5976,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalFloatIs
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLong(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalLongLongCaller>(state, "methodWithOptionalLongLong");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalLongLong");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = state->argument(0).isUndefined() ? Optional<int64_t>() : convert<IDLLongLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5923,16 +5994,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLon
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZero(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroCaller>(state, "methodWithOptionalLongLongIsZero");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalLongLongIsZeroCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalLongLongIsZero");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = convert<IDLLongLong>(*state, state->argument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5940,16 +6012,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalLongLon
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLong(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongCaller>(state, "methodWithOptionalUnsignedLongLong");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalUnsignedLongLong");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = state->argument(0).isUndefined() ? Optional<uint64_t>() : convert<IDLUnsignedLongLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5957,16 +6030,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsigne
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZero(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroCaller>(state, "methodWithOptionalUnsignedLongLongIsZero");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalUnsignedLongLongIsZeroCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalUnsignedLongLongIsZero");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto number = convert<IDLUnsignedLongLong>(*state, state->argument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5974,16 +6048,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalUnsigne
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequence(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalSequenceCaller>(state, "methodWithOptionalSequence");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalSequence");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto array = state->argument(0).isUndefined() ? Optional<Vector<String>>() : convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -5991,16 +6066,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmpty(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller>(state, "methodWithOptionalSequenceIsEmpty");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalSequenceIsEmpty");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto array = state->argument(0).isUndefined() ? Vector<String>() : convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6008,16 +6084,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalSequenc
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBoolean(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalBooleanCaller>(state, "methodWithOptionalBoolean");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalBoolean");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto b = state->argument(0).isUndefined() ? Optional<bool>() : convert<IDLBoolean>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6025,16 +6102,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBoolean
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalse(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseCaller>(state, "methodWithOptionalBooleanIsFalse");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalBooleanIsFalseCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalBooleanIsFalse");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto b = convert<IDLBoolean>(*state, state->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6042,16 +6120,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalBoolean
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAnyCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAny(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalAnyCaller>(state, "methodWithOptionalAny");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAnyCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalAny");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto a = convert<IDLAny>(*state, state->argument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6059,16 +6138,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalAny(Exe
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapper(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperCaller>(state, "methodWithOptionalNullableWrapper");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalNullableWrapper");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     TestObj* obj = nullptr;
     if (!state->argument(0).isUndefinedOrNull()) {
@@ -6080,16 +6160,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullabl
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullCaller>(state, "methodWithOptionalNullableWrapperIsNull");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNullCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalNullableWrapperIsNull");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     TestObj* obj = nullptr;
     if (!state->argument(0).isUndefinedOrNull()) {
@@ -6101,16 +6182,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullabl
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverCaller>(state, "methodWithOptionalXPathNSResolver");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithOptionalXPathNSResolver");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     RefPtr<XPathNSResolver> resolver = nullptr;
     if (!state->argument(0).isUndefinedOrNull()) {
@@ -6123,16 +6205,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithCallbackArgCaller>(state, "methodWithCallbackArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithCallbackArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6143,16 +6226,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(Exe
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgCaller>(state, "methodWithNonCallbackArgAndCallbackArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNonCallbackArgAndCallbackArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6165,16 +6249,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgCaller>(state, "methodWithCallbackAndOptionalArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithCallbackAndOptionalArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     RefPtr<TestCallback> callback;
     if (!state->argument(0).isUndefinedOrNull()) {
@@ -6186,16 +6271,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOpti
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgCaller>(state, "methodWithCallbackFunctionArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithCallbackFunctionArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6206,16 +6292,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctio
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgCaller>(state, "methodWithNonCallbackArgAndCallbackFunctionArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackFunctionArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithNonCallbackArgAndCallbackFunctionArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6228,16 +6315,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgA
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArg(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgCaller>(state, "methodWithCallbackFunctionAndOptionalArg");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackFunctionAndOptionalArgCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithCallbackFunctionAndOptionalArg");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     RefPtr<TestCallbackFunction> callback;
     if (!state->argument(0).isUndefinedOrNull()) {
@@ -6279,16 +6367,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionStaticMethodWithCallbac
 }
 
 #if ENABLE(Condition1)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConditionalMethod1Caller>(state, "conditionalMethod1");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "conditionalMethod1");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.conditionalMethod1());
     return JSValue::encode(result);
@@ -6297,16 +6386,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod1(ExecSt
 #endif
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConditionalMethod2Caller>(state, "conditionalMethod2");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "conditionalMethod2");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.conditionalMethod2();
     return JSValue::encode(jsUndefined());
@@ -6315,16 +6405,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(ExecSt
 #endif
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod3Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConditionalMethod3Caller>(state, "conditionalMethod3");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod3Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "conditionalMethod3");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.conditionalMethod3();
     return JSValue::encode(jsUndefined());
@@ -6332,16 +6423,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(ExecSt
 
 #endif
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod1Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6357,16 +6449,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod1(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod2Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6382,16 +6475,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod2(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod3Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6401,16 +6495,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod3(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod4Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6420,16 +6515,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod4(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod5Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6440,16 +6536,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod5(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod6Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6463,16 +6560,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod6(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod7Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6482,16 +6580,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod7(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod8Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6502,16 +6601,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod8(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod9Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6522,16 +6622,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod9(ExecSta
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod10Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6541,16 +6642,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod10(ExecSt
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod11Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6560,16 +6662,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod11(ExecSt
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod12Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6579,16 +6682,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod12(ExecSt
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethod13Caller>(state, "overloadedMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto blobArgs = convertVariadicArguments<IDLInterface<Blob>>(*state, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
@@ -6642,16 +6746,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
     return throwVMTypeError(state, throwScope);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Caller>(state, "overloadedMethodWithOptionalParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethodWithOptionalParameter");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6667,16 +6772,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptio
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Caller>(state, "overloadedMethodWithOptionalParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "overloadedMethodWithOptionalParameter");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6739,9 +6845,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    UNUSED_PARAM(throwScope);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     return JSValue::encode(JSTestObj::classMethod2(state));
@@ -6800,16 +6903,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecS
 }
 #endif
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionClassMethodWithClampCaller>(state, "classMethodWithClamp");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithClampCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "classMethodWithClamp");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6821,16 +6925,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRange(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionClassMethodWithEnforceRangeCaller>(state, "classMethodWithEnforceRange");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionClassMethodWithEnforceRangeCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "classMethodWithEnforceRange");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6842,16 +6947,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithEnforceRan
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceCaller>(state, "methodWithUnsignedLongSequence");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithUnsignedLongSequenceCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithUnsignedLongSequence");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6861,16 +6967,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSeq
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionStringArrayFunctionCaller>(state, "stringArrayFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "stringArrayFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6883,16 +6990,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStringArrayFunction(ExecS
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionDomStringListFunctionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionDomStringListFunctionCaller>(state, "domStringListFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionDomStringListFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "domStringListFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6906,16 +7014,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionDomStringListFunction(Exe
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequence(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceCaller>(state, "methodWithAndWithoutNullableSequence");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithAndWithoutNullableSequenceCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "methodWithAndWithoutNullableSequence");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6927,16 +7036,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithAndWithoutNulla
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetElementByIdCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetElementById(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionGetElementByIdCaller>(state, "getElementById");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetElementByIdCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "getElementById");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6946,16 +7056,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetElementById(ExecState*
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionGetSVGDocumentCaller>(state, "getSVGDocument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionGetSVGDocumentCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "getSVGDocument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     if (!shouldAllowAccessToNode(state, impl.getSVGDocument(ec)))
@@ -6966,16 +7077,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionGetSVGDocument(ExecState*
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConvert1Caller>(state, "convert1");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "convert1");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -6986,16 +7098,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert1(ExecState* state
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConvert2Caller>(state, "convert2");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "convert2");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7009,16 +7122,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert2(ExecState* state
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert3Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert3(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConvert3Caller>(state, "convert3");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert3Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "convert3");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7028,16 +7142,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert3(ExecState* state
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert4Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConvert4Caller>(state, "convert4");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConvert4Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "convert4");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7047,61 +7162,65 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConvert4(ExecState* state
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMutablePointFunctionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMutablePointFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionMutablePointFunctionCaller>(state, "mutablePointFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMutablePointFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "mutablePointFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), SVGPropertyTearOff<SVGPoint>::create(impl.mutablePointFunction()));
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionImmutablePointFunctionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionImmutablePointFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionImmutablePointFunctionCaller>(state, "immutablePointFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionImmutablePointFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "immutablePointFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = toJS(state, castedThis->globalObject(), SVGPropertyTearOff<SVGPoint>::create(impl.immutablePointFunction()));
     return JSValue::encode(result);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOrangeCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOrange(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOrangeCaller>(state, "orange");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOrangeCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "orange");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.banana();
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVariadicStringMethodCaller>(state, "variadicStringMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "variadicStringMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7113,16 +7232,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicStringMethod(Exec
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVariadicDoubleMethodCaller>(state, "variadicDoubleMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "variadicDoubleMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7134,16 +7254,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicDoubleMethod(Exec
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVariadicNodeMethodCaller>(state, "variadicNodeMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "variadicNodeMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7156,16 +7277,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicNodeMethod(ExecSt
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicUnionMethod(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionVariadicUnionMethodCaller>(state, "variadicUnionMethod");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "variadicUnionMethod");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7177,16 +7299,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionVariadicUnionMethod(ExecS
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAnyCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionAnyCaller>(state, "any");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAnyCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "any");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 2))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7198,6 +7321,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* state)
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionCaller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
+
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState*, Ref<DeferredPromise>&&);
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecState* state)
@@ -7208,18 +7333,19 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecS
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseFunctionCaller>(state, WTFMove(promise), "testPromiseFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     impl.testPromiseFunction(WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentCaller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState*, Ref<DeferredPromise>&&);
 
@@ -7231,14 +7357,13 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentCaller>(state, WTFMove(promise), "testPromiseFunctionWithFloatArgument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentCaller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseFunctionWithFloatArgument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7247,6 +7372,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     impl.testPromiseFunctionWithFloatArgument(WTFMove(a), WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionCaller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState*, Ref<DeferredPromise>&&);
 
@@ -7258,20 +7385,21 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionCaller>(state, WTFMove(promise), "testPromiseFunctionWithException");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionCaller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseFunctionWithException");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     ExceptionCode ec = 0;
     impl.testPromiseFunctionWithException(WTFMove(promise), ec);
     setDOMException(state, throwScope, ec);
     return JSValue::encode(jsUndefined());
 }
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentCaller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState*, Ref<DeferredPromise>&&);
 
@@ -7283,20 +7411,21 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOp
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentCaller>(state, WTFMove(promise), "testPromiseFunctionWithOptionalIntArgument");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentCaller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseFunctionWithOptionalIntArgument");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     auto a = state->argument(0).isUndefined() ? Optional<int32_t>() : convert<IDLLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.testPromiseFunctionWithOptionalIntArgument(WTFMove(a), WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Caller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise(ExecState*, Ref<DeferredPromise>&&);
 
@@ -7308,14 +7437,13 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Promise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Caller>(state, WTFMove(promise), "testPromiseOverloadedFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction1Caller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseOverloadedFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7324,6 +7452,8 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
     impl.testPromiseOverloadedFunction(WTFMove(a), WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Caller(JSC::ExecState*, JSTestObj*, Ref<DeferredPromise>&&, JSC::ThrowScope&);
 
 static EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise(ExecState*, Ref<DeferredPromise>&&);
 
@@ -7335,14 +7465,13 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunc
 
 static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Promise(ExecState* state, Ref<DeferredPromise>&& promise)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callPromiseOperation<jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Caller>(state, WTFMove(promise), "testPromiseOverloadedFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestPromiseOverloadedFunction2Caller(JSC::ExecState* state, JSTestObj* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "testPromiseOverloadedFunction");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7406,30 +7535,32 @@ static inline EncodedJSValue jsTestObjConstructorFunctionTestStaticPromiseFuncti
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomPromiseFunctionCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestCustomPromiseFunction(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionTestCustomPromiseFunctionCaller, CastedThisErrorBehavior::RejectPromise>(state, "testCustomPromiseFunction");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionTestCustomPromiseFunctionCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return createRejectedPromiseWithTypeError(*state, makeThisTypeErrorMessage("TestObject", "testCustomPromiseFunction"));
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     return JSValue::encode(castedThis->testCustomPromiseFunction(*state));
 }
 
 #if ENABLE(CONDITION1)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConditionalOverload1Caller>(state, "conditionalOverload");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "conditionalOverload");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7442,16 +7573,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload1(Exec
 #endif
 
 #if ENABLE(CONDITION2)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionConditionalOverload2Caller>(state, "conditionalOverload");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalOverload2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "conditionalOverload");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7484,16 +7616,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(ExecS
 }
 #endif
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionSingleConditionalOverload1Caller>(state, "singleConditionalOverload");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "singleConditionalOverload");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7504,16 +7637,17 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload
 }
 
 #if ENABLE(CONDITION)
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 static inline EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionSingleConditionalOverload2Caller>(state, "singleConditionalOverload");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSingleConditionalOverload2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "singleConditionalOverload");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7542,16 +7676,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOverload
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionAttachShadowRootCaller>(state, "attachShadowRoot");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "attachShadowRoot");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7561,16 +7696,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(ExecStat
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller>(state, "operationWithExternalDictionaryParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameterCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "operationWithExternalDictionaryParameter");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
@@ -7580,16 +7716,17 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithExternalDict
     return JSValue::encode(jsUndefined());
 }
 
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(ExecState* state)
 {
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionToStringCaller>(state, "toString");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
-    JSValue thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObject", "toString");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
     auto& impl = castedThis->wrapped();
     JSValue result = jsStringWithCache(state, impl.stringifierAttribute());
     return JSValue::encode(result);
