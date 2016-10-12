@@ -49,9 +49,9 @@ Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const String& k
     return adoptRef(*new StorageEvent(type, key, oldValue, newValue, url, storageArea));
 }
 
-Ref<StorageEvent> StorageEvent::createForBindings(const AtomicString& type, const StorageEventInit& initializer)
+Ref<StorageEvent> StorageEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new StorageEvent(type, initializer));
+    return adoptRef(*new StorageEvent(type, initializer, isTrusted));
 }
 
 StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea)
@@ -64,8 +64,8 @@ StorageEvent::StorageEvent(const AtomicString& type, const String& key, const St
 {
 }
 
-StorageEvent::StorageEvent(const AtomicString& type, const StorageEventInit& initializer)
-    : Event(type, initializer)
+StorageEvent::StorageEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_key(initializer.key)
     , m_oldValue(initializer.oldValue)
     , m_newValue(initializer.newValue)

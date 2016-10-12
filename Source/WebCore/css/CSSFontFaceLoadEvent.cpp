@@ -46,8 +46,8 @@ CSSFontFaceLoadEvent::CSSFontFaceLoadEvent(const AtomicString& type, RefPtr<CSSF
 {
 }
 
-CSSFontFaceLoadEvent::CSSFontFaceLoadEvent(const AtomicString& type, const CSSFontFaceLoadEventInit& initializer)
-    : Event(type, initializer)
+CSSFontFaceLoadEvent::CSSFontFaceLoadEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_fontface(initializer.fontface)
     , m_error(initializer.error)
 {

@@ -12,7 +12,7 @@ PASS new WebGLContextEvent('eventType', { cancelable: false }).cancelable is fal
 PASS new WebGLContextEvent('eventType', { cancelable: true }).cancelable is true
 PASS new WebGLContextEvent('eventType', { statusMessage: 'abcde' }).statusMessage is "abcde"
 PASS new WebGLContextEvent('eventType', { statusMessage: '' }).statusMessage is ""
-PASS new WebGLContextEvent('eventType', { statusMessage: undefined }).statusMessage is "undefined"
+PASS new WebGLContextEvent('eventType', { statusMessage: undefined }).statusMessage is ""
 PASS new WebGLContextEvent('eventType', { statusMessage: null }).statusMessage is "null"
 PASS new WebGLContextEvent('eventType', { statusMessage: false }).statusMessage is "false"
 PASS new WebGLContextEvent('eventType', { statusMessage: true }).statusMessage is "true"

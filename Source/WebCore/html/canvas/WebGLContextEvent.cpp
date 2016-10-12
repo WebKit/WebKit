@@ -38,8 +38,8 @@ WebGLContextEvent::WebGLContextEvent(const AtomicString& type, bool canBubble, b
 {
 }
 
-WebGLContextEvent::WebGLContextEvent(const AtomicString& type, const WebGLContextEventInit& initializer)
-    : Event(type, initializer)
+WebGLContextEvent::WebGLContextEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_statusMessage(initializer.statusMessage)
 {
 }

@@ -42,11 +42,6 @@ namespace WebCore {
 
 class DOMError;
 
-struct CSSFontFaceLoadEventInit : public EventInit {
-    RefPtr<CSSFontFaceRule> fontface;
-    RefPtr<DOMError> error;
-};
-
 class CSSFontFaceLoadEvent final : public Event {
 public:
     static Ref<CSSFontFaceLoadEvent> create()
@@ -54,9 +49,14 @@ public:
         return adoptRef<CSSFontFaceLoadEvent>(*new CSSFontFaceLoadEvent);
     }
 
-    static Ref<CSSFontFaceLoadEvent> create(const AtomicString& type, const CSSFontFaceLoadEventInit& initializer)
+    struct Init : EventInit {
+        RefPtr<CSSFontFaceRule> fontface;
+        RefPtr<DOMError> error;
+    };
+
+    static Ref<CSSFontFaceLoadEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef<CSSFontFaceLoadEvent>(*new CSSFontFaceLoadEvent(type, initializer));
+        return adoptRef<CSSFontFaceLoadEvent>(*new CSSFontFaceLoadEvent(type, initializer, isTrusted));
     }
 
     static Ref<CSSFontFaceLoadEvent> createForFontFaceRule(const AtomicString& type, RefPtr<CSSFontFaceRule>&& rule)
@@ -79,7 +79,7 @@ public:
 private:
     CSSFontFaceLoadEvent();
     CSSFontFaceLoadEvent(const AtomicString&, RefPtr<CSSFontFaceRule>&&, RefPtr<DOMError>&&);
-    CSSFontFaceLoadEvent(const AtomicString&, const CSSFontFaceLoadEventInit&);
+    CSSFontFaceLoadEvent(const AtomicString&, const Init&, IsTrusted);
 
     RefPtr<CSSFontFaceRule> m_fontface;
     RefPtr<DOMError> m_error;

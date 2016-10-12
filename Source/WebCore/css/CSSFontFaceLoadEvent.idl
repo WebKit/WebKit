@@ -29,10 +29,14 @@
  */
 
 [
-    NoInterfaceObject,
     Conditional=FONT_LOAD_EVENTS,
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional CSSFontFaceLoadEventInit eventInit),
 ] interface CSSFontFaceLoadEvent : Event {
-    [InitializedByEventConstructor] readonly attribute CSSFontFaceRule fontface;
-    [InitializedByEventConstructor] readonly attribute DOMError error;
+    readonly attribute CSSFontFaceRule? fontface;
+    readonly attribute DOMError? error;
+};
+
+dictionary CSSFontFaceLoadEventInit : EventInit {
+    CSSFontFaceRule? fontface = null;
+    DOMError? error = null;
 };

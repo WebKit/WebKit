@@ -33,19 +33,20 @@ namespace WebCore {
 
 class Storage;
 
-struct StorageEventInit : public EventInit {
-    String key;
-    String oldValue;
-    String newValue;
-    String url;
-    RefPtr<Storage> storageArea;
-};
-
 class StorageEvent : public Event {
 public:
     static Ref<StorageEvent> create(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
     static Ref<StorageEvent> createForBindings();
-    static Ref<StorageEvent> createForBindings(const AtomicString&, const StorageEventInit&);
+
+    struct Init : EventInit {
+        String key;
+        String oldValue;
+        String newValue;
+        String url;
+        RefPtr<Storage> storageArea;
+    };
+
+    static Ref<StorageEvent> create(const AtomicString&, const Init&, IsTrusted = IsTrusted::No);
     virtual ~StorageEvent();
 
     const String& key() const { return m_key; }
@@ -64,7 +65,7 @@ public:
 private:
     StorageEvent();
     StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& url, Storage* storageArea);
-    StorageEvent(const AtomicString&, const StorageEventInit&);
+    StorageEvent(const AtomicString&, const Init&, IsTrusted);
 
     String m_key;
     String m_oldValue;

@@ -29,7 +29,7 @@ shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: 'abcd
 shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: '' }).statusMessage", "");
 
 // Non-strings.
-shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: undefined }).statusMessage", "undefined");
+shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: undefined }).statusMessage", "");
 shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: null }).statusMessage", "null");
 shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: false }).statusMessage", "false");
 shouldBeEqualToString("new WebGLContextEvent('eventType', { statusMessage: true }).statusMessage", "true");

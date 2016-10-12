@@ -13,7 +13,7 @@ description("This tests the constructor for the StorageEvent DOM class.");
 // No initializer is passed.
 shouldBe("new StorageEvent('eventType').bubbles", "false");
 shouldBe("new StorageEvent('eventType').cancelable", "false");
-shouldBeEqualToString("new StorageEvent('eventType').key", "");
+shouldBe("new StorageEvent('eventType').key", "null");
 // Note: oldValue is nullable.
 shouldBe("new StorageEvent('eventType').oldValue", "null");
 // Note: newValue is nullable.
@@ -36,8 +36,14 @@ shouldBe("new StorageEvent('eventType', { cancelable: true }).cancelable", "true
     shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": '' })." + attr, "");
 
     // Non-strings.
-    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": undefined })." + attr, "undefined");
-    shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": null })." + attr, "null");
+    if (attr == "key" || attr == "oldValue" || attr == "newValue") {
+        // Those members are nullable.
+        shouldBe("new StorageEvent('eventType', { " + attr + ": undefined })." + attr, "null");
+        shouldBe("new StorageEvent('eventType', { " + attr + ": null })." + attr, "null");
+    } else {
+        shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": undefined })." + attr, "");
+        shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": null })." + attr, "null");
+    }
     shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": false })." + attr, "false");
     shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": true })." + attr, "true");
     shouldBeEqualToString("new StorageEvent('eventType', { " + attr + ": 12345 })." + attr, "12345");
@@ -56,21 +62,21 @@ shouldBe("new StorageEvent('eventType', { storageArea: sessionStorage }).storage
 
 // Non-Storage objects.
 var test_object = {abc: 123};
-shouldBe("new StorageEvent('eventType', { storageArea: test_object }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: window }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: document }).storageArea", "null");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: test_object })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: window })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: document })", "TypeError");
 shouldBe("new StorageEvent('eventType', { storageArea: undefined }).storageArea", "null");
 shouldBe("new StorageEvent('eventType', { storageArea: null }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: false }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: true }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: '' }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: 'chocolate' }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: 12345 }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: 18446744073709551615 }).storageArea", "null");
-shouldBe("new StorageEvent('eventType', { storageArea: NaN }).storageArea", "null");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: false })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: true })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: '' })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: 'chocolate' })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: 12345 })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: 18446744073709551615 })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: NaN })", "TypeError");
 // Note that valueOf() is not called, when the left hand side is evaluated.
-shouldBeFalse("new StorageEvent('eventType', { storageArea: {valueOf: function () { return window; } } }).storageArea == window");
-shouldBe("new StorageEvent('eventType', { get storageArea() { return 123; } }).storageArea", "null");
+shouldThrowErrorName("new StorageEvent('eventType', { storageArea: {valueOf: function () { return window; } } })", "TypeError");
+shouldThrowErrorName("new StorageEvent('eventType', { get storageArea() { return 123; } }).storageArea", "TypeError");
 shouldThrow("new StorageEvent('eventType', { get storageArea() { throw 'StorageEvent Error'; } })");
 
 // All initializers are passed.

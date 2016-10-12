@@ -21,18 +21,65 @@
 #include "config.h"
 #include "JSTestEventConstructor.h"
 
+#include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "JSDictionary.h"
 #include "URL.h"
 #include <runtime/Error.h>
-#include <runtime/FunctionPrototype.h>
 #include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+template<> Optional<TestEventConstructor::Init> convertDictionary<TestEventConstructor::Init>(ExecState& state, JSValue value)
+{
+    VM& vm = state.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    bool isNullOrUndefined = value.isUndefinedOrNull();
+    auto* object = isNullOrUndefined ? nullptr : value.getObject();
+    if (UNLIKELY(!isNullOrUndefined && !object)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
+        throwTypeError(&state, throwScope);
+        return Nullopt;
+    }
+    TestEventConstructor::Init result;
+    JSValue bubblesValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bubbles"));
+    if (!bubblesValue.isUndefined()) {
+        result.bubbles = convert<IDLBoolean>(state, bubblesValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.bubbles = false;
+    JSValue cancelableValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "cancelable"));
+    if (!cancelableValue.isUndefined()) {
+        result.cancelable = convert<IDLBoolean>(state, cancelableValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.cancelable = false;
+    JSValue composedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "composed"));
+    if (!composedValue.isUndefined()) {
+        result.composed = convert<IDLBoolean>(state, composedValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.composed = false;
+    JSValue attr2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr2"));
+    if (!attr2Value.isUndefined()) {
+        result.attr2 = convert<IDLDOMString>(state, attr2Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.attr2 = "";
+    JSValue attr3Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr3"));
+    if (!attr3Value.isUndefined()) {
+        result.attr3 = convert<IDLDOMString>(state, attr3Value);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.attr3 = "";
+    return WTFMove(result);
+}
 
 // Attributes
 
@@ -75,53 +122,22 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
 {
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* jsConstructor = jsCast<JSTestEventConstructorConstructor*>(state->callee());
-    ASSERT(jsConstructor);
-
-    if (!jsConstructor->scriptExecutionContext())
-        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, "TestEventConstructor");
-
+    UNUSED_PARAM(throwScope);
+    auto* castedThis = jsCast<JSTestEventConstructorConstructor*>(state->callee());
+    ASSERT(castedThis);
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-
-    AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
+    auto type = state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-
-    TestEventConstructorInit eventInit;
-
-    JSValue initializerValue = state->argument(1);
-    if (!initializerValue.isUndefinedOrNull()) {
-        // Given the above test, this will always yield an object.
-        JSObject* initializerObject = initializerValue.toObject(state);
-        ASSERT(!throwScope.exception());
-
-        // Create the dictionary wrapper from the initializer object.
-        JSDictionary dictionary(state, initializerObject);
-
-        // Attempt to fill in the EventInit.
-        if (!fillTestEventConstructorInit(eventInit, dictionary))
-            return JSValue::encode(jsUndefined());
-    }
-
-    Ref<TestEventConstructor> event = TestEventConstructor::createForBindings(eventType, eventInit);
-    return JSValue::encode(createWrapper<TestEventConstructor>(jsConstructor->globalObject(), WTFMove(event)));
-}
-
-bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, JSDictionary& dictionary)
-{
-    if (!dictionary.tryGetProperty("attr2", eventInit.attr2))
-        return false;
-#if ENABLE(SPECIAL_EVENT)
-    if (!dictionary.tryGetProperty("attr3", eventInit.attr3))
-        return false;
-#endif
-    return true;
+    auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*state, state->argument(1));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto object = TestEventConstructor::create(WTFMove(type), eventInitDict.value());
+    return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
 template<> JSValue JSTestEventConstructorConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    UNUSED_PARAM(vm);
-    return globalObject.functionPrototype();
+    return JSEvent::getConstructor(vm, &globalObject);
 }
 
 template<> void JSTestEventConstructorConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
@@ -158,24 +174,18 @@ void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
 JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventConstructor>&& impl)
-    : JSDOMWrapper<TestEventConstructor>(structure, globalObject, WTFMove(impl))
+    : JSEvent(structure, globalObject, WTFMove(impl))
 {
 }
 
 JSObject* JSTestEventConstructor::createPrototype(VM& vm, JSGlobalObject* globalObject)
 {
-    return JSTestEventConstructorPrototype::create(vm, globalObject, JSTestEventConstructorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    return JSTestEventConstructorPrototype::create(vm, globalObject, JSTestEventConstructorPrototype::createStructure(vm, globalObject, JSEvent::prototype(vm, globalObject)));
 }
 
 JSObject* JSTestEventConstructor::prototype(VM& vm, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestEventConstructor>(vm, globalObject);
-}
-
-void JSTestEventConstructor::destroy(JSC::JSCell* cell)
-{
-    JSTestEventConstructor* thisObject = static_cast<JSTestEventConstructor*>(cell);
-    thisObject->JSTestEventConstructor::~JSTestEventConstructor();
 }
 
 template<> inline JSTestEventConstructor* BindingCaller<JSTestEventConstructor>::castForAttribute(ExecState&, EncodedJSValue thisValue)
@@ -263,20 +273,6 @@ JSValue JSTestEventConstructor::getConstructor(VM& vm, const JSGlobalObject* glo
     return getDOMConstructor<JSTestEventConstructorConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
-bool JSTestEventConstructorOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
-{
-    UNUSED_PARAM(handle);
-    UNUSED_PARAM(visitor);
-    return false;
-}
-
-void JSTestEventConstructorOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    auto* jsTestEventConstructor = jsCast<JSTestEventConstructor*>(handle.slot()->asCell());
-    auto& world = *static_cast<DOMWrapperWorld*>(context);
-    uncacheWrapper(world, &jsTestEventConstructor->wrapped(), jsTestEventConstructor);
-}
-
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -315,11 +311,5 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEv
     return wrap(state, globalObject, impl);
 }
 
-TestEventConstructor* JSTestEventConstructor::toWrapped(JSC::JSValue value)
-{
-    if (auto* wrapper = jsDynamicCast<JSTestEventConstructor*>(value))
-        return &wrapper->wrapped();
-    return nullptr;
-}
 
 }

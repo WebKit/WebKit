@@ -20,17 +20,16 @@
 
 #pragma once
 
-#include "JSDOMWrapper.h"
+#include "JSDOMConvert.h"
+#include "JSEvent.h"
 #include "TestEventConstructor.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSDictionary;
-
-class JSTestEventConstructor : public JSDOMWrapper<TestEventConstructor> {
+class JSTestEventConstructor : public JSEvent {
 public:
-    using Base = JSDOMWrapper<TestEventConstructor>;
+    using Base = JSEvent;
+    using DOMWrapped = TestEventConstructor;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEventConstructor>&& impl)
     {
         JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(globalObject->vm().heap)) JSTestEventConstructor(structure, *globalObject, WTFMove(impl));
@@ -40,8 +39,6 @@ public:
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);
-    static TestEventConstructor* toWrapped(JSC::JSValue);
-    static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
 
@@ -51,6 +48,10 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
+    TestEventConstructor& wrapped() const
+    {
+        return static_cast<TestEventConstructor&>(Base::wrapped());
+    }
 protected:
     JSTestEventConstructor(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEventConstructor>&&);
 
@@ -62,32 +63,15 @@ protected:
 
 };
 
-class JSTestEventConstructorOwner : public JSC::WeakHandleOwner {
-public:
-    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
-    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
-};
-
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestEventConstructor*)
-{
-    static NeverDestroyed<JSTestEventConstructorOwner> owner;
-    return &owner.get();
-}
-
-inline void* wrapperKey(TestEventConstructor* wrappableObject)
-{
-    return wrappableObject;
-}
-
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestEventConstructor&);
 inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestEventConstructor* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<TestEventConstructor>&&);
 inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<TestEventConstructor>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-bool fillTestEventConstructorInit(TestEventConstructorInit&, JSDictionary&);
-
 template<> struct JSDOMWrapperConverterTraits<TestEventConstructor> {
     using WrapperClass = JSTestEventConstructor;
 };
+template<> Optional<TestEventConstructor::Init> convertDictionary<TestEventConstructor::Init>(JSC::ExecState&, JSC::JSValue);
+
 
 } // namespace WebCore

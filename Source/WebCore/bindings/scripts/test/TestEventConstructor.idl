@@ -29,10 +29,15 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
 [
-    ConstructorTemplate=Event
-] interface TestEventConstructor {
+    Constructor(DOMString type, optional TestEventConstructorInit eventInitDict),
+] interface TestEventConstructor : Event {
     // Attributes
     readonly attribute DOMString attr1;
-    [InitializedByEventConstructor] readonly attribute DOMString attr2;
-    [InitializedByEventConstructor, Conditional=SPECIAL_EVENT] readonly attribute DOMString attr3;
+    readonly attribute DOMString attr2;
+    [Conditional=SPECIAL_EVENT] readonly attribute DOMString attr3;
+};
+
+dictionary TestEventConstructorInit : EventInit {
+    DOMString attr2 = "";
+    [Conditional=SPECIAL_EVENT]  DOMString attr3 = "";
 };
