@@ -39,11 +39,11 @@ DeviceProximityEvent::DeviceProximityEvent(const AtomicString& eventType, const 
 {
 }
 
-DeviceProximityEvent::DeviceProximityEvent(const AtomicString& eventType, const DeviceProximityEventInit& initializer)
-    : Event(eventType, initializer)
-    , m_value(initializer.value)
-    , m_min(initializer.min)
-    , m_max(initializer.max)
+DeviceProximityEvent::DeviceProximityEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : Event(eventType, initializer, isTrusted)
+    , m_value(initializer.value ? *initializer.value : std::numeric_limits<double>::infinity())
+    , m_min(initializer.min ? *initializer.min : -std::numeric_limits<double>::infinity())
+    , m_max(initializer.max ? *initializer.max : std::numeric_limits<double>::infinity())
 {
 }
 

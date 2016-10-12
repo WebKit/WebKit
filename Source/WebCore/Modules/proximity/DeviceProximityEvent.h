@@ -26,22 +26,6 @@
 
 namespace WebCore {
 
-struct DeviceProximityEventInit : public EventInit {
-    DeviceProximityEventInit()
-        : value(std::numeric_limits<double>::infinity())
-        , min(-std::numeric_limits<double>::infinity())
-        , max(std::numeric_limits<double>::infinity())
-    {
-        // Default value of bubbles is true by the Proximity Events spec.
-        // http://www.w3.org/TR/proximity/#deviceproximityevent-interface
-        bubbles = true;
-    };
-
-    double value;
-    double min;
-    double max;
-};
-
 class DeviceProximityEvent : public Event {
 public:
     ~DeviceProximityEvent() { }
@@ -56,9 +40,15 @@ public:
         return adoptRef(*new DeviceProximityEvent(eventType, value, min, max));
     }
 
-    static Ref<DeviceProximityEvent> create(const AtomicString& type, const DeviceProximityEventInit& initializer)
+    struct Init : EventInit {
+        Optional<double> value;
+        Optional<double> min;
+        Optional<double> max;
+    };
+
+    static Ref<DeviceProximityEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new DeviceProximityEvent(type, initializer));
+        return adoptRef(*new DeviceProximityEvent(type, initializer, isTrusted));
     }
 
     double value() { return m_value; }
@@ -70,7 +60,7 @@ public:
 private:
     DeviceProximityEvent();
     DeviceProximityEvent(const AtomicString& eventType, const double value, const double min, const double max);
-    DeviceProximityEvent(const AtomicString& eventType, const DeviceProximityEventInit&);
+    DeviceProximityEvent(const AtomicString& eventType, const Init&, IsTrusted);
 
     double m_value;
     double m_min;

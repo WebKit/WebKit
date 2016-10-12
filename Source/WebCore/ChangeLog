@@ -1,3 +1,21 @@
+2016-10-11  Chris Dumez  <cdumez@apple.com>
+
+        Update DeviceProximityEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163311
+
+        Reviewed by Ryosuke Niwa.
+
+        Update DeviceProximityEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a regular constructor instead, as in the specification:
+        - https://www.w3.org/TR/2015/WD-proximity-20150903/#deviceproximityevent-interface
+
+        * Modules/proximity/DeviceProximityEvent.cpp:
+        (WebCore::DeviceProximityEvent::DeviceProximityEvent):
+        * Modules/proximity/DeviceProximityEvent.h:
+        (WebCore::DeviceProximityEvent::create):
+        (WebCore::DeviceProximityEventInit::DeviceProximityEventInit): Deleted.
+        * Modules/proximity/DeviceProximityEvent.idl:
+
 2016-10-11  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, EFL build fix because of r207173.

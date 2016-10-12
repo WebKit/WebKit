@@ -19,10 +19,15 @@
 
 [
     Conditional=PROXIMITY_EVENTS,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional DeviceProximityEventInit eventInitDict),
 ] interface DeviceProximityEvent : Event {
-    [InitializedByEventConstructor] readonly attribute unrestricted double value;
-    [InitializedByEventConstructor] readonly attribute unrestricted double min;
-    [InitializedByEventConstructor] readonly attribute unrestricted double max;
+    readonly attribute unrestricted double value;
+    readonly attribute unrestricted double min;
+    readonly attribute unrestricted double max;
 };
 
+dictionary DeviceProximityEventInit : EventInit {
+    double value;
+    double min;
+    double max;
+};
