@@ -72,8 +72,8 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
             request.setInitiator(m_initiatorName);
 
         if (options.mode == FetchOptions::Mode::Cors) {
-            ASSERT(loader.document()->securityOrigin());
-            updateRequestForAccessControl(request.mutableResourceRequest(), *loader.document()->securityOrigin(), options.allowCredentials);
+            ASSERT(loader.document());
+            request.updateForAccessControl(*loader.document());
         }
         m_cachedImage = loader.requestImage(WTFMove(request));
     }

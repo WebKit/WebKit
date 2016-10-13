@@ -115,7 +115,7 @@ static std::chrono::milliseconds deadDecodedDataDeletionIntervalForResourceType(
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, SessionID sessionID)
-    : m_resourceRequest(WTFMove(request.mutableResourceRequest()))
+    : m_resourceRequest(request.releaseResourceRequest())
     , m_options(request.options())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)

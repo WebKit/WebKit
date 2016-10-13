@@ -67,10 +67,12 @@ void WebCoreAVFResourceLoader::startLoading()
 
     NSURLRequest *nsRequest = [m_avRequest.get() request];
 
+    ResourceRequest resourceRequest(nsRequest);
+    resourceRequest.setPriority(ResourceLoadPriority::Low);
+
     // FIXME: Skip Content Security Policy check if the element that inititated this request
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
-    CachedResourceRequest request(nsRequest, ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
-    request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
+    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
     if (auto* loader = m_parent->player()->cachedResourceLoader())
         m_resource = loader->requestMedia(WTFMove(request));
 

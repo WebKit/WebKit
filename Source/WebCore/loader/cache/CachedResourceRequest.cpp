@@ -27,9 +27,12 @@
 #include "CachedResourceRequest.h"
 
 #include "CachedResourceLoader.h"
+#include "ContentExtensionActions.h"
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
+#include "HTTPHeaderValues.h"
+#include "MemoryCache.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -78,7 +81,115 @@ void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Docu
     m_options.credentials = equalLettersIgnoringASCIICase(mode, "use-credentials") ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.allowCredentials = equalLettersIgnoringASCIICase(mode, "use-credentials") ? AllowStoredCredentials : DoNotAllowStoredCredentials;
 
-    updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
+    WebCore::updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
 }
+
+void CachedResourceRequest::updateForAccessControl(Document& document)
+{
+    ASSERT(m_options.mode == FetchOptions::Mode::Cors);
+    ASSERT(document.securityOrigin());
+
+    m_origin = document.securityOrigin();
+    WebCore::updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
+}
+
+void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
+{
+    URL url = m_resourceRequest.url();
+
+    ASSERT(document.contentSecurityPolicy());
+    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
+
+    if (url == m_resourceRequest.url())
+        return;
+
+    m_resourceRequest.setURL(url);
+}
+
+#if ENABLE(CACHE_PARTITIONING)
+void CachedResourceRequest::setDomainForCachePartition(Document& document)
+{
+    ASSERT(document.topOrigin());
+    m_resourceRequest.setDomainForCachePartition(document.topOrigin()->domainForCachePartition());
+}
+#endif
+
+static inline String acceptHeaderValueFromType(CachedResource::Type type)
+{
+    switch (type) {
+    case CachedResource::Type::MainResource:
+        return ASCIILiteral("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+    case CachedResource::Type::ImageResource:
+        return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5");
+    case CachedResource::Type::CSSStyleSheet:
+        return ASCIILiteral("text/css,*/*;q=0.1");
+    case CachedResource::Type::SVGDocumentResource:
+        return ASCIILiteral("image/svg+xml");
+#if ENABLE(XSLT)
+    case CachedResource::Type::XSLStyleSheet:
+        // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
+        return ASCIILiteral("text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml");
+#endif
+    default:
+        return ASCIILiteral("*/*");
+    }
+}
+
+void CachedResourceRequest::setAcceptHeaderIfNone(CachedResource::Type type)
+{
+    if (!m_resourceRequest.hasHTTPHeader(HTTPHeaderName::Accept))
+        m_resourceRequest.setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type));
+}
+
+void CachedResourceRequest::updateAccordingCacheMode()
+{
+    if (m_options.cache == FetchOptions::Cache::Default
+        && (m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
+            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
+            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfUnmodifiedSince)
+            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfMatch)
+            || m_resourceRequest.hasHTTPHeaderField(HTTPHeaderName::IfRange)))
+        m_options.cache = FetchOptions::Cache::NoStore;
+
+    switch (m_options.cache) {
+    case FetchOptions::Cache::NoCache:
+        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
+        break;
+    case FetchOptions::Cache::NoStore:
+        m_options.cachingPolicy = CachingPolicy::DisallowCaching;
+        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        break;
+    case FetchOptions::Cache::Reload:
+        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
+        m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
+        break;
+    case FetchOptions::Cache::Default:
+        break;
+    case FetchOptions::Cache::ForceCache:
+        m_resourceRequest.setCachePolicy(ReturnCacheDataElseLoad);
+        break;
+    case FetchOptions::Cache::OnlyIfCached:
+        m_resourceRequest.setCachePolicy(ReturnCacheDataDontLoad);
+        break;
+    }
+}
+
+void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
+{
+    URL url = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());
+    if (url.string() != m_resourceRequest.url())
+        m_resourceRequest.setURL(url);
+}
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedStatus& blockedStatus)
+{
+    ContentExtensions::applyBlockedStatusToRequest(blockedStatus, m_resourceRequest);
+}
+#endif
 
 } // namespace WebCore

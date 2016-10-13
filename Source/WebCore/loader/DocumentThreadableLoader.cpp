@@ -380,10 +380,10 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         options.clientCredentialPolicy = m_sameOriginRequest ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
+        request.setAllowCookies(m_options.allowCredentials == AllowStoredCredentials);
         CachedResourceRequest newRequest(WTFMove(request), options);
         if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
             newRequest.setInitiator(m_options.initiator);
-        newRequest.mutableResourceRequest().setAllowCookies(m_options.allowCredentials == AllowStoredCredentials);
         newRequest.setOrigin(&securityOrigin());
 
         ASSERT(!m_resource);

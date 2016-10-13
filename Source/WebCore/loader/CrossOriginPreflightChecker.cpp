@@ -109,12 +109,9 @@ void CrossOriginPreflightChecker::startPreflight()
     options.redirect = FetchOptions::Redirect::Manual;
     options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
-    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin()), options);
+    CachedResourceRequest preflightRequest(createAccessControlPreflightRequest(m_request, m_loader.securityOrigin(), m_loader.referrer()), options);
     if (RuntimeEnabledFeatures::sharedFeatures().resourceTimingEnabled())
         preflightRequest.setInitiator(m_loader.options().initiator);
-
-    if (!m_loader.referrer().isNull())
-        preflightRequest.mutableResourceRequest().setHTTPReferrer(m_loader.referrer());
 
     ASSERT(!m_resource);
     m_resource = m_loader.document().cachedResourceLoader().requestRawResource(WTFMove(preflightRequest));
@@ -127,13 +124,10 @@ void CrossOriginPreflightChecker::doPreflight(DocumentThreadableLoader& loader, 
     if (!loader.document().frame())
         return;
 
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin());
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, loader.securityOrigin(), loader.referrer());
     ResourceError error;
     ResourceResponse response;
     RefPtr<SharedBuffer> data;
-
-    if (!loader.referrer().isNull())
-        preflightRequest.setHTTPReferrer(loader.referrer());
 
     unsigned identifier = loader.document().frame()->loader().loadResourceSynchronously(preflightRequest, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, error, response, data);
 

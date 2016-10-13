@@ -45,7 +45,7 @@ bool isOnAccessControlSimpleRequestHeaderWhitelist(HTTPHeaderName, const String&
 bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
 void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentials);
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&);
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);
 
 bool isValidCrossOriginRedirectionURL(const URL&);
 void cleanRedirectedRequestForAccessControl(ResourceRequest&);

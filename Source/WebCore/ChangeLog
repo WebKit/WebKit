@@ -1,3 +1,68 @@
+2016-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Remove CachedResourceRequest::mutableResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=163277
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+
+        Removing CachedResourceRequest::mutableResourceRequest requires call sites to either update the ResourceRequest
+        before creating the CachedResourceRequest or to add methods at CachedResourceRequest.
+
+        Adding CachedResourceRequest::releaseResourceRequest for CachedResource constructor.
+
+        Most new CachedResourceRequest methods are used by CachedResourceLoader which is passed a CachedResourceRequest.
+        This allows code in CachedResourceLoader to be easier to read.
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::loadBestFitImage):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::loadImage):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScriptWithCache):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::startPreflight):
+        (WebCore::CrossOriginPreflightChecker::doPreflight):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::prepareFetch):
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::acceptHeaderValueFromType): Deleted.
+        (WebCore::updateRequestAccordingCacheMode): Deleted.
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin):
+        (WebCore::CachedResourceRequest::updateForAccessControl):
+        (WebCore::CachedResourceRequest::upgradeInsecureRequestIfNeeded):
+        (WebCore::CachedResourceRequest::setDomainForCachePartition):
+        (WebCore::acceptHeaderValueFromType):
+        (WebCore::CachedResourceRequest::setAcceptHeaderIfNone):
+        (WebCore::CachedResourceRequest::updateAccordingCacheMode):
+        (WebCore::CachedResourceRequest::removeFragmentIdentifierIfNeeded):
+        (WebCore::CachedResourceRequest::applyBlockedStatus):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::releaseResourceRequest):
+        (WebCore::CachedResourceRequest::setCachingPolicy):
+        (WebCore::CachedResourceRequest::mutableResourceRequest): Deleted.
+        (WebCore::CachedResourceRequest::setCacheModeToNoStore): Deleted.
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+
 2016-10-13  Antti Koivisto  <antti@apple.com>
 
         Support scoped style for user agent shadow trees

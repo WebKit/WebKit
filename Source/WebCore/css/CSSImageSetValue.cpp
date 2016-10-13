@@ -90,6 +90,8 @@ CSSImageSetValue::ImageWithScale CSSImageSetValue::bestImageForScaleFactor()
 std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
     Document* document = loader.document();
+    ASSERT(document);
+
     updateDeviceScaleFactor(*document);
 
     if (!m_accessedBestFitImage) {
@@ -101,10 +103,9 @@ std::pair<CachedImage*, float> CSSImageSetValue::loadBestFitImage(CachedResource
         ImageWithScale image = bestImageForScaleFactor();
         CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)), options);
         request.setInitiator(cachedResourceRequestInitiators().css);
-        if (options.mode == FetchOptions::Mode::Cors) {
-            ASSERT(document->securityOrigin());
-            updateRequestForAccessControl(request.mutableResourceRequest(), *document->securityOrigin(), options.allowCredentials);
-        }
+        if (options.mode == FetchOptions::Mode::Cors)
+            request.updateForAccessControl(*document);
+
         m_cachedImage = loader.requestImage(WTFMove(request));
         m_bestFitImageScaleFactor = image.scaleFactor;
     }

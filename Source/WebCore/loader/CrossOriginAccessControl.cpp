@@ -103,13 +103,15 @@ void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& sec
     request.setHTTPOrigin(securityOrigin.toString());
 }
 
-ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin)
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin& securityOrigin, const String& referrer)
 {
     ResourceRequest preflightRequest(request.url());
     updateRequestForAccessControl(preflightRequest, securityOrigin, DoNotAllowStoredCredentials);
     preflightRequest.setHTTPMethod("OPTIONS");
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
     preflightRequest.setPriority(request.priority());
+    if (!referrer.isNull())
+        preflightRequest.setHTTPReferrer(referrer);
 
     const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
 

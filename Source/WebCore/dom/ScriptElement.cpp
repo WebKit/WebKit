@@ -293,8 +293,7 @@ CachedResourceHandle<CachedScript> ScriptElement::requestScriptWithCache(const U
 
     CachedResourceRequest request(ResourceRequest(sourceURL), options);
     request.setAsPotentiallyCrossOrigin(m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), document);
-
-    document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
+    request.upgradeInsecureRequestIfNeeded(document);
 
     request.setCharset(scriptCharset());
     request.setInitiator(&element());

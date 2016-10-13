@@ -58,10 +58,12 @@ void IconLoader::startLoading()
     if (m_resource || !m_frame.document())
         return;
 
-    // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
-    CachedResourceRequest request(ResourceRequest(m_frame.loader().icon().url()), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
+    ResourceRequest resourceRequest(m_frame.loader().icon().url());
+    resourceRequest.setPriority(ResourceLoadPriority::Low);
 
-    request.mutableResourceRequest().setPriority(ResourceLoadPriority::Low);
+    // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
+    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
+
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
     m_resource = m_frame.document()->cachedResourceLoader().requestRawResource(WTFMove(request));

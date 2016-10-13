@@ -51,7 +51,6 @@
 #include "FrameLoaderClient.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
-#include "HTTPHeaderValues.h"
 #include "LoaderStrategy.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
@@ -182,7 +181,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
     if (Frame* frame = this->frame()) {
         if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             if (Document* document = frame->document())
-                document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
+                request.upgradeInsecureRequestIfNeeded(*document);
             URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::ImageResource, requestURL, request, ForPreload::No))
                 PingLoader::loadImage(*frame, requestURL);
@@ -219,10 +218,9 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestCSSStyleS
 
 CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSStyleSheet(CachedResourceRequest&& request)
 {
-    URL url = MemoryCache::removeFragmentIdentifierIfNeeded(request.resourceRequest().url());
-
 #if ENABLE(CACHE_PARTITIONING)
-    request.mutableResourceRequest().setDomainForCachePartition(document()->topOrigin()->domainForCachePartition());
+    ASSERT(document());
+    request.setDomainForCachePartition(*document());
 #endif
 
     auto& memoryCache = MemoryCache::singleton();
@@ -234,8 +232,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
         }
     }
 
-    if (url.string() != request.resourceRequest().url())
-        request.mutableResourceRequest().setURL(url);
+    request.removeFragmentIdentifierIfNeeded();
 
     CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(WTFMove(request), sessionID());
 
@@ -633,27 +630,6 @@ static inline void logMemoryCacheResourceRequest(Frame* frame, const String& des
         frame->page()->diagnosticLoggingClient().logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceRequestKey(), description, value, ShouldSample::Yes);
 }
 
-static inline String acceptHeaderValueFromType(CachedResource::Type type)
-{
-    switch (type) {
-    case CachedResource::Type::MainResource:
-        return ASCIILiteral("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-    case CachedResource::Type::ImageResource:
-        return ASCIILiteral("image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5");
-    case CachedResource::Type::CSSStyleSheet:
-        return ASCIILiteral("text/css,*/*;q=0.1");
-    case CachedResource::Type::SVGDocumentResource:
-        return ASCIILiteral("image/svg+xml");
-#if ENABLE(XSLT)
-    case CachedResource::Type::XSLStyleSheet:
-        // FIXME: This should accept more general xml formats */*+xml, image/svg+xml for example.
-        return ASCIILiteral("text/xml,application/xml,application/xhtml+xml,text/xsl,application/rss+xml,application/atom+xml");
-#endif
-    default:
-        return ASCIILiteral("*/*");
-    }
-}
-
 void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourceRequest& request)
 {
     // Implementing step 1 to 7 of https://fetch.spec.whatwg.org/#fetching
@@ -661,60 +637,23 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     if (!request.origin() && document())
         request.setOrigin(document()->securityOrigin());
 
-    if (!request.resourceRequest().hasHTTPHeader(HTTPHeaderName::Accept))
-        request.mutableResourceRequest().setHTTPHeaderField(HTTPHeaderName::Accept, acceptHeaderValueFromType(type));
+    request.setAcceptHeaderIfNone(type);
 
     // Accept-Language value is handled in underlying port-specific code.
     // FIXME: Decide whether to support client hints
 }
 
-static inline void updateRequestAccordingCacheMode(CachedResourceRequest& request)
-{
-    if (request.options().cache == FetchOptions::Cache::Default
-            && (request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfModifiedSince)
-                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfNoneMatch)
-                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfUnmodifiedSince)
-                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfMatch)
-                || request.resourceRequest().hasHTTPHeaderField(HTTPHeaderName::IfRange)))
-        request.setCacheModeToNoStore();
 
-    switch (request.options().cache) {
-    case FetchOptions::Cache::NoCache:
-        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
-        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
-        break;
-    case FetchOptions::Cache::NoStore:
-        request.setCachingPolicy(CachingPolicy::DisallowCaching);
-        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
-        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
-        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
-        break;
-    case FetchOptions::Cache::Reload:
-        request.mutableResourceRequest().setCachePolicy(ReloadIgnoringCacheData);
-        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
-        request.mutableResourceRequest().addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
-        break;
-    case FetchOptions::Cache::Default:
-        break;
-    case FetchOptions::Cache::ForceCache:
-        request.mutableResourceRequest().setCachePolicy(ReturnCacheDataElseLoad);
-        break;
-    case FetchOptions::Cache::OnlyIfCached:
-        request.mutableResourceRequest().setCachePolicy(ReturnCacheDataDontLoad);
-        break;
-    }
-}
-
-void CachedResourceLoader::updateHTTPRequestHeaders(CachedResourceRequest& resourceRequest)
+void CachedResourceLoader::updateHTTPRequestHeaders(CachedResourceRequest& request)
 {
     // Implementing steps 10 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
-    updateRequestAccordingCacheMode(resourceRequest);
+    request.updateAccordingCacheMode();
 }
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, DeferOption defer)
 {
     if (Document* document = this->document())
-        document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request.mutableResourceRequest(), ContentSecurityPolicy::InsecureRequestType::Load);
+        request.upgradeInsecureRequestIfNeeded(*document);
 
     URL url = request.resourceRequest().url();
 
@@ -738,16 +677,16 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (frame() && frame()->mainFrame().page() && m_documentLoader) {
-        auto& resourceRequest = request.mutableResourceRequest();
+        const auto& resourceRequest = request.resourceRequest();
         auto blockedStatus = frame()->mainFrame().page()->userContentProvider().processContentExtensionRulesForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);
-        applyBlockedStatusToRequest(blockedStatus, resourceRequest);
+        request.applyBlockedStatus(blockedStatus);
         if (blockedStatus.blockedLoad) {
             RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", frame());
             if (type == CachedResource::Type::MainResource) {
                 auto resource = createResource(type, WTFMove(request), sessionID());
                 ASSERT(resource);
                 resource->error(CachedResource::Status::LoadError);
-                resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, request.resourceRequest().url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
+                resource->setResourceError(ResourceError(ContentExtensions::WebKitContentBlockerDomain, 0, resourceRequest.url(), WEB_UI_STRING("The URL was blocked by a content blocker", "WebKitErrorBlockedByContentBlocker description")));
                 return resource;
             }
             return nullptr;
@@ -784,7 +723,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     CachedResourceHandle<CachedResource> resource;
 #if ENABLE(CACHE_PARTITIONING)
     if (document())
-        request.mutableResourceRequest().setDomainForCachePartition(document()->topOrigin()->domainForCachePartition());
+        request.setDomainForCachePartition(*document());
 #endif
 
     if (request.allowsCaching())
