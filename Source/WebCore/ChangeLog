@@ -76,6 +76,37 @@
 
 2016-10-13  Antti Koivisto  <antti@apple.com>
 
+        Share inline stylesheets between shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=163353
+
+        Reviewed by Ryosuke Niwa and Andreas Kling.
+
+        If shadow trees have identical inline stylesheets the data structures can be shared.
+        In future this will also allow sharing style resolvers.
+
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContextHash::hash):
+        (WebCore::CSSParserContextHash::equal):
+        (WTF::HashTraits<WebCore::CSSParserContext>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::CSSParserContext>::isDeletedValue):
+        (WTF::HashTraits<WebCore::CSSParserContext>::emptyValue):
+
+            Make CSSParserContext hashable.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::makeInlineStyleSheetCacheKey):
+        (WebCore::inlineStyleSheetCache):
+
+            Implement a simple cache for sharing stylesheets with identical text and context.
+
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::clearCache):
+        * dom/InlineStyleSheetOwner.h:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseNoncriticalMemory):
+
+2016-10-13  Antti Koivisto  <antti@apple.com>
+
         Support scoped style for user agent shadow trees
         https://bugs.webkit.org/show_bug.cgi?id=163212
         <rdar://problem/28715318>

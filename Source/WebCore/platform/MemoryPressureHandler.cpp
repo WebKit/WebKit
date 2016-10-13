@@ -33,6 +33,7 @@
 #include "FontCache.h"
 #include "GCController.h"
 #include "HTMLMediaElement.h"
+#include "InlineStyleSheetOwner.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -102,6 +103,11 @@ void MemoryPressureHandler::releaseNoncriticalMemory()
     {
         ReliefLogger log("Prune presentation attribute cache");
         StyledElement::clearPresentationAttributeCache();
+    }
+
+    {
+        ReliefLogger log("Clear inline stylesheet cache");
+        InlineStyleSheetOwner::clearCache();
     }
 }
 
