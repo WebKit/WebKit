@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (8,0) size 108x19
             text run at (8,0) width 108: "|10,20,30,40,50: "
           RenderBlock {METER} at (115,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,40) size 744x20
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (16,0) size 89x19
             text run at (16,0) width 89: ",20,30,40,50: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,60) size 744x20
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (36,0) size 69x19
             text run at (36,0) width 69: ",30,40,50: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 20x16
           RenderText {#text} at (184,0) size 113x19
@@ -58,7 +58,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (56,0) size 49x19
             text run at (56,0) width 49: ",40,50: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 40x16
           RenderText {#text} at (184,0) size 113x19
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (76,0) size 29x19
             text run at (76,0) width 29: ",50: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
           RenderText {#text} at (184,0) size 113x19
@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (96,0) size 9x19
             text run at (96,0) width 9: ": "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
           RenderText {#text} at (184,0) size 121x19
@@ -103,7 +103,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (115,0) size 9x19
             text run at (115,0) width 9: ": "
           RenderBlock {METER} at (123,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
           RenderText {#text} at (203,0) size 121x19
@@ -118,7 +118,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (36,0) size 69x19
             text run at (36,0) width 69: ",30,40,50: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,180) size 744x20
@@ -131,7 +131,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (76,0) size 29x19
             text run at (76,0) width 29: ",40: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
           RenderText {#text} at (184,0) size 113x19
@@ -144,7 +144,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (8,0) size 108x19
             text run at (8,0) width 108: "|10,10,10,20,30: "
           RenderBlock {METER} at (115,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,220) size 744x20
@@ -157,7 +157,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (56,0) size 49x19
             text run at (56,0) width 49: ",20,30: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,240) size 744x20
@@ -170,7 +170,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (56,0) size 49x19
             text run at (56,0) width 49: ",30,30: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
           RenderText {#text} at (184,0) size 113x19
@@ -185,7 +185,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (115,0) size 9x19
             text run at (115,0) width 9: ": "
           RenderBlock {METER} at (123,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
           RenderText {#text} at (203,0) size 113x19
@@ -200,7 +200,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (56,0) size 49x19
             text run at (56,0) width 49: ",20,30: "
           RenderBlock {METER} at (104,2) size 81x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 40x16
           RenderText {#text} at (184,0) size 113x19

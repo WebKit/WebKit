@@ -192,7 +192,7 @@ inline void StyleResolver::State::clear()
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
-void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType, unsigned treeContextOrdinal)
+void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& properties, StyleRule* rule, unsigned linkMatchType, PropertyWhitelistType propertyWhitelistType, int treeContextOrdinal)
 {
     m_matchedProperties.grow(m_matchedProperties.size() + 1);
     StyleResolver::MatchedProperties& newProperties = m_matchedProperties.last();
@@ -2032,7 +2032,6 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
 }
 
 inline StyleResolver::MatchedProperties::MatchedProperties()
-    : possiblyPaddedMember(nullptr)
 {
 }
 
@@ -2196,7 +2195,7 @@ void StyleResolver::CascadedProperties::addImportantMatches(const MatchResult& m
 
     struct IndexAndOrdinal {
         int index;
-        unsigned ordinal;
+        int ordinal;
     };
     Vector<IndexAndOrdinal> shadowTreeMatches;
 

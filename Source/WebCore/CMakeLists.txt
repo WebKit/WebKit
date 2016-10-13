@@ -1849,7 +1849,6 @@ set(WebCore_SOURCES
     html/shadow/MediaControlElementTypes.cpp
     html/shadow/MediaControlElements.cpp
     html/shadow/MediaControls.cpp
-    html/shadow/MeterShadowElement.cpp
     html/shadow/ProgressShadowElement.cpp
     html/shadow/SliderThumbElement.cpp
     html/shadow/SpinButtonElement.cpp
@@ -2987,6 +2986,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
+    ${WEBCORE_DIR}/html/shadow/meterElementShadow.css
 )
 
 set(WebCore_PLUG_INS_RESOURCES

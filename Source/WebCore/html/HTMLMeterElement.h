@@ -77,7 +77,7 @@ private:
     void didElementStateChange();
     void didAddUserAgentShadowRoot(ShadowRoot*) final;
 
-    RefPtr<MeterValueElement> m_value;
+    RefPtr<HTMLElement> m_value;
 };
 
 } // namespace

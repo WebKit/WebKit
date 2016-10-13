@@ -71,9 +71,21 @@ Scope::Scope(ShadowRoot& shadowRoot)
 {
 }
 
+bool Scope::shouldUseSharedUserAgentShadowTreeStyleResolver() const
+{
+    if (!m_shadowRoot)
+        return false;
+    if (m_shadowRoot->mode() != ShadowRoot::Mode::UserAgent)
+        return false;
+    // If we have stylesheets in the user agent shadow tree use per-scope resolver.
+    if (!m_styleSheetCandidateNodes.isEmpty())
+        return false;
+    return true;
+}
+
 StyleResolver& Scope::resolver()
 {
-    if (m_shadowRoot && m_shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+    if (shouldUseSharedUserAgentShadowTreeStyleResolver())
         return m_document.userAgentShadowTreeStyleResolver();
 
     if (!m_resolver) {
@@ -85,7 +97,7 @@ StyleResolver& Scope::resolver()
 
 StyleResolver* Scope::resolverIfExists()
 {
-    if (m_shadowRoot && m_shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+    if (shouldUseSharedUserAgentShadowTreeStyleResolver())
         return &m_document.userAgentShadowTreeStyleResolver();
 
     return m_resolver.get();

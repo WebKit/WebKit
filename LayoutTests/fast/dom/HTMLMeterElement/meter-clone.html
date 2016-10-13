@@ -17,15 +17,17 @@
     
     targetShadowRoot = internals.shadowRoot(target);
     clonedShadowRoot = internals.shadowRoot(cloned);
-    
+    targetInnerElement = targetShadowRoot.querySelector("#inner");
+    clonedInnerElement = clonedShadowRoot.querySelector("#inner");
+
     shouldBe("cloned.value", "target.value");
-    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild)");
-    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild)");
-    shouldBe("internals.shadowPseudoId(clonedShadowRoot.firstChild.firstChild.firstChild)", "internals.shadowPseudoId(targetShadowRoot.firstChild.firstChild.firstChild)");
+    shouldBe("internals.shadowPseudoId(clonedInnerElement)", "internals.shadowPseudoId(targetInnerElement)");
+    shouldBe("internals.shadowPseudoId(clonedInnerElement.firstChild)", "internals.shadowPseudoId(targetInnerElement.firstChild)");
+    shouldBe("internals.shadowPseudoId(clonedInnerElement.firstChild.firstChild)", "internals.shadowPseudoId(targetInnerElement.firstChild.firstChild)");
 
     cloned.value = 70;
-    shouldBe("clonedShadowRoot.firstChild.firstChild.firstChild.style.width", '"70%"');
-    shouldBe("targetShadowRoot.firstChild.firstChild.firstChild.style.width", '"50%"');
+    shouldBe("clonedInnerElement.firstChild.firstChild.style.width", '"70%"');
+    shouldBe("targetInnerElement.firstChild.firstChild.style.width", '"50%"');
 })();
 </script>
 <script src="../../../resources/js-test-post.js"></script>

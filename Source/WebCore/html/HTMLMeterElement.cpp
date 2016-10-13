@@ -27,14 +27,16 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
+#include "HTMLDivElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "MeterShadowElement.h"
+#include "HTMLStyleElement.h"
 #include "Page.h"
 #include "RenderMeter.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "UserAgentStyleSheets.h"
 
 namespace WebCore {
 
@@ -67,7 +69,7 @@ RenderPtr<RenderElement> HTMLMeterElement::createElementRenderer(RenderStyle&& s
 
 bool HTMLMeterElement::childShouldCreateRenderer(const Node& child) const
 {
-    return hasShadowRootParent(child) && HTMLElement::childShouldCreateRenderer(child);
+    return !is<RenderMeter>(renderer()) && HTMLElement::childShouldCreateRenderer(child);
 }
 
 void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -186,10 +188,31 @@ double HTMLMeterElement::valueRatio() const
     return (value - min) / (max - min);
 }
 
+static void setValueClass(HTMLElement& element, HTMLMeterElement::GaugeRegion gaugeRegion)
+{
+    switch (gaugeRegion) {
+    case HTMLMeterElement::GaugeRegionOptimum:
+        element.setAttribute(HTMLNames::classAttr, "optimum");
+        element.setPseudo("-webkit-meter-optimum-value");
+        return;
+    case HTMLMeterElement::GaugeRegionSuboptimal:
+        element.setAttribute(HTMLNames::classAttr, "suboptimum");
+        element.setPseudo("-webkit-meter-suboptimum-value");
+        return;
+    case HTMLMeterElement::GaugeRegionEvenLessGood:
+        element.setAttribute(HTMLNames::classAttr, "even-less-good");
+        element.setPseudo("-webkit-meter-even-less-good-value");
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 void HTMLMeterElement::didElementStateChange()
 {
-    m_value->setWidthPercentage(valueRatio()*100);
-    m_value->updatePseudo();
+    m_value->setInlineStyleProperty(CSSPropertyWidth, valueRatio()*100, CSSPrimitiveValue::CSS_PERCENTAGE);
+    setValueClass(*m_value, gaugeRegion());
+
     if (RenderMeter* render = renderMeter())
         render->updateFromElement();
 }
@@ -198,23 +221,35 @@ RenderMeter* HTMLMeterElement::renderMeter() const
 {
     if (is<RenderMeter>(renderer()))
         return downcast<RenderMeter>(renderer());
-    return downcast<RenderMeter>(descendantsOfType<Element>(*userAgentShadowRoot()).first()->renderer());
+    return nullptr;
 }
 
 void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     ASSERT(!m_value);
 
-    auto inner = MeterInnerElement::create(document());
+    static NeverDestroyed<String> shadowStyle(meterElementShadowUserAgentStyleSheet, String::ConstructFromLiteral);
+
+    auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
+    style->setTextContent(shadowStyle, IGNORE_EXCEPTION);
+    root->appendChild(style);
+
+    // Pseudos are set to allow author styling.
+    auto inner = HTMLDivElement::create(document());
+    inner->setIdAttribute("inner");
+    inner->setPseudo("-webkit-meter-inner-element");
     root->appendChild(inner);
 
-    auto bar = MeterBarElement::create(document());
-    m_value = MeterValueElement::create(document());
-    m_value->setWidthPercentage(0);
-    m_value->updatePseudo();
+    auto bar = HTMLDivElement::create(document());
+    bar->setIdAttribute("bar");
+    bar->setPseudo("-webkit-meter-bar");
+    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
+
+    m_value = HTMLDivElement::create(document());
+    m_value->setIdAttribute("value");
     bar->appendChild(*m_value, ASSERT_NO_EXCEPTION);
 
-    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
+    didElementStateChange();
 }
 
 } // namespace

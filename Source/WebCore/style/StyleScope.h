@@ -96,6 +96,8 @@ public:
     static Scope& forNode(Node&);
 
 private:
+    bool shouldUseSharedUserAgentShadowTreeStyleResolver() const;
+
     enum class UpdateType { ActiveSet, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
 

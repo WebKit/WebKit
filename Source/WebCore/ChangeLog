@@ -1,3 +1,93 @@
+2016-10-13  Antti Koivisto  <antti@apple.com>
+
+        Support scoped style for user agent shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=163212
+        <rdar://problem/28715318>
+
+        Reviewed by Ryosuke Niwa and Andreas Kling.
+
+        This patch adds support for user agent shadow trees that have scoped style. This means
+        that the shadows can be styled via <style> elements contained in the tree instead of
+        using pseudo elements on the global UA sheet. Since the style is scoped it can use
+        normal id and class selectors.
+
+        Elements in the shadow tree can still be exposed for author styling if needed by giving
+        them pseudo ids
+
+        The patch also uses the new mechanism for the <meter> element.
+
+        The mechanism is not optimized yet, each shadow tree gets its own copy of style-related data
+        structures. This can be improved later.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::MatchRequest::MatchRequest):
+        (WebCore::ElementRuleCollector::addMatchedRule):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+
+            Make treeContextOrdinal an int so we can use negative ordinals. This is used to allow author pseudo
+            elements from earlier tree context to win over the shadow tree (matching CSS scoping spec language).
+
+        * css/ElementRuleCollector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::CascadedProperties::addImportantMatches):
+        * css/StyleResolver.h:
+        * css/html.css:
+        (meter::-webkit-meter-inner-element): Deleted.
+        (meter::-webkit-meter-bar): Deleted.
+        (meter::-webkit-meter-optimum-value): Deleted.
+        (meter::-webkit-meter-suboptimum-value): Deleted.
+        (meter::-webkit-meter-even-less-good-value): Deleted.
+
+            Remove meter pseudo elements from the UA sheet.
+
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::childShouldCreateRenderer):
+
+            Don't create shadow renderers when we have appearance (are using RenderMeter).
+
+        (WebCore::setValueClass):
+
+            Move this logic here from MeterShadowElement.cpp.
+            Set both class and pseudo id. The latter is needed to keep author styling working.
+
+        (WebCore::HTMLMeterElement::didElementStateChange):
+        (WebCore::HTMLMeterElement::renderMeter):
+
+            RenderMeter is now only instantiated when appearance is enabled.
+
+        (WebCore::HTMLMeterElement::didAddUserAgentShadowRoot):
+
+            Build the shadow tree out of <div>s instead of special shadow elements.
+
+        * html/HTMLMeterElement.h:
+        * html/shadow/MeterShadowElement.cpp: Removed.
+        * html/shadow/MeterShadowElement.h: Removed.
+
+            Not needed anymore.
+
+        * html/shadow/meterElementShadow.css: Added.
+        (div#inner):
+        (div#bar):
+        (div#value):
+        (div#value.optimum):
+        (div#value.suboptimum):
+        (div#value.even-less-good):
+
+            Stylesheet for meter element shadow tree using normal id and class selectors.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::shouldUseSharedUserAgentShadowTreeStyleResolver):
+
+            Switch to per-scope style resolver for UA shadow trees if there is stylesheets in the tree.
+
+        (WebCore::Style::Scope::resolver):
+        (WebCore::Style::Scope::resolverIfExists):
+        * style/StyleScope.h:
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Drop support for legacy [ConstructorConditional=*]

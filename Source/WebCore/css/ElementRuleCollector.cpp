@@ -70,7 +70,7 @@ static const StyleProperties& rightToLeftDeclaration()
 
 class MatchRequest {
 public:
-    MatchRequest(const RuleSet* ruleSet, bool includeEmptyRules = false, unsigned treeContextOrdinal = 0)
+    MatchRequest(const RuleSet* ruleSet, bool includeEmptyRules = false, int treeContextOrdinal = 0)
         : ruleSet(ruleSet)
         , includeEmptyRules(includeEmptyRules)
         , treeContextOrdinal(treeContextOrdinal)
@@ -78,7 +78,7 @@ public:
     }
     const RuleSet* ruleSet;
     const bool includeEmptyRules;
-    unsigned treeContextOrdinal;
+    int treeContextOrdinal;
 };
 
 ElementRuleCollector::ElementRuleCollector(const Element& element, const DocumentRuleSets& ruleSets, const SelectorFilter* selectorFilter)
@@ -110,7 +110,7 @@ const Vector<RefPtr<StyleRule>>& ElementRuleCollector::matchedRuleList() const
     return m_matchedRuleList;
 }
 
-inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, unsigned treeContextOrdinal, StyleResolver::RuleRange& ruleRange)
+inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, int treeContextOrdinal, StyleResolver::RuleRange& ruleRange)
 {
     // Update our first/last rule indices in the matched rules array.
     ++ruleRange.lastRuleIndex;
@@ -232,7 +232,7 @@ void ElementRuleCollector::matchAuthorShadowPseudoElementRules(const MatchReques
         return;
     // Look up shadow pseudo elements also from the host scope author style as they are web-exposed.
     auto& hostAuthorRules = Style::Scope::forNode(*shadowRoot.host()).resolver().ruleSets().authorStyle();
-    MatchRequest hostAuthorRequest { &hostAuthorRules, matchRequest.includeEmptyRules };
+    MatchRequest hostAuthorRequest { &hostAuthorRules, matchRequest.includeEmptyRules, matchRequest.treeContextOrdinal - 1 };
     collectMatchingShadowPseudoElementRules(hostAuthorRequest, ruleRange);
 }
 

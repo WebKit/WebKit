@@ -1,0 +1,36 @@
+/* use div# because the preprocessor doen't like # start */
+
+div#inner {
+    -webkit-appearance: inherit;
+    box-sizing: inherit;
+    height: 100%;
+    width: 100%;
+}
+
+div#bar {
+    background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+div#value {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+div#value.optimum {
+    background: -webkit-gradient(linear, left top, left bottom, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
+}
+
+div#value.suboptimum {
+    background: -webkit-gradient(linear, left top, left bottom, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
+    height: 100%;
+    box-sizing: border-box;
+}
+
+div#value.even-less-good {
+    background: -webkit-gradient(linear, left top, left bottom, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
+    height: 100%;
+    box-sizing: border-box;
+}
