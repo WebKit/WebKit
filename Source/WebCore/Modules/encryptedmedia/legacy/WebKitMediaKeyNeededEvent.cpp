@@ -39,8 +39,8 @@ WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, U
 {
 }
 
-WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer)
-    : Event(type, initializer)
+WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_initData(initializer.initData)
 {
 }

@@ -1,5 +1,42 @@
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
+        Update WebKitMediaKeyMessageEvent / WebKitMediaKeyNeededEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163369
+
+        Reviewed by Ryosuke Niwa.
+
+        Update WebKitMediaKeyMessageEvent / WebKitMediaKeyNeededEvent to stop
+        using legacy [ConstructorTemplate=Event] and use regular constructors
+        instead.
+
+        This also adds support for having dictionary members that are typed
+        arrays because this was needed.
+
+        Test: fast/events/webkit-media-key-events-constructor.html
+
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.cpp:
+        (WebCore::WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.h:
+        (WebCore::WebKitMediaKeyMessageEvent::create):
+        (WebCore::WebKitMediaKeyMessageEvent::createForBindings): Deleted.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.cpp:
+        (WebCore::WebKitMediaKeyNeededEvent::WebKitMediaKeyNeededEvent):
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.h:
+        (WebCore::WebKitMediaKeyNeededEvent::create):
+        (WebCore::WebKitMediaKeyNeededEvent::createForBindings): Deleted.
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl:
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>>::convert):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h:
+        * dom/InputEvent.idl:
+
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
         Update HTMLSelectElement::recalcListItems() to ignore nested optgroup elements
         https://bugs.webkit.org/show_bug.cgi?id=163358
 

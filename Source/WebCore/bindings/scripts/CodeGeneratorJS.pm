@@ -995,7 +995,7 @@ sub GenerateDefaultValue
     }
     if ($defaultValue eq "null") {
         return "jsNull()" if $member->type eq "any";
-        return "nullptr" if $codeGenerator->IsWrapperType($member->type);
+        return "nullptr" if $codeGenerator->IsWrapperType($member->type) || $codeGenerator->IsTypedArrayType($member->type);
         return "String()" if $codeGenerator->IsStringType($member->type);
         return "Nullopt";
     }

@@ -121,6 +121,28 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
     }
 };
 
+
+// Typed arrays support.
+
+template<typename Adaptor> struct IDLInterface<JSC::GenericTypedArrayView<Adaptor>> : IDLType<Ref<JSC::GenericTypedArrayView<Adaptor>>> {
+    using RawType = JSC::GenericTypedArrayView<Adaptor>;
+    using NullableType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
+};
+
+template<typename Adaptor> struct Converter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>> : DefaultConverter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>> {
+    using ReturnType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
+
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        ReturnType object = JSC::toNativeTypedView<Adaptor>(value);
+        if (!object)
+            throwTypeError(&state, scope);
+        return object;
+    }
+};
+
 // MARK: -
 // MARK: Any type
 

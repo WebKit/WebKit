@@ -41,8 +41,8 @@ WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type,
 }
 
 
-WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type, const WebKitMediaKeyMessageEventInit& initializer)
-    : Event(type, initializer)
+WebKitMediaKeyMessageEvent::WebKitMediaKeyMessageEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
     , m_message(initializer.message)
     , m_destinationURL(initializer.destinationURL)
 {

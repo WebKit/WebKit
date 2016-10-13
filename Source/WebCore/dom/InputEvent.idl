@@ -24,8 +24,12 @@
 */
 
 [
-    ConstructorTemplate=Event
+    Constructor(DOMString type, optional InputEventInit eventInitDict),
 ] interface InputEvent : UIEvent {
     readonly attribute DOMString inputType;
-    [InitializedByEventConstructor] readonly attribute DOMString? data;
+    readonly attribute DOMString? data;
+};
+
+dictionary InputEventInit : UIEventInit {
+    DOMString? data = null;
 };

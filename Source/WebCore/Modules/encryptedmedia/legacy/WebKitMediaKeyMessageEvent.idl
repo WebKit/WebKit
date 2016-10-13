@@ -25,9 +25,13 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    ConstructorTemplate=Event,
+    Constructor(DOMString type, optional WebKitMediaKeyMessageEventInit eventInitDict),
 ] interface WebKitMediaKeyMessageEvent : Event {
     readonly attribute Uint8Array message;
-    [InitializedByEventConstructor] readonly attribute DOMString destinationURL;
+    readonly attribute DOMString destinationURL;
 };
 
+dictionary WebKitMediaKeyMessageEventInit : EventInit {
+    Uint8Array? message = null;
+    DOMString destinationURL = "";
+};

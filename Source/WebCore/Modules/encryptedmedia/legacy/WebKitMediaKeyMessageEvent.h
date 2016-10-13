@@ -34,11 +34,6 @@
 
 namespace WebCore {
 
-struct WebKitMediaKeyMessageEventInit : public EventInit {
-    RefPtr<Uint8Array> message;
-    String destinationURL;
-};
-
 class WebKitMediaKeyMessageEvent : public Event {
 public:
     virtual ~WebKitMediaKeyMessageEvent();
@@ -48,9 +43,14 @@ public:
         return adoptRef(*new WebKitMediaKeyMessageEvent(type, message, destinationURL));
     }
 
-    static Ref<WebKitMediaKeyMessageEvent> createForBindings(const AtomicString& type, const WebKitMediaKeyMessageEventInit& initializer)
+    struct Init : EventInit {
+        RefPtr<Uint8Array> message;
+        String destinationURL;
+    };
+
+    static Ref<WebKitMediaKeyMessageEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new WebKitMediaKeyMessageEvent(type, initializer));
+        return adoptRef(*new WebKitMediaKeyMessageEvent(type, initializer, isTrusted));
     }
 
     EventInterface eventInterface() const override;
@@ -60,7 +60,7 @@ public:
 
 private:
     WebKitMediaKeyMessageEvent(const AtomicString& type, Uint8Array* message, const String& destinationURL);
-    WebKitMediaKeyMessageEvent(const AtomicString& type, const WebKitMediaKeyMessageEventInit& initializer);
+    WebKitMediaKeyMessageEvent(const AtomicString& type, const Init&, IsTrusted);
 
     RefPtr<Uint8Array> m_message;
     String m_destinationURL;

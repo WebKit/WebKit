@@ -32,11 +32,6 @@ namespace WebCore {
 class DOMWindow;
 class DataTransfer;
 
-struct InputEventInit : UIEventInit {
-    String data;
-    bool isComposing;
-};
-
 class InputEvent final : public UIEvent {
 public:
     static Ref<InputEvent> create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, int detail)
@@ -44,13 +39,17 @@ public:
         return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, view, data, detail));
     }
 
-    static Ref<InputEvent> createForBindings(const AtomicString& type, const InputEventInit& initializer)
+    struct Init : UIEventInit {
+        String data;
+    };
+
+    static Ref<InputEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new InputEvent(type, initializer));
+        return adoptRef(*new InputEvent(type, initializer, isTrusted));
     }
 
     InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow*, const String& data, int detail);
-    InputEvent(const AtomicString& eventType, const InputEventInit&);
+    InputEvent(const AtomicString& eventType, const Init&, IsTrusted);
 
     virtual ~InputEvent() { }
 

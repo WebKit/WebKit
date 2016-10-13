@@ -25,8 +25,11 @@
 
 [
     Conditional=LEGACY_ENCRYPTED_MEDIA,
-    ConstructorTemplate=Event 
+    Constructor(DOMString type, optional WebKitMediaKeyNeededEventInit eventInitDict),
 ] interface WebKitMediaKeyNeededEvent : Event {
     readonly attribute Uint8Array initData;
 };
 
+dictionary WebKitMediaKeyNeededEventInit : EventInit {
+    Uint8Array? initData = null;
+};

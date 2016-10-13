@@ -33,10 +33,6 @@
 
 namespace WebCore {
 
-struct WebKitMediaKeyNeededEventInit : public EventInit {
-    RefPtr<Uint8Array> initData;
-};
-
 class WebKitMediaKeyNeededEvent : public Event {
 public:
     virtual ~WebKitMediaKeyNeededEvent();
@@ -46,9 +42,13 @@ public:
         return adoptRef(*new WebKitMediaKeyNeededEvent(type, initData));
     }
 
-    static Ref<WebKitMediaKeyNeededEvent> createForBindings(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer)
+    struct Init : EventInit {
+        RefPtr<Uint8Array> initData;
+    };
+
+    static Ref<WebKitMediaKeyNeededEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new WebKitMediaKeyNeededEvent(type, initializer));
+        return adoptRef(*new WebKitMediaKeyNeededEvent(type, initializer, isTrusted));
     }
 
     EventInterface eventInterface() const override;
@@ -57,7 +57,7 @@ public:
 
 private:
     WebKitMediaKeyNeededEvent(const AtomicString& type, Uint8Array* initData);
-    WebKitMediaKeyNeededEvent(const AtomicString& type, const WebKitMediaKeyNeededEventInit& initializer);
+    WebKitMediaKeyNeededEvent(const AtomicString& type, const Init&, IsTrusted);
 
     RefPtr<Uint8Array> m_initData;
 };

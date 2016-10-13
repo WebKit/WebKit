@@ -41,8 +41,8 @@ InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, b
 {
 }
 
-InputEvent::InputEvent(const AtomicString& eventType, const InputEventInit& initializer)
-    : UIEvent(eventType, initializer)
+InputEvent::InputEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
+    : UIEvent(eventType, initializer, isTrusted)
     , m_inputType(emptyString())
     , m_data(initializer.data)
 {
