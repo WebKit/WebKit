@@ -1,3 +1,24 @@
+2016-10-12  Zalan Bujtas  <zalan@apple.com>
+
+        RenderRubyRun should not mark child renderers dirty at the end of layout.
+        https://bugs.webkit.org/show_bug.cgi?id=163359
+        <rdar://problem/28711840>
+
+        Reviewed by David Hyatt.
+
+        The current layout logic does not support marking renderers dirty for subsequent layouts.
+        Layout needs to exit with a clean tree.
+        Should relayoutChild be insufficient, we could also mark the base/text dirty for the justified content.
+
+        Test: fast/ruby/rubyrun-has-bad-child.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::updateRubyForJustifiedText):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        (WebCore::RenderRubyRun::layoutBlock):
+        * rendering/RenderRubyRun.h:
+
 2016-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Crash when using megaplan.ru

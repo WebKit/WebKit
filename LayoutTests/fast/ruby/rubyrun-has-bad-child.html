@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can rendere ruby with text-align justified properly.</title>
+<style>
+body {
+  text-align: justify;
+  font: 150px Litherum;
+}
+</style>
+</head>
+<body>
+PASS if no crash or assert in debug.
+<ruby><rb>r</rb>
+ <canvas id=canvasId></canvas></ruby>
+foobarfoobar<ruby><rt id=rtId></rt></ruby><div id=divId></div>
+</body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+var rt = document.getElementById("rtId");
+var canvas = document.getElementById("canvasId");
+rt.parentNode.removeChild(rt);
+canvas.parentNode.insertBefore(rt, canvas);
+</script>
+</html>

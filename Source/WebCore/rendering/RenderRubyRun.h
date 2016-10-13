@@ -54,6 +54,7 @@ public:
 
     RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) override;
     void layout() override;
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0) override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;

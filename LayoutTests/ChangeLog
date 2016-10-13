@@ -1,3 +1,14 @@
+2016-10-12  Zalan Bujtas  <zalan@apple.com>
+
+        RenderRubyRun should not mark child renderers dirty at the end of layout.
+        https://bugs.webkit.org/show_bug.cgi?id=163359
+        <rdar://problem/28711840>
+
+        Reviewed by David Hyatt.
+
+        * fast/ruby/rubyrun-has-bad-child-expected.txt: Added.
+        * fast/ruby/rubyrun-has-bad-child.html: Added.
+
 2016-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         polygonPathFromPoints calls uncheckedAppend, but assertion size() < capacity() fails
