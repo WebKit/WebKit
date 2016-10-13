@@ -762,6 +762,10 @@ webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-constructor.html [ F
 webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-setters.html [ Failure ]
 webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 
+webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
+webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
+webkit.org/b/163383 accessibility/roles-exposed.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,20 @@
+2016-10-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Rebaseline tests affected by r207280 and report 3 new failures on accesibility tests.
+        https://bugs.webkit.org/show_bug.cgi?id=163383
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2016-10-13  Antti Koivisto  <antti@apple.com>
 
         Support scoped style for user agent shadow trees

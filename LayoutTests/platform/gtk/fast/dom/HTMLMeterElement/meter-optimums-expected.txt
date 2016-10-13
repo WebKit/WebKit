@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=150: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 20x16
         RenderListItem {LI} at (40,17) size 744x17
@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=450: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 36x16
         RenderListItem {LI} at (40,34) size 744x17
@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=750: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
         RenderListItem {LI} at (40,51) size 744x17
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "value=0: "
           RenderBlock {METER} at (59,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,68) size 744x17
@@ -50,7 +50,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "value=1000: "
           RenderBlock {METER} at (83,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
       RenderBlock {H2} at (0,245) size 784x27
@@ -62,7 +62,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=150: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 20x16
         RenderListItem {LI} at (40,17) size 744x17
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=450: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 36x16
         RenderListItem {LI} at (40,34) size 744x17
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=750: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
         RenderListItem {LI} at (40,51) size 744x17
@@ -86,7 +86,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "value=0: "
           RenderBlock {METER} at (59,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,68) size 744x17
@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "value=1000: "
           RenderBlock {METER} at (83,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
       RenderBlock {H2} at (0,395) size 784x27
@@ -106,7 +106,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=150: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 20x16
         RenderListItem {LI} at (40,17) size 744x17
@@ -114,7 +114,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=450: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 36x16
         RenderListItem {LI} at (40,34) size 744x17
@@ -122,7 +122,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 75x17
             text run at (0,0) width 75: "value=750: "
           RenderBlock {METER} at (75,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 60x16
         RenderListItem {LI} at (40,51) size 744x17
@@ -130,7 +130,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 59x17
             text run at (0,0) width 59: "value=0: "
           RenderBlock {METER} at (59,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 0x16
         RenderListItem {LI} at (40,68) size 744x17
@@ -138,6 +138,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "value=1000: "
           RenderBlock {METER} at (83,1) size 80x17
-            RenderMeter {DIV} at (0,0) size 80x16
+            RenderBlock {DIV} at (0,0) size 80x16
               RenderBlock {DIV} at (0,0) size 80x16
                 RenderBlock {DIV} at (0,0) size 80x16
