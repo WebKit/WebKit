@@ -27,5 +27,5 @@
     Conditional=APPLE_PAY,
     NoInterfaceObject,
 ] interface ApplePayValidateMerchantEvent : Event {
-    [InitializedByEventConstructor] readonly attribute DOMString validationURL;
+    readonly attribute DOMString validationURL;
 };

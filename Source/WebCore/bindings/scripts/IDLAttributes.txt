@@ -34,7 +34,6 @@ Constructor
 ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorMayThrowException
 ConstructorMayThrowLegacyException
-ConstructorTemplate=Event|TypedArray
 Custom
 CustomCall
 CustomConstructor
@@ -77,7 +76,6 @@ ImplementationLacksVTable
 ImplementationNamespace=*
 ImplementationReturnType=*
 ImplicitThis
-InitializedByEventConstructor
 InterfaceName=*
 IsWeakCallback
 JSBuiltin
@@ -94,6 +92,8 @@ JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
 JSLegacyParent=*
+LegacyConstructorTemplate=Event
+LegacyInitializedByEventConstructor
 LenientThis
 MasqueradesAsUndefined
 MayThrowException

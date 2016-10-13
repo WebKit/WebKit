@@ -29,8 +29,8 @@
     EnabledAtRuntime=IndexedDB,
     Constructor(DOMString type, optional IDBVersionChangeEventInit eventInitDict),
 ] interface IDBVersionChangeEvent : Event {
-    [InitializedByEventConstructor] readonly attribute unsigned long long oldVersion;
-    [InitializedByEventConstructor] readonly attribute unsigned long long? newVersion;
+    readonly attribute unsigned long long oldVersion;
+    readonly attribute unsigned long long? newVersion;
 };
 
 dictionary IDBVersionChangeEventInit : EventInit {

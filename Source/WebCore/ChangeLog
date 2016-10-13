@@ -1,3 +1,29 @@
+2016-10-13  Chris Dumez  <cdumez@apple.com>
+
+        Rename [ConstructorTemplate=*] to [LegacyConstructorTemplate=*]
+        https://bugs.webkit.org/show_bug.cgi?id=163390
+
+        Reviewed by Darin Adler.
+
+        Rename [ConstructorTemplate=*] to [LegacyConstructorTemplate=*] as the
+        modern way of doing this is to use a constructor that takes in a
+        dictionary. I am working on getting rid of this extended attribute
+        entirely but the remaining uses require better support for union types.
+
+        * Modules/applepay/ApplePayValidateMerchantEvent.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/mediastream/RTCTrackEvent.idl:
+        * bindings/scripts/CodeGenerator.pm:
+        (IsConstructorTemplate):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        (IsConstructable):
+        * bindings/scripts/IDLAttributes.txt:
+        * dom/Event.idl:
+        * dom/ProgressEvent.idl:
+        * dom/UIEvent.idl:
+        * html/track/TrackEvent.idl:
+
 2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207297.

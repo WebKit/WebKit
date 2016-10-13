@@ -5727,7 +5727,7 @@ END
 
             for (my $index = 0; $index < @{$interface->attributes}; $index++) {
                 my $attribute = @{$interface->attributes}[$index];
-                if ($attribute->signature->extendedAttributes->{InitializedByEventConstructor}) {
+                if ($attribute->signature->extendedAttributes->{LegacyInitializedByEventConstructor}) {
                     my $attributeName = $attribute->signature->name;
                     my $attributeImplName = $attribute->signature->extendedAttributes->{ImplementedAs} || $attributeName;
                     my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
@@ -5982,7 +5982,7 @@ sub IsConstructable
     return HasCustomConstructor($interface)
         || $interface->extendedAttributes->{Constructor}
         || $interface->extendedAttributes->{NamedConstructor}
-        || $interface->extendedAttributes->{ConstructorTemplate}
+        || $interface->extendedAttributes->{LegacyConstructorTemplate}
         || $interface->extendedAttributes->{JSBuiltinConstructor};
 }
 

@@ -385,7 +385,7 @@ sub IsConstructorTemplate
     my $interface = shift;
     my $template = shift;
 
-    return $interface->extendedAttributes->{"ConstructorTemplate"} && $interface->extendedAttributes->{"ConstructorTemplate"} eq $template;
+    return $interface->extendedAttributes->{"LegacyConstructorTemplate"} && $interface->extendedAttributes->{"LegacyConstructorTemplate"} eq $template;
 }
 
 sub IsNumericType
