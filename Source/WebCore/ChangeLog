@@ -1,3 +1,30 @@
+2016-10-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Fix intrinsic maximums resolution with fit-content and auto
+        https://bugs.webkit.org/show_bug.cgi?id=163282
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The step 2.5 in section 12.5 https://drafts.csswg.org/css-grid/#algo-content of the specs,
+        details how to sizes tracks with intrinsic max track sizing functions.
+
+        Not so long ago there were only two max track sizing functions min-content and max-content
+        (auto was always resolved to max-content). However there were some recent changes that force
+        us to consider 2 new values: auto (which is not internally translated to max-content
+        although it still works the same) and specially the newly added fit-content.
+
+        Some of the new test cases are commented due to bug http://wkb.ug/163283.
+
+        Test: fast/css-grid-layout/grid-intrinsic-maximums.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::shouldProcessTrackForTrackSizeComputationPhase):
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::cacheMinMaxTrackBreadthTypes):
+        (WebCore::GridTrackSize::hasIntrinsicMinTrackBreadth):
+        (WebCore::GridTrackSize::hasIntrinsicMaxTrackBreadth):
+        (WebCore::GridTrackSize::hasAutoOrMinContentMinTrackBreadthAndIntrinsicMaxTrackBreadth):
+
 2016-10-13  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Video playback doesn't work properly with accelerated compositing disabled
