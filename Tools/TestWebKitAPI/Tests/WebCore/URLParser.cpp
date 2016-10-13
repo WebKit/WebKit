@@ -706,11 +706,31 @@ TEST_F(URLParserTest, ParserDifferences)
         {"file", "", "", "", 0, "/pAtH/", "", "", "file:///pAtH/"},
         {"file", "", "", "", 0, "pAtH/", "", "", "file://pAtH/"});
     
-    // FIXME: Fix and test incomplete percent encoded characters in the middle and end of the input string.
-    // FIXME: Fix and test percent encoded upper case characters in the host.
     checkURLDifferences("http://host%73",
         {"http", "", "", "hosts", 0, "/", "", "", "http://hosts/"},
         {"http", "", "", "host%73", 0, "/", "", "", "http://host%73/"});
+    checkURLDifferences("http://host%53",
+        {"http", "", "", "hosts", 0, "/", "", "", "http://hosts/"},
+        {"http", "", "", "host%53", 0, "/", "", "", "http://host%53/"});
+    checkURLDifferences("http://%",
+        {"", "", "", "", 0, "", "", "", "http://%"},
+        {"http", "", "", "%", 0, "/", "", "", "http://%/"});
+    checkURLDifferences("http://%7",
+        {"", "", "", "", 0, "", "", "", "http://%7"},
+        {"http", "", "", "%7", 0, "/", "", "", "http://%7/"});
+    checkURLDifferences("http://%7s",
+        {"", "", "", "", 0, "", "", "", "http://%7s"},
+        {"http", "", "", "%7s", 0, "/", "", "", "http://%7s/"});
+    checkURLDifferences("http://%73",
+        {"http", "", "", "s", 0, "/", "", "", "http://s/"},
+        {"http", "", "", "%73", 0, "/", "", "", "http://%73/"});
+    checkURLDifferences("http://abcdefg%",
+        {"", "", "", "", 0, "", "", "", "http://abcdefg%"},
+        {"http", "", "", "abcdefg%", 0, "/", "", "", "http://abcdefg%/"});
+    checkURLDifferences("http://abcd%7Xefg",
+        {"", "", "", "", 0, "", "", "", "http://abcd%7Xefg"},
+        {"http", "", "", "abcd%7xefg", 0, "/", "", "", "http://abcd%7xefg/"});
+
     
     // URLParser matches Chrome and the spec, but not URL::parse or Firefox.
     checkURLDifferences(utf16String(u"http://０Ｘｃ０．０２５０．０１"),
@@ -1101,6 +1121,8 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("i");
     shouldFail("asdf");
     shouldFail("~");
+    shouldFail("%");
+    shouldFail("//%");
     shouldFail("~", "about:blank");
     shouldFail("~~~");
     shouldFail("://:0/");

@@ -1,3 +1,13 @@
+2016-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fix out-of-bounds reading in URLParser when parsing improperly percent-encoded values
+        https://bugs.webkit.org/show_bug.cgi?id=163376
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2016-10-11  Dean Jackson  <dino@apple.com>
 
         Add preliminary support for extended colors to WebCore::Color

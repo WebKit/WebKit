@@ -2445,7 +2445,7 @@ static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar* input, 
         uint8_t byte = input[i];
         if (byte != '%')
             output.uncheckedAppend(byte);
-        else if (i < length - 2) {
+        else if (length > 2 && i < length - 2) {
             if (isASCIIHexDigit(input[i + 1]) && isASCIIHexDigit(input[i + 2])) {
                 output.uncheckedAppend(toASCIIHexValue(input[i + 1], input[i + 2]));
                 i += 2;
