@@ -235,7 +235,7 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
     }
     
     if (coreItem->children().size()) {
-        const HistoryItemVector& children = coreItem->children();
+        const auto& children = coreItem->children();
         int currPos = [result length];
         unsigned size = children.size();        
         for (unsigned i = 0; i < size; ++i) {
@@ -456,7 +456,7 @@ WebHistoryItem *kit(HistoryItem* item)
 #else
     if (coreItem->children().size()) {
 #endif
-        const HistoryItemVector& children = coreItem->children();
+        const auto& children = coreItem->children();
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:children.size()];
         
         for (int i = children.size() - 1; i >= 0; i--)
@@ -510,7 +510,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSArray *)children
 {
-    const HistoryItemVector& children = core(_private)->children();
+    const auto& children = core(_private)->children();
     if (!children.size())
         return nil;
 

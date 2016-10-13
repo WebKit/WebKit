@@ -36,7 +36,6 @@ namespace WebCore {
 
 class Page;
 
-typedef Vector<Ref<HistoryItem>> HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
 
 class BackForwardList : public BackForwardClient {
@@ -56,8 +55,8 @@ public:
     WEBCORE_EXPORT HistoryItem* forwardItem();
     HistoryItem* itemAtIndex(int) override;
 
-    WEBCORE_EXPORT void backListWithLimit(int, HistoryItemVector&);
-    WEBCORE_EXPORT void forwardListWithLimit(int, HistoryItemVector&);
+    WEBCORE_EXPORT void backListWithLimit(int, Vector<Ref<HistoryItem>>&);
+    WEBCORE_EXPORT void forwardListWithLimit(int, Vector<Ref<HistoryItem>>&);
 
     WEBCORE_EXPORT int capacity();
     WEBCORE_EXPORT void setCapacity(int);
@@ -71,7 +70,7 @@ public:
     WEBCORE_EXPORT bool closed();
 
     WEBCORE_EXPORT void removeItem(HistoryItem*);
-    WEBCORE_EXPORT HistoryItemVector& entries();
+    WEBCORE_EXPORT Vector<Ref<HistoryItem>>& entries();
 
 #if PLATFORM(IOS)
     unsigned current() override;
@@ -84,7 +83,7 @@ private:
     WEBCORE_EXPORT explicit BackForwardList(Page*);
 
     Page* m_page;
-    HistoryItemVector m_entries;
+    Vector<Ref<HistoryItem>> m_entries;
     HistoryItemHashSet m_entryHash;
     unsigned m_current;
     unsigned m_capacity;

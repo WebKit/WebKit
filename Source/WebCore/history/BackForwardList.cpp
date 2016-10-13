@@ -136,7 +136,7 @@ HistoryItem* BackForwardList::forwardItem()
     return nullptr;
 }
 
-void BackForwardList::backListWithLimit(int limit, HistoryItemVector& list)
+void BackForwardList::backListWithLimit(int limit, Vector<Ref<HistoryItem>>& list)
 {
     list.clear();
     if (m_current != NoCurrentItemIndex) {
@@ -146,7 +146,7 @@ void BackForwardList::backListWithLimit(int limit, HistoryItemVector& list)
     }
 }
 
-void BackForwardList::forwardListWithLimit(int limit, HistoryItemVector& list)
+void BackForwardList::forwardListWithLimit(int limit, Vector<Ref<HistoryItem>>& list)
 {
     ASSERT(limit > -1);
     list.clear();
@@ -220,7 +220,7 @@ HistoryItem* BackForwardList::itemAtIndex(int index)
     return m_entries[index + m_current].ptr();
 }
 
-HistoryItemVector& BackForwardList::entries()
+Vector<Ref<HistoryItem>>& BackForwardList::entries()
 {
     return m_entries;
 }

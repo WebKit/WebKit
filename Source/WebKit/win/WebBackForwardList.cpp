@@ -194,7 +194,7 @@ HRESULT WebBackForwardList::forwardItem(_COM_Outptr_opt_ IWebHistoryItem** item)
 HRESULT WebBackForwardList::backListWithLimit(int limit, _Out_ int* listCount,
     __deref_inout_opt IWebHistoryItem** list)
 {
-    HistoryItemVector historyItemVector;
+    Vector<Ref<HistoryItem>> historyItemVector;
     m_backForwardList->backListWithLimit(limit, historyItemVector);
 
     *listCount = static_cast<int>(historyItemVector.size());
@@ -211,7 +211,7 @@ HRESULT WebBackForwardList::backListWithLimit(int limit, _Out_ int* listCount,
 HRESULT WebBackForwardList::forwardListWithLimit(int limit, _Out_ int* listCount,
     __deref_inout_opt IWebHistoryItem** list)
 {
-    HistoryItemVector historyItemVector;
+    Vector<Ref<HistoryItem>> historyItemVector;
     m_backForwardList->forwardListWithLimit(limit, historyItemVector);
 
     *listCount = static_cast<int>(historyItemVector.size());

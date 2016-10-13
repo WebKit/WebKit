@@ -289,7 +289,7 @@ HRESULT WebHistoryItem::children(unsigned* outChildCount, SAFEARRAY** outChildre
     *outChildCount = 0;
     *outChildren = 0;
 
-    const HistoryItemVector& coreChildren = m_historyItem->children();
+    const auto& coreChildren = m_historyItem->children();
     if (coreChildren.isEmpty())
         return S_OK;
     size_t childCount = coreChildren.size();

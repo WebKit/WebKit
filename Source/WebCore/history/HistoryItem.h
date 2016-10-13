@@ -56,8 +56,6 @@ class ResourceRequest;
 class URL;
 enum class PruningReason;
 
-typedef Vector<Ref<HistoryItem>> HistoryItemVector;
-
 WEBCORE_EXPORT extern void (*notifyHistoryItemChanged)(HistoryItem*);
 
 class HistoryItem : public RefCounted<HistoryItem> {
@@ -143,7 +141,7 @@ public:
     void setChildItem(Ref<HistoryItem>&&);
     WEBCORE_EXPORT HistoryItem* childItemWithTarget(const String&);
     HistoryItem* childItemWithDocumentSequenceNumber(long long number);
-    WEBCORE_EXPORT const HistoryItemVector& children() const;
+    WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const;
     WEBCORE_EXPORT bool hasChildren() const;
     void clearChildren();
     bool isAncestorOf(const HistoryItem&) const;
@@ -233,7 +231,7 @@ private:
 
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     
-    HistoryItemVector m_children;
+    Vector<Ref<HistoryItem>> m_children;
     
     bool m_lastVisitWasFailure;
     bool m_isTargetItem;

@@ -160,7 +160,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 {
     BackForwardList *coreBFList = core(self);
     
-    HistoryItemVector& historyItems = coreBFList->entries();
+    auto& historyItems = coreBFList->entries();
     unsigned size = historyItems.size();
     NSMutableArray *entriesArray = [[NSMutableArray alloc] initWithCapacity:size];
     for (unsigned i = 0; i < size; ++i)
@@ -232,7 +232,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     return [[kit(core(self)->forwardItem()) retain] autorelease];
 }
 
-static NSArray* vectorToNSArray(HistoryItemVector& list)
+static NSArray* vectorToNSArray(Vector<Ref<HistoryItem>>& list)
 {
     unsigned size = list.size();
     NSMutableArray *result = [[[NSMutableArray alloc] initWithCapacity:size] autorelease];
@@ -256,7 +256,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSArray *)backListWithLimit:(int)limit
 {
-    HistoryItemVector list;
+    Vector<Ref<HistoryItem>> list;
     core(self)->backListWithLimit(limit, list);
     NSArray *result = vectorToNSArray(list);
     
@@ -271,7 +271,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (NSArray *)forwardListWithLimit:(int)limit
 {
-    HistoryItemVector list;
+    Vector<Ref<HistoryItem>> list;
     core(self)->forwardListWithLimit(limit, list);
     NSArray *result = vectorToNSArray(list);
     
@@ -305,7 +305,7 @@ static bool bumperCarBackForwardHackNeeded()
     [result appendString:@"WebBackForwardList:\n"];
     
     BackForwardList* backForwardList = core(self);
-    HistoryItemVector& entries = backForwardList->entries();
+    auto& entries = backForwardList->entries();
     
     unsigned size = entries.size();
     for (unsigned i = 0; i < size; ++i) {

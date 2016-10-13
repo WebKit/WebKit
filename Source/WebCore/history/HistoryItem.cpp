@@ -368,7 +368,7 @@ HistoryItem* HistoryItem::childItemWithDocumentSequenceNumber(long long number)
     return nullptr;
 }
 
-const HistoryItemVector& HistoryItem::children() const
+const Vector<Ref<HistoryItem>>& HistoryItem::children() const
 {
     return m_children;
 }
