@@ -1,3 +1,13 @@
+2016-10-13  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::SourceBuffer::removeCodedFrames + 37
+        https://bugs.webkit.org/show_bug.cgi?id=163336
+
+        Reviewed by Alex Christensen.
+
+        * media/media-source/media-source-remove-crash-expected.txt: Added.
+        * media/media-source/media-source-remove-crash.html: Added.
+
 2016-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Use min-size instead of min-content contribution for intrinsic maximums resolution

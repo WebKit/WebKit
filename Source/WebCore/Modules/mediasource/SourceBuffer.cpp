@@ -829,6 +829,9 @@ void SourceBuffer::removeCodedFrames(const MediaTime& start, const MediaTime& en
 
 void SourceBuffer::removeTimerFired()
 {
+    if (isRemoved())
+        return;
+
     ASSERT(m_updating);
     ASSERT(m_pendingRemoveStart.isValid());
     ASSERT(m_pendingRemoveStart < m_pendingRemoveEnd);

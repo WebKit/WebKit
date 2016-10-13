@@ -1,3 +1,18 @@
+2016-10-13  Jer Noble  <jer.noble@apple.com>
+
+        CRASH at WebCore::SourceBuffer::removeCodedFrames + 37
+        https://bugs.webkit.org/show_bug.cgi?id=163336
+
+        Reviewed by Alex Christensen.
+
+        Test: media/media-source/media-source-remove-crash.html
+
+        A null-deref crash can occur if a SourceBuffer is removed from a MediaSource after
+        SourceBuffer.remove() is called, but before the removeTimer is fired.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeTimerFired):
+
 2016-10-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] SHOULD NEVER BE REACHED ../../Source/WebCore/platform/URL.cpp(1291) : void WebCore::URL::parse(const WTF::String&)
