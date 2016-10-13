@@ -1,3 +1,29 @@
+2016-10-13  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] MediaControls base class
+        https://bugs.webkit.org/show_bug.cgi?id=163387
+        <rdar://problem/28753955>
+
+        Reviewed by Dean Jackson.
+
+        Introducing the new MediaControls class which will serve as a basis for all media controls.
+        We will introduce specific MediaControls subclasses for macOS inline, macOS fullscreen and
+        iOS inline in future patches.
+
+        Tests: media/modern-media-controls/media-controls/media-controls-constructor.html
+               media/modern-media-controls/media-controls/media-controls-placard.html
+               media/modern-media-controls/media-controls/media-controls-start-button.html
+
+        * Modules/modern-media-controls/controls/media-controls.css: Added.
+        (.media-controls,):
+        * Modules/modern-media-controls/controls/media-controls.js: Added.
+        (MediaControls.):
+        (MediaControls.prototype.get showsStartButton):
+        (MediaControls.prototype.set showsStartButton):
+        (MediaControls.prototype.get showsPlacard):
+        (MediaControls.prototype.showPlacard):
+        (MediaControls.prototype.hidePlacard):
+
 2016-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Disable URLParser for non-Safari iOS and Mac apps for now

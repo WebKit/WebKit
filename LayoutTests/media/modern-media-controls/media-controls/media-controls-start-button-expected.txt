@@ -1,0 +1,17 @@
+Testing the MediaControls showsStartButton property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default where showsStartButton = false
+PASS mediaControls.showsStartButton is false
+PASS mediaControls.children is [mediaControls.controlsBar]
+
+showsStartButton = true
+PASS mediaControls.showsStartButton is true
+PASS mediaControls.children is [mediaControls.startButton]
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

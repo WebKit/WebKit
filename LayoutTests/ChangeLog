@@ -1,5 +1,22 @@
 2016-10-13  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] MediaControls base class
+        https://bugs.webkit.org/show_bug.cgi?id=163387
+        <rdar://problem/28753955>
+
+        Reviewed by Dean Jackson.
+
+        Testing the properties of the new MediaControls class.
+
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt: Added.
+        * media/modern-media-controls/media-controls/media-controls-constructor.html: Added.
+        * media/modern-media-controls/media-controls/media-controls-placard-expected.txt: Added.
+        * media/modern-media-controls/media-controls/media-controls-placard.html: Added.
+        * media/modern-media-controls/media-controls/media-controls-start-button-expected.txt: Added.
+        * media/modern-media-controls/media-controls/media-controls-start-button.html: Added.
+
+2016-10-13  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] TimeControl and TimeLabel
         https://bugs.webkit.org/show_bug.cgi?id=163356
         <rdar://problem/28741376>
