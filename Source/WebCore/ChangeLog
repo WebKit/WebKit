@@ -1,3 +1,15 @@
+2016-10-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] SHOULD NEVER BE REACHED ../../Source/WebCore/platform/URL.cpp(1291) : void WebCore::URL::parse(const WTF::String&)
+        https://bugs.webkit.org/show_bug.cgi?id=163392
+
+        Reviewed by Alex Christensen.
+
+        Fix the URL constructor to work with URLParser.
+
+        * platform/soup/URLSoup.cpp:
+        (WebCore::URL::URL):
+
 2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207286.

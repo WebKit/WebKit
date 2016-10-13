@@ -29,6 +29,7 @@
 
 #include "URL.h"
 
+#include "URLParser.h"
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>
 
@@ -42,7 +43,12 @@ URL::URL(SoupURI* soupURI)
     }
 
     GUniquePtr<gchar> urlString(soup_uri_to_string(soupURI, FALSE));
-    parse(String::fromUTF8(urlString.get()));
+    if (URLParser::enabled()) {
+        URLParser parser(String::fromUTF8(urlString.get()));
+        *this = parser.result();
+    } else
+        parse(String::fromUTF8(urlString.get()));
+
     if (!isValid())
         return;
 
