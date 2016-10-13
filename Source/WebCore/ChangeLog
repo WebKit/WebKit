@@ -1,5 +1,23 @@
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
+        The bindings generator should provide a better error message when it does not find a dictionary definition
+        https://bugs.webkit.org/show_bug.cgi?id=163377
+
+        Reviewed by Ryosuke Niwa.
+
+        The bindings generator should provide a better error message when it does
+        not find a dictionary definition.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GetDictionaryByName):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (assert):
+        (GenerateDictionaryImplementationContent):
+        (GenerateHeader):
+        (GenerateDictionaryHeader):
+
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
         Update WebKitMediaKeyMessageEvent / WebKitMediaKeyNeededEvent to stop using legacy [ConstructorTemplate=Event]
         https://bugs.webkit.org/show_bug.cgi?id=163369
 

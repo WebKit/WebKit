@@ -474,7 +474,7 @@ sub GetEnumImplementationNameOverride
 sub GetDictionaryByName
 {
     my ($object, $name) = @_;
-    return unless defined($name);
+    die "GetDictionaryByName() was called with an undefined dictionary name" unless defined($name);
 
     for my $dictionary (@{$useDocument->dictionaries}) {
         return $dictionary if $dictionary->name eq $name;

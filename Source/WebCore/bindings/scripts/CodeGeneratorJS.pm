@@ -33,6 +33,8 @@ package CodeGeneratorJS;
 
 use strict;
 use constant FileNamePrefix => "JS";
+use Carp qw<longmess>;
+use Data::Dumper;
 use Hasher;
 
 my $codeGenerator;
@@ -106,6 +108,16 @@ my $headerTemplate = << "EOF";
     Boston, MA 02110-1301, USA.
 */
 EOF
+
+sub assert
+{
+    my $message = shift;
+
+    my $mess = longmess();
+    print Dumper($mess);
+
+    die $message;
+}
 
 # Default constructor
 sub new
@@ -1092,10 +1104,12 @@ sub GenerateDictionaryImplementationContent
     # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
     my @dictionaries;
     push(@dictionaries, $dictionary);
-    my $parentDictionary = $codeGenerator->GetDictionaryByName($dictionary->parent);
-    while (defined($parentDictionary)) {
+    my $parentName = $dictionary->parent;
+    while (defined($parentName)) {
+        my $parentDictionary = $codeGenerator->GetDictionaryByName($parentName);
+        assert("Unable to find definition for dictionary named '" . $parentName . "'!") unless defined($parentDictionary);
         unshift(@dictionaries, $parentDictionary);
-        $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary->parent);
+        $parentName = $parentDictionary->parent;
     }
 
     my $arguments = "";
@@ -1741,10 +1755,12 @@ sub GenerateHeader
             push(@ancestors, $currentInterface->name);
         }, 0);
         for my $dictionary (@$dictionaries) {
-            my $parentDictionary = $dictionary->parent;
-            while (defined($parentDictionary)) {
-                push(@ancestors, $parentDictionary) if $codeGenerator->IsExternalDictionaryType($parentDictionary);
-                $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary)->parent;
+            my $parentName = $dictionary->parent;
+            while (defined($parentName)) {
+                push(@ancestors, $parentName) if $codeGenerator->IsExternalDictionaryType($parentName);
+                my $parentDictionary = $codeGenerator->GetDictionaryByName($parentName);
+                assert("Unable to find definition for dictionary named '" . $parentName . "'!") unless defined($parentDictionary);
+                $parentName = $parentDictionary->parent;
             }
         }
         push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
@@ -4375,10 +4391,12 @@ sub GenerateDictionaryHeader
     # - Generate dependencies.
     if ($writeDependencies) {
         my @ancestors;
-        my $parentDictionary = $dictionary->parent;
-        while (defined($parentDictionary)) {
-            push(@ancestors, $parentDictionary) if $codeGenerator->IsExternalDictionaryType($parentDictionary);
-            $parentDictionary = $codeGenerator->GetDictionaryByName($parentDictionary)->parent;
+        my $parentName = $dictionary->parent;
+        while (defined($parentName)) {
+            push(@ancestors, $parentName) if $codeGenerator->IsExternalDictionaryType($parentName);
+            my $parentDictionary = $codeGenerator->GetDictionaryByName($parentName);
+            assert("Unable to find definition for dictionary named '" . $parentName . "'!") unless $parentDictionary;
+            $parentName = $parentDictionary->parent;
         }
         push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
         push(@depsContent, map { "$_.idl :\n" } @ancestors);
