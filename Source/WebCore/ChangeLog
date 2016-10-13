@@ -1,3 +1,15 @@
+2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207286.
+
+        Caused LayoutTest http/tests/misc/acid3.html to fail.
+
+        Reverted changeset:
+
+        "Share inline stylesheets between shadow trees"
+        https://bugs.webkit.org/show_bug.cgi?id=163353
+        http://trac.webkit.org/changeset/207286
+
 2016-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Use min-size instead of min-content contribution for intrinsic maximums resolution

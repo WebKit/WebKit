@@ -32,9 +32,6 @@
 #define CSSParserMode_h
 
 #include "URL.h"
-#include "URLHash.h"
-#include <wtf/HashFunctions.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -117,50 +114,6 @@ inline bool operator!=(const CSSParserContext& a, const CSSParserContext& b) { r
 
 WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 
-struct CSSParserContextHash {
-    static unsigned hash(const CSSParserContext& key)
-    {
-        auto hash = URLHash::hash(key.baseURL);
-        hash ^= StringHash::hash(key.charset);
-        unsigned bits = key.isHTMLDocument                  << 0
-            & key.isHTMLDocument                            << 1
-#if ENABLE(CSS_GRID_LAYOUT)
-            & key.cssGridLayoutEnabled                      << 2
-#endif
-#if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 3
-#endif
-            & key.needsSiteSpecificQuirks                   << 4
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 5
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 6
-            & key.springTimingFunctionEnabled               << 7
-            & key.useNewParser                              << 8
-#if ENABLE(VARIATION_FONTS)
-            & key.variationFontsEnabled                     << 9
-#endif
-            & key.mode                                      << 10;
-        hash ^= WTF::intHash(bits);
-        return hash;
-    }
-    static bool equal(const CSSParserContext& a, const CSSParserContext& b)
-    {
-        return a == b;
-    }
-    static const bool safeToCompareToEmptyOrDeleted = false;
 };
-
-}
-
-namespace WTF {
-template<> struct HashTraits<WebCore::CSSParserContext> : GenericHashTraits<WebCore::CSSParserContext> {
-    static void constructDeletedValue(WebCore::CSSParserContext& slot) { new (NotNull, &slot.baseURL) WebCore::URL(WTF::HashTableDeletedValue); }
-    static bool isDeletedValue(const WebCore::CSSParserContext& value) { return value.baseURL.isHashTableDeletedValue(); }
-    static WebCore::CSSParserContext emptyValue() { return WebCore::CSSParserContext(WebCore::HTMLStandardMode); }
-};
-
-template<> struct DefaultHash<WebCore::CSSParserContext> {
-    typedef WebCore::CSSParserContextHash Hash;
-};
-}
 
 #endif // CSSParserMode_h

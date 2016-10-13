@@ -30,39 +30,9 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextNodeTraversal.h"
-#include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
-
-using InlineStyleSheetCacheKey = std::pair<String, CSSParserContext>;
-using InlineStyleSheetCache = HashMap<InlineStyleSheetCacheKey, RefPtr<StyleSheetContents>>;
-
-static InlineStyleSheetCache& inlineStyleSheetCache()
-{
-    static NeverDestroyed<InlineStyleSheetCache> cache;
-    return cache;
-}
-
-static URL inlineStyleSheetBaseURLForElement(const Element& element)
-{
-    auto* shadowRoot = element.containingShadowRoot();
-    // User agent shadow trees can't contain document-relative URLs. Use blank URL as base allowing cross-document sharing.
-    return shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent ? blankURL() : element.document().baseURL();
-}
-
-static Optional<InlineStyleSheetCacheKey> makeInlineStyleSheetCacheKey(const String& text, const Element& element)
-{
-    if (text.isEmpty())
-        return { };
-    // Only cache for shadow trees. Main document inline stylesheets are generally unique and can't be shared between documents.
-    // FIXME: This could be relaxed when a stylesheet does not contain document-relative URLs (or #urls).
-    if (!element.isInShadowTree())
-        return { };
-
-    CSSParserContext context { element.document(), inlineStyleSheetBaseURLForElement(element) };
-    return std::make_pair(text, context);
-}
 
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
     : m_isParsingChildren(createdByParser)
@@ -182,20 +152,9 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
     if (m_styleScope)
         m_styleScope->addPendingSheet();
 
-    auto cacheKey = makeInlineStyleSheetCacheKey(text, element);
-    if (cacheKey) {
-        if (auto* cachedSheet = inlineStyleSheetCache().get(*cacheKey)) {
-            ASSERT(cachedSheet->isCacheable());
-            m_sheet = CSSStyleSheet::create(*cachedSheet, element);
-            sheetLoaded(element);
-            element.notifyLoadedSheetAndAllCriticalSubresources(false);
-            return;
-        }
-    }
-
     m_loading = true;
 
-    m_sheet = CSSStyleSheet::createInline(element, inlineStyleSheetBaseURLForElement(element), m_startTextPosition, document.encoding());
+    m_sheet = CSSStyleSheet::createInline(element, URL(), m_startTextPosition, document.encoding());
     m_sheet->setMediaQueries(mediaQueries.releaseNonNull());
     m_sheet->setTitle(element.title());
     m_sheet->contents().parseStringAtPosition(text, m_startTextPosition, m_isParsingChildren);
@@ -204,15 +163,6 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     if (m_sheet)
         m_sheet->contents().checkLoaded();
-
-    if (cacheKey && m_sheet && m_sheet->contents().isCacheable()) {
-        inlineStyleSheetCache().add(*cacheKey, &m_sheet->contents());
-
-        // Prevent pathological growth.
-        const size_t maximumInlineStyleSheetCacheSize = 50;
-        if (inlineStyleSheetCache().size() > maximumInlineStyleSheetCacheSize)
-            inlineStyleSheetCache().remove(inlineStyleSheetCache().begin());
-    }
 }
 
 bool InlineStyleSheetOwner::isLoading() const
@@ -237,11 +187,6 @@ void InlineStyleSheetOwner::startLoadingDynamicSheet(Element&)
 {
     if (m_styleScope)
         m_styleScope->addPendingSheet();
-}
-
-void InlineStyleSheetOwner::clearCache()
-{
-    inlineStyleSheetCache().clear();
 }
 
 }
