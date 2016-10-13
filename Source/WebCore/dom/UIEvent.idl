@@ -18,7 +18,6 @@
  */
 
 [
-    ConstructorConditional=DOM4_EVENTS_CONSTRUCTOR,
     ConstructorTemplate=Event,
 ] interface UIEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMWindow view;

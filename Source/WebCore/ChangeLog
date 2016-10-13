@@ -1,5 +1,28 @@
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
+        [Web IDL] Drop support for legacy [ConstructorConditional=*]
+        https://bugs.webkit.org/show_bug.cgi?id=163368
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop support for legacy [ConstructorConditional=*] webkit-specific IDL
+        extended attribute. This was introduced to disable DOM4 event
+        constructors at compile time. However, nowadays, those constructors are
+        enabled everywhere.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateConstructorConditionalString): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::getConstructData): Deleted.
+        * bindings/scripts/test/TestInterface.idl:
+        * dom/UIEvent.idl:
+
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
         The bindings generator should provide a better error message when it does not find a dictionary definition
         https://bugs.webkit.org/show_bug.cgi?id=163377
 

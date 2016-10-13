@@ -35,7 +35,6 @@
     ConstructorCallWith=ScriptExecutionContext,
     Constructor(DOMString str1, optional DOMString str2 = "defaultString"),
     ConstructorMayThrowLegacyException,
-    ConstructorConditional=TEST_INTERFACE,
     ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable
 ] interface TestInterface {

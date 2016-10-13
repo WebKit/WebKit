@@ -259,17 +259,6 @@ template<> void JSTestInterfaceConstructor::initializeProperties(VM& vm, JSDOMGl
     reifyStaticProperties(vm, JSTestInterfaceConstructorTableValues, *this);
 }
 
-template<> ConstructType JSTestInterfaceConstructor::getConstructData(JSCell* cell, ConstructData& constructData)
-{
-#if ENABLE(TEST_INTERFACE)
-    UNUSED_PARAM(cell);
-    constructData.native.function = construct;
-    return ConstructType::Host;
-#else
-    return Base::getConstructData(cell, constructData);
-#endif
-}
-
 template<> const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterface", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestInterfaceConstructor) };
 
 /* Hash table for prototype */
