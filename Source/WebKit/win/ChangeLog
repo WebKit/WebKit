@@ -1,3 +1,19 @@
+2016-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Copy BackForwardList from WebCore to WebKit/win
+        https://bugs.webkit.org/show_bug.cgi?id=163360
+
+        Reviewed by Alex Christensen.
+
+        Use our local BackForwardList class instead of WebCore::BackForwardList.
+
+        * BackForwardList.cpp: Added.
+        * BackForwardList.h: Added.
+        * WebBackForwardList.h:
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (WebView::backForwardList):
+
 2016-10-13  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the HistoryItemVector typedef

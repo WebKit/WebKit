@@ -1,3 +1,15 @@
+2016-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Copy BackForwardList from WebCore to WebKit/win
+        https://bugs.webkit.org/show_bug.cgi?id=163360
+
+        Reviewed by Alex Christensen.
+
+        This is the first step towards getting rid of BackForwardList in WebCore.
+
+        * PlatformWin.cmake:
+        Add new files.
+
 2016-10-11  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead networking code

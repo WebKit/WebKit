@@ -26,11 +26,11 @@
 #include "WebKitDLL.h"
 #include "WebBackForwardList.h"
 
+#include "BackForwardList.h"
 #include "WebFrame.h"
 #include "WebKit.h"
 #include "WebPreferences.h"
 
-#include <WebCore/BackForwardList.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/HistoryItem.h>
 

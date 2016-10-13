@@ -144,6 +144,7 @@ list(APPEND WebKit_SOURCES_Classes
     win/AccessibleDocument.cpp
     win/AccessibleImage.cpp
     win/AccessibleTextImpl.cpp
+    win/BackForwardList.cpp
     win/CFDictionaryPropertyBag.cpp
     win/DOMCSSClasses.cpp
     win/DOMCoreClasses.cpp

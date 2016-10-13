@@ -27,7 +27,7 @@
 
 #include "WebView.h"
 
-#include "BackForwardController.h"
+#include "BackForwardList.h"
 #include "COMVariantSetter.h"
 #include "DOMCoreClasses.h"
 #include "FullscreenVideoController.h"
@@ -84,7 +84,6 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
 #include <WebCore/BackForwardController.h>
-#include <WebCore/BackForwardList.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
@@ -3099,6 +3098,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     m_inspectorClient = new WebInspectorClient(this);
 
     PageConfiguration configuration(makeUniqueRef<WebEditorClient>(this), SocketProvider::create());
+    configuration.backForwardClient = BackForwardList::create();
     configuration.chromeClient = new WebChromeClient(this);
     configuration.contextMenuClient = new WebContextMenuClient(this);
     configuration.dragClient = new WebDragClient(this);
@@ -3430,7 +3430,7 @@ HRESULT WebView::backForwardList(_COM_Outptr_opt_ IWebBackForwardList** list)
     if (!m_useBackForwardList)
         return E_FAIL;
  
-    *list = WebBackForwardList::createInstance(static_cast<WebCore::BackForwardList*>(m_page->backForward().client()));
+    *list = WebBackForwardList::createInstance(static_cast<BackForwardList*>(m_page->backForward().client()));
 
     return S_OK;
 }
