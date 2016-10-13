@@ -1,3 +1,16 @@
+2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping highlight for dot/bracket expressions in if statements highlights subset of the expression
+        https://bugs.webkit.org/show_bug.cgi?id=163378
+        <rdar://problem/28749376>
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        Since each expression builds on the previous, always keep the starting
+        location the first location.
+
 2016-10-13  Per Arne Vollan  <pvollan@apple.com>
 
         [Win64] Compile fix.

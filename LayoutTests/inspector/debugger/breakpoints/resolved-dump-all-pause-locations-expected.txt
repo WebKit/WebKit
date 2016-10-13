@@ -1256,6 +1256,74 @@ PAUSES AT: 200:0
     199    
  => 200    |a(a(), b());
     201    
+    202    if (o1.p1)
+    203        a();
+
+INSERTING AT: 200:1
+PAUSES AT: 202:4
+    197    var t1 = `${1} ${x=1} ${a()}`;
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+ -> 200    a#(a(), b());
+    201    
+ => 202    if (|o1.p1)
+    203        a();
+    204    
+    205    if (o1["p1"])
+
+INSERTING AT: 202:5
+PAUSES AT: 203:4
+    199    
+    200    a(a(), b());
+    201    
+ -> 202    if (o#1.p1)
+ => 203        |a();
+    204    
+    205    if (o1["p1"])
+    206        a();
+
+INSERTING AT: 203:5
+PAUSES AT: 205:4
+    200    a(a(), b());
+    201    
+    202    if (o1.p1)
+ -> 203        a#();
+    204    
+ => 205    if (|o1["p1"])
+    206        a();
+    207    
+    208    if (String.raw`test`)
+
+INSERTING AT: 205:5
+PAUSES AT: 206:4
+    202    if (o1.p1)
+    203        a();
+    204    
+ -> 205    if (o#1["p1"])
+ => 206        |a();
+    207    
+    208    if (String.raw`test`)
+    209        a();
+
+INSERTING AT: 206:5
+PAUSES AT: 208:4
+    203        a();
+    204    
+    205    if (o1["p1"])
+ -> 206        a#();
+    207    
+ => 208    if (|String.raw`test`)
+    209        a();
+    210    
+
+INSERTING AT: 208:5
+PAUSES AT: 209:4
+    205    if (o1["p1"])
+    206        a();
+    207    
+ -> 208    if (S#tring.raw`test`)
+ => 209        |a();
+    210    
 
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.Functions

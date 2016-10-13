@@ -1,3 +1,18 @@
+2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Stepping highlight for dot/bracket expressions in if statements highlights subset of the expression
+        https://bugs.webkit.org/show_bug.cgi?id=163378
+        <rdar://problem/28749376>
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/breakpoints/resolved-dump-all-pause-locations-expected.txt:
+        * inspector/debugger/breakpoints/resolved-dump-each-line-expected.txt:
+        * inspector/debugger/breakpoints/resources/dump-general.js:
+        * inspector/debugger/stepping/stepping-misc-expected.txt:
+        * inspector/debugger/stepping/stepping-misc.html:
+        Add tests for these kinds of special cases.
+
 2016-10-13  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] MediaControls base class

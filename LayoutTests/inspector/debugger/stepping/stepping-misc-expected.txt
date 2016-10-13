@@ -475,7 +475,7 @@ PAUSE AT entryDestructuring:72:5
  ->  71        |var [w, z] = arr;
      72    }
      73    
-     74    
+     74    function entryIfWithDotExpression() {
 
 ACTION: step-in
 PAUSE AT entryDestructuring:73:2
@@ -484,8 +484,149 @@ PAUSE AT entryDestructuring:73:2
      71        var [w, z] = arr;
  ->  72    }|
      73    
-     74    
-     75    // FIXME: Not Yet Tested
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithDotExpression
+EXPRESSION: setTimeout(entryIfWithDotExpression)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithDotExpression:77:5
+     73    
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+ ->  76        |debugger;
+     77        if (o.condition)
+     78            a();
+     79    }
+
+ACTION: step-over
+PAUSE AT entryIfWithDotExpression:78:9
+     74    function entryIfWithDotExpression() {
+     75        var o = {condition: true};
+     76        debugger;
+ ->  77        if (|o.condition)
+     78            a();
+     79    }
+     80    
+
+ACTION: step-in
+PAUSE AT entryIfWithDotExpression:79:9
+     75        var o = {condition: true};
+     76        debugger;
+     77        if (o.condition)
+ ->  78            |a();
+     79    }
+     80    
+     81    function entryIfWithBracketExpression() {
+
+ACTION: step-over
+PAUSE AT entryIfWithDotExpression:80:2
+     76        debugger;
+     77        if (o.condition)
+     78            a();
+ ->  79    }|
+     80    
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithBracketExpression
+EXPRESSION: setTimeout(entryIfWithBracketExpression)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithBracketExpression:84:5
+     80    
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+ ->  83        |debugger;
+     84        if (o["condition"])
+     85            a();
+     86    }
+
+ACTION: step-over
+PAUSE AT entryIfWithBracketExpression:85:9
+     81    function entryIfWithBracketExpression() {
+     82        var o = {condition: true};
+     83        debugger;
+ ->  84        if (|o["condition"])
+     85            a();
+     86    }
+     87    
+
+ACTION: step-in
+PAUSE AT entryIfWithBracketExpression:86:9
+     82        var o = {condition: true};
+     83        debugger;
+     84        if (o["condition"])
+ ->  85            |a();
+     86    }
+     87    
+     88    function entryIfWithTaggedTemplate() {
+
+ACTION: step-over
+PAUSE AT entryIfWithBracketExpression:87:2
+     83        debugger;
+     84        if (o["condition"])
+     85            a();
+ ->  86    }|
+     87    
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+
+ACTION: resume
+RESUMED
+PASS: Should have used all steps.
+
+-- Running test case: Debugger.stepping.IfWithTaggedTemplate
+EXPRESSION: setTimeout(entryIfWithTaggedTemplate)
+STEPS: over, in, over, resume
+PAUSED (debugger-statement)
+PAUSE AT entryIfWithTaggedTemplate:90:5
+     86    }
+     87    
+     88    function entryIfWithTaggedTemplate() {
+ ->  89        |debugger;
+     90        if (String.raw`test`)
+     91            a();
+     92    }
+
+ACTION: step-over
+PAUSE AT entryIfWithTaggedTemplate:91:9
+     87    
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+ ->  90        if (|String.raw`test`)
+     91            a();
+     92    }
+     93    
+
+ACTION: step-in
+PAUSE AT entryIfWithTaggedTemplate:92:9
+     88    function entryIfWithTaggedTemplate() {
+     89        debugger;
+     90        if (String.raw`test`)
+ ->  91            |a();
+     92    }
+     93    
+     94    
+
+ACTION: step-over
+PAUSE AT entryIfWithTaggedTemplate:93:2
+     89        debugger;
+     90        if (String.raw`test`)
+     91            a();
+ ->  92    }|
+     93    
+     94    
+     95    // FIXME: Not Yet Tested
 
 ACTION: resume
 RESUMED

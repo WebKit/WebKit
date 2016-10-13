@@ -4484,7 +4484,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             int initialAssignments = m_parserState.assignmentCount;
             TreeExpression property = parseExpression(context);
             failIfFalse(property, "Cannot parse subscript expression");
-            base = context.createBracketAccess(location, base, property, initialAssignments != m_parserState.assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
+            base = context.createBracketAccess(startLocation, base, property, initialAssignments != m_parserState.assignmentCount, expressionStart, expressionEnd, tokenEndPosition());
             
             if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
                 currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
@@ -4542,7 +4542,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             JSTextPosition expressionEnd = lastTokenEndPosition();
             nextExpectIdentifier(LexerFlagsIgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT, "Expected a property name after '.'");
-            base = context.createDotAccess(location, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
+            base = context.createDotAccess(startLocation, base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEndPosition());
             if (UNLIKELY(baseIsSuper && currentScope()->isArrowFunction()))
                 currentFunctionScope()->setInnerArrowFunctionUsesSuperProperty();
             next();
@@ -4554,7 +4554,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             int nonLHSCount = m_parserState.nonLHSCount;
             typename TreeBuilder::TemplateLiteral templateLiteral = parseTemplateLiteral(context, LexerType::RawStringsBuildMode::BuildRawStrings);
             failIfFalse(templateLiteral, "Cannot parse template literal");
-            base = context.createTaggedTemplate(location, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
+            base = context.createTaggedTemplate(startLocation, base, templateLiteral, expressionStart, expressionEnd, lastTokenEndPosition());
             m_parserState.nonLHSCount = nonLHSCount;
             break;
         }

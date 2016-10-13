@@ -2926,6 +2926,8 @@ PAUSES AT: 200:0
  -> 199    #
  => 200    |a(a(), b());
     201    
+    202    if (o1.p1)
+    203        a();
 
 
 INSERTING AT: 200:0
@@ -2935,9 +2937,109 @@ PAUSES AT: 200:0
     199    
 -=> 200    |a(a(), b());
     201    
+    202    if (o1.p1)
+    203        a();
 
 
 INSERTING AT: 201:0
+PAUSES AT: 202:4
+    198    var t2 = a`${1} ${x=1} ${a()}`;
+    199    
+    200    a(a(), b());
+ -> 201    #
+ => 202    if (|o1.p1)
+    203        a();
+    204    
+    205    if (o1["p1"])
+
+
+INSERTING AT: 202:0
+PAUSES AT: 202:4
+    199    
+    200    a(a(), b());
+    201    
+-=> 202    #if (|o1.p1)
+    203        a();
+    204    
+    205    if (o1["p1"])
+
+
+INSERTING AT: 203:0
+PAUSES AT: 203:4
+    200    a(a(), b());
+    201    
+    202    if (o1.p1)
+-=> 203    #    |a();
+    204    
+    205    if (o1["p1"])
+    206        a();
+
+
+INSERTING AT: 204:0
+PAUSES AT: 205:4
+    201    
+    202    if (o1.p1)
+    203        a();
+ -> 204    #
+ => 205    if (|o1["p1"])
+    206        a();
+    207    
+    208    if (String.raw`test`)
+
+
+INSERTING AT: 205:0
+PAUSES AT: 205:4
+    202    if (o1.p1)
+    203        a();
+    204    
+-=> 205    #if (|o1["p1"])
+    206        a();
+    207    
+    208    if (String.raw`test`)
+
+
+INSERTING AT: 206:0
+PAUSES AT: 206:4
+    203        a();
+    204    
+    205    if (o1["p1"])
+-=> 206    #    |a();
+    207    
+    208    if (String.raw`test`)
+    209        a();
+
+
+INSERTING AT: 207:0
+PAUSES AT: 208:4
+    204    
+    205    if (o1["p1"])
+    206        a();
+ -> 207    #
+ => 208    if (|String.raw`test`)
+    209        a();
+    210    
+
+
+INSERTING AT: 208:0
+PAUSES AT: 208:4
+    205    if (o1["p1"])
+    206        a();
+    207    
+-=> 208    #if (|String.raw`test`)
+    209        a();
+    210    
+
+
+INSERTING AT: 209:0
+PAUSES AT: 209:4
+    206        a();
+    207    
+    208    if (String.raw`test`)
+-=> 209    #    |a();
+    210    
+
+
+INSERTING AT: 210:0
 PRODUCES: Could not resolve breakpoint
 
 -- Running test case: Debugger.resolvedBreakpoint.dumpEachLine.Functions

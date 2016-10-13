@@ -72,6 +72,26 @@ function entryDestructuring() {
     var [w, z] = arr;
 }
 
+function entryIfWithDotExpression() {
+    var o = {condition: true};
+    debugger;
+    if (o.condition)
+        a();
+}
+
+function entryIfWithBracketExpression() {
+    var o = {condition: true};
+    debugger;
+    if (o["condition"])
+        a();
+}
+
+function entryIfWithTaggedTemplate() {
+    debugger;
+    if (String.raw`test`)
+        a();
+}
+
 
 // FIXME: Not Yet Tested
 // - Iterators
@@ -184,6 +204,42 @@ function test()
             "over",
                 "in",  // var {x, y} = o;
                 "in",  // var [w, z] = arr
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithDotExpression",
+        description: "Should step to the entire expression, not the dot.",
+        expression: "setTimeout(entryIfWithDotExpression)",
+        steps: [
+            "over",
+                "in",    // o.condition
+                "over",  // a
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithBracketExpression",
+        description: "Should step to the entire expression, not the bracket dot.",
+        expression: "setTimeout(entryIfWithBracketExpression)",
+        steps: [
+            "over",
+                "in",    // o["condition"]
+                "over",  // a
+            "resume",
+        ]
+    });
+
+    addSteppingTestCase({
+        name: "Debugger.stepping.IfWithTaggedTemplate",
+        description: "Should step to the entire expression, not the template.",
+        expression: "setTimeout(entryIfWithTaggedTemplate)",
+        steps: [
+            "over",
+                "in",    // String.raw`test`
+                "over",  // a
             "resume",
         ]
     });
