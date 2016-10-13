@@ -1,3 +1,13 @@
+2016-10-13  Jonathan Bedard  <jbedard@apple.com>
+
+        GTK and EFL on Mac fail to compile WebTextChecker due to missing definition of WKTextCheckerClientBase
+        https://bugs.webkit.org/show_bug.cgi?id=163346
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/API/C/WKTextChecker.cpp: Fixed #ifdefs for GTK and EFL builds on Darwin machines.
+        * UIProcess/API/C/WKTextChecker.h: Ditto.
+
 2016-10-13  Tim Horton  <timothy_horton@apple.com>
 
         Expose SPI to disable synchronously blocking on painting after parenting a WKWebView
