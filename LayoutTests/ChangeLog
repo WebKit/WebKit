@@ -1,3 +1,15 @@
+2016-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Use min-size instead of min-content contribution for intrinsic maximums resolution
+        https://bugs.webkit.org/show_bug.cgi?id=163283
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Uncommented a bunch of failing test cases that are working fine now.
+
+        * fast/css-grid-layout/grid-intrinsic-maximums-expected.html:
+        * fast/css-grid-layout/grid-intrinsic-maximums.html:
+
 2016-10-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix intrinsic maximums resolution with fit-content and auto

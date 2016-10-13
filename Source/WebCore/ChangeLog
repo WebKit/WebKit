@@ -1,3 +1,18 @@
+2016-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Use min-size instead of min-content contribution for intrinsic maximums resolution
+        https://bugs.webkit.org/show_bug.cgi?id=163283
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        This was recently modified in the specs
+        https://hg.csswg.org/drafts/diff/575fb847e29d/css-grid/Overview.bs. Specifically this is
+        addressing the last one. It used to be "min-content contribution" but now it says "min-size
+        contribution".
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::currentItemSizeForTrackSizeComputationPhase):
+
 2016-10-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Fix intrinsic maximums resolution with fit-content and auto
