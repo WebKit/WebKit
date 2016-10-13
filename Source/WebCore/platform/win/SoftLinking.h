@@ -44,19 +44,13 @@
 #pragma mark - Soft-link macros for use within a single source file
 
 #define SOFT_LINK(library, functionName, resultType, callingConvention, parameterDeclarations, parameterNames) \
-    static resultType callingConvention init##functionName parameterDeclarations; \
-    static resultType (callingConvention*softLink##functionName) parameterDeclarations = init##functionName; \
-    \
-    static resultType callingConvention init##functionName parameterDeclarations \
-    { \
-        softLink##functionName = reinterpret_cast<resultType (callingConvention*) parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        ASSERT(softLink##functionName); \
-        return softLink##functionName parameterNames; \
-    } \
+    static resultType(callingConvention*softLink##functionName) parameterDeclarations = nullptr; \
     \
     inline resultType functionName parameterDeclarations \
     { \
-        return softLink##functionName parameterNames; \
+        if (!softLink##functionName) \
+            softLink##functionName = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName))); \
+        return reinterpret_cast<resultType (callingConvention*) parameterDeclarations>(::DecodePointer(softLink##functionName)) parameterNames; \
     }
 
 #define SOFT_LINK_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
@@ -66,12 +60,11 @@
         static functionName##PtrType ptr; \
         static bool initialized; \
         \
-        if (initialized) \
-            return ptr; \
-        initialized = true; \
-        \
-        ptr = reinterpret_cast<functionName##PtrType>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        return ptr; \
+        if (!initialized) { \
+            ptr = reinterpret_cast<functionName##PtrType>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName))); \
+            initialized = true; \
+        } \
+        return reinterpret_cast<functionName##PtrType>(::DecodePointer(ptr)); \
     } \
 
 #define SOFT_LINK_LOADED_LIBRARY(library, functionName, resultType, callingConvention, parameterDeclarations) \
@@ -81,14 +74,13 @@
         static functionName##PtrType ptr; \
         static bool initialized; \
         \
-        if (initialized) \
-            return ptr; \
-        initialized = true; \
+        if (!initialized) { \
+            static HINSTANCE libraryInstance = ::GetModuleHandle(L#library); \
+            ptr = reinterpret_cast<functionName##PtrType>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(libraryInstance, #functionName))); \
+            initialized = true; \
+        } \
         \
-        static HINSTANCE libraryInstance = ::GetModuleHandle(L#library); \
-        \
-        ptr = reinterpret_cast<functionName##PtrType>(SOFT_LINK_GETPROCADDRESS(libraryInstance, #functionName)); \
-        return ptr; \
+        return reinterpret_cast<functionName##PtrType>(::DecodePointer(ptr)); \
     } \
 
 /*
@@ -99,19 +91,13 @@
     #define myFunction softLink_myFunction
 */
 #define SOFT_LINK_DLL_IMPORT(library, functionName, resultType, callingConvention, parameterDeclarations, parameterNames) \
-    static resultType callingConvention init##functionName parameterDeclarations; \
-    static resultType(callingConvention*softLink##functionName) parameterDeclarations = init##functionName; \
-    \
-    static resultType callingConvention init##functionName parameterDeclarations \
-    { \
-        softLink##functionName = reinterpret_cast<resultType (callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        ASSERT(softLink##functionName); \
-        return softLink##functionName parameterNames; \
-    } \
+    static resultType(callingConvention*softLink##functionName) parameterDeclarations = nullptr; \
     \
     inline resultType softLink_##functionName parameterDeclarations \
     { \
-        return softLink##functionName parameterNames; \
+        if (!softLink##functionName) \
+            softLink##functionName = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName))); \
+        return reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(::DecodePointer(softLink##functionName)) parameterNames; \
     }
 
 #define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
@@ -121,12 +107,11 @@
         static functionName##PtrType ptr; \
         static bool initialized; \
         \
-        if (initialized) \
-            return ptr; \
-        initialized = true; \
-        \
-        ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        return ptr; \
+        if (!initialized) { \
+            ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName))); \
+            initialized = true; \
+        } \
+        return reinterpret_cast<functionName##PtrType>(::DecodePointer(ptr)); \
     } \
 
 #define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
@@ -136,12 +121,11 @@
         static functionName##PtrType ptr; \
         static bool initialized; \
         \
-        if (initialized) \
-            return ptr; \
-        initialized = true; \
-        \
-        ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
-        return ptr; \
+        if (!initialized) { \
+            ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(::EncodePointer(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName))); \
+            initialized = true; \
+        } \
+        return reinterpret_cast<functionName##PtrType>(::DecodePointer(ptr)); \
     } \
 
 /*

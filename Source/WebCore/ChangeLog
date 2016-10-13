@@ -1,3 +1,14 @@
+2016-10-12  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Encode function pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=163331
+
+        Reviewed by Brent Fulgham.
+
+        We should encode stored function pointers.
+
+        * platform/win/SoftLinking.h:
+
 2016-10-13  Youenn Fablet  <youenn@apple.com>
 
         Remove CachedResourceRequest::mutableResourceRequest
