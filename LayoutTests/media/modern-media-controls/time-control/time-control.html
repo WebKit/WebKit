@@ -1,0 +1,51 @@
+<link rel="stylesheet" href="../../../../Source/WebCore/Modules/modern-media-controls/controls/slider.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../Source/WebCore/Modules/modern-media-controls/controls/scrubber.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../Source/WebCore/Modules/modern-media-controls/controls/time-label.css" type="text/css" media="screen">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/scheduler.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/layout-node.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/layout-item.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/slider.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/scrubber.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/time-label.js" type="text/javascript"></script>
+<script src="../../../../Source/WebCore/Modules/modern-media-controls/controls/time-control.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>TimeControl</code> class.");
+
+const timeControl = new TimeControl;
+
+shouldBeEqualToString("timeControl.element.localName", "div");
+shouldBeEqualToString("timeControl.element.className", "time-control");
+
+debug("");
+shouldBeTrue("timeControl.elapsedTimeLabel instanceof TimeLabel");
+shouldBeTrue("timeControl.scrubber instanceof Scrubber");
+shouldBeTrue("timeControl.remainingTimeLabel instanceof TimeLabel");
+
+debug("");
+shouldBe("timeControl.children.length", "3");
+shouldBe("timeControl.children[0]", "timeControl.elapsedTimeLabel");
+shouldBe("timeControl.children[1]", "timeControl.scrubber");
+shouldBe("timeControl.children[2]", "timeControl.remainingTimeLabel");
+
+debug("");
+debug("timeControl.width = 500;");
+timeControl.width = 500;
+shouldBe("timeControl.elapsedTimeLabel.x", "-2");
+shouldBe("timeControl.scrubber.x", "43");
+shouldBe("timeControl.scrubber.width", "406");
+shouldBe("timeControl.remainingTimeLabel.x", "454");
+shouldBeTrue("timeControl.isSufficientlyWide");
+
+debug("");
+debug("timeControl.width = 261;");
+timeControl.width = 261;
+shouldBeFalse("timeControl.isSufficientlyWide");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

@@ -1,0 +1,31 @@
+Testing the TimeControl class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS timeControl.element.localName is "div"
+PASS timeControl.element.className is "time-control"
+
+PASS timeControl.elapsedTimeLabel instanceof TimeLabel is true
+PASS timeControl.scrubber instanceof Scrubber is true
+PASS timeControl.remainingTimeLabel instanceof TimeLabel is true
+
+PASS timeControl.children.length is 3
+PASS timeControl.children[0] is timeControl.elapsedTimeLabel
+PASS timeControl.children[1] is timeControl.scrubber
+PASS timeControl.children[2] is timeControl.remainingTimeLabel
+
+timeControl.width = 500;
+PASS timeControl.elapsedTimeLabel.x is -2
+PASS timeControl.scrubber.x is 43
+PASS timeControl.scrubber.width is 406
+PASS timeControl.remainingTimeLabel.x is 454
+PASS timeControl.isSufficientlyWide is true
+
+timeControl.width = 261;
+PASS timeControl.isSufficientlyWide is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,18 @@
+2016-10-13  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] TimeControl and TimeLabel
+        https://bugs.webkit.org/show_bug.cgi?id=163356
+        <rdar://problem/28741376>
+
+        Reviewed by Dean Jackson.
+
+        Adding tests for the new TimeControl and TimeLabel classes.
+
+        * media/modern-media-controls/time-control/time-control-expected.txt: Added.
+        * media/modern-media-controls/time-control/time-control.html: Added.
+        * media/modern-media-controls/time-label/time-label-expected.txt: Added.
+        * media/modern-media-controls/time-label/time-label.html: Added.
+
 2016-10-13  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::SourceBuffer::removeCodedFrames + 37

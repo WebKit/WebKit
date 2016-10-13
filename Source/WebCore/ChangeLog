@@ -1,3 +1,37 @@
+2016-10-13  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] TimeControl and TimeLabel
+        https://bugs.webkit.org/show_bug.cgi?id=163356
+        <rdar://problem/28741376>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the TimeControl and TimeLabel classes. A TimeControl object
+        provides two TimeLabels, one for the elapsed time, one for the remaining
+        time, and a Scrubber in between them. Depending on a TimeControl's width,
+        it will adjust its layout such that the scrubber takes all the available
+        space between the labels, and can indicate whether it's large enough to
+        meet the minimal required width to show the scrubber, such that a container
+        node may decide not to show the TimeControl at all.
+
+        TimeLabel nodes simply show an integer time value in miliseconds in a
+        nicely formatted way.
+
+        Tests: media/modern-media-controls/time-control/time-control.html
+               media/modern-media-controls/time-label/time-label.html
+
+        * Modules/modern-media-controls/controls/time-control.js: Added.
+        (TimeControl.prototype.get width):
+        (TimeControl.prototype.set width):
+        (TimeControl.prototype.get isSufficientlyWide):
+        * Modules/modern-media-controls/controls/time-label.css: Added.
+        (.time-label):
+        * Modules/modern-media-controls/controls/time-label.js: Added.
+        (TimeLabel.prototype.get value):
+        (TimeLabel.prototype.set value):
+        (TimeLabel.prototype.commitProperty):
+        (TimeLabel.prototype._formattedTime):
+
 2016-10-13  Jer Noble  <jer.noble@apple.com>
 
         CRASH at WebCore::SourceBuffer::removeCodedFrames + 37
