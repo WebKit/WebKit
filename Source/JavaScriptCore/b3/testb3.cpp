@@ -54,6 +54,7 @@
 #include "B3Validate.h"
 #include "B3ValueInlines.h"
 #include "B3VariableValue.h"
+#include "B3WasmBoundsCheckValue.h"
 #include "CCallHelpers.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
@@ -13729,6 +13730,37 @@ void testOptimizeMaterialization()
     CHECK(found);
 }
 
+void testWasmBoundsCheck(unsigned offset)
+{
+    Procedure proc;
+    GPRReg pinned = GPRInfo::argumentGPR1;
+    proc.pinRegister(pinned);
+
+    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned actualOffset) {
+        CHECK_EQ(pinnedGPR, pinned);
+        CHECK_EQ(actualOffset, offset);
+
+        // This should always work because a function this simple should never have callee
+        // saves.
+        jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+
+    BasicBlock* root = proc.addBlock();
+    Value* left = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    if (pointerType() != Int32)
+        left = root->appendNew<Value>(proc, Trunc, Origin(), left);
+    root->appendNew<WasmBoundsCheckValue>(proc, Origin(), left, pinned, offset);
+    Value* result = root->appendNew<Const32Value>(proc, Origin(), 0x42);
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    auto code = compile(proc);
+    CHECK_EQ(invoke<int32_t>(*code, 1, 2 + offset), 0x42);
+    CHECK_EQ(invoke<int32_t>(*code, 3, 2 + offset), 42);
+    CHECK_EQ(invoke<int32_t>(*code, 2, 2 + offset), 42);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -15148,7 +15180,7 @@ void run(const char* filter)
     RUN(testSomeEarlyRegister());
     RUN(testPatchpointTerminalReturnValue(true));
     RUN(testPatchpointTerminalReturnValue(false));
-    
+
     RUN(testMemoryFence());
     RUN(testStoreFence());
     RUN(testLoadFence());
@@ -15168,7 +15200,12 @@ void run(const char* filter)
     RUN(testLoadBaseIndexShift2());
     RUN(testLoadBaseIndexShift32());
     RUN(testOptimizeMaterialization());
-    
+
+    RUN(testWasmBoundsCheck(0));
+    RUN(testWasmBoundsCheck(100));
+    RUN(testWasmBoundsCheck(10000));
+    RUN(testWasmBoundsCheck(std::numeric_limits<unsigned>::max() - 5));
+
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
         RUN(testBranchBitAndImmFusion(Identity, Int64, 0xff, Air::BranchTest32, Air::Arg::Tmp));

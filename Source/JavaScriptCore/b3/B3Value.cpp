@@ -616,6 +616,10 @@ Effects Value::effects() const
     case Check:
         result = Effects::forCheck();
         break;
+    case WasmBoundsCheck:
+        result.readsPinned = true;
+        result.exitsSideways = true;
+        break;
     case Upsilon:
     case Set:
         result.writesLocalState = true;
@@ -809,6 +813,7 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case Return:
     case Oops:
     case EntrySwitch:
+    case WasmBoundsCheck:
         return Void;
     case Select:
         ASSERT(secondChild);

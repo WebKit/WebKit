@@ -272,6 +272,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case Check:
         out.print("Check");
         return;
+    case WasmBoundsCheck:
+        out.print("WasmBoundsCheck");
+        return;
     case Upsilon:
         out.print("Upsilon");
         return;

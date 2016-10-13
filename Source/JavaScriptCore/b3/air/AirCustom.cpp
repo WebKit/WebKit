@@ -178,6 +178,17 @@ CCallHelpers::Jump ShuffleCustom::generate(Inst& inst, CCallHelpers&, Generation
     return CCallHelpers::Jump();
 }
 
+bool WasmBoundsCheckCustom::isValidForm(Inst& inst)
+{
+    if (inst.args.size() != 2)
+        return false;
+    if (!inst.args[0].isTmp() && !inst.args[0].isSomeImm())
+        return false;
+
+    return inst.args[1].isReg();
+}
+
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

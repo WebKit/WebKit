@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlockInlines.h"
 #include "B3Dominators.h"
@@ -40,6 +41,7 @@
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
+#include "B3WasmBoundsCheckValue.h"
 #include <wtf/HashSet.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/CString.h>
@@ -412,6 +414,13 @@ public:
                 VALIDATE(isInt(value->child(0)->type()), ("At ", *value));
                 VALIDATE(value->as<StackmapValue>()->constrainedChild(0).rep() == ValueRep::WarmAny, ("At ", *value));
                 validateStackmap(value);
+                break;
+            case WasmBoundsCheck:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == Int32, ("At ", *value));
+                VALIDATE(m_procedure.code().isPinned(value->as<WasmBoundsCheckValue>()->pinnedGPR()), ("At ", *value));
+                VALIDATE(m_procedure.code().wasmBoundsCheckGenerator(), ("At ", *value));
                 break;
             case Upsilon:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));

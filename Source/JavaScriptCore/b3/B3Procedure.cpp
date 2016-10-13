@@ -348,6 +348,11 @@ void Procedure::setBlockOrderImpl(Vector<BasicBlock*>& blocks)
     }
 }
 
+void Procedure::setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator> generator)
+{
+    code().setWasmBoundsCheckGenerator(generator);
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -58,6 +58,9 @@ class Variable;
 
 namespace Air { class Code; }
 
+typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg, unsigned);
+typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
+
 // This represents B3's view of a piece of code. Note that this object must exist in a 1:1
 // relationship with Air::Code. B3::Procedure and Air::Code are just different facades of the B3
 // compiler's knowledge about a piece of code. Some kinds of state aren't perfect fits for either
@@ -220,6 +223,14 @@ public:
 
     PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
     PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }
+
+    JS_EXPORT_PRIVATE void setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>);
+
+    template<typename Functor>
+    void setWasmBoundsCheckGenerator(const Functor& functor)
+    {
+        setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>(createSharedTask<WasmBoundsCheckGeneratorFunction>(functor)));
+    }
 
 private:
     friend class BlockInsertionSet;

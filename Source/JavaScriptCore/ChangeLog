@@ -1,3 +1,65 @@
+2016-10-12  Keith Miller  <keith_miller@apple.com>
+
+        B3 needs a special WasmBoundsCheck Opcode
+        https://bugs.webkit.org/show_bug.cgi?id=163246
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a new Opcode, WasmBoundsCheck, as well as a B3::Value subclass for it,
+        WasmBoundsCheckValue. WasmBoundsCheckValue takes three pieces of information. The first is
+        the Int32 pointer value used to be used by the Load.  Next is the pinned register. The
+        pinned register must be pinned by calling proc.setPinned() prior to compiling the
+        Procedure. Lastly, the WasmBoundsCheckValue takes an offset. The WasmBoundsCheckValue is
+        will then emit code that side-exits if the Int64 sum of the offset and pointer is greater
+        than or equal to the value in the pinnedRegister. Instead of taking a generator for each
+        value like Check/Patchpoint, WasmBoundsCheck gets its generator directly off Air::Code. In
+        Air this patch adds a new Custom opcode, WasmBoundsCheck.
+
+        In the future we should add WasmBoundsCheck to CSE so it can eliminate redundant bounds
+        checks. At the first cut, we can remove any WasmBoundsCheck dominated by another
+        WasmBoundsCheck with the same pointer and pinnedGPR, and a larger offset.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::imm):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::setWasmBoundsCheckGenerator):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setWasmBoundsCheckGenerator):
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        (JSC::B3::Value::typeFor):
+        * b3/B3WasmBoundsCheckValue.cpp: Added.
+        (JSC::B3::WasmBoundsCheckValue::~WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::dumpMeta):
+        * b3/B3WasmBoundsCheckValue.h: Added.
+        (JSC::B3::WasmBoundsCheckValue::accepts):
+        (JSC::B3::WasmBoundsCheckValue::pinnedGPR):
+        (JSC::B3::WasmBoundsCheckValue::offset):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setWasmBoundsCheckGenerator):
+        (JSC::B3::Air::Code::wasmBoundsCheckGenerator):
+        * b3/air/AirCustom.cpp:
+        (JSC::B3::Air::WasmBoundsCheckCustom::isValidForm):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::WasmBoundsCheckCustom::forEachArg):
+        (JSC::B3::Air::WasmBoundsCheckCustom::isValidFormStatic):
+        (JSC::B3::Air::WasmBoundsCheckCustom::admitsStack):
+        (JSC::B3::Air::WasmBoundsCheckCustom::isTerminal):
+        (JSC::B3::Air::WasmBoundsCheckCustom::hasNonArgNonControlEffects):
+        (JSC::B3::Air::WasmBoundsCheckCustom::generate):
+        * b3/air/AirOpcode.opcodes:
+        * b3/testb3.cpp:
+        (JSC::B3::testWasmBoundsCheck):
+        (JSC::B3::run):
+
 2016-10-12  Filip Pizlo  <fpizlo@apple.com>
 
         The blackening of CellState is a bad way of tracking if the object is being marked for the first time

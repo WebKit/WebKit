@@ -1206,6 +1206,8 @@
 		52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52C952B819A28A1C0069B386 /* TypeProfiler.cpp */; };
 		531374BD1D5CE67600AF7A0B /* WASMPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 531374BC1D5CE67600AF7A0B /* WASMPlan.h */; };
 		531374BF1D5CE95000AF7A0B /* WASMPlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531374BE1D5CE95000AF7A0B /* WASMPlan.cpp */; };
+		5341FC701DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */; };
+		5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */; };
 		53486BB71C1795C300F6F3AF /* JSTypedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 53486BB61C1795C300F6F3AF /* JSTypedArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53486BBB1C18E84500F6F3AF /* JSTypedArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */; };
 		534902851C7276B70012BCB8 /* TypedArrayCTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */; };
@@ -3441,6 +3443,8 @@
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
 		531374BC1D5CE67600AF7A0B /* WASMPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMPlan.h; sourceTree = "<group>"; };
 		531374BE1D5CE95000AF7A0B /* WASMPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMPlan.cpp; sourceTree = "<group>"; };
+		5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmBoundsCheckValue.cpp; path = b3/B3WasmBoundsCheckValue.cpp; sourceTree = "<group>"; };
+		5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmBoundsCheckValue.h; path = b3/B3WasmBoundsCheckValue.h; sourceTree = "<group>"; };
 		53486BB61C1795C300F6F3AF /* JSTypedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTypedArray.h; sourceTree = "<group>"; };
 		53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArray.cpp; sourceTree = "<group>"; };
 		534902821C7242C80012BCB8 /* TypedArrayCTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TypedArrayCTest.cpp; path = API/tests/TypedArrayCTest.cpp; sourceTree = "<group>"; };
@@ -4857,6 +4861,8 @@
 				0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */,
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
 				DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */,
+				5341FC6F1DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp */,
+				5341FC711DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h */,
 				0F6B8ADE1C4EFE1700969052 /* B3BreakCriticalEdges.cpp */,
 				0F6B8ADF1C4EFE1700969052 /* B3BreakCriticalEdges.h */,
 				DC9A0C1C1D2D94EF0085124E /* B3CaseCollection.cpp */,
@@ -7650,6 +7656,7 @@
 				72AAF7CE1D0D31B3005E60BE /* JSCustomGetterSetterFunction.h in Headers */,
 				0F1E3A67153A21E2000F9456 /* DFGSilentRegisterSavePlan.h in Headers */,
 				0FFB921D16D02F300055A5DB /* DFGSlowPathGenerator.h in Headers */,
+				5341FC721DAC343C00E7E4D7 /* B3WasmBoundsCheckValue.h in Headers */,
 				86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */,
 				0F682FB319BCB36400FA3BAD /* DFGSSACalculator.h in Headers */,
 				A7D89D0017A0B8CC00773AD8 /* DFGSSAConversionPhase.h in Headers */,
@@ -9365,6 +9372,7 @@
 				2AACE63C18CA5A0300ED0191 /* GCActivityCallback.cpp in Sources */,
 				0F766D2F15A8DCE0008F363E /* GCAwareJITStubRoutine.cpp in Sources */,
 				2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */,
+				5341FC701DAC33E500E7E4D7 /* B3WasmBoundsCheckValue.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
 				0F0332C318B01763005F979A /* GetByIdVariant.cpp in Sources */,
 				14280855107EC0E70013E7B2 /* GetterSetter.cpp in Sources */,

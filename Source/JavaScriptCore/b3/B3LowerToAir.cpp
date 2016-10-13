@@ -568,13 +568,17 @@ private:
         return loadPromise(loadValue, Load);
     }
 
+    Arg imm(int64_t intValue)
+    {
+        if (Arg::isValidImmForm(intValue))
+            return Arg::imm(intValue);
+        return Arg();
+    }
+
     Arg imm(Value* value)
     {
-        if (value->hasInt()) {
-            int64_t intValue = value->asInt();
-            if (Arg::isValidImmForm(intValue))
-                return Arg::imm(intValue);
-        }
+        if (value->hasInt())
+            return imm(value->asInt());
         return Arg();
     }
 
@@ -2624,6 +2628,26 @@ private:
             fillStackmap(inst, checkValue, 1);
             
             m_insts.last().append(WTFMove(inst));
+            return;
+        }
+
+        case B3::WasmBoundsCheck: {
+            WasmBoundsCheckValue* value = m_value->as<WasmBoundsCheckValue>();
+
+            Value* ptr = value->child(0);
+
+            Arg temp = m_code.newTmp(Arg::GP);
+            append(Inst(Move32, value, tmp(ptr), temp));
+            if (value->offset()) {
+                if (imm(value->offset()))
+                    append(Add64, imm(value->offset()), temp);
+                else {
+                    Arg bigImm = m_code.newTmp(Arg::GP);
+                    append(Move, Arg::bigImm(value->offset()), bigImm);
+                    append(Add64, bigImm, temp);
+                }
+            }
+            append(Inst(Air::WasmBoundsCheck, value, temp, Arg(value->pinnedGPR())));
             return;
         }
 

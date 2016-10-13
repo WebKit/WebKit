@@ -27,9 +27,12 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirCode.h"
+#include "AirGenerationContext.h"
 #include "AirInst.h"
 #include "AirSpecial.h"
-#include "B3Value.h"
+#include "B3ValueInlines.h"
+#include "B3WasmBoundsCheckValue.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -269,6 +272,53 @@ struct EntrySwitchCustom : public CommonCustomBase<EntrySwitchCustom> {
         // This should never be reached because we should have lowered EntrySwitch before
         // generation.
         UNREACHABLE_FOR_PLATFORM();
+        return CCallHelpers::Jump();
+    }
+};
+
+struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
+    template<typename Func>
+    static void forEachArg(Inst& inst, const Func& functor)
+    {
+        functor(inst.args[0], Arg::Use, Arg::GP, Arg::Width64);
+        functor(inst.args[1], Arg::Use, Arg::GP, Arg::Width64);
+    }
+
+    template<typename... Arguments>
+    static bool isValidFormStatic(Arguments...)
+    {
+        return false;
+    }
+
+    static bool isValidForm(Inst&);
+
+    static bool admitsStack(Inst&, unsigned)
+    {
+        return false;
+    }
+
+    static bool isTerminal(Inst&)
+    {
+        return false;
+    }
+    
+    static bool hasNonArgNonControlEffects(Inst&)
+    {
+        return true;
+    }
+
+    static CCallHelpers::Jump generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)
+    {
+        WasmBoundsCheckValue* value = inst.origin->as<WasmBoundsCheckValue>();
+        CCallHelpers::Jump outOfBounds = Inst(Air::Branch64, value, Arg::relCond(CCallHelpers::AboveOrEqual), inst.args[0], inst.args[1]).generate(jit, context);
+
+        context.latePaths.append(createSharedTask<GenerationContext::LatePathFunction>(
+            [=] (CCallHelpers& jit, Air::GenerationContext&) {
+                outOfBounds.link(&jit);
+                context.code->wasmBoundsCheckGenerator()->run(jit, value->pinnedGPR(), value->offset());
+            }));
+
+        // We said we were not a terminal.
         return CCallHelpers::Jump();
     }
 };

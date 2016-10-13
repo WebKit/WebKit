@@ -209,6 +209,12 @@ enum Opcode : int16_t {
     // WarmAny. It will not have an output constraint.
     Check,
 
+    // Special Wasm opcode that takes a Int32, a special pinned gpr and an offset. This node exists
+    // to allow us to CSE WasmBoundsChecks if both use the same pointer and one dominates the other.
+    // Without some such node B3 would not have enough information about the inner workings of wasm
+    // to be able to perform such optimizations.
+    WasmBoundsCheck,
+
     // SSA support, in the style of DFG SSA.
     Upsilon, // This uses the UpsilonValue class.
     Phi,

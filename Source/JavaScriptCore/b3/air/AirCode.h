@@ -52,6 +52,9 @@ namespace Air {
 class BlockInsertionSet;
 class CCallSpecial;
 
+typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg, unsigned);
+typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
+
 // This is an IR that is very close to the bare metal. It requires about 40x more bytes than the
 // generated machine code - for example if you're generating 1MB of machine code, you need about
 // 40MB of Air.
@@ -261,6 +264,13 @@ public:
 
     const char* lastPhaseName() const { return m_lastPhaseName; }
 
+    void setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator> generator)
+    {
+        m_wasmBoundsCheckGenerator = generator;
+    }
+
+    RefPtr<WasmBoundsCheckGenerator> wasmBoundsCheckGenerator() const { return m_wasmBoundsCheckGenerator; }
+
     // This is a hash of the code. You can use this if you want to put code into a hashtable, but
     // it's mainly for validating the results from JSAir.
     unsigned jsHash() const;
@@ -298,6 +308,7 @@ private:
     RegisterAtOffsetList m_calleeSaveRegisters;
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<CCallHelpers::Label> m_entrypointLabels; // This is empty until code generation.
+    RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;
 };
 

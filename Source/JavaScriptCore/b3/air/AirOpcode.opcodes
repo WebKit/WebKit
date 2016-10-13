@@ -889,4 +889,7 @@ custom Patch
 custom CCall
 custom ColdCCall
 
+# This is a special wasm opcode that branches to a trap handler. This uses the generator located to Air::Code
+# to produce the side-exit code.
+custom WasmBoundsCheck
 
