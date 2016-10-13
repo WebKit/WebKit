@@ -1409,6 +1409,7 @@ void atexitFunction()
 
 int DumpRenderTreeMain(int argc, const char *argv[])
 {
+    WebCoreTestSupport::setURLParserEnabled(true);
     atexit(atexitFunction);
 
 #if PLATFORM(IOS)

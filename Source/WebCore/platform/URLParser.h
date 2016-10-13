@@ -60,7 +60,7 @@ private:
 
     template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
-    template<typename CharacterType> bool parseHostAndPort(CodePointIterator<CharacterType>, const bool& isMail);
+    template<typename CharacterType> bool parseHostAndPort(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool parsePort(CodePointIterator<CharacterType>&);
 
     void failure();
