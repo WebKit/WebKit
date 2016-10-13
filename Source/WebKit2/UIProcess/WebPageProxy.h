@@ -1653,6 +1653,8 @@ private:
         
     bool m_maintainsInactiveSelection;
 
+    bool m_shouldWaitForPaintAfterViewDidMoveToWindow;
+
     String m_toolTip;
 
     EditorState m_editorState;

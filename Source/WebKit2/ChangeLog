@@ -1,3 +1,35 @@
+2016-10-13  Tim Horton  <timothy_horton@apple.com>
+
+        Expose SPI to disable synchronously blocking on painting after parenting a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=163364
+        <rdar://problem/28012494>
+
+        Reviewed by Geoff Garen.
+
+        Some clients may not want the default WKWebView behavior where we synchronously
+        block on the Web process after the first time a WKWebView is re-added to the window,
+        because they are e.g. parenting re-used WKWebViews while scrolling.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::shouldSynchronizeInitialPaintAfterMovingToWindow):
+        (API::PageConfiguration::setShouldSynchronizeInitialPaintAfterMovingToWindow):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _shouldSynchronizeInitialPaintAfterMovingToWindow]):
+        (-[WKWebViewConfiguration _setShouldSynchronizeInitialPaintAfterMovingToWindow:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Add and plumb a new WKWebView configuration parameter.
+
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        If the new configuration parameter is set, don't block the main thread when
+        a view is reparented.
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Drop support for legacy [ConstructorConditional=*]

@@ -92,6 +92,9 @@ public:
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
+    bool shouldWaitForPaintAfterViewDidMoveToWindow() const { return m_shouldWaitForPaintAfterViewDidMoveToWindow; }
+    void setShouldWaitForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_shouldWaitForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -112,6 +115,7 @@ private:
     bool m_alwaysRunsAtForegroundPriority = false;
 #endif
     bool m_initialCapitalizationEnabled = true;
+    bool m_shouldWaitForPaintAfterViewDidMoveToWindow = true;
 };
 
 } // namespace API
