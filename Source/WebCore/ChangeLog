@@ -1,3 +1,21 @@
+2016-10-12  Alex Christensen  <achristensen@webkit.org>
+
+        Mail needs nonspecial URLs to keep case in host and not have slash after host
+        https://bugs.webkit.org/show_bug.cgi?id=163373
+
+        Reviewed by Saam Barati.
+        
+        Mail uses urls like scheme://HoSt which were not changed when canonicalized 
+        before enabling the URLParser but now are canonicalized to scheme://host/
+        I manually verified this fixes the issue.
+        This should be reverted once Mail will accept modern canonicalized URLs.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::parseHostAndPort):
+        * platform/URLParser.h:
+        If the application is mail and the scheme is nonspecial, don't make the host lower case and don't add a slash after the host.
+
 2016-10-11  Dean Jackson  <dino@apple.com>
 
         Add preliminary support for extended colors to WebCore::Color

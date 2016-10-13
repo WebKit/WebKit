@@ -27,6 +27,7 @@
 #include "URLParser.h"
 
 #include "Logging.h"
+#include "RuntimeApplicationChecks.h"
 #include <array>
 #include <unicode/uidna.h>
 #include <unicode/utypes.h>
@@ -1127,6 +1128,12 @@ URLParser::URLParser(const String& input, const URL& base, const TextEncoding& e
 template<typename CharacterType>
 void URLParser::parse(const CharacterType* input, const unsigned length, const URL& base, const TextEncoding& encoding)
 {
+#if PLATFORM(MAC)
+    static bool isMail = MacApplication::isAppleMail();
+#else
+    static bool isMail = false;
+#endif
+    
     URL_PARSER_LOG("Parsing URL <%s> base <%s> encoding <%s>", String(input, length).utf8().data(), base.string().utf8().data(), encoding.name());
     m_url = { };
     ASSERT(m_asciiBuffer.isEmpty());
@@ -1453,7 +1460,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     } else {
                         m_url.m_userEnd = currentPosition(authorityOrHostBegin);
                         m_url.m_passwordEnd = m_url.m_userEnd;
-                        if (!parseHostAndPort(iterator)) {
+                        if (!parseHostAndPort(iterator, isMail)) {
                             failure();
                             return;
                         }
@@ -1475,7 +1482,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             do {
                 LOG_STATE("Host");
                 if (*c == '/' || *c == '?' || *c == '#') {
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c), isMail)) {
                         failure();
                         return;
                     }
@@ -1646,7 +1653,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         state = State::Path;
                         break;
                     }
-                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+                    if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c), isMail)) {
                         failure();
                         return;
                     }
@@ -1866,13 +1873,16 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             m_url.m_hostEnd = m_url.m_userStart;
             m_url.m_portEnd = m_url.m_userStart;
             m_url.m_pathEnd = m_url.m_userStart + 2;
-        } else if (!parseHostAndPort(authorityOrHostBegin)) {
+        } else if (!parseHostAndPort(authorityOrHostBegin, isMail)) {
             failure();
             return;
         } else {
-            syntaxViolation(c);
-            appendToASCIIBuffer('/');
-            m_url.m_pathEnd = m_url.m_portEnd + 1;
+            if (LIKELY(!isMail || m_urlIsSpecial)) {
+                syntaxViolation(c);
+                appendToASCIIBuffer('/');
+                m_url.m_pathEnd = m_url.m_portEnd + 1;
+            } else
+                m_url.m_pathEnd = m_url.m_portEnd;
         }
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
         m_url.m_queryEnd = m_url.m_pathEnd;
@@ -1880,13 +1890,16 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::Host:
         LOG_FINAL_STATE("Host");
-        if (!parseHostAndPort(authorityOrHostBegin)) {
+        if (!parseHostAndPort(authorityOrHostBegin, isMail)) {
             failure();
             return;
         }
-        syntaxViolation(c);
-        appendToASCIIBuffer('/');
-        m_url.m_pathEnd = m_url.m_portEnd + 1;
+        if (LIKELY(!isMail || m_urlIsSpecial)) {
+            syntaxViolation(c);
+            appendToASCIIBuffer('/');
+            m_url.m_pathEnd = m_url.m_portEnd + 1;
+        } else
+            m_url.m_pathEnd = m_url.m_portEnd;
         m_url.m_pathAfterLastSlash = m_url.m_pathEnd;
         m_url.m_queryEnd = m_url.m_pathEnd;
         m_url.m_fragmentEnd = m_url.m_pathEnd;
@@ -1940,7 +1953,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             break;
         }
 
-        if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c))) {
+        if (!parseHostAndPort(CodePointIterator<CharacterType>(authorityOrHostBegin, c), isMail)) {
             failure();
             return;
         }
@@ -2555,7 +2568,7 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
 }
 
 template<typename CharacterType>
-bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
+bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator, const bool& isMail)
 {
     if (iterator.atEnd())
         return false;
@@ -2605,9 +2618,13 @@ bool URLParser::parseHostAndPort(CodePointIterator<CharacterType> iterator)
         }
         for (; hostIterator != iterator; ++hostIterator) {
             if (LIKELY(!isTabOrNewline(*hostIterator))) {
-                if (UNLIKELY(isASCIIUpper(*hostIterator)))
-                    syntaxViolation(hostIterator);
-                appendToASCIIBuffer(toASCIILower(*hostIterator));
+                if (UNLIKELY(isMail && !m_urlIsSpecial))
+                    appendToASCIIBuffer(*hostIterator);
+                else {
+                    if (UNLIKELY(isASCIIUpper(*hostIterator)))
+                        syntaxViolation(hostIterator);
+                    appendToASCIIBuffer(toASCIILower(*hostIterator));
+                }
             } else
                 syntaxViolation(hostIterator);
         }
