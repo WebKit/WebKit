@@ -1,3 +1,19 @@
+2016-10-12  Chris Dumez  <cdumez@apple.com>
+
+        Update HTMLSelectElement::recalcListItems() to ignore nested optgroup elements
+        https://bugs.webkit.org/show_bug.cgi?id=163358
+
+        Reviewed by Kent Tamura.
+
+        Update HTMLSelectElement::recalcListItems() to ignore nested optgroup elements.
+        As per the specification, we only want optgroup elements that are direct
+        children of the select element. This also matches the behavior of Chrome.
+
+        Test: fast/dom/HTMLSelectElement/nested-optgroup.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems):
+
 2016-10-12  Zalan Bujtas  <zalan@apple.com>
 
         RenderRubyRun should not mark child renderers dirty at the end of layout.

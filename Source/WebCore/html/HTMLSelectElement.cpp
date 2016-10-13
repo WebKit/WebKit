@@ -770,10 +770,8 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         }
         HTMLElement& current = downcast<HTMLElement>(*currentElement);
 
-        // optgroup tags may not nest. However, both FireFox and IE will
-        // flatten the tree automatically, so we follow suit.
-        // (http://www.w3.org/TR/html401/interact/forms.html#h-17.6)
-        if (is<HTMLOptGroupElement>(current)) {
+        // Only consider optgroup elements that are direct children of the select element.
+        if (is<HTMLOptGroupElement>(current) && current.parentNode() == this) {
             m_listItems.append(&current);
             if (Element* nextElement = ElementTraversal::firstWithin(current)) {
                 currentElement = nextElement;
