@@ -1,3 +1,90 @@
+2016-10-11  Dean Jackson  <dino@apple.com>
+
+        Add preliminary support for extended colors to WebCore::Color
+        https://bugs.webkit.org/show_bug.cgi?id=162878
+        <rdar://problem/28596413>
+
+        Reviewed by Darin Adler.
+
+        Add an ExtendedColor class that will hold the data necessary
+        for wider-than-sRGB (and more precise) colors. In order to
+        avoid increasing the size of Color, implement a tagged
+        pointer that is either referencing an ExtendedColor, or
+        is a 64-bit number with the top 32-bits being the RGBA, and
+        the bottom 2 bits indicating an invalid RGBA or a valid RGBA,
+        plus the tag.
+
+        Add copy constructors and operator= so that the new Color objects
+        are correctly copied.
+
+        There isn't yet a way to create an ExtendedColor. That's coming
+        in a followup patch (and will require changes to the CSS parser).
+
+        Covered by existing tests, and new API tests in Color.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * platform/graphics/Color.cpp: Update everything to use m_rgbaAndFlags
+        instead of m_color + m_valid.
+        (WebCore::Color::Color):
+        (WebCore::Color::~Color):
+        (WebCore::Color::operator=):
+        (WebCore::Color::nameForRenderTreeAsText):
+        (WebCore::Color::setNamedColor):
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+        (WebCore::Color::setValid):
+        (WebCore::Color::setExtended):
+        (WebCore::Color::isExtended):
+        (WebCore::Color::asExtended):
+        * platform/graphics/Color.h: Implement the tagged union.
+        (WebCore::Color::Color):
+        (WebCore::Color::isValid):
+        (WebCore::Color::red):
+        (WebCore::Color::green):
+        (WebCore::Color::blue):
+        (WebCore::Color::alpha):
+        (WebCore::Color::rgb):
+        (WebCore::Color::setRGB):
+        (WebCore::operator==):
+
+        * platform/graphics/ExtendedColor.cpp: New file. Holds floating point
+        red, green, blue and alpha, plus a color space.
+        (WebCore::ExtendedColor::create):
+        (WebCore::ExtendedColor::~ExtendedColor):
+        (WebCore::ExtendedColor::ref):
+        (WebCore::ExtendedColor::deref):
+        * platform/graphics/ExtendedColor.h:
+        (WebCore::ExtendedColor::red):
+        (WebCore::ExtendedColor::green):
+        (WebCore::ExtendedColor::blue):
+        (WebCore::ExtendedColor::alpha):
+        (WebCore::ExtendedColor::colorSpace):
+        (WebCore::ExtendedColor::ExtendedColor):
+
+        * platform/graphics/cg/ColorCG.cpp: Update the constructors for
+        the platform specific color classes.
+        (WebCore::Color::Color):
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::Color):
+        * platform/graphics/win/ColorDirect2D.cpp:
+        (WebCore::Color::Color):
+
+        * rendering/RenderEmbeddedObject.cpp: Use NeverDestroyed.
+        (WebCore::replacementTextRoundedRectPressedColor):
+        (WebCore::replacementTextRoundedRectColor):
+        (WebCore::replacementTextColor):
+        (WebCore::unavailablePluginBorderColor):
+
+        * rendering/RenderFrameSet.cpp: Ditto.
+        (WebCore::borderStartEdgeColor):
+        (WebCore::borderEndEdgeColor):
+        (WebCore::borderFillColor):
+
+        * rendering/RenderTableCell.cpp: This grows in size slightly
+        because it can no longer pack bits.
+
 2016-10-12  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Sliders: scrubber and volume

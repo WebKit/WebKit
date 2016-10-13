@@ -144,4 +144,47 @@ TEST(Color, RGBToHSV_LightGray)
     EXPECT_DOUBLE_EQ(0.75294117647058822, v);
 }
 
+TEST(Color, Validity)
+{
+    Color invalidColor;
+    EXPECT_FALSE(invalidColor.isValid());
+    EXPECT_FALSE(invalidColor.isExtended());
+
+    Color otherInvalidColor = invalidColor;
+    EXPECT_FALSE(otherInvalidColor.isValid());
+    EXPECT_FALSE(otherInvalidColor.isExtended());
+
+    Color validColor(255, 0, 0);
+    EXPECT_TRUE(validColor.isValid());
+    EXPECT_FALSE(validColor.isExtended());
+
+    Color otherValidColor = validColor;
+    EXPECT_TRUE(otherValidColor.isValid());
+    EXPECT_FALSE(otherValidColor.isExtended());
+
+    validColor = Color(1, 2, 3, 4);
+    EXPECT_TRUE(validColor.isValid());
+    EXPECT_FALSE(validColor.isExtended());
+    EXPECT_EQ(validColor.red(), 1);
+    EXPECT_EQ(validColor.green(), 2);
+    EXPECT_EQ(validColor.blue(), 3);
+    EXPECT_EQ(validColor.alpha(), 4);
+
+    Color yetAnotherValidColor(WTFMove(validColor));
+    EXPECT_TRUE(yetAnotherValidColor.isValid());
+    EXPECT_FALSE(yetAnotherValidColor.isExtended());
+    EXPECT_EQ(yetAnotherValidColor.red(), 1);
+    EXPECT_EQ(yetAnotherValidColor.green(), 2);
+    EXPECT_EQ(yetAnotherValidColor.blue(), 3);
+    EXPECT_EQ(yetAnotherValidColor.alpha(), 4);
+
+    otherValidColor = WTFMove(yetAnotherValidColor);
+    EXPECT_TRUE(otherValidColor.isValid());
+    EXPECT_FALSE(otherValidColor.isExtended());
+    EXPECT_EQ(otherValidColor.red(), 1);
+    EXPECT_EQ(otherValidColor.green(), 2);
+    EXPECT_EQ(otherValidColor.blue(), 3);
+    EXPECT_EQ(otherValidColor.alpha(), 4);
+}
+
 } // namespace TestWebKitAPI

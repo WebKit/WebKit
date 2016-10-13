@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && ENABLE(REMOTE_INSPECTOR)
+#include "config.h"
+#include "ExtendedColor.h"
 
-#import "WebIndicateLayer.h"
+#include "ColorSpace.h"
 
-#import "WebFramePrivate.h"
-#import "WebView.h"
-#import <WebCore/ColorMac.h>
-#import <WebCore/QuartzCoreSPI.h>
-#import <WebCore/WAKWindow.h>
-#import <wtf/NeverDestroyed.h>
+namespace WebCore {
 
-using namespace WebCore;
-
-@implementation WebIndicateLayer
-
-- (id)initWithWebView:(WebView *)webView
+Ref<ExtendedColor> ExtendedColor::create(float r, float g, float b, float a, ColorSpace colorSpace)
 {
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _webView = webView;
-
-    self.canDrawConcurrently = NO;
-    self.contentsScale = [[_webView window] screenScale];
-
-    // Blue highlight color.
-    static NeverDestroyed<Color> highlightColor(111.0f / 255.0f, 168.0f / 255.0f, 220.0f / 255.0f, 0.66f);
-    self.backgroundColor = cachedCGColor(highlightColor);
-
-    return self;
+    return adoptRef(*new ExtendedColor(r, g, b, a, colorSpace));
 }
 
-- (void)layoutSublayers
-{
-    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
-    [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
-    [self setFrame:[_webView frame]];
 }
-
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-    // Disable all implicit animations.
-    return nil;
-}
-
-@end
-
-#endif

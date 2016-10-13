@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS) && ENABLE(REMOTE_INSPECTOR)
+#pragma once
 
-#import "WebIndicateLayer.h"
+#include "ColorSpace.h"
 
-#import "WebFramePrivate.h"
-#import "WebView.h"
-#import <WebCore/ColorMac.h>
-#import <WebCore/QuartzCoreSPI.h>
-#import <WebCore/WAKWindow.h>
-#import <wtf/NeverDestroyed.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-@implementation WebIndicateLayer
+class ExtendedColor : public RefCounted<ExtendedColor> {
+public:
+    static Ref<ExtendedColor> create(float r, float g, float b, float a, ColorSpace = ColorSpace::ColorSpaceSRGB);
 
-- (id)initWithWebView:(WebView *)webView
-{
-    self = [super init];
-    if (!self)
-        return nil;
+    float red() const { return m_red; }
+    float green() const { return m_green; }
+    float blue() const { return m_blue; }
+    float alpha() const { return m_alpha; }
 
-    _webView = webView;
+    ColorSpace colorSpace() const { return m_colorSpace; }
 
-    self.canDrawConcurrently = NO;
-    self.contentsScale = [[_webView window] screenScale];
+private:
+    ExtendedColor(float r, float g, float b, float a, ColorSpace colorSpace)
+        : m_red(r)
+        , m_green(g)
+        , m_blue(b)
+        , m_alpha(a)
+        , m_colorSpace(colorSpace)
+    { }
 
-    // Blue highlight color.
-    static NeverDestroyed<Color> highlightColor(111.0f / 255.0f, 168.0f / 255.0f, 220.0f / 255.0f, 0.66f);
-    self.backgroundColor = cachedCGColor(highlightColor);
+    float m_red { 0 };
+    float m_green { 0 };
+    float m_blue { 0 };
+    float m_alpha { 0 };
 
-    return self;
+    ColorSpace m_colorSpace { ColorSpace::ColorSpaceSRGB };
+};
+
 }
-
-- (void)layoutSublayers
-{
-    CGFloat documentScale = [[[_webView mainFrame] documentView] scale];
-    [self setTransform:CATransform3DMakeScale(documentScale, documentScale, 1.0)];
-    [self setFrame:[_webView frame]];
-}
-
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-    // Disable all implicit animations.
-    return nil;
-}
-
-@end
-
-#endif

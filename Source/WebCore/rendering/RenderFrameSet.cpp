@@ -69,19 +69,19 @@ RenderFrameSet::GridAxis::GridAxis()
 
 static const Color& borderStartEdgeColor()
 {
-    static const Color color(170, 170, 170);
+    static NeverDestroyed<Color> color(170, 170, 170);
     return color;
 }
 
 static const Color& borderEndEdgeColor()
 {
-    static const Color color = Color::black;
+    static NeverDestroyed<Color> color = Color::black;
     return color;
 }
 
 static const Color& borderFillColor()
 {
-    static const Color color(208, 208, 208);
+    static NeverDestroyed<Color> color(208, 208, 208);
     return color;
 }
 

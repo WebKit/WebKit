@@ -1381,6 +1381,8 @@
 		31C422461D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C422451D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp */; };
 		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DCD29D1AB4FBDE0072E817 /* AnimationTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */; };
+		31DCDF441DA1C45400EA5B93 /* ExtendedColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31DEA4551B39F4D900F77178 /* WebSystemBackdropLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */; };
 		31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */; };
 		31DF63571AF187DD0078FD91 /* NSColorSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31DF63561AF187DD0078FD91 /* NSColorSPI.h */; };
@@ -8349,6 +8351,8 @@
 		31C422451D74EB9A00F12342 /* JSPerformanceTimingCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceTimingCustom.cpp; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
 		31DCD29C1AB4FBDE0072E817 /* AnimationTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimationTrigger.h; sourceTree = "<group>"; };
+		31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
+		31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedColor.h; sourceTree = "<group>"; };
 		31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSystemBackdropLayer.mm; sourceTree = "<group>"; };
 		31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSystemBackdropLayer.h; sourceTree = "<group>"; };
 		31DF63561AF187DD0078FD91 /* NSColorSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSColorSPI.h; sourceTree = "<group>"; };
@@ -20733,6 +20737,8 @@
 				CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
+				31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */,
+				31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
 				2D2FC0541460CD6F00263633 /* CrossfadeGeneratedImage.cpp */,
 				2D2FC0551460CD6F00263633 /* CrossfadeGeneratedImage.h */,
@@ -24928,6 +24934,7 @@
 				510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */,
 				510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
+				31DCDF441DA1C45400EA5B93 /* ExtendedColor.h in Headers */,
 				555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
@@ -30376,6 +30383,7 @@
 				B2227AEF0D00BF220071B782 /* SVGViewElement.cpp in Sources */,
 				B2227AF20D00BF220071B782 /* SVGViewSpec.cpp in Sources */,
 				8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */,
+				31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */,
 				B2227AF50D00BF220071B782 /* SVGZoomAndPan.cpp in Sources */,
 				B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,

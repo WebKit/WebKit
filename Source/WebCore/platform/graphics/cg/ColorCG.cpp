@@ -73,8 +73,7 @@ static CGColorRef createCGColorWithDeviceRGBA(CGColorRef sourceColor)
 Color::Color(CGColorRef color)
 {
     if (!color) {
-        m_color = 0;
-        m_valid = false;
+        m_colorData.rgbaAndFlags = invalidRGBAColor;
         return;
     }
 
@@ -111,8 +110,7 @@ Color::Color(CGColorRef color)
         ASSERT_NOT_REACHED();
     }
 
-    m_color = makeRGBA(r * 255, g * 255, b * 255, a * 255);
-    m_valid = true;
+    setRGB(makeRGBA(r * 255, g * 255, b * 255, a * 255));
 }
 
 static CGColorRef leakCGColor(const Color& color)

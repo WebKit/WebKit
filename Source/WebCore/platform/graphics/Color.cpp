@@ -225,23 +225,78 @@ int differenceSquared(const Color& c1, const Color& c2)
 Color::Color(const String& name)
 {
     if (name[0] == '#') {
+        RGBA32 color;
+        bool valid;
+
         if (name.is8Bit())
-            m_valid = parseHexColor(name.characters8() + 1, name.length() - 1, m_color);
+            valid = parseHexColor(name.characters8() + 1, name.length() - 1, color);
         else
-            m_valid = parseHexColor(name.characters16() + 1, name.length() - 1, m_color);
+            valid = parseHexColor(name.characters16() + 1, name.length() - 1, color);
+
+        if (valid)
+            setRGB(color);
     } else
         setNamedColor(name);
 }
 
 Color::Color(const char* name)
 {
+    RGBA32 color;
+    bool valid;
     if (name[0] == '#')
-        m_valid = parseHexColor((String)&name[1], m_color);
+        valid = parseHexColor((String)&name[1], color);
     else {
         const NamedColor* foundColor = findColor(name, strlen(name));
-        m_color = foundColor ? foundColor->ARGBValue : 0;
-        m_valid = foundColor;
+        color = foundColor ? foundColor->ARGBValue : 0;
+        valid = foundColor;
     }
+
+    if (valid)
+        setRGB(color);
+}
+
+Color::Color(const Color& other)
+    : m_colorData(other.m_colorData)
+{
+    if (isExtended())
+        m_colorData.extendedColor->ref();
+}
+
+Color::Color(Color&& other)
+{
+    *this = WTFMove(other);
+}
+
+Color::~Color()
+{
+    if (isExtended())
+        m_colorData.extendedColor->deref();
+}
+
+Color& Color::operator=(const Color& other)
+{
+    if (*this == other)
+        return *this;
+
+    if (isExtended())
+        m_colorData.extendedColor->deref();
+
+    m_colorData = other.m_colorData;
+
+    if (isExtended())
+        m_colorData.extendedColor->ref();
+    return *this;
+}
+
+Color& Color::operator=(Color&& other)
+{
+    if (*this == other)
+        return *this;
+
+    m_colorData = other.m_colorData;
+    other.m_colorData.rgbaAndFlags = invalidRGBAColor;
+
+    return *this;
 }
 
 String Color::serialized() const
@@ -291,6 +346,7 @@ String Color::cssText() const
 
 String Color::nameForRenderTreeAsText() const
 {
+    // FIXME: Handle ExtendedColors.
     if (alpha() < 0xFF)
         return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
     return String::format("#%02X%02X%02X", red(), green(), blue());
@@ -315,14 +371,16 @@ static inline const NamedColor* findNamedColor(const String& name)
 void Color::setNamedColor(const String& name)
 {
     const NamedColor* foundColor = findNamedColor(name);
-    m_color = foundColor ? foundColor->ARGBValue : 0;
-    m_valid = foundColor;
+    if (foundColor)
+        setRGB(foundColor->ARGBValue);
+    else
+        m_colorData.rgbaAndFlags = invalidRGBAColor;
 }
 
 Color Color::light() const
 {
     // Hardcode this common case for speed.
-    if (m_color == black)
+    if (rgb() == black)
         return lightenedBlack;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -347,7 +405,7 @@ Color Color::light() const
 Color Color::dark() const
 {
     // Hardcode this common case for speed.
-    if (m_color == white)
+    if (rgb() == white)
         return darkenedWhite;
     
     const float scaleFactor = nextafterf(256.0f, 0.0f);
@@ -559,6 +617,32 @@ Color blend(const Color& from, const Color& to, double progress, bool blendPremu
 TextStream& operator<<(TextStream& ts, const Color& color)
 {
     return ts << color.nameForRenderTreeAsText();
+}
+
+void Color::tagAsValid()
+{
+    m_colorData.rgbaAndFlags |= validRGBAColor;
+}
+
+void Color::tagAsExtended()
+{
+    // FIXME: Is this method necessary? Will colors ever change from RGBA32 to Extended?
+    // Valid colors should not change type.
+    ASSERT(!isValid());
+    m_colorData.rgbaAndFlags &= ~(invalidRGBAColor);
+}
+
+bool Color::isExtended() const
+{
+    return !(m_colorData.rgbaAndFlags & invalidRGBAColor);
+}
+
+ExtendedColor* Color::asExtended() const
+{
+    ASSERT(isExtended());
+    if (!isExtended())
+        return nullptr;
+    return m_colorData.extendedColor;
 }
 
 } // namespace WebCore

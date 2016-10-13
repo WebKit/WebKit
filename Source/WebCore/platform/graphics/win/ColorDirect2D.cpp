@@ -35,8 +35,7 @@ namespace WebCore {
 
 Color::Color(D2D1_COLOR_F color)
 {
-    m_color = makeRGBA(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
-    m_valid = true;
+    setRGB(makeRGBA(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
 }
 
 Color::operator D2D1_COLOR_F() const
