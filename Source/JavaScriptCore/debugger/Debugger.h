@@ -110,6 +110,10 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
+    bool isBlacklisted(SourceID) const;
+    void addToBlacklist(SourceID);
+    void clearBlacklist();
+
     bool isPaused() const { return m_isPaused; }
     bool isStepping() const { return m_steppingMode == SteppingModeEnabled; }
 
@@ -216,7 +220,8 @@ private:
 
     VM& m_vm;
     HashSet<JSGlobalObject*> m_globalObjects;
-    HashMap<SourceID, DebuggerParseData> m_parseDataMap;
+    HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
+    HashSet<SourceID, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blacklistedScripts;
 
     PauseOnExceptionsState m_pauseOnExceptionsState;
     bool m_pauseAtNextOpportunity : 1;

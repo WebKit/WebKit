@@ -1,3 +1,16 @@
+2016-10-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: step-into `console.log(o)` should not step through inspector javascript
+        https://bugs.webkit.org/show_bug.cgi?id=161656
+        <rdar://problem/28181123>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/stepping/stepping-internal-scripts-expected.txt: Added.
+        * inspector/debugger/stepping/stepping-internal-scripts.html: Added.
+        Ensure step-into a console.log statement steps past it, and doesn't pause
+        inside the non-visible internal script.
+
 2016-10-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, add expected file for new test after r207239

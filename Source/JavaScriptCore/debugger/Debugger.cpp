@@ -691,6 +691,10 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     if (m_suppressAllPauses)
         return;
 
+    intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
+    if (isBlacklisted(sourceID))
+        return;
+
     DebuggerPausedScope debuggerPausedScope(*this);
 
     bool pauseNow = m_pauseAtNextOpportunity;
@@ -700,7 +704,6 @@ void Debugger::pauseIfNeeded(CallFrame* callFrame)
     bool didHitBreakpoint = false;
 
     Breakpoint breakpoint;
-    intptr_t sourceID = DebuggerCallFrame::sourceIDForCallFrame(m_currentCallFrame);
     TextPosition position = DebuggerCallFrame::positionForCallFrame(m_currentCallFrame);
     pauseNow |= didHitBreakpoint = hasBreakpoint(sourceID, position, &breakpoint);
     m_lastExecutedLine = position.m_line.zeroBasedInt();
@@ -910,6 +913,21 @@ DebuggerCallFrame* Debugger::currentDebuggerCallFrame()
     if (!m_currentDebuggerCallFrame)
         m_currentDebuggerCallFrame = DebuggerCallFrame::create(m_currentCallFrame);
     return m_currentDebuggerCallFrame.get();
+}
+
+bool Debugger::isBlacklisted(SourceID sourceID) const
+{
+    return m_blacklistedScripts.contains(sourceID);
+}
+
+void Debugger::addToBlacklist(SourceID sourceID)
+{
+    m_blacklistedScripts.add(sourceID);
+}
+
+void Debugger::clearBlacklist()
+{
+    m_blacklistedScripts.clear();
 }
 
 } // namespace JSC

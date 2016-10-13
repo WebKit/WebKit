@@ -21,7 +21,7 @@ function test()
         name: "TopLevelSyntaxErrorDontCrash",
         description: "Make sure exceptions from top-level syntax errors don't cause us to crash.",
         test: (resolve, reject) => {
-            InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject) { 
+            InspectorProtocol.eventHandler["Debugger.paused"] = function(messageObject) {
                 InspectorProtocol.sendCommand("Debugger.resume");
 
                 ProtocolTest.pass("Paused on the breakpoint after syntax error at top level without crashing.");
@@ -37,6 +37,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p> Making sure we don't crash when having a top-level syntax error. </p>
+<p>Making sure we don't crash when having a top-level syntax error.</p>
 </body>
 </html>

@@ -681,6 +681,11 @@ String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
     return script.sourceMappingURL;
 }
 
+static bool isWebKitInjectedScript(const String& sourceURL)
+{
+    return sourceURL.startsWith("__InjectedScript_") && sourceURL.endsWith(".js");
+}
+
 void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& script)
 {
     String scriptIDStr = String::number(sourceID);
@@ -695,6 +700,9 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
     m_frontendDispatcher->scriptParsed(scriptIDStr, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceURLParam, sourceMapURLParam);
 
     m_scripts.set(sourceID, script);
+
+    if (hasSourceURL && isWebKitInjectedScript(sourceURL))
+        m_scriptDebugServer.addToBlacklist(sourceID);
 
     String scriptURLForBreakpoints = hasSourceURL ? script.sourceURL : script.url;
     if (scriptURLForBreakpoints.isEmpty())
@@ -868,6 +876,7 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
 {
     m_scriptDebugServer.clearBreakpointActions();
     m_scriptDebugServer.clearBreakpoints();
+    m_scriptDebugServer.clearBlacklist();
 
     m_pausedScriptState = nullptr;
     m_currentCallStack = { };
