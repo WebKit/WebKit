@@ -1,3 +1,15 @@
+2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207297.
+
+        This change broke the iOS build.
+
+        Reverted changeset:
+
+        "Disable URLParser for non-Safari iOS and Mac apps for now"
+        https://bugs.webkit.org/show_bug.cgi?id=163397
+        http://trac.webkit.org/changeset/207297
+
 2016-10-13  Anders Carlsson  <andersca@apple.com>
 
         Get rid of the HistoryItemVector typedef

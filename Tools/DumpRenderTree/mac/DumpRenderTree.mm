@@ -58,7 +58,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <JavaScriptCore/TestRunnerUtils.h>
 #import <WebCore/LogInitialization.h>
-#import <WebCore/URLParser.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
@@ -1410,7 +1409,6 @@ void atexitFunction()
 
 int DumpRenderTreeMain(int argc, const char *argv[])
 {
-    WebCore::URLParser::setEnabled(true);
     atexit(atexitFunction);
 
 #if PLATFORM(IOS)
