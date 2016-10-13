@@ -1,3 +1,16 @@
+2016-10-13  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] better accessibility support for Summary elements
+        https://bugs.webkit.org/show_bug.cgi?id=163367
+        <rdar://problem/28745010>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/details-summary-expected.txt:
+        * accessibility/mac/details-summary-role-description-expected.txt:
+        * accessibility/mac/details-summary-role-description.html:
+        * accessibility/mac/details-summary.html:
+
 2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking inspector/debugger/breakpoints/resolved-dump-each-line.html as flaky on mac.

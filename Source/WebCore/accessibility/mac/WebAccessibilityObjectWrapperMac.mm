@@ -1410,7 +1410,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache* cache, const Visibl
     if (m_object->isToggleButton())
         [additional addObject:NSAccessibilityValueAttribute];
     
-    if (m_object->supportsExpanded())
+    if (m_object->supportsExpanded() || m_object->isSummary())
         [additional addObject:NSAccessibilityExpandedAttribute];
     
     if (m_object->isScrollbar()
@@ -2207,7 +2207,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { RubyRunRole, NSAccessibilityGroupRole },
         { RubyTextRole, NSAccessibilityGroupRole },
         { DetailsRole, NSAccessibilityGroupRole },
-        { SummaryRole, NSAccessibilityGroupRole },
+        { SummaryRole, NSAccessibilityButtonRole },
         { SVGTextPathRole, NSAccessibilityGroupRole },
         { SVGTextRole, NSAccessibilityGroupRole },
         { SVGTSpanRole, NSAccessibilityGroupRole },
@@ -2494,8 +2494,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return AXDetailsText();
         case FooterRole:
             return AXFooterRoleDescriptionText();
-        case SummaryRole:
-            return AXSummaryText();
         case VideoRole:
             return localizedMediaControlElementString("VideoElement");
         default:
@@ -2534,6 +2532,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // AppKit also returns AXTab for the role description for a tab item.
     if (m_object->isTabItem())
         return NSAccessibilityRoleDescription(@"AXTab", nil);
+    
+    if (m_object->isSummary())
+        return AXSummaryText();
     
     // We should try the system default role description for all other roles.
     // If we get the same string back, then as a last resort, return unknown.
@@ -2756,6 +2757,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         // Meter elements should communicate their content via AXValueDescription.
         if (m_object->isMeter())
             return [NSString string];
+        
+        // Summary element should use its text node as AXTitle.
+        if (m_object->isSummary())
+            return m_object->textUnderElement();
         
         return [self baseAccessibilityTitle];
     }

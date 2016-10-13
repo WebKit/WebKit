@@ -131,22 +131,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return wrapper;
 }
 
-template<typename MatchFunction>
-static AccessibilityObject* matchedParent(AccessibilityObject* object, bool includeSelf, const MatchFunction& matches)
-{
-    if (!object)
-        return nullptr;
-
-    AccessibilityObject* parent = includeSelf ? object : object->parentObject();
-    for (; parent; parent = parent->parentObject()) {
-        if (matches(parent))
-            return parent;
-    }
-    
-    return nullptr;
-}
-
-
 #pragma mark Accessibility Text Marker
 
 @interface WebAccessibilityTextMarker : NSObject
@@ -549,45 +533,40 @@ static AccessibilityObject* matchedParent(AccessibilityObject* object, bool incl
 
 - (AccessibilityObjectWrapper*)_accessibilityListAncestor
 {
-    auto matchFunc = [] (AccessibilityObject* object) {
-        AccessibilityRole role = object->roleValue();
+    auto matchFunc = [] (const AccessibilityObject& object) {
+        AccessibilityRole role = object.roleValue();
         return role == ListRole || role == ListBoxRole;
     };
     
-    if (AccessibilityObject* parent = matchedParent(m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, matchFunc))
         return parent->wrapper();
     return nil;
 }
 
 - (AccessibilityObjectWrapper*)_accessibilityLandmarkAncestor
 {
-    auto matchFunc = [self] (AccessibilityObject* object) {
-        return [self _accessibilityIsLandmarkRole:object->roleValue()];
-    };
-    
-    if (AccessibilityObject* parent = matchedParent(m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [self] (const AccessibilityObject& object) {
+        return [self _accessibilityIsLandmarkRole:object.roleValue()];
+    }))
         return parent->wrapper();
     return nil;
 }
 
 - (AccessibilityObjectWrapper*)_accessibilityTableAncestor
 {
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return object->roleValue() == TableRole || object->roleValue() == GridRole;
-    };
     
-    if (AccessibilityObject* parent = matchedParent(m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+        return object.roleValue() == TableRole || object.roleValue() == GridRole;
+    }))
         return parent->wrapper();
     return nil;
 }
 
 - (AccessibilityObjectWrapper*)_accessibilityFieldsetAncestor
 {
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return object->isFieldset();
-    };
-    
-    if (AccessibilityObject* parent = matchedParent(m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+        return object.isFieldset();
+    }))
         return parent->wrapper();
     return nil;
 }
@@ -1041,11 +1020,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 - (AccessibilityTableCell*)tableCellParent
 {
     // Find if this element is in a table cell.
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return object->isTableCell();
-    };
-    
-    if (AccessibilityObject* parent = matchedParent(m_object, true, matchFunc))
+    if (AccessibilityObject* parent = const_cast<AccessibilityObject*>(AccessibilityObject::matchedParent(*m_object, true, [] (const AccessibilityObject& object) {
+        return object.isTableCell();
+    })))
         return static_cast<AccessibilityTableCell*>(parent);
     return nil;
 }
@@ -1053,11 +1030,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 - (AccessibilityTable*)tableParent
 {
     // Find if the parent table for the table cell.
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return is<AccessibilityTable>(*object) && downcast<AccessibilityTable>(*object).isExposableThroughAccessibility();
-    };
-    
-    if (AccessibilityObject* parent = matchedParent(m_object, true, matchFunc))
+    if (AccessibilityObject* parent = const_cast<AccessibilityObject*>(AccessibilityObject::matchedParent(*m_object, true, [] (const AccessibilityObject& object) {
+        return is<AccessibilityTable>(object) && downcast<AccessibilityTable>(object).isExposableThroughAccessibility();
+    })))
         return static_cast<AccessibilityTable*>(parent);
     return nil;
 }
@@ -1426,12 +1401,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }
     else {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        auto matchFunc = [] (AccessibilityObject* object) {
-            return is<AccessibilityScrollView>(*object);
-        };
-        
         ScrollView* scrollView = nullptr;
-        AccessibilityObject* parent = matchedParent(m_object, false, matchFunc);
+        const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+            return is<AccessibilityScrollView>(object);
+        });
         if (parent)
             scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
         
@@ -1480,12 +1453,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         
     } else {
         // Find the appropriate scroll view to use to convert the contents to the window.
-        auto matchFunc = [] (AccessibilityObject* object) {
-            return is<AccessibilityScrollView>(*object);
-        };
-
         ScrollView* scrollView = nullptr;
-        AccessibilityObject* parent = matchedParent(m_object, false, matchFunc);
+        const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, [] (const AccessibilityObject& object) {
+            return is<AccessibilityScrollView>(object);
+        });
         if (parent)
             scrollView = downcast<AccessibilityScrollView>(*parent).scrollView();
         
@@ -1855,11 +1826,9 @@ static RenderObject* rendererForView(WAKView* view)
 {
     // Use this to check if an object is the child of a summary object.
     // And return the summary's parent, which is the expandable details object.
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return object->hasTagName(summaryTag);
-    };
-    
-    if (AccessibilityObject* summary = matchedParent(object, true, matchFunc))
+    if (const AccessibilityObject* summary = AccessibilityObject::matchedParent(*object, true, [] (const AccessibilityObject& object) {
+        return object.hasTagName(summaryTag);
+    }))
         return summary->parentObject();
     return nil;
 }
@@ -1867,12 +1836,10 @@ static RenderObject* rendererForView(WAKView* view)
 - (AccessibilityObject*)detailParentForObject:(AccessibilityObject*)object
 {
     // Use this to check if an object is inside a details object.
-    auto matchFunc = [] (AccessibilityObject* object) {
-        return object->hasTagName(detailsTag);
-    };
-    
-    if (AccessibilityObject* details = matchedParent(object, true, matchFunc))
-        return details;
+    if (const AccessibilityObject* details = AccessibilityObject::matchedParent(*object, true, [] (const AccessibilityObject& object) {
+        return object.hasTagName(detailsTag);
+    }))
+        return const_cast<AccessibilityObject*>(details);
     return nil;
 }
 

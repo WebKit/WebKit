@@ -1,3 +1,49 @@
+2016-10-13  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] better accessibility support for Summary elements
+        https://bugs.webkit.org/show_bug.cgi?id=163367
+        <rdar://problem/28745010>
+
+        Reviewed by Chris Fleizach.
+
+        Exposed summary elements as AXButton and used the text node's content
+        as AXTitle. Also exposed the details parent's expanded status on the summary
+        element, so that users would see it as a collapsed/expanded button.
+
+        Changes are covered in the modified tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::parentObjectUnignored):
+        (WebCore::AccessibilityObject::scrollViewAncestor):
+        (WebCore::AccessibilityObject::headingElementForNode):
+        (WebCore::AccessibilityObject::matchedParent):
+        (WebCore::AccessibilityObject::isDescendantOfObject):
+        (WebCore::AccessibilityObject::isInsideARIALiveRegion):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        (WebCore::AccessibilityObject::isExpanded):
+        (WebCore::AccessibilityObject::isARIAHidden):
+        (WebCore::AccessibilityObject::focusableAncestor):
+        (WebCore::AccessibilityObject::editableAncestor):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isSummary):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityListAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityLandmarkAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityTableAncestor]):
+        (-[WebAccessibilityObjectWrapper _accessibilityFieldsetAncestor]):
+        (-[WebAccessibilityObjectWrapper tableCellParent]):
+        (-[WebAccessibilityObjectWrapper tableParent]):
+        (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper convertRectToScreenSpace:]):
+        (-[WebAccessibilityObjectWrapper detailParentForSummaryObject:]):
+        (-[WebAccessibilityObjectWrapper detailParentForObject:]):
+        (matchedParent): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2016-10-13  Zalan Bujtas  <zalan@apple.com>
 
         [Clean RenderTree] LayoutTests/imported/blink/fast/table/crash-bad-child-table-continuation.html fails.
