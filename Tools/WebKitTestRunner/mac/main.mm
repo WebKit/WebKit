@@ -29,6 +29,7 @@
 
 #import "PlatformWebView.h"
 #import "TestController.h"
+#import <WebCore/URLParser.h>
 
 static void setDefaultsToConsistentValuesForTesting()
 {
@@ -55,6 +56,7 @@ static void disableAppNapInUIProcess()
 
 int main(int argc, const char* argv[])
 {
+    WebCore::URLParser::setEnabled(true);
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [NSApplication sharedApplication];
     setDefaultsToConsistentValuesForTesting();

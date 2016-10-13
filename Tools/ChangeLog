@@ -1,3 +1,17 @@
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Disable URLParser for non-Safari iOS and Mac apps for now
+        https://bugs.webkit.org/show_bug.cgi?id=163397
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (DumpRenderTreeMain):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (main):
+        * WebKitTestRunner/mac/main.mm:
+        (main):
+
 2016-10-12  Alex Christensen  <achristensen@webkit.org>
 
         Fix out-of-bounds reading in URLParser when parsing improperly percent-encoded values

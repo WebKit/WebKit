@@ -29,6 +29,7 @@
 #import "TestController.h"
 #import "UIKitSPI.h"
 #import <UIKit/UIKit.h>
+#import <WebCore/URLParser.h>
 
 static int _argc;
 static const char **_argv;
@@ -64,6 +65,7 @@ static const char **_argv;
 
 int main(int argc, const char* argv[])
 {
+    WebCore::URLParser::setEnabled(true);
     _argc = argc;
     _argv = argv;
 

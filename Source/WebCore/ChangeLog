@@ -1,3 +1,23 @@
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Disable URLParser for non-Safari iOS and Mac apps for now
+        https://bugs.webkit.org/show_bug.cgi?id=163397
+
+        Reviewed by Tim Horton.
+
+        r207268 was an awful hack, and it was insufficient.
+        Disable the URLParser for other apps for now.  Hopefully we can enable it everywhere soon.
+
+        No change in behavior for testing infrastructure.  
+        Old URLs were well tested before making the switch, and nothing has changed for them.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::parseHostAndPort):
+        (WebCore::URLParser::setEnabled):
+        (WebCore::URLParser::enabled):
+        * platform/URLParser.h:
+
 2016-10-13  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] TimeControl and TimeLabel
