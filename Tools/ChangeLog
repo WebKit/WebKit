@@ -1,5 +1,17 @@
 2016-10-13  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase API tests after r207305.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Actually build Tests/mac/LoadInvalidURLRequest.mm so we are running the WebKit1.LoadInvalidURLRequest API test.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLNavigationActionDelegate webView:didFailProvisionalNavigation:withError:]):
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLWebFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        Change results back to what they were before r207162, r207167, and r207184.
+
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
         Disable URLParser for non-Safari iOS and Mac apps for now
         https://bugs.webkit.org/show_bug.cgi?id=163397
 

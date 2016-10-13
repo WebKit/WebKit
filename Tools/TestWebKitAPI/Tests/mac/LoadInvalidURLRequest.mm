@@ -47,8 +47,8 @@ static bool didFailProvisionalLoad;
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
-    EXPECT_WK_STREQ(error.domain, @"NSURLErrorDomain");
-    EXPECT_EQ(error.code, -1003);
+    EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
+    EXPECT_EQ(error.code, WebKitErrorCannotShowURL);
 
     static char literal[] = "https://www.example.com<>/";
     NSURL *failedURL = WebCore::URLWithData([NSData dataWithBytes:literal length:strlen(literal)], nil);
