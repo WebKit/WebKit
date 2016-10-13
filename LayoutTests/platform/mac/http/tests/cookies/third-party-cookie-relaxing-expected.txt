@@ -43,5 +43,5 @@ ALERT: Test stage 9 document.cookie is: foo=awesomevalue
 ALERT: Restricting to first party only cookies
 ALERT: http://localhost:8000/cookies/resources/cookie-utility.php?queryfunction=setFooAndBarCookie
 ALERT: XHR response - Set the foo and bar cookies
-ALERT: Test stage 10 document.cookie is: foo=awesomevalue; bar=anotherawesomevalue
+ALERT: Test stage 10 document.cookie is: bar=anotherawesomevalue; foo=awesomevalue
 

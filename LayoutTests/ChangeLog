@@ -1,3 +1,14 @@
+2016-10-13  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline failing LayoutTests.
+
+        Unreviewed test gardening.
+
+        * http/tests/security/location-cross-origin-expected.txt:
+        * platform/mac-elcapitan/fast/text/emoji-expected.txt: Copied from LayoutTests/platform/mac/fast/text/emoji-expected.txt.
+        * platform/mac/fast/text/emoji-expected.txt:
+        * platform/mac/http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+
 2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r206975. rdar://problem/28545012
