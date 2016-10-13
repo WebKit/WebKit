@@ -4638,7 +4638,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRTemporary result(this);
             Optional<GPRTemporary> temp;
 
-            GPRReg tempGPR;
+            GPRReg tempGPR = InvalidGPRReg;
             if (node->child1().useKind() == CellUse) {
                 temp = GPRTemporary(this);
                 tempGPR = temp->gpr();
