@@ -92,8 +92,8 @@ public:
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
-    bool shouldWaitForPaintAfterViewDidMoveToWindow() const { return m_shouldWaitForPaintAfterViewDidMoveToWindow; }
-    void setShouldWaitForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_shouldWaitForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
+    bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
+    void setWaitsForPaintAfterViewDidMoveToWindow(bool shouldSynchronize) { m_waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize; }
 
 private:
 
@@ -115,7 +115,7 @@ private:
     bool m_alwaysRunsAtForegroundPriority = false;
 #endif
     bool m_initialCapitalizationEnabled = true;
-    bool m_shouldWaitForPaintAfterViewDidMoveToWindow = true;
+    bool m_waitsForPaintAfterViewDidMoveToWindow = true;
 };
 
 } // namespace API

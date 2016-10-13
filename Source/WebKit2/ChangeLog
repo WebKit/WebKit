@@ -1,3 +1,31 @@
+2016-10-13  Tim Horton  <timothy_horton@apple.com>
+
+        Rename the SPI added in r207292 due to post-landing review comments
+        https://bugs.webkit.org/show_bug.cgi?id=163364
+        <rdar://problem/28012494>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::waitsForPaintAfterViewDidMoveToWindow):
+        (API::PageConfiguration::setWaitsForPaintAfterViewDidMoveToWindow):
+        (API::PageConfiguration::shouldWaitForPaintAfterViewDidMoveToWindow): Deleted.
+        (API::PageConfiguration::setShouldWaitForPaintAfterViewDidMoveToWindow): Deleted.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _waitsForPaintAfterViewDidMoveToWindow]):
+        (-[WKWebViewConfiguration _setWaitsForPaintAfterViewDidMoveToWindow:]):
+        (-[WKWebViewConfiguration _shouldWaitForPaintAfterViewDidMoveToWindow]): Deleted.
+        (-[WKWebViewConfiguration _setShouldWaitForPaintAfterViewDidMoveToWindow:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        * UIProcess/WebPageProxy.h:
+
 2016-10-13  Jonathan Bedard  <jbedard@apple.com>
 
         GTK and EFL on Mac fail to compile WebTextChecker due to missing definition of WKTextCheckerClientBase

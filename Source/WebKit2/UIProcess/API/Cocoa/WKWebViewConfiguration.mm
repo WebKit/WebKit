@@ -123,7 +123,7 @@ private:
     BOOL _requiresUserActionForEditingControlsManager;
 #endif
     BOOL _initialCapitalizationEnabled;
-    BOOL _shouldWaitForPaintAfterViewDidMoveToWindow;
+    BOOL _waitsForPaintAfterViewDidMoveToWindow;
 
 #if ENABLE(APPLE_PAY)
     BOOL _applePayEnabled;
@@ -175,7 +175,7 @@ private:
     _requiresUserActionForEditingControlsManager = NO;
 #endif
     _initialCapitalizationEnabled = YES;
-    _shouldWaitForPaintAfterViewDidMoveToWindow = YES;
+    _waitsForPaintAfterViewDidMoveToWindow = YES;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
@@ -286,7 +286,7 @@ private:
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
     configuration->_initialCapitalizationEnabled = self->_initialCapitalizationEnabled;
-    configuration->_shouldWaitForPaintAfterViewDidMoveToWindow = self->_shouldWaitForPaintAfterViewDidMoveToWindow;
+    configuration->_waitsForPaintAfterViewDidMoveToWindow = self->_waitsForPaintAfterViewDidMoveToWindow;
 
 #if PLATFORM(IOS)
     configuration->_allowsInlineMediaPlayback = self->_allowsInlineMediaPlayback;
@@ -658,14 +658,14 @@ static NSString *defaultApplicationNameForUserAgent()
     _initialCapitalizationEnabled = initialCapitalizationEnabled;
 }
 
-- (BOOL)_shouldWaitForPaintAfterViewDidMoveToWindow
+- (BOOL)_waitsForPaintAfterViewDidMoveToWindow
 {
-    return _shouldWaitForPaintAfterViewDidMoveToWindow;
+    return _waitsForPaintAfterViewDidMoveToWindow;
 }
 
-- (void)_setShouldWaitForPaintAfterViewDidMoveToWindow:(BOOL)shouldSynchronize
+- (void)_setWaitsForPaintAfterViewDidMoveToWindow:(BOOL)shouldSynchronize
 {
-    _shouldWaitForPaintAfterViewDidMoveToWindow = shouldSynchronize;
+    _waitsForPaintAfterViewDidMoveToWindow = shouldSynchronize;
 }
 
 #if PLATFORM(MAC)

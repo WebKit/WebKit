@@ -1653,7 +1653,7 @@ private:
         
     bool m_maintainsInactiveSelection;
 
-    bool m_shouldWaitForPaintAfterViewDidMoveToWindow;
+    bool m_waitsForPaintAfterViewDidMoveToWindow;
 
     String m_toolTip;
 
