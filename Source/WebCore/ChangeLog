@@ -1,3 +1,20 @@
+2016-10-13  Zalan Bujtas  <zalan@apple.com>
+
+        [Clean RenderTree] LayoutTests/imported/blink/fast/table/crash-bad-child-table-continuation.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=163399
+
+        Reviewed by David Hyatt.
+
+        When we try to insert a renderer before a child whose direct parent is a (anonymus) RenderTable, continuation logic
+        should dismiss the RenderTable as the parent and find a more appropriate ancestor.
+        RenderTables assumes a certain descendant tree structure which might not be available in the continuation.
+
+        Will be testable with webkit.org/b/162834
+
+        * rendering/RenderInline.cpp:
+        (WebCore::canUseAsParentForContinuation):
+        (WebCore::RenderInline::addChildToContinuation):
+
 2016-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Disable URLParser for non-Safari iOS and Mac apps for now
