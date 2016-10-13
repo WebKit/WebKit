@@ -1,3 +1,24 @@
+2016-10-13  Brian Burg  <bburg@apple.com>
+
+        [CMake] Split the definition of CODE_GENERATOR_PREPROCESSOR so it can be used in a custom command
+        https://bugs.webkit.org/show_bug.cgi?id=163401
+
+        Reviewed by Michael Catanzaro.
+
+        In another patch, we need to use CODE_GENERATOR_PREPROCESSOR as the COMMAND argument
+        when defining an add_custom_command. Previously, it has only been used as a quoted argument
+        to various Perl code generation scripts.
+
+        To support both use cases, we need to be able to provide the executable and its arguments as
+        an unbroken quoted string, and as a CMake list suitable for passing as an argument to COMMAND.
+
+        * Source/cmake/OptionsCommon.cmake:
+        Split out the executable and argument string into separate variables that can be used elsewhere.
+        Compute the final unbroken quoted string using the two separate variables to arrive at the same result.
+
+        * Source/cmake/WebKitMacros.cmake:
+        Drive-by cleanup to add quotes around the use of CODE_GENERATOR_PREPROCESSOR so it matches other uses.
+
 2016-10-12  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Drop support for legacy [ConstructorConditional=*]

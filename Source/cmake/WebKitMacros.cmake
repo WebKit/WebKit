@@ -117,7 +117,7 @@ function(GENERATE_BINDINGS)
             OUTPUT ${arg_DESTINATION}/JS${_name}.cpp ${arg_DESTINATION}/JS${_name}.h
             MAIN_DEPENDENCY ${_file}
             DEPENDS ${common_generator_dependencies}
-            COMMAND ${PERL_EXECUTABLE} ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor ${CODE_GENERATOR_PREPROCESSOR} --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
+            COMMAND ${PERL_EXECUTABLE} ${binding_generator} --defines ${arg_FEATURES} --generator ${arg_GENERATOR} ${idl_includes} --outputDir ${arg_DESTINATION} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --idlAttributesFile ${idl_attributes_file} ${_supplemental_dependency} ${_file}
             WORKING_DIRECTORY ${arg_BASE_DIR}
             VERBATIM)
         list(APPEND gen_sources ${arg_DESTINATION}/JS${_name}.cpp)
