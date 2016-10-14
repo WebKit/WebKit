@@ -1,3 +1,15 @@
+2016-10-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207322.
+
+        This change caused JSC test failures
+
+        Reverted changeset:
+
+        "Fix Array.prototype.splice ES6 compliance."
+        https://bugs.webkit.org/show_bug.cgi?id=163372
+        http://trac.webkit.org/changeset/207322
+
 2016-10-14  Mark Lam  <mark.lam@apple.com>
 
         JSON.parse should not modify frozen objects.
