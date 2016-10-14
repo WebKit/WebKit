@@ -158,8 +158,8 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
             else
                 document().resetActiveLinkColor();
         } else {
-            RGBA32 color;
-            if (CSSParser::parseColor(color, value, !document().inQuirksMode())) {
+            Color color = CSSParser::parseColor(value, !document().inQuirksMode());
+            if (color.isValid()) {
                 if (name == linkAttr)
                     document().setLinkColor(color);
                 else if (name == vlinkAttr)

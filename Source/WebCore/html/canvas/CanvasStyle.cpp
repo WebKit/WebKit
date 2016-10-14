@@ -43,44 +43,36 @@
 
 namespace WebCore {
 
-enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParsedSystemColor, ParseFailed };
-
-static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString, Document* document = nullptr)
+static bool isCurrentColorString(const String& colorString)
 {
-    if (equalLettersIgnoringASCIICase(colorString, "currentcolor"))
-        return ParsedCurrentColor;
-    if (CSSParser::parseColor(parsedColor, colorString))
-        return ParsedRGBA;
-    if (CSSParser::parseSystemColor(parsedColor, colorString, document))
-        return ParsedSystemColor;
-    return ParseFailed;
+    return equalLettersIgnoringASCIICase(colorString, "currentcolor");
 }
 
-RGBA32 currentColor(HTMLCanvasElement* canvas)
+static Color parseColor(const String& colorString, Document* document = nullptr)
+{
+    Color color = CSSParser::parseColor(colorString);
+    if (color.isValid())
+        return color;
+
+    return CSSParser::parseSystemColor(colorString, document);
+}
+
+Color currentColor(HTMLCanvasElement* canvas)
 {
     if (!canvas || !canvas->inDocument() || !canvas->inlineStyle())
         return Color::black;
-    RGBA32 rgba = Color::black;
-    CSSParser::parseColor(rgba, canvas->inlineStyle()->getPropertyValue(CSSPropertyColor));
-    return rgba;
+    Color color = CSSParser::parseColor(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor));
+    if (!color.isValid())
+        return Color::black;
+    return color;
 }
 
-bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement* canvas)
+Color parseColorOrCurrentColor(const String& colorString, HTMLCanvasElement* canvas)
 {
-    ColorParseResult parseResult = parseColor(parsedColor, colorString, canvas ? &canvas->document() : 0);
-    switch (parseResult) {
-    case ParsedRGBA:
-    case ParsedSystemColor:
-        return true;
-    case ParsedCurrentColor:
-        parsedColor = currentColor(canvas);
-        return true;
-    case ParseFailed:
-        return false;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    if (isCurrentColorString(colorString))
+        return currentColor(canvas);
+
+    return parseColor(colorString, canvas ? &canvas->document() : nullptr);
 }
 
 CanvasStyle::CanvasStyle(Color color)
@@ -133,39 +125,28 @@ CanvasStyle::~CanvasStyle()
         delete m_cmyka;
 }
 
-CanvasStyle CanvasStyle::createFromString(const String& color, Document* document)
+CanvasStyle CanvasStyle::createFromString(const String& colorString, Document* document)
 {
-    RGBA32 rgba;
-    ColorParseResult parseResult = parseColor(rgba, color, document);
-    switch (parseResult) {
-    case ParsedRGBA:
-    case ParsedSystemColor:
-        return CanvasStyle(rgba);
-    case ParsedCurrentColor:
+    if (isCurrentColorString(colorString))
         return CanvasStyle(ConstructCurrentColor);
-    case ParseFailed:
-        return CanvasStyle();
-    default:
-        ASSERT_NOT_REACHED();
-        return CanvasStyle();
-    }
+
+    Color color = parseColor(colorString, document);
+    if (color.isValid())
+        return CanvasStyle(color);
+
+    return CanvasStyle();
 }
 
-CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& color, float alpha)
+CanvasStyle CanvasStyle::createFromStringWithOverrideAlpha(const String& colorString, float alpha)
 {
-    RGBA32 rgba;
-    ColorParseResult parseResult = parseColor(rgba, color);
-    switch (parseResult) {
-    case ParsedRGBA:
-        return CanvasStyle(colorWithOverrideAlpha(rgba, alpha));
-    case ParsedCurrentColor:
+    if (isCurrentColorString(colorString))
         return CanvasStyle(CurrentColorWithOverrideAlpha, alpha);
-    case ParseFailed:
-        return CanvasStyle();
-    default:
-        ASSERT_NOT_REACHED();
-        return CanvasStyle();
-    }
+
+    Color color = parseColor(colorString);
+    if (color.isValid())
+        return CanvasStyle(colorWithOverrideAlpha(color.rgb(), alpha));
+
+    return CanvasStyle();
 }
 
 bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const

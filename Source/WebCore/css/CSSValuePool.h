@@ -34,6 +34,7 @@
 #include "CSSRevertValue.h"
 #include "CSSUnsetValue.h"
 #include "CSSValueKeywords.h"
+#include "ColorHash.h"
 #include <utility>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -60,7 +61,7 @@ public:
     Ref<CSSRevertValue> createRevertValue() { return m_revertValue.get(); }
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSValueID identifier);
     Ref<CSSPrimitiveValue> createIdentifierValue(CSSPropertyID identifier);
-    Ref<CSSPrimitiveValue> createColorValue(unsigned rgbValue);
+    Ref<CSSPrimitiveValue> createColorValue(const Color&);
     Ref<CSSPrimitiveValue> createValue(double value, CSSPrimitiveValue::UnitTypes);
     Ref<CSSPrimitiveValue> createValue(const String& value, CSSPrimitiveValue::UnitTypes type) { return CSSPrimitiveValue::create(value, type); }
     Ref<CSSPrimitiveValue> createValue(const Length& value, const RenderStyle& style) { return CSSPrimitiveValue::create(value, style); }
@@ -72,7 +73,7 @@ public:
 private:
     CSSValuePool();
 
-    typedef HashMap<unsigned, RefPtr<CSSPrimitiveValue>> ColorValueCache;
+    typedef HashMap<Color, RefPtr<CSSPrimitiveValue>> ColorValueCache;
     ColorValueCache m_colorValueCache;
 
     typedef HashMap<AtomicString, RefPtr<CSSValueList>> FontFaceValueCache;

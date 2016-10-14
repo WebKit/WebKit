@@ -50,15 +50,15 @@ CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint&
 {
 }
 
-void CanvasGradient::addColorStop(float value, const String& color, ExceptionCode& ec)
+void CanvasGradient::addColorStop(float value, const String& colorString, ExceptionCode& ec)
 {
     if (!(value >= 0 && value <= 1.0f)) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    RGBA32 rgba = 0;
-    if (!parseColorOrCurrentColor(rgba, color, 0 /*canvas*/)) {
+    Color color = parseColorOrCurrentColor(colorString, 0 /*canvas*/);
+    if (!color.isValid()) {
 #if ENABLE(DASHBOARD_SUPPORT)
         if (!m_dashboardCompatibilityMode)
             ec = SYNTAX_ERR;
@@ -68,7 +68,7 @@ void CanvasGradient::addColorStop(float value, const String& color, ExceptionCod
         return;
     }
 
-    m_gradient->addColorStop(value, Color(rgba));
+    m_gradient->addColorStop(value, color);
 }
 
 } // namespace
