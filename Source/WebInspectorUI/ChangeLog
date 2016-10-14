@@ -1,5 +1,24 @@
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove uses of delete in SourceCodeTextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=163379
+
+        Reviewed by Timothy Hatcher.
+
+        Remove uses of delete and better group member variables.
+        One of the deletes was deleting an incorrect property.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointAdded):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointRemoved):
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointMoved):
+        (WebInspector.SourceCodeTextEditor.prototype._tokenTrackingControllerHighlightedMarkedExpression):
+        (WebInspector.SourceCodeTextEditor.prototype._dismissEditingController):
+        (WebInspector.SourceCodeTextEditor.prototype.editingControllerDidFinishEditing):
+
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception: TypeError: this.positionToOffset is not a function - seen hovering expressions with Type Profiler enabled
         https://bugs.webkit.org/show_bug.cgi?id=163405
         <rdar://problem/28763953>

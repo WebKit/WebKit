@@ -39,16 +39,22 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._widgetMap = new Map;
         this._contentPopulated = false;
         this._invalidLineNumbers = {0: true};
-        this._ignoreContentDidChange = 0;
         this._requestingScriptContent = false;
         this._activeCallFrameSourceCodeLocation = null;
 
         this._typeTokenScrollHandler = null;
         this._typeTokenAnnotator = null;
         this._basicBlockAnnotator = null;
+        this._editingController = null;
 
         this._autoFormat = false;
         this._isProbablyMinified = false;
+
+        this._ignoreContentDidChange = 0;
+        this._ignoreLocationUpdateBreakpoint = null;
+        this._ignoreBreakpointAddedBreakpoint = null;
+        this._ignoreBreakpointRemovedBreakpoint = null;
+        this._ignoreAllBreakpointLocationUpdates = false;
 
         // FIXME: Currently this just jumps between resources and related source map resources. It doesn't "jump to symbol" yet.
         this._updateTokenTrackingControllerState();
@@ -1098,11 +1104,10 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);
 
         this._ignoreBreakpointAddedBreakpoint = breakpoint;
-
         var shouldSkipEventDispatch = false;
         var shouldSpeculativelyResolveBreakpoint = true;
         WebInspector.debuggerManager.addBreakpoint(breakpoint, shouldSkipEventDispatch, shouldSpeculativelyResolveBreakpoint);
-        delete this._ignoreBreakpointAddedBreakpoint;
+        this._ignoreBreakpointAddedBreakpoint = null;
 
         // Return the more accurate location and breakpoint info.
         return {
@@ -1128,7 +1133,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         this._ignoreBreakpointRemovedBreakpoint = breakpoint;
         WebInspector.debuggerManager.removeBreakpoint(breakpoint);
-        delete this._ignoreBreakpointAddedBreakpoint;
+        this._ignoreBreakpointRemovedBreakpoint = null;
     }
 
     textEditorBreakpointMoved(textEditor, oldLineNumber, oldColumnNumber, newLineNumber, newColumnNumber)
@@ -1149,7 +1154,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         var unformattedNewLineInfo = this._unformattedLineInfoForEditorLineInfo(newLineInfo);
         this._ignoreLocationUpdateBreakpoint = breakpoint;
         breakpoint.sourceCodeLocation.update(this._sourceCode, unformattedNewLineInfo.lineNumber, unformattedNewLineInfo.columnNumber);
-        delete this._ignoreLocationUpdateBreakpoint;
+        this._ignoreLocationUpdateBreakpoint = null;
 
         var accurateNewLineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
         this._addBreakpointWithEditorLineInfo(breakpoint, accurateNewLineInfo);
@@ -1771,7 +1776,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             var color = this._editingController.value;
             if (!color || !color.valid) {
                 editableMarker.clear();
-                delete this._editingController;
+                this._editingController = null;
                 return;
             }
         }
@@ -1786,7 +1791,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
             this._editingController.dismissHoverMenu(discrete);
 
         this.tokenTrackingController.hoveredMarker = null;
-        delete this._editingController;
+        this._editingController = null;
     }
 
     // CodeMirrorEditingController Delegate
@@ -1811,7 +1816,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
 
         this._ignoreContentDidChange--;
 
-        delete this._editingController;
+        this._editingController = null;
     }
 
     _setTypeTokenAnnotatorEnabledState(shouldActivate)
