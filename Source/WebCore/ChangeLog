@@ -1,3 +1,28 @@
+2016-10-14  Chris Dumez  <cdumez@apple.com>
+
+        [Mac] Allow throttling of background tabs that have media elements with no audible audio
+        https://bugs.webkit.org/show_bug.cgi?id=163402
+        <rdar://problem/28056151>
+
+        Reviewed by Gavin Barraclough.
+
+        Allow throttling of background tabs that have media elements with no audible audio.
+        We were taking an media assertion from the PageThrottler as soon as there was a
+        media element playing on the page. This prevented throttling of background tabs
+        even if those media elements had no audible audio, which was unfortunate.
+
+        We now have more fine-grained rules for when HTMLMediaElement should take an
+        assertion. I also added release logging to help debug such issues in the
+        future.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::updateVolume):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::updateAudioAssertionState):
+        (WebCore::HTMLMediaElement::effectiveMuted): Deleted.
+        * html/HTMLMediaElement.h:
+
 2016-10-14  Romain Bellessort  <romain.bellessort@crf.canon.fr>
 
         [Readable Streams API] Cleanup patch, fix small inconsistencies

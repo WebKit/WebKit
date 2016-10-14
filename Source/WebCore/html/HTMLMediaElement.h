@@ -769,6 +769,8 @@ private:
 
     bool effectiveMuted() const;
 
+    void updateAudioAssertionState();
+
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
@@ -1005,7 +1007,7 @@ private:
 #endif
 
     std::unique_ptr<MediaElementSession> m_mediaSession;
-    PageActivityAssertionToken m_activityToken;
+    PageActivityAssertionToken m_audioActivityToken;
     size_t m_reportedExtraMemoryCost;
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
