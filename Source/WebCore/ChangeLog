@@ -1,3 +1,48 @@
+2016-10-14  Antti Koivisto  <antti@apple.com>
+
+        Share inline stylesheets between shadow trees
+        https://bugs.webkit.org/show_bug.cgi?id=163353
+
+        Reviewed by Ryosuke Niwa and Andreas Kling.
+
+        If shadow trees have identical inline stylesheets the data structures can be shared.
+        In future this will also allow sharing style resolvers.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::createInline):
+
+            Move StyleSheetContents construction to the client.
+
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContextHash::hash):
+        (WebCore::CSSParserContextHash::equal):
+        (WTF::HashTraits<WebCore::CSSParserContext>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::CSSParserContext>::isDeletedValue):
+        (WTF::HashTraits<WebCore::CSSParserContext>::emptyValue):
+
+            Make CSSParserContext hashable.
+
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::createExtensionsStyleSheet):
+        (WebCore::ExtensionStyleSheets::pageUserSheet):
+        (WebCore::ExtensionStyleSheets::updateInjectedStyleSheetCache):
+
+            Don't use CSSStyleSheet::createInline, these are not really inline stylesheets.
+            Code cleanups.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::parserContextForForElement):
+        (WebCore::makeInlineStyleSheetCacheKey):
+        (WebCore::inlineStyleSheetCache):
+
+            Implement a simple cache for sharing stylesheets with identical text and context.
+
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::InlineStyleSheetOwner::clearCache):
+        * dom/InlineStyleSheetOwner.h:
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::releaseNoncriticalMemory):
+
 2016-10-14  Chris Dumez  <cdumez@apple.com>
 
         [Mac] Allow throttling of background tabs that have media elements with no audible audio
