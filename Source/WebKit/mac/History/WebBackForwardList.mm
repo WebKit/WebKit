@@ -29,6 +29,7 @@
 #import "WebBackForwardList.h"
 #import "WebBackForwardListInternal.h"
 
+#import "BackForwardList.h"
 #import "WebFrameInternal.h"
 #import "WebHistoryItemInternal.h"
 #import "WebHistoryItemPrivate.h"
@@ -38,7 +39,6 @@
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
-#import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageCache.h>
@@ -82,17 +82,17 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (WebBackForwardList *webBackForwardList = backForwardLists().get(backForwardList))
         return webBackForwardList;
 
-    return [[[WebBackForwardList alloc] initWithBackForwardList:backForwardList] autorelease];
+    return [[[WebBackForwardList alloc] initWithBackForwardList:*backForwardList] autorelease];
 }
 
-- (id)initWithBackForwardList:(PassRefPtr<BackForwardList>)backForwardList
+- (id)initWithBackForwardList:(Ref<BackForwardList>&&)backForwardList
 {   
     WebCoreThreadViolationCheckRoundOne();
     self = [super init];
     if (!self)
         return nil;
 
-    _private = reinterpret_cast<WebBackForwardListPrivate*>(backForwardList.leakRef());
+    _private = reinterpret_cast<WebBackForwardListPrivate*>(&backForwardList.leakRef());
     backForwardLists().set(core(self), self);
     return self;
 }
@@ -332,12 +332,12 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (void)setPageCacheSize:(NSUInteger)size
 {
-    [kit(core(self)->page()) setUsesPageCache:size != 0];
+    [core(self)->webView() setUsesPageCache:size != 0];
 }
 
 - (NSUInteger)pageCacheSize
 {
-    return [kit(core(self)->page()) usesPageCache] ? PageCache::singleton().maxSize() : 0;
+    return [core(self)->webView() usesPageCache] ? PageCache::singleton().maxSize() : 0;
 }
 
 - (int)backListCount

@@ -28,6 +28,7 @@
 
 #import "WebFrameLoaderClient.h"
 
+#import "BackForwardList.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLFormElementInternal.h"
 #import "WebBackForwardList.h"
@@ -75,7 +76,6 @@
 #import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BackForwardController.h>
-#import <WebCore/BackForwardList.h>
 #import <WebCore/CachedFrame.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/DNS.h>

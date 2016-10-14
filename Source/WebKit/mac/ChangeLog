@@ -1,5 +1,31 @@
 2016-10-13  Anders Carlsson  <andersca@apple.com>
 
+        Move BackForwardList from WebCore to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=163418
+
+        Reviewed by Tim Horton.
+
+        * History/BackForwardList.h: Renamed from Source/WebCore/history/BackForwardList.h.
+        (BackForwardList::create):
+        (BackForwardList::webView):
+        * History/BackForwardList.mm: Renamed from Source/WebCore/history/BackForwardList.cpp.
+        (BackForwardList::BackForwardList):
+        (BackForwardList::close):
+        (BackForwardList::containsItem):
+        * History/WebBackForwardList.mm:
+        (kit):
+        (-[WebBackForwardList initWithBackForwardList:]):
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList pageCacheSize]):
+        * History/WebBackForwardListInternal.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
+2016-10-13  Anders Carlsson  <andersca@apple.com>
+
         Get rid of the HistoryItemVector typedef
         https://bugs.webkit.org/show_bug.cgi?id=163398
 

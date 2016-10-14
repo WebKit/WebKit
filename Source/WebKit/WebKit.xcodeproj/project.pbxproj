@@ -55,6 +55,8 @@
 		1A86CCD41AD48A620074BA89 /* WebApplicationCacheInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A86CCD31AD48A620074BA89 /* WebApplicationCacheInternal.h */; };
 		1A8DED500EE88B8A00F25022 /* HostedNetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */; };
 		1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */; };
+		1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9119F41DB0470A0087D1FD /* BackForwardList.mm */; };
+		1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9119F51DB0470A0087D1FD /* BackForwardList.h */; };
 		1AA83F831A5C4AE400026EC6 /* WebDatabaseProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA83F811A5C4AE400026EC6 /* WebDatabaseProvider.cpp */; };
 		1AA83F841A5C4AE400026EC6 /* WebDatabaseProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA83F821A5C4AE400026EC6 /* WebDatabaseProvider.h */; };
 		1AA879B611CBE9BF003C664F /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */; };
@@ -849,6 +851,8 @@
 		1A86CCD31AD48A620074BA89 /* WebApplicationCacheInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheInternal.h; sourceTree = "<group>"; };
 		1A8DED4E0EE88B8A00F25022 /* HostedNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HostedNetscapePluginStream.h; sourceTree = "<group>"; };
 		1A8DED4F0EE88B8A00F25022 /* HostedNetscapePluginStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HostedNetscapePluginStream.mm; sourceTree = "<group>"; };
+		1A9119F41DB0470A0087D1FD /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
+		1A9119F51DB0470A0087D1FD /* BackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardList.h; sourceTree = "<group>"; };
 		1AA83F811A5C4AE400026EC6 /* WebDatabaseProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDatabaseProvider.cpp; path = ../../Storage/WebDatabaseProvider.cpp; sourceTree = "<group>"; };
 		1AA83F821A5C4AE400026EC6 /* WebDatabaseProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDatabaseProvider.h; path = ../../Storage/WebDatabaseProvider.h; sourceTree = "<group>"; };
 		1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlatformStrategies.h; sourceTree = "<group>"; };
@@ -1848,6 +1852,8 @@
 		25A8176801B5474B0ECA149E /* History */ = {
 			isa = PBXGroup;
 			children = (
+				1A9119F41DB0470A0087D1FD /* BackForwardList.mm */,
+				1A9119F51DB0470A0087D1FD /* BackForwardList.h */,
 				1A60518D17502A5D00BC62F5 /* BinaryPropertyList.cpp */,
 				1A60518E17502A5D00BC62F5 /* BinaryPropertyList.h */,
 				1A60519017502A5D00BC62F5 /* HistoryPropertyList.h */,
@@ -2895,6 +2901,7 @@
 				93D437651D57ABEF00AB85EA /* DOMProcessingInstructionInternal.h in Headers */,
 				93D437661D57ABEF00AB85EA /* DOMProgressEvent.h in Headers */,
 				93D437681D57ABEF00AB85EA /* DOMRange.h in Headers */,
+				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				93D4376A1D57ABEF00AB85EA /* DOMRangeException.h in Headers */,
 				93D4376B1D57ABEF00AB85EA /* DOMRangeInternal.h in Headers */,
 				93D4376C1D57ABEF00AB85EA /* DOMRanges.h in Headers */,
@@ -3539,6 +3546,7 @@
 				CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */,
 				B6CE5C24100BC5CE00219936 /* WebApplicationCache.mm in Sources */,
 				A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */,
+				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				9398111D0824BF01008DF038 /* WebArchive.mm in Sources */,
 				939810CF0824BF01008DF038 /* WebAuthenticationPanel.m in Sources */,
 				939810BC0824BF01008DF038 /* WebBackForwardList.mm in Sources */,

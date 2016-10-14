@@ -1,3 +1,20 @@
+2016-10-13  Anders Carlsson  <andersca@apple.com>
+
+        Move BackForwardList from WebCore to WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=163418
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::BackForwardController):
+        * history/BackForwardController.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
 2016-10-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Changing the argument on fit-content() doesn't cause the grid to be relayout

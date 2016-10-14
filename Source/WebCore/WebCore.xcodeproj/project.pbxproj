@@ -5280,8 +5280,6 @@
 		BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA846D50DC67A350026C309 /* RenderReplica.h */; };
 		BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C81C11E3D36900812FB7 /* BackForwardController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */; };
-		BCA8CA5F11E4E6D100812FB7 /* BackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8CA5D11E4E6D100812FB7 /* BackForwardList.cpp */; };
-		BCA8CA6011E4E6D100812FB7 /* BackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8CA5E11E4E6D100812FB7 /* BackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */; };
 		BCAA487014A052530088FAC4 /* PlatformEventFactoryMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
@@ -12806,8 +12804,6 @@
 		BCA846D50DC67A350026C309 /* RenderReplica.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderReplica.h; sourceTree = "<group>"; };
 		BCA8C81C11E3D36900812FB7 /* BackForwardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardController.h; sourceTree = "<group>"; };
 		BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardController.cpp; sourceTree = "<group>"; };
-		BCA8CA5D11E4E6D100812FB7 /* BackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardList.cpp; sourceTree = "<group>"; };
-		BCA8CA5E11E4E6D100812FB7 /* BackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardList.h; sourceTree = "<group>"; };
 		BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformEventFactoryMac.mm; sourceTree = "<group>"; };
 		BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEventFactoryMac.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Scrollbar.cpp; sourceTree = "<group>"; };
@@ -16698,8 +16694,6 @@
 				51741D0B0B07259A00ED442C /* BackForwardClient.h */,
 				BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */,
 				BCA8C81C11E3D36900812FB7 /* BackForwardController.h */,
-				BCA8CA5D11E4E6D100812FB7 /* BackForwardList.cpp */,
-				BCA8CA5E11E4E6D100812FB7 /* BackForwardList.h */,
 				51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */,
 				51C0AA380F2AA10A001648C2 /* CachedFrame.h */,
 				51CBFC980D10E483002DBF51 /* CachedFramePlatformData.h */,
@@ -24000,7 +23994,6 @@
 				91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */,
 				51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */,
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
-				BCA8CA6011E4E6D100812FB7 /* BackForwardList.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarProp.h in Headers */,
 				460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */,
 				379E61CA126CA5C400B63E8D /* BaseButtonInputType.h in Headers */,
@@ -27779,7 +27772,6 @@
 				1A299FE71D7F5FA600A60093 /* RenderThemeCocoa.mm in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,
-				BCA8CA5F11E4E6D100812FB7 /* BackForwardList.cpp in Sources */,
 				BC124EE70C2641CD009E2349 /* BarProp.cpp in Sources */,
 				460BB6151D0A1BF000221812 /* Base64Utilities.cpp in Sources */,
 				379E61C9126CA5C300B63E8D /* BaseButtonInputType.cpp in Sources */,

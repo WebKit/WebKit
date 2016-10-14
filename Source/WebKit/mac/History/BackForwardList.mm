@@ -24,25 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
 #include "BackForwardList.h"
 
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
-#include "HistoryItem.h"
-#include "Logging.h"
-#include "Page.h"
-#include "PageCache.h"
-#include "SerializedScriptValue.h"
+#include <WebCore/PageCache.h>
 
-namespace WebCore {
+using namespace WebCore;
 
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;
 
-BackForwardList::BackForwardList(Page* page)
-    : m_page(page)
+BackForwardList::BackForwardList(WebView *webView)
+    : m_webView(webView)
     , m_current(NoCurrentItemIndex)
     , m_capacity(DefaultCapacity)
     , m_closed(true)
@@ -88,17 +80,15 @@ void BackForwardList::addItem(Ref<HistoryItem>&& newItem)
 void BackForwardList::goBack()
 {
     ASSERT(m_current > 0);
-    if (m_current > 0) {
+    if (m_current > 0)
         m_current--;
-    }
 }
 
 void BackForwardList::goForward()
 {
     ASSERT(m_current < m_entries.size() - 1);
-    if (m_current < m_entries.size() - 1) {
+    if (m_current < m_entries.size() - 1)
         m_current++;
-    }
 }
 
 void BackForwardList::goToItem(HistoryItem* item)
@@ -106,13 +96,14 @@ void BackForwardList::goToItem(HistoryItem* item)
     if (!m_entries.size() || !item)
         return;
         
-    unsigned int index = 0;
-    for (; index < m_entries.size(); ++index)
+    unsigned index = 0;
+    for (; index < m_entries.size(); ++index) {
         if (m_entries[index].ptr() == item)
             break;
-    if (index < m_entries.size()) {
-        m_current = index;
     }
+
+    if (index < m_entries.size())
+        m_current = index;
 }
 
 HistoryItem* BackForwardList::backItem()
@@ -177,9 +168,9 @@ void BackForwardList::setCapacity(int size)
 
     if (!size)
         m_current = NoCurrentItemIndex;
-    else if (m_current > m_entries.size() - 1) {
+    else if (m_current > m_entries.size() - 1)
         m_current = m_entries.size() - 1;
-    }
+
     m_capacity = size;
 }
 
@@ -255,7 +246,7 @@ void BackForwardList::close()
         PageCache::singleton().remove(item);
     m_entries.clear();
     m_entryHash.clear();
-    m_page = nullptr;
+    m_webView = nullptr;
     m_closed = true;
 }
 
@@ -291,5 +282,3 @@ bool BackForwardList::containsItem(HistoryItem* entry)
 {
     return m_entryHash.contains(entry);
 }
-
-}; // namespace WebCore

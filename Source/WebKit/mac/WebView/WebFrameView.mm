@@ -28,6 +28,7 @@
 
 #import "WebFrameView.h"
 
+#import "BackForwardList.h"
 #import "WebClipView.h"
 #import "WebDataSourcePrivate.h"
 #import "WebDocument.h"
@@ -52,7 +53,6 @@
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/BackForwardController.h>
-#import <WebCore/BackForwardList.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>

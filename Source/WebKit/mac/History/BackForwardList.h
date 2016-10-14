@@ -25,38 +25,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BackForwardList_h
-#define BackForwardList_h
+#pragma once
 
-#include "BackForwardClient.h"
+#include <WebCore/BackForwardClient.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
+OBJC_CLASS WebView;
 
-class Page;
+typedef HashSet<RefPtr<WebCore::HistoryItem>> HistoryItemHashSet;
 
-typedef HashSet<RefPtr<HistoryItem>> HistoryItemHashSet;
-
-class BackForwardList : public BackForwardClient {
+class BackForwardList : public WebCore::BackForwardClient {
 public: 
-    static Ref<BackForwardList> create(Page* page) { return adoptRef(*new BackForwardList(page)); }
+    static Ref<BackForwardList> create(WebView *webView) { return adoptRef(*new BackForwardList(webView)); }
     virtual ~BackForwardList();
 
-    Page* page() { return m_page; }
+    WebView *webView() { return m_webView; }
 
-    void addItem(Ref<HistoryItem>&&) override;
+    void addItem(Ref<WebCore::HistoryItem>&&) override;
     WEBCORE_EXPORT void goBack();
     WEBCORE_EXPORT void goForward();
-    void goToItem(HistoryItem*) override;
+    void goToItem(WebCore::HistoryItem*) override;
         
-    WEBCORE_EXPORT HistoryItem* backItem();
-    WEBCORE_EXPORT HistoryItem* currentItem();
-    WEBCORE_EXPORT HistoryItem* forwardItem();
-    HistoryItem* itemAtIndex(int) override;
+    WEBCORE_EXPORT WebCore::HistoryItem* backItem();
+    WEBCORE_EXPORT WebCore::HistoryItem* currentItem();
+    WEBCORE_EXPORT WebCore::HistoryItem* forwardItem();
+    WebCore::HistoryItem* itemAtIndex(int) override;
 
-    WEBCORE_EXPORT void backListWithLimit(int, Vector<Ref<HistoryItem>>&);
-    WEBCORE_EXPORT void forwardListWithLimit(int, Vector<Ref<HistoryItem>>&);
+    WEBCORE_EXPORT void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
+    WEBCORE_EXPORT void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
 
     WEBCORE_EXPORT int capacity();
     WEBCORE_EXPORT void setCapacity(int);
@@ -64,13 +61,13 @@ public:
     WEBCORE_EXPORT void setEnabled(bool);
     int backListCount() override;
     int forwardListCount() override;
-    WEBCORE_EXPORT bool containsItem(HistoryItem*);
+    WEBCORE_EXPORT bool containsItem(WebCore::HistoryItem*);
 
     void close() override;
     WEBCORE_EXPORT bool closed();
 
-    WEBCORE_EXPORT void removeItem(HistoryItem*);
-    WEBCORE_EXPORT Vector<Ref<HistoryItem>>& entries();
+    WEBCORE_EXPORT void removeItem(WebCore::HistoryItem*);
+    WEBCORE_EXPORT Vector<Ref<WebCore::HistoryItem>>& entries();
 
 #if PLATFORM(IOS)
     unsigned current() override;
@@ -80,17 +77,13 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT explicit BackForwardList(Page*);
+    WEBCORE_EXPORT explicit BackForwardList(WebView *);
 
-    Page* m_page;
-    Vector<Ref<HistoryItem>> m_entries;
+    WebView* m_webView;
+    Vector<Ref<WebCore::HistoryItem>> m_entries;
     HistoryItemHashSet m_entryHash;
     unsigned m_current;
     unsigned m_capacity;
     bool m_closed;
     bool m_enabled;
 };
-    
-} // namespace WebCore
-
-#endif // BackForwardList_h

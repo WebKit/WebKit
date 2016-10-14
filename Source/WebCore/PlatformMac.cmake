@@ -690,7 +690,6 @@ set(WebCore_FORWARDING_HEADERS_FILES
 
     editing/mac/TextAlternativeWithRange.h
 
-    history/BackForwardList.h
     history/HistoryItem.h
     history/PageCache.h
 

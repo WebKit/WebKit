@@ -31,6 +31,7 @@
 #import "WebViewInternal.h"
 #import "WebViewData.h"
 
+#import "BackForwardList.h"
 #import "DOMCSSStyleDeclarationInternal.h"
 #import "DOMDocumentInternal.h"
 #import "DOMInternal.h"
@@ -121,7 +122,6 @@
 #import <WebCore/AnimationController.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>
-#import <WebCore/BackForwardList.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
@@ -1032,6 +1032,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
 #endif
 
+    pageConfiguration.backForwardClient = BackForwardList::create(self);
+
 #if ENABLE(APPLE_PAY)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
 #endif
@@ -1281,6 +1283,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinatorClient();
 #endif
 
+    pageConfiguration.backForwardClient = BackForwardList::create(self);
     pageConfiguration.inspectorClient = new WebInspectorClient(self);
     pageConfiguration.loaderClientForMainFrame = new WebFrameLoaderClient;
     pageConfiguration.progressTrackerClient = new WebProgressTrackerClient(self);

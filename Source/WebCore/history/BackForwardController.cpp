@@ -26,18 +26,15 @@
 #include "config.h"
 #include "BackForwardController.h"
 
-#include "BackForwardList.h"
-#include "HistoryItem.h"
+#include "BackForwardClient.h"
 #include "Page.h"
 
 namespace WebCore {
 
-BackForwardController::BackForwardController(Page& page, RefPtr<BackForwardClient>&& client)
+BackForwardController::BackForwardController(Page& page, Ref<BackForwardClient>&& client)
     : m_page(page)
     , m_client(WTFMove(client))
 {
-    if (!m_client)
-        m_client = BackForwardList::create(&page);
 }
 
 BackForwardController::~BackForwardController()

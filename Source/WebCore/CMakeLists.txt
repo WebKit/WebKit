@@ -1604,7 +1604,6 @@ set(WebCore_SOURCES
     fileapi/WebKitBlobBuilder.cpp
 
     history/BackForwardController.cpp
-    history/BackForwardList.cpp
     history/CachedFrame.cpp
     history/CachedPage.cpp
     history/HistoryItem.cpp
