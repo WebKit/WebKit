@@ -181,6 +181,16 @@
 {
     _processPoolConfiguration->setCTDataConnectionServiceType(ctDataConnectionServiceType);
 }
+
+- (BOOL)alwaysRunsAtBackgroundPriority
+{
+    return _processPoolConfiguration->alwaysRunsAtBackgroundPriority();
+}
+
+- (void)setAlwaysRunsAtBackgroundPriority:(BOOL)alwaysRunsAtBackgroundPriority
+{
+    _processPoolConfiguration->setAlwaysRunsAtBackgroundPriority(alwaysRunsAtBackgroundPriority);
+}
 #endif
 
 - (NSString *)description

@@ -108,6 +108,9 @@ public:
     const WTF::String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
     void setSourceApplicationSecondaryIdentifier(const WTF::String& sourceApplicationSecondaryIdentifier) { m_sourceApplicationSecondaryIdentifier = sourceApplicationSecondaryIdentifier; }
 
+    bool alwaysRunsAtBackgroundPriority() const { return m_alwaysRunsAtBackgroundPriority; }
+    void setAlwaysRunsAtBackgroundPriority(bool alwaysRunsAtBackgroundPriority) { m_alwaysRunsAtBackgroundPriority = alwaysRunsAtBackgroundPriority; }
+
 #if PLATFORM(IOS)
     const WTF::String& ctDataConnectionServiceType() const { return m_ctDataConnectionServiceType; }
     void setCTDataConnectionServiceType(const WTF::String& ctDataConnectionServiceType) { m_ctDataConnectionServiceType = ctDataConnectionServiceType; }
@@ -138,6 +141,7 @@ private:
     Vector<WTF::String> m_overrideLanguages;
     WTF::String m_sourceApplicationBundleIdentifier;
     WTF::String m_sourceApplicationSecondaryIdentifier;
+    bool m_alwaysRunsAtBackgroundPriority { false };
 #if PLATFORM(IOS)
     WTF::String m_ctDataConnectionServiceType;
 #endif

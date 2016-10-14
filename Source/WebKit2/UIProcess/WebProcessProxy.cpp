@@ -927,6 +927,11 @@ void WebProcessProxy::sendProcessDidResume()
         send(Messages::WebProcess::ProcessDidResume(), 0);
 }
 
+bool WebProcessProxy::alwaysRunsAtBackgroundPriority()
+{
+    return m_processPool->alwaysRunsAtBackgroundPriority();
+}
+
 void WebProcessProxy::processReadyToSuspend()
 {
     m_throttler.processReadyToSuspend();

@@ -1,3 +1,39 @@
+2016-10-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Add API to restrict WebKit processes to background priority
+        https://bugs.webkit.org/show_bug.cgi?id=163363
+
+        Reviewed by Anders Carlson.
+
+        Add API on _WKProcessPoolConfiguration to flag a process pool as 'alwaysRunsAtBackgroundPriority'.
+        WebContent and Networking processes associated with that pool will only run a background priority,
+        when they otherwise would have run at foreground priority.
+
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+            - Add m_alwaysRunsAtBackgroundPriority flag to pool configuration object.
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration alwaysRunsAtBackgroundPriority]):
+        (-[_WKProcessPoolConfiguration setAlwaysRunsAtBackgroundPriority:]):
+            - Expose new configuration property through API.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::alwaysRunsAtBackgroundPriority):
+        * UIProcess/Network/NetworkProcessProxy.h:
+            - Support ProcessThrottlerClient interface to check if alwaysRunsAtBackgroundPriority is set.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::assertionState):
+            - When determining whether to take a foreground exception check alwaysRunsAtBackgroundPriority.
+        * UIProcess/ProcessThrottlerClient.h:
+            - Add interface to access alwaysRunsAtBackgroundPriority state of WebProcess of NetworkProcess.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        * UIProcess/WebProcessPool.h:
+            - Add m_alwaysRunsAtBackgroundPriority, set by configuration.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::alwaysRunsAtBackgroundPriority):
+        * UIProcess/WebProcessProxy.h:
+            - Support ProcessThrottlerClient interface to check if alwaysRunsAtBackgroundPriority is set.
+
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkCache aware of fetch cache mode

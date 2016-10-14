@@ -390,6 +390,11 @@ void NetworkProcessProxy::sendProcessDidResume()
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
 }
 
+bool NetworkProcessProxy::alwaysRunsAtBackgroundPriority()
+{
+    return m_processPool.alwaysRunsAtBackgroundPriority();
+}
+
 void NetworkProcessProxy::processReadyToSuspend()
 {
     m_throttler.processReadyToSuspend();

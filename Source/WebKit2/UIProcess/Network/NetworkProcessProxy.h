@@ -91,6 +91,7 @@ private:
     void sendPrepareToSuspend() override;
     void sendCancelPrepareToSuspend() override;
     void sendProcessDidResume() override;
+    bool alwaysRunsAtBackgroundPriority() override;
     void didSetAssertionState(AssertionState) override;
 
     // IPC::Connection::Client
