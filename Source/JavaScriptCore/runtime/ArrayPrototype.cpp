@@ -922,9 +922,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     }
 
     unsigned actualStart = argumentClampedIndexFromStartOrEnd(exec, 0, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned actualDeleteCount = length - actualStart;
+    unsigned insertCount = 0;
     if (exec->argumentCount() > 1) {
+        insertCount = exec->argumentCount() - 2;
         double deleteCount = exec->uncheckedArgument(1).toInteger(exec);
         if (deleteCount < 0)
             actualDeleteCount = 0;
@@ -934,9 +937,13 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             actualDeleteCount = static_cast<unsigned>(deleteCount);
     }
 
+    // FIXME: Need to implement step 8 of the spec https://tc39.github.io/ecma262/#sec-array.prototype.splice here.
+    // https://bugs.webkit.org/show_bug.cgi?id=163417
+
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, actualDeleteCount);
+    ASSERT(!scope.exception() || speciesResult.first == SpeciesConstructResult::Exception);
     if (speciesResult.first == SpeciesConstructResult::Exception)
-        return JSValue::encode(jsUndefined());
+        return encodedJSValue();
 
     JSObject* result = nullptr;
     if (speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj))
@@ -966,10 +973,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
                     continue;
                 result->initializeIndex(vm, k, v);
             }
+            ASSERT(!scope.exception());
         }
+        setLength(exec, vm, result, actualDeleteCount);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
-    unsigned itemCount = std::max<int>(exec->argumentCount() - 2, 0);
+    unsigned itemCount = insertCount;
+    ASSERT(itemCount == static_cast<unsigned>(std::max<int>(exec->argumentCount() - 2, 0)));
     if (itemCount < actualDeleteCount) {
         shift<JSArray::ShiftCountForSplice>(exec, thisObj, actualStart, actualDeleteCount, itemCount, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
