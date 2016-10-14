@@ -133,7 +133,7 @@ function shouldThrow(func, message) {
     if (called)
         throw new Error(called);
     toStringCalled = false;
-    shouldThrow(function () { test(null, 20, propertyKey); }, "TypeError: null is not an object (near '...for (var i = 0; i < length; ++i)...')");
+    shouldThrow(function () { test(null, 20, propertyKey); }, "TypeError: null is not an object (evaluating 'array[property]')");
     if (toStringCalled)
         throw new Error("toString is called.");
 }());

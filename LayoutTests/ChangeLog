@@ -1,3 +1,16 @@
+2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Exception message for expressions with multiple bracket accesses is inconsistent / incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=163426
+
+        Reviewed by Geoffrey Garen.
+
+        * js/exception-expression-offset-expected.txt:
+        * js/script-tests/exception-expression-offset.js:
+        (testException):
+        Correct existing tests and add new tests for multiple and intermixed
+        dot / bracket accesses.
+
 2016-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Hosts of URLs with non-special schemes should be case-sensitive, and non-ASCII characters in such hosts should be punycode-encoded

@@ -1,3 +1,17 @@
+2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Exception message for expressions with multiple bracket accesses is inconsistent / incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=163426
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BracketAccessorNode::emitBytecode):
+        It matters where emitExpressionInfo is called since it gathers
+        info about where we are in the instruction stream. We need to
+        emit it before the bytecode that we want to associate the data
+        with. In this case, before the getById / getByVal.
+
 2016-10-13  Mark Lam  <mark.lam@apple.com>
 
         Fix Array.prototype.splice ES6 compliance.

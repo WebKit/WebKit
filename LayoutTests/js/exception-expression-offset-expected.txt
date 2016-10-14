@@ -5,85 +5,109 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Testing 'undefined.a++'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.a')"
 
 Testing '++undefined.a'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.a')"
 
 Testing 'undefined[0]++'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
 
 Testing '++undefined[1]'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[1]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[1]')"
 
 Testing 'undefined.b'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.b')"
 
 Testing 'undefined[0]'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
 
 Testing 'undefined.b += 1'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.b')"
 
 Testing 'undefined[0] += 1'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
 
 Testing 'undefined()'
-FAIL ex.message == "'undefined' is not a function (evaluating 'undefined()')" should be true. Was false.
+PASS ex.message is "undefined is not a function. (In 'undefined()', 'undefined' is undefined)"
 
 Testing 'new undefined()'
-FAIL ex.message == "'undefined' is not a constructor (evaluating 'new undefined()')" should be true. Was false.
+PASS ex.message is "undefined is not a constructor (evaluating 'new undefined()')"
 
 Testing '({}).b()'
-FAIL ex.message == "'undefined' is not a function (evaluating '({}).b()')" should be true. Was false.
+PASS ex.message is "({}).b is not a function. (In '({}).b()', '({}).b' is undefined)"
 
 Testing 'new {}.b()'
-FAIL ex.message == "'undefined' is not a constructor (evaluating 'new {}.b()')" should be true. Was false.
+PASS ex.message is "undefined is not a constructor (evaluating 'new {}.b()')"
 
 Testing '1()'
-FAIL ex.message == "'1' is not a function (evaluating '1()')" should be true. Was false.
+PASS ex.message is "1 is not a function. (In '1()', '1' is 1)"
 
 Testing 'new 1()'
-FAIL ex.message == "'1' is not a constructor (evaluating 'new 1()')" should be true. Was false.
+PASS ex.message is "1 is not a constructor (evaluating 'new 1()')"
 
 Testing 'throw { message : 'thrown object' }'
-PASS ex.message == "thrown object" is true
+PASS ex.message is "thrown object"
 
 Testing '1 in undefined'
-FAIL ex.message == "'undefined' is not a valid argument for 'in' (evaluating '1 in undefined')" should be true. Was false.
+PASS ex.message is "undefined is not an Object. (evaluating '1 in undefined')"
 
 Testing '1 instanceof undefined'
-FAIL ex.message == "'undefined' is not a valid argument for 'instanceof' (evaluating '1 instanceof undefined')" should be true. Was false.
+PASS ex.message is "Right hand side of instanceof is not an object"
 
 Testing 'for (undefined.b in [1]) {}'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.b')"
 
 Testing 'for (undefined[0] in [1]) {}'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
 
 Testing 'undefined.a = 5'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a = 5')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.a = 5')"
 
 Testing 'undefined[0] = 5'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0] = 5')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0] = 5')"
 
 Testing '({b:undefined}).b.a = 5'
-FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a = 5')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating '({b:undefined}).b.a = 5')"
 
 Testing '({b:undefined}).b[0] = 5'
-FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0] = 5')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating '({b:undefined}).b[0] = 5')"
 
 Testing 'undefined.a += 5'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined.a')"
 
 Testing 'undefined[0] += 5'
-FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
 
 Testing '({b:undefined}).b.a += 5'
-FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating '({b:undefined}).b.a')"
 
 Testing '({b:undefined}).b[0] += 5'
-FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0]')" should be true. Was false.
+PASS ex.message is "undefined is not an object (evaluating '({b:undefined}).b[0]')"
+
+Testing '[].a.b.x'
+PASS ex.message is "undefined is not an object (evaluating '[].a.b')"
+
+Testing '[]['a']['b'].x'
+PASS ex.message is "undefined is not an object (evaluating '[]['a']['b']')"
+
+Testing '[].a['b'].x'
+PASS ex.message is "undefined is not an object (evaluating '[].a['b']')"
+
+Testing '[]['a'].b.x'
+PASS ex.message is "undefined is not an object (evaluating '[]['a'].b')"
+
+Testing 'func(undefined.x)'
+PASS ex.message is "undefined is not an object (evaluating 'undefined.x')"
+
+Testing 'func(null.x)'
+PASS ex.message is "null is not an object (evaluating 'null.x')"
+
+Testing 'func(undefined[0])'
+PASS ex.message is "undefined is not an object (evaluating 'undefined[0]')"
+
+Testing 'func(null[0])'
+PASS ex.message is "null is not an object (evaluating 'null[0]')"
 PASS successfullyParsed is true
 
 TEST COMPLETE

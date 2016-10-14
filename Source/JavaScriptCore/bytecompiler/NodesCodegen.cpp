@@ -633,15 +633,17 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
         RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
         RefPtr<RegisterID> thisValue = generator.ensureThis();
         RefPtr<RegisterID> superBase = emitSuperBaseForCallee(generator);
+
         if (isNonIndexStringElement(*m_subscript)) {
             const Identifier& id = static_cast<StringNode*>(m_subscript)->value();
+            generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             generator.emitGetById(finalDest.get(), superBase.get(), thisValue.get(), id);
         } else  {
             RefPtr<RegisterID> subscript = generator.emitNode(m_subscript);
+            generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
             generator.emitGetByVal(finalDest.get(), superBase.get(), thisValue.get(), subscript.get());
         }
 
-        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         generator.emitProfileType(finalDest.get(), divotStart(), divotEnd());
         return finalDest.get();
     }
@@ -651,14 +653,14 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
 
     if (isNonIndexStringElement(*m_subscript)) {
         RefPtr<RegisterID> base = generator.emitNode(m_base);
+        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         ret = generator.emitGetById(finalDest.get(), base.get(), static_cast<StringNode*>(m_subscript)->value());
     } else {
         RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_subscriptHasAssignments, m_subscript->isPure(generator));
         RegisterID* property = generator.emitNode(m_subscript);
+        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         ret = generator.emitGetByVal(finalDest.get(), base.get(), property);
     }
-
-    generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
 
     generator.emitProfileType(finalDest.get(), divotStart(), divotEnd());
     return ret;
