@@ -170,18 +170,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     m_cfRequest = adoptCF(cfRequest);
 }
 
+// FIXME: We should use a switch based on ResourceRequestCachePolicy parameter
 static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
 {
-    switch (policy) {
-    case UseProtocolCachePolicy:
-        return CFURLRequestUseProtocolCachePolicy;
-    case ReturnCacheDataElseLoad:
-        return CFURLRequestReturnCacheDataElseLoad;
-    case ReturnCacheDataDontLoad:
-        return CFURLRequestReturnCacheDataDontLoad;
-    default:
-        return CFURLRequestReloadIgnoringLocalCacheData;
-    }
+    return static_cast<CFURLRequestCachePolicy>((policy <= ReturnCacheDataDontLoad) ? policy : ReloadIgnoringCacheData);
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()
