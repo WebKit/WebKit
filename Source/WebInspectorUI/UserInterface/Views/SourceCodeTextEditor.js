@@ -1516,7 +1516,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         var sourceCode = this._sourceCode;
         var sourceID = sourceCode instanceof WebInspector.Script ? sourceCode.id : sourceCode.scripts[0].id;
         var range = candidate.hoveredTokenRange;
-        var offset = this.positionToOffset({line: range.start.line, ch: range.start.ch});
+        var offset = this.currentPositionToOriginalOffset(range.start);
 
         var allRequests = [{
             typeInformationDescriptor: WebInspector.ScriptSyntaxTree.TypeProfilerSearchDescriptor.NormalExpression,
