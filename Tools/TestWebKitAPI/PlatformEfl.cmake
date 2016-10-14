@@ -97,6 +97,7 @@ set(test_webkit2_api_BINARIES
     PendingAPIRequestURL
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
+    ProvisionalURLAfterWillSendRequestCallback
     ResponsivenessTimerDoesntFireEarly
     ShouldGoToBackForwardListItem
     TerminateTwice
