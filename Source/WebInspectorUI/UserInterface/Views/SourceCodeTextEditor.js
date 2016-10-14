@@ -1215,7 +1215,7 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
         this._reinsertAllIssues();
     }
 
-    textEditorExecutionHighlightRange(offset, position, callback)
+    textEditorExecutionHighlightRange(offset, position, characterAtOffset, callback)
     {
         let script = this._getAssociatedScript(position);
         if (!script) {
@@ -1283,6 +1283,8 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                 return aLength - bLength;
             });
 
+            let characterAtOffsetIsDotOrBracket = characterAtOffset === "." || characterAtOffset === "[";
+
             for (let i = 0; i < nodes.length; ++i) {
                 let node = nodes[i];
 
@@ -1293,14 +1295,38 @@ WebInspector.SourceCodeTextEditor = class SourceCodeTextEditor extends WebInspec
                     return;
                 }
 
-                // In the middle of a member expression.
+                // In the middle of a member expression we want to highlight the best
+                // member expression range. We can end up in the middle when we are
+                // paused inside of a getter and select the parent call frame. For
+                // these cases we may be at a '.' or '[' and we can find the best member
+                // expression from there.
+                //
+                // Examples:
+                //
+                //     foo*.x.y.z => inside x looking at parent call frame => |foo.x|.y.z
+                //     foo.x*.y.z => inside y looking at parent call frame => |foo.x.y|.z
+                //
+                //     foo*["x"]["y"]["z"] => inside x looking at parent call frame => |foo["x"]|["y"]["z"]
+                //     foo["x"]*["y"]["z"] => inside y looking at parent call frame => |foo["x"]["y"]|["z"]
+                //
                 if (node.type === WebInspector.ScriptSyntaxTree.NodeType.ThisExpression
-                    || node.type === WebInspector.ScriptSyntaxTree.NodeType.IdentifierExpression) {
-                    let nextNode = nodes[i + 1];
-                    if (nextNode && nextNode.type === WebInspector.ScriptSyntaxTree.NodeType.MemberExpression) {
-                        callback(convertRangeOffsetsToSourceCodeOffsets(nextNode.range));
+                    || (characterAtOffsetIsDotOrBracket && (node.type === WebInspector.ScriptSyntaxTree.NodeType.Identifier || node.type === WebInspector.ScriptSyntaxTree.NodeType.MemberExpression))) {
+                    let memberExpressionNode = null;
+                    for (let j = i + 1; j < nodes.length; ++j) {
+                        let nextNode = nodes[j];
+                        if (nextNode.type === WebInspector.ScriptSyntaxTree.NodeType.MemberExpression) {
+                            memberExpressionNode = nextNode;
+                            if (offset === memberExpressionNode.range[1])
+                                continue;
+                        }
+                        break;
+                    }
+
+                    if (memberExpressionNode) {
+                        callback(convertRangeOffsetsToSourceCodeOffsets(memberExpressionNode.range));
                         return;
                     }
+
                     callback(convertRangeOffsetsToSourceCodeOffsets(node.range));
                     return;
                 }

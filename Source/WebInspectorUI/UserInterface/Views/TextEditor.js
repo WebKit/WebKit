@@ -1241,8 +1241,9 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
         let originalOffset = this.currentPositionToOriginalOffset(currentPosition);
         let originalCodeMirrorPosition = this.currentPositionToOriginalPosition(currentPosition);
         let originalPosition = new WebInspector.SourceCodePosition(originalCodeMirrorPosition.line, originalCodeMirrorPosition.ch);
+        let characterAtOffset = this._codeMirror.getRange(currentPosition, {line: this._executionLineNumber, ch: this._executionColumnNumber + 1});
 
-        this._delegate.textEditorExecutionHighlightRange(originalOffset, originalPosition, (range) => {
+        this._delegate.textEditorExecutionHighlightRange(originalOffset, originalPosition, characterAtOffset, (range) => {
             let start, end;
             if (!range) {
                 // Highlight the rest of the line.

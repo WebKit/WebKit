@@ -1,5 +1,23 @@
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Improve debugger highlight when inside of getter/setter calls
+        https://bugs.webkit.org/show_bug.cgi?id=163428
+        <rdar://problem/28769061>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorExecutionHighlightRange):
+        When in the middle of a member expression at a '.' or '[' get the best member
+        expression range.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype._updateExecutionRangeHighlight):
+        Include the character at the current position. This is useful since AST Nodes
+        don't give us token info but we would like to know if we are at particular tokens.
+
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Unused Breakpoint getter/setter for "id" - should be "identifier"
         https://bugs.webkit.org/show_bug.cgi?id=163395
 
