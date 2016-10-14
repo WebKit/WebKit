@@ -1,3 +1,105 @@
+2016-10-14  Dean Jackson  <dino@apple.com>
+
+        CSS parsing should use Color not RGBA32
+        https://bugs.webkit.org/show_bug.cgi?id=163423
+        <rdar://problem/28766903>
+
+        Reviewed by Simon Fraser.
+
+        Re-landing this after it was rolled out in https://trac.webkit.org/r207342.
+
+        In order to allow CSS to use the ExtendedColor variant of
+        Color, we need to stop using RGBA32. This is a fairly big
+        change that goes through all the places in the parser
+        related to colors, and moves them from RGBA32 to Color.
+
+        No change in functionality, so covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj: Add the new ColorHash.h file.
+
+        * css/CSSPrimitiveValue.cpp: CSSPrimitiveValue now can hold a Color*
+        rather than an unsigned int for colors.
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getRGBColorValue):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        (WebCore::CSSPrimitiveValue::equals):
+        * css/CSSPrimitiveValue.h: Move to Color* and also use some
+        nullptrs.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Add a new inline
+        constructor.
+
+        * css/CSSValuePool.cpp: Move to Color.
+        (WebCore::CSSValuePool::CSSValuePool):
+        (WebCore::CSSValuePool::createColorValue):
+        * css/CSSValuePool.h: Change the ColorValueCache to a new type.
+
+        * css/StyleResolver.cpp: Move to Color.
+        (WebCore::StyleResolver::colorFromPrimitiveValue):
+        * css/parser/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseColorFromString):
+        (WebCore::CSSParser::parseSystemColor):
+        (WebCore::fastParseColorInternal):
+        (WebCore::CSSParser::fastParseColor):
+        (WebCore::CSSParser::parseColorFromValue):
+        * css/parser/CSSParser.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::fastParseColorInternal):
+        (WebCore::CSSParserFastPaths::parseColor):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeColor):
+        * css/parser/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * editing/EditingStyle.cpp:
+        (WebCore::cssValueToColor):
+        (WebCore::textColorFromStyle):
+        (WebCore::backgroundColorFromStyle):
+        (WebCore::rgbaBackgroundColorInEffect):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        (WebCore::isTransparentColorValue):
+        (WebCore::cssValueToRGBA): Deleted.
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::colorPropertyValueForNode):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::addColorStop):
+        * html/canvas/CanvasRenderingContext2D.cpp: Ditto, but leave a FIXME to
+        remind myself to come back when colorWithOverrideAlpha has been updated.
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::setShadowColor):
+        (WebCore::CanvasRenderingContext2D::setShadow):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::isCurrentColorString):
+        (WebCore::parseColor):
+        (WebCore::currentColor):
+        (WebCore::parseColorOrCurrentColor):
+        (WebCore::CanvasStyle::createFromString):
+        (WebCore::CanvasStyle::createFromStringWithOverrideAlpha):
+        * html/canvas/CanvasStyle.h:
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::colorFromRGBColorString):
+
+        * platform/graphics/Color.h: Add new constructors for the special
+        empty and deleted Color values used in HashTables.
+        (WebCore::Color::Color):
+        (WebCore::Color::isHashTableDeletedValue):
+        (WebCore::Color::asUint64): New accessor to get the raw uint64_t value.
+
+        * platform/graphics/ColorHash.h: Added. Implement the traits for a Color HashTable.
+        (WTF::ColorHash::hash):
+        (WTF::ColorHash::equal):
+        (WTF::HashTraits<WebCore::Color>::emptyValue):
+        (WTF::HashTraits<WebCore::Color>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::Color>::isDeletedValue):
+
 2016-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Implement basic SVG support

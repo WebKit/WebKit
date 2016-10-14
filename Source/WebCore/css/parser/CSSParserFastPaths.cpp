@@ -411,16 +411,21 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
 }
 
 template <typename CharacterType>
-static bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters, unsigned length, bool quirksMode)
+static Color fastParseColorInternal(const CharacterType* characters, unsigned length, bool quirksMode)
 {
     CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::UnitTypes::CSS_UNKNOWN;
 
-    if (length >= 4 && characters[0] == '#')
-        return Color::parseHexColor(characters + 1, length - 1, rgb);
+    if (length >= 4 && characters[0] == '#') {
+        // FIXME: Why doesn't this check if the parse worked? Is the fallback black?
+        RGBA32 rgb;
+        Color::parseHexColor(characters + 1, length - 1, rgb);
+        return Color(rgb);
+    }
 
     if (quirksMode && (length == 3 || length == 6)) {
+        RGBA32 rgb;
         if (Color::parseHexColor(characters, length, rgb))
-            return true;
+            return Color(rgb);
     }
 
     // Try rgba() syntax.
@@ -433,17 +438,16 @@ static bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters,
         int alpha;
 
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return false;
+            return Color();
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return false;
+            return Color();
         if (!parseColorIntOrPercentage(current, end, ',', expect, blue))
-            return false;
+            return Color();
         if (!parseAlphaValue(current, end, ')', alpha))
-            return false;
+            return Color();
         if (current != end)
-            return false;
-        rgb = makeRGBA(red, green, blue, alpha);
-        return true;
+            return Color();
+        return Color(makeRGBA(red, green, blue, alpha));
     }
 
     // Try rgb() syntax.
@@ -454,18 +458,17 @@ static bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters,
         int green;
         int blue;
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return false;
+            return Color();
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return false;
+            return Color();
         if (!parseColorIntOrPercentage(current, end, ')', expect, blue))
-            return false;
+            return Color();
         if (current != end)
-            return false;
-        rgb = makeRGB(red, green, blue);
-        return true;
+            return Color();
+        return Color(makeRGB(red, green, blue));
     }
 
-    return false;
+    return Color();
 }
 
 RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserMode parserMode)
@@ -478,16 +481,15 @@ RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserM
         return CSSPrimitiveValue::createIdentifier(valueID);
     }
 
-    RGBA32 color;
     bool quirksMode = isQuirksModeBehavior(parserMode);
 
     // Fast path for hex colors and rgb()/rgba() colors
-    bool parseResult;
+    Color color;
     if (string.is8Bit())
-        parseResult = fastParseColorInternal(color, string.characters8(), string.length(), quirksMode);
+        color = fastParseColorInternal(string.characters8(), string.length(), quirksMode);
     else
-        parseResult = fastParseColorInternal(color, string.characters16(), string.length(), quirksMode);
-    if (!parseResult)
+        color = fastParseColorInternal(string.characters16(), string.length(), quirksMode);
+    if (!color.isValid())
         return nullptr;
     return CSSValuePool::singleton().createColorValue(color);
 }

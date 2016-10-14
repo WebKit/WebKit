@@ -113,8 +113,8 @@ namespace WebCore {
         Type m_type;
     };
 
-    RGBA32 currentColor(HTMLCanvasElement*);
-    bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement*);
+    Color currentColor(HTMLCanvasElement*);
+    Color parseColorOrCurrentColor(const String& colorString, HTMLCanvasElement*);
 
     inline CanvasStyle::CanvasStyle()
         : m_type(Invalid)
