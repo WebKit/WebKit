@@ -25,7 +25,7 @@ PASS src is expected
 PASS src is expected
 PASS src is expected
 PASS src is expected
-FAIL src should be ghost://CamelCase/. Was ghost://camelcase/.
+PASS src is expected
 FAIL src should be ghost://UnicodeF%C3%AAte/. Was ghost://xn--unicodefte-t7a/.
 PASS successfullyParsed is true
 

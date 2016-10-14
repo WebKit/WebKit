@@ -1,3 +1,36 @@
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Hosts of URLs with non-special schemes should be case-sensitive, and non-ASCII characters in such hosts should be punycode-encoded
+        https://bugs.webkit.org/show_bug.cgi?id=163413
+
+        Reviewed by Tim Horton.
+
+        * contentfiltering/block-after-add-data-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-add-data-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-response-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-response-then-deny-unblock-expected.txt:
+        * contentfiltering/block-after-will-send-request-then-allow-unblock-expected.txt:
+        * contentfiltering/block-after-will-send-request-then-deny-unblock-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize-expected.txt:
+        * fast/backgrounds/background-shorthand-after-set-backgroundSize.html:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style-expected.txt:
+        * fast/backgrounds/background-shorthand-with-backgroundSize-style.html:
+        * fast/css/getComputedStyle/computed-style-border-image-expected.txt:
+        * fast/css/getComputedStyle/computed-style-border-image.html:
+        * fast/css/getComputedStyle/computed-style-cross-fade-expected.txt:
+        * fast/css/getComputedStyle/computed-style-cross-fade.html:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-background-shorthand.html:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html:
+        * fast/loader/url-parse-1-expected.txt:
+        * fast/url/host-lowercase-per-scheme-expected.txt:
+        * fast/url/safari-extension-expected.txt:
+        * http/tests/xmlhttprequest/access-control-and-redirects-async-expected.txt:
+        Update test expectations.  This is how they were before r207162, showing that this change to the URLParser increases compatibility.
+
 2016-10-13  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Add support for [SameObject] extended attribute

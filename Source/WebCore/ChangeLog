@@ -1,3 +1,33 @@
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Hosts of URLs with non-special schemes should be case-sensitive, and non-ASCII characters in such hosts should be punycode-encoded
+        https://bugs.webkit.org/show_bug.cgi?id=163413
+
+        Reviewed by Tim Horton.
+
+        This retains compatibility with the canonicalization Chrome, Firefox, and Safari with uppercase characters
+        in the hosts of URLs with unrecognized schemes.  Safari treats such characters as the host, while Firefox
+        and Chrome treat such characters as part of the path, starting with the "//" after the ':'
+        Behavior of non-ASCII characters is inconsistent, and since we need to have a host, we should punycode-encode
+        the host to be consistent with special schemes because percent-encoding hosts sometimes is inconsistent.
+        
+        This solution was proposed to the spec in https://github.com/whatwg/url/issues/148
+
+        Covered by updated API and layout tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::percentDecode):
+        (WebCore::URLParser::domainToASCII):
+        (WebCore::URLParser::hasInvalidDomainCharacter):
+        (WebCore::URLParser::parseHostAndPort):
+        (WebCore::URLParser::formURLDecode):
+        (WebCore::percentDecode): Deleted.
+        (WebCore::domainToASCII): Deleted.
+        (WebCore::hasInvalidDomainCharacter): Deleted.
+        (WebCore::formURLDecode): Deleted.
+        * platform/URLParser.h:
+
 2016-10-13  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Add support for [SameObject] extended attribute

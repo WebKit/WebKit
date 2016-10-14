@@ -1,3 +1,14 @@
+2016-10-13  Alex Christensen  <achristensen@webkit.org>
+
+        Hosts of URLs with non-special schemes should be case-sensitive, and non-ASCII characters in such hosts should be punycode-encoded
+        https://bugs.webkit.org/show_bug.cgi?id=163413
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url/url-setters-expected.txt:
+        Update results.  Some more tests are failing, but if my proposal in https://github.com/whatwg/url/issues/148 is accepted,
+        then these web platform tests will need to be changed.  These web platform tests were also failing with the old URL::parse.
+
 2016-10-11  Chris Dumez  <cdumez@apple.com>
 
         select.options may return too many option elements

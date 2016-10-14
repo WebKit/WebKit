@@ -57,6 +57,7 @@ private:
     const void* m_inputBegin { nullptr };
 
     bool m_didSeeSyntaxViolation { false };
+    const static size_t defaultInlineBufferSize = 2048;
 
     template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const TextEncoding&);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);
@@ -86,6 +87,11 @@ private:
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
     template<bool(*isInCodeSet)(UChar32), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
+    template<typename CharacterType> Optional<Vector<LChar, defaultInlineBufferSize>> domainToASCII(const String&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    template<typename CharacterType> Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
+    static Vector<LChar, defaultInlineBufferSize> percentDecode(const LChar*, size_t);
+    static Optional<String> formURLDecode(StringView input);
+    static bool hasInvalidDomainCharacter(const Vector<LChar, defaultInlineBufferSize>&);
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(UChar32);
     void appendToASCIIBuffer(const char*, size_t);

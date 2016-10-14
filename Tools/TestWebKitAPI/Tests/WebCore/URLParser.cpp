@@ -656,9 +656,7 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences(":foo.com\\", "notspecial://example.org/foo/bar",
         {"notspecial", "", "", "example.org", 0, "/foo/:foo.com\\", "", "", "notspecial://example.org/foo/:foo.com\\"},
         {"notspecial", "", "", "example.org", 0, "/foo/:foo.com/", "", "", "notspecial://example.org/foo/:foo.com/"});
-    checkURLDifferences("sc://pa",
-        {"sc", "", "", "pa", 0, "/", "", "", "sc://pa/"},
-        {"sc", "", "", "pa", 0, "", "", "", "sc://pa"});
+    checkURL("sc://pa", {"sc", "", "", "pa", 0, "", "", "", "sc://pa"});
     checkRelativeURLDifferences("notspecial:\\\\foo.com\\", "http://example.org/foo/bar",
         {"notspecial", "", "", "", 0, "\\\\foo.com\\", "", "", "notspecial:\\\\foo.com\\"},
         {"notspecial", "", "", "foo.com", 0, "/", "", "", "notspecial://foo.com/"});
@@ -789,7 +787,7 @@ TEST_F(URLParserTest, ParserDifferences)
         {"notspecial", "@test@test", "", "example", 800, "/path@end", "", "", "notspecial://%40test%40test@example:800/path@end"},
         {"", "", "", "", 0, "", "", "", "notspecial://@test@test@example:800/path@end"});
     checkURLDifferences("notspecial://@test@test@example:800\\path@end",
-        {"notspecial", "@test@test@example", "800\\path", "end", 0, "/", "", "", "notspecial://%40test%40test%40example:800%5Cpath@end/"},
+        {"notspecial", "@test@test@example", "800\\path", "end", 0, "", "", "", "notspecial://%40test%40test%40example:800%5Cpath@end"},
         {"", "", "", "", 0, "", "", "", "notspecial://@test@test@example:800\\path@end"});
     checkURLDifferences("http://%48OsT",
         {"http", "", "", "host", 0, "/", "", "", "http://host/"},
@@ -893,15 +891,14 @@ TEST_F(URLParserTest, ParserDifferences)
     checkRelativeURLDifferences("http://f:010/c", "http://example.org/foo/bar",
         {"http", "", "", "f", 10, "/c", "", "", "http://f:10/c"},
         {"http", "", "", "f", 10, "/c", "", "", "http://f:010/c"});
-    checkURLDifferences("notspecial://HoSt",
-        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
-        {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"});
+    checkURL("notspecial://HoSt", {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"});
+    checkURLDifferences("notspecial://H%6FSt",
+        {"notspecial", "", "", "HoSt", 0, "", "", "", "notspecial://HoSt"},
+        {"notspecial", "", "", "H%6FSt", 0, "", "", "", "notspecial://H%6FSt"});
     checkURLDifferences("notspecial://H%4fSt",
-        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
+        {"notspecial", "", "", "HOSt", 0, "", "", "", "notspecial://HOSt"},
         {"notspecial", "", "", "H%4fSt", 0, "", "", "", "notspecial://H%4fSt"});
-    checkURLDifferences(utf16String(u"notspecial://H😍ßt"),
-        {"notspecial", "", "", "xn--hsst-qc83c", 0, "/", "", "", "notspecial://xn--hsst-qc83c/"},
-        {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
+    checkURL(utf16String(u"notspecial://H😍ßt"), {"notspecial", "", "", "xn--hsst-qc83c", 0, "", "", "", "notspecial://xn--hsst-qc83c"}, testTabsValueForSurrogatePairs);
     checkURLDifferences("http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/",
         {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:ffff:ffff]/"},
         {"http", "", "", "[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]", 0, "/", "", "", "http://[ffff:aaaa:cccc:eeee:bbbb:dddd:255.255.255.255]/"}, TestTabs::No);
@@ -1046,26 +1043,17 @@ TEST_F(URLParserTest, DefaultPort)
         {"wss", "", "", "host", 444, "/", "", "", "wss://host:444/"},
         {"wss", "", "", "host", 444, "", "", "", "wss://host:444"});
 
-    // 990 is the default ftps port in URL::parse, but it's not in the URL spec. Maybe it should be.
     checkURL("fTpS://host:990/", {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"});
     checkURL("ftps://host:990/", {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"});
     checkURL("ftps://host:991/", {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"});
-    checkURLDifferences("ftps://host:990",
-        {"ftps", "", "", "host", 990, "/", "", "", "ftps://host:990/"},
-        {"ftps", "", "", "host", 990, "", "", "", "ftps://host:990"});
-    checkURLDifferences("ftps://host:991",
-        {"ftps", "", "", "host", 991, "/", "", "", "ftps://host:991/"},
-        {"ftps", "", "", "host", 991, "", "", "", "ftps://host:991"});
+    checkURL("ftps://host:990", {"ftps", "", "", "host", 990, "", "", "", "ftps://host:990"});
+    checkURL("ftps://host:991", {"ftps", "", "", "host", 991, "", "", "", "ftps://host:991"});
 
     checkURL("uNkNoWn://host:80/", {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"});
     checkURL("unknown://host:80/", {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"});
     checkURL("unknown://host:81/", {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"});
-    checkURLDifferences("unknown://host:80",
-        {"unknown", "", "", "host", 80, "/", "", "", "unknown://host:80/"},
-        {"unknown", "", "", "host", 80, "", "", "", "unknown://host:80"});
-    checkURLDifferences("unknown://host:81",
-        {"unknown", "", "", "host", 81, "/", "", "", "unknown://host:81/"},
-        {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
+    checkURL("unknown://host:80", {"unknown", "", "", "host", 80, "", "", "", "unknown://host:80"});
+    checkURL("unknown://host:81", {"unknown", "", "", "host", 81, "", "", "", "unknown://host:81"});
 
     checkURL("file://host:0", {"file", "", "", "host", 0, "/", "", "", "file://host:0/"});
     checkURL("file://host:80", {"file", "", "", "host", 80, "/", "", "", "file://host:80/"});
@@ -1141,6 +1129,7 @@ TEST_F(URLParserTest, ParserFailures)
     shouldFail("http://[a:b:c:d:e:f:g:h:127.0.0.1]");
     shouldFail("http://[a:b:c:d:e:f:127.0.0.0x11]"); // Chrome treats this as hex, Firefox and the spec fail
     shouldFail("http://[a:b:c:d:e:f:127.0.-0.1]");
+    shouldFail("asdf://space InHost");
 }
 
 // These are in the spec but not in the web platform tests.
@@ -1148,9 +1137,7 @@ TEST_F(URLParserTest, AdditionalTests)
 {
     checkURL("about:\a\aabc", {"about", "", "", "", 0, "%07%07abc", "", "", "about:%07%07abc"});
     checkURL("notspecial:\t\t\n\t", {"notspecial", "", "", "", 0, "", "", "", "notspecial:"});
-    checkURLDifferences("notspecial\t\t\n\t:\t\t\n\t/\t\t\n\t/\t\t\n\thost",
-        {"notspecial", "", "", "host", 0, "/", "", "", "notspecial://host/"},
-        {"notspecial", "", "", "host", 0, "", "", "", "notspecial://host"});
+    checkURL("notspecial\t\t\n\t:\t\t\n\t/\t\t\n\t/\t\t\n\thost", {"notspecial", "", "", "host", 0, "", "", "", "notspecial://host"});
     checkRelativeURL("http:", "http://example.org/foo/bar?query#fragment", {"http", "", "", "example.org", 0, "/foo/bar", "query", "", "http://example.org/foo/bar?query"});
     checkRelativeURLDifferences("ws:", "http://example.org/foo/bar",
         {"ws", "", "", "", 0, "", "", "", "ws:"},
