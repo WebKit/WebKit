@@ -81,6 +81,10 @@
 #include "ContentFilter.h"
 #endif
 
+#if USE(QUICK_LOOK)
+#include "QuickLook.h"
+#endif
+
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - DocumentLoader::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
@@ -744,6 +748,32 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     });
 }
 
+static bool isRemoteWebArchive(const DocumentLoader& documentLoader)
+{
+    using MIMETypeHashSet = HashSet<String, ASCIICaseInsensitiveHash>;
+    static NeverDestroyed<MIMETypeHashSet> webArchiveMIMETypes {
+        MIMETypeHashSet {
+            ASCIILiteral("application/x-webarchive"),
+            ASCIILiteral("application/x-mimearchive"),
+            ASCIILiteral("multipart/related"),
+#if PLATFORM(GTK)
+            ASCIILiteral("message/rfc822"),
+#endif
+        }
+    };
+
+    const ResourceResponse& response = documentLoader.response();
+    if (!webArchiveMIMETypes.get().contains(response.mimeType()))
+        return false;
+
+#if USE(QUICK_LOOK)
+    if (response.url().protocolIs(QLPreviewProtocol()))
+        return false;
+#endif
+
+    return !documentLoader.substituteData().isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(documentLoader.request().url().protocol());
+}
+
 void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 {
     ASSERT(m_waitingForContentPolicy);
@@ -751,20 +781,10 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     if (isStopping())
         return;
 
-    URL url = m_request.url();
-    const String& mimeType = m_response.mimeType();
-    
     switch (policy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
-        bool isRemoteWebArchive = (equalLettersIgnoringASCIICase(mimeType, "application/x-webarchive")
-            || equalLettersIgnoringASCIICase(mimeType, "application/x-mimearchive")
-#if PLATFORM(GTK)
-            || equalLettersIgnoringASCIICase(mimeType, "message/rfc822")
-#endif
-            || equalLettersIgnoringASCIICase(mimeType, "multipart/related"))
-            && !m_substituteData.isValid() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(url.protocol());
-        if (!frameLoader()->client().canShowMIMEType(mimeType) || isRemoteWebArchive) {
+        if (!frameLoader()->client().canShowMIMEType(m_response.mimeType()) || isRemoteWebArchive(*this)) {
             frameLoader()->policyChecker().cannotShowMIMEType(m_response);
             // Check reachedTerminalState since the load may have already been canceled inside of _handleUnimplementablePolicyWithErrorCode::.
             stopLoadingForPolicyChange();
