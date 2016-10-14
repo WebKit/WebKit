@@ -36,7 +36,7 @@
     PublicIdentifier
 ] interface ReadableStream {
     [NotEnumerable] Promise cancel(optional any reason);
-    [NotEnumerable] Object getReader();
+    [NotEnumerable] Object getReader(optional any options);
     [NotEnumerable] Promise pipeTo(any streams, optional any options);
     [NotEnumerable] Object pipeThrough(any dest, any options);
     [NotEnumerable] Object tee();

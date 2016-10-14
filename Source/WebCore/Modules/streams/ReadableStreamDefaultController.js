@@ -52,7 +52,7 @@ function error(error)
     if (stream.@state !== @streamReadable)
         @throwTypeError("ReadableStream is not readable");
 
-    @readableStreamError(stream, error);
+    @readableStreamDefaultControllerError(this, error);
 }
 
 function close()

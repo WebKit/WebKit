@@ -299,6 +299,7 @@ function readableStreamDefaultControllerCallPullIfNeeded(controller)
         return;
     }
 
+    @assert(!controller.@pullAgain);
     controller.@pulling = true;
 
     @promiseInvokeOrNoop(controller.@underlyingSource, "pull", [controller]).@then(function() {

@@ -1,3 +1,19 @@
+2016-10-14  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Cleanup patch, fix small inconsistencies
+        https://bugs.webkit.org/show_bug.cgi?id=163329
+
+        Reviewed by Youenn Fablet.
+
+        Cleanup patch, fixed 3 small inconsistences between implementation and spec.
+
+        No change in behaviour.
+
+        * Modules/streams/ReadableStream.idl: Added optional parameter in getReader.
+        * Modules/streams/ReadableStreamDefaultController.js:
+        (error): Call readableStreamDefaultControllerError instead of readableStreamError.
+        * Modules/streams/ReadableStreamInternals.js: Added missing ASSERT in readableStreamDefaultControllerCallPullIfNeeded.
+
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
         http://trac.webkit.org/changeset/207330 broke Mac Windows build
