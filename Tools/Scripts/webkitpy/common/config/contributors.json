@@ -149,6 +149,7 @@
       "status" : "committer"
    },
    "Adobe Bug Tracker" : {
+      "class" : "bot",
       "emails" : [
          "WebkitBugTracker@adobe.com"
       ]
@@ -1258,6 +1259,7 @@
       "status" : "committer"
    },
    "Commit Queue" : {
+      "class" : "bot",
       "emails" : [
          "commit-queue@webkit.org"
       ]
@@ -4513,6 +4515,7 @@
       "status" : "committer"
    },
    "Radar WebKit Bug Importer" : {
+      "class" : "bot",
       "emails" : [
          "webkit-bug-importer@group.apple.com"
       ]
@@ -5460,6 +5463,7 @@
       ]
    },
    "WebKit Review Bot" : {
+      "class" : "bot",
       "emails" : [
          "webkit.review.bot@gmail.com"
       ],
@@ -5468,6 +5472,7 @@
       ]
    },
    "WebKitGTK+ Bugs" : {
+      "class" : "bot",
       "emails" : [
          "bugs-noreply@webkitgtk.org"
       ]

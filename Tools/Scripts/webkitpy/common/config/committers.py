@@ -62,6 +62,7 @@ class Contributor(object):
         self.expertise = expertise
         self.can_commit = False
         self.can_review = False
+        self.is_bot = False
 
     def bugzilla_email(self):
         # FIXME: We're assuming the first email is a valid bugzilla email,
@@ -146,6 +147,9 @@ class Contributor(object):
         if self.expertise:
             info["expertise"] = self.expertise
 
+        if self.is_bot:
+            info["class"] = "bot"
+
         return info
 
 
@@ -160,6 +164,11 @@ class Reviewer(Committer):
         Committer.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
         self.can_review = True
 
+
+class Bot(Contributor):
+    def __init__(self, name, email_or_emails, irc_nickname=None, alias_or_aliases=None, expertise=None):
+        Contributor.__init__(self, name, email_or_emails, irc_nickname, alias_or_aliases, expertise)
+        self.is_bot = True
 
 class CommitterList(object):
 
@@ -199,6 +208,8 @@ class CommitterList(object):
             elif status == "committer":
                 contributor = Committer(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
                 self._committers.append(contributor)
+            elif data.get('class') == 'bot':
+                contributor = Bot(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
             else:
                 contributor = Contributor(name, data.get('emails'), data.get('nicks'), data.get('aliases'), data.get('expertise'))
 
