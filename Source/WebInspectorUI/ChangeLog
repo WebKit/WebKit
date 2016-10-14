@@ -1,5 +1,19 @@
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unused Breakpoint getter/setter for "id" - should be "identifier"
+        https://bugs.webkit.org/show_bug.cgi?id=163395
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.get identifier): Renamed.
+        (WebInspector.Breakpoint.prototype.set identifier): Renamed.
+        The only user is DebuggerManager which sets and gets. Previously
+        it was unexpectedly setting a direct property on the Breakpoint
+        instead of using these methods to set the member variable.
+
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove uses of delete in SourceCodeTextEditor
         https://bugs.webkit.org/show_bug.cgi?id=163379
 

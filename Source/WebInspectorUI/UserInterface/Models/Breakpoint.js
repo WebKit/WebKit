@@ -67,12 +67,12 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
 
     // Public
 
-    get id()
+    get identifier()
     {
         return this._id;
     }
 
-    set id(id)
+    set identifier(id)
     {
         this._id = id || null;
     }
