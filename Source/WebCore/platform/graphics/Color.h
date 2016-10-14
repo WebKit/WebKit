@@ -141,23 +141,6 @@ public:
     WEBCORE_EXPORT explicit Color(const String&);
     explicit Color(const char*);
 
-    explicit Color(WTF::HashTableDeletedValueType)
-    {
-        m_colorData.rgbaAndFlags = 0xfffffffffffffffd;
-        ASSERT(!isExtended());
-    }
-
-    bool isHashTableDeletedValue() const
-    {
-        return m_colorData.rgbaAndFlags == 0xfffffffffffffffd;
-    }
-
-    explicit Color(WTF::HashTableEmptyValueType)
-    {
-        m_colorData.rgbaAndFlags = 0xffffffffffffffb;
-        ASSERT(!isExtended());
-    }
-
     // FIXME: Add constructor for ExtendedColor type.
 
     Color(RGBA, ColorSpace);
@@ -201,7 +184,6 @@ public:
     RGBA32 rgb() const { ASSERT(!isExtended()); return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32); }
     void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
     void setRGB(RGBA32);
-    uint64_t asUint64() const { return m_colorData.rgbaAndFlags; }
 
     WEBCORE_EXPORT void getRGBA(float& r, float& g, float& b, float& a) const;
     WEBCORE_EXPORT void getRGBA(double& r, double& g, double& b, double& a) const;

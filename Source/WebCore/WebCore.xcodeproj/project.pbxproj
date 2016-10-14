@@ -1297,7 +1297,6 @@
 		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
 		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3103B7DE1DB01556008BB890 /* ColorHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3106036F14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */; };
 		3106037014327D2E00ABF4BA /* WebKitCSSFilterValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		310603741432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 310603721432819C00ABF4BA /* JSWebKitCSSFilterValue.cpp */; };
@@ -8262,7 +8261,6 @@
 		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
 		2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStreamClient.h; sourceTree = "<group>"; };
-		3103B7DE1DB01556008BB890 /* ColorHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorHash.h; sourceTree = "<group>"; };
 		3106036C14327D2E00ABF4BA /* WebKitCSSFilterValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSFilterValue.cpp; sourceTree = "<group>"; };
 		3106036D14327D2E00ABF4BA /* WebKitCSSFilterValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSFilterValue.h; sourceTree = "<group>"; };
 		3106036E14327D2E00ABF4BA /* WebKitCSSFilterValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSFilterValue.idl; sourceTree = "<group>"; };
@@ -20736,7 +20734,6 @@
 				CDDE02E918B3DFC700CF7FF1 /* CDMSession.h */,
 				B27535380B053814002CE64F /* Color.cpp */,
 				B27535390B053814002CE64F /* Color.h */,
-				3103B7DE1DB01556008BB890 /* ColorHash.h */,
 				31DCDF411DA1C45400EA5B93 /* ExtendedColor.cpp */,
 				31DCDF421DA1C45400EA5B93 /* ExtendedColor.h */,
 				9382DF5710A8D5C900925652 /* ColorSpace.h */,
@@ -25389,7 +25386,6 @@
 				BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */,
 				FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */,
 				CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */,
-				3103B7DF1DB01567008BB890 /* ColorHash.h in Headers */,
 				9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */,
 				CD9DE17B17AAC75B00EA386D /* JSSourceBuffer.h in Headers */,
 				CD9DE17D17AAC75B00EA386D /* JSSourceBufferList.h in Headers */,

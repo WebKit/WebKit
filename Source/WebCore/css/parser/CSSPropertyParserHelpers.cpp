@@ -509,7 +509,7 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, CSSParserMode
     RGBA32 color = Color::transparent;
     if (!parseHexColor(range, color, acceptQuirkyColors) && !parseColorFunction(range, color))
         return nullptr;
-    return CSSPrimitiveValue::create(Color(color));
+    return CSSPrimitiveValue::createColor(color);
 }
 
 static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless)

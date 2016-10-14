@@ -48,9 +48,9 @@ CSSValuePool::CSSValuePool()
     m_unsetValue.construct();
     m_revertValue.construct();
 
-    m_transparentColor.construct(Color(Color::transparent));
-    m_whiteColor.construct(Color(Color::white));
-    m_blackColor.construct(Color(Color::black));
+    m_transparentColor.construct(Color::transparent);
+    m_whiteColor.construct(Color::white);
+    m_blackColor.construct(Color::black);
 
     for (unsigned i = 0; i < numCSSValueKeywords; ++i)
         m_identifierValues[i].construct(static_cast<CSSValueID>(i));
@@ -73,15 +73,15 @@ Ref<CSSPrimitiveValue> CSSValuePool::createIdentifierValue(CSSPropertyID ident)
     return CSSPrimitiveValue::createIdentifier(ident);
 }
 
-Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
+Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(unsigned rgbValue)
 {
     // These are the empty and deleted values of the hash table.
-    if (color == Color::transparent)
+    if (rgbValue == Color::transparent)
         return m_transparentColor.get();
-    if (color == Color::white)
+    if (rgbValue == Color::white)
         return m_whiteColor.get();
     // Just because it is common.
-    if (color == Color::black)
+    if (rgbValue == Color::black)
         return m_blackColor.get();
 
     // Remove one entry at random if the cache grows too large.
@@ -89,9 +89,9 @@ Ref<CSSPrimitiveValue> CSSValuePool::createColorValue(const Color& color)
     if (m_colorValueCache.size() >= maximumColorCacheSize)
         m_colorValueCache.remove(m_colorValueCache.begin());
 
-    ColorValueCache::AddResult entry = m_colorValueCache.add(color, nullptr);
+    ColorValueCache::AddResult entry = m_colorValueCache.add(rgbValue, nullptr);
     if (entry.isNewEntry)
-        entry.iterator->value = CSSPrimitiveValue::create(color);
+        entry.iterator->value = CSSPrimitiveValue::createColor(rgbValue);
     return *entry.iterator->value;
 }
 

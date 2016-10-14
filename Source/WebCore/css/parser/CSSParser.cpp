@@ -494,8 +494,8 @@ static CSSParser::ParseResult parseColorValue(MutableStyleProperties& declaratio
         auto value = CSSValuePool::singleton().createIdentifierValue(valueID);
         return declaration.addParsedProperty(CSSProperty(propertyId, WTFMove(value), important)) ? CSSParser::ParseResult::Changed : CSSParser::ParseResult::Unchanged;
     }
-    Color color = CSSParser::fastParseColor(string, strict && string[0] != '#');
-    if (!color.isValid())
+    RGBA32 color;
+    if (!CSSParser::fastParseColor(color, string, strict && string[0] != '#'))
         return CSSParser::ParseResult::Error;
 
     auto value = CSSValuePool::singleton().createColorValue(color);
@@ -1370,34 +1370,36 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return result;
 }
 
-Color CSSParser::parseColor(const String& string, bool strict)
+// The color will only be changed when string contains a valid CSS color, so callers
+// can set it to a default color and ignore the boolean result.
+bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
 {
     if (string.isEmpty())
-        return Color();
+        return false;
 
     // First try creating a color specified by name, rgba(), rgb() or "#" syntax.
-    Color color = fastParseColor(string, strict);
-    if (color.isValid())
-        return color;
+    if (fastParseColor(color, string, strict))
+        return true;
 
     CSSParser parser(HTMLStandardMode);
 
     // In case the fast-path parser didn't understand the color, try the full parser.
-    if (!parser.parseColorFromString(string))
-        return Color();
+    if (!parser.parseColor(string))
+        return false;
 
     CSSValue& value = *parser.m_parsedProperties.first().value();
     if (!is<CSSPrimitiveValue>(value))
-        return Color();
+        return false;
 
     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (!primitiveValue.isRGBColor())
-        return Color();
+        return false;
 
-    return primitiveValue.color();
+    color = primitiveValue.getRGBA32Value();
+    return true;
 }
 
-bool CSSParser::parseColorFromString(const String& string)
+bool CSSParser::parseColor(const String& string)
 {
     setupParser("@-webkit-decls{color:", string, "} ");
     cssyyparse(this);
@@ -1406,18 +1408,23 @@ bool CSSParser::parseColorFromString(const String& string)
     return !m_parsedProperties.isEmpty() && m_parsedProperties.first().id() == CSSPropertyColor;
 }
 
-Color CSSParser::parseSystemColor(const String& string, Document* document)
+bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* document)
 {
     if (!document || !document->page())
-        return Color();
+        return false;
 
     CSSParserString cssColor;
     cssColor.init(string);
     CSSValueID id = cssValueKeywordID(cssColor);
     if (!validPrimitiveValueColor(id))
-        return Color();
+        return false;
 
-    return document->page()->theme().systemColor(id);
+    Color parsedColor = document->page()->theme().systemColor(id);
+    if (!parsedColor.isValid())
+        return false;
+
+    color = parsedColor.rgb();
+    return true;
 }
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
@@ -7474,18 +7481,17 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
 }
 
 template <typename CharacterType>
-static inline Color fastParseColorInternal(const CharacterType* characters, unsigned length , bool strict)
+static inline bool fastParseColorInternal(RGBA32& rgb, const CharacterType* characters, unsigned length , bool strict)
 {
     CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::CSS_UNKNOWN;
-
+    
     if (!strict && length >= 3) {
-        RGBA32 rgb;
         if (characters[0] == '#') {
             if (Color::parseHexColor(characters + 1, length - 1, rgb))
-                return Color(rgb);
+                return true;
         } else {
             if (Color::parseHexColor(characters, length, rgb))
-                return Color(rgb);
+                return true;
         }
     }
 
@@ -7499,16 +7505,17 @@ static inline Color fastParseColorInternal(const CharacterType* characters, unsi
         int alpha;
         
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return Color();
+            return false;
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return Color();
+            return false;
         if (!parseColorIntOrPercentage(current, end, ',', expect, blue))
-            return Color();
+            return false;
         if (!parseAlphaValue(current, end, ')', alpha))
-            return Color();
+            return false;
         if (current != end)
-            return Color();
-        return Color(makeRGBA(red, green, blue, alpha));
+            return false;
+        rgb = makeRGBA(red, green, blue, alpha);
+        return true;
     }
 
     // Try rgb() syntax.
@@ -7519,39 +7526,45 @@ static inline Color fastParseColorInternal(const CharacterType* characters, unsi
         int green;
         int blue;
         if (!parseColorIntOrPercentage(current, end, ',', expect, red))
-            return Color();
+            return false;
         if (!parseColorIntOrPercentage(current, end, ',', expect, green))
-            return Color();
+            return false;
         if (!parseColorIntOrPercentage(current, end, ')', expect, blue))
-            return Color();
+            return false;
         if (current != end)
-            return Color();
-        return Color(makeRGB(red, green, blue));
+            return false;
+        rgb = makeRGB(red, green, blue);
+        return true;
     }
 
-    return Color();
+    return false;
 }
 
 template<typename StringType>
-Color CSSParser::fastParseColor(const StringType& name, bool strict)
+bool CSSParser::fastParseColor(RGBA32& rgb, const StringType& name, bool strict)
 {
     unsigned length = name.length();
+    bool parseResult;
 
     if (!length)
-        return Color();
+        return false;
 
-    Color color;
     if (name.is8Bit())
-        color = fastParseColorInternal(name.characters8(), length, strict);
+        parseResult = fastParseColorInternal(rgb, name.characters8(), length, strict);
     else
-        color = fastParseColorInternal(name.characters16(), length, strict);
+        parseResult = fastParseColorInternal(rgb, name.characters16(), length, strict);
 
-    if (color.isValid())
-        return color;
+    if (parseResult)
+        return true;
 
     // Try named colors.
-    color.setNamedColor(name);
-    return color;
+    Color tc;
+    tc.setNamedColor(name);
+    if (tc.isValid()) {
+        rgb = tc.rgb();
+        return true;
+    }
+    return false;
 }
     
 inline double CSSParser::parsedDouble(ValueWithCalculation& valueWithCalculation)
@@ -7667,58 +7680,61 @@ bool CSSParser::parseHSLParameters(CSSParserValue& value, double* colorArray, bo
 
 RefPtr<CSSPrimitiveValue> CSSParser::parseColor(CSSParserValue* value)
 {
-    Color color = parseColorFromValue(value ? *value : *m_valueList->current());
-    if (!color.isValid())
+    RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(value ? *value : *m_valueList->current(), c))
         return nullptr;
-    return CSSValuePool::singleton().createColorValue(color);
+    return CSSValuePool::singleton().createColorValue(c);
 }
 
-Color CSSParser::parseColorFromValue(CSSParserValue& value)
+bool CSSParser::parseColorFromValue(CSSParserValue& value, RGBA32& c)
 {
     if (inQuirksMode() && value.unit == CSSPrimitiveValue::CSS_NUMBER
         && value.fValue >= 0. && value.fValue < 1000000.) {
         String str = String::format("%06d", static_cast<int>((value.fValue+.5)));
         // FIXME: This should be strict parsing for SVG as well.
-        return fastParseColor(str, inStrictMode());
+        if (!fastParseColor(c, str, inStrictMode()))
+            return false;
     } else if (value.unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR
         || value.unit == CSSPrimitiveValue::CSS_IDENT
         || (inQuirksMode() && value.unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        return fastParseColor(value.string, inStrictMode() && value.unit == CSSPrimitiveValue::CSS_IDENT);
+        if (!fastParseColor(c, value.string, inStrictMode() && value.unit == CSSPrimitiveValue::CSS_IDENT))
+            return false;
     } else if (value.unit == CSSParserValue::Function
         && value.function->args
         && value.function->args->size() == 5 /* rgb + two commas */
         && equalLettersIgnoringASCIICase(value.function->name, "rgb(")) {
         int colorValues[3];
         if (!parseRGBParameters(value, colorValues, false))
-            return Color();
-        return Color(makeRGB(colorValues[0], colorValues[1], colorValues[2]));
+            return false;
+        c = makeRGB(colorValues[0], colorValues[1], colorValues[2]);
     } else if (value.unit == CSSParserValue::Function
         && value.function->args
         && value.function->args->size() == 7 /* rgba + three commas */
         && equalLettersIgnoringASCIICase(value.function->name, "rgba(")) {
         int colorValues[4];
         if (!parseRGBParameters(value, colorValues, true))
-            return Color();
-        return Color(makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]));
+            return false;
+        c = makeRGBA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
     } else if (value.unit == CSSParserValue::Function
         && value.function->args
         && value.function->args->size() == 5 /* hsl + two commas */
         && equalLettersIgnoringASCIICase(value.function->name, "hsl(")) {
         double colorValues[3];
         if (!parseHSLParameters(value, colorValues, false))
-            return Color();
-        return Color(makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0));
+            return false;
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], 1.0);
     } else if (value.unit == CSSParserValue::Function
         && value.function->args
         && value.function->args->size() == 7 /* hsla + three commas */
         && equalLettersIgnoringASCIICase(value.function->name, "hsla(")) {
         double colorValues[4];
         if (!parseHSLParameters(value, colorValues, true))
-            return Color();
-        return Color(makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]));
-    }
+            return false;
+        c = makeRGBAFromHSLA(colorValues[0], colorValues[1], colorValues[2], colorValues[3]);
+    } else
+        return false;
 
-    return Color();
+    return true;
 }
 
 // This class tracks parsing state for shadow values.  If it goes out of scope (e.g., due to an early return)

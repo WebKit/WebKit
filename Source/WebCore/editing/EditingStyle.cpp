@@ -382,33 +382,35 @@ EditingStyle::~EditingStyle()
 {
 }
 
-static Color cssValueToColor(CSSValue* colorValue)
+static RGBA32 cssValueToRGBA(CSSValue* colorValue)
 {
     if (!is<CSSPrimitiveValue>(colorValue))
         return Color::transparent;
     
     CSSPrimitiveValue& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
     if (primitiveColor.isRGBColor())
-        return primitiveColor.color();
+        return primitiveColor.getRGBA32Value();
     
-    return CSSParser::parseColor(colorValue->cssText());
+    RGBA32 rgba = 0;
+    CSSParser::parseColor(rgba, colorValue->cssText());
+    return rgba;
 }
 
 template<typename T>
-static inline Color textColorFromStyle(T& style)
+static inline RGBA32 textColorFromStyle(T& style)
 {
-    return cssValueToColor(extractPropertyValue(style, CSSPropertyColor).get());
+    return cssValueToRGBA(extractPropertyValue(style, CSSPropertyColor).get());
 }
 
 template<typename T>
-static inline Color backgroundColorFromStyle(T& style)
+static inline RGBA32 backgroundColorFromStyle(T& style)
 {
-    return cssValueToColor(extractPropertyValue(style, CSSPropertyBackgroundColor).get());
+    return cssValueToRGBA(extractPropertyValue(style, CSSPropertyBackgroundColor).get());
 }
 
-static inline Color rgbaBackgroundColorInEffect(Node* node)
+static inline RGBA32 rgbaBackgroundColorInEffect(Node* node)
 {
-    return cssValueToColor(backgroundColorInEffect(node).get());
+    return cssValueToRGBA(backgroundColorInEffect(node).get());
 }
 
 static int textAlignResolvingStartAndEnd(int textAlign, int direction)
@@ -1094,7 +1096,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         m_mutableStyle->removeProperty(CSSPropertyColor);
 
     if (hasTransparentBackgroundColor(m_mutableStyle.get())
-        || cssValueToColor(m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(position.containerNode()))
+        || cssValueToRGBA(m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(position.containerNode()))
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
     if (is<CSSPrimitiveValue>(unicodeBidi.get())) {
@@ -1838,7 +1840,7 @@ bool isTransparentColorValue(CSSValue* cssValue)
         return false;
     CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(*cssValue);
     if (value.isRGBColor())
-        return value.color().hasAlpha();
+        return !alphaChannel(value.getRGBA32Value());
     return value.getValueID() == CSSValueTransparent;
 }
 

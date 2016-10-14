@@ -350,11 +350,11 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& string, UnitTypes type)
         m_value.string->ref();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
+CSSPrimitiveValue::CSSPrimitiveValue(RGBA32 color)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_RGBCOLOR;
-    m_value.color = new Color(color);
+    m_value.rgbcolor = color;
 }
 
 CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
@@ -574,11 +574,6 @@ void CSSPrimitiveValue::cleanup()
         delete m_value.fontFamily;
         m_value.fontFamily = nullptr;
         break;
-    case CSS_RGBCOLOR:
-        ASSERT(m_value.color);
-        delete m_value.color;
-        m_value.color = nullptr;
-        break;
     case CSS_NUMBER:
     case CSS_PARSER_INTEGER:
     case CSS_PERCENTAGE:
@@ -610,6 +605,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_DPCM:
     case CSS_FR:
     case CSS_IDENT:
+    case CSS_RGBCOLOR:
     case CSS_UNKNOWN:
     case CSS_UNICODE_RANGE:
     case CSS_PARSER_OPERATOR:
@@ -1032,7 +1028,7 @@ RefPtr<RGBColor> CSSPrimitiveValue::getRGBColorValue(ExceptionCode& ec) const
     }
 
     // FIMXE: This should not return a new object for each invocation.
-    return RGBColor::create(m_value.color->rgb());
+    return RGBColor::create(m_value.rgbcolor);
 }
 
 Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
@@ -1179,13 +1175,13 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSS_LENGTH_REPEAT:
         return getLengthRepeatValue()->cssText();
 #endif
-    case CSS_PARSER_HEXCOLOR: {
-        RGBA32 rgb;
-        Color::parseHexColor((String)m_value.string, rgb);
-        return Color(rgb).cssText();
-    }
     case CSS_RGBCOLOR:
-        return color().cssText();
+    case CSS_PARSER_HEXCOLOR: {
+        RGBA32 rgbColor = m_value.rgbcolor;
+        if (m_primitiveUnitType == CSS_PARSER_HEXCOLOR)
+            Color::parseHexColor((String)m_value.string, rgbColor);
+        return Color(rgbColor).cssText();
+    }
     case CSS_PAIR:
         return getPairValue()->cssText();
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1355,7 +1351,7 @@ Ref<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
         result = CSSPrimitiveValue::createIdentifier(m_value.valueID);
         break;
     case CSS_RGBCOLOR:
-        result = CSSPrimitiveValue::create(*m_value.color);
+        result = CSSPrimitiveValue::createColor(m_value.rgbcolor);
         break;
     case CSS_DIMENSION:
     case CSS_UNKNOWN:
@@ -1434,7 +1430,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.lengthRepeat && other.m_value.lengthRepeat && m_value.lengthRepeat->equals(*other.m_value.lengthRepeat);
 #endif
     case CSS_RGBCOLOR:
-        return color() == other.color();
+        return m_value.rgbcolor == other.m_value.rgbcolor;
     case CSS_PAIR:
         return m_value.pair && other.m_value.pair && m_value.pair->equals(*other.m_value.pair);
 #if ENABLE(DASHBOARD_SUPPORT)

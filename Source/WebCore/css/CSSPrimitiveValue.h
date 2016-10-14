@@ -253,6 +253,7 @@ public:
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
     static Ref<CSSPrimitiveValue> createParserOperator(int parserOperator) { return adoptRef(*new CSSPrimitiveValue(parserOperator)); }
 
+    static Ref<CSSPrimitiveValue> createColor(unsigned rgbValue) { return adoptRef(*new CSSPrimitiveValue(rgbValue)); }
     static Ref<CSSPrimitiveValue> create(double value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const String& value, UnitTypes type) { return adoptRef(*new CSSPrimitiveValue(value, type)); }
     static Ref<CSSPrimitiveValue> create(const Length& value, const RenderStyle& style) { return adoptRef(*new CSSPrimitiveValue(value, style)); }
@@ -341,21 +342,21 @@ public:
     WEBCORE_EXPORT String getStringValue() const;
 
     WEBCORE_EXPORT Counter* getCounterValue(ExceptionCode&) const;
-    Counter* getCounterValue() const { return m_primitiveUnitType != CSS_COUNTER ? nullptr : m_value.counter; }
+    Counter* getCounterValue() const { return m_primitiveUnitType != CSS_COUNTER ? 0 : m_value.counter; }
 
     WEBCORE_EXPORT Rect* getRectValue(ExceptionCode&) const;
-    Rect* getRectValue() const { return m_primitiveUnitType != CSS_RECT ? nullptr : m_value.rect; }
+    Rect* getRectValue() const { return m_primitiveUnitType != CSS_RECT ? 0 : m_value.rect; }
 
     Quad* getQuadValue(ExceptionCode&) const;
-    Quad* getQuadValue() const { return m_primitiveUnitType != CSS_QUAD ? nullptr : m_value.quad; }
+    Quad* getQuadValue() const { return m_primitiveUnitType != CSS_QUAD ? 0 : m_value.quad; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     LengthRepeat* getLengthRepeatValue(ExceptionCode&) const;
-    LengthRepeat* getLengthRepeatValue() const { return m_primitiveUnitType != CSS_LENGTH_REPEAT ? nullptr : m_value.lengthRepeat; }
+    LengthRepeat* getLengthRepeatValue() const { return m_primitiveUnitType != CSS_LENGTH_REPEAT ? 0 : m_value.lengthRepeat; }
 #endif
 
     WEBCORE_EXPORT RefPtr<RGBColor> getRGBColorValue(ExceptionCode&) const;
-    const Color& color() const { ASSERT(m_primitiveUnitType == CSS_RGBCOLOR); return *m_value.color; }
+    RGBA32 getRGBA32Value() const { return m_primitiveUnitType != CSS_RGBCOLOR ? 0 : m_value.rgbcolor; }
 
     Pair* getPairValue(ExceptionCode&) const;
     Pair* getPairValue() const { return m_primitiveUnitType != CSS_PAIR ? nullptr : m_value.pair; }
@@ -403,7 +404,7 @@ private:
     CSSPrimitiveValue(CSSPropertyID);
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and operator cases.
     CSSPrimitiveValue(int parserOperator);
-    CSSPrimitiveValue(const Color&);
+    CSSPrimitiveValue(unsigned color); // RGB value
     CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle&);
     CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
@@ -463,7 +464,7 @@ private:
 #if ENABLE(CSS_SCROLL_SNAP)
         LengthRepeat* lengthRepeat;
 #endif
-        const Color* color;
+        unsigned rgbcolor;
         Pair* pair;
         DashboardRegion* region;
         CSSBasicShape* shape;

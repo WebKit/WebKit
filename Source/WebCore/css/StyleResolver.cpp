@@ -1831,7 +1831,7 @@ bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimiti
 Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, bool forVisitedLink) const
 {
     if (value.isRGBColor())
-        return value.color();
+        return Color(value.getRGBA32Value());
 
     const State& state = m_state;
     CSSValueID ident = value.getValueID();

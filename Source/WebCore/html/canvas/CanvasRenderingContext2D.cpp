@@ -404,10 +404,9 @@ void CanvasRenderingContext2D::setStrokeStyle(CanvasStyle style)
         return;
 
     if (style.isCurrentColor()) {
-        if (style.hasOverrideAlpha()) {
-            // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()).rgb(), style.overrideAlpha()));
-        } else
+        if (style.hasOverrideAlpha())
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()), style.overrideAlpha()));
+        else
             style = CanvasStyle(currentColor(canvas()));
     } else
         checkOrigin(style.canvasPattern());
@@ -431,10 +430,9 @@ void CanvasRenderingContext2D::setFillStyle(CanvasStyle style)
         return;
 
     if (style.isCurrentColor()) {
-        if (style.hasOverrideAlpha()) {
-            // FIXME: Should not use RGBA32 here.
-            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()).rgb(), style.overrideAlpha()));
-        } else
+        if (style.hasOverrideAlpha())
+            style = CanvasStyle(colorWithOverrideAlpha(currentColor(canvas()), style.overrideAlpha()));
+        else
             style = CanvasStyle(currentColor(canvas()));
     } else
         checkOrigin(style.canvasPattern());
@@ -580,15 +578,15 @@ String CanvasRenderingContext2D::shadowColor() const
     return Color(state().shadowColor).serialized();
 }
 
-void CanvasRenderingContext2D::setShadowColor(const String& colorString)
+void CanvasRenderingContext2D::setShadowColor(const String& color)
 {
-    Color color = parseColorOrCurrentColor(colorString, canvas());
-    if (!color.isValid())
+    RGBA32 rgba;
+    if (!parseColorOrCurrentColor(rgba, color, canvas()))
         return;
-    if (state().shadowColor == color)
+    if (state().shadowColor == rgba)
         return;
     realizeSaves();
-    modifiableState().shadowColor = color;
+    modifiableState().shadowColor = rgba;
     applyShadow();
 }
 
@@ -1250,15 +1248,12 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     }
 }
 
-void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& colorString, Optional<float> alpha)
+void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& color, Optional<float> alpha)
 {
-    Color color = parseColorOrCurrentColor(colorString, canvas());
-    if (!colorString.isNull() && !color.isValid())
+    RGBA32 rgba = Color::transparent;
+    if (!color.isNull() && !parseColorOrCurrentColor(rgba, color, canvas()))
         return;
-    if (!color.isValid())
-        color = Color::transparent;
-    // FIXME: Should not use RGBA32 here.
-    setShadow(FloatSize(width, height), blur, colorWithOverrideAlpha(color.rgb(), alpha));
+    setShadow(FloatSize(width, height), blur, colorWithOverrideAlpha(rgba, alpha));
 }
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, float grayLevel, float alpha)

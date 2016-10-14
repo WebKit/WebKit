@@ -4939,13 +4939,6 @@ template<> inline CSSPrimitiveValue::operator SVGWritingMode() const
     return WM_LRTB;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_RGBCOLOR;
-    m_value.color = new Color(color);
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSFontFamily fontFamily)
     : CSSValue(PrimitiveClass)
 {

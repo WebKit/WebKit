@@ -989,13 +989,13 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
     Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), propertyId == CSSPropertyColor);
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
     }
 
     bool inherit = false;
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
         if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).color().rgb()), propertyId == CSSPropertyColor);
+            return normalizedColor(Color(downcast<CSSPrimitiveValue>(*value).getRGBA32Value()), propertyId == CSSPropertyColor);
         if (value->isInheritedValue())
             inherit = true;
     }

@@ -51,7 +51,10 @@ Color SVGColor::colorFromRGBColorString(const String& colorString)
     // FIXME: Rework CSS parser so it exactly matches what the SVG specification requires?
     // FIXME: Move this out of the SVGColor class?
     // FIXME: Is it really OK to do stripWhitespace here instead of stripLeadingAndTrailingHTMLSpaces?
-    return CSSParser::parseColor(colorString.stripWhiteSpace());
+    RGBA32 color;
+    if (CSSParser::parseColor(color, colorString.stripWhiteSpace()))
+        return color;
+    return Color();
 }
 
 void SVGColor::setRGBColor(const String&, ExceptionCode& ec)

@@ -131,10 +131,10 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
             else if (isValidSystemControlColorValue(id) || id == CSSValueMenu)
                 parsedValue = SVGPaint::createColor(RenderTheme::defaultTheme()->systemColor(id));
             else if (valueWithCalculation.value().unit == CSSPrimitiveValue::CSS_URI) {
+                RGBA32 c = Color::transparent;
                 if (m_valueList->next()) {
-                    Color color = parseColorFromValue(*m_valueList->current());
-                    if (color.isValid())
-                        parsedValue = SVGPaint::createURIAndColor(valueWithCalculation.value().string, color);
+                    if (parseColorFromValue(*m_valueList->current(), c))
+                        parsedValue = SVGPaint::createURIAndColor(valueWithCalculation.value().string, c);
                     else if (m_valueList->current()->id == CSSValueNone)
                         parsedValue = SVGPaint::createURIAndNone(valueWithCalculation.value().string);
                 }
@@ -286,18 +286,18 @@ RefPtr<CSSValueList> CSSParser::parseSVGStrokeDasharray()
 
 RefPtr<SVGPaint> CSSParser::parseSVGPaint()
 {
-    Color color = parseColorFromValue(*m_valueList->current());
-    if (!color.isValid())
+    RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(*m_valueList->current(), c))
         return nullptr;
-    return SVGPaint::createColor(color);
+    return SVGPaint::createColor(Color(c));
 }
 
 RefPtr<SVGColor> CSSParser::parseSVGColor()
 {
-    Color color = parseColorFromValue(*m_valueList->current());
-    if (!color.isValid())
+    RGBA32 c = Color::transparent;
+    if (!parseColorFromValue(*m_valueList->current(), c))
         return nullptr;
-    return SVGColor::createFromColor(color);
+    return SVGColor::createFromColor(Color(c));
 }
 
 RefPtr<CSSValueList> CSSParser::parsePaintOrder()
