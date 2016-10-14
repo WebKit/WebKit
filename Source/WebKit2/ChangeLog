@@ -1,3 +1,12 @@
+2016-10-14  Brady Eidson  <beidson@apple.com>
+
+        Enable Gamepads by default in WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=163447
+
+        Rubberstamped by Sam Weinig.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2016-10-14  Gavin Barraclough  <barraclough@apple.com>
 
         Add API to restrict WebKit processes to background priority
