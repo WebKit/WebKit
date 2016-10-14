@@ -1,3 +1,13 @@
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Failure with RegExp.prototype.compile when pattern is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=163431
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/regexp-compile-expected.txt:
+        * js/script-tests/regexp-compile.js:
+
 2016-10-14  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r207299): media/modern-media-controls/pip-button/pip-button.html and media/modern-media-controls/skip-back-button/skip-back-button.html are flaky

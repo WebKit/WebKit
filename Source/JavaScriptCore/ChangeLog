@@ -1,3 +1,16 @@
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Failure with RegExp.prototype.compile when pattern is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=163431
+
+        Reviewed by Yusuke Suzuki.
+
+        If pattern is undefined let P be the empty String.
+        https://tc39.github.io/ecma262/#sec-regexpinitialize
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+
 2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Exception message for expressions with multiple bracket accesses is inconsistent / incorrect

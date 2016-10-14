@@ -158,7 +158,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             return throwVMTypeError(exec, scope, ASCIILiteral("Cannot supply flags when constructing one RegExp from another."));
         regExp = asRegExpObject(arg0)->regExp();
     } else {
-        String pattern = !exec->argumentCount() ? emptyString() : arg0.toString(exec)->value(exec);
+        String pattern = arg0.isUndefined() ? emptyString() : arg0.toString(exec)->value(exec);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         RegExpFlags flags = NoFlags;
