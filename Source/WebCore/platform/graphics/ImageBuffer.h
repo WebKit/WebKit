@@ -35,14 +35,11 @@
 #include "IntSize.h"
 #include "ImageBufferData.h"
 #include "PlatformLayer.h"
+#include <memory>
 #include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if PLATFORM(WIN)
-interface ID2D1RenderTarget;
-#endif
 
 namespace WebCore {
 
@@ -74,14 +71,10 @@ class ImageBuffer {
     friend class IOSurface;
 public:
     // Will return a null pointer on allocation failure.
-    static std::unique_ptr<ImageBuffer> create(const FloatSize& size, RenderingMode renderingMode, float resolutionScale = 1, ColorSpace colorSpace = ColorSpaceSRGB)
-    {
-        bool success = false;
-        std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(size, resolutionScale, colorSpace, renderingMode, success));
-        if (!success)
-            return nullptr;
-        return buffer;
-    }
+    WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, float resolutionScale = 1, ColorSpace = ColorSpaceSRGB);
+#if USE(DIRECT2D)
+    WEBCORE_EXPORT static std::unique_ptr<ImageBuffer> create(const FloatSize&, RenderingMode, const GraphicsContext*, float resolutionScale = 1, ColorSpace = ColorSpaceSRGB);
+#endif
 
     // Create an image buffer compatible with the context, with suitable resolution for drawing into the buffer and then into this context.
     static std::unique_ptr<ImageBuffer> createCompatibleBuffer(const FloatSize&, const GraphicsContext&);
@@ -182,7 +175,7 @@ private:
 #if USE(CG)
     ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
 #elif USE(DIRECT2D)
-    ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, ID2D1RenderTarget*, bool& success);
+    ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const GraphicsContext*, bool& success);
 #endif
 };
 

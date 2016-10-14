@@ -137,9 +137,9 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
-    virtual NativeImagePtr nativeImage() { return nullptr; }
-    virtual NativeImagePtr nativeImageOfSize(const IntSize&) { return nullptr; }
-    virtual NativeImagePtr nativeImageForCurrentFrame() { return nullptr; }
+    virtual NativeImagePtr nativeImage(const GraphicsContext* = nullptr) { return nullptr; }
+    virtual NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) { return nullptr; }
+    virtual NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) { return nullptr; }
     virtual ImageOrientation orientationForCurrentFrame() const { return ImageOrientation(); }
     virtual Vector<NativeImagePtr> framesNativeImages() { return { }; }
 

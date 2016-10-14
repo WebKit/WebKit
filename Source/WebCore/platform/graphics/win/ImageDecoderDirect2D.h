@@ -73,7 +73,7 @@ public:
     bool isAllDataReceived() const { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) { }
 
-    void setRenderTarget(ID2D1RenderTarget*);
+    void setTargetContext(ID2D1RenderTarget*);
 
     static IWICImagingFactory* systemImagingFactory();
 

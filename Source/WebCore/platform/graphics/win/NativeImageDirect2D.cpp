@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include <d2d1.h>
 
 namespace WebCore {
 

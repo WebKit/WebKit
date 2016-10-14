@@ -117,21 +117,18 @@ public:
     Evas_Object* getEvasObject(Evas*) override;
 #endif
 
-    WEBCORE_EXPORT NativeImagePtr nativeImage() override;
-    NativeImagePtr nativeImageForCurrentFrame() override;
+    WEBCORE_EXPORT NativeImagePtr nativeImage(const GraphicsContext* = nullptr) override;
+    NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) override;
 #if USE(CG)
-    NativeImagePtr nativeImageOfSize(const IntSize&) override;
+    NativeImagePtr nativeImageOfSize(const IntSize&, const GraphicsContext* = nullptr) override;
     Vector<NativeImagePtr> framesNativeImages() override;
-#endif
-#if USE(DIRECT2D)
-    void setRenderTarget(GraphicsContext&);
 #endif
 
 protected:
     WEBCORE_EXPORT BitmapImage(NativeImagePtr&&, ImageObserver* = nullptr);
     WEBCORE_EXPORT BitmapImage(ImageObserver* = nullptr);
 
-    NativeImagePtr frameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default);
+    NativeImagePtr frameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* = nullptr);
 
     // Called to invalidate cached data. When |destroyAll| is true, we wipe out
     // the entire frame buffer cache and tell the image source to destroy

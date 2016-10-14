@@ -115,15 +115,18 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     return true;
 }
 
-#if USE(DIRECT2D)
-void ImageSource::setRenderTarget(GraphicsContext& context)
+void ImageSource::setDecoderTargetContext(const GraphicsContext* targetContext)
 {
+#if USE(DIRECT2D)
     if (!isDecoderAvailable())
         return;
 
-    m_decoder->setRenderTarget(context.platformContext());
-}
+    if (targetContext)
+        m_decoder->setTargetContext(targetContext->platformContext());
+#else
+    UNUSED_PARAM(targetContext);
 #endif
+}
 
 void ImageSource::setData(SharedBuffer* data, bool allDataReceived)
 {
@@ -207,6 +210,13 @@ SubsamplingLevel ImageSource::subsamplingLevelForScale(float scale)
 NativeImagePtr ImageSource::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
 {
     return isDecoderAvailable() ? m_decoder->createFrameImageAtIndex(index, subsamplingLevel) : nullptr;
+}
+
+NativeImagePtr ImageSource::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
+{
+    setDecoderTargetContext(targetContext);
+
+    return m_frameCache.frameImageAtIndex(index, subsamplingLevel);
 }
 
 void ImageSource::dump(TextStream& ts)

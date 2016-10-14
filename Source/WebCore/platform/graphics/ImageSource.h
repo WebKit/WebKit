@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2010, 2012, 2014, 2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2008, 2010, 2012, 2014, 2016 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,10 +59,6 @@ public:
     bool ensureDecoderAvailable(SharedBuffer*);
     bool isDecoderAvailable() const { return m_decoder.get(); }
 
-#if USE(DIRECT2D)
-    void setRenderTarget(GraphicsContext&);
-#endif
-
     void setData(SharedBuffer* data, bool allDataReceived);
     bool dataChanged(SharedBuffer* data, bool allDataReceived);
 
@@ -93,7 +89,7 @@ public:
     unsigned frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache.frameBytesAtIndex(index, subsamplingLevel); }
     float frameDurationAtIndex(size_t index) { return m_frameCache.frameDurationAtIndex(index); }
     ImageOrientation frameOrientationAtIndex(size_t index) { return m_frameCache.frameOrientationAtIndex(index); }
-    NativeImagePtr frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache.frameImageAtIndex(index, subsamplingLevel); }
+    NativeImagePtr frameImageAtIndex(size_t index, SubsamplingLevel = SubsamplingLevel::Default, const GraphicsContext* targetContext = nullptr);
 
     SubsamplingLevel maximumSubsamplingLevel();
     SubsamplingLevel subsamplingLevelForScale(float);
@@ -104,7 +100,9 @@ private:
     void clearFrameBufferCache(size_t);
     void clear(bool destroyAll, size_t count, SharedBuffer* data);
     void dump(TextStream&);
-    
+
+    void setDecoderTargetContext(const GraphicsContext*);
+
     ImageFrameCache m_frameCache;
     std::unique_ptr<ImageDecoder> m_decoder;
 

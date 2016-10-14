@@ -66,7 +66,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     RenderingMode renderingMode = context.renderingMode();
     IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
     bool success = false;
-    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, 1, ColorSpaceSRGB, renderingMode, context.platformContext(), success));
+    std::unique_ptr<ImageBuffer> buffer(new ImageBuffer(scaledSize, 1, ColorSpaceSRGB, renderingMode, &context, success));
 
     if (!success)
         return nullptr;
@@ -76,7 +76,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
     return buffer;
 }
 
-ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace /*colorSpace*/, RenderingMode renderingMode, ID2D1RenderTarget* renderTarget, bool& success)
+ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpace /*colorSpace*/, RenderingMode renderingMode, const GraphicsContext* targetContext, bool& success)
     : m_logicalSize(size)
     , m_resolutionScale(resolutionScale)
 {
@@ -101,6 +101,7 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     if (numBytes.hasOverflowed())
         return;
 
+    auto renderTarget = targetContext ? targetContext->platformContext() : nullptr;
     if (!renderTarget)
         renderTarget = GraphicsContext::defaultRenderTarget();
     RELEASE_ASSERT(renderTarget);

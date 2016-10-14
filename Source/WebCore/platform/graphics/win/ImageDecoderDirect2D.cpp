@@ -187,14 +187,14 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
     return width * height * 4;
 }
 
-void ImageDecoder::setRenderTarget(ID2D1RenderTarget* renderTarget)
+void ImageDecoder::setTargetContext(ID2D1RenderTarget* renderTarget)
 {
     m_renderTarget = renderTarget;
 }
 
 NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, DecodingMode) const
 {
-    if (!m_nativeDecoder)
+    if (!m_nativeDecoder || !m_renderTarget)
         return nullptr;
 
     COMPtr<IWICBitmapFrameDecode> frame;
@@ -209,10 +209,6 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
 
     hr = converter->Initialize(frame.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom);
     if (!SUCCEEDED(hr))
-        return nullptr;
-
-    ASSERT(m_renderTarget);
-    if (!m_renderTarget)
         return nullptr;
 
     COMPtr<ID2D1Bitmap> bitmap;

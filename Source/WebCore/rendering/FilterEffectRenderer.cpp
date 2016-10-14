@@ -48,6 +48,10 @@
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
+#if USE(DIRECT2D)
+#include <d2d1.h>
+#endif
+
 namespace WebCore {
 
 static inline void endMatrixRow(Vector<float>& parameters)
@@ -313,15 +317,21 @@ bool FilterEffectRenderer::updateBackingStoreRect(const FloatRect& filterRect)
     return true;
 }
 
-void FilterEffectRenderer::allocateBackingStoreIfNeeded()
+void FilterEffectRenderer::allocateBackingStoreIfNeeded(const GraphicsContext& targetContext)
 {
     // At this point the effect chain has been built, and the
     // source image sizes set. We just need to attach the graphic
     // buffer if we have not yet done so.
     if (!m_graphicsBufferAttached) {
         IntSize logicalSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height());
-        if (!sourceImage() || sourceImage()->logicalSize() != logicalSize)
+        if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
+#if USE(DIRECT2D)
+            setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale()));
+#else
+            UNUSED_PARAM(targetContext);
             setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), filterScale()));
+#endif
+        }
         m_graphicsBufferAttached = true;
     }
 }
@@ -396,7 +406,7 @@ bool FilterEffectRendererHelper::beginFilterEffect()
     ASSERT(m_renderLayer);
     
     FilterEffectRenderer* filter = m_renderLayer->filterRenderer();
-    filter->allocateBackingStoreIfNeeded();
+    filter->allocateBackingStoreIfNeeded(m_targetContext);
     // Paint into the context that represents the SourceGraphic of the filter.
     GraphicsContext* sourceGraphicsContext = filter->inputContext();
     if (!sourceGraphicsContext || filter->filterRegion().isEmpty() || ImageBuffer::sizeNeedsClamping(filter->filterRegion().size())) {

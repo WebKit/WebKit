@@ -1,3 +1,84 @@
+2016-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Implement basic SVG support
+        https://bugs.webkit.org/show_bug.cgi?id=163349
+
+        Reviewed by Brent Fulgham.
+
+        Direct2D needs access to the target graphics context when generating bitmap
+        images so that it can properly match pixel format and other settings.
+
+        Add implementations for a number of drawing primitives used in the SVG
+        test cases. Correct some differences between CG and Direct2D for drawing
+        different primitives.
+
+        No new tests. Tested by existing 'svg' tests.
+
+        * platform/graphics/BitmapImage.cpp:
+       (WebCore::BitmapImage::frameImageAtIndex): Take optional target graphics
+       context. Also pass the graphics context to the image decoder.
+       (WebCore::BitmapImage::nativeImage): Accept an optional target context.
+       (WebCore::BitmapImage::nativeImageForCurrentFrame): Ditto.
+       (WebCore::BitmapImage::draw): Pass target graphics context to the
+       'frameImageAtIndex' method.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::create): Moved from header. Add create function that
+        takes an optional GraphicsContext argument.
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageFrameCache.cpp: Add missing include needed to build
+        under Direct2D.
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::setDecoderTargetContext): Added.
+        (WebCore::ImageSource::setRenderTarget): Deleted.
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/Pattern.h:
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::endDraw): Log error state instead of crashing
+        each time.
+        (WebCore::GraphicsContext::drawEllipse): Ellipses are defined in D2D as a center, an
+        X-radius, and a Y-radius.
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::clearRect): Use 'Clear' function if possible. Don't clear
+        anything if the clear rect is outside the drawing area.
+        (WebCore::GraphicsContext::strokeRect): Provide implementation (needed by SVG).
+        (WebCore::GraphicsContext::platformFillEllipse): Ellipses are defined in D2D as
+        a center, an X-radius, and a Y-radius.
+        (WebCore::GraphicsContext::platformStrokeEllipse): Ditto.
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer): Accept optional GraphicsContext argument.
+        (WebCore::ImageBuffer::ImageBuffer): Ditto.
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::setTargetContext): Renamed from 'setRenderTarget'.
+        (WebCore::ImageDecoder::createFrameImageAtIndex): Take optional GraphicsContext argument.
+        (WebCore::ImageDecoder::setRenderTarget): Deleted.
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/graphics/win/ImageDirect2D.cpp:
+        (WebCore::BitmapImage::setRenderTarget): Deleted.
+        * platform/graphics/win/NativeImageDirect2D.cpp: Add missing include.
+        * platform/graphics/win/PatternDirect2D.cpp: 
+        (WebCore::Pattern::createPlatformPattern): Revise for new signature.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::allocateBackingStoreIfNeeded): Pass GraphicsContext
+        to ImageBuffer constructor.
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect): Pass target context to
+        filter when allocating backing store.
+        * rendering/FilterEffectRenderer.h: Add GraphicsContext as argument to constructor.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasFilterThatIsPainting): Supply GraphicsContext argument when
+        building new FilterEffectRenderer and helper.
+        (WebCore::RenderLayer::setupFilters): Ditto.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame): Revise to take optional GraphicsContext
+        argument.
+        (WebCore::SVGImage::nativeImage): Ditto.
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::nativeImageForCurrentFrame): Ditto.
+        * svg/graphics/SVGImageForContainer.h:
+
 2016-10-14  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r207319.

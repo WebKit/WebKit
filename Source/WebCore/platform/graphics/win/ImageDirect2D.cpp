@@ -92,11 +92,6 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext& ctxt, const Float
     draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), compositeOp, BlendModeNormal, ImageOrientationDescription());
 }
 
-void BitmapImage::setRenderTarget(GraphicsContext& context)
-{
-    m_source.setRenderTarget(context);
-}
-
 void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {

@@ -338,7 +338,8 @@ void GraphicsContextPlatformPrivate::endDraw()
     D2D1_TAG first, second;
     HRESULT hr = m_renderTarget->EndDraw(&first, &second);
 
-    RELEASE_ASSERT(SUCCEEDED(hr));
+    if (!SUCCEEDED(hr))
+        WTFLogAlways("Failed in GraphicsContextPlatformPrivate::endDraw: hr=%ld, first=%ld, second=%ld", hr, first, second);
 }
 
 void GraphicsContextPlatformPrivate::restore()
@@ -736,7 +737,7 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
         return;
     }
 
-    auto ellipse = D2D1::Ellipse(D2D1::Point2F(rect.x(), rect.y()), rect.width(), rect.height());
+    auto ellipse = D2D1::Ellipse(rect.center(), 0.5 * rect.width(), 0.5 * rect.height());
 
     auto context = platformContext();
 
@@ -758,7 +759,7 @@ void GraphicsContext::applyStrokePattern()
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 
     const float patternAlpha = 1;
-    m_data->m_patternStrokeBrush = adoptCOM(m_state.strokePattern->createPlatformPattern(context, patternAlpha, userToBaseCTM));
+    m_data->m_patternStrokeBrush = adoptCOM(m_state.strokePattern->createPlatformPattern(*this, patternAlpha, userToBaseCTM));
 }
 
 void GraphicsContext::applyFillPattern()
@@ -770,7 +771,7 @@ void GraphicsContext::applyFillPattern()
     AffineTransform userToBaseCTM; // FIXME: This isn't really needed on Windows
 
     const float patternAlpha = 1;
-    m_data->m_patternFillBrush = adoptCOM(m_state.fillPattern->createPlatformPattern(context, patternAlpha, userToBaseCTM));
+    m_data->m_patternFillBrush = adoptCOM(m_state.fillPattern->createPlatformPattern(*this, patternAlpha, userToBaseCTM));
 }
 
 void GraphicsContext::drawPath(const Path& path)
@@ -1329,24 +1330,58 @@ void GraphicsContext::clearRect(const FloatRect& rect)
         return;
     }
 
-    auto context = platformContext();
-
-    context->SetTags(1, __LINE__);
-
     drawWithoutShadow(rect, [this, rect](ID2D1RenderTarget* renderTarget) {
-        FloatSize renderTargetSize = renderTarget->GetSize();
-        if (rect.size() == renderTargetSize)
+        FloatRect renderTargetRect(FloatPoint(), renderTarget->GetSize());
+        FloatRect rectToClear(rect);
+
+        if (rectToClear.contains(renderTargetRect)) {
+            renderTarget->SetTags(1, __LINE__);
             renderTarget->Clear();
-        else
-            renderTarget->FillRectangle(rect, m_data->brushWithColor(colorWithGlobalAlpha(fillColor())).get());
+            return;
+        }
+
+        if (!rectToClear.intersects(renderTargetRect))
+            return;
+
+        renderTarget->SetTags(1, __LINE__);
+        rectToClear.intersect(renderTargetRect);
+        renderTarget->FillRectangle(rectToClear, m_data->brushWithColor(colorWithGlobalAlpha(fillColor())).get());
     });
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
-    (void)rect;
-    (void)lineWidth;
-    notImplemented();
+    if (paintingDisabled())
+        return;
+
+    if (isRecording()) {
+        m_displayListRecorder->strokeRect(rect, lineWidth);
+        return;
+    }
+
+    if (m_state.strokeGradient) {
+        auto drawFunction = [this, rect, lineWidth](ID2D1RenderTarget* renderTarget) {
+            renderTarget->SetTags(1, __LINE__);
+            const D2D1_RECT_F d2dRect = rect;
+            renderTarget->DrawRectangle(&d2dRect, m_state.strokeGradient->createPlatformGradientIfNecessary(renderTarget), lineWidth, m_data->strokeStyle());
+        };
+
+        if (hasShadow())
+            drawWithShadow(rect, drawFunction);
+        else
+            drawWithoutShadow(rect, drawFunction);
+        return;
+    }
+
+    if (m_state.strokePattern)
+        applyStrokePattern();
+
+    drawWithoutShadow(rect, [this, rect, lineWidth](ID2D1RenderTarget* renderTarget) {
+        renderTarget->SetTags(1, __LINE__);
+        const D2D1_RECT_F d2dRect = rect;
+        auto brush = m_state.strokePattern ? patternStrokeBrush() : solidStrokeBrush();
+        renderTarget->DrawRectangle(&d2dRect, brush, lineWidth, m_data->strokeStyle());
+    });
 }
 
 void GraphicsContext::setLineCap(LineCap cap)
@@ -1813,7 +1848,7 @@ void GraphicsContext::platformFillEllipse(const FloatRect& ellipse)
         return;
     }
 
-    auto d2dEllipse = D2D1::Ellipse(D2D1::Point2F(ellipse.x(), ellipse.y()), ellipse.width(), ellipse.height());
+    auto d2dEllipse = D2D1::Ellipse(ellipse.center(), 0.5 * ellipse.width(), 0.5 * ellipse.height());
 
     platformContext()->SetTags(1, __LINE__);
 
@@ -1835,7 +1870,7 @@ void GraphicsContext::platformStrokeEllipse(const FloatRect& ellipse)
         return;
     }
 
-    auto d2dEllipse = D2D1::Ellipse(D2D1::Point2F(ellipse.x(), ellipse.y()), ellipse.width(), ellipse.height());
+    auto d2dEllipse = D2D1::Ellipse(ellipse.center(), 0.5 * ellipse.width(), 0.5 * ellipse.height());
 
     platformContext()->SetTags(1, __LINE__);
 

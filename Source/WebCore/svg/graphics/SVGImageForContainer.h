@@ -63,7 +63,7 @@ public:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
 
-    NativeImagePtr nativeImageForCurrentFrame() final;
+    NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
 
 private:
     SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)

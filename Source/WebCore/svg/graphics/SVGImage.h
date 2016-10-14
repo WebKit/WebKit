@@ -66,7 +66,10 @@ public:
     void resetAnimation() final;
 
 #if USE(CAIRO)
-    NativeImagePtr nativeImageForCurrentFrame() final;
+    NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
+#endif
+#if USE(DIRECT2D)
+    NativeImagePtr nativeImage(const GraphicsContext* = nullptr) final;
 #endif
 
 private:

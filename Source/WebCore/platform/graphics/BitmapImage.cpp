@@ -80,39 +80,39 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     return m_source.dataChanged(data(), allDataReceived);
 }
 
-NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel)
+NativeImagePtr BitmapImage::frameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const GraphicsContext* targetContext)
 {
     if (frameHasInvalidNativeImageAtIndex(index, subsamplingLevel)) {
         LOG(Images, "BitmapImage %p frameImageAtIndex - subsamplingLevel was %d, resampling", this, static_cast<int>(frameSubsamplingLevelAtIndex(index)));
         invalidatePlatformData();
     }
 
-    return m_source.frameImageAtIndex(index, subsamplingLevel);
+    return m_source.frameImageAtIndex(index, subsamplingLevel, targetContext);
 }
 
-NativeImagePtr BitmapImage::nativeImage()
+NativeImagePtr BitmapImage::nativeImage(const GraphicsContext* targetContext)
 {
-    return frameImageAtIndex(0);
+    return frameImageAtIndex(0, SubsamplingLevel::Default, targetContext);
 }
 
-NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
+NativeImagePtr BitmapImage::nativeImageForCurrentFrame(const GraphicsContext* targetContext)
 {
-    return frameImageAtIndex(m_currentFrame);
+    return frameImageAtIndex(m_currentFrame, SubsamplingLevel::Default, targetContext);
 }
 
 #if USE(CG)
-NativeImagePtr BitmapImage::nativeImageOfSize(const IntSize& size)
+NativeImagePtr BitmapImage::nativeImageOfSize(const IntSize& size, const GraphicsContext* targetContext)
 {
     size_t count = frameCount();
 
     for (size_t i = 0; i < count; ++i) {
-        auto image = frameImageAtIndex(i);
+        auto image = frameImageAtIndex(i, SubsamplingLevel::Default, targetContext);
         if (image && nativeImageSize(image) == size)
             return image;
     }
 
     // Fallback to the first frame image if we can't find the right size
-    return frameImageAtIndex(0);
+    return frameImageAtIndex(0, SubsamplingLevel::Default, targetContext);
 }
 
 Vector<NativeImagePtr> BitmapImage::framesNativeImages()
@@ -141,10 +141,6 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     if (destRect.isEmpty() || srcRect.isEmpty())
         return;
 
-#if USE(DIRECT2D)
-    setRenderTarget(context);
-#endif
-
 #if PLATFORM(IOS)
     startAnimation(DoNotCatchUp);
 #else
@@ -161,7 +157,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     SubsamplingLevel subsamplingLevel = m_source.subsamplingLevelForScale(scale);
     LOG(Images, "BitmapImage %p draw - subsamplingLevel %d at scale %.4f", this, static_cast<int>(subsamplingLevel), scale);
 
-    auto image = frameImageAtIndex(m_currentFrame, subsamplingLevel);
+    auto image = frameImageAtIndex(m_currentFrame, subsamplingLevel, &context);
     if (!image) // If it's too early we won't have an image yet.
         return;
 
