@@ -1,3 +1,15 @@
+2016-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Clean up BackForwardClient
+        https://bugs.webkit.org/show_bug.cgi?id=163454
+
+        Reviewed by Sam Weinig.
+
+        Remove iOS specific member functions that are only used from WebKit.
+
+        * history/BackForwardClient.h:
+        * loader/EmptyClients.cpp:
+
 2016-10-13  Anders Carlsson  <andersca@apple.com>
 
         Move BackForwardList from WebCore to WebKitLegacy

@@ -70,10 +70,8 @@ public:
     WEBCORE_EXPORT Vector<Ref<WebCore::HistoryItem>>& entries();
 
 #if PLATFORM(IOS)
-    unsigned current() override;
-    void setCurrent(unsigned newCurrent) override;
-
-    bool clearAllPageCaches() override;
+    unsigned current();
+    void setCurrent(unsigned newCurrent);
 #endif
 
 private:

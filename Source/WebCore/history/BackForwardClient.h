@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2010, 2016 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef BackForwardClient_h
-#define BackForwardClient_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -50,17 +49,6 @@ public:
     virtual int forwardListCount() = 0;
 
     virtual void close() = 0;
-
-#if PLATFORM(IOS)
-    // FIXME: These methods seem to violate the encapsulation of this class.
-    virtual unsigned current() = 0;
-    virtual void setCurrent(unsigned newCurrent) = 0;
-
-    // FIXME: Consider renaming this method once we upstream the iOS changes to WebView.mm.
-    virtual bool clearAllPageCaches() = 0;
-#endif
 };
 
 } // namespace WebCore
-
-#endif // BackForwardClient_h

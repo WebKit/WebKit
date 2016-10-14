@@ -59,12 +59,6 @@ private:
 
     void close() override;
 
-#if PLATFORM(IOS)
-    unsigned current() override;
-    void setCurrent(unsigned newCurrent) override;
-    bool clearAllPageCaches() override;
-#endif
-
     WebPage* m_page;
     HashSet<uint64_t> m_associatedItemIDs;
 };

@@ -1,3 +1,22 @@
+2016-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Clean up BackForwardClient
+        https://bugs.webkit.org/show_bug.cgi?id=163454
+
+        Reviewed by Sam Weinig.
+
+        * History/BackForwardList.h:
+        Remove override keywords.
+
+        * History/BackForwardList.mm:
+        (BackForwardList::clearAllPageCaches): Deleted.
+        Remove this, it's no longer used.
+
+        * WebView/WebView.mm:
+        (-[WebView _clearBackForwardCache]): Deleted.
+        * WebView/WebViewPrivate.h:
+        Remove SPI that's no longer used by anyone.
+
 2016-10-13  Anders Carlsson  <andersca@apple.com>
 
         Move BackForwardList from WebCore to WebKitLegacy

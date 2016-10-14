@@ -1,3 +1,16 @@
+2016-10-14  Anders Carlsson  <andersca@apple.com>
+
+        Clean up BackForwardClient
+        https://bugs.webkit.org/show_bug.cgi?id=163454
+
+        Reviewed by Sam Weinig.
+
+        Remove empty iOS only stubs.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/ios/WebBackForwardListProxyIOS.mm: Removed.
+
 2016-10-14  Brady Eidson  <beidson@apple.com>
 
         Enable Gamepads by default in WK2.

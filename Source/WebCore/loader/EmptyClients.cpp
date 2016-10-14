@@ -148,12 +148,6 @@ class EmptyBackForwardClient final : public BackForwardClient {
     int backListCount() override { return 0; }
     int forwardListCount() override { return 0; }
     void close() override { }
-
-#if PLATFORM(IOS)
-    unsigned current() override { return 0; }
-    void setCurrent(unsigned) override { }
-    bool clearAllPageCaches() override { return false; }
-#endif
 };
 
 void fillWithEmptyClients(PageConfiguration& pageConfiguration)

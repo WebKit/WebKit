@@ -226,18 +226,6 @@ void BackForwardList::setCurrent(unsigned newCurrent)
 {
     m_current = newCurrent;
 }
-
-bool BackForwardList::clearAllPageCaches()
-{
-    bool didRemoveAtLeastOneItem = false;
-    for (auto& item : m_entries) {
-        if (item->isInPageCache()) {
-            didRemoveAtLeastOneItem = true;
-            PageCache::singleton().remove(item);
-        }
-    }
-    return didRemoveAtLeastOneItem;
-}
 #endif
 
 void BackForwardList::close()

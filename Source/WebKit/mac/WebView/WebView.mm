@@ -3554,20 +3554,6 @@ static inline IMP getMethod(id o, SEL s)
     [self _locked_recursivelyPerformPlugInSelector:@selector(destroyAllPlugins) inFrame:[self mainFrame]];
 }
 
-- (void)_clearBackForwardCache
-{
-    WebThreadRun(^{
-        WebKit::MemoryMeasure measurer("[WebView _clearBackForwardCache]");
-        BackForwardList* bfList = core([self backForwardList]);
-        if (!bfList)
-            return;
-
-        BOOL didClearBFCache = bfList->clearAllPageCaches();
-        if (WebKit::MemoryMeasure::isLoggingEnabled())
-            NSLog(@"[WebView _clearBackForwardCache] %@ empty cache\n", (didClearBFCache ? @"DID" : @"did NOT"));
-    });
-}
-
 - (void)_startAllPlugIns
 {
     WebThreadLock();
