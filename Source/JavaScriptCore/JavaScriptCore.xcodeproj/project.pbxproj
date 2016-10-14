@@ -1221,6 +1221,8 @@
 		539EB07A1D55607000C82EF7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		539EB0811D55608A00C82EF7 /* testWASM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539EB0711D553DF800C82EF7 /* testWASM.cpp */; };
 		539FB8BA1C99DA7C00940FA1 /* JSArrayInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */; };
+		53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */; };
+		53D444DE1DAF09A000B92784 /* B3WasmAddressValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */; };
 		53F40E851D58F9770099A1B6 /* WASMSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WASMSections.h */; };
 		53F40E8B1D5901BB0099A1B6 /* WASMFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WASMFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WASMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WASMParser.h */; };
@@ -3461,6 +3463,8 @@
 		539EB0711D553DF800C82EF7 /* testWASM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testWASM.cpp; sourceTree = "<group>"; };
 		539EB0801D55607000C82EF7 /* testWASM */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testWASM; sourceTree = BUILT_PRODUCTS_DIR; };
 		539FB8B91C99DA7C00940FA1 /* JSArrayInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayInlines.h; sourceTree = "<group>"; };
+		53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3WasmAddressValue.h; path = b3/B3WasmAddressValue.h; sourceTree = "<group>"; };
+		53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3WasmAddressValue.cpp; path = b3/B3WasmAddressValue.cpp; sourceTree = "<group>"; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F40E841D58F9770099A1B6 /* WASMSections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMSections.h; sourceTree = "<group>"; };
 		53F40E8A1D5901BB0099A1B6 /* WASMFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMFunctionParser.h; sourceTree = "<group>"; };
@@ -5005,6 +5009,8 @@
 				0F2BBD931C5FF3F50023EF23 /* B3Variable.h */,
 				0F2BBD941C5FF3F50023EF23 /* B3VariableValue.cpp */,
 				0F2BBD951C5FF3F50023EF23 /* B3VariableValue.h */,
+				53D444DD1DAF09A000B92784 /* B3WasmAddressValue.cpp */,
+				53D444DB1DAF08AB00B92784 /* B3WasmAddressValue.h */,
 				0FEC85AE1BDB5D5E0080FF74 /* testb3.cpp */,
 			);
 			name = b3;
@@ -7248,6 +7254,7 @@
 				0F3730931C0D67EE00052BFA /* AirUseCounts.h in Headers */,
 				0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */,
 				79B00CBD1C6AB07E0088C65D /* ProxyConstructor.h in Headers */,
+				53D444DC1DAF08AB00B92784 /* B3WasmAddressValue.h in Headers */,
 				990DA67F1C8E316A00295159 /* generate_objc_protocol_type_conversions_implementation.py in Headers */,
 				DC17E8191C9C91DB008A6AB3 /* ShadowChickenInlines.h in Headers */,
 				DC17E8181C9C91D9008A6AB3 /* ShadowChicken.h in Headers */,
@@ -9786,6 +9793,7 @@
 				0F919D2515853CE0004A4E7D /* Watchpoint.cpp in Sources */,
 				1ACF7377171CA6FB00C9BB1E /* Weak.cpp in Sources */,
 				14E84F9E14EE1ACC00D6D5D4 /* WeakBlock.cpp in Sources */,
+				53D444DE1DAF09A000B92784 /* B3WasmAddressValue.cpp in Sources */,
 				14F7256514EE265E00B1652B /* WeakHandleOwner.cpp in Sources */,
 				A7CA3AE317DA41AE006538AF /* WeakMapConstructor.cpp in Sources */,
 				0F338DF91BE96AA80013C88F /* B3CCallValue.cpp in Sources */,

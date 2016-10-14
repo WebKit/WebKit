@@ -1,3 +1,49 @@
+2016-10-14  Keith Miller  <keith_miller@apple.com>
+
+        B3 needs a special WasmAddress Opcode
+        https://bugs.webkit.org/show_bug.cgi?id=163394
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds support for WasmAddress. WasmAddress will be used by
+        Wasm to compute the address of a memory operation from the pinned
+        base pointer. WasmAddress takes an IntPtr so we can avoid emitting
+        unnecessary Move32s in Air. This could happen in the following case:
+
+        @ptr = Trunc(...)
+        WasmAddress(@ptr, pinnedGPR)
+        ...
+        PatchPoint(...) // Do Wasm call
+        WasmAddress(@ptr, pinnedGPR)
+        ...
+
+        In this case we will not be able to CSE the WasmAddresses since the
+        call writes to pinnedGPR. Thus if WasmAddress took an Int32 we would need
+        to emit an extra Move32 at the second WasmAddress to ensure it saw a proper
+        32-bit value. If Wasm ensures that there there is a leading ZExt32 then
+        the duplicated moves become unnecessary.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::effectiveAddr):
+        (JSC::B3::Air::LowerToAir::lower):
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects):
+        * b3/B3WasmAddressValue.cpp: Added.
+        (JSC::B3::WasmAddressValue::~WasmAddressValue):
+        (JSC::B3::WasmAddressValue::dumpMeta):
+        (JSC::B3::WasmAddressValue::cloneImpl):
+        (JSC::B3::WasmAddressValue::WasmAddressValue):
+        * b3/B3WasmAddressValue.h: Added.
+        * b3/testb3.cpp:
+        (JSC::B3::testWasmAddress):
+        (JSC::B3::run):
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: @isConstructor incorrectly thinks Math.cos is a constructor

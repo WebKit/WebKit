@@ -54,6 +54,7 @@
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "B3VariableValue.h"
+#include "B3WasmAddressValue.h"
 #include <wtf/IndexMap.h>
 #include <wtf/IndexSet.h>
 #include <wtf/ListDump.h>
@@ -507,6 +508,21 @@ private:
 
         case SlotBase:
             return Arg::stack(m_stackToStack.get(address->as<SlotBaseValue>()->slot()), offset);
+
+        case WasmAddress: {
+            WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
+            Value* pointer = wasmAddress->child(0);
+            ASSERT(Arg::isValidIndexForm(1, offset, width));
+            if (m_locked.contains(pointer))
+                return fallback();
+
+            // FIXME: We should support ARM64 LDR 32-bit addressing, which will
+            // allow us to fuse a Shl ptr, 2 into the address. Additionally, and
+            // perhaps more importantly, it would allow us to avoid a truncating
+            // move. See: https://bugs.webkit.org/show_bug.cgi?id=163465
+
+            return Arg::index(Tmp(wasmAddress->pinnedGPR()), tmp(pointer), 1, offset);
+        }
 
         default:
             return fallback();
@@ -2276,7 +2292,14 @@ private:
             appendStore(Air::Store16, valueToStore, addr(m_value));
             return;
         }
-            
+
+        case WasmAddress: {
+            WasmAddressValue* address = m_value->as<WasmAddressValue>();
+
+            append(Add64, Arg(address->pinnedGPR()), tmp(address));
+            return;
+        }
+
         case Fence: {
             FenceValue* fence = m_value->as<FenceValue>();
             if (!fence->write && !fence->read)

@@ -586,6 +586,9 @@ Effects Value::effects() const
         result.writes = as<MemoryValue>()->range();
         result.controlDependent = true;
         break;
+    case WasmAddress:
+        result.readsPinned = true;
+        break;
     case Fence: {
         const FenceValue* fence = as<FenceValue>();
         result.reads = fence->read;

@@ -1,3 +1,14 @@
+2016-10-14  Keith Miller  <keith_miller@apple.com>
+
+        B3 needs a special WasmAddress Opcode
+        https://bugs.webkit.org/show_bug.cgi?id=163394
+
+        Reviewed by Filip Pizlo.
+
+        Update the b3 docs for the new WasmAddress opcode.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-10-14  Simon Fraser  <simon.fraser@apple.com>
 
         Annotate bots in contributors.json and don't show them on webkit.org/team

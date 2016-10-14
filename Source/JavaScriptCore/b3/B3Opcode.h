@@ -157,6 +157,12 @@ enum Opcode : int16_t {
     Store16,
     // This is a polymorphic store for Int32, Int64, Float, and Double.
     Store,
+
+    // This is used to compute the actual address of a Wasm memory operation. It takes an IntPtr
+    // and a pinned register then computes the appropriate IntPtr address. For the use-case of
+    // Wasm it is important that the first child initially be a ZExt32 so the top bits are cleared.
+    // We do WasmAddress(ZExt32(ptr), ...) so that we can avoid generating extraneous moves in Air.
+    WasmAddress,
     
     // This is used to represent standalone fences - i.e. fences that are not part of other
     // instructions. It's expressive enough to expose mfence on x86 and dmb ish/ishst on ARM. On
