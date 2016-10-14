@@ -586,7 +586,13 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     _removeDebuggerTreeElement(debuggerTreeElement)
     {
-        var parentTreeElement = debuggerTreeElement.parent;
+        // If this is a BreakpointTreeElement being deleted because of a cause
+        // outside of the TreeOutline then deselect if it is selected to avoid
+        // TreeOutline selection changes causing unexpected ContentView changes.
+        if (!debuggerTreeElement.__deletedViaDeleteKeyboardShortcut)
+            debuggerTreeElement.deselect();
+
+        let parentTreeElement = debuggerTreeElement.parent;
         parentTreeElement.removeChild(debuggerTreeElement);
 
         console.assert(parentTreeElement.parent === this._breakpointsContentTreeOutline);

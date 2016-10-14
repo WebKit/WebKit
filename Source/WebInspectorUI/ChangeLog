@@ -1,5 +1,26 @@
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Dragging to delete a Breakpoint should never trigger a ContentView change
+        https://bugs.webkit.org/show_bug.cgi?id=163403
+        <rdar://problem/28762930>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WebInspector.BreakpointTreeElement.prototype.ondelete):
+        Signal when a breakpoint tree element will be going away because it was
+        deleted via the keyboard operation within the TreeOutline. This is a dirty
+        way to do the signal but we remove BreakpointTreeElements asynchronously
+        when the Breakpoint actually gets removed from the backend.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype._removeDebuggerTreeElement):
+        Deselect a BreakpointTreeElement if it was deleted in a way other then
+        the delete keyboard shortcut. This ensures another TreeElement selection
+        doesn't force ContentView changes.
+
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Improve debugger highlight when inside of getter/setter calls
         https://bugs.webkit.org/show_bug.cgi?id=163428
         <rdar://problem/28769061>

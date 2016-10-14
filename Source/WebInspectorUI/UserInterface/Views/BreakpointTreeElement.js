@@ -80,6 +80,11 @@ WebInspector.BreakpointTreeElement = class BreakpointTreeElement extends WebInsp
         if (!WebInspector.debuggerManager.isBreakpointRemovable(this._breakpoint))
             return false;
 
+        // We set this flag so that TreeOutlines that will remove this
+        // BreakpointTreeElement will know whether it was deleted from
+        // within the TreeOutline or from outside it (e.g. TextEditor).
+        this.__deletedViaDeleteKeyboardShortcut = true;
+
         WebInspector.debuggerManager.removeBreakpoint(this._breakpoint);
         return true;
     }
