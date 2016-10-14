@@ -1,3 +1,18 @@
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: @isConstructor incorrectly thinks Math.cos is a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=163437
+
+        Reviewed by Saam Barati.
+
+        * stress/is-constructor.js: Added.
+        (assert):
+        (prototype.assert):
+        New test to cover the @isConstructor builtin.
+
+        * test262.yaml:
+        Test now passes.
+
 2016-10-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207322.

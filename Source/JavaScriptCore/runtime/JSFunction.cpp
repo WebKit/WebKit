@@ -573,6 +573,8 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
     if (thisObject->isHostFunction()) {
+        if (thisObject->nativeConstructor() == callHostFunctionAsConstructor)
+            return ConstructType::None;
         constructData.native.function = thisObject->nativeConstructor();
         return ConstructType::Host;
     }

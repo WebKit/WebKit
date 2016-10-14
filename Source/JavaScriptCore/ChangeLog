@@ -1,3 +1,18 @@
+2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: @isConstructor incorrectly thinks Math.cos is a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=163437
+
+        Reviewed by Saam Barati.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getConstructData):
+        By default, Host JSFunctions are not constructable. They get
+        the default callHostFunctionAsConstructor native constructor.
+        When getting construct data we can return ConstructType::None
+        in these cases instead of indicating it might be constructable
+        and later throwing an exception when construction is attempted.
+
 2016-10-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207322.
