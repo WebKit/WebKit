@@ -1,3 +1,24 @@
+2016-10-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] GraphicsContext3D::ImageExtractor fails to extract images
+        https://bugs.webkit.org/show_bug.cgi?id=163439
+
+        Reviewed by Carlos Garcia Campos.
+
+        In the Cairo implementation of GraphicsContext3D::ImageExtractor,
+        don't check for frame completeness at index 0. This information
+        is now cached only after the frame for that index is decoded and
+        marked as completed, which is done after this check.
+
+        Becuase of this the current check forces extractImage() to return
+        early and abort WebGL texture uploads from image sources.
+
+        This bug was most likely exposed after the refactoring in r206481.
+        https://trac.webkit.org/changeset/206481
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::ImageExtractor::extractImage):
+
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
         MediaResourceLoader should use CachedResource::ressourceError to do CORS checks

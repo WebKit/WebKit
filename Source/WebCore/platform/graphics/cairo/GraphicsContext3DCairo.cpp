@@ -223,7 +223,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
 
     if (m_image->data()) {
         decoder.setData(m_image->data(), true);
-        if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
+        if (!decoder.frameCount())
             return false;
         m_imageSurface = decoder.createFrameImageAtIndex(0);
     } else {
