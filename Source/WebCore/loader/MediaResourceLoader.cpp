@@ -134,7 +134,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
         return;
 
     RefPtr<MediaResource> protectedThis(this);
-    if (!m_loader->crossOriginMode().isNull() && !m_resource->passesSameOriginPolicyCheck(*m_loader->document()->securityOrigin())) {
+    if (m_resource->resourceError().isAccessControl()) {
         static NeverDestroyed<const String> consoleMessage("Cross-origin media resource load denied by Cross-Origin Resource Sharing policy.");
         m_loader->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, consoleMessage.get());
         m_didPassAccessControlCheck = false;
@@ -144,7 +144,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
         return;
     }
 
-    m_didPassAccessControlCheck = !m_loader->crossOriginMode().isNull();
+    m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
     if (m_client)
         m_client->responseReceived(*this, response);
 }

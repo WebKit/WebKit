@@ -1,5 +1,22 @@
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
+        MediaResourceLoader should use CachedResource::ressourceError to do CORS checks
+        https://bugs.webkit.org/show_bug.cgi?id=163279
+
+        Reviewed by Darin Adler.
+
+        Covered by existing tests.
+
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::responseReceived): Making use of CachedResource::ressourceError to detect CORS failures.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest): Activating loader options checks
+        before reusing the resource.
+        (WebCore::isResourceSuitableForDirectReuse): Disabling direct reuse of MediaResource since reuse of raw
+        resources does not work yet for media resources.
+
+2016-10-14  Youenn Fablet  <youenn@apple.com>
+
         Make NetworkCache aware of fetch cache mode
         https://bugs.webkit.org/show_bug.cgi?id=163332
 

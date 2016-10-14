@@ -561,8 +561,6 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
     switch (resource.type()) {
     case CachedResource::SVGDocumentResource:
         return false;
-    case CachedResource::MediaResource:
-        return false;
     case CachedResource::MainResource:
         return false;
 #if ENABLE(LINK_PREFETCH)
@@ -602,7 +600,7 @@ static inline bool isResourceSuitableForDirectReuse(const CachedResource& resour
         return false;
 
     // FIXME: Implement reuse of cached raw resources.
-    if (resource.type() == CachedResource::Type::RawResource)
+    if (resource.type() == CachedResource::Type::RawResource || resource.type() == CachedResource::Type::MediaResource)
         return false;
 
     return true;
