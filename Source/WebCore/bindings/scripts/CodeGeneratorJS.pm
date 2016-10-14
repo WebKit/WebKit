@@ -352,15 +352,6 @@ sub ShouldUseGlobalObjectPrototype
     return IsDOMGlobalObject($interface);
 }
 
-sub ShouldCacheAttribute
-{
-    my $attribute = shift;
-
-    return 1 if $attribute->signature->extendedAttributes->{CachedAttribute};
-    return 1 if $attribute->signature->extendedAttributes->{SameObject};
-    return 0;
-}
-
 sub GenerateGetOwnPropertySlotBody
 {
     my ($interface, $className, $inlined) = @_;
@@ -1490,7 +1481,7 @@ sub GenerateHeader
             my $attribute = $_;
             $numCustomAttributes++ if HasCustomGetter($attribute->signature->extendedAttributes);
             $numCustomAttributes++ if HasCustomSetter($attribute->signature->extendedAttributes);
-            if (ShouldCacheAttribute($attribute)) {
+            if ($attribute->signature->extendedAttributes->{CachedAttribute}) {
                 my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                 push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@headerContent, "    mutable JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
@@ -3073,7 +3064,7 @@ sub GenerateImplementation
                 }
             }
 
-            $needsVisitChildren = 1 if ShouldCacheAttribute($attribute);
+            $needsVisitChildren = 1 if $attribute->signature->extendedAttributes->{CachedAttribute};
 
             if ($interface->extendedAttributes->{CheckSecurity} &&
                 !$attribute->signature->extendedAttributes->{DoNotCheckSecurity} &&
@@ -3148,7 +3139,7 @@ sub GenerateImplementation
                 }
             } elsif (!$attribute->signature->extendedAttributes->{GetterMayThrowLegacyException}) {
                 my $cacheIndex = 0;
-                if (ShouldCacheAttribute($attribute)) {
+                if ($attribute->signature->extendedAttributes->{CachedAttribute}) {
                     $cacheIndex = $currentCachedAttribute;
                     $currentCachedAttribute++;
                     push(@implContent, "    if (JSValue cachedValue = thisObject.m_" . $attribute->signature->name . ".get())\n");
@@ -3191,7 +3182,7 @@ sub GenerateImplementation
                     }
                 }
 
-                push(@implContent, "    thisObject.m_" . $attribute->signature->name . ".set(state.vm(), &thisObject, result);\n") if ShouldCacheAttribute($attribute);
+                push(@implContent, "    thisObject.m_" . $attribute->signature->name . ".set(state.vm(), &thisObject, result);\n") if $attribute->signature->extendedAttributes->{CachedAttribute};
                 push(@implContent, "    return result;\n");
 
             } else {
@@ -3777,7 +3768,7 @@ END
         if ($numCachedAttributes > 0) {
             foreach (@{$interface->attributes}) {
                 my $attribute = $_;
-                if (ShouldCacheAttribute($attribute)) {
+                if ($attribute->signature->extendedAttributes->{CachedAttribute}) {
                     push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
                 }
             }

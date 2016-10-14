@@ -1,3 +1,16 @@
+2016-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r207319.
+
+        Regressed Dromaeo and may have caused crashes under
+        GuardMalloc (rdar://problem/28780835)
+
+        Reverted changeset:
+
+        "[Web IDL] Add support for [SameObject] extended attribute"
+        https://bugs.webkit.org/show_bug.cgi?id=163414
+        http://trac.webkit.org/changeset/207319
+
 2016-10-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Changing the argument on fit-content() doesn't cause the grid to be relayout

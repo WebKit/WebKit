@@ -39,5 +39,5 @@ interface HTMLButtonElement : HTMLElement {
     boolean checkValidity();
     void setCustomValidity(DOMString? error);
 
-    [SameObject] readonly attribute NodeList labels;
+    readonly attribute NodeList labels;
 };

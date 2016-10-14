@@ -23,7 +23,7 @@
  */
 
 interface HTMLOutputElement : HTMLElement {
-    [SameObject, PutForwards=value] readonly attribute DOMTokenList htmlFor;
+    [PutForwards=value] readonly attribute DOMTokenList htmlFor;
 
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString name;
@@ -38,5 +38,5 @@ interface HTMLOutputElement : HTMLElement {
     boolean checkValidity();
     void setCustomValidity(DOMString? error);
 
-    [SameObject] readonly attribute NodeList labels;
+    readonly attribute NodeList labels;
 };

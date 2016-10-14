@@ -23,8 +23,8 @@ interface HTMLTableElement : HTMLElement {
     [SetterMayThrowLegacyException] attribute HTMLTableSectionElement? tHead;
     [SetterMayThrowLegacyException] attribute HTMLTableSectionElement? tFoot;
 
-    [SameObject] readonly attribute HTMLCollection rows;
-    [SameObject] readonly attribute HTMLCollection tBodies;
+    readonly attribute HTMLCollection rows;
+    readonly attribute HTMLCollection tBodies;
     [Reflect] attribute DOMString align;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString bgColor;
     [Reflect] attribute DOMString border;

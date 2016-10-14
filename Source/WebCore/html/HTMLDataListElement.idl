@@ -31,5 +31,5 @@
 [
     Conditional=DATALIST_ELEMENT,
 ] interface HTMLDataListElement : HTMLElement {
-    [SameObject] readonly attribute HTMLCollection options;
+    readonly attribute HTMLCollection options;
 };

@@ -58,5 +58,6 @@
 
     readonly attribute USVString origin;
 
-    [Unforgeable, SameObject] readonly attribute FrozenArray<USVString> ancestorOrigins;
+    // FIXME: Add support for SameObject
+    [Unforgeable, CachedAttribute] readonly attribute FrozenArray<USVString> ancestorOrigins;
 };

@@ -30,7 +30,7 @@
     [Reflect] attribute DOMString media;
     [Reflect] attribute DOMString rel;
     [Reflect] attribute DOMString rev;
-    [SameObject, PutForwards=value] readonly attribute DOMTokenList sizes;
+    [PutForwards=value] readonly attribute DOMTokenList sizes;
     [Reflect] attribute DOMString target;
     [Reflect] attribute DOMString type;
     [Reflect] attribute DOMString as;
@@ -39,6 +39,6 @@
     // DOM Level 2 Style
     readonly attribute StyleSheet sheet;
 
-    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 

@@ -24,10 +24,10 @@ interface HTMLFieldSetElement : HTMLElement {
 
     readonly attribute DOMString type;
 
-    [SameObject] readonly attribute HTMLFormControlsCollection elements;
+    readonly attribute HTMLFormControlsCollection elements;
 
     readonly attribute boolean         willValidate;
-    [SameObject] readonly attribute ValidityState validity;
+    readonly attribute ValidityState   validity;
     readonly attribute DOMString       validationMessage;
     boolean  checkValidity();
     void     setCustomValidity(DOMString? error);

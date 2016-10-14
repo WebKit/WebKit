@@ -36,7 +36,7 @@
 
     [Reflect] attribute DOMString webkitdropzone;
     // FIXME: Support the standard HTML equivalent.
-    // [SameObject, PutForwards=value] readonly attribute DOMTokenList dropzone;
+    // [PutForwards=value] readonly attribute DOMTokenList dropzone;
 
     [Reflect] attribute boolean hidden;
     [Reflect] attribute DOMString accessKey;
@@ -54,7 +54,7 @@
     void focus();
     void blur();
 
-    [SameObject] readonly attribute DOMStringMap dataset;
+    readonly attribute DOMStringMap dataset;
 };
 
 HTMLElement implements GlobalEventHandlers;

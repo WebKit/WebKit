@@ -21,7 +21,7 @@
 interface HTMLTableRowElement : HTMLElement {
     readonly attribute long rowIndex;
     readonly attribute long sectionRowIndex;
-    [SameObject] readonly attribute HTMLCollection cells;
+    readonly attribute HTMLCollection cells;
     [Reflect] attribute DOMString align;
     [Reflect, TreatNullAs=EmptyString] attribute DOMString bgColor;
     [Reflect=char] attribute DOMString ch;

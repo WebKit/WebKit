@@ -29,7 +29,7 @@ interface HTMLAreaElement : HTMLElement {
 
     [Conditional=DOWNLOAD_ATTRIBUTE, EnabledAtRuntime=DownloadAttribute, Reflect] attribute DOMString download;
 
-    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
+    [PutForwards=value] readonly attribute DOMTokenList relList;
 };
 
 HTMLAreaElement implements HTMLHyperlinkElementUtils;
