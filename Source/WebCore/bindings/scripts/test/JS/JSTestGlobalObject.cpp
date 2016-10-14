@@ -458,7 +458,7 @@ static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateF
 
 EncodedJSValue JSC_HOST_CALL jsTestGlobalObjectInstanceFunctionTestPrivateFunction(ExecState* state)
 {
-    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller>(state, "testPrivateFunction");
+    return BindingCaller<JSTestGlobalObject>::callOperation<jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller, CastedThisErrorBehavior::Assert>(state, "testPrivateFunction");
 }
 
 static inline JSC::EncodedJSValue jsTestGlobalObjectInstanceFunctionTestPrivateFunctionCaller(JSC::ExecState* state, JSTestGlobalObject* castedThis, JSC::ThrowScope& throwScope)

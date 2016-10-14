@@ -331,7 +331,7 @@ template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFu
 template<typename T> struct NativeValueTraits;
 
 
-enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise };
+enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise, Assert };
 
 template<typename JSClass>
 struct BindingCaller {
@@ -343,16 +343,17 @@ struct BindingCaller {
     static JSClass* castForAttribute(JSC::ExecState&, JSC::EncodedJSValue);
     static JSClass* castForOperation(JSC::ExecState&);
 
-    template<PromiseOperationCallerFunction operationCaller>
+    template<PromiseOperationCallerFunction operationCaller, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::RejectPromise>
     static JSC::EncodedJSValue callPromiseOperation(JSC::ExecState* state, Ref<DeferredPromise>&& promise, const char* operationName)
     {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForOperation(*state);
-        if (UNLIKELY(!thisObject)) {
+        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject)) {
             ASSERT(JSClass::info());
             return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
         }
+        ASSERT(thisObject);
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
         return operationCaller(state, thisObject, WTFMove(promise), throwScope);
@@ -364,13 +365,14 @@ struct BindingCaller {
         ASSERT(state);
         auto throwScope = DECLARE_THROW_SCOPE(state->vm());
         auto* thisObject = castForOperation(*state);
-        if (UNLIKELY(!thisObject)) {
+        if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject)) {
             ASSERT(JSClass::info());
             if (shouldThrow == CastedThisErrorBehavior::Throw)
                 return throwThisTypeError(*state, throwScope, JSClass::info()->className, operationName);
             // For custom promise-returning operations
             return rejectPromiseWithThisTypeError(*state, JSClass::info()->className, operationName);
         }
+        ASSERT(thisObject);
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
         // FIXME: We should refactor the binding generated code to use references for state and thisObject.
         return operationCaller(state, thisObject, throwScope);

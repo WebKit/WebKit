@@ -3677,16 +3677,22 @@ END
             } else {
                 my $methodName = $function->signature->name;
                 if (IsReturningPromise($function) && !$isCustom) {
-                    push(@implContent, "    return BindingCaller<$className>::callPromiseOperation<${functionName}Caller>(state, WTFMove(promise), \"${methodName}\");\n");
+                    my $templateParameters = "${functionName}Caller";
+                    $templateParameters .= ", CastedThisErrorBehavior::Assert" if ($function->signature->extendedAttributes->{PrivateIdentifier} and not $function->signature->extendedAttributes->{PublicIdentifier});
+                    push(@implContent, "    return BindingCaller<$className>::callPromiseOperation<${templateParameters}>(state, WTFMove(promise), \"${methodName}\");\n");
                     push(@implContent, "}\n");
                     push(@implContent, "\n");
                     push(@implContent, "static inline JSC::EncodedJSValue ${functionName}Caller(JSC::ExecState* state, ${className}* castedThis, Ref<DeferredPromise>&& promise, JSC::ThrowScope& throwScope)\n");
                 } else {
                     my $classParameterType = $className eq "JSEventTarget" ? "JSEventTargetWrapper*" : "${className}*";
                     my $templateParameters = "${functionName}Caller";
-                    # FIXME: We need this specific handling for custom promise-returning functions.
-                    # It would be better to have the casted-this code calling the promise-specific code.
-                    $templateParameters .= ", CastedThisErrorBehavior::RejectPromise" if IsReturningPromise($function);
+                    if ($function->signature->extendedAttributes->{PrivateIdentifier} and not $function->signature->extendedAttributes->{PublicIdentifier}) {
+                        $templateParameters .= ", CastedThisErrorBehavior::Assert";
+                    } elsif (IsReturningPromise($function)) {
+                        # FIXME: We need this specific handling for custom promise-returning functions.
+                        # It would be better to have the casted-this code calling the promise-specific code.
+                        $templateParameters .= ", CastedThisErrorBehavior::RejectPromise" if IsReturningPromise($function);
+                    }
 
                     push(@implContent, "    return BindingCaller<$className>::callOperation<${templateParameters}>(state, \"${methodName}\");\n");
                     push(@implContent, "}\n");

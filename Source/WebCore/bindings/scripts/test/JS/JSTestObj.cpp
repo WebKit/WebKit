@@ -5352,7 +5352,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionPrivateMethod(ExecState* state)
 {
-    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionPrivateMethodCaller>(state, "privateMethod");
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionPrivateMethodCaller, CastedThisErrorBehavior::Assert>(state, "privateMethod");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
