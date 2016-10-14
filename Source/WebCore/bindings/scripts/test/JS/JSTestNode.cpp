@@ -274,47 +274,71 @@ const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator", &Base::s_
 template<>
 const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestNodeIteratorPrototype) };
 
+static inline EncodedJSValue jsTestNodePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Value));
+}
+
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestNode>(*state, IterationKind::Value, "[Symbol.Iterator]");
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionSymbolIteratorCaller>(state, "[Symbol.Iterator]");
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::KeyValue));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestNode>(*state, IterationKind::KeyValue, "entries");
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionEntriesCaller>(state, "entries");
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Key));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestNode>(*state, IterationKind::Key, "keys");
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionKeysCaller>(state, "keys");
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestNode>(*state, IterationKind::Value, "values");
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionValuesCaller>(state, "values");
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
+{
+    return JSValue::encode(iteratorForEach<JSTestNode>(*state, *thisObject, throwScope));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)
 {
-    return iteratorForEach<JSTestNode>(*state, "forEach");
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionForEachCaller>(state, "forEach");
+}
+
+static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONCaller(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
+{
+    auto& vm = state->vm();
+    auto* result = constructEmptyObject(state);
+
+    auto nameValue = jsTestNodeNameGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
+
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)
 {
-    ASSERT(state);
-    auto thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestNode*>(thisValue);
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestNode", "toJSON");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestNode::info());
-
-    auto* result = constructEmptyObject(state);
-    auto nameValue = jsTestNodeName(state, JSValue::encode(thisValue), Identifier());
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "name"), JSValue::decode(nameValue));
-    return JSValue::encode(result);
+    return BindingCaller<JSTestNode>::callOperation<jsTestNodePrototypeFunctionToJSONCaller>(state, "toJSON");
 }
 
 void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)

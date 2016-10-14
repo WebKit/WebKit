@@ -7735,31 +7735,33 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::
     return JSValue::encode(result);
 }
 
+static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONCaller(ExecState* state, JSTestObj* thisObject, JSC::ThrowScope& throwScope)
+{
+    auto& vm = state->vm();
+    auto* result = constructEmptyObject(state);
+
+    auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttrGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
+
+    auto enumAttrValue = jsTestObjEnumAttrGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "enumAttr"), enumAttrValue);
+
+    auto longAttrValue = jsTestObjLongAttrGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), longAttrValue);
+
+    auto createValue = jsTestObjCreateGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "create"), createValue);
+
+    return JSValue::encode(result);
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(ExecState* state)
 {
-    ASSERT(state);
-    auto thisValue = state->thisValue();
-    auto castedThis = jsDynamicCast<JSTestObj*>(thisValue);
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    if (UNLIKELY(!castedThis))
-        return throwThisTypeError(*state, throwScope, "TestObj", "toJSON");
-    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-
-    auto* result = constructEmptyObject(state);
-    auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttr(state, JSValue::encode(thisValue), Identifier());
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), JSValue::decode(readOnlyStringAttrValue));
-    auto enumAttrValue = jsTestObjEnumAttr(state, JSValue::encode(thisValue), Identifier());
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "enumAttr"), JSValue::decode(enumAttrValue));
-    auto longAttrValue = jsTestObjLongAttr(state, JSValue::encode(thisValue), Identifier());
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), JSValue::decode(longAttrValue));
-    auto createValue = jsTestObjCreate(state, JSValue::encode(thisValue), Identifier());
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "create"), JSValue::decode(createValue));
-    return JSValue::encode(result);
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionToJSONCaller>(state, "toJSON");
 }
 
 void JSTestObj::visitChildren(JSCell* cell, SlotVisitor& visitor)

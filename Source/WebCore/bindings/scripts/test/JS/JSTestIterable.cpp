@@ -172,29 +172,54 @@ const JSC::ClassInfo TestIterableIterator::s_info = { "TestIterable Iterator", &
 template<>
 const JSC::ClassInfo TestIterableIteratorPrototype::s_info = { "TestIterable Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestIterableIteratorPrototype) };
 
+static inline EncodedJSValue jsTestIterablePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestIterable>(*thisObject, IterationKind::Value));
+}
+
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionSymbolIterator(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestIterable>(*state, IterationKind::Value, "[Symbol.Iterator]");
+    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionSymbolIteratorCaller>(state, "[Symbol.Iterator]");
+}
+
+static inline EncodedJSValue jsTestIterablePrototypeFunctionEntriesCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestIterable>(*thisObject, IterationKind::KeyValue));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionEntries(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestIterable>(*state, IterationKind::KeyValue, "entries");
+    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionEntriesCaller>(state, "entries");
+}
+
+static inline EncodedJSValue jsTestIterablePrototypeFunctionKeysCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestIterable>(*thisObject, IterationKind::Key));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionKeys(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestIterable>(*state, IterationKind::Key, "keys");
+    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionKeysCaller>(state, "keys");
+}
+
+static inline EncodedJSValue jsTestIterablePrototypeFunctionValuesCaller(ExecState*, JSTestIterable* thisObject, JSC::ThrowScope&)
+{
+    return JSValue::encode(iteratorCreate<JSTestIterable>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionValues(JSC::ExecState* state)
 {
-    return iteratorCreate<JSTestIterable>(*state, IterationKind::Value, "values");
+    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionValuesCaller>(state, "values");
+}
+
+static inline EncodedJSValue jsTestIterablePrototypeFunctionForEachCaller(ExecState* state, JSTestIterable* thisObject, JSC::ThrowScope& throwScope)
+{
+    return JSValue::encode(iteratorForEach<JSTestIterable>(*state, *thisObject, throwScope));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestIterablePrototypeFunctionForEach(JSC::ExecState* state)
 {
-    return iteratorForEach<JSTestIterable>(*state, "forEach");
+    return BindingCaller<JSTestIterable>::callOperation<jsTestIterablePrototypeFunctionForEachCaller>(state, "forEach");
 }
 
 bool JSTestIterableOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)

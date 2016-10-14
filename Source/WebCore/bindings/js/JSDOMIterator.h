@@ -124,21 +124,16 @@ private:
 };
 
 template<typename JSWrapper>
-JSC::EncodedJSValue iteratorCreate(JSC::ExecState&, IterationKind, const char*);
+JSC::JSValue iteratorCreate(JSWrapper&, IterationKind);
 template<typename JSWrapper>
-JSC::EncodedJSValue iteratorForEach(JSC::ExecState&, const char*);
+JSC::JSValue iteratorForEach(JSC::ExecState&, JSWrapper&, JSC::ThrowScope&);
 
 template<typename JSWrapper>
-JSC::EncodedJSValue iteratorCreate(JSC::ExecState& state, IterationKind kind, const char* propertyName)
+JSC::JSValue iteratorCreate(JSWrapper& thisObject, IterationKind kind)
 {
-    JSC::VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
-    if (UNLIKELY(!wrapper))
-        return throwThisTypeError(state, scope, JSWrapper::info()->className, propertyName);
-    JSDOMGlobalObject& globalObject = *wrapper->globalObject();
-    return JSC::JSValue::encode(JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), *wrapper, kind));
+    ASSERT(thisObject.globalObject());
+    JSDOMGlobalObject& globalObject = *thisObject.globalObject();
+    return JSDOMIterator<JSWrapper>::create(globalObject.vm(), getDOMStructure<JSDOMIterator<JSWrapper>>(globalObject.vm(), globalObject), thisObject, kind);
 }
 
 template<typename JSWrapper>
@@ -182,33 +177,26 @@ appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject* globalObject, J
 }
 
 template<typename JSWrapper>
-JSC::EncodedJSValue iteratorForEach(JSC::ExecState& state, const char* propertyName)
+JSC::JSValue iteratorForEach(JSC::ExecState& state, JSWrapper& thisObject, JSC::ThrowScope& scope)
 {
-    JSC::VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto wrapper = JSC::jsDynamicCast<JSWrapper*>(state.thisValue());
-    if (UNLIKELY(!wrapper))
-        return throwThisTypeError(state, scope, JSWrapper::info()->className, propertyName);
-
     JSC::JSValue callback = state.argument(0);
     JSC::JSValue thisValue = state.argument(1);
 
     JSC::CallData callData;
     JSC::CallType callType = JSC::getCallData(callback, callData);
     if (callType == JSC::CallType::None)
-        return throwVMTypeError(&state, scope);
+        return throwTypeError(&state, scope, ASCIILiteral("Cannot call callback"));
 
-    auto iterator = wrapper->wrapped().createIterator();
+    auto iterator = thisObject.wrapped().createIterator();
     while (auto value = iterator.next()) {
         JSC::MarkedArgumentBuffer arguments;
-        appendForEachArguments(state, wrapper->globalObject(), arguments, value);
-        arguments.append(wrapper);
+        appendForEachArguments(state, thisObject.globalObject(), arguments, value);
+        arguments.append(&thisObject);
         JSC::call(&state, callback, callType, callData, thisValue, arguments);
         if (UNLIKELY(scope.exception()))
             break;
     }
-    return JSC::JSValue::encode(JSC::jsUndefined());
+    return JSC::jsUndefined();
 }
 
 template<typename JSWrapper>

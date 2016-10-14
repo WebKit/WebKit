@@ -3976,28 +3976,29 @@ sub GenerateSerializerFunction
     my $serializerNativeFunctionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($serializerFunctionName);
 
     AddToImplIncludes("ObjectConstructor.h");
-    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
+    push(@implContent, "static inline EncodedJSValue ${serializerNativeFunctionName}Caller(ExecState* state, JS$interfaceName* thisObject, JSC::ThrowScope& throwScope)\n");
     push(@implContent, "{\n");
-    push(@implContent, "    ASSERT(state);\n");
-    push(@implContent, "    auto thisValue = state->thisValue();\n");
-    push(@implContent, "    auto castedThis = jsDynamicCast<JS$interfaceName*>(thisValue);\n");
-    push(@implContent, "    VM& vm = state->vm();\n");
-    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-    push(@implContent, "    if (UNLIKELY(!castedThis))\n");
-    push(@implContent, "        return throwThisTypeError(*state, throwScope, \"$interfaceName\", \"$serializerFunctionName\");\n");
-    push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, ${className}::info());\n\n") unless $interfaceName eq "EventTarget";
+    push(@implContent, "    auto& vm = state->vm();\n");
     push(@implContent, "    auto* result = constructEmptyObject(state);\n");
+    push(@implContent, "\n");
     foreach my $attribute (@{$interface->attributes}) {
         my $name = $attribute->signature->name;
         if (grep $_ eq $name, @{$interface->serializable->attributes}) {
             my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "    auto ${name}Value = ${getFunctionName}(state, JSValue::encode(thisValue), Identifier());\n");
+            push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(*state, *thisObject, throwScope);\n");
             push(@implContent, "    ASSERT(!throwScope.exception());\n");
-            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), JSValue::decode(${name}Value));\n");
+            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
+            push(@implContent, "\n");
         }
     }
     push(@implContent, "    return JSValue::encode(result);\n");
-    push(@implContent, "}\n\n");
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
+    push(@implContent, "EncodedJSValue JSC_HOST_CALL ${serializerNativeFunctionName}(ExecState* state)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return BindingCaller<JS$interfaceName>::callOperation<${serializerNativeFunctionName}Caller>(state, \"$serializerFunctionName\");\n");
+    push(@implContent, "}\n");
+    push(@implContent, "\n");
 }
 
 sub GenerateCallWithUsingReferences
@@ -4801,27 +4802,36 @@ END
         my $propertyName = $function->signature->name;
         my $functionName = GetFunctionName($interface, $className, $function);
 
-        if (not $propertyName eq "forEach") {
-            my $iterationKind = "KeyValue";
-            $iterationKind = "Key" if $propertyName eq "keys";
-            $iterationKind = "Value" if $propertyName eq "values";
-            $iterationKind = "Value" if $propertyName eq "[Symbol.Iterator]" and not $interface->iterable->isKeyValue;
+        if ($propertyName eq "forEach") {
             push(@implContent,  <<END);
-JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+static inline EncodedJSValue ${functionName}Caller(ExecState* state, JS$interfaceName* thisObject, JSC::ThrowScope& throwScope)
 {
-    return iteratorCreate<${className}>(*state, IterationKind::${iterationKind}, "${propertyName}");
+    return JSValue::encode(iteratorForEach<${className}>(*state, *thisObject, throwScope));
 }
 
 END
         } else {
+            my $iterationKind = "KeyValue";
+            $iterationKind = "Key" if $propertyName eq "keys";
+            $iterationKind = "Value" if $propertyName eq "values";
+            $iterationKind = "Value" if $propertyName eq "[Symbol.Iterator]" and not $interface->iterable->isKeyValue;
+
             push(@implContent,  <<END);
-JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+static inline EncodedJSValue ${functionName}Caller(ExecState*, JS$interfaceName* thisObject, JSC::ThrowScope&)
 {
-    return iteratorForEach<${className}>(*state, "${propertyName}");
+    return JSValue::encode(iteratorCreate<${className}>(*thisObject, IterationKind::${iterationKind}));
 }
 
 END
         }
+
+        push(@implContent,  <<END);
+JSC::EncodedJSValue JSC_HOST_CALL ${functionName}(JSC::ExecState* state)
+{
+    return BindingCaller<$className>::callOperation<${functionName}Caller>(state, "${propertyName}");
+}
+
+END
     }
 }
 

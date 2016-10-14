@@ -1,3 +1,48 @@
+2016-10-13  Youenn Fablet  <youenn@apple.com>
+
+        Update serializer and iterator binding generated code
+        https://bugs.webkit.org/show_bug.cgi?id=163325
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+        Covered by existing tests and rebased binding generated code.
+
+        Making use of BindingCaller::callOperation within serializer and iterator operations.
+        Refactored serializer code to use direct attribute getters.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::iteratorCreate):
+        (WebCore::iteratorForEach):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerFunction):
+        (GenerateImplementationIterableFunctions):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::jsTestIterablePrototypeFunctionSymbolIteratorCaller):
+        (WebCore::jsTestIterablePrototypeFunctionSymbolIterator):
+        (WebCore::jsTestIterablePrototypeFunctionEntriesCaller):
+        (WebCore::jsTestIterablePrototypeFunctionEntries):
+        (WebCore::jsTestIterablePrototypeFunctionKeysCaller):
+        (WebCore::jsTestIterablePrototypeFunctionKeys):
+        (WebCore::jsTestIterablePrototypeFunctionValuesCaller):
+        (WebCore::jsTestIterablePrototypeFunctionValues):
+        (WebCore::jsTestIterablePrototypeFunctionForEachCaller):
+        (WebCore::jsTestIterablePrototypeFunctionForEach):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodePrototypeFunctionSymbolIteratorCaller):
+        (WebCore::jsTestNodePrototypeFunctionSymbolIterator):
+        (WebCore::jsTestNodePrototypeFunctionEntriesCaller):
+        (WebCore::jsTestNodePrototypeFunctionEntries):
+        (WebCore::jsTestNodePrototypeFunctionKeysCaller):
+        (WebCore::jsTestNodePrototypeFunctionKeys):
+        (WebCore::jsTestNodePrototypeFunctionValuesCaller):
+        (WebCore::jsTestNodePrototypeFunctionValues):
+        (WebCore::jsTestNodePrototypeFunctionForEachCaller):
+        (WebCore::jsTestNodePrototypeFunctionForEach):
+        (WebCore::jsTestNodePrototypeFunctionToJSON):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionToJSON):
+
 2016-10-13  Alex Christensen  <achristensen@webkit.org>
 
         Fix API test after r207318.
