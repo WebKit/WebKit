@@ -1,3 +1,13 @@
+2016-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Add ProvisionalURLAfterWillSendRequestCallback.cpp and ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp to Mac builds
+        https://bugs.webkit.org/show_bug.cgi?id=163440
+
+        Unreviewed.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Adding new test files introduced in
+        https://bugs.webkit.org/show_bug.cgi?id=146306 patch.
+
 2016-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Removed myself from BindingsScripts watch list.
