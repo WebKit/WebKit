@@ -763,7 +763,8 @@ static bool isRemoteWebArchive(const DocumentLoader& documentLoader)
     };
 
     const ResourceResponse& response = documentLoader.response();
-    if (!webArchiveMIMETypes.get().contains(response.mimeType()))
+    String mimeType = response.mimeType();
+    if (mimeType.isNull() || !webArchiveMIMETypes.get().contains(mimeType))
         return false;
 
 #if USE(QUICK_LOOK)
