@@ -77,6 +77,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
     encoder << resourceRequest.responseContentDispositionEncodingFallbackArray();
     encoder.encodeEnum(resourceRequest.requester());
+    encoder.encodeEnum(resourceRequest.cachePolicy());
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, ResourceRequest& resourceRequest)
@@ -114,6 +115,11 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
     if (!decoder.decodeEnum(requester))
         return false;
     resourceRequest.setRequester(requester);
+
+    ResourceRequestCachePolicy cachePolicy;
+    if (!decoder.decodeEnum(cachePolicy))
+        return false;
+    resourceRequest.setCachePolicy(cachePolicy);
 
     return true;
 }

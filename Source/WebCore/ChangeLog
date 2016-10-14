@@ -1,3 +1,34 @@
+2016-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkCache aware of fetch cache mode
+        https://bugs.webkit.org/show_bug.cgi?id=163332
+
+        Reviewed by Antti Koivisto.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/request/request-cache-default-conditional.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-no-cache.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-no-store.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html
+               imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::updateRequestAccordingCacheMode): Setting request cache policy according cache mode.
+        Basically, these two are about the same.
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy): Making use of cache policy instead of cache mode.
+        * platform/network/ResourceRequestBase.h: Adding new cache policies, aligned with fetch cache modes.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::toPlatformRequestCachePolicy): If policy is not supported by CFNetwork, fallback to ReloadIgnoringCacheData.
+        This is the best approximate we might find.
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Only updating cache policy, if cache policy is the default.
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cocoa/ResourceRequestCocoa.mm: Doing the same modifications as for ResourceRequestCFNet.
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::toPlatformRequestCachePolicy):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2016-10-13  Youenn Fablet  <youenn@apple.com>
 
         Binding generated code for private operations should assert for casted-this checks

@@ -1,3 +1,30 @@
+2016-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkCache aware of fetch cache mode
+        https://bugs.webkit.org/show_bug.cgi?id=163332
+
+        Reviewed by Antti Koivisto.
+
+        Adding explicit serialization of ResourceRequest cachePolicy since it does no longer map to platform request cache policy.
+
+        Added support for:
+        - Bypassing entirely the network cache in case cache mode is NoStore.
+        - requiring revalidation in case of cache hit and cache mode is NoCache.
+        - Not using any entry if cache mode is Reload (but cache can still be updated)
+
+        Also made sure that the ResourceRequest::cachePolicy remains the same throughout redirections.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::canUseCache):
+        (WebKit::NetworkResourceLoader::retrieveCacheEntry):
+        (WebKit::NetworkResourceLoader::continueWillSendRequest):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::cachePolicyAllowsExpired):
+        (WebKit::NetworkCache::makeRetrieveDecision):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+
 2016-10-13  Tim Horton  <timothy_horton@apple.com>
 
         Rename the SPI added in r207292 due to post-landing review comments

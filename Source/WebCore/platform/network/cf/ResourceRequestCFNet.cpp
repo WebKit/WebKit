@@ -170,6 +170,20 @@ void ResourceRequest::doUpdatePlatformRequest()
     m_cfRequest = adoptCF(cfRequest);
 }
 
+static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
+{
+    switch (policy) {
+    case UseProtocolCachePolicy:
+        return CFURLRequestUseProtocolCachePolicy;
+    case ReturnCacheDataElseLoad:
+        return CFURLRequestReturnCacheDataElseLoad;
+    case ReturnCacheDataDontLoad:
+        return CFURLRequestReturnCacheDataDontLoad;
+    default:
+        return CFURLRequestReloadIgnoringLocalCacheData;
+    }
+}
+
 void ResourceRequest::doUpdatePlatformHTTPBody()
 {
     CFMutableURLRequestRef cfRequest;
@@ -180,7 +194,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
         CFURLRequestSetMainDocumentURL(cfRequest, firstPartyForCookies.get());
-        CFURLRequestSetCachePolicy(cfRequest, (CFURLRequestCachePolicy)cachePolicy());
+        CFURLRequestSetCachePolicy(cfRequest, toPlatformRequestCachePolicy(cachePolicy()));
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
     } else
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
@@ -211,7 +225,8 @@ void ResourceRequest::doUpdateResourceRequest()
 
     m_url = CFURLRequestGetURL(m_cfRequest.get());
 
-    m_cachePolicy = (ResourceRequestCachePolicy)CFURLRequestGetCachePolicy(m_cfRequest.get());
+    if (!m_cachePolicy)
+        m_cachePolicy = (ResourceRequestCachePolicy)CFURLRequestGetCachePolicy(m_cfRequest.get());
     m_timeoutInterval = CFURLRequestGetTimeoutInterval(m_cfRequest.get());
     m_firstPartyForCookies = CFURLRequestGetMainDocumentURL(m_cfRequest.get());
     if (CFStringRef method = CFURLRequestCopyHTTPRequestMethod(m_cfRequest.get())) {

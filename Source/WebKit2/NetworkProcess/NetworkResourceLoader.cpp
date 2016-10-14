@@ -122,6 +122,8 @@ bool NetworkResourceLoader::canUseCache(const ResourceRequest& request) const
         return false;
     if (!request.url().protocolIsInHTTPFamily())
         return false;
+    if (originalRequest().cachePolicy() == WebCore::DoNotUseAnyCache)
+        return false;
 
     return true;
 }
@@ -188,7 +190,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
             loader->startNetworkLoad(request);
             return;
         }
-        if (entry->needsValidation()) {
+        if (entry->needsValidation() || request.cachePolicy() == WebCore::RefreshAnyCacheData) {
             loader->validateCacheEntry(WTFMove(entry));
             return;
         }
@@ -470,6 +472,9 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest)
 {
     RELEASE_LOG_IF_ALLOWED("continueWillSendRequest: (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")", m_parameters.webPageID, m_parameters.webFrameID, m_parameters.identifier);
+
+    // If there is a match in the network cache, we need to reuse the original cache policy.
+    newRequest.setCachePolicy(originalRequest().cachePolicy());
 
 #if ENABLE(NETWORK_CACHE)
     if (m_isWaitingContinueWillSendRequestForCachedRedirect) {

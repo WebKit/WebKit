@@ -153,12 +153,12 @@ void CachedResourceRequest::updateAccordingCacheMode()
 
     switch (m_options.cache) {
     case FetchOptions::Cache::NoCache:
-        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.setCachePolicy(RefreshAnyCacheData);
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
         break;
     case FetchOptions::Cache::NoStore:
         m_options.cachingPolicy = CachingPolicy::DisallowCaching;
-        m_resourceRequest.setCachePolicy(ReloadIgnoringCacheData);
+        m_resourceRequest.setCachePolicy(DoNotUseAnyCache);
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::Pragma, HTTPHeaderValues::noCache());
         m_resourceRequest.addHTTPHeaderFieldIfNotPresent(HTTPHeaderName::CacheControl, HTTPHeaderValues::noCache());
         break;

@@ -36,10 +36,12 @@
 namespace WebCore {
 
 enum ResourceRequestCachePolicy {
-    UseProtocolCachePolicy, // normal load
-    ReloadIgnoringCacheData, // reload
-    ReturnCacheDataElseLoad, // back/forward or encoding change - allow stale data
-    ReturnCacheDataDontLoad  // results of a post - allow stale data and only use cache
+    UseProtocolCachePolicy, // normal load, equivalent to fetch "default" cache mode.
+    ReloadIgnoringCacheData, // reload, equivalent to fetch "reload"cache mode.
+    ReturnCacheDataElseLoad, // back/forward or encoding change - allow stale data, equivalent to fetch "force-cache" cache mode.
+    ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache, equivalent to fetch "only-if-cached" cache mode.
+    DoNotUseAnyCache, // Bypass the cache entirely, equivalent to fetch "no-store" cache mode.
+    RefreshAnyCacheData, // Serve cache data only if revalidated, equivalent to fetch "no-cache" mode.
 };
 
 enum HTTPBodyUpdatePolicy {

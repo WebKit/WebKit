@@ -1,3 +1,38 @@
+2016-10-14  Youenn Fablet  <youenn@apple.com>
+
+        Make NetworkCache aware of fetch cache mode
+        https://bugs.webkit.org/show_bug.cgi?id=163332
+
+        Reviewed by Antti Koivisto.
+
+        Splitting web-platform-tests/fetch/api/request/request-cache.html in several files so that running the individual test files
+        is more manageable.
+
+        * web-platform-tests/fetch/api/request/request-cache-default-conditional-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-default-conditional.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-default-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-default.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-expected.txt: Removed.
+        * web-platform-tests/fetch/api/request/request-cache-force-cache-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-force-cache.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-no-cache-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-no-cache.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-no-store-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-no-store.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache-reload-expected.txt: Added.
+        * web-platform-tests/fetch/api/request/request-cache-reload.html: Added.
+        * web-platform-tests/fetch/api/request/request-cache.html: Removed.
+        * web-platform-tests/fetch/api/request/request-cache.js: Added.
+        (base_path):
+        (make_url):
+        (expected_status):
+        (expected_response_text):
+        (server_state):
+        (run_next_step):
+        (make_test):
+
 2016-10-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Exception message for expressions with multiple bracket accesses is inconsistent / incorrect

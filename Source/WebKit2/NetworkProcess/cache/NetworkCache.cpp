@@ -136,9 +136,12 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
         return true;
     case WebCore::UseProtocolCachePolicy:
     case WebCore::ReloadIgnoringCacheData:
+    case WebCore::RefreshAnyCacheData:
+        return false;
+    case WebCore::DoNotUseAnyCache:
+        ASSERT_NOT_REACHED();
         return false;
     }
-    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -198,6 +201,8 @@ static UseDecision makeUseDecision(const Entry& entry, const WebCore::ResourceRe
 
 static RetrieveDecision makeRetrieveDecision(const WebCore::ResourceRequest& request)
 {
+    ASSERT(request.cachePolicy() != WebCore::DoNotUseAnyCache);
+
     // FIXME: Support HEAD requests.
     if (request.httpMethod() != "GET")
         return RetrieveDecision::NoDueToHTTPMethod;

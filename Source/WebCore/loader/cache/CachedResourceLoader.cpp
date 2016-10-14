@@ -835,7 +835,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 {
     auto& memoryCache = MemoryCache::singleton();
     ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID())
-        || request.options().cache == FetchOptions::Cache::NoCache || request.options().cache == FetchOptions::Cache::NoStore || request.options().cache == FetchOptions::Cache::Reload);
+        || request.resourceRequest().cachePolicy() == DoNotUseAnyCache || request.resourceRequest().cachePolicy() == ReloadIgnoringCacheData || request.resourceRequest().cachePolicy() == RefreshAnyCacheData);
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
@@ -888,10 +888,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (!existingResource)
         return Load;
 
-    if (cachedResourceRequest.options().cache == FetchOptions::Cache::NoStore)
+    if (request.cachePolicy() == DoNotUseAnyCache || request.cachePolicy() == ReloadIgnoringCacheData)
         return Load;
 
-    if (cachedResourceRequest.options().cache == FetchOptions::Cache::Reload)
+    if (request.cachePolicy() == RefreshAnyCacheData)
         return Reload;
 
     // We already have a preload going for this URL.

@@ -61,10 +61,40 @@ CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) c
     return [nsURLRequest(bodyPolicy) _CFURLRequest];
 }
 
+static inline ResourceRequestCachePolicy fromPlatformRequestCachePolicy(NSURLRequestCachePolicy policy)
+{
+    switch (policy) {
+    case NSURLRequestUseProtocolCachePolicy:
+        return UseProtocolCachePolicy;
+    case NSURLRequestReturnCacheDataElseLoad:
+        return ReturnCacheDataElseLoad;
+    case NSURLRequestReturnCacheDataDontLoad:
+        return ReturnCacheDataDontLoad;
+    default:
+        return ReloadIgnoringCacheData;
+    }
+}
+
+static inline NSURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
+{
+    switch (policy) {
+    case UseProtocolCachePolicy:
+        return NSURLRequestUseProtocolCachePolicy;
+    case ReturnCacheDataElseLoad:
+        return NSURLRequestReturnCacheDataElseLoad;
+    case ReturnCacheDataDontLoad:
+        return NSURLRequestReturnCacheDataDontLoad;
+    default:
+        return NSURLRequestReloadIgnoringLocalCacheData;
+    }
+}
+
 void ResourceRequest::doUpdateResourceRequest()
 {
     m_url = [m_nsRequest.get() URL];
-    m_cachePolicy = (ResourceRequestCachePolicy)[m_nsRequest.get() cachePolicy];
+
+    if (!m_cachePolicy)
+        m_cachePolicy = fromPlatformRequestCachePolicy([m_nsRequest.get() cachePolicy]);
     m_timeoutInterval = [m_nsRequest.get() timeoutInterval];
     m_firstPartyForCookies = [m_nsRequest.get() mainDocumentURL];
 
@@ -132,7 +162,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (ResourceRequest::resourcePrioritiesEnabled())
         CFURLRequestSetRequestPriority([nsRequest _CFURLRequest], toPlatformRequestPriority(priority()));
 
-    [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
+    [nsRequest setCachePolicy:toPlatformRequestCachePolicy(cachePolicy())];
     _CFURLRequestSetProtocolProperty([nsRequest _CFURLRequest], kCFURLRequestAllowAllPOSTCaching, kCFBooleanTrue);
 
     double timeoutInterval = ResourceRequestBase::timeoutInterval();
