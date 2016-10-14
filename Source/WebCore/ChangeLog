@@ -1,3 +1,23 @@
+2016-10-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Changing the argument on fit-content() doesn't cause the grid to be relayout
+        https://bugs.webkit.org/show_bug.cgi?id=163434
+
+        Reviewed by Sergio Villar Senin.
+
+        When fit-content() was implemented a new attribute
+        m_fitContentTrackBreadth was added to GridTrackSize.
+        However we forgot to include it in the == operator implementation,
+        so we were missing the changes on that value.
+
+        Now if you change the argument of a fit-content() track,
+        the track size is properly recomputed.
+
+        Test: fast/css-grid-layout/grid-change-fit-content-argument.html
+
+        * rendering/style/GridTrackSize.h:
+        (WebCore::GridTrackSize::operator==): Check m_fitContentTrackBreadth.
+
 2016-10-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207317.

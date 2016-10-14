@@ -1,3 +1,13 @@
+2016-10-14  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Changing the argument on fit-content() doesn't cause the grid to be relayout
+        https://bugs.webkit.org/show_bug.cgi?id=163434
+
+        Reviewed by Sergio Villar Senin.
+
+        * fast/css-grid-layout/grid-change-fit-content-argument-expected.txt: Added.
+        * fast/css-grid-layout/grid-change-fit-content-argument.html: Added.
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Failure with RegExp.prototype.compile when pattern is undefined
