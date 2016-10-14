@@ -52,7 +52,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& origi
 
     ASSERT(!m_paymentAuthorizationViewController);
 
-    auto paymentRequest = toPKPaymentRequest(originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     m_paymentAuthorizationViewController = adoptNS([allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:paymentRequest.get()]);
     if (!m_paymentAuthorizationViewController) {

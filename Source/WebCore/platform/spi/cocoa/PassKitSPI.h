@@ -242,4 +242,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)openPaymentSetupForMerchantIdentifier:(NSString *)identifier domain:(NSString *)domain completion:(void(^)(BOOL success))completion;
 @end
 
+@interface PKPaymentRequest ()
+@property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
+@property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
+@property (nonatomic, strong) NSString *CTDataConnectionServiceType;
+@end
+
 NS_ASSUME_NONNULL_END

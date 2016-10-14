@@ -1,5 +1,19 @@
 2016-10-14  Anders Carlsson  <andersca@apple.com>
 
+        Pass on networking settings to the PKPaymentRequest
+        https://bugs.webkit.org/show_bug.cgi?id=163462
+        rdar://problem/28567629
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.h:
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentRequest):
+        * UIProcess/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+
+2016-10-14  Anders Carlsson  <andersca@apple.com>
+
         Clean up BackForwardClient
         https://bugs.webkit.org/show_bug.cgi?id=163454
 
