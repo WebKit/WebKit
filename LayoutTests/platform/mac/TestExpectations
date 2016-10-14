@@ -1444,3 +1444,6 @@ webkit.org/b/160488 [ Yosemite ] fast/text/flag-emoji-line-break.html [ ImageOnl
 
 # rdar://problem/27434307
 [ Sierra+ ] http/tests/misc/bad-charset-alias.html [ Failure ]
+
+# rdar://problem/27475162
+[ Sierra+ ] compositing/video/poster.html [ Pass ImageOnlyFailure ]
