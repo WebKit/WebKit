@@ -31,6 +31,9 @@ shouldBeEqualToString("exitFullscreenButton.iconName", `${Icons.ExitFullscreen}`
 
 scheduler.frameDidFire = function()
 {
+    if ([enterFullscreenButton, iOSEnterFullscreenButton, exitFullscreenButton].some(button => button.width == 0))
+        return;
+
     shouldBeTrue('enterFullscreenButton.element.style.webkitMaskImage.includes("macOS/enter-fullscreen@")');
     shouldBeTrue('iOSEnterFullscreenButton.element.style.webkitMaskImage.includes("iOS/enter-fullscreen@")');
     shouldBeTrue('exitFullscreenButton.element.style.webkitMaskImage.includes("macOS/exit-fullscreen@")');

@@ -26,6 +26,9 @@ shouldBeEqualToString("forwardButton.iconName", `${Icons.Forward}`);
 
 scheduler.frameDidFire = function()
 {
+    if (forwardButton.width == 0)
+        return;
+
     shouldBeTrue('forwardButton.element.style.webkitMaskImage.includes("macOS/forward@")');
     finishJSTest();
 };

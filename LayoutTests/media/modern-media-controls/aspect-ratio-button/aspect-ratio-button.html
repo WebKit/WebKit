@@ -30,6 +30,9 @@ shouldBeEqualToString("scaleToFitButton.iconName", `${Icons.ScaleToFit}`);
 
 scheduler.frameDidFire = function()
 {
+    if ([scaleToFillButton, scaleToFitButton].some(button => button.width == 0))
+        return;
+
     shouldBeTrue('scaleToFillButton.element.style.webkitMaskImage.includes("macOS/scale-to-fill@")');
     shouldBeTrue('scaleToFitButton.element.style.webkitMaskImage.includes("macOS/scale-to-fit@")');
 

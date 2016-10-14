@@ -28,6 +28,9 @@ const iOSSkipBackButton = new SkipBackButton({ layoutTraits: LayoutTraits.iOS })
 
 scheduler.frameDidFire = function()
 {
+    if ([skipBackButton, iOSSkipBackButton].some(button => button.width == 0))
+        return;
+
     shouldBeTrue('skipBackButton.element.style.webkitMaskImage.includes("macOS/interval-skip-back@")');
     shouldBeTrue('iOSSkipBackButton.element.style.webkitMaskImage.includes("iOS/interval-skip-back@")');
     finishJSTest();

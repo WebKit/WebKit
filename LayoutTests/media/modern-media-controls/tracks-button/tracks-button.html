@@ -28,6 +28,9 @@ const fullscreenTracksButton = new TracksButton({ layoutTraits: LayoutTraits.mac
 
 scheduler.frameDidFire = function()
 {
+    if ([tracksButton, fullscreenTracksButton].some(button => button.width == 0))
+        return;
+
     shouldBeTrue('tracksButton.element.style.webkitMaskImage.includes("macOS/media-selection@")');
     shouldBeTrue('fullscreenTracksButton.element.style.webkitMaskImage.includes("macOS/media-selection-fullscreen@")');
     finishJSTest();

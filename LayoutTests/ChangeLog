@@ -1,3 +1,21 @@
+2016-10-14  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION (r207299): media/modern-media-controls/pip-button/pip-button.html and media/modern-media-controls/skip-back-button/skip-back-button.html are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=163411
+
+        Reviewed by Antoine Quint.
+
+        Ensure all buttons have their required images loaded before we check on the mask-image set through CSS.
+
+        * media/modern-media-controls/aspect-ratio-button/aspect-ratio-button.html:
+        * media/modern-media-controls/forward-button/forward-button.html:
+        * media/modern-media-controls/fullscreen-button/fullscreen-button.html:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * media/modern-media-controls/pip-button/pip-button.html:
+        * media/modern-media-controls/rewind-button/rewind-button.html:
+        * media/modern-media-controls/skip-back-button/skip-back-button.html:
+        * media/modern-media-controls/tracks-button/tracks-button.html:
+
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkCache aware of fetch cache mode

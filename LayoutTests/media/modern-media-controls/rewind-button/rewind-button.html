@@ -26,6 +26,9 @@ shouldBeEqualToString("rewindButton.iconName", `${Icons.Rewind}`);
 
 scheduler.frameDidFire = function()
 {
+    if (rewindButton.width == 0)
+        return;
+
     shouldBeTrue('rewindButton.element.style.webkitMaskImage.includes("macOS/rewind@")');
     finishJSTest();
 };
