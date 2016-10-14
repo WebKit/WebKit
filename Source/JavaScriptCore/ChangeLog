@@ -1,3 +1,39 @@
+2016-10-14  Mark Lam  <mark.lam@apple.com>
+
+        JSON.parse should not modify frozen objects.
+        https://bugs.webkit.org/show_bug.cgi?id=163430
+
+        Reviewed by Saam Barati.
+
+        The ES6 spec for JSON.parse (https://tc39.github.io/ecma262/#sec-json.parse and
+        https://tc39.github.io/ecma262/#sec-internalizejsonproperty) states that it uses
+        CreateDataProperty() (https://tc39.github.io/ecma262/#sec-createdataproperty) to
+        set values returned by a reviver.  The spec for CreateDataPropertyOrThrow states:
+
+        "This abstract operation creates a property whose attributes are set to the same
+        defaults used for properties created by the ECMAScript language assignment
+        operator. Normally, the property will not already exist. If it does exist and is
+        not configurable or if O is not extensible, [[DefineOwnProperty]] will return
+        false."
+
+        Note: CreateDataProperty() will not throw a TypeError.
+
+        Since the properties of frozen objects are not extensible, not configurable, and
+        not writeable, JSON.parse should fail to write to any frozen objects.  Similarly,
+        JSON.parse should fail to delete properties in frozen objects.
+
+        In JSON.parse(), we previously write to array elements using the form of
+        putDirectIndex() that uses mode PutDirectIndexLikePutDirect.  This makes it so
+        that the write (i.e. put) is always successful.  We've now fixed this to use
+        PutDirectIndexShouldNotThrow mode instead, which will fail to put the element if
+        the array is not writeable.
+
+        Also changed Walker::walk() to use the version of methodTable() that takes a VM&
+        since the VM& is already available.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Walker::walk):
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Failure with RegExp.prototype.compile when pattern is undefined

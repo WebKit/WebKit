@@ -631,7 +631,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     inValue = array->getIndexQuickly(index);
                 else {
                     PropertySlot slot(array, PropertySlot::InternalMethodType::Get);
-                    if (array->methodTable()->getOwnPropertySlotByIndex(array, m_exec, index, slot))
+                    if (array->methodTable(vm)->getOwnPropertySlotByIndex(array, m_exec, index, slot))
                         inValue = slot.getValue(m_exec, index);
                     else
                         inValue = jsUndefined();
@@ -649,9 +649,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSArray* array = arrayStack.peek();
                 JSValue filteredValue = callReviver(array, jsString(m_exec, String::number(indexStack.last())), outValue);
                 if (filteredValue.isUndefined())
-                    array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
+                    array->methodTable(vm)->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else
-                    array->putDirectIndex(m_exec, indexStack.last(), filteredValue);
+                    array->putDirectIndex(m_exec, indexStack.last(), filteredValue, 0, PutDirectIndexShouldNotThrow);
                 RETURN_IF_EXCEPTION(scope, JSValue());
                 indexStack.last()++;
                 goto arrayStartVisitMember;
@@ -667,7 +667,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 objectStack.push(object);
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
-                object->methodTable()->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
+                object->methodTable(vm)->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, JSValue());
             }
             objectStartVisitMember:
@@ -684,7 +684,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-                if (object->methodTable()->getOwnPropertySlot(object, m_exec, properties[index], slot))
+                if (object->methodTable(vm)->getOwnPropertySlot(object, m_exec, properties[index], slot))
                     inValue = slot.getValue(m_exec, properties[index]);
                 else
                     inValue = jsUndefined();
@@ -705,9 +705,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 PutPropertySlot slot(object);
                 JSValue filteredValue = callReviver(object, jsString(m_exec, prop.string()), outValue);
                 if (filteredValue.isUndefined())
-                    object->methodTable()->deleteProperty(object, m_exec, prop);
+                    object->methodTable(vm)->deleteProperty(object, m_exec, prop);
                 else
-                    object->methodTable()->put(object, m_exec, prop, filteredValue, slot);
+                    object->methodTable(vm)->put(object, m_exec, prop, filteredValue, slot);
                 RETURN_IF_EXCEPTION(scope, JSValue());
                 indexStack.last()++;
                 goto objectStartVisitMember;
@@ -731,7 +731,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     }
     JSObject* finalHolder = constructEmptyObject(m_exec);
     PutPropertySlot slot(finalHolder);
-    finalHolder->methodTable()->put(finalHolder, m_exec, vm.propertyNames->emptyIdentifier, outValue, slot);
+    finalHolder->methodTable(vm)->put(finalHolder, m_exec, vm.propertyNames->emptyIdentifier, outValue, slot);
     return callReviver(finalHolder, jsEmptyString(m_exec), outValue);
 }
 

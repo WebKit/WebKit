@@ -1,3 +1,12 @@
+2016-10-14  Mark Lam  <mark.lam@apple.com>
+
+        JSON.parse should not modify frozen objects.
+        https://bugs.webkit.org/show_bug.cgi?id=163430
+
+        Reviewed by Saam Barati.
+
+        * stress/json-parse-on-frozen-object.js: Added.
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Failure with RegExp.prototype.compile when pattern is undefined
