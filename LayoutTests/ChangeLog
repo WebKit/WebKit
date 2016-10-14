@@ -1,3 +1,15 @@
+2016-10-13  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for [SameObject] extended attribute
+        https://bugs.webkit.org/show_bug.cgi?id=163414
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * js/dom/SameObject-support-expected.txt: Added.
+        * js/dom/SameObject-support.html: Added.
+
 2016-10-13  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] better accessibility support for Summary elements

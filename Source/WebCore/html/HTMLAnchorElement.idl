@@ -33,7 +33,7 @@ interface HTMLAnchorElement : HTMLElement {
 
     attribute DOMString text;
 
-    [PutForwards=value] readonly attribute DOMTokenList relList;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList relList;
 };
 
 HTMLAnchorElement implements HTMLHyperlinkElementUtils;

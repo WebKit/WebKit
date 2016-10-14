@@ -48,7 +48,7 @@
 
     [DOMJIT, CustomGetter] readonly attribute unsigned short nodeType;
     [DOMJIT] readonly attribute Node? parentNode;
-    readonly attribute NodeList childNodes;
+    [SameObject] readonly attribute NodeList childNodes;
     [DOMJIT] readonly attribute Node? firstChild;
     [DOMJIT] readonly attribute Node? lastChild;
     [DOMJIT] readonly attribute Node? previousSibling;

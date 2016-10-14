@@ -35,7 +35,7 @@
     [Reflect] attribute boolean noValidate;
     [Reflect] attribute DOMString target;
 
-    readonly attribute HTMLFormControlsCollection elements;
+    [SameObject] readonly attribute HTMLFormControlsCollection elements;
     readonly attribute long length;
 
     getter Element (unsigned long index);

@@ -1,0 +1,146 @@
+Test support for [SameObject] extended attribute in Web IDL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.implementation === document.implementation is true
+PASS document.implementation.foo is 1
+
+PASS document.images === document.images is true
+PASS document.images.foo is 1
+
+PASS document.applets === document.applets is true
+PASS document.applets.foo is 1
+
+PASS document.links === document.links is true
+PASS document.links.foo is 1
+
+PASS document.forms === document.forms is true
+PASS document.forms.foo is 1
+
+PASS document.anchors === document.anchors is true
+PASS document.anchors.foo is 1
+
+PASS document.embeds === document.embeds is true
+PASS document.embeds.foo is 1
+
+PASS document.plugins === document.plugins is true
+PASS document.plugins.foo is 1
+
+PASS document.scripts === document.scripts is true
+PASS document.scripts.foo is 1
+
+PASS htmlElement.childNodes === htmlElement.childNodes is true
+PASS htmlElement.childNodes.foo is 1
+
+PASS htmlElement.attributes === htmlElement.attributes is true
+PASS htmlElement.attributes.foo is 1
+
+PASS htmlElement.classList === htmlElement.classList is true
+PASS htmlElement.classList.foo is 1
+
+PASS htmlElement.children === htmlElement.children is true
+PASS htmlElement.children.foo is 1
+
+PASS htmlElement.dataset === htmlElement.dataset is true
+PASS htmlElement.dataset.foo is 1
+
+PASS anchorElement.relList === anchorElement.relList is true
+PASS anchorElement.relList.foo is 1
+
+PASS areaElement.relList === areaElement.relList is true
+PASS areaElement.relList.foo is 1
+
+PASS buttonElement.labels === buttonElement.labels is true
+PASS buttonElement.labels.foo is 1
+
+PASS fieldsetElement.elements === fieldsetElement.elements is true
+PASS fieldsetElement.elements.foo is 1
+
+PASS fieldsetElement.validity === fieldsetElement.validity is true
+PASS fieldsetElement.validity.foo is 1
+
+PASS formElement.elements === formElement.elements is true
+PASS formElement.elements.foo is 1
+
+PASS iframeElement.sandbox === iframeElement.sandbox is true
+PASS iframeElement.sandbox.foo is 1
+
+PASS inputElement.labels === inputElement.labels is true
+PASS inputElement.labels.foo is 1
+
+PASS keygenElement.labels === keygenElement.labels is true
+PASS keygenElement.labels.foo is 1
+
+PASS linkElement.sizes === linkElement.sizes is true
+PASS linkElement.sizes.foo is 1
+
+PASS linkElement.relList === linkElement.relList is true
+PASS linkElement.relList.foo is 1
+
+PASS mapElement.areas === mapElement.areas is true
+PASS mapElement.areas.foo is 1
+
+PASS mediaElement.audioTracks === mediaElement.audioTracks is true
+PASS mediaElement.audioTracks.foo is 1
+
+PASS mediaElement.textTracks === mediaElement.textTracks is true
+PASS mediaElement.textTracks.foo is 1
+
+PASS mediaElement.videoTracks === mediaElement.videoTracks is true
+PASS mediaElement.videoTracks.foo is 1
+
+PASS meterElement.labels === meterElement.labels is true
+PASS meterElement.labels.foo is 1
+
+PASS outputElement.htmlFor === outputElement.htmlFor is true
+PASS outputElement.htmlFor.foo is 1
+
+PASS outputElement.labels === outputElement.labels is true
+PASS outputElement.labels.foo is 1
+
+PASS progressElement.labels === progressElement.labels is true
+PASS progressElement.labels.foo is 1
+
+PASS selectElement.options === selectElement.options is true
+PASS selectElement.options.foo is 1
+
+PASS selectElement.selectedOptions === selectElement.selectedOptions is true
+PASS selectElement.selectedOptions.foo is 1
+
+PASS selectElement.labels === selectElement.labels is true
+PASS selectElement.labels.foo is 1
+
+PASS tableElement.rows === tableElement.rows is true
+PASS tableElement.rows.foo is 1
+
+PASS tableElement.tBodies === tableElement.tBodies is true
+PASS tableElement.tBodies.foo is 1
+
+PASS trElement.cells === trElement.cells is true
+PASS trElement.cells.foo is 1
+
+PASS tbodyElement.rows === tbodyElement.rows is true
+PASS tbodyElement.rows.foo is 1
+
+PASS textareaElement.labels === textareaElement.labels is true
+PASS textareaElement.labels.foo is 1
+
+PASS location.ancestorOrigins === location.ancestorOrigins is true
+
+PASS navigator.plugins === navigator.plugins is true
+PASS navigator.plugins.foo is 1
+
+PASS navigator.mimeTypes === navigator.mimeTypes is true
+PASS navigator.mimeTypes.foo is 1
+
+PASS nodeIterator.root === nodeIterator.root is true
+PASS nodeIterator.root.foo is 1
+
+PASS treeWalker.root === treeWalker.root is true
+PASS treeWalker.root.foo is 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

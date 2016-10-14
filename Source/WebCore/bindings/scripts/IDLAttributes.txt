@@ -114,6 +114,7 @@ Replaceable
 ReportExtraMemoryCost
 ReportExternalMemoryCost
 RequiresExistingAtomicString
+SameObject
 SetterCallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack|ActiveWindow|FirstWindow
 SetterMayThrowException
 SetterMayThrowLegacyException

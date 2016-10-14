@@ -25,7 +25,7 @@
     [Reflect=char] attribute DOMString ch;
     [Reflect=charoff] attribute DOMString chOff;
     [Reflect] attribute DOMString vAlign;
-    readonly attribute HTMLCollection rows;
+    [SameObject] readonly attribute HTMLCollection rows;
     [MayThrowLegacyException] HTMLElement insertRow(optional long index = -1);
     [MayThrowLegacyException] void deleteRow(long index);
 };

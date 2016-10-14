@@ -27,7 +27,7 @@ interface HTMLIFrameElement : HTMLElement {
     [Reflect, TreatNullAs=EmptyString] attribute DOMString marginWidth;
     [Reflect] attribute DOMString name;
 
-    [PutForwards=value] readonly attribute DOMTokenList sandbox;
+    [SameObject, PutForwards=value] readonly attribute DOMTokenList sandbox;
     [Reflect] attribute boolean allowFullscreen;
 
     [Reflect] attribute DOMString scrolling;

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Test support for [SameObject] extended attribute in Web IDL.");
+
+var htmlElement = document.createElement("test");
+var anchorElement = document.createElement("a");
+var areaElement = document.createElement("area");
+var buttonElement = document.createElement("button");
+var formElement = document.createElement("form");
+var iframeElement = document.createElement("iframe");
+var inputElement = document.createElement("input");
+var keygenElement = document.createElement("keygen");
+var fieldsetElement = document.createElement("fieldset");
+var linkElement = document.createElement("link");
+var mapElement = document.createElement("map");
+var mediaElement = document.createElement("video");
+var meterElement = document.createElement("meter");
+var outputElement = document.createElement("output");
+var progressElement = document.createElement("progress");
+var selectElement = document.createElement("select");
+var tableElement = document.createElement("table");
+var trElement = document.createElement("tr");
+var tbodyElement = document.createElement("tbody");
+var textareaElement = document.createElement("textarea");
+var nodeIterator = document.createNodeIterator(document.body);
+var treeWalker = document.createTreeWalker(document.body);
+
+function testSameObjectAttribute(object, attributeName)
+{
+    try {
+        shouldBeTrue(object + "." + attributeName + " === " + object + "." + attributeName);
+
+        var attributeObject = eval(object + "['" + attributeName + "']");
+        if (!Object.isFrozen(attributeObject)) {
+            Object.defineProperty(attributeObject, "foo", { value: 1 });
+            document.body.appendChild(document.createElement('span')); // DOM tree mutation.
+            gc();
+            shouldBe(object + "." + attributeName + ".foo", "1");
+        }
+    } catch(e) {
+        testFailed("" + e);
+    }
+    debug("");
+}
+
+var documentAttributes = ["implementation", "images", "applets", "links", "forms", "anchors", "embeds", "plugins", "scripts"];
+for (var attribute of documentAttributes)
+    testSameObjectAttribute("document", attribute);
+
+var htmlElementAttributes = ["childNodes", "attributes", "classList", "children", "dataset"];
+for (var attribute of htmlElementAttributes)
+    testSameObjectAttribute("htmlElement", attribute);
+
+testSameObjectAttribute("anchorElement", "relList");
+
+testSameObjectAttribute("areaElement", "relList");
+
+testSameObjectAttribute("buttonElement", "labels");
+
+var fiedsetElementAttributes = ["elements", "validity"];
+for (var attribute of fiedsetElementAttributes)
+    testSameObjectAttribute("fieldsetElement", attribute);
+
+testSameObjectAttribute("formElement", "elements");
+
+testSameObjectAttribute("iframeElement", "sandbox");
+
+testSameObjectAttribute("inputElement", "labels");
+
+testSameObjectAttribute("keygenElement", "labels");
+
+var linkElementAttributes = ["sizes", "relList"];
+for (var attribute of linkElementAttributes)
+    testSameObjectAttribute("linkElement", attribute);
+
+testSameObjectAttribute("mapElement", "areas");
+
+var mediaElementAttributes = ["audioTracks", "textTracks", "videoTracks"];
+for (var attribute of mediaElementAttributes)
+    testSameObjectAttribute("mediaElement", attribute);
+
+testSameObjectAttribute("meterElement", "labels");
+
+var outputElementAttributes = ["htmlFor", "labels"];
+for (var attribute of outputElementAttributes)
+    testSameObjectAttribute("outputElement", attribute);
+
+testSameObjectAttribute("progressElement", "labels");
+
+var selectElementAttributes = ["options", "selectedOptions", "labels"];
+for (var attribute of selectElementAttributes)
+    testSameObjectAttribute("selectElement", attribute);
+
+var tableElementAttributes = ["rows", "tBodies"];
+for (var attribute of tableElementAttributes)
+    testSameObjectAttribute("tableElement", attribute);
+
+testSameObjectAttribute("trElement", "cells");
+
+testSameObjectAttribute("tbodyElement", "rows");
+
+testSameObjectAttribute("textareaElement", "labels");
+
+testSameObjectAttribute("location", "ancestorOrigins");
+
+var navigatorAttributes = ["plugins", "mimeTypes"];
+for (var attribute of navigatorAttributes)
+    testSameObjectAttribute("navigator", attribute);
+
+testSameObjectAttribute("nodeIterator", "root");
+
+testSameObjectAttribute("treeWalker", "root");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

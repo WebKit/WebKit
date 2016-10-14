@@ -28,7 +28,7 @@
     JSGenerateToNativeObject,
 ] interface Document : Node {
     readonly attribute DocumentType? doctype;
-    readonly attribute DOMImplementation implementation;
+    [SameObject] readonly attribute DOMImplementation implementation;
     readonly attribute Element? documentElement;
 
     [NewObject, MayThrowLegacyException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
@@ -105,14 +105,14 @@
     [SetterMayThrowLegacyException, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
 
     readonly attribute HTMLHeadElement? head;
-    readonly attribute HTMLCollection images;
-    readonly attribute HTMLCollection applets;
-    readonly attribute HTMLCollection links;
-    readonly attribute HTMLCollection forms;
-    readonly attribute HTMLCollection anchors;
-    readonly attribute HTMLCollection embeds;
-    readonly attribute HTMLCollection plugins;
-    readonly attribute HTMLCollection scripts;
+    [SameObject] readonly attribute HTMLCollection images;
+    [SameObject] readonly attribute HTMLCollection applets;
+    [SameObject] readonly attribute HTMLCollection links;
+    [SameObject] readonly attribute HTMLCollection forms;
+    [SameObject] readonly attribute HTMLCollection anchors;
+    [SameObject] readonly attribute HTMLCollection embeds;
+    [SameObject] readonly attribute HTMLCollection plugins;
+    [SameObject] readonly attribute HTMLCollection scripts;
     readonly attribute DOMString lastModified;
 
     NodeList getElementsByName([AtomicString] DOMString elementName);

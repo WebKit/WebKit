@@ -23,7 +23,7 @@
     ImplementationLacksVTable,
     JSCustomMarkFunction,
 ] interface NodeIterator {
-    readonly attribute Node root;
+    [SameObject] readonly attribute Node root;
     readonly attribute unsigned long whatToShow;
     readonly attribute NodeFilter filter;
     readonly attribute Node referenceNode;

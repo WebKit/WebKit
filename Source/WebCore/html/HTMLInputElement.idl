@@ -73,7 +73,7 @@
     boolean checkValidity();
     void setCustomValidity(DOMString? error);
 
-    readonly attribute NodeList labels;
+    [SameObject] readonly attribute NodeList labels;
 
     void select();
     [Custom] attribute long selectionStart;

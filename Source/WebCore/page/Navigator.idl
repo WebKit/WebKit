@@ -20,8 +20,8 @@
 [
     GenerateIsReachable=ImplFrame,
 ] interface Navigator {
-    readonly attribute DOMPluginArray plugins;
-    readonly attribute DOMMimeTypeArray mimeTypes;
+    [SameObject] readonly attribute DOMPluginArray plugins;
+    [SameObject] readonly attribute DOMMimeTypeArray mimeTypes;
     [Nondeterministic] readonly attribute boolean cookieEnabled;
     [Nondeterministic] boolean javaEnabled();
 
