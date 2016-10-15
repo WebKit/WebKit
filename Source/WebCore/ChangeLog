@@ -1,3 +1,16 @@
+2016-10-14  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Minor cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=162953
+
+        Reviewed by Dean Jackson.
+
+        Code cleanup. No change in behavior.
+
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex):
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+
 2016-10-14  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

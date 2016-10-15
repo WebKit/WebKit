@@ -139,10 +139,7 @@ bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
 
     COMPtr<IWICBitmapFrameDecode> frame;
     HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
-    if (!SUCCEEDED(hr))
-        return false;
-
-    return true;
+    return SUCCEEDED(hr);
 }
 
 ImageOrientation ImageDecoder::frameOrientationAtIndex(size_t index) const
@@ -174,17 +171,8 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
     if (!m_nativeDecoder)
         return 0;
 
-    COMPtr<IWICBitmapFrameDecode> frame;
-    HRESULT hr = m_nativeDecoder->GetFrame(index, &frame);
-    if (!SUCCEEDED(hr))
-        return 0;
-
-    UINT width, height;
-    hr = frame->GetSize(&width, &height);
-    if (!SUCCEEDED(hr))
-        return 0;
-
-    return width * height * 4;
+    auto frameSize = frameSizeAtIndex(index, subsamplingLevel);
+    return frameSize.area() * 4;
 }
 
 void ImageDecoder::setTargetContext(ID2D1RenderTarget* renderTarget)
