@@ -42,7 +42,7 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::PaymentRequest& request, std::function<void (bool)> completionHandler)
 {
-    auto paymentRequest = toPKPaymentRequest(originatingURL, linkIconURLStrings, request);
+    auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = m_weakPtrFactory.createWeakPtr();

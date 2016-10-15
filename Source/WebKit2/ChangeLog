@@ -1,5 +1,12 @@
 2016-10-14  Anders Carlsson  <andersca@apple.com>
 
+        Fix Mac build.
+
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+
+2016-10-14  Anders Carlsson  <andersca@apple.com>
+
         Pass on networking settings to the PKPaymentRequest
         https://bugs.webkit.org/show_bug.cgi?id=163462
         rdar://problem/28567629
