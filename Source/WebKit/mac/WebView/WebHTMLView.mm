@@ -3956,6 +3956,9 @@ static RetainPtr<NSMenuItem> createMenuItem(const HitTestResult& hitTestResult, 
             [menu addItem:menuItem];
 
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:nullptr keyEquivalent:@""]);
+
+        if (auto tag = toTag(item.action()))
+            [menuItem setTag:*tag];
         [menuItem setEnabled:item.enabled()];
         [menuItem setSubmenu:menu.get()];
 
