@@ -1,3 +1,36 @@
+2016-10-15  Zalan Bujtas  <zalan@apple.com>
+
+        CounterNode::resetRenderers is so inefficient.
+        https://bugs.webkit.org/show_bug.cgi?id=163480
+
+        Reviewed by Simon Fraser.
+
+        CounterNode::resetRenderers() removes all the associated renderers from this CounterNode
+        and sets the dirty bit on them.
+        This patch does all that in a loop, instead of traversing the linked tree on each removal.
+
+        No change in functionality.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::CounterNode):
+        (WebCore::CounterNode::~CounterNode):
+        (WebCore::CounterNode::nextInPreOrderAfterChildren):
+        (WebCore::CounterNode::lastDescendant):
+        (WebCore::CounterNode::addRenderer): These assertions do not seem super useful.
+        (WebCore::CounterNode::removeRenderer):
+        (WebCore::CounterNode::resetRenderers):
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        * rendering/CounterNode.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::RenderCounter):
+        (WebCore::RenderCounter::~RenderCounter):
+        (WebCore::RenderCounter::originalText):
+        (WebCore::updateCounters):
+        (WebCore::RenderCounter::invalidate): Deleted.
+        * rendering/RenderCounter.h:
+
 2016-10-15  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] macOS inline controls
