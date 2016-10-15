@@ -1,3 +1,14 @@
+2016-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Setting HTMLMediaElement.volume to NaN or Inf should throw a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=163472
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline w3c test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/volume_nonfinite-expected.txt:
+
 2016-10-14  Chris Dumez  <cdumez@apple.com>
 
         Setting HTMLMediaElement.muted to the same value should not fire a volume change event

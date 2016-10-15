@@ -77,7 +77,7 @@
 
     // controls
     attribute boolean controls;
-    [SetterMayThrowLegacyException] attribute unrestricted double volume;
+    [SetterMayThrowLegacyException] attribute double volume;
     attribute boolean muted;
     [Reflect=muted] attribute boolean defaultMuted;
 
