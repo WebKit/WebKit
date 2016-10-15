@@ -1,3 +1,118 @@
+2016-10-14  JF Bastien  <jfbastien@apple.com>
+
+        Basic WebAssembly testing
+
+        Create a small DSL in JavaScript which can build WebAssembly binary modules based on the JSON description of the format as described in:
+        https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md
+
+        This DSL can then be used to write small text description of valid and invalid WebAssembly binaries, making testing the JSC implementation much easier.
+
+        Details and example in README.md.
+
+        Basic WebAssembly testing
+        https://bugs.webkit.org/show_bug.cgi?id=163267
+
+        Reviewed by Keith Miller.
+
+        * stress/wasm/wasm.json: Removed.
+        * wasm.yaml: Added.
+        * wasm/Builder.js: Added.
+        (const._isValidValue):
+        (const._BuildWebAssemblyBinary):
+        (export.default.Builder):
+        (export.default.Builder.prototype.setChecked):
+        (export.default.Builder.prototype.setPreamble):
+        (export.default.Builder.prototype._registerSectionBuilders.switch.case.string_appeared_here.this.section):
+        (export.default.Builder.prototype._registerSectionBuilders.this.Unknown):
+        (export.default.Builder.prototype._registerSectionBuilders):
+        (export.default.Builder.prototype._addSection):
+        (export.default.Builder.prototype.optimize):
+        (export.default.Builder.prototype.json):
+        (export.default.Builder.prototype.AsmJS):
+        (export.default.Builder.prototype.WebAssembly):
+        * wasm/LowLevelBinary.js: Added.
+        (const._getterRangeCheck):
+        (const._hexdump):
+        (export.default.LowLevelBinary):
+        (export.default.LowLevelBinary.prototype.newPatchable):
+        (export.default.LowLevelBinary.prototype.hexdump):
+        (export.default.LowLevelBinary.prototype._maybeGrow):
+        (export.default.LowLevelBinary.prototype._push8):
+        (export.default.LowLevelBinary.prototype.uint8):
+        (export.default.LowLevelBinary.prototype.uint16):
+        (export.default.LowLevelBinary.prototype.uint32):
+        (export.default.LowLevelBinary.prototype.varuint):
+        (export.default.LowLevelBinary.prototype.varint):
+        (export.default.LowLevelBinary.prototype.varuint7):
+        (export.default.LowLevelBinary.prototype.string):
+        (export.default.LowLevelBinary.prototype.getSize):
+        (export.default.LowLevelBinary.prototype.getUint8):
+        (export.default.LowLevelBinary.prototype.getUint16):
+        (export.default.LowLevelBinary.prototype.getUint32):
+        (export.default.LowLevelBinary.prototype.getVaruint):
+        (export.default.LowLevelBinary.prototype.getVarint):
+        (export.default.LowLevelBinary.prototype.getVaruint7):
+        (export.default.LowLevelBinary.prototype.getString):
+        (PatchableLowLevelBinary):
+        (PatchableLowLevelBinary.prototype._push8):
+        (PatchableLowLevelBinary.prototype.apply):
+        * wasm/README.md: Added.
+        * wasm/WASM.js: Added.
+        * wasm/assert.js: Added.
+        (export.const.notUndef):
+        (export.const.eq):
+        (export.const.ge):
+        (export.const.throwsError):
+        (export.const.throwsRangeError):
+        * wasm/generate-wasmops-header.js: Renamed from JSTests/stress/wasm/generate-wasmops-header.js.
+        * wasm/self-test/test_BuilderJSON.js: Added.
+        (const.assertOpThrows):
+        (EmptyModule):
+        (CustomMagicNumber):
+        (CustomVersion):
+        (CustomSection):
+        (CustomSectionAllBytes):
+        (CustomSectionInvalidByte):
+        (TwoCustomSections):
+        (EmptyCodeSection):
+        (CodeSectionWithEmptyFunction):
+        (CodeSectionWithEmptyFunctionWithParameters):
+        (InvalidFunctionParameters):
+        (SimpleFunction):
+        (TwoSimpleFunctions):
+        (TwoBuildersAtTheSameTime):
+        (CheckedOpcodeArgumentsTooMany):
+        (CheckedOpcodeArgumentsNotEnough):
+        (CallNoArguments):
+        (CallInvalid):
+        (I32ConstInvalid):
+        (F32ConstInvalid):
+        (F64ConstInvalid):
+        (CallManyFromStack):
+        (OpcodeAdd):
+        (OpcodeUnreachable):
+        (OpcodeUnreachableCombinations):
+        (OpcodeSelect):
+        * wasm/self-test/test_BuilderWebAssembly.js: Added.
+        (EmptyModule):
+        (CustomSection):
+        (Basic):
+        * wasm/self-test/test_LowLevelBinary_encode.js: Added.
+        * wasm/self-test/test_LowLevelBinary_string.js: Added.
+        * wasm/self-test/test_LowLevelBinary_uint16.js: Added.
+        * wasm/self-test/test_LowLevelBinary_uint32.js: Added.
+        * wasm/self-test/test_LowLevelBinary_uint8.js: Added.
+        * wasm/self-test/test_LowLevelBinary_varint.js: Added.
+        * wasm/self-test/test_LowLevelBinary_varuint.js: Added.
+        * wasm/self-test/test_LowLevelBinary_varuint7.js: Added.
+        * wasm/self-test/test_WASM.js: Added.
+        * wasm/test.sh: Added.
+        * wasm/utilities.js: Added.
+        (const._read.filename.switch):
+        (const._load.filename.switch):
+        (const._json.filename.switch):
+        * wasm/wasm.json: Added.
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: @isConstructor incorrectly thinks Math.cos is a constructor
