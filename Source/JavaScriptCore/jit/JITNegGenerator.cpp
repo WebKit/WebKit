@@ -82,7 +82,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     return JITMathICInlineResult::GenerateFullSnippet;
 }
 
-bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile*, bool)
+bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList& endJumpList, CCallHelpers::JumpList& slowPathJumpList, const ArithProfile* arithProfile, bool shouldEmitProfiling)
 {
     ASSERT(m_scratchGPR != m_src.payloadGPR());
     ASSERT(m_scratchGPR != m_result.payloadGPR());
@@ -115,6 +115,10 @@ bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 #else
     jit.xor32(CCallHelpers::TrustedImm32(1 << 31), m_result.tagGPR());
 #endif
+    // The flags of ArithNegate are basic in DFG.
+    // We only need to know if we ever produced a number.
+    if (shouldEmitProfiling && arithProfile && !arithProfile->lhsObservedType().sawNumber() && !arithProfile->didObserveDouble())
+        arithProfile->emitSetDouble(jit);
     return true;
 }
 

@@ -1,3 +1,49 @@
+2016-10-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] op_negate should with any type
+        https://bugs.webkit.org/show_bug.cgi?id=162587
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        ArithNegate is quite simple. If the input is double, the output
+        is double. The other cases are set from the LLInt slow case.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        Tweak a bit the IntegerRangeOptimizationPhase when simplifying
+        ArithAbs to ArithNegate.
+        We should not do the conversion if the target nodes OSR Exits
+        on different input than the source node.
+
+        In particular, Checked ArithNegate exits on zero while
+        ArithAbs has not problem with it.
+        Unchecked ArithAbs() do not OSR Exit on INT_MIN, ArithNeg
+        should not either.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileMathIC):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+
+        * jit/JITNegGenerator.cpp:
+        (JSC::JITNegGenerator::generateFastPath):
+        * jit/JITOperations.cpp:
+        Add result profiling in baseline to have types we can use
+        in DFG and FTL.
+
 2016-10-14  Keith Miller  <keith_miller@apple.com>
 
         B3 needs a special WasmAddress Opcode

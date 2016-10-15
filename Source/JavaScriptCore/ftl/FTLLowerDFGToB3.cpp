@@ -1580,6 +1580,90 @@ private:
     }
 
     template <typename Generator>
+    void compileMathIC(JITUnaryMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
+    {
+        Node* node = m_node;
+
+        LValue operand = lowJSValue(node->child1());
+
+        PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(operand);
+        patchpoint->append(m_tagMask, ValueRep::lateReg(GPRInfo::tagMaskRegister));
+        patchpoint->append(m_tagTypeNumber, ValueRep::lateReg(GPRInfo::tagTypeNumberRegister));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+        patchpoint->numGPScratchRegisters = 1;
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                Box<CCallHelpers::JumpList> exceptions =
+                    exceptionHandle->scheduleExitCreation(params)->jumps(jit);
+
+#if ENABLE(MATH_IC_STATS)
+                auto inlineStart = jit.label();
+#endif
+
+                Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
+                mathIC->m_generator = Generator(JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()), params.gpScratch(0));
+
+                bool shouldEmitProfiling = false;
+                bool generatedInline = mathIC->generateInline(jit, *mathICGenerationState, shouldEmitProfiling);
+
+                if (generatedInline) {
+                    ASSERT(!mathICGenerationState->slowPathJumps.empty());
+                    auto done = jit.label();
+                    params.addLatePath([=] (CCallHelpers& jit) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        mathICGenerationState->slowPathJumps.link(&jit);
+                        mathICGenerationState->slowPathStart = jit.label();
+#if ENABLE(MATH_IC_STATS)
+                        auto slowPathStart = jit.label();
+#endif
+
+                        if (mathICGenerationState->shouldSlowPathRepatch) {
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
+                                repatchingFunction, params[0].gpr(), params[1].gpr(), CCallHelpers::TrustedImmPtr(mathIC));
+                            mathICGenerationState->slowPathCall = call.call();
+                        } else {
+                            SlowPathCall call = callOperation(*state, params.unavailableRegisters(), jit, node->origin.semantic,
+                                exceptions.get(), nonRepatchingFunction, params[0].gpr(), params[1].gpr());
+                            mathICGenerationState->slowPathCall = call.call();
+                        }
+                        jit.jump().linkTo(done, &jit);
+
+                        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                            mathIC->finalizeInlineCode(*mathICGenerationState, linkBuffer);
+                        });
+
+#if ENABLE(MATH_IC_STATS)
+                        auto slowPathEnd = jit.label();
+                        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                            size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                            mathIC->m_generatedCodeSize += size;
+                        });
+#endif
+                    });
+                } else {
+                    callOperation(
+                        *state, params.unavailableRegisters(), jit, node->origin.semantic, exceptions.get(),
+                        nonRepatchingFunction, params[0].gpr(), params[1].gpr());
+                }
+
+#if ENABLE(MATH_IC_STATS)
+                auto inlineEnd = jit.label();
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+                    mathIC->m_generatedCodeSize += size;
+                });
+#endif
+            });
+
+        setJSValue(patchpoint);
+    }
+
+    template <typename Generator>
     void compileMathIC(JITBinaryMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
     {
         Node* node = m_node;
@@ -2451,7 +2535,12 @@ private:
         }
             
         default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+            ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
+            JITNegIC* negIC = codeBlock()->addJITNegIC(arithProfile);
+            auto repatchingFunction = operationArithNegateOptimize;
+            auto nonRepatchingFunction = operationArithNegate;
+            compileMathIC(negIC, repatchingFunction, nonRepatchingFunction);
             break;
         }
     }

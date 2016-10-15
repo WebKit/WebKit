@@ -209,7 +209,7 @@ private:
         }
             
         case ArithNegate: {
-            if (m_graph.unaryArithShouldSpeculateInt32(node, FixupPass)) {
+            if (node->child1()->shouldSpeculateInt32OrBoolean() && node->canSpeculateInt32(FixupPass)) {
                 fixIntOrBooleanEdge(node->child1());
                 if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
                     node->setArithMode(Arith::Unchecked);
@@ -217,6 +217,8 @@ private:
                     node->setArithMode(Arith::CheckOverflow);
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
+                node->setResult(NodeResultInt32);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
             if (m_graph.unaryArithShouldSpeculateAnyInt(node, FixupPass)) {
@@ -226,10 +228,15 @@ private:
                 else
                     node->setArithMode(Arith::CheckOverflowAndNegativeZero);
                 node->setResult(NodeResultInt52);
+                node->clearFlags(NodeMustGenerate);
                 break;
             }
-            fixDoubleOrBooleanEdge(node->child1());
-            node->setResult(NodeResultDouble);
+            if (node->child1()->shouldSpeculateNotCell()) {
+                fixDoubleOrBooleanEdge(node->child1());
+                node->setResult(NodeResultDouble);
+                node->clearFlags(NodeMustGenerate);
+            } else
+                fixEdge<UntypedUse>(node->child1());
             break;
         }
             

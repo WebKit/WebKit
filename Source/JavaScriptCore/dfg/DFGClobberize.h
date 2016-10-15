@@ -211,6 +211,17 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         return;
 
+    case ArithNegate:
+        if (node->child1().useKind() == Int32Use
+            || node->child1().useKind() == DoubleRepUse
+            || node->child1().useKind() == Int52RepUse)
+            def(PureValue(node));
+        else {
+            read(World);
+            write(Heap);
+        }
+        return;
+
     case IsCellWithType:
         def(PureValue(node, node->queriedType()));
         return;
@@ -334,7 +345,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case ArithAdd:
-    case ArithNegate:
     case ArithMod:
     case DoubleAsInt32:
     case UInt32ToNumber:

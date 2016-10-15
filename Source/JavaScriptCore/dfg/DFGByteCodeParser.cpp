@@ -974,6 +974,17 @@ private:
                         node->mergeFlags(NodeMayHaveNonNumberResult);
                     break;
                 }
+                case ArithNegate: {
+                    ASSERT_WITH_MESSAGE(!arithProfile->didObserveNonNumber(), "op_negate starts with a toNumber() on the argument, it should only produce numbers.");
+
+                    if (arithProfile->lhsObservedType().sawNumber() || arithProfile->didObserveDouble())
+                        node->mergeFlags(NodeMayHaveDoubleResult);
+                    if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
+                        node->mergeFlags(NodeMayNegZeroInBaseline);
+                    if (arithProfile->didObserveInt32Overflow() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+                        node->mergeFlags(NodeMayOverflowInt32InBaseline);
+                    break;
+                }
                 
                 default:
                     break;
@@ -989,14 +1000,6 @@ private:
             case ValueAdd:
             case ArithMod: // for ArithMod "MayOverflow" means we tried to divide by zero, or we saw double.
                 node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                break;
-                
-            case ArithNegate:
-                // Currently we can't tell the difference between a negation overflowing
-                // (i.e. -(1 << 31)) or generating negative zero (i.e. -0). If it took slow
-                // path then we assume that it did both of those things.
-                node->mergeFlags(NodeMayOverflowInt32InBaseline);
-                node->mergeFlags(NodeMayNegZeroInBaseline);
                 break;
                 
             default:

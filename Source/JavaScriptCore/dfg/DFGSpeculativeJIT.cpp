@@ -4237,11 +4237,106 @@ void SpeculativeJIT::compileArithNegate(Node* node)
         return;
     }
         
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+    default: {
+        ArithProfile* arithProfile = m_jit.graph().baselineCodeBlockFor(node->origin.semantic)->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
+        JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile);
+        auto repatchingFunction = operationArithNegateOptimize;
+        auto nonRepatchingFunction = operationArithNegate;
+        bool needsScratchGPRReg = true;
+        compileMathIC(node, negIC, needsScratchGPRReg, repatchingFunction, nonRepatchingFunction);
         return;
     }
+    }
 }
+
+template <typename Generator, typename RepatchingFunction, typename NonRepatchingFunction>
+void SpeculativeJIT::compileMathIC(Node* node, JITUnaryMathIC<Generator>* mathIC, bool needsScratchGPRReg, RepatchingFunction repatchingFunction, NonRepatchingFunction nonRepatchingFunction)
+{
+    GPRReg scratchGPR = InvalidGPRReg;
+    Optional<GPRTemporary> gprScratch;
+    if (needsScratchGPRReg) {
+        gprScratch = GPRTemporary(this);
+        scratchGPR = gprScratch->gpr();
+    }
+    JSValueOperand childOperand(this, node->child1());
+    JSValueRegs childRegs = childOperand.jsValueRegs();
+#if USE(JSVALUE64)
+    GPRTemporary result(this, Reuse, childOperand);
+    JSValueRegs resultRegs(result.gpr());
+#else
+    GPRTemporary resultTag(this);
+    GPRTemporary resultPayload(this);
+    JSValueRegs resultRegs(resultPayload.gpr(), resultTag.gpr());
+#endif
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineStart = m_jit.label();
+#endif
+
+    Box<MathICGenerationState> icGenerationState = Box<MathICGenerationState>::create();
+    mathIC->m_generator = Generator(resultRegs, childRegs, scratchGPR);
+
+    bool shouldEmitProfiling = false;
+    bool generatedInline = mathIC->generateInline(m_jit, *icGenerationState, shouldEmitProfiling);
+
+    if (generatedInline) {
+        ASSERT(!icGenerationState->slowPathJumps.empty());
+
+        Vector<SilentRegisterSavePlan> savePlans;
+        silentSpillAllRegistersImpl(false, savePlans, resultRegs);
+
+        auto done = m_jit.label();
+
+        addSlowPathGenerator([=, savePlans = WTFMove(savePlans)] () {
+            icGenerationState->slowPathJumps.link(&m_jit);
+            icGenerationState->slowPathStart = m_jit.label();
+#if ENABLE(MATH_IC_STATS)
+            auto slowPathStart = m_jit.label();
+#endif
+
+            silentSpill(savePlans);
+
+            if (icGenerationState->shouldSlowPathRepatch)
+                icGenerationState->slowPathCall = callOperation(bitwise_cast<J_JITOperation_EJMic>(repatchingFunction), resultRegs, childRegs, TrustedImmPtr(mathIC));
+            else
+                icGenerationState->slowPathCall = callOperation(nonRepatchingFunction, resultRegs, childRegs);
+
+            silentFill(savePlans);
+            m_jit.exceptionCheck();
+            m_jit.jump().linkTo(done, &m_jit);
+
+            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                mathIC->finalizeInlineCode(*icGenerationState, linkBuffer);
+            });
+
+#if ENABLE(MATH_IC_STATS)
+            auto slowPathEnd = m_jit.label();
+            m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                size_t size = static_cast<char*>(linkBuffer.locationOf(slowPathEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(slowPathStart).executableAddress());
+                mathIC->m_generatedCodeSize += size;
+            });
+#endif
+
+        });
+    } else {
+        flushRegisters();
+        callOperation(nonRepatchingFunction, resultRegs, childRegs);
+        m_jit.exceptionCheck();
+    }
+
+#if ENABLE(MATH_IC_STATS)
+    auto inlineEnd = m_jit.label();
+    m_jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+        size_t size = static_cast<char*>(linkBuffer.locationOf(inlineEnd).executableAddress()) - static_cast<char*>(linkBuffer.locationOf(inlineStart).executableAddress());
+        mathIC->m_generatedCodeSize += size;
+    });
+#endif
+
+    jsValueResult(resultRegs, node);
+    return;
+}
+
+
 void SpeculativeJIT::compileArithMul(Node* node)
 {
     switch (node->binaryUseKind()) {

@@ -1,3 +1,16 @@
+2016-10-14  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] op_negate should with any type
+        https://bugs.webkit.org/show_bug.cgi?id=162587
+
+        Reviewed by Saam Barati.
+
+        * stress/arith-abs-to-arith-negate-range-optimizaton.js: Added.
+        Cover OSR Exits when converting Math.abs() into ArithNegate.
+
+        * stress/arith-negate-on-various-types.js: Added.
+        Cover ArithNegate with all types.
+
 2016-10-14  JF Bastien  <jfbastien@apple.com>
 
         Basic WebAssembly testing

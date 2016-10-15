@@ -657,7 +657,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     forNode(node->child1()).m_type));
             break;
         default:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            forNode(node).setType(SpecBytecodeNumber);
             break;
         }
         break;

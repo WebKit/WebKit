@@ -1252,9 +1252,10 @@ public:
                         changed = true;
                         break;
                     }
-                    if (maxValue <= 0) {
+                    bool absIsUnchecked = !shouldCheckOverflow(node->arithMode());
+                    if (maxValue < 0 || (absIsUnchecked && maxValue <= 0)) {
                         node->convertToArithNegate();
-                        if (minValue > std::numeric_limits<int>::min())
+                        if (absIsUnchecked || minValue > std::numeric_limits<int>::min())
                             node->setArithMode(Arith::Unchecked);
                         changed = true;
                         break;

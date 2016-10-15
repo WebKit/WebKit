@@ -245,17 +245,23 @@ private:
             break;
         }
 
-        case ArithNegate:
-            if (node->child1()->prediction()) {
-                if (m_graph.unaryArithShouldSpeculateInt32(node, m_pass))
+        case ArithNegate: {
+            SpeculatedType prediction = node->child1()->prediction();
+            if (prediction) {
+                if (isInt32OrBooleanSpeculation(prediction) && node->canSpeculateInt32(m_pass))
                     changed |= mergePrediction(SpecInt32Only);
                 else if (m_graph.unaryArithShouldSpeculateAnyInt(node, m_pass))
                     changed |= mergePrediction(SpecInt52Only);
-                else
+                else if (isBytecodeNumberSpeculation(prediction))
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
+                else {
+                    changed |= mergePrediction(SpecInt32Only);
+                    if (node->mayHaveDoubleResult())
+                        changed |= mergePrediction(SpecBytecodeDouble);
+                }
             }
             break;
-            
+        }
         case ArithMin:
         case ArithMax: {
             SpeculatedType left = node->child1()->prediction();
