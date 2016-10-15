@@ -69,6 +69,7 @@ sub attributeCommand($$);
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($$);
 sub changeLogNameFromArgs($$);
+sub computeModifiedFunctions($$$);
 sub createPatchCommand($$$$);
 sub decodeEntities($);
 sub determinePropertyChanges($$$);
@@ -83,7 +84,6 @@ sub findChangeLogs($$);
 sub findOriginalFileFromSvn($);
 sub generateFileList(\%$$$);
 sub generateFunctionLists($$$$$);
-sub generateFunctionListsByRanges($$$$);
 sub generateNewChangeLogs($$$$$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
@@ -349,16 +349,20 @@ sub actuallyGenerateFunctionLists($$$$$$)
         # and other code doesn't expect to see a trailing " character when sniffing a file extension.
         chomp $file;
         $file =~ s/ /\\ /g;
-        my %saw_function;
-        # Find all the functions in the file.
-        if ($line_ranges_after_changed{$file}) {
-            my $sourceFileHandle = $delegateHashRef->{openFile}($file);
-            next unless $sourceFileHandle;
-            my @function_ranges = get_function_line_ranges($sourceFileHandle, $file);
-            close($sourceFileHandle);
 
+        my %saw_function;
+        my @afterChangeFunctionRanges;
+
+        # Find all the functions in the file.
+        my $sourceFileHandle = $delegateHashRef->{openFile}($file);
+        next unless $sourceFileHandle;
+        my @afterChangeFunctionRanges = get_function_line_ranges($sourceFileHandle, $file);
+        close($sourceFileHandle);
+
+        # Find modified functions in the file.
+        if ($line_ranges_after_changed{$file}) {
             my @change_ranges = (@{$line_ranges_after_changed{$file}}, []);
-            my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@function_ranges, \%saw_function);
+            my @functions = computeModifiedFunctions($file, \@change_ranges, \@afterChangeFunctionRanges);
 
             # Format the list of functions.
             if (@functions) {
@@ -370,11 +374,20 @@ sub actuallyGenerateFunctionLists($$$$$$)
         if ($line_ranges_before_changed{$file}) {
             my $originalFileHandle = $delegateHashRef->{openOriginalFile}($file, $gitCommit, $gitIndex, $mergeBase);
             next unless $originalFileHandle;
-            my @deleted_function_ranges = get_function_line_ranges($originalFileHandle, $file);
+            my @beforeChangeFunctionRanges = get_function_line_ranges($originalFileHandle, $file);
             close($originalFileHandle);
 
-            my @change_ranges = (@{$line_ranges_before_changed{$file}}, []);
-            my @functions = generateFunctionListsByRanges($file, \@change_ranges, \@deleted_function_ranges, \%saw_function);
+            my %existsAfterChange = map { $_->[2] => 1 } @afterChangeFunctionRanges;
+
+            my @functions;
+            my %sawFunctions;
+            for my $functionRange (@beforeChangeFunctionRanges) {
+                my $functionName = $functionRange->[2];
+                if (!$existsAfterChange{$functionName} && !$sawFunctions{$functionName}) {
+                    push @functions, $functionName;
+                    $sawFunctions{$functionName} = 1;
+                }
+            }
 
             # Format the list of deleted functions.
             if (@functions) {
@@ -385,15 +398,17 @@ sub actuallyGenerateFunctionLists($$$$$$)
     }
 }
 
-sub generateFunctionListsByRanges($$$$)
+sub computeModifiedFunctions($$$)
 {
-    my ($file, $changed_line_ranges, $function_ranges, $saw_function) = @_;
+    my ($file, $changedLineRanges, $functionRanges) = @_;
+
+    my %sawFunction;
 
     # Find all the modified functions.
     my @functions;
-    my @change_ranges = @{$changed_line_ranges};
+    my @change_ranges = @{$changedLineRanges};
     my @change_range = (0, 0);
-    FUNCTION: foreach my $function_range_ref (@{$function_ranges}) {
+    FUNCTION: foreach my $function_range_ref (@{$functionRanges}) {
         my @function_range = @{$function_range_ref};
 
         # FIXME: This is a hack. If the function name is empty, skip it.
@@ -414,8 +429,8 @@ sub generateFunctionListsByRanges($$$$)
             # If an overlap with this function range, record the function name.
             if ($change_range[1] >= $function_range[0]
                 and $change_range[0] <= $function_range[1]) {
-                if (!$saw_function->{$function_range[2]}) {
-                    $saw_function->{$function_range[2]} = 1;
+                if (!$sawFunction{$function_range[2]}) {
+                    $sawFunction{$function_range[2]} = 1;
                     push @functions, $function_range[2];
                 }
                 next FUNCTION;
@@ -1996,7 +2011,7 @@ sub diffCommand($$$$)
 {
     my ($paths, $gitCommit, $gitIndex, $mergeBase) = @_;
 
-    # The function overlap detection logic in generateFunctionListsByRanges() assumes that its line
+    # The function overlap detection logic in computeModifiedFunctions() assumes that its line
     # ranges were from a unified diff without any context lines.
     my $command;
     if (isSVN()) {

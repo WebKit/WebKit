@@ -75,6 +75,20 @@ int main(int argc, const char* argv[])
 }
 EOF
 
+my $EXAMPLE_JAVASCRIPT_WITH_SAME_FUNCTION_DEFINED_TWICE = <<EOF;
+function f() {
+    return 5;
+}
+
+function f() {
+    return 6;
+}
+
+function g() {
+    return 7;
+}
+EOF
+
 my @testCaseHashRefs = (
 ###
 # 0 lines of context
@@ -145,6 +159,131 @@ EOF
     expected => <<EOF
 
         (fib): Deleted.
+EOF
+},
+{
+    testName => "Unified diff with 0 context; add function immediately after another function",
+    inputText => $EXAMPLE_CPP,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -11,0 +12,4 @@ unsigned fibPlusFive(unsigned n)
++unsigned fibPlusSeven(unsigned n)
++{
++    return fib(n) + 7;
++}
+EOF
+    expected => <<EOF
+
+        (fibPlusSeven):
+EOF
+},
+{
+    testName => "Unified diff with 0 context; add function at the end of the file",
+    inputText => $EXAMPLE_CPP,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -39,0 +40,5 @@ int main(int argc, const char* argv[])
++
++unsigned fibPlusSeven(unsigned n)
++{
++    return fib(n) + 7;
++}
+EOF
+    expected => <<EOF
+
+        (fibPlusSeven):
+EOF
+},
+{
+    testName => "Unified diff with 0 context; rename function",
+    inputText => $EXAMPLE_CPP,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -8 +8 @@ unsigned fib(unsigned);
+-unsigned fibPlusFive(unsigned n)
++unsigned fibPlusFive2(unsigned n)
+EOF
+    expected => <<EOF
+
+        (fibPlusFive2):
+        (fibPlusFive): Deleted.
+EOF
+},
+{
+    testName => "Unified diff with 0 context; replace function",
+    inputText => $EXAMPLE_CPP,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -8,4 +8,5 @@ unsigned fib(unsigned);
+-unsigned fibPlusFive(unsigned n)
+-{
+-    return fib(n) + 5;
+-}
++unsigned fibPlusSeven(unsigned n)
++{   // First comment
++    // Second comment
++    return fib(n) + 7;
++};
+EOF
+    expected => <<EOF
+
+        (fibPlusSeven):
+        (fibPlusFive): Deleted.
+EOF
+},
+{
+    testName => "Unified diff with 0 context; move function from the top of the file to the end of the file",
+    inputText => $EXAMPLE_CPP,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -8,5 +7,0 @@ unsigned fib(unsigned);
+-unsigned fibPlusFive(unsigned n)
+-{
+-    return fib(n) + 5;
+-}
+-
+@@ -39,0 +35,5 @@ int main(int argc, const char* argv[])
++
++unsigned fibPlusFive(unsigned n)
++{
++    return fib(n) + 5;
++}
+EOF
+    expected => <<EOF
+
+        (fibPlusFive):
+EOF
+},
+{
+    testName => "Unified diff with 0 context; remove functions with the same name",
+    inputText => $EXAMPLE_JAVASCRIPT_WITH_SAME_FUNCTION_DEFINED_TWICE,
+    diffToApply => <<EOF,
+diff --git a/fib.cpp b/fib.cpp
+--- a/fib.cpp
++++ b/fib.cpp
+@@ -1,8 +0,0 @@
+-function f() {
+-    return 5;
+-}
+-
+-function f() {
+-    return 6;
+-}
+-
+EOF
+    expected => <<EOF
+
+        (f): Deleted.
 EOF
 },
 {
