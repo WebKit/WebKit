@@ -214,21 +214,14 @@ static inline HTMLFormControlElement* submitElementFromEvent(const Event& event)
     return nullptr;
 }
 
-bool HTMLFormElement::validateInteractively(Event& event)
+bool HTMLFormElement::validateInteractively()
 {
-    if (!document().page() || !document().page()->settings().interactiveFormValidationEnabled() || noValidate())
-        return true;
-
-    HTMLFormControlElement* submitElement = submitElementFromEvent(event);
-    if (submitElement && submitElement->formNoValidate())
-        return true;
-
     for (auto& associatedElement : m_associatedElements) {
         if (is<HTMLFormControlElement>(*associatedElement))
             downcast<HTMLFormControlElement>(*associatedElement).hideVisibleValidationMessage();
     }
 
-    Vector<RefPtr<FormAssociatedElement>> unhandledInvalidControls;
+    Vector<RefPtr<HTMLFormControlElement>> unhandledInvalidControls;
     if (!checkInvalidControlsAndCollectUnhandled(unhandledInvalidControls))
         return true;
     // Because the form has invalid controls, we abort the form submission and
@@ -242,12 +235,8 @@ bool HTMLFormElement::validateInteractively(Event& event)
 
     // Focus on the first focusable control and show a validation message.
     for (auto& control : unhandledInvalidControls) {
-        HTMLElement& element = control->asHTMLElement();
-        if (element.inDocument() && element.isFocusable()) {
-            element.scrollIntoViewIfNeeded(false);
-            element.focus();
-            if (is<HTMLFormControlElement>(element))
-                downcast<HTMLFormControlElement>(element).updateVisibleValidationMessage();
+        if (control->inDocument() && control->isFocusable()) {
+            control->focusAndShowValidationMessage();
             break;
         }
     }
@@ -255,11 +244,9 @@ bool HTMLFormElement::validateInteractively(Event& event)
     // Warn about all of unfocusable controls.
     if (document().frame()) {
         for (auto& control : unhandledInvalidControls) {
-            HTMLElement& element = control->asHTMLElement();
-            if (element.inDocument() && element.isFocusable())
+            if (control->inDocument() && control->isFocusable())
                 continue;
-            String message("An invalid form control with name='%name' is not focusable.");
-            message.replace("%name", control->name());
+            String message = makeString("An invalid form control with name='", control->name(), "' is not focusable.");
             document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Error, message);
         }
     }
@@ -276,8 +263,14 @@ void HTMLFormElement::prepareForSubmission(Event& event)
     m_isSubmittingOrPreparingForSubmission = true;
     m_shouldSubmit = false;
 
+    bool shouldValidate = document().page() && document().page()->settings().interactiveFormValidationEnabled() && !noValidate();
+
+    HTMLFormControlElement* submitElement = submitElementFromEvent(event);
+    if (submitElement && submitElement->formNoValidate())
+        shouldValidate = false;
+
     // Interactive validation must be done before dispatching the submit event.
-    if (!validateInteractively(event)) {
+    if (shouldValidate && !validateInteractively()) {
         m_isSubmittingOrPreparingForSubmission = false;
         return;
     }
@@ -752,11 +745,11 @@ void HTMLFormElement::resetDefaultButton()
 
 bool HTMLFormElement::checkValidity()
 {
-    Vector<RefPtr<FormAssociatedElement>> controls;
+    Vector<RefPtr<HTMLFormControlElement>> controls;
     return !checkInvalidControlsAndCollectUnhandled(controls);
 }
 
-bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<FormAssociatedElement>>& unhandledInvalidControls)
+bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<HTMLFormControlElement>>& unhandledInvalidControls)
 {
     Ref<HTMLFormElement> protectedThis(*this);
     // Copy m_associatedElements because event handlers called from
@@ -774,6 +767,11 @@ bool HTMLFormElement::checkInvalidControlsAndCollectUnhandled(Vector<RefPtr<Form
         }
     }
     return hasInvalidControls;
+}
+
+bool HTMLFormElement::reportValidity()
+{
+    return validateInteractively();
 }
 
 #ifndef NDEBUG

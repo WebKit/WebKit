@@ -1,3 +1,79 @@
+2016-10-15  Chris Dumez  <cdumez@apple.com>
+
+        Add support for reportValidity() on form and form control elements
+        https://bugs.webkit.org/show_bug.cgi?id=163479
+
+        Reviewed by Darin Adler.
+
+        Add support for reportValidity() on form and form control elements:
+        - https://html.spec.whatwg.org/#dom-form-reportvalidity
+        - https://html.spec.whatwg.org/#dom-cva-reportvalidity
+
+        Firefox and Chrome already support this.
+
+        Demo: https://googlechrome.github.io/samples/report-validity/
+
+        No new tests, rebaselined existing tests.
+
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        Add reportValidity() operation.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::checkValidity):
+
+        (WebCore::HTMLFormControlElement::reportValidity):
+        Add implementation for reportValidity() for form control elements.
+        First, it calls checkValidity() and returns early if there is no
+        constraint violation. if the JS canceled the 'invalid' event
+        fired by checkValidity(), then return early as well, as per the
+        specification. If the element is focusable, we scroll to it,
+        focus it and show the validation message. Otherwise, we log a
+        error message to the console. The last part of the behavior
+        matches what we already did in HTMLFormElement::validateInteractively()
+        and complies with the behavior in the specification.
+
+        (WebCore::HTMLFormControlElement::focusAndShowValidationMessage):
+        Add utility function to scroll to the form control element, focus
+        it and show its validation message. This code was moved from
+        HTMLFormElement::validateInteractively() so that it could be reused
+        in HTMLFormControlElement::reportValidity().
+
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        Move the early abort checks to the existing call site (prepareForSubmission)
+        so that we can reuse this method for reportValidity().
+
+        (WebCore::HTMLFormElement::prepareForSubmission):
+        Only call validateInteractively() if we really should validate. Those checks
+        used to be in validateInteractively() but I moved them here so we could more
+        easily reuse validateInteractively().
+
+        (WebCore::HTMLFormElement::checkValidity):
+        (WebCore::HTMLFormElement::checkInvalidControlsAndCollectUnhandled):
+        Update Vector type to be a Vector of HTMLFormControlElement given that we
+        only add HTMLFormControlElement objects to it and that it results it simpler
+        code.
+
+        (WebCore::HTMLFormElement::reportValidity):
+        Add implementation for reportValidity() for form elements. The
+        implementation calls our already existing validateInteractively()
+        method, as per the specification.
+
+        * html/HTMLFormElement.h:
+
+        * html/HTMLObjectElement.h:
+        reportValidity() returns true unconditionally for object elements,
+        similarly to checkValidity().
+
 2016-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Sort the project file.

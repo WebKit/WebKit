@@ -1726,7 +1726,7 @@ PASS HTMLObjectElement interface: attribute willValidate
 PASS HTMLObjectElement interface: attribute validity 
 PASS HTMLObjectElement interface: attribute validationMessage 
 PASS HTMLObjectElement interface: operation checkValidity() 
-FAIL HTMLObjectElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLObjectElement interface: operation reportValidity() 
 PASS HTMLObjectElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLObjectElement interface: attribute align 
 PASS HTMLObjectElement interface: attribute archive 
@@ -2547,7 +2547,7 @@ PASS HTMLFormElement interface: attribute length
 PASS HTMLFormElement interface: operation submit() 
 PASS HTMLFormElement interface: operation reset() 
 PASS HTMLFormElement interface: operation checkValidity() 
-FAIL HTMLFormElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLFormElement interface: operation reportValidity() 
 PASS HTMLFormElement must be primary interface of document.createElement("form") 
 PASS Stringification of document.createElement("form") 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "acceptCharset" with the proper type (0) 
@@ -2564,7 +2564,7 @@ PASS HTMLFormElement interface: document.createElement("form") must inherit prop
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "submit" with the proper type (13) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "reset" with the proper type (14) 
 PASS HTMLFormElement interface: document.createElement("form") must inherit property "checkValidity" with the proper type (15) 
-FAIL HTMLFormElement interface: document.createElement("form") must inherit property "reportValidity" with the proper type (16) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLFormElement interface: document.createElement("form") must inherit property "reportValidity" with the proper type (16) 
 PASS HTMLLabelElement interface: existence and properties of interface object 
 PASS HTMLLabelElement interface object length 
 PASS HTMLLabelElement interface object name 
@@ -2629,7 +2629,7 @@ PASS HTMLInputElement interface: attribute willValidate
 PASS HTMLInputElement interface: attribute validity 
 PASS HTMLInputElement interface: attribute validationMessage 
 PASS HTMLInputElement interface: operation checkValidity() 
-FAIL HTMLInputElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLInputElement interface: operation reportValidity() 
 PASS HTMLInputElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLInputElement interface: attribute labels 
 PASS HTMLInputElement interface: operation select() 
@@ -2689,7 +2689,7 @@ PASS HTMLInputElement interface: document.createElement("input") must inherit pr
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on document.createElement("input") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "labels" with the proper type (46) 
@@ -2753,7 +2753,7 @@ PASS HTMLInputElement interface: createInput("text") must inherit property "will
 PASS HTMLInputElement interface: createInput("text") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("text") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("text") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("text") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("text") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("text") must inherit property "labels" with the proper type (46) 
@@ -2817,7 +2817,7 @@ PASS HTMLInputElement interface: createInput("hidden") must inherit property "wi
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("hidden") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("hidden") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("hidden") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "labels" with the proper type (46) 
@@ -2881,7 +2881,7 @@ PASS HTMLInputElement interface: createInput("search") must inherit property "wi
 PASS HTMLInputElement interface: createInput("search") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("search") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("search") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("search") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("search") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("search") must inherit property "labels" with the proper type (46) 
@@ -2945,7 +2945,7 @@ PASS HTMLInputElement interface: createInput("tel") must inherit property "willV
 PASS HTMLInputElement interface: createInput("tel") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("tel") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("tel") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("tel") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("tel") must inherit property "labels" with the proper type (46) 
@@ -3009,7 +3009,7 @@ PASS HTMLInputElement interface: createInput("url") must inherit property "willV
 PASS HTMLInputElement interface: createInput("url") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("url") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("url") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("url") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("url") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("url") must inherit property "labels" with the proper type (46) 
@@ -3073,7 +3073,7 @@ PASS HTMLInputElement interface: createInput("email") must inherit property "wil
 PASS HTMLInputElement interface: createInput("email") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("email") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("email") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("email") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("email") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("email") must inherit property "labels" with the proper type (46) 
@@ -3137,7 +3137,7 @@ PASS HTMLInputElement interface: createInput("password") must inherit property "
 PASS HTMLInputElement interface: createInput("password") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("password") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("password") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("password") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("password") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("password") must inherit property "labels" with the proper type (46) 
@@ -3201,7 +3201,7 @@ PASS HTMLInputElement interface: createInput("date") must inherit property "will
 PASS HTMLInputElement interface: createInput("date") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("date") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("date") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("date") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("date") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("date") must inherit property "labels" with the proper type (46) 
@@ -3265,7 +3265,7 @@ PASS HTMLInputElement interface: createInput("month") must inherit property "wil
 PASS HTMLInputElement interface: createInput("month") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("month") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("month") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("month") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("month") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("month") must inherit property "labels" with the proper type (46) 
@@ -3329,7 +3329,7 @@ PASS HTMLInputElement interface: createInput("week") must inherit property "will
 PASS HTMLInputElement interface: createInput("week") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("week") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("week") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("week") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("week") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("week") must inherit property "labels" with the proper type (46) 
@@ -3393,7 +3393,7 @@ PASS HTMLInputElement interface: createInput("time") must inherit property "will
 PASS HTMLInputElement interface: createInput("time") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("time") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("time") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("time") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("time") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("time") must inherit property "labels" with the proper type (46) 
@@ -3457,7 +3457,7 @@ PASS HTMLInputElement interface: createInput("datetime-local") must inherit prop
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("datetime-local") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("datetime-local") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "labels" with the proper type (46) 
@@ -3521,7 +3521,7 @@ PASS HTMLInputElement interface: createInput("number") must inherit property "wi
 PASS HTMLInputElement interface: createInput("number") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("number") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("number") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("number") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("number") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("number") must inherit property "labels" with the proper type (46) 
@@ -3585,7 +3585,7 @@ PASS HTMLInputElement interface: createInput("range") must inherit property "wil
 PASS HTMLInputElement interface: createInput("range") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("range") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("range") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("range") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("range") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("range") must inherit property "labels" with the proper type (46) 
@@ -3649,7 +3649,7 @@ PASS HTMLInputElement interface: createInput("color") must inherit property "wil
 PASS HTMLInputElement interface: createInput("color") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("color") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("color") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("color") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("color") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("color") must inherit property "labels" with the proper type (46) 
@@ -3713,7 +3713,7 @@ PASS HTMLInputElement interface: createInput("checkbox") must inherit property "
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("checkbox") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("checkbox") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("checkbox") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "labels" with the proper type (46) 
@@ -3777,7 +3777,7 @@ PASS HTMLInputElement interface: createInput("radio") must inherit property "wil
 PASS HTMLInputElement interface: createInput("radio") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("radio") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("radio") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("radio") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("radio") must inherit property "labels" with the proper type (46) 
@@ -3841,7 +3841,7 @@ PASS HTMLInputElement interface: createInput("file") must inherit property "will
 PASS HTMLInputElement interface: createInput("file") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("file") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("file") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("file") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("file") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("file") must inherit property "labels" with the proper type (46) 
@@ -3905,7 +3905,7 @@ PASS HTMLInputElement interface: createInput("submit") must inherit property "wi
 PASS HTMLInputElement interface: createInput("submit") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("submit") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("submit") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("submit") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("submit") must inherit property "labels" with the proper type (46) 
@@ -3969,7 +3969,7 @@ PASS HTMLInputElement interface: createInput("image") must inherit property "wil
 PASS HTMLInputElement interface: createInput("image") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("image") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("image") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("image") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("image") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("image") must inherit property "labels" with the proper type (46) 
@@ -4033,7 +4033,7 @@ PASS HTMLInputElement interface: createInput("reset") must inherit property "wil
 PASS HTMLInputElement interface: createInput("reset") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("reset") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("reset") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("reset") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("reset") must inherit property "labels" with the proper type (46) 
@@ -4097,7 +4097,7 @@ PASS HTMLInputElement interface: createInput("button") must inherit property "wi
 PASS HTMLInputElement interface: createInput("button") must inherit property "validity" with the proper type (41) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "validationMessage" with the proper type (42) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "checkValidity" with the proper type (43) 
-FAIL HTMLInputElement interface: createInput("button") must inherit property "reportValidity" with the proper type (44) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLInputElement interface: createInput("button") must inherit property "reportValidity" with the proper type (44) 
 PASS HTMLInputElement interface: createInput("button") must inherit property "setCustomValidity" with the proper type (45) 
 PASS HTMLInputElement interface: calling setCustomValidity(DOMString) on createInput("button") with too few arguments must throw TypeError 
 PASS HTMLInputElement interface: createInput("button") must inherit property "labels" with the proper type (46) 
@@ -4134,7 +4134,7 @@ PASS HTMLButtonElement interface: attribute willValidate
 PASS HTMLButtonElement interface: attribute validity 
 PASS HTMLButtonElement interface: attribute validationMessage 
 PASS HTMLButtonElement interface: operation checkValidity() 
-FAIL HTMLButtonElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLButtonElement interface: operation reportValidity() 
 PASS HTMLButtonElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLButtonElement interface: attribute labels 
 PASS HTMLButtonElement must be primary interface of document.createElement("button") 
@@ -4155,7 +4155,7 @@ PASS HTMLButtonElement interface: document.createElement("button") must inherit 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "validity" with the proper type (13) 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "validationMessage" with the proper type (14) 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "checkValidity" with the proper type (15) 
-FAIL HTMLButtonElement interface: document.createElement("button") must inherit property "reportValidity" with the proper type (16) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLButtonElement interface: document.createElement("button") must inherit property "reportValidity" with the proper type (16) 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "setCustomValidity" with the proper type (17) 
 PASS HTMLButtonElement interface: calling setCustomValidity(DOMString) on document.createElement("button") with too few arguments must throw TypeError 
 PASS HTMLButtonElement interface: document.createElement("button") must inherit property "labels" with the proper type (18) 
@@ -4187,7 +4187,7 @@ PASS HTMLSelectElement interface: attribute willValidate
 PASS HTMLSelectElement interface: attribute validity 
 PASS HTMLSelectElement interface: attribute validationMessage 
 PASS HTMLSelectElement interface: operation checkValidity() 
-FAIL HTMLSelectElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLSelectElement interface: operation reportValidity() 
 PASS HTMLSelectElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLSelectElement interface: attribute labels 
 PASS HTMLSelectElement must be primary interface of document.createElement("select") 
@@ -4219,7 +4219,7 @@ PASS HTMLSelectElement interface: document.createElement("select") must inherit 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "validity" with the proper type (21) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "validationMessage" with the proper type (22) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "checkValidity" with the proper type (23) 
-FAIL HTMLSelectElement interface: document.createElement("select") must inherit property "reportValidity" with the proper type (24) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLSelectElement interface: document.createElement("select") must inherit property "reportValidity" with the proper type (24) 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "setCustomValidity" with the proper type (25) 
 PASS HTMLSelectElement interface: calling setCustomValidity(DOMString) on document.createElement("select") with too few arguments must throw TypeError 
 PASS HTMLSelectElement interface: document.createElement("select") must inherit property "labels" with the proper type (26) 
@@ -4304,7 +4304,7 @@ PASS HTMLTextAreaElement interface: attribute willValidate
 PASS HTMLTextAreaElement interface: attribute validity 
 PASS HTMLTextAreaElement interface: attribute validationMessage 
 PASS HTMLTextAreaElement interface: operation checkValidity() 
-FAIL HTMLTextAreaElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLTextAreaElement interface: operation reportValidity() 
 PASS HTMLTextAreaElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLTextAreaElement interface: attribute labels 
 PASS HTMLTextAreaElement interface: operation select() 
@@ -4339,7 +4339,7 @@ PASS HTMLTextAreaElement interface: document.createElement("textarea") must inhe
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "validity" with the proper type (20) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "validationMessage" with the proper type (21) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "checkValidity" with the proper type (22) 
-FAIL HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "reportValidity" with the proper type (23) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "reportValidity" with the proper type (23) 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "setCustomValidity" with the proper type (24) 
 PASS HTMLTextAreaElement interface: calling setCustomValidity(DOMString) on document.createElement("textarea") with too few arguments must throw TypeError 
 PASS HTMLTextAreaElement interface: document.createElement("textarea") must inherit property "labels" with the proper type (25) 
@@ -4371,7 +4371,7 @@ PASS HTMLKeygenElement interface: attribute willValidate
 PASS HTMLKeygenElement interface: attribute validity 
 PASS HTMLKeygenElement interface: attribute validationMessage 
 PASS HTMLKeygenElement interface: operation checkValidity() 
-FAIL HTMLKeygenElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLKeygenElement interface: operation reportValidity() 
 PASS HTMLKeygenElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLKeygenElement interface: attribute labels 
 PASS HTMLKeygenElement must be primary interface of document.createElement("keygen") 
@@ -4387,7 +4387,7 @@ PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "validity" with the proper type (8) 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "validationMessage" with the proper type (9) 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "checkValidity" with the proper type (10) 
-FAIL HTMLKeygenElement interface: document.createElement("keygen") must inherit property "reportValidity" with the proper type (11) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "reportValidity" with the proper type (11) 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "setCustomValidity" with the proper type (12) 
 PASS HTMLKeygenElement interface: calling setCustomValidity(DOMString) on document.createElement("keygen") with too few arguments must throw TypeError 
 PASS HTMLKeygenElement interface: document.createElement("keygen") must inherit property "labels" with the proper type (13) 
@@ -4406,7 +4406,7 @@ PASS HTMLOutputElement interface: attribute willValidate
 PASS HTMLOutputElement interface: attribute validity 
 PASS HTMLOutputElement interface: attribute validationMessage 
 PASS HTMLOutputElement interface: operation checkValidity() 
-FAIL HTMLOutputElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLOutputElement interface: operation reportValidity() 
 PASS HTMLOutputElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLOutputElement interface: attribute labels 
 PASS HTMLOutputElement must be primary interface of document.createElement("output") 
@@ -4421,7 +4421,7 @@ PASS HTMLOutputElement interface: document.createElement("output") must inherit 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "validity" with the proper type (7) 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "validationMessage" with the proper type (8) 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "checkValidity" with the proper type (9) 
-FAIL HTMLOutputElement interface: document.createElement("output") must inherit property "reportValidity" with the proper type (10) assert_inherits: property "reportValidity" not found in prototype chain
+PASS HTMLOutputElement interface: document.createElement("output") must inherit property "reportValidity" with the proper type (10) 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "setCustomValidity" with the proper type (11) 
 PASS HTMLOutputElement interface: calling setCustomValidity(DOMString) on document.createElement("output") with too few arguments must throw TypeError 
 PASS HTMLOutputElement interface: document.createElement("output") must inherit property "labels" with the proper type (12) 
@@ -4475,7 +4475,7 @@ PASS HTMLFieldSetElement interface: attribute willValidate
 PASS HTMLFieldSetElement interface: attribute validity 
 PASS HTMLFieldSetElement interface: attribute validationMessage 
 PASS HTMLFieldSetElement interface: operation checkValidity() 
-FAIL HTMLFieldSetElement interface: operation reportValidity() assert_own_property: interface prototype object missing non-static operation expected property "reportValidity" missing
+PASS HTMLFieldSetElement interface: operation reportValidity() 
 PASS HTMLFieldSetElement interface: operation setCustomValidity(DOMString) 
 PASS HTMLLegendElement interface: existence and properties of interface object 
 PASS HTMLLegendElement interface object length 
