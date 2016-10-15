@@ -1,3 +1,17 @@
+2016-10-15  Sam Weinig  <sam@webkit.org>
+
+        MessageEvent's source property should be a (DOMWindow or MessagePort)? rather than a EventTarget?
+        https://bugs.webkit.org/show_bug.cgi?id=163475
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/message-port-deleted-by-accessor.html:
+        Switch source parameter to null to avoid accidental type error.
+
+        * fast/events/constructors/message-event-constructor-expected.txt:
+        * fast/events/constructors/message-event-constructor.html:
+        Update test expect a thrown type error, as is now expected, for non-window or MessagePort EventTargets.
+
 2016-10-15  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] macOS inline controls

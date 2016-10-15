@@ -458,6 +458,8 @@ dictionary TestDictionary {
     any anyValueWithNullDefault = null;
     AnyTypedef anyTypedefValue;
     TestDictionaryThatShouldTolerateNull dictionaryMember;
+    (long or Node) unionMember;
+    (long or Node)? nullableUnionMember = null;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

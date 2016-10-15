@@ -63,6 +63,8 @@ class UIRequestEvent;
 
 const int nodeStyleChangeShift = 14;
 
+using NodeOrString = std::experimental::variant<RefPtr<Node>, String>;
+
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
 // RenderLayers are created or destroyed due to animation changes.
@@ -202,9 +204,9 @@ public:
     WEBCORE_EXPORT Element* nextElementSibling() const;
 
     // From the ChildNode - https://dom.spec.whatwg.org/#childnode
-    void before(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
-    void after(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
-    void replaceWith(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
+    void before(Vector<NodeOrString>&&, ExceptionCode&);
+    void after(Vector<NodeOrString>&&, ExceptionCode&);
+    void replaceWith(Vector<NodeOrString>&&, ExceptionCode&);
     WEBCORE_EXPORT void remove(ExceptionCode&);
 
     // Other methods (not part of DOM)
@@ -660,7 +662,7 @@ protected:
     void setStyleChange(StyleChangeType changeType) { m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType; }
     void updateAncestorsForStyleRecalc();
 
-    RefPtr<Node> convertNodesOrStringsIntoNode(Vector<std::experimental::variant<std::reference_wrapper<Node>, String>>&&, ExceptionCode&);
+    RefPtr<Node> convertNodesOrStringsIntoNode(Vector<NodeOrString>&&, ExceptionCode&);
 
 private:
     virtual PseudoId customPseudoId() const

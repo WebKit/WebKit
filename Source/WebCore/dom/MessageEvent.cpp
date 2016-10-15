@@ -29,7 +29,6 @@
 #include "MessageEvent.h"
 
 #include "Blob.h"
-#include "DOMWindow.h"
 #include "EventNames.h"
 #include <runtime/JSCInlines.h>
 
@@ -37,37 +36,31 @@ namespace WebCore {
 
 using namespace JSC;
 
-static inline bool isValidSource(EventTarget* source)
-{
-    return !source || source->toDOMWindow() || source->isMessagePort();
-}
-
 inline MessageEvent::MessageEvent()
     : m_dataType(DataTypeScriptValue)
 {
 }
 
-inline MessageEvent::MessageEvent(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+inline MessageEvent::MessageEvent(ExecState& state, const AtomicString& type, Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_dataType(DataTypeScriptValue)
     , m_dataAsScriptValue(state.vm(), initializer.data)
     , m_origin(initializer.origin)
     , m_lastEventId(initializer.lastEventId)
-    , m_source(isValidSource(initializer.source.get()) ? initializer.source : nullptr)
+    , m_source(WTFMove(initializer.source))
     , m_ports(std::make_unique<MessagePortArray>(initializer.ports))
 {
 }
 
-inline MessageEvent::MessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, EventTarget* source, std::unique_ptr<MessagePortArray> ports)
+inline MessageEvent::MessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, Optional<MessageEventSource>&& source, std::unique_ptr<MessagePortArray> ports)
     : Event(eventNames().messageEvent, false, false)
     , m_dataType(DataTypeSerializedScriptValue)
     , m_dataAsSerializedScriptValue(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)
-    , m_source(source)
+    , m_source(WTFMove(source))
     , m_ports(WTFMove(ports))
 {
-    ASSERT(isValidSource(source));
 }
 
 inline MessageEvent::MessageEvent(const AtomicString& type, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId)
@@ -103,9 +96,9 @@ inline MessageEvent::MessageEvent(Ref<ArrayBuffer>&& data, const String& origin)
 {
 }
 
-Ref<MessageEvent> MessageEvent::create(std::unique_ptr<MessagePortArray> ports, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, EventTarget* source)
+Ref<MessageEvent> MessageEvent::create(std::unique_ptr<MessagePortArray> ports, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, Optional<MessageEventSource>&& source)
 {
-    return adoptRef(*new MessageEvent(WTFMove(data), origin, lastEventId, source, WTFMove(ports)));
+    return adoptRef(*new MessageEvent(WTFMove(data), origin, lastEventId, WTFMove(source), WTFMove(ports)));
 }
 
 Ref<MessageEvent> MessageEvent::create(const AtomicString& type, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId)
@@ -133,7 +126,7 @@ Ref<MessageEvent> MessageEvent::createForBindings()
     return adoptRef(*new MessageEvent);
 }
 
-Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& type, Init& initializer, IsTrusted isTrusted)
 {
     return adoptRef(*new MessageEvent(state, type, initializer, isTrusted));
 }
@@ -142,7 +135,7 @@ MessageEvent::~MessageEvent()
 {
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, DOMWindow* source, std::unique_ptr<MessagePortArray> ports)
+void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const Deprecated::ScriptValue& data, const String& origin, const String& lastEventId, Optional<MessageEventSource>&& source, std::unique_ptr<MessagePortArray> ports)
 {
     if (dispatched())
         return;
@@ -155,11 +148,11 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_triedToSerialize = false;
     m_origin = origin;
     m_lastEventId = lastEventId;
-    m_source = source;
+    m_source = WTFMove(source);
     m_ports = WTFMove(ports);
 }
 
-void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, std::unique_ptr<MessagePortArray> ports)
+void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, Optional<MessageEventSource>&& source, std::unique_ptr<MessagePortArray> ports)
 {
     if (dispatched())
         return;
@@ -170,10 +163,23 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_dataAsSerializedScriptValue = data;
     m_origin = origin;
     m_lastEventId = lastEventId;
-    m_source = source;
+    m_source = WTFMove(source);
     m_ports = WTFMove(ports);
 }
     
+EventTarget* MessageEvent::source() const
+{
+    if (!m_source)
+        return nullptr;
+
+    auto visitor = WTF::makeVisitor(
+        [](const RefPtr<DOMWindow>& window) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(window.get())); },
+        [](const RefPtr<MessagePort>& messagePort) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(messagePort.get())); }
+    );
+
+    return std::experimental::visit(visitor, m_source.value());
+}
+
 RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(ExecState* exec)
 {
     ASSERT(!m_dataAsScriptValue.hasNoValue());

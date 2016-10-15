@@ -86,13 +86,6 @@ private:
     Ref<ImplementationClass> m_wrapped;
 };
 
-ALWAYS_INLINE bool isJSDOMWrapperType(JSC::JSValue value)
-{
-    if (UNLIKELY(!value.isCell()))
-        return false;
-    return value.asCell()->type() >= JSDOMWrapperType;
-}
-
 template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
 
 template<typename JSClass, typename Enable = void>

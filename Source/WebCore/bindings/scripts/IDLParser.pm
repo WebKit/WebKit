@@ -1951,7 +1951,9 @@ sub parseType
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "(") {
-        return $self->parseUnionType();
+        my $unionType = $self->parseUnionType();
+        $unionType->isNullable($self->parseNull());
+        return $unionType;
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextType_1/) {
         return $self->parseSingleType();

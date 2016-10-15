@@ -515,25 +515,23 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         //         (FIXME: Add support for object and step 4.2)
         if (brigand::any<TypeList, IsIDLInterface<brigand::_1>>::value) {
-            if (isJSDOMWrapperType(value)) {
-                Optional<ReturnType> returnValue;
-                brigand::for_each<InterfaceTypeList>([&](auto&& type) {
-                    if (returnValue)
-                        return;
-                    
-                    using ImplementationType = typename WTF::RemoveCVAndReference<decltype(type)>::type::type::RawType;
-                    using WrapperType = typename JSDOMWrapperConverterTraits<ImplementationType>::WrapperClass;
+            Optional<ReturnType> returnValue;
+            brigand::for_each<InterfaceTypeList>([&](auto&& type) {
+                if (returnValue)
+                    return;
+                
+                using ImplementationType = typename WTF::RemoveCVAndReference<decltype(type)>::type::type::RawType;
+                using WrapperType = typename JSDOMWrapperConverterTraits<ImplementationType>::WrapperClass;
 
-                    auto* castedValue = JSC::jsDynamicCast<WrapperType*>(value);
-                    if (!castedValue)
-                        return;
-                    
-                    returnValue = ReturnType(castedValue->wrapped());
-                });
-                ASSERT(returnValue);
+                auto* castedValue = WrapperType::toWrapped(value);
+                if (!castedValue)
+                    return;
+                
+                returnValue = ReturnType(castedValue);
+            });
 
+            if (returnValue)
                 return WTFMove(returnValue.value());
-            }
         }
         
         // FIXME: Add support for steps 5 - 12.
@@ -592,13 +590,13 @@ namespace Detail {
             auto result = Converter<IDLType>::convert(state, value);
             RETURN_IF_EXCEPTION(scope, Nullopt);
 
-            return result;
+            return WTFMove(result);
         }
     };
 
     template<typename T>
     struct VariadicConverterBase<IDLInterface<T>> {
-        using Item = typename IDLInterface<T>::ImplementationType;
+        using Item = std::reference_wrapper<T>;
 
         static Optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
         {

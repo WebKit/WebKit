@@ -1944,7 +1944,7 @@ struct __visit_helper2<-1,_VariantIndex,_Indices...>{
     template<typename _Visitor,typename ... _Variants>
     static constexpr typename __multi_visitor_return_type<_Visitor,_Variants...>::__type
     __visit(_Visitor&,_Variants&& ...){
-        __throw_bad_variant_access<typename __multi_visitor_return_type<_Visitor,_Variants...>::__type>("Visiting of empty variant");
+        return __throw_bad_variant_access<typename __multi_visitor_return_type<_Visitor,_Variants...>::__type>("Visiting of empty variant");
     }
 };
 

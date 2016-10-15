@@ -566,6 +566,12 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     } else
         result.nullableStringWithDefault = String();
+    JSValue nullableUnionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableUnionMember"));
+    if (!nullableUnionMemberValue.isUndefined()) {
+        result.nullableUnionMember = convert<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(state, nullableUnionMemberValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    } else
+        result.nullableUnionMember = Nullopt;
     JSValue restrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
     if (!restrictedDoubleValue.isUndefined()) {
         result.restrictedDouble = convert<IDLDouble>(state, restrictedDoubleValue);
@@ -623,6 +629,11 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
         result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
+    JSValue unionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unionMember"));
+    if (!unionMemberValue.isUndefined()) {
+        result.unionMember = convert<IDLUnion<IDLLong, IDLInterface<Node>>>(state, unionMemberValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
     JSValue unrestrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));

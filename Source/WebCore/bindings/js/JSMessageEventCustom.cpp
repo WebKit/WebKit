@@ -35,6 +35,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
+#include "JSMessagePort.h"
 #include "JSMessagePortCustom.h"
 #include "MessageEvent.h"
 #include <runtime/JSArray.h>
@@ -112,7 +113,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     bool cancelableArg = state.argument(2).toBoolean(&state);
     const String originArg = valueToUSVString(&state, state.argument(4));
     const String lastEventIdArg = state.argument(5).toString(&state)->value(&state);
-    DOMWindow* sourceArg = JSDOMWindow::toWrapped(state.argument(6));
+    auto sourceArg = convert<IDLNullable<IDLUnion<IDLInterface<DOMWindow>, IDLInterface<MessagePort>>>>(state, state.argument(6));
     std::unique_ptr<MessagePortArray> messagePorts;
     std::unique_ptr<ArrayBufferArray> arrayBuffers;
     if (!state.argument(7).isUndefinedOrNull()) {
@@ -125,7 +126,7 @@ static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecSta
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     MessageEvent& event = jsEvent->wrapped();
-    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, WTFMove(messagePorts));
+    event.initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, WTFMove(sourceArg), WTFMove(messagePorts));
     jsEvent->m_data.set(vm, jsEvent, dataArg.jsValue());
     return jsUndefined();
 }

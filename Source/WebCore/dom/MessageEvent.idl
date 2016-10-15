@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Henry Mason <hmason@mac.com>
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +33,16 @@
 ] interface MessageEvent : Event {
     readonly attribute USVString origin;
     readonly attribute DOMString lastEventId;
-    readonly attribute EventTarget? source; // May be a DOMWindow or a MessagePort.
+    readonly attribute EventTarget? source;
     [CachedAttribute, CustomGetter] readonly attribute any data;
     readonly attribute FrozenArray<MessagePort> ports;
 
     [Custom] void initMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
-        optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional DOMWindow sourceArg,
+        optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional (DOMWindow or MessagePort)? sourceArg,
         optional Array messagePorts);
 
     [Custom] void webkitInitMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
-        optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional DOMWindow sourceArg,
+        optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional (DOMWindow or MessagePort)? sourceArg,
         optional Array transferables);
 };
 
@@ -49,6 +50,6 @@ dictionary MessageEventInit : EventInit {
       any data = null;
       USVString origin = "";
       DOMString lastEventId = "";
-      EventTarget? source = null;
+      (DOMWindow or MessagePort)? source = null;
       sequence<MessagePort> ports = [];
 };

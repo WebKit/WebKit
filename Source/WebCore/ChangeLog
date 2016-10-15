@@ -1,3 +1,67 @@
+2016-10-14  Sam Weinig  <sam@webkit.org>
+
+        MessageEvent's source property should be a (DOMWindow or MessagePort)? rather than a EventTarget?
+        https://bugs.webkit.org/show_bug.cgi?id=163475
+
+        Reviewed by Simon Fraser.
+
+        Start fleshing out union support, starting with MessageEvent.
+        - Simplify things a bit for now by requiring interface types to use RefPtr<T> as their type when
+          used in sequences and unions. We should revisit this later, and see if we can use Ref<T> where
+          possible, but it causes complications for dictionaries, since they want a Ref<T> uninitialized.
+
+        * bindings/generic/IDLTypes.h:
+        Switch IDLInterface to use RefPtr<T> as its implementation type.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Detail::VariadicConverterBase::convert):
+        - Remove isJSDOMWrapperType() optimization. It was not correct, due to not being able to detect window
+          and window shell, and not always an optimization, e.g. in the case of a single interface.
+        - Switch from JSC::jsDynamicCast<WrapperType*>() to WrapperType::toWrapped() which can be faster and
+          handles window and window shell correctly.
+        - Also fix an issue where we would wrongly assert that one interface had to match.
+
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::isJSDOMWrapperType): Deleted.
+        Remove unused predicate.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseType):
+        Add missing support for nullable unions.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Add new tests for unions (both non-null and nullable) in dictionaries.
+ 
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::append):
+        (WebCore::ContainerNode::prepend):
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        (WebCore::nodeSetPreTransformedFromNodeOrStringVector):
+        (WebCore::Node::convertNodesOrStringsIntoNode):
+        (WebCore::Node::before):
+        (WebCore::Node::after):
+        (WebCore::Node::replaceWith):
+        * dom/Node.h:
+        Add using declaration for NodeOrString and change it to use RefPtr<Node>.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::initMessageEvent):
+        (WebCore::MessageEvent::source):
+        (WebCore::isValidSource): Deleted.
+        * dom/MessageEvent.h:
+        * dom/MessageEvent.idl:
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::event):
+        Change MessageEvent's source to be a std::experimental::variant<RefPtr<DOMWindow>, RefPtr<MessagePort>>.
+        For now, we only enforce this on setting, and leave the getter a EventTarget?, but that should not be
+        observable, and will rectified in subsequent patches.
+
 2016-10-15  Chris Dumez  <cdumez@apple.com>
 
         Add support for reportValidity() on form and form control elements

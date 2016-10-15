@@ -62,8 +62,8 @@ PASS new MessageEvent('eventType', { source: window }).source is window
 PASS new MessageEvent('eventType', { source: this }).source is this
 PASS new MessageEvent('eventType', { ports: [channel.port1], source: channel.port1 }).source is channel.port1
 PASS new MessageEvent('eventType', { source: test_object }).source threw exception TypeError: Type error.
-PASS new MessageEvent('eventType', { source: document }).source is null
-PASS new MessageEvent('eventType', { source: document.body }).source is null
+PASS new MessageEvent('eventType', { source: document }).source threw exception TypeError: Type error.
+PASS new MessageEvent('eventType', { source: document.body }).source threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { source: undefined }).source is null
 PASS new MessageEvent('eventType', { source: null }).source is null
 PASS new MessageEvent('eventType', { source: false }).source threw exception TypeError: Type error.

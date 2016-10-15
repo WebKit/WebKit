@@ -77,8 +77,8 @@ shouldBe("new MessageEvent('eventType', { ports: [channel.port1], source: channe
 
 // Unacceptable source objects (not a Window or a MessagePort).
 shouldThrowErrorName("new MessageEvent('eventType', { source: test_object }).source", "TypeError");
-shouldBe("new MessageEvent('eventType', { source: document }).source", "null");
-shouldBe("new MessageEvent('eventType', { source: document.body }).source", "null");
+shouldThrowErrorName("new MessageEvent('eventType', { source: document }).source", "TypeError");
+shouldThrowErrorName("new MessageEvent('eventType', { source: document.body }).source", "TypeError");
 shouldBe("new MessageEvent('eventType', { source: undefined }).source", "null");
 shouldBe("new MessageEvent('eventType', { source: null }).source", "null");
 shouldThrowErrorName("new MessageEvent('eventType', { source: false }).source", "TypeError");
