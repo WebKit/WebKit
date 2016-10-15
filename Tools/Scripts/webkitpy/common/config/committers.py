@@ -76,7 +76,8 @@ class Contributor(object):
         return '"%s" <%s>' % (self.full_name, self.emails[0])
 
     def __eq__(self, other):
-        return (self.full_name == other.full_name
+        return (other is not None
+            and self.full_name == other.full_name
             and self.emails == other.emails
             and self._case_preserved_emails == other._case_preserved_emails
             and self.irc_nicknames == other.irc_nicknames
