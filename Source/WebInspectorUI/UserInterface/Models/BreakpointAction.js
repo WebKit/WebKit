@@ -44,7 +44,7 @@ WebInspector.BreakpointAction = class BreakpointAction extends WebInspector.Obje
             console.error("Unexpected type passed to WebInspector.BreakpointAction");
 
         console.assert(typeof this._type === "string");
-        this._id = WebInspector.debuggerManager.nextBreakpointActionIdentifier;
+        this._id = WebInspector.debuggerManager.nextBreakpointActionIdentifier();
     }
 
     // Public

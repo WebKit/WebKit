@@ -1,3 +1,69 @@
+2016-10-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup parts of DebuggerManager
+        https://bugs.webkit.org/show_bug.cgi?id=163400
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WebInspector.DebuggerManager.restoreBreakpointsSoon):
+
+        (WebInspector.DebuggerManager.prototype.get paused):
+        (WebInspector.DebuggerManager.prototype.get pauseReason):
+        (WebInspector.DebuggerManager.prototype.get pauseData):
+        (WebInspector.DebuggerManager.prototype.get callFrames):
+        (WebInspector.DebuggerManager.prototype.get activeCallFrame):
+        (WebInspector.DebuggerManager.prototype.set activeCallFrame):
+        Put simple accessors at the top.
+
+        (WebInspector.DebuggerManager.prototype.get allExceptionsBreakpoint):
+        (WebInspector.DebuggerManager.prototype.get allUncaughtExceptionsBreakpoint):
+        (WebInspector.DebuggerManager.prototype.get breakpoints):
+        (WebInspector.DebuggerManager.prototype.breakpointForIdentifier):
+        (WebInspector.DebuggerManager.prototype.breakpointsForSourceCode):
+        (WebInspector.DebuggerManager.prototype.isBreakpointRemovable):
+        (WebInspector.DebuggerManager.prototype.isBreakpointEditable):
+        (WebInspector.DebuggerManager.prototype.get breakpointsDisabledTemporarily):
+        Group public breakpoint state and access methods.
+
+        (WebInspector.DebuggerManager.prototype.scriptForIdentifier):
+        (WebInspector.DebuggerManager.prototype.scriptsForURL):
+        (WebInspector.DebuggerManager.prototype.get searchableScripts):
+        (WebInspector.DebuggerManager.prototype.get knownNonResourceScripts):
+        Group public script access methods.
+
+        (WebInspector.DebuggerManager.prototype.pause):
+        (WebInspector.DebuggerManager.prototype.resume):
+        (WebInspector.DebuggerManager.prototype.stepOver):
+        (WebInspector.DebuggerManager.prototype.stepInto):
+        (WebInspector.DebuggerManager.prototype.stepOut):
+        (WebInspector.DebuggerManager.prototype.continueToLocation):
+        (WebInspector.DebuggerManager.prototype.addBreakpoint):
+        (WebInspector.DebuggerManager.prototype.removeBreakpoint):
+        Group and modernize public methods that perform actions.
+
+        (WebInspector.DebuggerManager.prototype.nextBreakpointActionIdentifier):
+        Misc. methods.
+
+        (WebInspector.DebuggerManager.prototype.breakpointResolved):
+        (WebInspector.DebuggerManager.prototype.reset):
+        (WebInspector.DebuggerManager.prototype.playBreakpointActionSound):
+        (WebInspector.DebuggerManager.prototype.scriptDidParse):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint.didSetBreakpoint):
+        (WebInspector.DebuggerManager.prototype._setBreakpoint):
+        (WebInspector.DebuggerManager.prototype._breakpointEditablePropertyDidChange):
+        (WebInspector.DebuggerManager.prototype._updateBreakOnExceptionsState):
+        (WebInspector.DebuggerManager.prototype._associateBreakpointsWithSourceCode):
+        Minor cleanup in protected and private methods.
+
+        * UserInterface/Models/BreakpointAction.js:
+        (WebInspector.BreakpointAction):
+        Getting the next identifier is an action so it should be a function call.
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WebInspector.SourceCodeTextEditor.prototype.textEditorBreakpointAdded):
+        Remove unused parameter.
+
 2016-10-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Dragging to delete a Breakpoint should never trigger a ContentView change

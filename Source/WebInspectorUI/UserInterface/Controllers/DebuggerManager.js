@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
         this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
 
-        var specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
+        let specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
 
         this._allExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allExceptionsBreakpointEnabledSetting.value);
         this._allExceptionsBreakpoint.resolved = true;
@@ -85,9 +85,11 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         this._updateBreakOnExceptionsState();
 
+        this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
+
         function restoreBreakpointsSoon() {
             this._restoringBreakpoints = true;
-            for (var cookie of this._breakpointsSetting.value)
+            for (let cookie of this._breakpointsSetting.value)
                 this.addBreakpoint(new WebInspector.Breakpoint(cookie));
             this._restoringBreakpoints = false;
         }
@@ -98,29 +100,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     }
 
     // Public
-
-    get breakpointsEnabled()
-    {
-        return this._breakpointsEnabledSetting.value;
-    }
-
-    set breakpointsEnabled(enabled)
-    {
-        if (this._breakpointsEnabledSetting.value === enabled)
-            return;
-
-        console.assert(!(enabled && this.breakpointsDisabledTemporarily), "Should not enable breakpoints when we are temporarily disabling breakpoints.");
-        if (enabled && this.breakpointsDisabledTemporarily)
-            return;
-
-        this._breakpointsEnabledSetting.value = enabled;
-
-        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange);
-
-        DebuggerAgent.setBreakpointsActive(enabled);
-
-        this._updateBreakOnExceptionsState();
-    }
 
     get paused()
     {
@@ -157,113 +136,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange);
     }
 
-    pause()
-    {
-        if (this._paused)
-            return Promise.resolve();
-
-        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.WaitingToPause);
-
-        var listener = new WebInspector.EventListener(this, true);
-
-        var managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.Paused, resolve);
-        });
-
-        var protocolResult = DebuggerAgent.pause()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.pause failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
-    }
-
-    resume()
-    {
-        if (!this._paused)
-            return Promise.resolve();
-
-        var listener = new WebInspector.EventListener(this, true);
-
-        var managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.Resumed, resolve);
-        });
-
-        var protocolResult = DebuggerAgent.resume()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.resume failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
-    }
-
-    stepOver()
-    {
-        if (!this._paused)
-            return Promise.reject(new Error("Cannot step over because debugger is not paused."));
-
-        var listener = new WebInspector.EventListener(this, true);
-
-        var managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        var protocolResult = DebuggerAgent.stepOver()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepOver failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
-    }
-
-    stepInto()
-    {
-        if (!this._paused)
-            return Promise.reject(new Error("Cannot step into because debugger is not paused."));
-
-        var listener = new WebInspector.EventListener(this, true);
-
-        var managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        var protocolResult = DebuggerAgent.stepInto()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepInto failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
-    }
-
-    stepOut()
-    {
-        if (!this._paused)
-            return Promise.reject(new Error("Cannot step out because debugger is not paused."));
-
-        var listener = new WebInspector.EventListener(this, true);
-
-        var managerResult = new Promise(function(resolve, reject) {
-            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
-        });
-
-        var protocolResult = DebuggerAgent.stepOut()
-            .catch(function(error) {
-                listener.disconnect();
-                console.error("DebuggerManager.stepOut failed: ", error);
-                throw error;
-            });
-
-        return Promise.all([managerResult, protocolResult]);
-    }
-
     get allExceptionsBreakpoint()
     {
         return this._allExceptionsBreakpoint;
@@ -279,12 +151,17 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         return this._breakpoints;
     }
 
+    breakpointForIdentifier(id)
+    {
+        return this._breakpointIdMap.get(id) || null;
+    }
+
     breakpointsForSourceCode(sourceCode)
     {
         console.assert(sourceCode instanceof WebInspector.Resource || sourceCode instanceof WebInspector.Script);
 
         if (sourceCode instanceof WebInspector.SourceMapResource) {
-            var originalSourceCodeBreakpoints = this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode);
+            let originalSourceCodeBreakpoints = this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode);
             return originalSourceCodeBreakpoints.filter(function(breakpoint) {
                 return breakpoint.sourceCodeLocation.displaySourceCode === sourceCode;
             });
@@ -307,9 +184,42 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         return [];
     }
 
-    breakpointForIdentifier(id)
+    isBreakpointRemovable(breakpoint)
     {
-        return this._breakpointIdMap.get(id) || null;
+        return breakpoint !== this._allExceptionsBreakpoint && breakpoint !== this._allUncaughtExceptionsBreakpoint;
+    }
+
+    isBreakpointEditable(breakpoint)
+    {
+        return this.isBreakpointRemovable(breakpoint);
+    }
+
+    get breakpointsEnabled()
+    {
+        return this._breakpointsEnabledSetting.value;
+    }
+
+    set breakpointsEnabled(enabled)
+    {
+        if (this._breakpointsEnabledSetting.value === enabled)
+            return;
+
+        console.assert(!(enabled && this.breakpointsDisabledTemporarily), "Should not enable breakpoints when we are temporarily disabling breakpoints.");
+        if (enabled && this.breakpointsDisabledTemporarily)
+            return;
+
+        this._breakpointsEnabledSetting.value = enabled;
+
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointsEnabledDidChange);
+
+        DebuggerAgent.setBreakpointsActive(enabled);
+
+        this._updateBreakOnExceptionsState();
+    }
+
+    get breakpointsDisabledTemporarily()
+    {
+        return this._temporarilyDisabledBreakpointsRestoreSetting.value !== null;
     }
 
     scriptForIdentifier(id)
@@ -321,11 +231,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         // FIXME: This may not be safe. A Resource's URL may differ from a Script's URL.
         return this._scriptContentIdentifierMap.get(url) || [];
-    }
-
-    continueToLocation(scriptIdentifier, lineNumber, columnNumber)
-    {
-        DebuggerAgent.continueToLocation({scriptId: scriptIdentifier, lineNumber, columnNumber});
     }
 
     get searchableScripts()
@@ -347,9 +252,121 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         return knownScripts;
     }
 
-    addBreakpoint(breakpoint, skipEventDispatch, shouldSpeculativelyResolve)
+    pause()
     {
-        console.assert(breakpoint instanceof WebInspector.Breakpoint, "Bad argument to DebuggerManger.addBreakpoint: ", breakpoint);
+        if (this._paused)
+            return Promise.resolve();
+
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.WaitingToPause);
+
+        let listener = new WebInspector.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.Paused, resolve);
+        });
+
+        let protocolResult = DebuggerAgent.pause()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.pause failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
+    resume()
+    {
+        if (!this._paused)
+            return Promise.resolve();
+
+        let listener = new WebInspector.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.Resumed, resolve);
+        });
+
+        let protocolResult = DebuggerAgent.resume()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.resume failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
+    stepOver()
+    {
+        if (!this._paused)
+            return Promise.reject(new Error("Cannot step over because debugger is not paused."));
+
+        let listener = new WebInspector.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
+        });
+
+        let protocolResult = DebuggerAgent.stepOver()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.stepOver failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
+    stepInto()
+    {
+        if (!this._paused)
+            return Promise.reject(new Error("Cannot step into because debugger is not paused."));
+
+        let listener = new WebInspector.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
+        });
+
+        let protocolResult = DebuggerAgent.stepInto()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.stepInto failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
+    stepOut()
+    {
+        if (!this._paused)
+            return Promise.reject(new Error("Cannot step out because debugger is not paused."));
+
+        let listener = new WebInspector.EventListener(this, true);
+
+        let managerResult = new Promise(function(resolve, reject) {
+            listener.connect(WebInspector.debuggerManager, WebInspector.DebuggerManager.Event.ActiveCallFrameDidChange, resolve);
+        });
+
+        let protocolResult = DebuggerAgent.stepOut()
+            .catch(function(error) {
+                listener.disconnect();
+                console.error("DebuggerManager.stepOut failed: ", error);
+                throw error;
+            });
+
+        return Promise.all([managerResult, protocolResult]);
+    }
+
+    continueToLocation(scriptId, lineNumber, columnNumber)
+    {
+        return DebuggerAgent.continueToLocation({scriptId, lineNumber, columnNumber});
+    }
+
+    addBreakpoint(breakpoint, shouldSpeculativelyResolve)
+    {
+        console.assert(breakpoint instanceof WebInspector.Breakpoint);
         if (!breakpoint)
             return;
 
@@ -373,22 +390,21 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         this._breakpoints.push(breakpoint);
 
-        function speculativelyResolveBreakpoint(breakpoint) {
-            breakpoint.resolved = true;
+        if (!breakpoint.disabled) {
+            this._setBreakpoint(breakpoint, () => {
+                if (shouldSpeculativelyResolve)
+                    breakpoint.resolved = true;
+            });
         }
-
-        if (!breakpoint.disabled)
-            this._setBreakpoint(breakpoint, shouldSpeculativelyResolve ? speculativelyResolveBreakpoint.bind(null, breakpoint) : null);
 
         this._saveBreakpoints();
 
-        if (!skipEventDispatch)
-            this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint});
+        this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointAdded, {breakpoint});
     }
 
     removeBreakpoint(breakpoint)
     {
-        console.assert(breakpoint);
+        console.assert(breakpoint instanceof WebInspector.Breakpoint);
         if (!breakpoint)
             return;
 
@@ -428,6 +444,13 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.BreakpointRemoved, {breakpoint});
     }
 
+    nextBreakpointActionIdentifier()
+    {
+        return this._nextBreakpointActionIdentifier++;
+    }
+
+    // Protected (Called from WebInspector.DebuggerObserver)
+
     breakpointResolved(breakpointIdentifier, location)
     {
         // Called from WebInspector.DebuggerObserver.
@@ -440,7 +463,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         console.assert(breakpoint.identifier === breakpointIdentifier);
 
         if (!breakpoint.sourceCodeLocation.sourceCode) {
-            var sourceCodeLocation = this._sourceCodeLocationFromPayload(location);
+            let sourceCodeLocation = this._sourceCodeLocationFromPayload(location);
             breakpoint.sourceCodeLocation.sourceCode = sourceCodeLocation.sourceCode;
         }
 
@@ -451,7 +474,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         // Called from WebInspector.DebuggerObserver.
 
-        var wasPaused = this._paused;
+        let wasPaused = this._paused;
 
         WebInspector.Script.resetUniqueDisplayNameNumbers();
 
@@ -467,8 +490,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         // Mark all the breakpoints as unresolved. They will be reported as resolved when
         // breakpointResolved is called as the page loads.
-        for (var i = 0; i < this._breakpoints.length; ++i) {
-            var breakpoint = this._breakpoints[i];
+        for (let breakpoint of this._breakpoints) {
             breakpoint.resolved = false;
             if (breakpoint.sourceCodeLocation.sourceCode)
                 breakpoint.sourceCodeLocation.sourceCode = null;
@@ -544,11 +566,15 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     playBreakpointActionSound(breakpointActionIdentifier)
     {
+        // Called from WebInspector.DebuggerObserver.
+
         InspectorFrontendHost.beep();
     }
 
     scriptDidParse(scriptIdentifier, url, startLine, startColumn, endLine, endColumn, isContentScript, sourceURL, sourceMapURL)
     {
+        // Called from WebInspector.DebuggerObserver.
+
         // Don't add the script again if it is already known.
         if (this._scriptIdMap.has(scriptIdentifier)) {
             const script = this._scriptIdMap.get(scriptIdentifier);
@@ -587,21 +613,6 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             return;
 
         this.dispatchEventToListeners(WebInspector.DebuggerManager.Event.ScriptAdded, {script});
-    }
-
-    isBreakpointRemovable(breakpoint)
-    {
-        return breakpoint !== this._allExceptionsBreakpoint && breakpoint !== this._allUncaughtExceptionsBreakpoint;
-    }
-
-    isBreakpointEditable(breakpoint)
-    {
-        return this.isBreakpointRemovable(breakpoint);
-    }
-
-    get nextBreakpointActionIdentifier()
-    {
-        return this._nextBreakpointActionIdentifier++;
     }
 
     // Private
@@ -729,7 +740,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             if (!(locations instanceof Array))
                 locations = [locations];
 
-            for (var location of locations)
+            for (let location of locations)
                 this.breakpointResolved(breakpointIdentifier, location);
 
             if (typeof callback === "function")
@@ -801,7 +812,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         if (this._ignoreBreakpointDisplayLocationDidChangeEvent)
             return;
 
-        var breakpoint = event.target;
+        let breakpoint = event.target;
         if (!breakpoint.identifier || breakpoint.disabled)
             return;
 
@@ -861,14 +872,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         function breakpointRemoved()
         {
-            // Add the breakpoint with its new condition and get a new id.
+            // Add the breakpoint with its new properties and get a new id.
             this._setBreakpoint(breakpoint);
         }
-    }
-
-    get breakpointsDisabledTemporarily()
-    {
-        return this._temporarilyDisabledBreakpointsRestoreSetting.value !== null;
     }
 
     _startDisablingBreakpointsTemporarily()
@@ -936,7 +942,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     _updateBreakOnExceptionsState()
     {
-        var state = "none";
+        let state = "none";
 
         if (this._breakpointsEnabledSetting.value) {
             if (!this._allExceptionsBreakpoint.disabled)
@@ -975,9 +981,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
     {
         this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
 
-        for (var i = 0; i < breakpoints.length; ++i) {
-            var breakpoint = breakpoints[i];
-            if (breakpoint.sourceCodeLocation.sourceCode === null)
+        for (let breakpoint of breakpoints) {
+            if (!breakpoint.sourceCodeLocation.sourceCode)
                 breakpoint.sourceCodeLocation.sourceCode = sourceCode;
             // SourceCodes can be unequal if the SourceCodeLocation is associated with a Script and we are looking at the Resource.
             console.assert(breakpoint.sourceCodeLocation.sourceCode === sourceCode || breakpoint.sourceCodeLocation.sourceCode.contentIdentifier === sourceCode.contentIdentifier);
