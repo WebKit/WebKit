@@ -208,6 +208,7 @@ list(APPEND WebKit_SOURCES
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
     mac/DefaultDelegates/WebDefaultUIDelegate.m
 
+    mac/History/BackForwardList.mm
     mac/History/BinaryPropertyList.cpp
     mac/History/HistoryPropertyList.mm
     mac/History/WebBackForwardList.mm

@@ -51,9 +51,10 @@ list(APPEND WebCore_LIBRARIES
     ${ZLIB_LIBRARIES}
 )
 
-add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
-add_definitions(-iframework ${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-iframework ${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-iframework ${CARBON_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 
 find_library(DATADETECTORSCORE_FRAMEWORK DataDetectorsCore HINTS /System/Library/PrivateFrameworks)
 if (NOT DATADETECTORSCORE_FRAMEWORK-NOTFOUND)
@@ -517,9 +518,6 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/NetworkStorageSessionCFNet.cpp
     platform/network/cf/ProxyServerCFNet.cpp
     platform/network/cf/ResourceErrorCF.cpp
-    platform/network/cf/ResourceHandleCFNet.cpp
-    platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp
-    platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
     platform/network/cf/ResourceResponseCFNet.cpp
     platform/network/cf/SocketStreamHandleImplCFNet.cpp
@@ -543,7 +541,6 @@ list(APPEND WebCore_SOURCES
     platform/network/mac/NetworkStateNotifierMac.cpp
     platform/network/mac/ResourceErrorMac.mm
     platform/network/mac/ResourceHandleMac.mm
-    platform/network/mac/ResourceRequestMac.mm
     platform/network/mac/SynchronousLoaderClient.mm
     platform/network/mac/UTIUtilities.mm
     platform/network/mac/WebCoreResourceHandleAsDelegate.mm
@@ -622,6 +619,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     page/animation
     page/cocoa
+    page/csp
     page/mac
     page/scrolling
 
