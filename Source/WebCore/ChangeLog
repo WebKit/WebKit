@@ -1,5 +1,11 @@
 2016-10-15  Simon Fraser  <simon.fraser@apple.com>
 
+        Sort the project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2016-10-15  Simon Fraser  <simon.fraser@apple.com>
+
         Implement serializer = { attribute }
         https://bugs.webkit.org/show_bug.cgi?id=163466
 
