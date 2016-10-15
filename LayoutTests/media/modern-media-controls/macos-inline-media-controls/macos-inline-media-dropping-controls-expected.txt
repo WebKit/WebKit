@@ -1,0 +1,30 @@
+Testing MacOSInlineMediaControls and dropping controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+TimeControl is visible
+TimeControl is not visible
+
+AirplayButton is visible
+AirplayButton is not visible
+
+PiPButton is visible
+PiPButton is not visible
+
+TracksButton is visible
+TracksButton is not visible
+
+MuteButton is visible
+MuteButton is not visible
+
+SkipBackButton is visible
+SkipBackButton is not visible
+
+FullscreenButton is visible
+FullscreenButton is not visible
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

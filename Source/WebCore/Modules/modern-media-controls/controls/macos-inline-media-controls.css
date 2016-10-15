@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* Controls bar */
+
+.media-controls.mac.inline > .controls-bar {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+}
+
+.media-controls.mac.inline > .controls-bar > * {
+    position: absolute;
+}
+
+.media-controls.mac.inline button {
+    background-color: rgba(255, 255, 255, 0.572);
+}
+
+.media-controls.mac.inline button:active {
+    background-color: white;
+}
+
+.media-controls.mac.inline > .controls-bar button {
+    height: 100% !important;
+}
+
+/* Blurred backgrounds */
+
+.media-controls.mac.inline > .controls-bar,
+.media-controls.mac.inline .volume-slider-container:before {
+    /* FIXME: we want to use the real System Dark treatment here, see <rdar://problem/19993961> */
+    background-color: rgba(30, 30, 30, 0.45);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Controls placement */
+
+.media-controls.mac.inline button.play-pause {
+    -webkit-mask-position-y: 12px;
+}
+
+.media-controls.mac.inline button.skip-back {
+    -webkit-mask-position-y: 10px;
+}
+
+.media-controls.mac.inline .scrubber.slider {
+    top: 23px;
+}
+
+.media-controls.mac.inline button.mute {
+    -webkit-mask-position-y: 10px;
+}
+
+.media-controls.mac.inline button.airplay {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.mac.inline button.pip {
+    -webkit-mask-position-y: 13px;
+}
+
+.media-controls.mac.inline button.tracks {
+    -webkit-mask-position-y: 15px;
+}
+
+.media-controls.mac.inline button.fullscreen {
+    -webkit-mask-position-y: 13px;
+}
+
+/* Time labels */
+
+.media-controls.mac.inline .time-label {
+    top: 14.5px;
+}
+
+/* Volume slider */
+
+.media-controls.mac.inline .volume-slider-container {
+    position: absolute;
+
+    top: 0px;
+    width: 31px;
+    height: 81px;
+    transform: translateY(-100%);
+}
+
+.media-controls.mac.inline .volume-slider-container:before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+
+    border-radius: 4px 4px 0 0;
+}
+
+.media-controls.mac.inline .volume.slider {
+    transform: rotate(-90deg);
+    left: -15px;
+    top: 40px;
+}

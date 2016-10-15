@@ -1,0 +1,24 @@
+Testing the MacOSInlineMediaControls volume slider visibility.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Default state
+PASS volumeSliderContainer.visible is false
+
+Mouse enters the mute button
+PASS volumeSliderContainer.visible is true
+
+Mouse leaves the mute button
+PASS volumeSliderContainer.visible is false
+
+Mouse enters the mute button, then leaves it but enters the volume slider container
+PASS volumeSliderContainer.visible is true
+
+Mouse leaves the volume slider container
+PASS volumeSliderContainer.visible is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

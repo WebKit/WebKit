@@ -1,3 +1,51 @@
+2016-10-15  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] macOS inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=163444
+        <rdar://problem/27989473>
+
+        Reviewed by Dean Jackson.
+
+        Introducing the new MacOSMediaControls and MacOSInlineMediaControls classes. MacOSMediaControls is a MediaControls subclass
+        that adds specific buttons to the macOS platform and sets the layout traits to be macOS. This class has a new subclass,
+        MacOSInlineMediaControls, which sets the layout traits to also include inline and implements custom layout to drop
+        controls as necessary as the width of the controls varies. It also shows the volume slider when the mute button is hovered.
+        
+        Tests: media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html
+               media/modern-media-controls/macos-media-controls/macos-media-controls.html
+
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.css: Added.
+        (.media-controls.mac.inline > .controls-bar):
+        (.media-controls.mac.inline > .controls-bar > *):
+        (.media-controls.mac.inline button):
+        (.media-controls.mac.inline button:active):
+        (.media-controls.mac.inline > .controls-bar button):
+        (.media-controls.mac.inline > .controls-bar,):
+        (.media-controls.mac.inline button.play-pause):
+        (.media-controls.mac.inline button.skip-back):
+        (.media-controls.mac.inline .scrubber.slider):
+        (.media-controls.mac.inline button.mute):
+        (.media-controls.mac.inline button.airplay):
+        (.media-controls.mac.inline button.pip):
+        (.media-controls.mac.inline button.tracks):
+        (.media-controls.mac.inline button.fullscreen):
+        (.media-controls.mac.inline .time-label):
+        (.media-controls.mac.inline .volume-slider-container):
+        (.media-controls.mac.inline .volume-slider-container:before):
+        (.media-controls.mac.inline .volume.slider):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js: Added.
+        (MacOSInlineMediaControls.prototype.layout):
+        (MacOSInlineMediaControls.prototype.handleEvent):
+        * Modules/modern-media-controls/controls/macos-media-controls.js: Added.
+        (MacOSMediaControls):
+
 2016-10-14  Antti Koivisto  <antti@apple.com>
 
         100% CPU on homedepot.com page

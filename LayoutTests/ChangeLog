@@ -1,3 +1,32 @@
+2016-10-15  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] macOS inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=163444
+        <rdar://problem/27989473>
+
+        Reviewed by Dean Jackson.
+
+        Testing the properties of the new MacOSMediaControls and MacOSInlineMediaControls classes.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-constructor.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html: Added.
+        * media/modern-media-controls/macos-media-controls/macos-media-controls-expected.txt: Added.
+        * media/modern-media-controls/macos-media-controls/macos-media-controls.html: Added.
+
 2016-10-14  Antti Koivisto  <antti@apple.com>
 
         100% CPU on homedepot.com page
