@@ -1523,6 +1523,9 @@ JSString* JIT_OPERATION operationToLowerCase(ExecState* exec, JSString* string, 
 
     const String& inputString = string->value(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!inputString.length())
+        return vm.smallStrings.emptyString();
+
     String lowercasedString = inputString.is8Bit() ? inputString.convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(failingIndex) : inputString.convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == inputString.impl())
         return string;

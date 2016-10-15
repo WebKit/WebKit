@@ -1,3 +1,23 @@
+2016-10-15  Saam Barati  <sbarati@apple.com>
+
+        Assertion failed under operationToLowerCase with a rope with zero length
+        https://bugs.webkit.org/show_bug.cgi?id=163314
+
+        Reviewed by Mark Lam.
+
+        There are some ways to get JSC to create empty rope strings. ToLowerCase
+        inside the DFG/FTL goes to the slow path when the argument is a rope.
+        operationToLowerCase was calling into a WTF string function that
+        assumed we are passing it a this value that has non-zero length.
+        However, we were calling it with a string that did have zero length.
+        To fix this, we make operationToLowerCase return the empty JSString
+        if it is going to make a string with zero length.
+
+        * dfg/DFGOperations.cpp:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionIsRope):
+
 2016-10-14  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] op_negate should with any type
