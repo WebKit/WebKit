@@ -1,3 +1,24 @@
+2016-10-14  Dean Jackson  <dino@apple.com>
+
+        Add Display P3 ColorSpace
+        https://bugs.webkit.org/show_bug.cgi?id=162880
+        <rdar://problem/28598564>
+
+        Reviewed by Sam Weinig.
+
+        Re-landing with a version that hopefully compiles on El Capitan.
+
+        Add a new ColorSpace for Display P3.
+
+        This will be tested once the Color class can create
+        objects that reference other color spaces.
+
+        * platform/graphics/ColorSpace.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::displayP3ColorSpaceRef):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::cachedCGColorSpace):
+
 2016-10-14  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Minor cleanups
