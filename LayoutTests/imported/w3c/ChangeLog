@@ -1,3 +1,14 @@
+2016-10-14  Chris Dumez  <cdumez@apple.com>
+
+        Setting HTMLMediaElement.muted to the same value should not fire a volume change event
+        https://bugs.webkit.org/show_bug.cgi?id=163474
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline W3C test now that more checks are passing.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/event_volumechange-expected.txt:
+
 2016-10-14  Youenn Fablet  <youenn@apple.com>
 
         Make NetworkCache aware of fetch cache mode

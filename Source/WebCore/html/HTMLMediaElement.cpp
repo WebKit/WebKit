@@ -3302,7 +3302,8 @@ void HTMLMediaElement::setMuted(bool muted)
 {
     LOG(Media, "HTMLMediaElement::setMuted(%p) - %s", this, boolString(muted));
 
-    if (m_muted != muted || !m_explicitlyMuted) {
+    bool mutedStateChanged = m_muted != muted;
+    if (mutedStateChanged || !m_explicitlyMuted) {
         m_muted = muted;
         m_explicitlyMuted = true;
 
@@ -3317,7 +3318,9 @@ void HTMLMediaElement::setMuted(bool muted)
                     mediaControls()->changedMute();
             }
         }
-        scheduleEvent(eventNames().volumechangeEvent);
+
+        if (mutedStateChanged)
+            scheduleEvent(eventNames().volumechangeEvent);
 
         updateShouldPlay();
 
