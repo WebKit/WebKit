@@ -28,36 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSocket_h
-#define WebSocket_h
+#pragma once
 
 #if ENABLE(WEB_SOCKETS)
 
 #include "ActiveDOMObject.h"
-#include "EventListener.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
+#include "Timer.h"
 #include "URL.h"
-#include "WebSocketChannel.h"
 #include "WebSocketChannelClient.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicStringHash.h>
+#include <wtf/Deque.h>
+
+namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
+}
 
 namespace WebCore {
 
 class Blob;
-class CloseEvent;
 class ThreadableWebSocketChannel;
 
-class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, public WebSocketChannelClient {
+class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
 public:
     static void setIsAvailable(bool);
     static bool isAvailable();
-    static const char* subProtocolSeperator();
-    static Ref<WebSocket> create(ScriptExecutionContext&);
-    static RefPtr<WebSocket> create(ScriptExecutionContext&, const String& url, ExceptionCode&);
-    static RefPtr<WebSocket> create(ScriptExecutionContext&, const String& url, const String& protocol, ExceptionCode&);
-    static RefPtr<WebSocket> create(ScriptExecutionContext&, const String& url, const Vector<String>& protocols, ExceptionCode&);
+
+    static const char* subprotocolSeparator();
+
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const String& protocol);
+    static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const Vector<String>& protocols);
     virtual ~WebSocket();
 
     enum State {
@@ -67,16 +69,16 @@ public:
         CLOSED = 3
     };
 
-    void connect(const String& url, ExceptionCode&);
-    void connect(const String& url, const String& protocol, ExceptionCode&);
-    void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
+    ExceptionOr<void> connect(const String& url);
+    ExceptionOr<void> connect(const String& url, const String& protocol);
+    ExceptionOr<void> connect(const String& url, const Vector<String>& protocols);
 
-    void send(const String& message, ExceptionCode&);
-    void send(JSC::ArrayBuffer&, ExceptionCode&);
-    void send(JSC::ArrayBufferView&, ExceptionCode&);
-    void send(Blob&, ExceptionCode&);
+    ExceptionOr<void> send(const String& message);
+    ExceptionOr<void> send(JSC::ArrayBuffer&);
+    ExceptionOr<void> send(JSC::ArrayBufferView&);
+    ExceptionOr<void> send(Blob&);
 
-    void close(Optional<unsigned short> code, const String& reason, ExceptionCode&);
+    ExceptionOr<void> close(Optional<unsigned short> code, const String& reason);
 
     const URL& url() const;
     State readyState() const;
@@ -86,16 +88,31 @@ public:
     String extensions() const;
 
     String binaryType() const;
-    void setBinaryType(const String&, ExceptionCode&);
+    ExceptionOr<void> setBinaryType(const String&);
 
-    // EventTarget functions.
-    EventTargetInterface eventTargetInterface() const override;
-    ScriptExecutionContext* scriptExecutionContext() const override;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
-    using RefCounted<WebSocket>::ref;
-    using RefCounted<WebSocket>::deref;
+private:
+    explicit WebSocket(ScriptExecutionContext&);
 
-    // WebSocketChannelClient functions.
+    void resumeTimerFired();
+    void dispatchOrQueueErrorEvent();
+    void dispatchOrQueueEvent(Ref<Event>&&);
+
+    void contextDestroyed() final;
+    bool canSuspendForDocumentSuspension() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+
+    EventTargetInterface eventTargetInterface() const final;
+    ScriptExecutionContext* scriptExecutionContext() const final;
+
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+
     void didConnect() final;
     void didReceiveMessage(const String& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
@@ -105,38 +122,17 @@ public:
     void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
     void didUpgradeURL() final;
 
-private:
-    explicit WebSocket(ScriptExecutionContext&);
-
-    void resumeTimerFired();
-    void dispatchOrQueueErrorEvent();
-    void dispatchOrQueueEvent(Ref<Event>&&);
-
-    // ActiveDOMObject API.
-    void contextDestroyed() override;
-    bool canSuspendForDocumentSuspension() const override;
-    void suspend(ReasonForSuspension) override;
-    void resume() override;
-    void stop() override;
-    const char* activeDOMObjectName() const override;
-
-    void refEventTarget() override { ref(); }
-    void derefEventTarget() override { deref(); }
-
     size_t getFramingOverhead(size_t payloadSize);
 
-    enum BinaryType {
-        BinaryTypeBlob,
-        BinaryTypeArrayBuffer
-    };
+    enum class BinaryType { Blob, ArrayBuffer };
 
     RefPtr<ThreadableWebSocketChannel> m_channel;
 
-    State m_state;
+    State m_state { CONNECTING };
     URL m_url;
-    unsigned m_bufferedAmount;
-    unsigned m_bufferedAmountAfterClose;
-    BinaryType m_binaryType;
+    unsigned m_bufferedAmount { 0 };
+    unsigned m_bufferedAmountAfterClose { 0 };
+    BinaryType m_binaryType { BinaryType::Blob };
     String m_subprotocol;
     String m_extensions;
 
@@ -149,5 +145,3 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(WEB_SOCKETS)
-
-#endif // WebSocket_h

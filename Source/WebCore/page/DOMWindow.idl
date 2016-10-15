@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@
     JSCustomToNativeObject,
     JSLegacyParent=JSDOMWindowBase,
 ] interface DOMWindow : EventTarget {
-    // DOM Level 0
     [Replaceable] readonly attribute Screen screen;
     readonly attribute History history;
     [Replaceable] readonly attribute BarProp locationbar;
@@ -76,13 +75,7 @@
     DOMString? prompt(optional DOMString message = "", optional DOMString defaultValue = "");
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean find(optional DOMString string = "undefined",
-                 optional boolean caseSensitive = false,
-                 optional boolean backwards = false,
-                 optional boolean wrap = false,
-                 optional boolean wholeWord = false,
-                 optional boolean searchInFrames = false,
-                 optional boolean showDialog = false);
+    boolean find(optional DOMString string = "undefined", optional boolean caseSensitive = false, optional boolean backwards = false, optional boolean wrap = false, optional boolean wholeWord = false, optional boolean searchInFrames = false, optional boolean showDialog = false);
 
     [Replaceable] readonly attribute  boolean offscreenBuffering;
 
@@ -108,10 +101,10 @@
     void scrollTo(optional ScrollToOptions options);
     [ImplementedAs=scrollTo] void scroll(optional ScrollToOptions options);
 
-    void moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: this should take longs not floats.
-    void moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: this should take longs not floats.
-    void resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: this should take longs not floats.
-    void resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // FIXME: this should take longs not floats.
+    void moveBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: This should take longs, not floats.
+    void moveTo(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: This should take longs, not floats.
+    void resizeBy(optional unrestricted float x = NaN, optional unrestricted float y = NaN); // FIXME: This should take longs, not floats.
+    void resizeTo(optional unrestricted float width = NaN, optional unrestricted float height = NaN); // FIXME: This should take longs, not floats.
 
     [DoNotCheckSecurity, ForwardDeclareInHeader] readonly attribute boolean closed;
 
@@ -121,10 +114,8 @@
 
     attribute DOMString status;
     attribute DOMString defaultStatus;
-    // This attribute is an alias of defaultStatus and is necessary for legacy uses.
-    [ImplementedAs=defaultStatus] attribute DOMString defaultstatus;
+    [ImplementedAs=defaultStatus] attribute DOMString defaultstatus; // For compatibility with legacy content.
 
-    // Self referential attributes
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
     [DoNotCheckSecurity, Unforgeable] readonly attribute DOMWindow window;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute  DOMWindow frames;
@@ -133,41 +124,33 @@
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow parent;
     [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute DOMWindow top;
 
-    // DOM Level 2 AbstractView Interface
     [Unforgeable] readonly attribute Document document;
 
-    // CSSOM View Module
     MediaQueryList matchMedia(DOMString query);
 
-    // styleMedia has been removed from the CSSOM View specification.
-    readonly attribute StyleMedia styleMedia;
+    readonly attribute StyleMedia styleMedia; // Keeping for now, but styleMedia has been removed from the CSSOM View specification.
 
-    // DOM Level 2 Style Interface
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
-    // FIXME: Drop this overload once <rdar://problem/28016778> has been fixed.
+
+    // FIXME: Drop the following overload of getComputedStyle once <rdar://problem/28020681> has been fixed.
     [NewObject, MayThrowLegacyException] CSSStyleDeclaration getComputedStyle(Document document, optional DOMString? pseudoElement = null);
 
-    // WebKit extensions
     CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
 
     [Replaceable] readonly attribute unrestricted double devicePixelRatio;
     
-    WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null,
-                                                 optional WebKitPoint? p = null);
-    WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null,
-                                                 optional WebKitPoint? p = null);
+    WebKitPoint webkitConvertPointFromPageToNode(optional Node? node = null, optional WebKitPoint? p = null);
+    WebKitPoint webkitConvertPointFromNodeToPage(optional Node? node = null, optional WebKitPoint? p = null);
 
     readonly attribute DOMApplicationCache applicationCache;
 
     [GetterMayThrowLegacyException] readonly attribute Storage sessionStorage;
     [GetterMayThrowLegacyException] readonly attribute Storage localStorage;
 
-    // This is the interface orientation in degrees. Some examples are:
-    //  0 is straight up; -90 is when the device is rotated 90 clockwise;
-    //  90 is when rotated counter clockwise.
+    // This is the interface orientation in degrees. Some examples:
+    // 0 when straight up; -90 when rotated 90 degrees clockwise; 90 counter clockwise.
     [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
 
-    // cross-document messaging
     [DoNotCheckSecurity, Custom, MayThrowLegacyException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, USVString targetOrigin, optional Array messagePorts);
 
     [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
@@ -178,20 +161,18 @@
     [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelAnimationFrame(long id);
     [Conditional=REQUEST_ANIMATION_FRAME, ImplementedAs=cancelAnimationFrame] void webkitCancelRequestAnimationFrame(long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 
-    void captureEvents(/*in long eventFlags*/);
-    void releaseEvents(/*in long eventFlags*/);
+    void captureEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
+    void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
 
-    [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image; // Usable with new operator
+    [CustomGetter, CustomConstructor] attribute HTMLImageElementNamedConstructor Image;
     attribute XMLDocumentConstructor SVGDocument;
 
-    attribute DOMURLConstructor webkitURL; // FIXME: deprecate this.
-    attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Add metrics to determine when we can remove this.
+    attribute DOMURLConstructor webkitURL; // FIXME: Deprecate this.
+    attribute MutationObserverConstructor WebKitMutationObserver; // FIXME: Remove once we prove it is not needed for compatibility with legacy content.
 
     [Conditional=CUSTOM_ELEMENTS, EnabledAtRuntime=CustomElements, ImplementedAs=ensureCustomElementRegistry] readonly attribute CustomElementRegistry customElements;
 
-    // Event Handlers
-
-    // Unique to Element and DOMWindow
+    // Event handlers unique to Element and DOMWindow.
     // FIXME: Should these be exposed on Document as well (and therefore moved to GlobalEventHandlers.idl)?
     [NotEnumerable] attribute EventHandler onanimationend;
     [NotEnumerable] attribute EventHandler onanimationiteration;
@@ -205,7 +186,7 @@
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongestureend;
     [NotEnumerable, Conditional=IOS_GESTURE_EVENTS] attribute EventHandler ongesturestart;
 
-    // Unique to DOMWindow
+    // Event handlers unique to DOMWindow.
     [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondevicemotion;
     [NotEnumerable, Conditional=DEVICE_ORIENTATION] attribute EventHandler ondeviceorientation;
     [NotEnumerable, Conditional=PROXIMITY_EVENTS] attribute EventHandler onwebkitdeviceproximity;

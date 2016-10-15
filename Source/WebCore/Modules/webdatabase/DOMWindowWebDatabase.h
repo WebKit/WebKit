@@ -24,29 +24,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMWindowWebDatabase_h
-#define DOMWindowWebDatabase_h
+#pragma once
 
-#include "ExceptionCode.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
 class DOMWindow;
 class Database;
 class DatabaseCallback;
-class Frame;
 
 class DOMWindowWebDatabase {
 public:
-    static RefPtr<Database> openDatabase(DOMWindow&, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, RefPtr<DatabaseCallback>&& creationCallback, ExceptionCode&);
+    static ExceptionOr<RefPtr<Database>> openDatabase(DOMWindow&, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback);
 
     DOMWindowWebDatabase() = delete;
     ~DOMWindowWebDatabase() = delete;
 };
 
 } // namespace WebCore
-
-#endif // DOMWindowWebDatabase_h

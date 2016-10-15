@@ -34,7 +34,7 @@
     Conditional=WEB_SOCKETS,
     Constructor(USVString url, optional sequence<DOMString> protocols = []),
     Constructor(USVString url, DOMString protocol),
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
     ConstructorCallWith=ScriptExecutionContext,
     EnabledAtRuntime,
     Exposed=(Window,Worker),
@@ -42,7 +42,6 @@
     readonly attribute USVString URL; // Lowercased .url is the one in the spec, but leaving .URL for compatibility reasons.
     readonly attribute USVString url;
 
-    // ready state
     const unsigned short CONNECTING = 0;
     const unsigned short OPEN = 1;
     const unsigned short CLOSING = 2;
@@ -51,7 +50,6 @@
 
     readonly attribute unsigned long bufferedAmount;
 
-    // networking
     attribute EventHandler onopen;
     attribute EventHandler onmessage;
     attribute EventHandler onerror;
@@ -60,12 +58,12 @@
     readonly attribute DOMString? protocol;
     readonly attribute DOMString? extensions;
 
-    [SetterMayThrowLegacyException] attribute DOMString binaryType;
+    [SetterMayThrowException] attribute DOMString binaryType;
 
-    [MayThrowLegacyException] void send(ArrayBuffer data);
-    [MayThrowLegacyException] void send(ArrayBufferView data);
-    [MayThrowLegacyException] void send(Blob data);
-    [MayThrowLegacyException] void send(USVString data);
+    [MayThrowException] void send(ArrayBuffer data);
+    [MayThrowException] void send(ArrayBufferView data);
+    [MayThrowException] void send(Blob data);
+    [MayThrowException] void send(USVString data);
 
-    [MayThrowLegacyException] void close([Clamp] optional unsigned short code, optional DOMString reason);
+    [MayThrowException] void close([Clamp] optional unsigned short code, optional DOMString reason);
 };

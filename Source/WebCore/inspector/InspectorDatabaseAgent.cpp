@@ -77,14 +77,14 @@ public:
 
     bool handleEvent(SQLTransaction*, SQLResultSet* resultSet) override
     {
-        SQLResultSetRowList* rowList = resultSet->rows();
+        auto& rowList = resultSet->rows();
 
         auto columnNames = Inspector::Protocol::Array<String>::create();
-        for (auto& column : rowList->columnNames())
+        for (auto& column : rowList.columnNames())
             columnNames->addItem(column);
 
         auto values = Inspector::Protocol::Array<InspectorValue>::create();
-        for (auto& value : rowList->values()) {
+        for (auto& value : rowList.values()) {
             RefPtr<InspectorValue> inspectorValue;
             switch (value.type()) {
             case SQLValue::StringValue: inspectorValue = InspectorValue::create(value.string()); break;

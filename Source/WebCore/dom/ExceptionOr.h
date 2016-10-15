@@ -36,6 +36,7 @@ template<typename ReturnType> class ExceptionOr {
 public:
     ExceptionOr(Exception&&);
     ExceptionOr(ReturnType&&);
+    template<typename OtherType> ExceptionOr(const OtherType&, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type* = nullptr);
 
     bool hasException() const;
     Exception&& releaseException();
@@ -64,6 +65,11 @@ template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(Except
 
 template<typename ReturnType> inline ExceptionOr<ReturnType>::ExceptionOr(ReturnType&& returnValue)
     : m_value(WTFMove(returnValue))
+{
+}
+
+template<typename ReturnType> template<typename OtherType> inline ExceptionOr<ReturnType>::ExceptionOr(const OtherType& returnValue, typename std::enable_if<std::is_scalar<OtherType>::value && std::is_convertible<OtherType, ReturnType>::value>::type*)
+    : m_value(static_cast<ReturnType>(returnValue))
 {
 }
 

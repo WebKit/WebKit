@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLResultSet_h
-#define SQLResultSet_h
+#pragma once
 
-#include "DatabaseBasicTypes.h"
+#include "ExceptionOr.h"
 #include "SQLResultSetRowList.h"
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -39,24 +38,31 @@ class SQLResultSet : public ThreadSafeRefCounted<SQLResultSet> {
 public:
     static Ref<SQLResultSet> create() { return adoptRef(*new SQLResultSet); }
 
-    SQLResultSetRowList* rows() const;
+    SQLResultSetRowList& rows() { return m_rows.get(); }
 
-    int64_t insertId(ExceptionCode&) const;
-    int rowsAffected() const;
+    ExceptionOr<int64_t> insertId() const;
+    int rowsAffected() const { return m_rowsAffected; }
 
-// For internal (non-JS) use
     void setInsertId(int64_t);
     void setRowsAffected(int);
 
 private:
     SQLResultSet();
 
-    RefPtr<SQLResultSetRowList> m_rows;
-    int64_t m_insertId;
-    bool m_insertIdSet;
-    int m_rowsAffected;
+    Ref<SQLResultSetRowList> m_rows;
+    Optional<int64_t> m_insertId;
+    int m_rowsAffected { 0 };
 };
 
-} // namespace WebCore
+inline void SQLResultSet::setInsertId(int64_t id)
+{
+    ASSERT(!m_insertId);
+    m_insertId = id;
+}
 
-#endif // SQLResultSet_h
+inline void SQLResultSet::setRowsAffected(int count)
+{
+    m_rowsAffected = count;
+}
+
+} // namespace WebCore

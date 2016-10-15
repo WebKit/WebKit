@@ -605,7 +605,7 @@ bool WebSocketHandshake::checkResponseHeaders()
             return false;
         }
         Vector<String> result;
-        m_clientProtocol.split(String(WebSocket::subProtocolSeperator()), result);
+        m_clientProtocol.split(WebSocket::subprotocolSeparator(), result);
         if (!result.contains(serverWebSocketProtocol)) {
             m_failureReason = ASCIILiteral("Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch");
             return false;

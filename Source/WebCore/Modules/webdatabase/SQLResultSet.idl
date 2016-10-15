@@ -30,6 +30,6 @@
     ImplementationLacksVTable
 ] interface SQLResultSet {
     readonly attribute SQLResultSetRowList rows;
-    [GetterMayThrowLegacyException] readonly attribute long insertId;
+    [GetterMayThrowException] readonly attribute long insertId;
     readonly attribute long rowsAffected;
 };

@@ -1,3 +1,68 @@
+2016-10-15  Darin Adler  <darin@apple.com>
+
+        Move Web SQL database and WebSockets off legacy exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=163284
+
+        Reviewed by Chris Dumez.
+
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase): Use ExceptionOr.
+        * Modules/webdatabase/DOMWindowWebDatabase.h: Update for above.
+        * Modules/webdatabase/DOMWindowWebDatabase.idl: Ditto.
+
+        * Modules/webdatabase/SQLResultSet.cpp:
+        (WebCore::SQLResultSet::SQLResultSet): Move initialization of
+        many data members into the class definition.
+        (WebCore::SQLResultSet::insertId): Use ExceptionOr.
+        (WebCore::SQLResultSet::rowsAffected): Moved into class definition.
+        (WebCore::SQLResultSet::rows): Ditto.
+        (WebCore::SQLResultSet::setInsertId): Ditto.
+        (WebCore::SQLResultSet::setRowsAffected): Ditto.
+
+        * Modules/webdatabase/SQLResultSet.h: Updated for above.
+
+        * Modules/webdatabase/SQLResultSet.idl: Use non-legacy exceptions.
+        Added a FIXME about the mismatch between long and int64_t.
+
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute): Use reference instead of pointer.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::isValidProtocolString): Use StringView.
+        (WebCore::WebSocket::subprotocolSeparator): Fixed capitalization and
+        spelling error in the name of this function.
+        (WebCore::WebSocket::WebSocket): Move initialization of many data
+        members into the class definition.
+        (WebCore::WebSocket::create): Use ExceptionOr.
+        (WebCore::WebSocket::connect): Ditto.
+        (WebCore::WebSocket::send): Ditto.
+        (WebCore::WebSocket::close): Ditto.
+        (WebCore::WebSocket::binaryType): Update to use enum class.
+        (WebCore::WebSocket::setBinaryType): Use ExecptionOr and update to
+        use enum class.
+        (WebCore::WebSocket::didReceiveBinaryData): Ditto.
+
+        * Modules/websockets/WebSocket.h: Updated for above. Changed the
+        BinaryType enum into an enum class.
+
+        * Modules/websockets/WebSocket.idl: Use non-legacy exceptions.
+
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        Updated for name change to subprotocolSeparator.
+
+        * dom/ExceptionOr.h: Added a constructor for scalar types that does not
+        require an rvalue reference. We can refine this more later, but for now
+        this is sufficient to obviate the need for WTFMove where it otherwise would
+        have been needed in the code above.
+
+        * inspector/InspectorDatabaseAgent.cpp: Use reference instead of pointer.
+
+        * page/DOMWindow.idl: Touched this file to work around bugs in the dependency
+        analysis of the current CMake build system, since otherwise it doesn't process the
+        change to the partial interface WebSocket. Edited lots of comments, removed many
+        others, and tweaked formatting.
+
 2016-10-14  Sam Weinig  <sam@webkit.org>
 
         MessageEvent's source property should be a (DOMWindow or MessagePort)? rather than a EventTarget?

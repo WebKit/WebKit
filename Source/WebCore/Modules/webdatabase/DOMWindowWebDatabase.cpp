@@ -29,30 +29,33 @@
 
 #include "DOMWindow.h"
 #include "Database.h"
-#include "DatabaseCallback.h"
 #include "DatabaseManager.h"
 #include "Document.h"
-#include "Frame.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
 
-RefPtr<Database> DOMWindowWebDatabase::openDatabase(DOMWindow& window, const String& name, const String& version, const String& displayName, unsigned long estimatedSize, RefPtr<DatabaseCallback>&& creationCallback, ExceptionCode& ec)
+ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(DOMWindow& window, const String& name, const String& version, const String& displayName, unsigned estimatedSize, RefPtr<DatabaseCallback>&& creationCallback)
 {
     if (!window.isCurrentlyDisplayedInFrame())
-        return nullptr;
-
-    RefPtr<Database> database;
-    DatabaseManager& dbManager = DatabaseManager::singleton();
-    DatabaseError error = DatabaseError::None;
-    if (dbManager.isAvailable() && window.document()->securityOrigin()->canAccessDatabase(window.document()->topOrigin())) {
-        database = dbManager.openDatabase(window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback), error);
-        ASSERT(database || error != DatabaseError::None);
-        ec = DatabaseManager::exceptionCodeForDatabaseError(error);
-    } else
-        ec = SECURITY_ERR;
-
-    return database;
+        return RefPtr<Database> { nullptr };
+    auto& manager = DatabaseManager::singleton();
+    if (!manager.isAvailable())
+        return Exception { SECURITY_ERR };
+    auto* document = window.document();
+    if (!document)
+        return Exception { SECURITY_ERR };
+    auto* securityOrigin = document->securityOrigin();
+    if (!securityOrigin)
+        return Exception { SECURITY_ERR };
+    if (!securityOrigin->canAccessDatabase(document->topOrigin()))
+        return Exception { SECURITY_ERR };
+    auto error = DatabaseError::None;
+    auto database = manager.openDatabase(window.document(), name, version, displayName, estimatedSize, WTFMove(creationCallback), error);
+    if (error != DatabaseError::None)
+        return Exception { DatabaseManager::exceptionCodeForDatabaseError(error) };
+    ASSERT(database);
+    return WTFMove(database);
 }
 
 } // namespace WebCore
