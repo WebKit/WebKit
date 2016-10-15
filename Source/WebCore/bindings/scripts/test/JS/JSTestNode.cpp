@@ -26,11 +26,11 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
-#include "ObjectConstructor.h"
 #include "RuntimeEnabledFeatures.h"
 #include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/JSString.h>
+#include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

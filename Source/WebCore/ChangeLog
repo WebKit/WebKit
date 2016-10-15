@@ -1,3 +1,48 @@
+2016-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement serializer = { attribute }
+        https://bugs.webkit.org/show_bug.cgi?id=163466
+
+        Reviewed by Darin Adler.
+
+        Fix the code generator to generate code for serializer = { attribute }.
+        In IDLParser, extend domSerializable with flags for the 'inherit', 'getter' and
+        'attribute' values (the first two are still unsupported). Fix parseSerializationPattern()
+        to detect these; it needs to create the domSerializable() now. Basic support
+        for isSerializableAttribute() is added (primitive types only).
+        
+        GenerateSerializerFunction is fixed to output code for the serializable attributes
+        in the order specified in "serializer = {}", as specified in WebIDL.
+        
+        Removed custom serialization for ClientRect and PerformanceTiming.
+        
+        Other minor cleanup to always get $interfaceName from $interface->name, and to fix
+        ObjectConstructor.h to be included as <runtime/ObjectConstructor.h>.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSClientRectCustom.cpp: Removed.
+        * bindings/js/JSPerformanceTimingCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateSerializerFunction):
+        * bindings/scripts/IDLParser.pm:
+        (parseSerializerRest):
+        (parseSerializationPattern):
+        (parseSerializationAttributes):
+        (isSerializableAttribute):
+        (applyMemberList):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionToJSONCaller):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSerialization.h: Added.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestSerialization.idl: Copied from Source/WebCore/dom/ClientRect.idl.
+        * dom/ClientRect.idl:
+        * page/PerformanceTiming.idl:
+
 2016-10-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Restore user agent quirk for Yahoo

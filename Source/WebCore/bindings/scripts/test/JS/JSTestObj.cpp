@@ -53,7 +53,6 @@
 #include "JSTestStandaloneDictionary.h"
 #include "JSTestSubObj.h"
 #include "JSXPathNSResolver.h"
-#include "ObjectConstructor.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocument.h"
 #include "SVGPoint.h"
@@ -7740,6 +7739,10 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONCaller(ExecState* s
     auto& vm = state->vm();
     auto* result = constructEmptyObject(state);
 
+    auto createValue = jsTestObjCreateGetter(*state, *thisObject, throwScope);
+    ASSERT(!throwScope.exception());
+    result->putDirect(vm, Identifier::fromString(&vm, "create"), createValue);
+
     auto readOnlyStringAttrValue = jsTestObjReadOnlyStringAttrGetter(*state, *thisObject, throwScope);
     ASSERT(!throwScope.exception());
     result->putDirect(vm, Identifier::fromString(&vm, "readOnlyStringAttr"), readOnlyStringAttrValue);
@@ -7751,10 +7754,6 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionToJSONCaller(ExecState* s
     auto longAttrValue = jsTestObjLongAttrGetter(*state, *thisObject, throwScope);
     ASSERT(!throwScope.exception());
     result->putDirect(vm, Identifier::fromString(&vm, "longAttr"), longAttrValue);
-
-    auto createValue = jsTestObjCreateGetter(*state, *thisObject, throwScope);
-    ASSERT(!throwScope.exception());
-    result->putDirect(vm, Identifier::fromString(&vm, "create"), createValue);
 
     return JSValue::encode(result);
 }

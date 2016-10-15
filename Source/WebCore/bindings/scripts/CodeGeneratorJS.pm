@@ -3745,7 +3745,7 @@ END
 
 
     GenerateImplementationIterableFunctions($interface) if $interface->iterable;
-    GenerateSerializerFunction($interface, $interfaceName, $className) if $interface->serializable;
+    GenerateSerializerFunction($interface, $className) if $interface->serializable;
 
     if ($needsVisitChildren) {
         push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
@@ -3968,26 +3968,40 @@ END
 
 sub GenerateSerializerFunction
 {
-    my ($interface, $interfaceName, $className) = @_;
+    my ($interface, $className) = @_;
+
+    my $interfaceName = $interface->name;
+
     my $serializerFunctionName = "toJSON";
     my $serializerNativeFunctionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($serializerFunctionName);
 
-    AddToImplIncludes("ObjectConstructor.h");
+    AddToImplIncludes("<runtime/ObjectConstructor.h>");
     push(@implContent, "static inline EncodedJSValue ${serializerNativeFunctionName}Caller(ExecState* state, JS$interfaceName* thisObject, JSC::ThrowScope& throwScope)\n");
     push(@implContent, "{\n");
     push(@implContent, "    auto& vm = state->vm();\n");
     push(@implContent, "    auto* result = constructEmptyObject(state);\n");
     push(@implContent, "\n");
-    foreach my $attribute (@{$interface->attributes}) {
-        my $name = $attribute->signature->name;
-        if (grep $_ eq $name, @{$interface->serializable->attributes}) {
-            my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(*state, *thisObject, throwScope);\n");
-            push(@implContent, "    ASSERT(!throwScope.exception());\n");
-            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
-            push(@implContent, "\n");
+
+    my @serializedAttributes = ();
+    foreach my $attribute_name (@{$interface->serializable->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
+            if ($attribute_name eq $attribute->signature->name) {
+                push @serializedAttributes, $attribute;
+                last;
+            }
         }
     }
+
+    foreach my $attribute (@serializedAttributes) {
+        my $name = $attribute->signature->name;
+
+        my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
+        push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(*state, *thisObject, throwScope);\n");
+        push(@implContent, "    ASSERT(!throwScope.exception());\n");
+        push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
+        push(@implContent, "\n");
+    }
+
     push(@implContent, "    return JSValue::encode(result);\n");
     push(@implContent, "}\n");
     push(@implContent, "\n");

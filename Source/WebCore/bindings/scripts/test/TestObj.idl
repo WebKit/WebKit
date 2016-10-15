@@ -414,8 +414,7 @@ enum TestConfidence { "high", "kinda-low" };
 
     stringifier attribute USVString stringifierAttribute;
 
-
-    serializer = {readOnlyStringAttr, create, enumAttr, longAttr};
+    serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
 };
 
 // The following comment should not generate any code.

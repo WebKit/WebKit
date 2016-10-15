@@ -112,6 +112,9 @@ struct( domIterable => {
 # Used to represent serializable interface
 struct( domSerializable => {
     attributes => '@', # List of attributes to serialize
+    hasAttribute => '$', # serializer = { attribute }
+    hasInherit => '$', # serializer = { inherit }
+    hasGetter => '$', # serializer = { getter }
     functions => '@', # toJSON function
 });
 
@@ -1148,12 +1151,9 @@ sub parseSerializerRest
     my $next = $self->nextToken();
     if ($next->value() eq "=") {
         $self->assertTokenValue($self->getToken(), "=", __LINE__);
-        my $attributes = $self->parseSerializationPattern();
 
-        my $newDataNode = domSerializable->new();
-        $newDataNode->attributes($attributes);
+        return $self->parseSerializationPattern();
 
-        return $newDataNode;
     }
     if ($next->type() == IdentifierToken || $next->value() eq "(") {
         return $self->parseOperationRest($extendedAttributeList);
@@ -1167,9 +1167,10 @@ sub parseSerializationPattern
     my $next = $self->nextToken();
     if ($next->value() eq "{") {
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        my $attributes = $self->parseSerializationAttributes();
+        my $newDataNode = domSerializable->new();
+        $self->parseSerializationAttributes($newDataNode);
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        return \@{$attributes};
+        return $newDataNode;
     }
     if ($next->value() eq "[") {
         die "Serialization of lists pattern is not currently supported.";
@@ -1179,7 +1180,11 @@ sub parseSerializationPattern
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
         push(@attributes, $token->value());
-        return \@attributes;
+
+        my $newDataNode = domSerializable->new();
+        $newDataNode->attributes(\@attributes);
+
+        return $newDataNode;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1187,21 +1192,30 @@ sub parseSerializationPattern
 sub parseSerializationAttributes
 {
     my $self = shift;
+    my $domSerializable = shift;
     my $token = $self->getToken();
 
     if ($token->value() eq "getter") {
+        $domSerializable->hasGetter(1);
         die "Serializer getter keyword is not currently supported.";
 
     }
     if ($token->value() eq "inherit") {
+        $domSerializable->hasInherit(1);
         die "Serializer inherit keyword is not currently supported.";
+    }
+
+    if ($token->value() eq "attribute") {
+        $domSerializable->hasAttribute(1);
+        # Attributes will be filled in via applyMemberList()
+        return;
     }
 
     my @attributes = ();
     $self->assertTokenType($token, IdentifierToken);
     push(@attributes, $token->value());
     push(@attributes, @{$self->parseIdentifiers()});
-    return \@attributes;
+    $domSerializable->attributes(\@attributes);
 }
 
 sub parseIdentifierList
@@ -2316,6 +2330,16 @@ sub parseName
     $self->assertUnexpectedToken($next->value());
 }
 
+sub isSerializableAttribute
+{
+    my $attribute = shift;
+
+    # FIXME: Need to support more than primitive serializable types.
+    # This check may have to move to the code generator, if we don't have enough information
+    # here to determine serializability: https://heycam.github.io/webidl/#idl-serializers
+    my $serializable_types = '^(\(byte|octet|short|unsigned short|long|unsigned long|long long|unsigned long long|float|unrestricted float|double|unrestricted double|boolean|DOMString|ByteString|USVString)$';
+    return $attribute->signature->type =~ /$serializable_types/;
+}
 
 sub applyMemberList
 {
@@ -2351,7 +2375,13 @@ sub applyMemberList
 
     if ($interface->serializable) {
         my $numSerializerAttributes = @{$interface->serializable->attributes};
-        if ($numSerializerAttributes == 0) {
+        if ($interface->serializable->hasAttribute) {
+            foreach my $attribute (@{$interface->attributes}) {
+                if (isSerializableAttribute($attribute)) {
+                    push(@{$interface->serializable->attributes}, $attribute->signature->name);
+                }
+            }
+        } elsif ($numSerializerAttributes == 0) {
             foreach my $attribute (@{$interface->attributes}) {
                 push(@{$interface->serializable->attributes}, $attribute->signature->name);
             }

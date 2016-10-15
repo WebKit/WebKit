@@ -41,7 +41,6 @@
 #include "JSCSSValueCustom.cpp"
 #include "JSCallbackData.cpp"
 #include "JSCanvasRenderingContext2DCustom.cpp"
-#include "JSClientRectCustom.cpp"
 #include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCryptoCustom.cpp"
 #include "JSCustomEventCustom.cpp"
