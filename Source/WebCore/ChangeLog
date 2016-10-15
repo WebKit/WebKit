@@ -1,3 +1,39 @@
+2016-10-14  Antti Koivisto  <antti@apple.com>
+
+        100% CPU on homedepot.com page
+        https://bugs.webkit.org/show_bug.cgi?id=163452
+        <rdar://problem/28730708>
+
+        Reviewed by Simon Fraser.
+
+        The site has a keyframe animation on body. Currently this causes the animation to invalidate the
+        style of the entire document.
+
+        Animations use SyntheticStyleChange to invalidate elements when animation progresses and currently
+        that causes full subtree invalidation. However animation only ever affect individual elements and
+        the normal style resolution mechanism should be able to deal with things like inheritance as needed.
+
+        Test: fast/animation/animation-style-update-size.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * dom/Document.h:
+        (WebCore::Document::lastStyleUpdateSizeForTesting):
+
+            Testing support.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
+            Don't force subtree style resolution for SyntheticStyleChange.
+
+        * style/StyleUpdate.h:
+        (WebCore::Style::Update::size):
+        * testing/Internals.cpp:
+        (WebCore::Internals::lastStyleUpdateSize):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-10-14  Chris Dumez  <cdumez@apple.com>
 
         Setting HTMLMediaElement.muted to the same value should not fire a volume change event

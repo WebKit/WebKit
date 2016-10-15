@@ -68,6 +68,8 @@ public:
 
     const Document& document() const { return m_document; }
 
+    unsigned size() const { return m_elements.size() + m_texts.size(); }
+
     void addElement(Element&, Element* parent, ElementUpdate&&);
     void addText(Text&, Element* parent);
     void addText(Text&);

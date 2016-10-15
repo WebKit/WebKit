@@ -535,6 +535,7 @@ public:
     void recalcStyle(Style::Change = Style::NoChange);
     WEBCORE_EXPORT void updateStyleIfNeeded();
     bool needsStyleRecalc() const;
+    unsigned lastStyleUpdateSizeForTesting() const { return m_lastStyleUpdateSizeForTesting; }
 
     WEBCORE_EXPORT void updateLayout();
     
@@ -1488,6 +1489,7 @@ private:
     bool m_inStyleRecalc;
     bool m_closeAfterStyleRecalc;
     bool m_inRenderTreeUpdate { false };
+    unsigned m_lastStyleUpdateSizeForTesting { 0 };
 
     bool m_gotoAnchorNeededAfterStylesheetsLoad;
     bool m_isDNSPrefetchEnabled;

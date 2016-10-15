@@ -327,6 +327,7 @@ enum UserInterfaceLayoutDirection {
 
     [MayThrowLegacyException] void startTrackingStyleRecalcs();
     [MayThrowLegacyException] unsigned long styleRecalcCount();
+    readonly attribute unsigned long lastStyleUpdateSize;
 
     [MayThrowLegacyException] void startTrackingCompositingUpdates();
     [MayThrowLegacyException] unsigned long compositingUpdateCount();
