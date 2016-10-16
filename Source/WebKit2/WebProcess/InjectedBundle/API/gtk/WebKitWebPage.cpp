@@ -129,9 +129,9 @@ static void webFrameDestroyed(WebFrame* webFrame)
     webFrameMap().remove(webFrame);
 }
 
-static CString getProvisionalURLForFrame(WebFrame* webFrame)
+static CString getDocumentLoaderURL(DocumentLoader* documentLoader)
 {
-    DocumentLoader* documentLoader = webFrame->coreFrame()->loader().provisionalDocumentLoader();
+    ASSERT(documentLoader);
     if (!documentLoader->unreachableURL().isEmpty())
         return documentLoader->unreachableURL().string().utf8();
 
@@ -158,7 +158,7 @@ static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef fr
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().provisionalDocumentLoader()));
 }
 
 static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef* /* userData */, const void *clientInfo)
@@ -166,7 +166,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundlePageRef, 
     if (!WKBundleFrameIsMainFrame(frame))
         return;
 
-    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getProvisionalURLForFrame(toImpl(frame)));
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().provisionalDocumentLoader()));
 }
 
 static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKSameDocumentNavigationType, WKTypeRef* /* userData */, const void *clientInfo)
@@ -175,6 +175,14 @@ static void didSameDocumentNavigationForFrame(WKBundlePageRef, WKBundleFrameRef 
         return;
 
     webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), toImpl(frame)->coreFrame()->document()->url().string().utf8());
+}
+
+static void didCommitLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef* /* userData */, const void* clientInfo)
+{
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
+    webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), getDocumentLoaderURL(toImpl(frame)->coreFrame()->loader().documentLoader()));
 }
 
 static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
@@ -485,7 +493,7 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
         0, // didFailProvisionalLoadWithErrorForFrame
-        0, // didCommitLoadForFrame
+        didCommitLoadForFrame,
         didFinishDocumentLoadForFrame,
         0, // didFinishLoadForFrame
         0, // didFailLoadWithErrorForFrame
