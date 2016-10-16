@@ -1,5 +1,16 @@
 2016-10-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Implement serializer = { attribute }
+        https://bugs.webkit.org/show_bug.cgi?id=163466
+        
+        Follow-up fix to die if "serializer {...}" lists an attribute not present
+        on the interface. I don't think this is testable with the current bindings tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerFunction):
+
+2016-10-16  Simon Fraser  <simon.fraser@apple.com>
+
         Add the "Geometry Interfaces" to features.json.
 
         * features.json:

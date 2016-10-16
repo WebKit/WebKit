@@ -3984,12 +3984,16 @@ sub GenerateSerializerFunction
 
     my @serializedAttributes = ();
     foreach my $attribute_name (@{$interface->serializable->attributes}) {
+        my $found_attribute = 0;
         foreach my $attribute (@{$interface->attributes}) {
             if ($attribute_name eq $attribute->signature->name) {
                 push @serializedAttributes, $attribute;
+                $found_attribute = 1;
                 last;
             }
         }
+        
+        die "Failed to find \"serializate\" attribute \"$attribute_name\" in $interfaceName" if !$found_attribute;
     }
 
     foreach my $attribute (@serializedAttributes) {
