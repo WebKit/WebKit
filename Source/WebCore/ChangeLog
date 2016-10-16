@@ -1,3 +1,22 @@
+2016-10-16  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Styles for StartButton are missing
+        https://bugs.webkit.org/show_bug.cgi?id=163499
+        <rdar://problem/28792009>
+
+        Reviewed by Darin Adler.
+
+        Add styling for StartButton so that instances are always displayed in the center of their container.
+
+        Test: media/modern-media-controls/start-button/start-button-styles.html
+
+        * Modules/modern-media-controls/controls/start-button.css: Added.
+        (button.start):
+        (button.start > *):
+        (button.start > div):
+        (button.start > img):
+        (button.start:active > img):
+
 2016-10-16  Simon Fraser  <simon.fraser@apple.com>
 
         Implement serializer = { attribute }

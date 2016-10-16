@@ -1,0 +1,34 @@
+Testing the StartButton class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS startButtonStyle.position is "absolute"
+PASS startButtonStyle.left is "50%"
+PASS startButtonStyle.top is "50%"
+PASS startButtonStyle.width is "70px"
+PASS startButtonStyle.height is "70px"
+PASS startButtonStyle.transform is "matrix(1, 0, 0, 1, -35, -35)"
+PASS startButtonBounds.left is 115
+PASS startButtonBounds.top is 65
+
+PASS startButtonBackgroundStyle.position is "absolute"
+PASS startButtonBackgroundStyle.left is "0px"
+PASS startButtonBackgroundStyle.top is "0px"
+PASS startButtonBackgroundStyle.width is "70px"
+PASS startButtonBackgroundStyle.height is "70px"
+PASS startButtonBackgroundStyle.webkitAppearance is "media-controls-light-bar-background"
+PASS startButtonBackgroundStyle.webkitClipPath is "circle(50% at 50% 50%)"
+PASS startButtonBackgroundStyle.willChange is "transform"
+
+PASS startButtonImageStyle.position is "absolute"
+PASS startButtonImageStyle.left is "0px"
+PASS startButtonImageStyle.top is "0px"
+PASS startButtonImageStyle.width is "70px"
+PASS startButtonImageStyle.height is "70px"
+PASS 0.6000000238418579 is within 0.001 of 0.6
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
