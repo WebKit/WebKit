@@ -1,3 +1,9 @@
+2016-10-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Add the "Geometry Interfaces" to features.json.
+
+        * features.json:
+
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Document request not updated after willSendRequest is called for a redirect

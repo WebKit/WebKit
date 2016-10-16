@@ -203,6 +203,16 @@
         "category": "css"
     },
     {
+        "name": "Geometry Interfaces",
+        "url": "https://drafts.fxtf.org/geometry/",
+        "keywords": ["geometry", "dompointreadonly", "dompoint", "domrectreadonly", "domrect", "domquad", "dommatrixreadonly", "dommatrix"],
+        "category": "html",
+        "status": {
+            "status": "In Development"
+        },
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=163505"
+    },
+    {
         "name": "HTML5",
         "url": "https://html.spec.whatwg.org",
         "keywords": ["html", "html5", "html5.1"],
