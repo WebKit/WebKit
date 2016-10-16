@@ -126,8 +126,7 @@ public:
 
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.
-    enum CatchUpAnimation { DoNotCatchUp, CatchUp };
-    virtual void startAnimation(CatchUpAnimation = CatchUp) { }
+    virtual void startAnimation() { }
     virtual void stopAnimation() {}
     virtual void resetAnimation() {}
     

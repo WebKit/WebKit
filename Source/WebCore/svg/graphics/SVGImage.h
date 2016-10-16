@@ -61,7 +61,7 @@ public:
     bool hasRelativeWidth() const final;
     bool hasRelativeHeight() const final;
 
-    void startAnimation(CatchUpAnimation = CatchUp) final;
+    void startAnimation() final;
     void stopAnimation() final;
     void resetAnimation() final;
 

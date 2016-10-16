@@ -1,3 +1,60 @@
+2016-10-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Delete the animated image catchup code
+        https://bugs.webkit.org/show_bug.cgi?id=163410
+
+        Reviewed by Simon Fraser.
+
+        This patch fixes two issues in the animated image workflow:
+
+        1) Setting the animation timer should follow the following rules:
+        
+            -- Initial case: Which happens before drawing the first frame. We
+            should set the timer to fire after the current_frame_duration.
+
+            -- Late case (Slow animation): This happens if the current_time is
+            past the next_frame_desired_time. In this case we should fire the
+            timer immediately.
+
+            -- Early case (Fast animation): This happens when there is still time
+            before the next_frame_desired_time. In this case we should set the
+            timer to fire after the difference between the next_frame_desired_time
+            and the current_time.
+
+        2) Deleting the code for catching up the current_frame:
+        
+            This code used to run in the slow animation case. It was never used
+            on iOS. It was trying to adjust the current_frame according to the
+            current_time as if there were no delay. It turned out that this might
+            cause a bigger delay because most likely the decoder decodes the image
+            frames incrementally; i.e. to decode frame k, it has to have frame
+            (k - 1) decoded.
+
+        Test: fast/images/ordered-animated-image-frames.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw): Remove the iOS specific code.
+        (WebCore::BitmapImage::startAnimation): Move the animation finishing code from 
+        BitmapImage::internalAdvanceAnimation() to this function. Simplify the timer
+        duration code as it is described above.
+
+        (WebCore::BitmapImage::advanceAnimation): Merge BitmapImage::internalAdvanceAnimation()
+        into this function.
+
+        (WebCore::BitmapImage::resetAnimation):
+        
+        (WebCore::BitmapImage::internalAdvanceAnimation): Deleted.
+        * platform/graphics/BitmapImage.h:
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        (WebCore::Image::startAnimation):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::startAnimation):
+        * svg/graphics/SVGImage.h:
+        Remove the catchup code form the Image and SVGImage classes.
+
 2016-10-15  Darin Adler  <darin@apple.com>
 
         Move Web SQL database and WebSockets off legacy exceptions
