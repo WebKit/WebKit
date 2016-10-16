@@ -465,7 +465,7 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
 
 static void testWebContextLanguages(WebViewTest* test, gconstpointer)
 {
-    static const char* expectedDefaultLanguage = "en-us";
+    static const char* expectedDefaultLanguage = "en-US";
     test->loadURI(kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
     size_t mainResourceDataSize = 0;
@@ -496,7 +496,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert(javascriptResult);
     g_assert(!error);
     GUniquePtr<char> locale(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(locale.get(), ==, "en-US");
+    g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
     // When using the POSIX locale, en-US should be used as default.
     const char* posixLanguage[] = { "POSIX", nullptr };
@@ -505,7 +505,7 @@ static void testWebContextLanguages(WebViewTest* test, gconstpointer)
     g_assert(javascriptResult);
     g_assert(!error);
     locale.reset(WebViewTest::javascriptResultToCString(javascriptResult));
-    g_assert_cmpstr(locale.get(), ==, "en-US");
+    g_assert_cmpstr(locale.get(), ==, expectedDefaultLanguage);
 
     // An invalid locale should throw an exception.
     const char* invalidLanguage[] = { "A", nullptr };

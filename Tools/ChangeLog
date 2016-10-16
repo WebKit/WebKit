@@ -1,5 +1,16 @@
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ unit test /webkit2/WebKitWebContext/languages after r206949.
+
+        After r206949 navigator.language returns en-US instead of en-us. Language tags in Accept-Language header are
+        actually case-insensitive, so we should actually do case-insensitive comparisons, but we only have
+        g_assert_cmpstr for tests.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextLanguages):
+
+2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebKitWebPage URI not updated after URI is modified by InjectedBundlePageResourceLoadClient::willSendRequestForFrame
         https://bugs.webkit.org/show_bug.cgi?id=163389
 
