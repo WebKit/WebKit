@@ -1,3 +1,28 @@
+2016-10-15  Mark Lam  <mark.lam@apple.com>
+
+        Add a $vm.getpid() method.
+        https://bugs.webkit.org/show_bug.cgi?id=163493
+
+        Reviewed by Saam Barati.
+
+        This is especially useful when we need to know the pid of an instance of jsc in
+        the foreground that we're trying to attach a debugger to while the JSC tests are
+        running in the background with a gazillion other jsc processes live at the same
+        time.
+
+        Currently, $vm.getpid() is only supported on non-Windows platforms.
+        According to https://msdn.microsoft.com/en-us/library/ms235372.aspx, getpid() is
+        deprecated.  According to https://msdn.microsoft.com/en-us/library/t2y34y40.aspx,
+        _getpid() cannot be used in applications that execute in the Windows Runtime.
+
+        Since this is only a debugging tool and is not a required feature, I'll defer
+        the Windows implementation of this function till the time when someone actually
+        needs it.
+
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::functionGetPID):
+        (JSC::JSDollarVMPrototype::finishCreation):
+
 2016-10-15  Saam Barati  <sbarati@apple.com>
 
         Assertion failed under operationToLowerCase with a rope with zero length
