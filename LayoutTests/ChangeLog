@@ -1,3 +1,12 @@
+2016-10-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Meter tests have been failed since r207280
+
+        Unreviewed EFL gardening. And add new baseline for meter-element.html.
+
+        * platform/efl/TestExpectations: Mark 2 tests to failure.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+
 2016-10-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Delete the animated image catchup code
