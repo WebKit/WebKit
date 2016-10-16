@@ -1,3 +1,22 @@
+2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Document request not updated after willSendRequest is called for a redirect
+        https://bugs.webkit.org/show_bug.cgi?id=163436
+
+        Reviewed by Michael Catanzaro.
+
+        The first willSendRequest happens before DocumentLoader::startLoadingMainResource(), that calls setRequest, but
+        the second one happens after DocumentLoader::redirectReceived() and then the request is never updated again.
+
+        Covered by GTK+ unit tests.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willContinueMainResourceLoadAfterRedirect): Set the new request.
+        * loader/DocumentLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal): Notify the document loader when loading the main resource
+        and called for a redirection.
+
 2016-10-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Delete the animated image catchup code
