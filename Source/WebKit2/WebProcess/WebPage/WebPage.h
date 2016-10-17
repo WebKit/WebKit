@@ -926,6 +926,7 @@ public:
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
     void setPageActivityState(WebCore::PageActivityState::Flags);
+    void setPageSuppressed(bool);
 
     void postMessage(const String& messageName, API::Object* messageBody);
     void postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
@@ -1038,8 +1039,6 @@ private:
     void validateCommand(const String&, uint64_t);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
-
-    void updateUserActivity();
 
     void mouseEvent(const WebMouseEvent&);
     void keyEvent(const WebKeyboardEvent&);
@@ -1476,9 +1475,7 @@ private:
     bool m_useAsyncScrolling;
 
     WebCore::ViewState::Flags m_viewState;
-    WebCore::PageActivityState::Flags m_activityState;
 
-    bool m_processSuppressionEnabled;
     UserActivity m_userActivity;
 
     uint64_t m_pendingNavigationID;

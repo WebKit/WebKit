@@ -1,3 +1,59 @@
+2016-10-17  Gavin Barraclough  <barraclough@apple.com>
+
+        UIProcess should determine throttle state for WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=163556
+
+        Reviewed by Anders Carlsson.
+
+        This is a step towards merging page/process throttling code for mac & iOS.
+
+        Previously WebPage determined whether to start a UserActivity based on page activity,
+        visibility and the preference to disable. Now WebPage passes the activity state across
+        to WebPageProxy, which makes the decision & explicitly instructs WebPage to start/stop
+        the UserActivity.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+            - updateActivityToken + updateProccessSuppressionState -> updateThrottleState
+        (WebKit::WebPageProxy::reattachToWebProcess):
+            - updateActivityToken -> updateThrottleState
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+            - updateActivityToken -> updateThrottleState
+        (WebKit::WebPageProxy::setPageActivityState):
+            - Record activity state passed from WebPage, and update.
+        (WebKit::WebPageProxy::preferencesDidChange):
+            - updateProccessSuppressionState -> updateThrottleState
+        (WebKit::WebPageProxy::updateActivityToken): Deleted.
+        (WebKit::WebPageProxy::updateProccessSuppressionState): Deleted.
+        (WebKit::WebPageProxy::updateThrottleState):
+            - Merged existing updateActivityToken/updateProccessSuppressionState to unified updateThrottleState.
+            - Compute whether page should be suppressed, and send SetPageSuppressed message accordingly.
+        * UIProcess/WebPageProxy.h:
+            - Merged existing updateActivityToken/updateProccessSuppressionState to unified updateThrottleState.
+            - Added setPageActivityState/m_activityState to report/record page activity.
+            - Added m_pageSuppressed to prevent redundant message sends.
+        * UIProcess/WebPageProxy.messages.in:
+            - Expose SetPageActivityState message (called by WebPage).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+            - removed m_processSuppressionEnabled
+            - updateUserActivity -> setPageSuppressed - explicitly set the page to not be suppressed, until WebPageProxy tells us to do so.
+        (WebKit::WebPage::setPageActivityState):
+            - post activity state on to WebPageProxy.
+        (WebKit::WebPage::setPageSuppressed):
+            - Start/stop USerActivity accordingly.
+        (WebKit::WebPage::setViewState):
+            - No longer need to monitor ViewState changes on the WebProcess side.
+        (WebKit::WebPage::updatePreferences):
+            - No longer need to monitor preference changes on the WebProcess side.
+        (WebKit::WebPage::updateUserActivity): Deleted.
+            - Only updated on reciept of setPageSuppressed message.
+        * WebProcess/WebPage/WebPage.h:
+            - Removed m_activityState, m_processSuppressionEnabled, updateUserActivity.
+            - Added setPageSuppressed message.
+        * WebProcess/WebPage/WebPage.messages.in:
+            - Added SetPageSuppressed message.
+
 2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r206189): logs error statements when API::URLRequest is canceled

@@ -457,8 +457,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);
 
     updateViewState();
-    updateActivityToken();
-    updateProccessSuppressionState();
+    updateThrottleState();
     updateHiddenPageThrottlingAutoIncreases();
     
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)
@@ -715,7 +714,7 @@ void WebPageProxy::reattachToWebProcess()
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, *this);
 
     updateViewState();
-    updateActivityToken();
+    updateThrottleState();
 
     m_inspector = WebInspectorProxy::create(this);
 #if ENABLE(FULLSCREEN_API)
@@ -1538,7 +1537,7 @@ void WebPageProxy::dispatchViewStateChange()
     m_nextViewStateChangeCallbacks.clear();
 
     // This must happen after the SetViewState message is sent, to ensure the page visibility event can fire.
-    updateActivityToken();
+    updateThrottleState();
 
     // If we've started the responsiveness timer as part of telling the web process to update the backing store
     // state, it might not send back a reply (since it won't paint anything if the web page is hidden) so we
@@ -1563,13 +1562,34 @@ void WebPageProxy::dispatchViewStateChange()
     m_viewWasEverInWindow |= isNowInWindow;
 }
 
+void WebPageProxy::setPageActivityState(WebCore::PageActivityState::Flags activityState)
+{
+    m_activityState = activityState;
+    updateThrottleState();
+}
+
 bool WebPageProxy::isAlwaysOnLoggingAllowed() const
 {
     return sessionID().isAlwaysOnLoggingAllowed();
 }
 
-void WebPageProxy::updateActivityToken()
+void WebPageProxy::updateThrottleState()
 {
+    bool processSuppressionEnabled = m_preferences->pageVisibilityBasedProcessSuppressionEnabled();
+
+    // If process suppression is not enabled take a token on the process pool to disable suppression of support processes.
+    if (!processSuppressionEnabled)
+        m_preventProcessSuppressionCount = m_process->processPool().processSuppressionDisabledForPageCount();
+    else if (!m_preventProcessSuppressionCount)
+        m_preventProcessSuppressionCount = nullptr;
+
+    // We should suppress if the page is not active, is visually idle, and supression is enabled.
+    bool pageShouldBeSuppressed = !m_activityState && processSuppressionEnabled && (m_viewState & ViewState::IsVisuallyIdle);
+    if (m_pageSuppressed != pageShouldBeSuppressed) {
+        m_pageSuppressed = pageShouldBeSuppressed;
+        m_process->send(Messages::WebPage::SetPageSuppressed(m_pageSuppressed), m_pageID);
+    }
+
     if (m_viewState & ViewState::IsVisuallyIdle)
         m_pageIsUserObservableCount = nullptr;
     else if (!m_pageIsUserObservableCount)
@@ -1589,14 +1609,6 @@ void WebPageProxy::updateActivityToken()
         m_activityToken = m_process->throttler().foregroundActivityToken();
     }
 #endif
-}
-
-void WebPageProxy::updateProccessSuppressionState()
-{
-    if (m_preferences->pageVisibilityBasedProcessSuppressionEnabled())
-        m_preventProcessSuppressionCount = nullptr;
-    else if (!m_preventProcessSuppressionCount)
-        m_preventProcessSuppressionCount = m_process->processPool().processSuppressionDisabledForPageCount();
 }
 
 void WebPageProxy::updateHiddenPageThrottlingAutoIncreases()
@@ -3012,7 +3024,7 @@ void WebPageProxy::preferencesDidChange()
         inspector()->enableRemoteInspection();
 #endif
 
-    updateProccessSuppressionState();
+    updateThrottleState();
     updateHiddenPageThrottlingAutoIncreases();
 
     m_pageClient.preferencesDidChange();
