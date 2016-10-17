@@ -1,3 +1,29 @@
+2016-10-16  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r206750): Crash when pressing Caps Lock if “Use the Caps Lock key to switch to and from U.S.” is selected in Input Sources preferences
+        https://bugs.webkit.org/show_bug.cgi?id=163506
+        <rdar://problem/28792483>
+
+        Reviewed by Darin Adler.
+
+        As per the NSEvent documentation [1], calling [NSEvent characters] is only
+        valid on key up / key down events and will raise an NSInternalInconsistencyException
+        if accessed on any other kind of event object. The crash happens when keyForKeyEvent()
+        is called with the third kind of key event (NSFlagsChanged) which is used for
+        detecting modifier keys. We normally detect the modifier key and return early before
+        calling [NSEvent characters]. However, in some rare cases, we fail to detect the
+        modifier key and we fall through.
+
+        To address the issue, we now return "Unidentified" for NSFlagsChanged events, if we
+        fail to detect the modifier key and before calling [NSEvent characters].
+
+        [1] https://developer.apple.com/reference/appkit/nsevent/1534183-characters
+
+        No new test, not easily testable.
+
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyForKeyEvent):
+
 2016-10-16  Darin Adler  <darin@apple.com>
 
         Move CSS classes from ExceptionCode to Exception

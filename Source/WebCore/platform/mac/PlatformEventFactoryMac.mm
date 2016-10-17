@@ -36,6 +36,7 @@
 #import <HIToolbox/Events.h>
 #import <mach/mach_time.h>
 #import <wtf/ASCIICType.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 
 namespace WebCore {
 
@@ -221,22 +222,14 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 
 static inline String textFromEvent(NSEvent* event)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if ([event type] == NSEventTypeFlagsChanged)
-#else
-    if ([event type] == NSFlagsChanged)
-#endif
         return emptyString();
     return String([event characters]);
 }
 
 static inline String unmodifiedTextFromEvent(NSEvent* event)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if ([event type] == NSEventTypeFlagsChanged)
-#else
-    if ([event type] == NSFlagsChanged)
-#endif
         return emptyString();
     return String([event charactersIgnoringModifiers]);
 }
@@ -264,16 +257,18 @@ String keyForKeyEvent(NSEvent *event)
         return ASCIILiteral("Control");
     }
 
+    // If the event is an NSEventTypeFlagsChanged events and we have not returned yet then this means we could not
+    // identify the modifier key. We return now and report the key as "Unidentified".
+    // Note that [event characters] below raises an exception if called on an NSEventTypeFlagsChanged event.
+    if ([event type] == NSEventTypeFlagsChanged)
+        return ASCIILiteral("Unidentified");
+
     // If more than one key is being pressed and the key combination includes one or more modifier keys
     // that result in the key no longer producing a printable character (e.g., Control + a), then the
     // key value should be the printable key value that would have been produced if the key had been
     // typed with the default keyboard layout with no modifier keys except for Shift and AltGr applied.
     // https://w3c.github.io/uievents/#keys-guidelines
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     bool isControlDown = ([event modifierFlags] & NSEventModifierFlagControl);
-#else
-    bool isControlDown = ([event modifierFlags] & NSControlKeyMask);
-#endif
     NSString *s = isControlDown ? [event charactersIgnoringModifiers] : [event characters];
     auto length = [s length];
     // characters / charactersIgnoringModifiers return an empty string for dead keys.
@@ -500,11 +495,7 @@ String codeForKeyEvent(NSEvent *event)
 
 String keyIdentifierForKeyEvent(NSEvent* event)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if ([event type] == NSEventTypeFlagsChanged) {
-#else
-    if ([event type] == NSFlagsChanged) {
-#endif
         switch ([event keyCode]) {
             case 54: // Right Command
             case 55: // Left Command
@@ -692,7 +683,6 @@ static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *even
 {
     OptionSet<PlatformEvent::Modifier> modifiers;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     if (event.modifierFlags & NSEventModifierFlagShift)
         modifiers |= PlatformEvent::Modifier::ShiftKey;
     if (event.modifierFlags & NSEventModifierFlagControl)
@@ -703,18 +693,6 @@ static inline OptionSet<PlatformEvent::Modifier> modifiersForEvent(NSEvent *even
         modifiers |= PlatformEvent::Modifier::MetaKey;
     if (event.modifierFlags & NSEventModifierFlagCapsLock)
         modifiers |= PlatformEvent::Modifier::CapsLockKey;
-#else
-    if (event.modifierFlags & NSShiftKeyMask)
-        modifiers |= PlatformEvent::Modifier::ShiftKey;
-    if (event.modifierFlags & NSControlKeyMask)
-        modifiers |= PlatformEvent::Modifier::CtrlKey;
-    if (event.modifierFlags & NSAlternateKeyMask)
-        modifiers |= PlatformEvent::Modifier::AltKey;
-    if (event.modifierFlags & NSCommandKeyMask)
-        modifiers |= PlatformEvent::Modifier::MetaKey;
-    if (event.modifierFlags & NSAlphaShiftKeyMask)
-        modifiers |= PlatformEvent::Modifier::CapsLockKey;
-#endif
 
     return modifiers;
 }
