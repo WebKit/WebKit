@@ -640,6 +640,31 @@ String AXFigureText()
     return WEB_UI_STRING("figure", "accessibility role description for a figure element.");
 }
 
+String AXEmailFieldText()
+{
+    return WEB_UI_STRING("email field", "accessibility role description for an email field.");
+}
+
+String AXTelephoneFieldText()
+{
+    return WEB_UI_STRING("telephone number field", "accessibility role description for a telephone number field.");
+}
+
+String AXURLFieldText()
+{
+    return WEB_UI_STRING("URL field", "accessibility role description for a URL field.");
+}
+
+String AXDateFieldText()
+{
+    return WEB_UI_STRING("date field", "accessibility role description for a date field.");
+}
+
+String AXTimeFieldText()
+{
+    return WEB_UI_STRING("time field", "accessibility role description for a time field.");
+}
+
 String AXButtonActionVerb()
 {
     return WEB_UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");

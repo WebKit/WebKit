@@ -461,6 +461,31 @@ String AXFigureText()
     return String::fromUTF8(_("figure"));
 }
 
+String AXEmailFieldText()
+{
+    return String::fromUTF8(_("email field"));
+}
+
+String AXTelephoneFieldText()
+{
+    return String::fromUTF8(_("telephone number field"));
+}
+
+String AXURLFieldText()
+{
+    return String::fromUTF8(_("URL field"));
+}
+
+String AXDateFieldText()
+{
+    return String::fromUTF8(_("date field"));
+}
+
+String AXTimeFieldText()
+{
+    return String::fromUTF8(_("time field"));
+}
+
 String AXFooterRoleDescriptionText()
 {
     return String::fromUTF8(_("footer"));

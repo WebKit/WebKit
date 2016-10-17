@@ -2516,6 +2516,26 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:@"AXHeading"])
         return AXHeadingText();
     
+    if ([axRole isEqualToString:NSAccessibilityTextFieldRole]) {
+        auto* node = m_object->node();
+        if (is<HTMLInputElement>(node)) {
+            auto& input = downcast<HTMLInputElement>(*node);
+            if (input.isEmailField())
+                return AXEmailFieldText();
+            if (input.isTelephoneField())
+                return AXTelephoneFieldText();
+            if (input.isURLField())
+                return AXURLFieldText();
+            
+            // These input types are not enabled on mac yet, we check the type attribute for now.
+            auto& type = input.attributeWithoutSynchronization(typeAttr);
+            if (equalLettersIgnoringASCIICase(type, "date"))
+                return AXDateFieldText();
+            if (equalLettersIgnoringASCIICase(type, "time"))
+                return AXTimeFieldText();
+        }
+    }
+    
     if (m_object->isFileUploadButton())
         return AXFileUploadButtonText();
     

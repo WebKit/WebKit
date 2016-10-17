@@ -217,6 +217,9 @@
 /* Undo action name */
 "Cut (Undo action name)" = "Cut";
 
+/* accessibility role description for a date field */
+"date field" = "date field";
+
 /* Default writing direction context menu item */
 "Default" = "Default";
 
@@ -243,6 +246,9 @@
 
 /* Undo action name */
 "Drag (Undo action name)" = "Drag";
+
+/* accessibility role description for an email field */
+"email field" = "email field";
 
 /* Video Enter Fullscreen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
@@ -612,6 +618,9 @@
 
 /* File Upload alert sheet camera button string for taking only videos */
 "Take Video (file upload action sheet)" = "Take Video";
+
+/* accessibility role description for a telephone number field */
+"telephone number field" = "telephone number field";
 
 /* Text Replacement context menu item */
 "Text Replacement" = "Text Replacement";
@@ -1087,6 +1096,9 @@
 /* term word of a description list */
 "term" = "term";
 
+/* accessibility role description for a time field */
+"time field" = "time field";
+
 /* accessibility label for timeline thumb */
 "timeline slider thumb" = "timeline slider thumb";
 
@@ -1131,6 +1143,9 @@
 
 /* HTTP result code string */
 "unsupported version" = "unsupported version";
+
+/* accessibility role description for a URL field */
+"URL field" = "URL field";
 
 /* Validation message for required form control elements that have no value */
 "value missing" = "value missing";

@@ -237,7 +237,7 @@ input[type='checkbox']
 input[type='date']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: date field
       
 input[type='datetime']
       AXRole: AXTextField
@@ -252,7 +252,7 @@ input[type='datetime-local']
 input[type='email']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: email field
       
 input[type='file']
       AXRole: AXButton
@@ -312,7 +312,7 @@ input[type='submit']
 input[type='tel']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: telephone number field
       
 input[type='text']
       AXRole: AXTextField
@@ -322,12 +322,12 @@ input[type='text']
 input[type='time']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: time field
       
 input[type='url']
       AXRole: AXTextField
       AXSubrole: 
-      AXRoleDescription: text field
+      AXRoleDescription: URL field
       
 input[type='week']
       AXRole: AXTextField
