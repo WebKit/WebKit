@@ -1,3 +1,15 @@
+2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r206189): logs error statements when API::URLRequest is canceled
+        https://bugs.webkit.org/show_bug.cgi?id=163393
+
+        Reviewed by Antti Koivisto.
+
+        Print this case at normal logging level, not as an error.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResource):
+
 2016-10-17  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Hook up WebPlatformTouchPoint's radiusX / radiusY to _UIWebTouchPoint.majorRadiusInScreenCoordinates
