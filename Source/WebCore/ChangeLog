@@ -1,3 +1,25 @@
+2016-10-17  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Eleminate code duplication between ResourceRequest encoding/decoding implementations
+        https://bugs.webkit.org/show_bug.cgi?id=163507
+
+        Reviewed by Carlos Garcia Campos.
+
+        ResourceRequestBase::encodeWithoutPlatformData() and Soup implementation of
+        ArgumentCoder<ResourceRequest>::encodePlatformData() share most of the code,
+        ditto for decoding implementations.
+
+        No new tests needed.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::encodeBase):
+        (WebCore::ResourceRequestBase::decodeBase):
+        (WebCore::ResourceRequestBase::encodeWithoutPlatformData):
+        (WebCore::ResourceRequestBase::decodeWithoutPlatformData):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::encodeWithPlatformData):
+        (WebCore::ResourceRequest::decodeWithPlatformData):
+
 2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Move user agent quirks to cross-platform location

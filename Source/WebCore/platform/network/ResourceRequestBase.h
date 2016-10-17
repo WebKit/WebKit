@@ -206,6 +206,9 @@ protected:
     void updatePlatformRequest(HTTPBodyUpdatePolicy = DoNotUpdateHTTPBody) const;
     void updateResourceRequest(HTTPBodyUpdatePolicy = DoNotUpdateHTTPBody) const;
 
+    template<class Encoder> void encodeBase(Encoder&) const;
+    template<class Decoder> bool decodeBase(Decoder&);
+
     // The ResourceRequest subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }
 
@@ -250,10 +253,8 @@ WEBCORE_EXPORT void initializeHTTPConnectionSettingsOnStartup();
 #endif
 
 template<class Encoder>
-void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
+ALWAYS_INLINE void ResourceRequestBase::encodeBase(Encoder& encoder) const
 {
-    ASSERT(!m_httpBody);
-    ASSERT(!m_platformRequestUpdated);
     encoder << m_url;
     encoder << m_timeoutInterval;
     encoder << m_firstPartyForCookies.string();
@@ -267,7 +268,7 @@ void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
+ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
 {
     if (!decoder.decode(m_url))
         return false;
@@ -308,6 +309,20 @@ bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
         return false;
 
     return true;
+}
+
+template<class Encoder>
+void ResourceRequestBase::encodeWithoutPlatformData(Encoder& encoder) const
+{
+    ASSERT(!m_httpBody);
+    ASSERT(!m_platformRequestUpdated);
+    encodeBase(encoder);
+}
+
+template<class Decoder>
+bool ResourceRequestBase::decodeWithoutPlatformData(Decoder& decoder)
+{
+    return decodeBase(decoder);
 }
 
 } // namespace WebCore
