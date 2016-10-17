@@ -34,7 +34,7 @@
 #include "WebPasteboardProxy.h"
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
-#include <WebCore/UserAgentGtk.h>
+#include <WebCore/UserAgent.h>
 #include <gtk/gtkx.h>
 #include <wtf/NeverDestroyed.h>
 

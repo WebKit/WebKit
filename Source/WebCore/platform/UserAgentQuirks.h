@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Naver Corp. All rights reserved.
+ * Copyright (C) 2012, 2014, 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserAgentEfl_h
-#define UserAgentEfl_h
+#pragma once
 
+#include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
+class URL;
+
+class UserAgentQuirks {
+public:
+    enum UserAgentQuirk {
+        NeedsChromeBrowser,
+        NeedsMacintoshPlatform,
+
+        NumUserAgentQuirks
+    };
+
+    UserAgentQuirks()
+        : m_quirks(0)
+    {
+        COMPILE_ASSERT(sizeof(m_quirks) * 8 >= NumUserAgentQuirks, not_enough_room_for_quirks);
+    }
+
+    void add(UserAgentQuirk quirk)
+    {
+        ASSERT(quirk >= 0);
+        ASSERT_WITH_SECURITY_IMPLICATION(quirk < NumUserAgentQuirks);
+
+        m_quirks |= (1 << quirk);
+    }
+
+    bool contains(UserAgentQuirk quirk) const
+    {
+        return m_quirks & (1 << quirk);
+    }
+
+    bool isEmpty() const { return !m_quirks; }
+
+    static UserAgentQuirks quirksForURL(const URL&);
+
+    static String stringForQuirk(UserAgentQuirk);
+
+private:
+    uint32_t m_quirks;
+};
 
 }
-
-#endif // UserAgentEfl_h
-

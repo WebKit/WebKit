@@ -1,3 +1,40 @@
+2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Move user agent quirks to cross-platform location
+        https://bugs.webkit.org/show_bug.cgi?id=163508
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tested by Tools/TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp.
+
+        * PlatformGTK.cmake:
+        * platform/UserAgent.h: Renamed from Source/WebCore/platform/gtk/UserAgentGtk.h.
+        * platform/UserAgentQuirks.cpp: Added. Moved from UserAgentGtk.cpp.
+        (WebCore::urlRequiresChromeBrowser): Sneakily tighten up Google domain detection, it should
+        only apply to sites if the base domain matches google.*, not any base domain that starts
+        with google.
+        (WebCore::urlRequiresMacintoshPlatform):
+        (WebCore::UserAgentQuirks::quirksForURL):
+        (WebCore::UserAgentQuirks::stringForQuirk):
+        * platform/UserAgentQuirks.h: Moved from UserAgentGtk.cpp. prepare-ChangeLog thinks it was
+        renamed from Source/WebCore/platform/efl/UserAgentEfl.h, but prepare-ChangeLog is dumb.
+        (WebCore::UserAgentQuirks::UserAgentQuirks):
+        (WebCore::UserAgentQuirks::add):
+        (WebCore::UserAgentQuirks::contains):
+        (WebCore::UserAgentQuirks::isEmpty):
+        * platform/efl/UserAgentEfl.cpp:
+        (WebCore::standardUserAgentForURL):
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::buildUserAgentString):
+        (WebCore::standardUserAgentForURL):
+        (): Deleted.
+        (WebCore::UserAgentQuirks::UserAgentQuirks): Deleted.
+        (WebCore::UserAgentQuirks::add): Deleted.
+        (WebCore::UserAgentQuirks::contains): Deleted.
+        (WebCore::UserAgentQuirks::isEmpty): Deleted.
+        (WebCore::urlRequiresChromeBrowser): Deleted.
+        (WebCore::urlRequiresMacintoshPlatform): Deleted.
+
 2016-10-17  Alberto Garcia  <berto@igalia.com>
 
         [GTK] gobject-introspection on package build with webkit2gtk fails without active X session

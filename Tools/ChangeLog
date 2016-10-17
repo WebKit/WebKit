@@ -1,3 +1,19 @@
+2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Move user agent quirks to cross-platform location
+        https://bugs.webkit.org/show_bug.cgi?id=163508
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the test to a cross-platform location and improve it to better check the full list of
+        sites we have defined quirks for.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/gtk/UserAgentQuirks.cpp.
+        (TestWebKitAPI::assertUserAgentForURLHasChromeBrowserQuirk):
+        (TestWebKitAPI::assertUserAgentForURLHasMacPlatformQuirk):
+        (TestWebKitAPI::TEST):
+
 2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Downloads should always sniff contents

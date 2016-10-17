@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "UserAgentEfl.h"
+#include "UserAgent.h"
 
 #include <wtf/NeverDestroyed.h>
 
@@ -73,6 +73,12 @@ String standardUserAgent(const String& applicationName, const String& applicatio
         finalApplicationVersion = ASCIILiteral(versionForUAString());
 
     return standardUserAgentString + ' ' + applicationName + '/' + finalApplicationVersion;
+}
+
+String standardUserAgentForURL(const URL&)
+{
+    // Disable user agent quirks for now.
+    return String();
 }
 
 } // namespace WebCore

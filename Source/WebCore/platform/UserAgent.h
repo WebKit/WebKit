@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012, 2014 Igalia S.L.
+ * Copyright (C) 2012, 2014, 2016 Igalia S.L.
+ * Copyright (C) 2014 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +24,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserAgentGtk_h
-#define UserAgentGtk_h
+#pragma once
+
+#if PLATFORM(COCOA)
+// FIXME: Remove Source/WebCore/page/cocoa/UserAgent.h
+#include_next "UserAgent.h"
+#else
 
 #include <wtf/text/WTFString.h>
 
@@ -36,5 +41,4 @@ String standardUserAgentForURL(const URL&);
 
 }
 
-#endif // UserAgentGtk_h
-
+#endif
