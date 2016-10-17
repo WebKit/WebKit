@@ -53,7 +53,6 @@
 #include "JSProxy.h"
 #include "JSString.h"
 #include "JSTypedArrays.h"
-#include "JSWASMModule.h"
 #include "LLIntData.h"
 #include "ObjectConstructor.h"
 #include "ParserError.h"

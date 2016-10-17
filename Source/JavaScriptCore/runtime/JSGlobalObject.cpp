@@ -106,7 +106,6 @@
 #include "JSTypedArrayViewConstructor.h"
 #include "JSTypedArrayViewPrototype.h"
 #include "JSTypedArrays.h"
-#include "JSWASMModule.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
 #include "JSWithScope.h"
@@ -155,6 +154,7 @@
 #include "WeakMapPrototype.h"
 #include "WeakSetConstructor.h"
 #include "WeakSetPrototype.h"
+#include "WebAssemblyObject.h"
 #include <wtf/RandomNumber.h>
 
 #if ENABLE(INTL)
@@ -817,6 +817,22 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "$vm"), dollarVM, DontEnum);
     }
+
+#if ENABLE(WEBASSEMBLY)
+    if (Options::useWebAssembly()) {
+        auto* wasm = WebAssemblyObject::create(vm, this, WebAssemblyObject::createStructure(vm, this, m_objectPrototype.get()));
+        putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), wasm, DontEnum);
+        GlobalPropertyInfo extraStaticGlobals[] = {
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().ModulePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Module")), DontEnum | DontDelete | ReadOnly),
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().InstancePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Instance")), DontEnum | DontDelete | ReadOnly),
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().MemoryPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Memory")), DontEnum | DontDelete | ReadOnly),
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().TablePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Table")), DontEnum | DontDelete | ReadOnly),
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().CompileErrorPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "CompileError")), DontEnum | DontDelete | ReadOnly),
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().RuntimeErrorPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "RuntimeError")), DontEnum | DontDelete | ReadOnly),
+        };
+        addStaticGlobals(extraStaticGlobals, WTF_ARRAY_LENGTH(extraStaticGlobals));
+    }
+#endif // ENABLE(WEBASSEMBLY)
 
     resetPrototype(vm, getPrototypeDirect());
 }

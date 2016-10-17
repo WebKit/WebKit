@@ -159,6 +159,13 @@ namespace JSC {
     macro(stringSubstrInternal) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
+    macro(WebAssembly) \
+    macro(Module) \
+    macro(Instance) \
+    macro(Memory) \
+    macro(Table) \
+    macro(CompileError) \
+    macro(RuntimeError) \
 
 
 #define INITIALIZE_PRIVATE_TO_PUBLIC_ENTRY(name) m_privateToPublicMap.add(m_##name##PrivateName.impl(), &m_##name);

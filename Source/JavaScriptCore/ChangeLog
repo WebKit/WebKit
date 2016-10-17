@@ -1,3 +1,35 @@
+2016-10-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement basic stub
+
+        Implement the global WebAssembly JavaScript object, and its constructor +
+        function properties as described in:
+          https://github.com/WebAssembly/design/blob/master/JS.md
+
+        These don't do anything at the moment, the parent bug will take care of adding
+        more functionality and associated tests.
+
+        WebAssembly JS API: implement basic stub
+        https://bugs.webkit.org/show_bug.cgi?id=163404
+
+        Reviewed by Keith Miller.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.h: register the new WebAssembly object's name and its constructor properties
+        * jsc.cpp: remove useless include
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): add the WebAssembly global object and its constructor properties, but only if the JSC option enables it
+        * runtime/Options.h: add the useWebAssembly (alias: enableWebAssembly) option, defaulting to false
+        * wasm/WebAssemblyObject.cpp: Added.
+        (JSC::WebAssemblyObject::create): boilerplate
+        (JSC::WebAssemblyObject::createStructure): boilerplate
+        (JSC::WebAssemblyObject::finishCreation): boilerplate
+        (JSC::WebAssemblyObject::WebAssemblyObject): boilerplate
+        (JSC::wasmObjectFuncvalidate): auto-throws for now
+        (JSC::wasmObjectFunccompile): auto-throws for now
+        * wasm/WebAssemblyObject.h: Added.
+
 2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, build fix after r207428

@@ -1160,7 +1160,7 @@ def runWebAssembly
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
-    run("default-wasm", "-m")
+    run("default-wasm", "-m", "--useWebAssembly=1")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)

@@ -23,3 +23,5 @@
 
 - path: wasm/self-test/
   cmd: runWebAssembly
+- path: wasm/js-api/
+  cmd: runWebAssembly

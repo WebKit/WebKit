@@ -1,3 +1,21 @@
+2016-10-17  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement basic stub
+
+        Implement the global WebAssembly JavaScript object, and its constructor +
+        function properties as described in:
+          https://github.com/WebAssembly/design/blob/master/JS.md
+
+        These don't do anything at the moment, the parent bug will take care of adding
+        more functionality and associated tests.
+
+        WebAssembly JS API: implement basic stub
+        https://bugs.webkit.org/show_bug.cgi?id=163404
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-jsc-stress-tests: use the new JSC option which exposes the WebAssembly object.
+
 2016-10-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         resolve-ChangeLogs: Specify --no-page to git diff
