@@ -167,7 +167,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     unsigned size = historyItems.size();
     NSMutableArray *entriesArray = [[NSMutableArray alloc] initWithCapacity:size];
     for (unsigned i = 0; i < size; ++i)
-        [entriesArray addObject:[kit(historyItems[i].ptr()) dictionaryRepresentationIncludingChildren:NO]];
+        [entriesArray addObject:[kit(const_cast<HistoryItem*>(historyItems[i].ptr())) dictionaryRepresentationIncludingChildren:NO]];
     
     NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
         entriesArray, WebBackForwardListDictionaryEntriesKey,

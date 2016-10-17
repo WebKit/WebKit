@@ -1,5 +1,12 @@
 2016-10-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix iOS build.
+
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dictionaryRepresentation]):
+
+2016-10-17  Anders Carlsson  <andersca@apple.com>
+
         CTTE some of the BackForwardList member functions
         https://bugs.webkit.org/show_bug.cgi?id=163555
 
