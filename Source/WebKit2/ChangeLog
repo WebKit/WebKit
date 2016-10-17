@@ -1,5 +1,18 @@
 2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Downloads should always sniff contents
+        https://bugs.webkit.org/show_bug.cgi?id=163538
+
+        Reviewed by Michael Catanzaro.
+
+        It's quite common that downloads have weird filenames with no extension, so it would be better if the loader
+        sniff the contents to guess the mime type.
+
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::startNetworkLoad): Pass true for shouldContentSniff parameter of ResourceHandle::create().
+
+2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Switch to use API::DownloadClient instead of the C API client
         https://bugs.webkit.org/show_bug.cgi?id=163537
 

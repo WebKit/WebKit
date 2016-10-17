@@ -212,7 +212,7 @@ void Download::startNetworkLoad()
     ASSERT(!m_downloadClient);
     ASSERT(!m_resourceHandle);
     m_downloadClient = std::make_unique<DownloadClient>(*this);
-    m_resourceHandle = ResourceHandle::create(0, m_request, m_downloadClient.get(), false, false);
+    m_resourceHandle = ResourceHandle::create(0, m_request, m_downloadClient.get(), false, true);
     didStart();
 }
 

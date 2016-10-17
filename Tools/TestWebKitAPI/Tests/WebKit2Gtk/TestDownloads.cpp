@@ -388,15 +388,17 @@ static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
     soup_message_headers_append(message->response_headers, "Content-Disposition", contentDisposition.get());
 }
 
-static gboolean writeNextChunkIdle(SoupMessage* message)
-{
-    soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, "chunk", 5);
-    return FALSE;
-}
-
 static void writeNextChunk(SoupMessage* message)
 {
-    g_timeout_add(100, reinterpret_cast<GSourceFunc>(writeNextChunkIdle), message);
+    /* We need a big enough chunk for the sniffer to not block the load */
+    static const char* chunk = "Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
+        "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!";
+    soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, chunk, strlen(chunk));
 }
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
@@ -416,6 +418,9 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         g_signal_connect(message, "wrote_chunk", G_CALLBACK(writeNextChunk), nullptr);
         return;
     }
+
+    if (g_str_equal(path, "/unknown"))
+        path = "/test.pdf";
 
     GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), path, nullptr));
     char* contents;
@@ -612,6 +617,33 @@ static void testPolicyResponseDownload(PolicyResponseDownloadTest* test, gconstp
     test->cancelDownloadAndWaitUntilFinished();
 }
 
+static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
+{
+    GRefPtr<WebKitDownload> download = adoptGRef(test->downloadURIAndWaitUntilFinishes(kServer->getURIForPath("/unknown")));
+    g_assert(!webkit_download_get_web_view(download.get()));
+
+    Vector<DownloadTest::DownloadEvent>& events = test->m_downloadEvents;
+    g_assert_cmpint(events.size(), ==, 5);
+    g_assert_cmpint(events[0], ==, DownloadTest::Started);
+    g_assert_cmpint(events[1], ==, DownloadTest::ReceivedResponse);
+    g_assert_cmpint(events[2], ==, DownloadTest::CreatedDestination);
+    g_assert_cmpint(events[3], ==, DownloadTest::ReceivedData);
+    g_assert_cmpint(events[4], ==, DownloadTest::Finished);
+    events.clear();
+
+    WebKitURIRequest* request = webkit_download_get_request(download.get());
+    WEBKIT_IS_URI_REQUEST(request);
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/unknown"));
+
+    WebKitURIResponse* response = webkit_download_get_response(download.get());
+    WEBKIT_IS_URI_RESPONSE(response);
+    g_assert_cmpstr(webkit_uri_response_get_mime_type(response), ==, "application/pdf");
+
+    g_assert(webkit_download_get_destination(download.get()));
+    g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
+    test->checkDestinationAndDeleteFile(download.get(), kServerSuggestedFilename);
+}
+
 void beforeAll()
 {
     kServer = new WebKitTestServer();
@@ -625,6 +657,7 @@ void beforeAll()
     DownloadErrorTest::add("Downloads", "remote-file-error", testDownloadRemoteFileError);
     WebViewDownloadTest::add("WebKitWebView", "download-uri", testWebViewDownloadURI);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
+    DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
 }
 
 void afterAll()
