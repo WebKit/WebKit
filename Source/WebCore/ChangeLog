@@ -1,3 +1,16 @@
+2016-10-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        preprocessor.pm: cl.exe outputs processing filenames if Windows Perl is used
+        https://bugs.webkit.org/show_bug.cgi?id=163435
+
+        Reviewed by Alex Christensen.
+
+        cl.exe outputs processing filenames to stderr. Suppress this
+        annoying messages by using open3 instead of open2.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): Use open3 in case of Windows Perl.
+
 2016-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use the reject() helper function for conditionally throwing TypeErrors.

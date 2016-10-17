@@ -99,7 +99,10 @@ sub applyPreprocessor
             }
         };
     } elsif ($Config::Config{"osname"} eq "MSWin32") {
-        $pid = open2(\*PP_OUT, \*PP_IN, $preprocessor, @args, @macros, $fileName);
+        # Suppress STDERR so that if we're using cl.exe, the output
+        # name isn't needlessly echoed.
+        use Symbol 'gensym'; my $err = gensym;
+        $pid = open3(\*PP_IN, \*PP_OUT, $err, $preprocessor, @args, @macros, $fileName);
     } else {
         $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), @args, @macros, $fileName);
     }
