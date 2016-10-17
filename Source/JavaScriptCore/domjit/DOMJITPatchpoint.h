@@ -34,7 +34,7 @@ namespace JSC { namespace DOMJIT {
 
 class PatchpointParams;
 
-typedef CCallHelpers::JumpList PatchpointGeneratorFunction(CCallHelpers&, const PatchpointParams&);
+typedef CCallHelpers::JumpList PatchpointGeneratorFunction(CCallHelpers&, PatchpointParams&);
 typedef SharedTask<PatchpointGeneratorFunction> PatchpointGenerator;
 
 // DOMJIT patchpoint is the way to inject an opaque code generator into DFG and FTL.

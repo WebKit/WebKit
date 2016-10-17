@@ -204,6 +204,7 @@ set(JavaScriptCore_SOURCES
     bytecode/ComplexGetStatus.cpp
     bytecode/DataFormat.cpp
     bytecode/DFGExitProfile.cpp
+    bytecode/DOMJITAccessCasePatchpointParams.cpp
     bytecode/DeferredCompilationCallback.cpp
     bytecode/DeferredSourceDump.cpp
     bytecode/ExecutionCounter.cpp

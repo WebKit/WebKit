@@ -50,7 +50,7 @@ static void dispatch(CCallHelpers& jit, FTL::State* state, const B3::StackmapGen
 }
 
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
-    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) const \
+    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers& jit, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
         dispatch(jit, &m_state, m_params, m_node, m_exceptions, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
     } \

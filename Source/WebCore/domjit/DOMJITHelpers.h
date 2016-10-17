@@ -59,7 +59,7 @@ void tryLookUpWrapperCache(CCallHelpers& jit, CCallHelpers::JumpList& failureCas
 }
 
 template<typename WrappedType, typename ToJSFunction>
-void toWrapper(CCallHelpers& jit, const JSC::DOMJIT::PatchpointParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function, JSC::JSValue globalObjectConstant)
+void toWrapper(CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params, GPRReg wrapped, GPRReg globalObject, JSValueRegs result, ToJSFunction function, JSC::JSValue globalObjectConstant)
 {
     ASSERT(wrapped != result.payloadGPR());
     ASSERT(globalObject != result.payloadGPR());

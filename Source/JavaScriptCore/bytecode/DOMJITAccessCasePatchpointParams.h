@@ -25,37 +25,36 @@
 
 #pragma once
 
-#if ENABLE(FTL_JIT)
+#if ENABLE(JIT)
 
-#include "B3StackmapGenerationParams.h"
 #include "DOMJITPatchpointParams.h"
 
-namespace JSC { namespace FTL {
+namespace JSC {
 
-class State;
+struct AccessGenerationState;
 
-class DOMJITPatchpointParams : public DOMJIT::PatchpointParams {
+class DOMJITAccessCasePatchpointParams : public DOMJIT::PatchpointParams {
 public:
-    DOMJITPatchpointParams(State& state, const B3::StackmapGenerationParams& params, DFG::Node* node, Box<CCallHelpers::JumpList> exceptions, Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
+    DOMJITAccessCasePatchpointParams(Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
         : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
-        , m_state(state)
-        , m_params(params)
-        , m_node(node)
-        , m_exceptions(exceptions)
     {
     }
+
+    class SlowPathCallGenerator {
+    public:
+        virtual ~SlowPathCallGenerator() { }
+        virtual CCallHelpers::JumpList generate(VM&, AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&) = 0;
+    };
+
+    CCallHelpers::JumpList emitSlowPathCalls(VM&, AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&);
 
 private:
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
     DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
-
-    State& m_state;
-    const B3::StackmapGenerationParams& m_params;
-    DFG::Node* m_node;
-    Box<CCallHelpers::JumpList> m_exceptions;
+    Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;
 };
 
-} }
+}
 
 #endif

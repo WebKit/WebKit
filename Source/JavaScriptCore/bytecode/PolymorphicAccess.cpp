@@ -31,6 +31,8 @@
 #include "BinarySwitch.h"
 #include "CCallHelpers.h"
 #include "CodeBlock.h"
+#include "DOMJITAccessCasePatchpointParams.h"
+#include "DOMJITCallDOMPatchpoint.h"
 #include "DirectArguments.h"
 #include "GetterSetter.h"
 #include "Heap.h"
@@ -72,7 +74,28 @@ void AccessGenerationState::succeed()
     success.append(jit->jump());
 }
 
-void AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling(const RegisterSet& extra)
+const RegisterSet& AccessGenerationState::liveRegistersForCall()
+{
+    if (!m_calculatedRegistersForCallAndExceptionHandling)
+        calculateLiveRegistersForCallAndExceptionHandling();
+    return m_liveRegistersForCall;
+}
+
+const RegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite()
+{
+    if (!m_calculatedRegistersForCallAndExceptionHandling)
+        calculateLiveRegistersForCallAndExceptionHandling();
+    return m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+}
+
+static RegisterSet calleeSaveRegisters()
+{
+    RegisterSet result = RegisterSet::registersToNotSaveForJSCall();
+    result.filter(RegisterSet::registersToNotSaveForCCall());
+    return result;
+}
+
+const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling) {
         m_calculatedRegistersForCallAndExceptionHandling = true;
@@ -83,35 +106,25 @@ void AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling(co
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
-        m_liveRegistersForCall.merge(extra);
-        m_liveRegistersForCall.exclude(RegisterSet::registersToNotSaveForJSCall());
-        m_liveRegistersForCall.merge(extra);
+        m_liveRegistersForCall.exclude(calleeSaveRegisters());
     }
+    return m_liveRegistersForCall;
 }
 
-void AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSet& extra)
+auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSet& extra) -> SpillState
 {
-    calculateLiveRegistersForCallAndExceptionHandling(extra);
+    RegisterSet liveRegisters = liveRegistersForCall();
+    liveRegisters.merge(extra);
     
     unsigned extraStackPadding = 0;
-    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegistersForCall(), extraStackPadding);
-    if (m_numberOfStackBytesUsedForRegisterPreservation != std::numeric_limits<unsigned>::max())
-        RELEASE_ASSERT(numberOfStackBytesUsedForRegisterPreservation == m_numberOfStackBytesUsedForRegisterPreservation);
-    m_numberOfStackBytesUsedForRegisterPreservation = numberOfStackBytesUsedForRegisterPreservation;
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
+    return SpillState {
+        liveRegisters,
+        numberOfStackBytesUsedForRegisterPreservation
+    };
 }
 
-void AccessGenerationState::restoreLiveRegistersFromStackForCall(bool isGetter)
-{
-    RegisterSet dontRestore;
-    if (isGetter) {
-        // This is the result value. We don't want to overwrite the result with what we stored to the stack.
-        // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-        dontRestore.set(valueRegs);
-    }
-    restoreLiveRegistersFromStackForCall(dontRestore);
-}
-
-void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException()
+void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException(const SpillState& spillState)
 {
     // Even if we're a getter, we don't want to ignore the result value like we normally do
     // because the getter threw, and therefore, didn't return a value that means anything.
@@ -119,25 +132,26 @@ void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownExcept
     // inline cache. The subtlety here is if the base and the result are the same register,
     // and the getter threw, we want OSR exit to see the original base value, not the result
     // of the getter call.
-    RegisterSet dontRestore = liveRegistersForCall();
+    RegisterSet dontRestore = spillState.spilledRegisters;
     // As an optimization here, we only need to restore what is live for exception handling.
     // We can construct the dontRestore set to accomplish this goal by having it contain only
     // what is live for call but not live for exception handling. By ignoring things that are
     // only live at the call but not the exception handler, we will only restore things live
     // at the exception handler.
     dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite());
-    restoreLiveRegistersFromStackForCall(dontRestore);
+    restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 }
 
-void AccessGenerationState::restoreLiveRegistersFromStackForCall(const RegisterSet& dontRestore)
+void AccessGenerationState::restoreLiveRegistersFromStackForCall(const SpillState& spillState, const RegisterSet& dontRestore)
 {
     unsigned extraStackPadding = 0;
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, liveRegistersForCall(), dontRestore, m_numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, spillState.spilledRegisters, dontRestore, spillState.numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
 }
 
 CallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal()
 {
-    RELEASE_ASSERT(m_calculatedRegistersForCallAndExceptionHandling);
+    if (!m_calculatedRegistersForCallAndExceptionHandling)
+        calculateLiveRegistersForCallAndExceptionHandling();
 
     if (!m_calculatedCallSiteIndex) {
         m_calculatedCallSiteIndex = true;
@@ -151,8 +165,11 @@ CallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal
     return m_callSiteIndex;
 }
 
-const HandlerInfo& AccessGenerationState::originalExceptionHandler() const
+const HandlerInfo& AccessGenerationState::originalExceptionHandler()
 {
+    if (!m_calculatedRegistersForCallAndExceptionHandling)
+        calculateLiveRegistersForCallAndExceptionHandling();
+
     RELEASE_ASSERT(m_needsToRestoreRegistersIfException);
     HandlerInfo* exceptionHandler = jit->codeBlock()->handlerForIndex(stubInfo->callSiteIndex.bits());
     RELEASE_ASSERT(exceptionHandler);
@@ -932,6 +949,16 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             return;
         }
 
+        if (m_type == CustomAccessorGetter && m_rareData->domJIT) {
+            // We do not need to emit CheckDOM operation since structure check ensures
+            // that the structure of the given base value is structure()! So all we should
+            // do is performing the CheckDOM thingy in IC compiling time here.
+            if (structure()->classInfo()->isSubClassOf(m_rareData->domJIT->thisClassInfo())) {
+                emitDOMJITGetter(state, baseForGetGPR);
+                return;
+            }
+        }
+
         // Stuff for custom getters/setters.
         CCallHelpers::Call operationCall;
 
@@ -940,12 +967,19 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         CCallHelpers::Call fastPathCall;
         CCallHelpers::Call slowPathCall;
 
-        CCallHelpers::Jump success;
-        CCallHelpers::Jump fail;
-
         // This also does the necessary calculations of whether or not we're an
         // exception handling call site.
-        state.preserveLiveRegistersToStackForCall();
+        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall();
+
+        auto restoreLiveRegistersFromStackForCall = [&](AccessGenerationState::SpillState& spillState, bool callHasReturnValue) {
+            RegisterSet dontRestore;
+            if (callHasReturnValue) {
+                // This is the result value. We don't want to overwrite the result with what we stored to the stack.
+                // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
+                dontRestore.set(valueRegs);
+            }
+            state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
+        };
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
@@ -965,6 +999,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             //
             // Therefore, we temporarily grow the stack for the purpose of the call and then
             // shrink it after.
+
+            state.setSpillStateForJSGetterSetter(spillState);
 
             RELEASE_ASSERT(!m_rareData->callLinkInfo);
             m_rareData->callLinkInfo = std::make_unique<CallLinkInfo>();
@@ -1065,9 +1101,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             done.link(&jit);
 
-            jit.addPtr(CCallHelpers::TrustedImm32((codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - state.numberOfStackBytesUsedForRegisterPreservation()),
+            jit.addPtr(CCallHelpers::TrustedImm32((codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation),
                 GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-            state.restoreLiveRegistersFromStackForCall(isGetter());
+            bool callHasReturnValue = isGetter();
+            restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
 
             jit.addLinkTask(
                 [=, &vm] (LinkBuffer& linkBuffer) {
@@ -1127,11 +1164,12 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             CCallHelpers::Jump noException =
                 jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
 
-            state.restoreLiveRegistersFromStackForCallWithThrownException();
+            state.restoreLiveRegistersFromStackForCallWithThrownException(spillState);
             state.emitExplicitExceptionHandler();
         
             noException.link(&jit);
-            state.restoreLiveRegistersFromStackForCall(isGetter());
+            bool callHasReturnValue = isGetter();
+            restoreLiveRegistersFromStackForCall(spillState, callHasReturnValue);
         }
         state.succeed();
         return;
@@ -1248,7 +1286,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 RegisterSet extraRegistersToPreserve;
                 extraRegistersToPreserve.set(baseGPR);
                 extraRegistersToPreserve.set(valueRegs);
-                state.preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
+                AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
                 
                 jit.store32(
                     CCallHelpers::TrustedImm32(
@@ -1288,11 +1326,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 CCallHelpers::Jump noException =
                     jit.emitExceptionCheck(CCallHelpers::InvertedExceptionCheck);
                 
-                state.restoreLiveRegistersFromStackForCallWithThrownException();
+                state.restoreLiveRegistersFromStackForCallWithThrownException(spillState);
                 state.emitExplicitExceptionHandler();
                 
                 noException.link(&jit);
-                state.restoreLiveRegistersFromStackForCall();
+                state.restoreLiveRegistersFromStackForCall(spillState);
             }
         }
 
@@ -1383,6 +1421,124 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     }
     
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGetGPR)
+{
+    CCallHelpers& jit = *state.jit;
+    VM& vm = *jit.vm();
+    StructureStubInfo& stubInfo = *state.stubInfo;
+    JSValueRegs valueRegs = state.valueRegs;
+    GPRReg baseGPR = state.baseGPR;
+    GPRReg scratchGPR = state.scratchGPR;
+
+    // We construct the environment that can execute the DOMJIT::Patchpoint here.
+    Ref<DOMJIT::CallDOMPatchpoint> patchpoint = m_rareData->domJIT->callDOM();
+
+    Vector<GPRReg> gpScratch;
+    Vector<FPRReg> fpScratch;
+    Vector<DOMJIT::Value> regs;
+
+    ScratchRegisterAllocator allocator(stubInfo.patch.usedRegisters);
+    allocator.lock(baseGPR);
+#if USE(JSVALUE32_64)
+    allocator.lock(static_cast<GPRReg>(stubInfo.patch.baseTagGPR));
+#endif
+    allocator.lock(valueRegs);
+    allocator.lock(scratchGPR);
+
+    GPRReg paramBaseGPR = InvalidGPRReg;
+    GPRReg paramGlobalObjectGPR = InvalidGPRReg;
+    JSValueRegs paramValueRegs = valueRegs;
+    GPRReg remainingScratchGPR = InvalidGPRReg;
+
+    // valueRegs and baseForGetGPR may be the same. For example, in Baseline JIT, we pass the same regT0 for baseGPR and valueRegs.
+    // In FTL, there is no constraint that the baseForGetGPR interferes with the result. To make implementation simple in
+    // DOMJIT::Patchpoint, DOMJIT::Patchpoint assumes that result registers always early interfere with input registers, in this case,
+    // baseForGetGPR. So we move baseForGetGPR to the other register if baseForGetGPR == valueRegs.
+    if (baseForGetGPR != valueRegs.payloadGPR()) {
+        paramBaseGPR = baseForGetGPR;
+        if (!patchpoint->requireGlobalObject)
+            remainingScratchGPR = scratchGPR;
+        else
+            paramGlobalObjectGPR = scratchGPR;
+    } else {
+        jit.move(valueRegs.payloadGPR(), scratchGPR);
+        paramBaseGPR = scratchGPR;
+        if (patchpoint->requireGlobalObject)
+            paramGlobalObjectGPR = allocator.allocateScratchGPR();
+    }
+
+    JSGlobalObject* globalObjectForDOMJIT = structure()->globalObject();
+
+    regs.append(paramValueRegs);
+    if (patchpoint->requireGlobalObject) {
+        ASSERT(paramGlobalObjectGPR != InvalidGPRReg);
+        regs.append(DOMJIT::Value(paramGlobalObjectGPR, globalObjectForDOMJIT));
+    }
+    regs.append(paramBaseGPR);
+
+    if (patchpoint->numGPScratchRegisters) {
+        unsigned i = 0;
+        if (remainingScratchGPR != InvalidGPRReg) {
+            gpScratch.append(remainingScratchGPR);
+            ++i;
+        }
+        for (; i < patchpoint->numGPScratchRegisters; ++i)
+            gpScratch.append(allocator.allocateScratchGPR());
+    }
+
+    for (unsigned i = 0; i < patchpoint->numFPScratchRegisters; ++i)
+        fpScratch.append(allocator.allocateScratchFPR());
+
+    // Let's store the reused registers to the stack. After that, we can use allocated scratch registers.
+    ScratchRegisterAllocator::PreservedState preservedState =
+        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
+
+    if (verbose) {
+        dataLog("baseGPR = ", baseGPR, "\n");
+        dataLog("valueRegs = ", valueRegs, "\n");
+        dataLog("scratchGPR = ", scratchGPR, "\n");
+        dataLog("paramBaseGPR = ", paramBaseGPR, "\n");
+        if (paramGlobalObjectGPR != InvalidGPRReg)
+            dataLog("paramGlobalObjectGPR = ", paramGlobalObjectGPR, "\n");
+        dataLog("paramValueRegs = ", paramValueRegs, "\n");
+        for (unsigned i = 0; i < patchpoint->numGPScratchRegisters; ++i)
+            dataLog("gpScratch[", i, "] = ", gpScratch[i], "\n");
+    }
+
+    if (patchpoint->requireGlobalObject)
+        jit.move(CCallHelpers::TrustedImmPtr(globalObjectForDOMJIT), paramGlobalObjectGPR);
+
+    // We just spill the registers used in DOMJIT::Patchpoint here. For not spilled registers here explicitly,
+    // they must be in the used register set passed by the callers (Baseline, DFG, and FTL) if they need to be kept.
+    // Some registers can be locked, but not in the used register set. For example, the caller could make baseGPR
+    // same to valueRegs, and not include it in the used registers since it will be changed.
+    RegisterSet registersToSpillForCCall;
+    for (auto& value : regs) {
+        DOMJIT::Reg reg = value.reg();
+        if (reg.isJSValueRegs())
+            registersToSpillForCCall.set(reg.jsValueRegs());
+        else if (reg.isGPR())
+            registersToSpillForCCall.set(reg.gpr());
+        else
+            registersToSpillForCCall.set(reg.fpr());
+    }
+    for (GPRReg reg : gpScratch)
+        registersToSpillForCCall.set(reg);
+    for (FPRReg reg : fpScratch)
+        registersToSpillForCCall.set(reg);
+    registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
+
+    DOMJITAccessCasePatchpointParams params(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
+    patchpoint->generator()->run(jit, params);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
+    state.succeed();
+
+    CCallHelpers::JumpList exceptions = params.emitSlowPathCalls(vm, state, registersToSpillForCCall, jit);
+    exceptions.link(&jit);
+    allocator.restoreReusedRegistersByPopping(jit, preservedState);
+    state.emitExplicitExceptionHandler();
 }
 
 PolymorphicAccess::PolymorphicAccess() { }
@@ -1684,13 +1840,15 @@ AccessGenerationResult PolymorphicAccess::regenerate(
         MacroAssembler::Label makeshiftCatchHandler = jit.label();
 
         int stackPointerOffset = codeBlock->stackPointerOffset() * sizeof(EncodedJSValue);
+        AccessGenerationState::SpillState spillStateForJSGetterSetter = state.spillStateForJSGetterSetter();
+        ASSERT(!spillStateForJSGetterSetter.isEmpty());
         stackPointerOffset -= state.preservedReusedRegisterState.numberOfBytesPreserved;
-        stackPointerOffset -= state.numberOfStackBytesUsedForRegisterPreservation();
+        stackPointerOffset -= spillStateForJSGetterSetter.numberOfStackBytesUsedForRegisterPreservation;
 
         jit.loadPtr(vm.addressOfCallFrameForCatch(), GPRInfo::callFrameRegister);
         jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
-        state.restoreLiveRegistersFromStackForCallWithThrownException();
+        state.restoreLiveRegistersFromStackForCallWithThrownException(spillStateForJSGetterSetter);
         state.restoreScratch();
         CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
 

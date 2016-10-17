@@ -1,3 +1,19 @@
+2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Use DOMJIT::Patchpoint in IC
+        https://bugs.webkit.org/show_bug.cgi?id=163223
+
+        Reviewed by Saam Barati.
+
+        Make DOMJITPatchpointParams non-const.
+
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJITHelpers::toWrapper):
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::createCallDOMForOffsetAccess):
+        (WebCore::checkNode):
+        (WebCore::NodeNodeTypeDOMJIT::callDOM):
+
 2016-10-17  Chris Dumez  <cdumez@apple.com>
 
         Move form.reportValidity() behind InteractiveFormValidation setting

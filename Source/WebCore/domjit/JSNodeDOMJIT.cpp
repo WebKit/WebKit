@@ -54,7 +54,7 @@ static Ref<DOMJIT::CallDOMPatchpoint> createCallDOMForOffsetAccess(ptrdiff_t off
 {
     Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
     patchpoint->numGPScratchRegisters = 1;
-    patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+    patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
         JSValueRegs result = params[0].jsValueRegs();
         GPRReg globalObject = params[1].gpr();
         GPRReg node = params[2].gpr();
@@ -84,7 +84,7 @@ static Ref<DOMJIT::CallDOMPatchpoint> createCallDOMForOffsetAccess(ptrdiff_t off
 static Ref<DOMJIT::Patchpoint> checkNode()
 {
     Ref<DOMJIT::Patchpoint> patchpoint = DOMJIT::Patchpoint::create();
-    patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+    patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
         CCallHelpers::JumpList failureCases;
         failureCases.append(DOMJITHelpers::branchIfNotNode(jit, params[0].gpr()));
         return failureCases;
@@ -157,7 +157,7 @@ Ref<DOMJIT::CallDOMPatchpoint> NodeNodeTypeDOMJIT::callDOM()
 {
     Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
     patchpoint->requireGlobalObject = false;
-    patchpoint->setGenerator([=](CCallHelpers& jit, const DOMJIT::PatchpointParams& params) {
+    patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
         JSValueRegs result = params[0].jsValueRegs();
         GPRReg node = params[1].gpr();
         jit.load8(CCallHelpers::Address(node, JSC::JSCell::typeInfoTypeOffset()), result.payloadGPR());

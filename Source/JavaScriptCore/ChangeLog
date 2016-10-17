@@ -1,3 +1,74 @@
+2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Use DOMJIT::Patchpoint in IC
+        https://bugs.webkit.org/show_bug.cgi?id=163223
+
+        Reviewed by Saam Barati.
+
+        This patch uses DOMJIT::Patchpoint to inline DOM accesses even in IC!
+        It is useful for Baseline JIT cases and GetById cases in DFG and FTL.
+        In AccessCase, we construct the environment that allows DOMJIT::Patchpoint
+        to emit code and make DOMJIT accessors inlined in IC.
+
+        To allow DOMJIT::Patchpoint to emit code, we create a mechanism to emit calls
+        required in DOMJIT::Patchpoint. This system is useful when we create the super-
+        polymorphic support[1] later. And inlining mechanism is useful even after
+        introducing super-polymorphic support since it can work even after we fire the
+        watchpoint for super-polymorphic handling.
+
+        This patch improves Dromaeo dom-traverse 8% (263.95 runs/s v.s. 244.07 runs/s).
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=163226
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/DOMJITAccessCasePatchpointParams.cpp: Added.
+        (JSC::SlowPathCallGeneratorWithArguments::SlowPathCallGeneratorWithArguments):
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        (JSC::DOMJITAccessCasePatchpointParams::emitSlowPathCalls):
+        * bytecode/DOMJITAccessCasePatchpointParams.h: Copied from Source/JavaScriptCore/ftl/FTLDOMJITPatchpointParams.h.
+        (JSC::DOMJITAccessCasePatchpointParams::DOMJITAccessCasePatchpointParams):
+        (JSC::DOMJITAccessCasePatchpointParams::SlowPathCallGenerator::~SlowPathCallGenerator):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::liveRegistersForCall):
+        (JSC::AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::calleeSaveRegisters):
+        (JSC::AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException):
+        (JSC::AccessGenerationState::restoreLiveRegistersFromStackForCall):
+        (JSC::AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal):
+        (JSC::AccessGenerationState::originalExceptionHandler):
+        (JSC::AccessCase::generateImpl):
+        (JSC::AccessCase::emitDOMJITGetter):
+        (JSC::PolymorphicAccess::regenerate):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCall): Deleted.
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::SpillState::isEmpty):
+        (JSC::AccessGenerationState::setSpillStateForJSGetterSetter):
+        (JSC::AccessGenerationState::spillStateForJSGetterSetter):
+        (JSC::AccessGenerationState::liveRegistersForCall): Deleted.
+        (JSC::AccessGenerationState::numberOfStackBytesUsedForRegisterPreservation): Deleted.
+        (JSC::AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite): Deleted.
+        * dfg/DFGDOMJITPatchpointParams.cpp:
+        * dfg/DFGDOMJITPatchpointParams.h:
+        * domjit/DOMJITPatchpoint.h:
+        * domjit/DOMJITPatchpointParams.h:
+        (JSC::DOMJIT::PatchpointParams::addSlowPathCall):
+        * ftl/FTLDOMJITPatchpointParams.cpp:
+        * ftl/FTLDOMJITPatchpointParams.h:
+        * jsc.cpp:
+        (WTF::DOMJITNode::checkDOMJITNode):
+        (WTF::DOMJITGetterComplex::DOMJITGetterComplex):
+        (WTF::DOMJITGetterComplex::createStructure):
+        (WTF::DOMJITGetterComplex::create):
+        (WTF::DOMJITGetterComplex::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT):
+        (WTF::DOMJITGetterComplex::domJITNodeGetterSetter):
+        (WTF::DOMJITGetterComplex::finishCreation):
+        (WTF::DOMJITGetterComplex::functionEnableException):
+        (WTF::DOMJITGetterComplex::customGetter):
+        (GlobalObject::finishCreation):
+        (functionCreateDOMJITGetterComplexObject):
+
 2016-10-17  Saam Barati  <sbarati@apple.com>
 
         Build fix for HasOwnPropertyCache::Entry caused slowdown by introducing a constructor that doesn't use move semantics for the RefPtr<UniquedStringImpl> parameter

@@ -40,7 +40,7 @@ static void dispatch(SpeculativeJIT* jit, CCallHelpers::JumpList from, Operation
 }
 
 #define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) \
-    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers&, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) const \
+    void DOMJITPatchpointParams::addSlowPathCallImpl(CCallHelpers::JumpList from, CCallHelpers&, OperationType operation, ResultType result, std::tuple<__VA_ARGS__> args) \
     { \
         dispatch(m_jit, from, operation, result, args, std::make_index_sequence<std::tuple_size<decltype(args)>::value>()); \
     } \
