@@ -1,3 +1,17 @@
+2016-10-17  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Hook up WebPlatformTouchPoint's radiusX / radiusY to _UIWebTouchPoint.majorRadiusInScreenCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=163547
+
+        Reviewed by Darin Adler.
+
+        Hook up WebPlatformTouchPoint's radiusX / radiusY to _UIWebTouchPoint.majorRadiusInScreenCoordinates
+        now that it is available in UIKit.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::extractWebTouchPoint):
+
 2016-10-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         Eleminate code duplication between ResourceRequest encoding/decoding implementations
