@@ -1,5 +1,16 @@
 2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, build fix for GTK and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=163223
+
+        Attempt to fix build failures in GTK port and Windows port.
+
+        * bytecode/PolymorphicAccess.cpp:
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::SpillState::SpillState):
+
+2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DOMJIT] Use DOMJIT::Patchpoint in IC
         https://bugs.webkit.org/show_bug.cgi?id=163223
 

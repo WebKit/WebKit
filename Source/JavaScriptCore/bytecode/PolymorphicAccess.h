@@ -474,6 +474,12 @@ struct AccessGenerationState {
     void succeed();
 
     struct SpillState {
+        SpillState(RegisterSet&& regs, unsigned usedStackBytes)
+            : spilledRegisters(WTFMove(regs))
+            , numberOfStackBytesUsedForRegisterPreservation(usedStackBytes)
+        {
+        }
+
         RegisterSet spilledRegisters { };
         unsigned numberOfStackBytesUsedForRegisterPreservation { std::numeric_limits<unsigned>::max() };
 

@@ -119,7 +119,7 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
     return SpillState {
-        liveRegisters,
+        WTFMove(liveRegisters),
         numberOfStackBytesUsedForRegisterPreservation
     };
 }
