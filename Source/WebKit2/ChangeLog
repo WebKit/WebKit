@@ -1,3 +1,23 @@
+2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to use API::DownloadClient instead of the C API client
+        https://bugs.webkit.org/show_bug.cgi?id=163537
+
+        Reviewed by Michael Catanzaro.
+
+        The code is simpler and we avoid all the toImpl/toAPI.
+
+        * UIProcess/API/gtk/WebKitDownloadClient.cpp:
+        (attachDownloadClientToContext):
+        (didStart):
+        (didReceiveResponse):
+        (didReceiveData):
+        (decideDestinationWithSuggestedFilename):
+        (didCreateDestination):
+        (didFail):
+        (didCancel):
+        (didFinish):
+
 2016-10-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Disable CSS Grid Layout runtime flag by default
