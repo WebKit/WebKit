@@ -108,6 +108,7 @@ protected:
     // Media controls
     String mediaControlsStyleSheet() override;
     String mediaControlsScript() override;
+    String mediaControlsBase64StringForIconAndPlatform(const String&, const String&) override;
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

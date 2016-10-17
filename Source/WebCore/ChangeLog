@@ -1,5 +1,32 @@
 2016-10-17  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Add a MediaControlsHost API to retrieve images as base64
+        https://bugs.webkit.org/show_bug.cgi?id=163502
+        <rdar://problem/28792017>
+
+        Reviewed by Darin Adler.
+
+        Add a new `base64StringForIconAndPlatform()` method to MediaControlsHost such that we
+        may load images from the modern-media-controls directory in the WebCore.framework bundle.
+        We use this new method in the iconService singleton when a `mediaControlsHost` is set,
+        which will be set in a later patch.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::base64StringForIconAndPlatform):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/modern-media-controls/controls/icon-service.js:
+        (const.iconService.new.IconService.prototype.urlForIconNameAndLayoutTraits):
+        (const.iconService.new.IconService):
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsBase64StringForIconAndPlatform):
+        (WebCore::RenderTheme::mediaControlsScript): Deleted.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsBase64StringForIconAndPlatform):
+
+2016-10-17  Antoine Quint  <graouts@apple.com>
+
         [Modern Media Controls] Add a MediaControlsHost API to retrieve the shadow root CSS
         https://bugs.webkit.org/show_bug.cgi?id=163501
         <rdar://problem/28792014>

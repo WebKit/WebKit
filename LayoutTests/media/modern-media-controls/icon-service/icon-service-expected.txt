@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Checking path to images is computed according to traits
-PASS iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS).includes("macOS/pause") is true
-PASS iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS).includes("iOS/pause") is true
-PASS iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).includes("macOS/pause-fullscreen") is true
+PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS).src.includes("macOS/pause@") is true
+PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS).src.includes("iOS/pause@") is true
+PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/pause-fullscreen@") is true
 
 Checking requested images are cached
 PASS iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS) === iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS) is true

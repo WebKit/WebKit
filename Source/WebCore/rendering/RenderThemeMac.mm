@@ -272,6 +272,20 @@ String RenderThemeMac::mediaControlsScript()
 #endif
 }
 
+String RenderThemeMac::mediaControlsBase64StringForIconAndPlatform(const String& iconName, const String& platform)
+{
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
+        return emptyString();
+
+    String directory = "modern-media-controls/images/" + platform;
+    NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
+    return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:@"png" inDirectory:directory]] base64EncodedStringWithOptions:0];
+#else
+    return emptyString();
+#endif
+}
+
 #endif // ENABLE(VIDEO)
 
 

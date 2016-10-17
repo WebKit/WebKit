@@ -52,20 +52,30 @@ const iconService = new class IconService {
         this.images = {};
     }
 
+    // Public
+
     imageForIconNameAndLayoutTraits(iconName, layoutTraits)
     {
-        const path = this.urlForIconNameAndLayoutTraits(iconName, layoutTraits);
-        
+        const [fileName, platform] = this._fileNameAndPlatformForIconNameAndLayoutTraits(iconName, layoutTraits);
+        const path = `${platform}/${fileName}.png`;
+
         let image = this.images[path];
         if (image)
             return image;
 
         image = this.images[path] = new Image;
-        image.src = path;
+
+        if (this.mediaControlsHost)
+            image.src = "data:image/png;base64," + this.mediaControlsHost.base64StringForIconAndPlatform(fileName, platform);
+        else
+            image.src = `${this.directoryPath}/${path}`;
+
         return image;
     }
 
-    urlForIconNameAndLayoutTraits(iconName, layoutTraits)
+    // Private
+
+    _fileNameAndPlatformForIconNameAndLayoutTraits(iconName, layoutTraits)
     {
         let platform;
         if (layoutTraits & LayoutTraits.macOS)
@@ -78,7 +88,9 @@ const iconService = new class IconService {
         if (layoutTraits & LayoutTraits.Fullscreen && IconsWithFullScreenVariants.includes(iconName))
             iconName += "-fullscreen";
 
-        return `${this.directoryPath}/${platform}/${iconName}@${window.devicePixelRatio}x.png`;
+        const fileName = `${iconName}@${window.devicePixelRatio}x`;
+
+        return [fileName, platform];
     }
 
 };

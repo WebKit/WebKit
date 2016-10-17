@@ -10,9 +10,9 @@ description("Testing the <code>iconService</code> singleton.");
 iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
 
 debug("Checking path to images is computed according to traits");
-shouldBeTrue('iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS).includes("macOS/pause")');
-shouldBeTrue('iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS).includes("iOS/pause")');
-shouldBeTrue('iconService.urlForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).includes("macOS/pause-fullscreen")');
+shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS).src.includes("macOS/pause@")');
+shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.iOS).src.includes("iOS/pause@")');
+shouldBeTrue('iconService.imageForIconNameAndLayoutTraits(Icons.Pause, LayoutTraits.macOS | LayoutTraits.Fullscreen).src.includes("macOS/pause-fullscreen@")');
 
 debug("");
 debug("Checking requested images are cached");

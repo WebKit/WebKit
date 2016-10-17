@@ -36,7 +36,7 @@ class StartButton extends Button
         background.className = "background";
 
         const image = this.element.appendChild(new Image);
-        image.src = iconService.urlForIconNameAndLayoutTraits(Icons.Start, this.layoutTraits);
+        image.src = iconService.imageForIconNameAndLayoutTraits(Icons.Start, this.layoutTraits).src;
     }
 
 }
