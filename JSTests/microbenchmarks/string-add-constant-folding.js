@@ -65,4 +65,81 @@ test(function() {
     assert(b + a === add(b, a));
 });
 
+test(function() {
+    let a = "foo";
+    let b = NaN;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = -0;
+    let b = "foo";
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 0.0;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = Infinity;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = -Infinity;
+    let b = "foo";
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e10;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e-10;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e5;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e-5;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e-40;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
+test(function() {
+    let a = "foo";
+    let b = 1e40;
+    assert(a + b === add(a, b));
+    assert(b + a === add(b, a));
+});
+
 runTests();
