@@ -1,3 +1,11 @@
+2016-10-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline mathml/mathml-in-dashboard.html for mac.
+
+        Unreviewed test gardening.
+
+        * platform/mac/mathml/mathml-in-dashboard-expected.txt: Added.
+
 2016-10-16  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] roleDescription for AXTextField input types

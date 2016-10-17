@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 664x36
+          text run at (0,0) width 214: "This tests that MathML works in "
+          text run at (213,0) width 451: "dashboard compatibility mode. The render tree dump should include a"
+          text run at (0,18) width 142: "RenderMathMLMath."
+      RenderBlock (anonymous) at (0,52) size 784x0
+        RenderMathMLMath {math} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
