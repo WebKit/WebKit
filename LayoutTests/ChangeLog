@@ -1,3 +1,9 @@
+2016-10-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Skip layout tests under crypto/workers/subtle
+
+        * platform/gtk/TestExpectations:
+
 2016-10-17  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] mapping for output elements
