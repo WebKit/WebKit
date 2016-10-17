@@ -3993,7 +3993,7 @@ sub GenerateSerializerFunction
             }
         }
         
-        die "Failed to find \"serializate\" attribute \"$attribute_name\" in $interfaceName" if !$found_attribute;
+        die "Failed to find \"serializer\" attribute \"$attribute_name\" in $interfaceName" if !$found_attribute;
     }
 
     foreach my $attribute (@serializedAttributes) {

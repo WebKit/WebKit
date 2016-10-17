@@ -1,3 +1,10 @@
+2016-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix typo in error message.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerFunction):
+
 2016-10-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         preprocessor.pm: cl.exe outputs processing filenames if Windows Perl is used
