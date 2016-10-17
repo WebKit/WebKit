@@ -49,6 +49,16 @@ PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').hasOwnProp
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').hasOwnProperty('set') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').enumerable is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMException').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPoint').value is DOMPoint
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPoint').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPoint').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPoint').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPoint').configurable is true
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').value is DOMPointReadOnly
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty('get') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty('set') is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').enumerable is false
+PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').configurable is true
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DataView').value is DataView
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DataView').hasOwnProperty('get') is false
 PASS [Worker] Object.getOwnPropertyDescriptor(global, 'DataView').hasOwnProperty('set') is false

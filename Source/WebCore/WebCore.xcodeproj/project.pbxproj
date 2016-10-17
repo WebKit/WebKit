@@ -466,6 +466,15 @@
 		0F3F0E5A157030C3006DA57F /* RenderGeometryMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */; };
 		0F43C85D189E10CF00019AE2 /* PerformanceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F43C85C189E10CF00019AE2 /* PerformanceTiming.cpp */; };
 		0F43C85F189E15A600019AE2 /* JSPerformanceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F43C85E189E15A600019AE2 /* JSPerformanceTiming.cpp */; };
+		0F49669D1DB408C100A274BB /* DOMPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966991DB408C100A274BB /* DOMPoint.h */; };
+		0F49669F1DB408C100A274BB /* DOMPointReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F49669B1DB408C100A274BB /* DOMPointReadOnly.h */; };
+		0F4966A31DB4091000A274BB /* DOMPointInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A21DB4091000A274BB /* DOMPointInit.h */; };
+		0F4966AA1DB40C4300A274BB /* JSDOMPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4966A41DB40C4300A274BB /* JSDOMPoint.cpp */; };
+		0F4966AB1DB40C4300A274BB /* JSDOMPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A51DB40C4300A274BB /* JSDOMPoint.h */; };
+		0F4966AC1DB40C4300A274BB /* JSDOMPointInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4966A61DB40C4300A274BB /* JSDOMPointInit.cpp */; };
+		0F4966AD1DB40C4300A274BB /* JSDOMPointInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */; };
+		0F4966AE1DB40C4300A274BB /* JSDOMPointReadOnly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */; };
+		0F4966AF1DB40C4300A274BB /* JSDOMPointReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */; };
 		0F4E57171313276200CF85AF /* RenderSVGAllInOne.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */; };
 		0F54DCE51881051D003EEDBB /* TextAutoSizing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */; };
 		0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCE41881051D003EEDBB /* TextAutoSizing.h */; };
@@ -7300,6 +7309,18 @@
 		0F3F0E58157030C3006DA57F /* RenderGeometryMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderGeometryMap.h; sourceTree = "<group>"; };
 		0F43C85C189E10CF00019AE2 /* PerformanceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceTiming.cpp; sourceTree = "<group>"; };
 		0F43C85E189E15A600019AE2 /* JSPerformanceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceTiming.cpp; sourceTree = "<group>"; };
+		0F4966991DB408C100A274BB /* DOMPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPoint.h; sourceTree = "<group>"; };
+		0F49669A1DB408C100A274BB /* DOMPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMPoint.idl; sourceTree = "<group>"; };
+		0F49669B1DB408C100A274BB /* DOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPointReadOnly.h; sourceTree = "<group>"; };
+		0F49669C1DB408C100A274BB /* DOMPointReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMPointReadOnly.idl; sourceTree = "<group>"; };
+		0F4966A11DB4090100A274BB /* DOMPointInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMPointInit.idl; sourceTree = "<group>"; };
+		0F4966A21DB4091000A274BB /* DOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPointInit.h; sourceTree = "<group>"; };
+		0F4966A41DB40C4300A274BB /* JSDOMPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPoint.cpp; path = JSDOMPoint.cpp; sourceTree = "<group>"; };
+		0F4966A51DB40C4300A274BB /* JSDOMPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPoint.h; path = JSDOMPoint.h; sourceTree = "<group>"; };
+		0F4966A61DB40C4300A274BB /* JSDOMPointInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPointInit.cpp; path = JSDOMPointInit.cpp; sourceTree = "<group>"; };
+		0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPointInit.h; path = JSDOMPointInit.h; sourceTree = "<group>"; };
+		0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPointReadOnly.cpp; path = JSDOMPointReadOnly.cpp; sourceTree = "<group>"; };
+		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPointReadOnly.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
 		0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGAllInOne.cpp; sourceTree = "<group>"; };
 		0F54DCCC1880C6AB003EEDBB /* ios-encodings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ios-encodings.txt"; sourceTree = "<group>"; };
 		0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextAutoSizing.cpp; sourceTree = "<group>"; };
@@ -19920,6 +19941,12 @@
 				65DF31E409D1CC60000BE325 /* JSDOMImplementation.h */,
 				52CCA9E015E3F62C0053C77F /* JSDOMNamedFlowCollection.cpp */,
 				52CCA9E115E3F62C0053C77F /* JSDOMNamedFlowCollection.h */,
+				0F4966A41DB40C4300A274BB /* JSDOMPoint.cpp */,
+				0F4966A51DB40C4300A274BB /* JSDOMPoint.h */,
+				0F4966A61DB40C4300A274BB /* JSDOMPointInit.cpp */,
+				0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */,
+				0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */,
+				0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */,
 				C5137CF011A58378004ADB99 /* JSDOMStringList.cpp */,
 				C5137CF111A58378004ADB99 /* JSDOMStringList.h */,
 				BC64649511D82349006455B0 /* JSDOMStringMap.cpp */,
@@ -23380,6 +23407,12 @@
 				52B6C9BD15E3F4DF00690B05 /* DOMNamedFlowCollection.cpp */,
 				52B6C9BE15E3F4DF00690B05 /* DOMNamedFlowCollection.h */,
 				52B6C9BF15E3F4DF00690B05 /* DOMNamedFlowCollection.idl */,
+				0F4966991DB408C100A274BB /* DOMPoint.h */,
+				0F49669A1DB408C100A274BB /* DOMPoint.idl */,
+				0F4966A21DB4091000A274BB /* DOMPointInit.h */,
+				0F4966A11DB4090100A274BB /* DOMPointInit.idl */,
+				0F49669B1DB408C100A274BB /* DOMPointReadOnly.h */,
+				0F49669C1DB408C100A274BB /* DOMPointReadOnly.idl */,
 				C55610F011A704EB00B82D27 /* DOMStringList.cpp */,
 				C544274911A57E7A0063A749 /* DOMStringList.h */,
 				C544274A11A57E7A0063A749 /* DOMStringList.idl */,
@@ -24732,6 +24765,9 @@
 				FB91392416AE4C17001FE682 /* DOMPath.h in Headers */,
 				A9C6E4EC0D745E2B006442E9 /* DOMPlugin.h in Headers */,
 				A9C6E4F00D745E38006442E9 /* DOMPluginArray.h in Headers */,
+				0F49669D1DB408C100A274BB /* DOMPoint.h in Headers */,
+				0F4966A31DB4091000A274BB /* DOMPointInit.h in Headers */,
+				0F49669F1DB408C100A274BB /* DOMPointReadOnly.h in Headers */,
 				5185FCB71BB4C7670012898F /* DOMRequestState.h in Headers */,
 				BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */,
 				C544274B11A57E7A0063A749 /* DOMStringList.h in Headers */,
@@ -25397,6 +25433,9 @@
 				FB91392A16AE4FC0001FE682 /* JSDOMPath.h in Headers */,
 				A9D247FF0D757E6900FDF959 /* JSDOMPlugin.h in Headers */,
 				A9D248010D757E6900FDF959 /* JSDOMPluginArray.h in Headers */,
+				0F4966AB1DB40C4300A274BB /* JSDOMPoint.h in Headers */,
+				0F4966AD1DB40C4300A274BB /* JSDOMPointInit.h in Headers */,
+				0F4966AF1DB40C4300A274BB /* JSDOMPointReadOnly.h in Headers */,
 				E172AF901811BC3700FBADB9 /* JSDOMPromise.h in Headers */,
 				BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */,
 				C5137CF311A58378004ADB99 /* JSDOMStringList.h in Headers */,
@@ -29073,6 +29112,9 @@
 				A9D248000D757E6900FDF959 /* JSDOMPluginArray.cpp in Sources */,
 				A9C6E64C0D7465E7006442E9 /* JSDOMPluginArrayCustom.cpp in Sources */,
 				A9C6E64D0D7465E7006442E9 /* JSDOMPluginCustom.cpp in Sources */,
+				0F4966AA1DB40C4300A274BB /* JSDOMPoint.cpp in Sources */,
+				0F4966AC1DB40C4300A274BB /* JSDOMPointInit.cpp in Sources */,
+				0F4966AE1DB40C4300A274BB /* JSDOMPointReadOnly.cpp in Sources */,
 				E172AF8F1811BC3700FBADB9 /* JSDOMPromise.cpp in Sources */,
 				BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */,
 				C5137CF211A58378004ADB99 /* JSDOMStringList.cpp in Sources */,

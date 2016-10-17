@@ -288,6 +288,16 @@ PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMParser').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPoint').value is DOMPoint
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPoint').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPoint').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPoint').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPoint').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').value is DOMPointReadOnly
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').value is DOMStringList
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMStringList').hasOwnProperty('set') is false

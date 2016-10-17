@@ -1,3 +1,35 @@
+2016-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMPoint/DOMPointReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=133916
+
+        Reviewed by Darin Adler.
+
+        Patch mostly by Dirk Schultz <krit@webkit.org>.
+
+        Implement DOMPoint/DOMPointReadOnly following https://drafts.fxtf.org/geometry/
+        (although we may need to match https://www.w3.org/TR/geometry-1/ to be compatible
+        with Chrome).
+        
+        Test: geometry/DOMPoint-001.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMPoint.h: Added.
+        * dom/DOMPoint.idl: Added.
+        * dom/DOMPointInit.h: Added.
+        * dom/DOMPointInit.idl: Added.
+        * dom/DOMPointReadOnly.h: Added.
+        (WebCore::DOMPointReadOnly::create):
+        (WebCore::DOMPointReadOnly::fromPoint):
+        (WebCore::DOMPointReadOnly::x):
+        (WebCore::DOMPointReadOnly::y):
+        (WebCore::DOMPointReadOnly::z):
+        (WebCore::DOMPointReadOnly::w):
+        (WebCore::DOMPointReadOnly::DOMPointReadOnly):
+        * dom/DOMPointReadOnly.idl: Added.
+
 2016-10-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Use modern-media-controls module sources for media controls stylesheet and script injection
