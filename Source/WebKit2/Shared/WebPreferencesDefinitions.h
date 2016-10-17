@@ -179,7 +179,7 @@
     macro(AsynchronousPluginInitializationEnabledForAllPlugins, asynchronousPluginInitializationEnabledForAllPlugins, Bool, bool, false, "", "") \
     macro(ArtificialPluginInitializationDelayEnabled, artificialPluginInitializationDelayEnabled, Bool, bool, false, "", "") \
     macro(TabToLinksEnabled, tabToLinksEnabled, Bool, bool, false, "", "") \
-    macro(InteractiveFormValidationEnabled, interactiveFormValidationEnabled, Bool, bool, false, "", "") \
+    macro(InteractiveFormValidationEnabled, interactiveFormValidationEnabled, Bool, bool, true, "", "") \
     macro(ScrollingPerformanceLoggingEnabled, scrollingPerformanceLoggingEnabled, Bool, bool, false, "", "") \
     macro(ScrollAnimatorEnabled, scrollAnimatorEnabled, Bool, bool, DEFAULT_WEBKIT_SCROLL_ANIMATOR_ENABLED, "", "") \
     macro(ForceUpdateScrollbarsOnMainThreadForPerformanceTesting, forceUpdateScrollbarsOnMainThreadForPerformanceTesting, Bool, bool, false, "", "") \

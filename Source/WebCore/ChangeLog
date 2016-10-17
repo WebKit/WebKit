@@ -1,3 +1,32 @@
+2016-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Move form.reportValidity() behind InteractiveFormValidation setting
+        https://bugs.webkit.org/show_bug.cgi?id=163550
+
+        Reviewed by Darin Adler.
+
+        Move form.reportValidity() behind InteractiveFormValidation setting for consistency
+        given that the two features are strongly related.
+
+        Also enable the setting by default so we can get feedback on the implementation.
+
+        Demos:
+        - Interactive form validation: http://jsfiddle.net/tj_vantoll/HdSqt/
+        - Report validity: https://googlechrome.github.io/samples/report-validity/
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setInteractiveFormValidationEnabled):
+        (WebCore::RuntimeEnabledFeatures::interactiveFormValidationEnabled):
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFieldSetElement.idl:
+        * html/HTMLFormElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLKeygenElement.idl:
+        * html/HTMLObjectElement.idl:
+        * html/HTMLOutputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+
 2016-10-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Add a MediaControlsHost API to retrieve images as base64

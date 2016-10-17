@@ -3197,6 +3197,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     RuntimeEnabledFeatures::sharedFeatures().setShadowDOMEnabled(store.getBoolValueForKey(WebPreferencesKey::shadowDOMEnabledKey()));
 
+    RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
+
     RuntimeEnabledFeatures::sharedFeatures().setDOMIteratorEnabled(store.getBoolValueForKey(WebPreferencesKey::domIteratorEnabledKey()));
 
     // Experimental Features.

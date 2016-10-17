@@ -1,3 +1,18 @@
+2016-10-17  Chris Dumez  <cdumez@apple.com>
+
+        Move form.reportValidity() behind InteractiveFormValidation setting
+        https://bugs.webkit.org/show_bug.cgi?id=163550
+
+        Reviewed by Darin Adler.
+
+        Enable InteractiveFormValidation setting by default and link it to
+        RuntimeEnabledFeatures so we can use it in the IDL.
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]):
+
 2016-10-17  Anders Carlsson  <andersca@apple.com>
 
         Fix iOS build.

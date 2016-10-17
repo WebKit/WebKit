@@ -198,6 +198,9 @@ public:
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
     bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
 
+    void setInteractiveFormValidationEnabled(bool isEnabled) { m_isInteractiveFormValidationEnabled = isEnabled; }
+    bool interactiveFormValidationEnabled() const { return m_isInteractiveFormValidationEnabled; }
+
 #if ENABLE(CUSTOM_ELEMENTS)
     void setCustomElementsEnabled(bool areEnabled) { m_areCustomElementsEnabled = areEnabled; }
     bool customElementsEnabled() const { return m_areCustomElementsEnabled; }
@@ -317,6 +320,8 @@ private:
 #endif
     
     bool m_isShadowDOMEnabled;
+
+    bool m_isInteractiveFormValidationEnabled { false };
 
 #if ENABLE(CUSTOM_ELEMENTS)
     bool m_areCustomElementsEnabled;

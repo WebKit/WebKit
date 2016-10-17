@@ -143,7 +143,7 @@ WebViewLayerFlushScheduler::WebViewLayerFlushScheduler(LayerFlushController* flu
     zoomMultiplier = 1;
     zoomsTextOnly = NO;
 
-    interactiveFormValidationEnabled = NO;
+    interactiveFormValidationEnabled = YES;
     // The default value should be synchronized with WebCore/page/Settings.cpp.
     validationMessageTimerMagnification = 50;
 

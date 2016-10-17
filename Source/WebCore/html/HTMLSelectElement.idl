@@ -59,7 +59,7 @@
     readonly attribute ValidityState validity;
     readonly attribute DOMString validationMessage;
     boolean checkValidity();
-    boolean reportValidity();
+    [EnabledAtRuntime=InteractiveFormValidation] boolean reportValidity();
     void setCustomValidity(DOMString? error); // FIXME: Argument should not be nullable.
 
     readonly attribute NodeList labels;
