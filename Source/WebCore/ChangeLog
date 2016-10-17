@@ -1,3 +1,20 @@
+2016-10-17  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Several tests crashing on debug bot in (anonymous namespace)::MediaPlayerPrivateGStreamerBase::repaint
+        https://bugs.webkit.org/show_bug.cgi?id=163511
+
+        Reviewed by Carlos Garcia Campos.
+
+        Perform the video repaint in the main thread when accelerated compositing is disabled.
+
+        Covered by existent tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::repaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2016-10-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         Eleminate code duplication between ResourceRequest encoding/decoding implementations
