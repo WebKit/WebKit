@@ -59,7 +59,7 @@ using namespace HTMLNames;
 
 static int toIdentifier(PassRefPtr<CSSValue> value)
 {
-    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->getValueID() : 0;
+    return (value && value->isPrimitiveValue()) ? static_pointer_cast<CSSPrimitiveValue>(value)->valueID() : 0;
 }
 
 static String& styleSpanClassString()
@@ -1513,8 +1513,8 @@ float ApplyStyleCommand::computedFontSize(Node* node)
     if (!node)
         return 0;
 
-    RefPtr<CSSValue> value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
-    return downcast<CSSPrimitiveValue>(*value).getFloatValue(CSSPrimitiveValue::CSS_PX);
+    auto value = ComputedStyleExtractor(node).propertyValue(CSSPropertyFontSize);
+    return downcast<CSSPrimitiveValue>(*value).floatValue(CSSPrimitiveValue::CSS_PX);
 }
 
 void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, const Position& end)

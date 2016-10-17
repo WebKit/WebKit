@@ -327,7 +327,7 @@ SVGLength SVGLength::fromCSSPrimitiveValue(const CSSPrimitiveValue& value)
 
     ExceptionCode ec = 0;
     SVGLength length;
-    length.newValueSpecifiedUnits(svgType, value.getFloatValue(), ec);
+    length.newValueSpecifiedUnits(svgType, value.floatValue(), ec);
     if (ec)    
         return SVGLength();
 

@@ -4245,7 +4245,7 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
 {
     // [ left | right ] [ <percentage] | <length> ] && [ top | bottom ] [ <percentage> | <length> ]
     // In the case of 4 values <position> requires the second value to be a length or a percentage.
-    if (isFillPositionKeyword(parsedValue2->getValueID()))
+    if (isFillPositionKeyword(parsedValue2->valueID()))
         return;
 
     unsigned cumulativeFlags = 0;
@@ -4254,8 +4254,8 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
     if (!value3)
         return;
 
-    CSSValueID ident1 = parsedValue1->getValueID();
-    CSSValueID ident3 = value3->getValueID();
+    CSSValueID ident1 = parsedValue1->valueID();
+    CSSValueID ident3 = value3->valueID();
 
     if (ident1 == CSSValueCenter)
         return;
@@ -4278,7 +4278,7 @@ void CSSParser::parse4ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
         return;
 
     // 4th value must be a length or a percentage.
-    if (isFillPositionKeyword(value4->getValueID()))
+    if (isFillPositionKeyword(value4->valueID()))
         return;
 
     value1 = createPrimitiveValuePair(WTFMove(parsedValue1), WTFMove(parsedValue2));
@@ -4303,9 +4303,9 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
     valueList.next();
 
     bool swapNeeded = false;
-    CSSValueID ident1 = parsedValue1->getValueID();
-    CSSValueID ident2 = parsedValue2->getValueID();
-    CSSValueID ident3 = value3->getValueID();
+    CSSValueID ident1 = parsedValue1->valueID();
+    CSSValueID ident2 = parsedValue2->valueID();
+    CSSValueID ident3 = value3->valueID();
 
     CSSValueID firstPositionKeyword;
     CSSValueID secondPositionKeyword;
@@ -4375,8 +4375,8 @@ void CSSParser::parse3ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
 #ifndef NDEBUG
     CSSPrimitiveValue& first = *value1;
     CSSPrimitiveValue& second = *value2;
-    ident1 = first.getPairValue()->first()->getValueID();
-    ident2 = second.getPairValue()->first()->getValueID();
+    ident1 = first.pairValue()->first()->valueID();
+    ident2 = second.pairValue()->first()->valueID();
     ASSERT(ident1 == CSSValueLeft || ident1 == CSSValueRight);
     ASSERT(ident2 == CSSValueBottom || ident2 == CSSValueTop);
 #endif
@@ -4441,7 +4441,7 @@ void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSPrimi
     auto parsedValue2 = value2.releaseNonNull();
 
     // Per CSS3 syntax, <position> can't have 'center' as its second keyword as we have more arguments to follow.
-    if (parsedValue2->getValueID() == CSSValueCenter)
+    if (parsedValue2->valueID() == CSSValueCenter)
         return;
 
     if (numberOfValues == 3)
@@ -4532,7 +4532,7 @@ void CSSParser::parseFillRepeat(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& valu
 
     // If only one value was specified, value2 is the same as value1.
     m_implicitShorthand = true;
-    value2 = CSSValuePool::singleton().createIdentifierValue(downcast<CSSPrimitiveValue>(*value1).getValueID());
+    value2 = CSSValuePool::singleton().createIdentifierValue(downcast<CSSPrimitiveValue>(*value1).valueID());
 }
 
 RefPtr<CSSPrimitiveValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowComma)
@@ -5274,12 +5274,12 @@ RefPtr<CSSValue> CSSParser::parseGridPosition()
         return nullptr;
 
     // Negative numbers are not allowed for span (but are for <integer>).
-    if (hasSeenSpanKeyword && numericValue && numericValue->getIntValue() < 0)
+    if (hasSeenSpanKeyword && numericValue && numericValue->intValue() < 0)
         return nullptr;
 
     // For the <custom-ident> case.
     if (gridLineName && !numericValue && !hasSeenSpanKeyword)
-        return CSSValuePool::singleton().createValue(gridLineName->getStringValue(), CSSPrimitiveValue::CSS_STRING);
+        return CSSValuePool::singleton().createValue(gridLineName->stringValue(), CSSPrimitiveValue::CSS_STRING);
 
     auto values = CSSValueList::createSpaceSeparated();
     if (hasSeenSpanKeyword)
@@ -5437,7 +5437,7 @@ bool CSSParser::parseGridTemplateRowsAndAreasAndColumns(bool important)
         if (!templateColumns)
             return false;
         // The template-columns <track-list> can't be 'none'.
-        if (templateColumns->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*templateColumns).getValueID() == CSSValueNone)
+        if (templateColumns->isPrimitiveValue() && downcast<CSSPrimitiveValue>(*templateColumns).valueID() == CSSValueNone)
             return false;
     }
 
@@ -5701,7 +5701,7 @@ bool CSSParser::parseGridLineNames(CSSParserValueList& inputList, CSSValueList& 
 
 static bool isGridTrackFixedSized(const CSSPrimitiveValue& value)
 {
-    CSSValueID valueID = value.getValueID();
+    CSSValueID valueID = value.valueID();
     if (valueID == CSSValueWebkitMinContent || valueID == CSSValueWebkitMaxContent || valueID == CSSValueAuto || value.isFlex())
         return false;
 
@@ -9178,10 +9178,10 @@ bool CSSParser::parseRadialGradient(CSSParserValueList& valueList, RefPtr<CSSVal
     if (sizeValue && horizontalSize)
         return false;
     // Circles must have 0 or 1 lengths.
-    if (shapeValue && shapeValue->getValueID() == CSSValueCircle && verticalSize)
+    if (shapeValue && shapeValue->valueID() == CSSValueCircle && verticalSize)
         return false;
     // Ellipses must have 0 or 2 length/percentages.
-    if (shapeValue && shapeValue->getValueID() == CSSValueEllipse && horizontalSize && !verticalSize)
+    if (shapeValue && shapeValue->valueID() == CSSValueEllipse && horizontalSize && !verticalSize)
         return false;
     // If there's only one size, it must be a length.
     if (!verticalSize && horizontalSize && horizontalSize->isPercentage())
@@ -9957,7 +9957,7 @@ RefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserVal
             if (filterType != WebKitCSSFilterValue::SaturateFilterOperation
                 && filterType != WebKitCSSFilterValue::ContrastFilterOperation) {
                 double maxAllowed = primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
-                if (primitiveValue->getDoubleValue() > maxAllowed)
+                if (primitiveValue->doubleValue() > maxAllowed)
                     return nullptr;
             }
 

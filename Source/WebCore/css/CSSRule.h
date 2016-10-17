@@ -22,16 +22,15 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include "ExceptionOr.h"
 #include <wtf/TypeCasts.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CSSStyleSheet;
 class StyleRuleBase;
+
 struct CSSParserContext;
-typedef int ExceptionCode;
 
 class CSSRule : public RefCounted<CSSRule> {
 public:
@@ -89,7 +88,7 @@ public:
 
     CSSRule* parentRule() const { return m_parentIsRule ? m_parentRule : 0; }
 
-    WEBCORE_EXPORT void setCssText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);
 
 protected:
     CSSRule(CSSStyleSheet* parent)

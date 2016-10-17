@@ -29,6 +29,7 @@
 
 #include "CSSParser.h"
 #include "ElementDescendantIterator.h"
+#include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "SelectorChecker.h"
 #include "StaticNodeList.h"

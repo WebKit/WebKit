@@ -240,7 +240,7 @@ bool CSSImageGeneratorValue::subimageIsPending(const CSSValue& value)
     if (is<CSSImageGeneratorValue>(value))
         return downcast<CSSImageGeneratorValue>(value).isPending();
 
-    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return false;
 
     ASSERT_NOT_REACHED();
@@ -261,7 +261,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue& value, Cac
         return nullptr;
     }
 
-    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+    if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return nullptr;
 
     ASSERT_NOT_REACHED();

@@ -965,4 +965,13 @@ template<typename T> inline JSC::JSValue toJSNumber(JSC::ExecState& state, JSC::
     return JSC::jsNumber(value.releaseReturnValue());
 }
 
+inline JSC::JSValue toJSString(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<String>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return JSC::jsStringWithCache(&state, value.releaseReturnValue());
+}
+
 } // namespace WebCore

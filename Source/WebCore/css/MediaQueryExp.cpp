@@ -129,7 +129,7 @@ static inline bool isFeatureValidWithIdentifier(const AtomicString& mediaFeature
 
 static inline bool isFeatureValidWithNonNegativeLengthOrNumber(const AtomicString& mediaFeature, const CSSParserValue& value)
 {
-    if (!(CSSPrimitiveValue::isLength(value.unit) || value.unit == CSSPrimitiveValue::CSS_NUMBER) || value.fValue < 0)
+    if (!(CSSPrimitiveValue::isLength(static_cast<CSSPrimitiveValue::UnitTypes>(value.unit)) || value.unit == CSSPrimitiveValue::CSS_NUMBER) || value.fValue < 0)
         return false;
 
     return mediaFeature == MediaFeatureNames::height
@@ -148,7 +148,7 @@ static inline bool isFeatureValidWithNonNegativeLengthOrNumber(const AtomicStrin
 
 static inline bool isFeatureValidWithDensity(const AtomicString& mediaFeature, const CSSParserValue& value)
 {
-    if (!CSSPrimitiveValue::isResolution(value.unit) || value.fValue <= 0)
+    if (!CSSPrimitiveValue::isResolution(static_cast<CSSPrimitiveValue::UnitTypes>(value.unit)) || value.fValue <= 0)
         return false;
 
     return mediaFeature == MediaFeatureNames::resolution

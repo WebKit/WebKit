@@ -57,14 +57,13 @@ CSSGroupingRule::~CSSGroupingRule()
     }
 }
 
-unsigned CSSGroupingRule::insertRule(const String& ruleString, unsigned index, ExceptionCode& ec)
+ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
 
     if (index > m_groupRule->childRules().size()) {
         // INDEX_SIZE_ERR: Raised if the specified index is not a valid insertion point.
-        ec = INDEX_SIZE_ERR;
-        return 0;
+        return Exception { INDEX_SIZE_ERR };
     }
 
     CSSParser parser(parserContext());
@@ -72,8 +71,7 @@ unsigned CSSGroupingRule::insertRule(const String& ruleString, unsigned index, E
     RefPtr<StyleRuleBase> newRule = parser.parseRule(styleSheet ? &styleSheet->contents() : nullptr, ruleString);
     if (!newRule) {
         // SYNTAX_ERR: Raised if the specified rule has a syntax error and is unparsable.
-        ec = SYNTAX_ERR;
-        return 0;
+        return Exception { SYNTAX_ERR };
     }
 
     if (newRule->isImportRule()) {
@@ -84,8 +82,7 @@ unsigned CSSGroupingRule::insertRule(const String& ruleString, unsigned index, E
         // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified
         // index, e.g., if an @import rule is inserted after a standard rule set or other
         // at-rule.
-        ec = HIERARCHY_REQUEST_ERR;
-        return 0;
+        return Exception { HIERARCHY_REQUEST_ERR };
     }
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
@@ -95,15 +92,14 @@ unsigned CSSGroupingRule::insertRule(const String& ruleString, unsigned index, E
     return index;
 }
 
-void CSSGroupingRule::deleteRule(unsigned index, ExceptionCode& ec)
+ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.size() == m_groupRule->childRules().size());
 
     if (index >= m_groupRule->childRules().size()) {
         // INDEX_SIZE_ERR: Raised if the specified index does not correspond to a
         // rule in the media rule list.
-        ec = INDEX_SIZE_ERR;
-        return;
+        return Exception { INDEX_SIZE_ERR };
     }
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
@@ -113,6 +109,8 @@ void CSSGroupingRule::deleteRule(unsigned index, ExceptionCode& ec)
     if (m_childRuleCSSOMWrappers[index])
         m_childRuleCSSOMWrappers[index]->setParentRule(0);
     m_childRuleCSSOMWrappers.remove(index);
+
+    return { };
 }
 
 void CSSGroupingRule::appendCssTextForItems(StringBuilder& result) const

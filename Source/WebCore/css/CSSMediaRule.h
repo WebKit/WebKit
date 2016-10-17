@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class MediaList;
+class MediaQuerySet;
 class StyleRuleMedia;
 
 class CSSMediaRule final : public CSSGroupingRule {

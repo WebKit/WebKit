@@ -84,7 +84,7 @@ String CSSCrossfadeValue::customCSSText() const
 
 FloatSize CSSCrossfadeValue::fixedSize(const RenderElement* renderer)
 {
-    float percentage = m_percentageValue->getFloatValue();
+    float percentage = m_percentageValue->floatValue();
     float inversePercentage = 1 - percentage;
 
     // FIXME: Skip Content Security Policy check when cross fade is applied to an element in a user agent shadow tree.
@@ -168,7 +168,7 @@ RefPtr<Image> CSSCrossfadeValue::image(RenderElement* renderer, const FloatSize&
     if (!fromImage || !toImage)
         return Image::nullImage();
 
-    m_generatedImage = CrossfadeGeneratedImage::create(*fromImage, *toImage, m_percentageValue->getFloatValue(), fixedSize(renderer), size);
+    m_generatedImage = CrossfadeGeneratedImage::create(*fromImage, *toImage, m_percentageValue->floatValue(), fixedSize(renderer), size);
 
     return m_generatedImage;
 }
@@ -202,10 +202,10 @@ RefPtr<CSSCrossfadeValue> CSSCrossfadeValue::blend(const CSSCrossfadeValue& from
     auto fromImageValue = CSSImageValue::create(*m_cachedFromImage);
     auto toImageValue = CSSImageValue::create(*m_cachedToImage);
 
-    double fromPercentage = from.m_percentageValue->getDoubleValue();
+    double fromPercentage = from.m_percentageValue->doubleValue();
     if (from.m_percentageValue->isPercentage())
         fromPercentage /= 100.0;
-    double toPercentage = m_percentageValue->getDoubleValue();
+    double toPercentage = m_percentageValue->doubleValue();
     if (m_percentageValue->isPercentage())
         toPercentage /= 100.0;
     auto percentageValue = CSSPrimitiveValue::create(blendFunc(fromPercentage, toPercentage, progress), CSSPrimitiveValue::CSS_NUMBER);

@@ -20,10 +20,10 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -32,8 +32,6 @@ class CSSRule;
 class CSSStyleSheet;
 class Document;
 class MediaQuery;
-
-using ExceptionCode = int;
 
 class MediaQuerySet final : public RefCounted<MediaQuerySet> {
 public:
@@ -96,11 +94,11 @@ public:
 
     unsigned length() const { return m_mediaQueries->queryVector().size(); }
     WEBCORE_EXPORT String item(unsigned index) const;
-    WEBCORE_EXPORT void deleteMedium(const String& oldMedium, ExceptionCode&);
-    WEBCORE_EXPORT void appendMedium(const String& newMedium, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> deleteMedium(const String& oldMedium);
+    WEBCORE_EXPORT ExceptionOr<void> appendMedium(const String& newMedium);
 
     String mediaText() const { return m_mediaQueries->mediaText(); }
-    WEBCORE_EXPORT void setMediaText(const String&, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<void> setMediaText(const String&);
 
     CSSRule* parentRule() const { return m_parentRule; }
     CSSStyleSheet* parentStyleSheet() const { return m_parentStyleSheet; }

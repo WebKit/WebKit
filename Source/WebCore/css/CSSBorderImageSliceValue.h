@@ -41,7 +41,7 @@ public:
 
     String customCSSText() const;
 
-    Quad* slices() const { return m_slices ? m_slices->getQuadValue() : nullptr; }
+    Quad* slices() const { return m_slices ? m_slices->quadValue() : nullptr; }
 
     bool equals(const CSSBorderImageSliceValue&) const;
 

@@ -1,3 +1,317 @@
+2016-10-16  Darin Adler  <darin@apple.com>
+
+        Move CSS classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163494
+
+        Reviewed by Sam Weinig.
+
+        Removed the "get" prefix from the names of many CSSPrimitiveValue
+        functions to match WebKit coding style and to disambiguate them
+        from the public CSS DOM functions that raise exceptions.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::propertyNamePrefix): Use enum class.
+        (WebCore::parseJavaScriptCSSPropertyName): Tweak style a bit.
+        (WebCore::stylePropertyGetter): Refactor to simplify structure.
+        (WebCore::stylePropertyGetterPixelOrPosPrefix): Ditto. Also use floatValue.
+        (WebCore::JSCSSStyleDeclaration::putDelegate): Use findIgnoringASCIICase,
+        and use propagateException to handle ExcpetionOr.
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue): Tweak style a bit.
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames): Use a lambda to
+        initialize a global here.
+
+        * bindings/js/JSDOMBinding.h: Added toJSString to support bindings for
+        functions returning ExceptionOr<String>.
+
+        * bindings/scripts/gobject-generate-headers.pl: Deleted.
+
+        * css/BasicShapeFunctions.cpp:
+        (WebCore::convertToLengthSize): Use pairValue.
+        (WebCore::convertToCenterCoordinate): Use valueID and pairValue.
+        (WebCore::cssValueToBasicShapeRadius): Ditto.
+        * css/CSSBasicShapes.cpp:
+        (WebCore::serializePositionOffset): Ditto.
+        (WebCore::buildSerializablePositionOffset): Ditto.
+        (WebCore::CSSBasicShapeCircle::cssText): Ditto.
+        (WebCore::CSSBasicShapeEllipse::cssText): Ditto.
+        (WebCore::updateCornerRadiusWidthAndHeight): Ditto.
+        * css/CSSBorderImageSliceValue.h: Use quadValue.
+        * css/CSSCalculationValue.cpp:
+        (WebCore::determineCategory): Use floatValue and doubleValue.
+
+        * css/CSSCharsetRule.h: Use ExceptionOr. Also made more things private.
+        * css/CSSCharsetRule.idl: Use non-legacy exceptions.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::setCssText): Use ExceptionOr.
+        (WebCore::ComputedStyleExtractor::propertyMatches): Use valueID.
+        (WebCore::CSSComputedStyleDeclaration::setProperty): Use ExceptionOr.
+        (WebCore::CSSComputedStyleDeclaration::removeProperty): Ditto.
+        (WebCore::CSSComputedStyleDeclaration::setPropertyInternal): Ditto.
+        (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue): Return
+        a Ref instead of a RefPtr.
+        * css/CSSComputedStyleDeclaration.h: Updated for above changes.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::fixedSize): Use floatValue.
+        (WebCore::CSSCrossfadeValue::image): Ditto.
+        (WebCore::CSSCrossfadeValue::blend): Use doubleValue.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::calculateStyleMask): Use valueID.
+        (WebCore::CSSFontFace::calculateWeightMask): Ditto.
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::familyNameFromPrimitive): Ditto.
+        (WebCore::CSSFontFaceSet::matchingFaces): Use ExceptoinOr.
+        (WebCore::CSSFontFaceSet::check): Ditto.
+        * css/CSSFontFaceSet.h: Updated for above changes.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::compareStops): Use doubleValue.
+        (WebCore::CSSGradientValue::addStops): Use floatValue.
+        (WebCore::positionFromValue): Use floatValue and valudID.
+        (WebCore::CSSLinearGradientValue::customCSSText): Use doubleValue and valueID.
+        (WebCore::CSSLinearGradientValue::createGradient): Use floatValue and valueID.
+        (WebCore::CSSRadialGradientValue::customCSSText): Use doubleValue and valueID.
+        (WebCore::CSSRadialGradientValue::resolveRadius): Use floatValue.
+        (WebCore::CSSRadialGradientValue::createGradient): Use valueID.
+
+        * css/CSSGroupingRule.cpp:
+        (WebCore::CSSGroupingRule::insertRule): Use ExceptionOr.
+        (WebCore::CSSGroupingRule::deleteRule): Ditto.
+        * css/CSSGroupingRule.h: Updated for above changes.
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::subimageIsPending): Use valueID.
+        (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue): Ditto.
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::fillImageSet): Use floatValue.
+
+        * css/CSSMediaRule.idl: Use non-legacy exceptions.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeDegrees): Use doubleValue.
+        (WebCore::CSSPrimitiveValue::setFloatValue): Use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::getFloatValue): Replaced getDoubleValue with this,
+        since getDoubleValue is unused, moving the call to clampTo into this function.
+        Also changed this to use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::doubleValue): Renamed from getDoubleValue.
+        (WebCore::CSSPrimitiveValue::doubleValueInternal): Use Optional instead of a bool
+        and an out argument to return the value and check for type failure.
+        (WebCore::CSSPrimitiveValue::setStringValue): Use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::getStringValue): Ditto.
+        (WebCore::CSSPrimitiveValue::stringValue): Renamed from getStringValue.
+        (WebCore::CSSPrimitiveValue::getCounterValue): Use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::getRectValue): Use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::getQuadValue): Deleted.
+        (WebCore::CSSPrimitiveValue::getLengthRepeatValue): Deleted.
+        (WebCore::CSSPrimitiveValue::getRGBColorValue): Use ExceptionOr.
+        (WebCore::CSSPrimitiveValue::getPairValue): Deleted.
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText): Use new names for functions.
+        * css/CSSPrimitiveValue.h: Reorganized the class, moved large inline function bodies
+        out of the class definition. Updated for the above changes.
+        * css/CSSPrimitiveValue.idl: Use non-legacy exceptions.
+
+        * css/CSSPrimitiveValueMappings.h: Use value instead of getValue, etc.
+
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::setCssText): Use ExceptionOr.
+        * css/CSSRule.h: Updated for above change.
+        * css/CSSRule.idl: Use non-legacy exceptions.
+
+        * css/CSSStyleDeclaration.h: Use ExceptionOr.
+        * css/CSSStyleDeclaration.idl: Use non-legacy exceptions.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::deprecatedInsertRule): Use ExceptionOr.
+        (WebCore::CSSStyleSheet::insertRule): Ditto.
+        (WebCore::CSSStyleSheet::deleteRule): Ditto.
+        (WebCore::CSSStyleSheet::addRule): Ditto.
+        * css/CSSStyleSheet.h: Updated for the above changes.
+        * css/CSSStyleSheet.idl: Use non-legacy exceptions.
+
+        * css/CSSSupportsRule.idl: Use non-legacy exceptions.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillAttachment): Use valueID instead of getValueID, etc.
+        (WebCore::convertToLengthSize): Ditto.
+        (WebCore::CSSToStyleMap::mapFillSize): Ditto.
+        (WebCore::CSSToStyleMap::mapFillXPosition): Ditto.
+        (WebCore::CSSToStyleMap::mapFillYPosition): Ditto.
+        (WebCore::CSSToStyleMap::mapFillMaskSourceType): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationDirection): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationFillMode): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationIterationCount): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationName): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationPlayState): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationProperty): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationTimingFunction): Ditto.
+        (WebCore::CSSToStyleMap::mapAnimationTrigger): Ditto.
+        (WebCore::CSSToStyleMap::mapNinePieceImageSlice): Ditto.
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad): Ditto.
+        (WebCore::CSSToStyleMap::mapNinePieceImageRepeat): Ditto.
+
+        * css/CSSValue.h: Use ExceptionOr.
+        * css/CSSValue.idl: Use non-legacy exceptions.
+
+        * css/Counter.h: Use stringValue instead of getStringValue, etc.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create): Use ExceptionOr.
+        (WebCore::FontFace::setFamily): Ditto.
+        (WebCore::FontFace::setStyle): Ditto.
+        (WebCore::FontFace::setWeight): Ditto.
+        (WebCore::FontFace::setStretch): Ditto.
+        (WebCore::FontFace::setUnicodeRange): Ditto.
+        (WebCore::FontFace::setVariant): Ditto.
+        (WebCore::FontFace::setFeatureSettings): Ditto.
+        * css/FontFace.h: Updated for above changes.
+        * css/FontFace.idl: Use non-legacy exceptions.
+
+        * css/FontFaceSet.cpp:
+        (WebCore::FontFaceSet::load): Use ExceptionOr.
+        (WebCore::FontFaceSet::check): Ditto.
+        * css/FontFaceSet.h: Updated for above changes.
+        * css/FontFaceSet.idl: Use non-legacy exceptions.
+
+        * css/FontVariantBuilder.cpp:
+        (WebCore::extractFontVariantLigatures): Use valueID instead of getValueID, etc.
+        (WebCore::extractFontVariantNumeric): Ditto.
+        (WebCore::extractFontVariantEastAsian): Ditto.
+
+        * css/MediaList.cpp:
+        (WebCore::MediaList::setMediaText): Use ExceptionOr.
+        (WebCore::MediaList::deleteMedium): Ditto.
+        (WebCore::MediaList::appendMedium): Ditto.
+        * css/MediaList.h: Updated for above changes.
+        * css/MediaList.idl: Use non-legacy exceptions.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::doubleValue): Use valueID instead of getValueID, etc.
+        (WebCore::colorGamutEvaluate): Ditto.
+        (WebCore::invertedColorsEvaluate): Ditto.
+        (WebCore::orientationEvaluate): Ditto.
+        (WebCore::evaluateResolution): Ditto.
+        (WebCore::computeLength): Ditto.
+        (WebCore::viewModeEvaluate): Ditto.
+        (WebCore::hoverEvaluate): Ditto.
+        (WebCore::pointerEvaluate): Ditto.
+        (WebCore::prefersReducedMotionEvaluate): Ditto.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText): Use ExceptionOr.
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty): Ditto.
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty): Ditto.
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal): Ditto.
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal): Ditto.
+        * css/PropertySetCSSStyleDeclaration.h: Updated for above changes.
+        Also marked a couple additional functions private.
+
+        * css/StyleBuilderConverter.h: Use doubleValue instead of getDoubleValue, etc.
+        * css/StyleBuilderCustom.h: Ditto.
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getLayeredShorthandValue): Ditto.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties): Ditto.
+        (WebCore::StyleResolver::colorFromPrimitiveValueIsDerivedFromElement): Ditto.
+        (WebCore::StyleResolver::colorFromPrimitiveValue): Ditto.
+        (WebCore::StyleResolver::createFilterOperations): Ditto.
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue): Ditto.
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::getViewportArgumentValue): Ditto.
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::WebKitCSSMatrix): Tweaked constructors a bit,
+        getting rid of the one that uses an ExceptionCode.
+        (WebCore::WebKitCSSMatrix::create): Moved in here, and use ExceptionOr.
+        (WebCore::WebKitCSSMatrix::setMatrixValue): Use ExceptionOr.
+        (WebCore::WebKitCSSMatrix::multiply): Tweak coding style a bit.
+        (WebCore::WebKitCSSMatrix::inverse): Use ExceptionOr.
+        (WebCore::WebKitCSSMatrix::translate): Return a Ref instead of RefPtr.
+        (WebCore::WebKitCSSMatrix::scale): Ditto.
+        (WebCore::WebKitCSSMatrix::rotate): Ditto.
+        (WebCore::WebKitCSSMatrix::rotateAxisAngle): Ditto.
+        (WebCore::WebKitCSSMatrix::skewX): Ditto.
+        (WebCore::WebKitCSSMatrix::skewY): Ditto.
+        (WebCore::WebKitCSSMatrix::toString): Tweaked formatting a bit.
+        * css/WebKitCSSMatrix.h: Updated for above changes.
+        * css/WebKitCSSMatrix.idl: Use non-legacy extensions.
+
+        * css/makeprop.pl:
+        (handleCurrentColorValue): Use valueID instead of getValueID.
+        (generateValueSetter): Ditto.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parse4ValuesFillPosition): Use valueID instead of getValueID, etc.
+        (WebCore::CSSParser::parse3ValuesFillPosition): Ditto.
+        (WebCore::CSSParser::parseFillPosition): Ditto.
+        (WebCore::CSSParser::parseFillRepeat): Ditto.
+        (WebCore::CSSParser::parseGridPosition): Ditto.
+        (WebCore::CSSParser::parseGridTemplateRowsAndAreasAndColumns): Ditto.
+        (WebCore::isGridTrackFixedSized): Ditto.
+        (WebCore::CSSParser::parseRadialGradient): Ditto.
+        (WebCore::CSSParser::parseBuiltinFilterArguments): Ditto.
+
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue): Removed the unneeded call to
+        setPrimitiveType here. The createParserOperator returns an object that
+        already has the correct primitive type.
+
+        * css/parser/CSSPropertyParser.cpp: Updated most cases of calling the old
+        getXXXValue functions, but not sure if it's right since it is commented out
+        code that I did not compile.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::clampRGBComponent): Use intValue instead of getIntValue, etc.
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters): Ditto.
+        (WebCore::CSSPropertyParserHelpers::isHorizontalPositionKeywordOnly): Ditto.
+        (WebCore::CSSPropertyParserHelpers::isVerticalPositionKeywordOnly): Ditto.
+        (WebCore::CSSPropertyParserHelpers::positionFromThreeOrFourValues): Ditto.
+        (WebCore::CSSPropertyParserHelpers::consumeRadialGradient): Ditto.
+
+        * dom/Range.cpp: Added now-needed include of ExceptionCode.h.
+        * dom/SelectorQuery.cpp: Ditto.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::toIdentifier): Use valueID instead of getValueID, etc.
+        (WebCore::ApplyStyleCommand::computedFontSize): Ditto.
+        * editing/EditingStyle.cpp:
+        (WebCore::identifierForStyleProperty): Ditto.
+        (WebCore::HTMLElementEquivalent::valueIsPresentInStyle): Ditto.
+        (WebCore::EditingStyle::extractFontSizeDelta): Ditto.
+        (WebCore::EditingStyle::textDirection): Ditto.
+        (WebCore::EditingStyle::prepareToApplyAt): Ditto.
+        (WebCore::EditingStyle::textDirectionForSelection): Ditto.
+        (WebCore::fontWeightIsBold): Ditto.
+        (WebCore::legacyFontSizeFromCSSValue): Ditto.
+        (WebCore::isTransparentColorValue): Ditto.
+        (WebCore::hasTransparentBackgroundColor): Ditto.
+        (WebCore::backgroundColorInEffect): Ditto.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyEditingStyleToElement): Removed IGNORE_EXCEPTION; that is
+        what we do by default for things returning ExceptionOr.
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::doApply): Ditto.
+        (WebCore::RemoveCSSPropertyCommand::doUnapply): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): Ditto.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (floatValueFromPrimitiveValue): Use floatValue instead of getFloatValue, etc.
+        * editing/markup.cpp:
+        (WebCore::propertyMissingOrEqualToNone): Ditto.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::addRule): Updated to call ExceptionOr-returning functions.
+        (WebCore::InspectorStyleSheet::deleteRule): Ditto.
+        (WebCore::InspectorStyleSheet::setStyleText): Ditto.
+
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::fromCSSPrimitiveValue): Use floatValue instead of getFloatValue.
+
 2016-10-16  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Styles for StartButton are missing

@@ -22,14 +22,14 @@ interface CSSStyleSheet : StyleSheet {
     readonly attribute CSSRule ownerRule;
     readonly attribute CSSRuleList cssRules;
 
-    [MayThrowLegacyException] unsigned long insertRule(DOMString rule, unsigned long index);
-    [MayThrowLegacyException, ImplementedAs=deprecatedInsertRule] unsigned long insertRule(DOMString rule); // Deprecated.
+    [MayThrowException] unsigned long insertRule(DOMString rule, unsigned long index);
+    [MayThrowException, ImplementedAs=deprecatedInsertRule] unsigned long insertRule(DOMString rule); // Deprecated.
 
-    [MayThrowLegacyException] void deleteRule(unsigned long index);
+    [MayThrowException] void deleteRule(unsigned long index);
 
     readonly attribute CSSRuleList rules;
 
-    // FIXME: Those operations are WebKit-specific.
-    [MayThrowLegacyException] long addRule(optional DOMString selector = "undefined", optional DOMString style = "undefined", optional unsigned long index);
-    [MayThrowLegacyException] void removeRule(optional unsigned long index = 0);
+    // The following two operations are WebKit-specific.
+    [MayThrowException] long addRule(optional DOMString selector = "undefined", optional DOMString style = "undefined", optional unsigned long index);
+    [MayThrowException] void removeRule(optional unsigned long index = 0);
 };

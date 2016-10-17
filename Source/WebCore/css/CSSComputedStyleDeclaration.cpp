@@ -1636,9 +1636,9 @@ String CSSComputedStyleDeclaration::cssText() const
     return result.toString();
 }
 
-void CSSComputedStyleDeclaration::setCssText(const String&, ExceptionCode& ec)
+ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
 RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword() const
@@ -4001,7 +4001,7 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
         if (auto* style = m_node->computedStyle(m_pseudoElementSpecifier)) {
             if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                 auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-                if (primitiveValue.isValueID() && primitiveValue.getValueID() == sizeIdentifier)
+                if (primitiveValue.isValueID() && primitiveValue.valueID() == sizeIdentifier)
                     return true;
             }
         }
@@ -4119,15 +4119,14 @@ bool CSSComputedStyleDeclaration::isPropertyImplicit(const String&)
     return false;
 }
 
-void CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&, ExceptionCode& ec)
+ExceptionOr<void> CSSComputedStyleDeclaration::setProperty(const String&, const String&, const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-String CSSComputedStyleDeclaration::removeProperty(const String&, ExceptionCode& ec)
+ExceptionOr<String> CSSComputedStyleDeclaration::removeProperty(const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
-    return String();
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
     
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)
@@ -4140,21 +4139,17 @@ String CSSComputedStyleDeclaration::getPropertyValueInternal(CSSPropertyID prope
     return getPropertyValue(propertyID);
 }
 
-bool CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool, ExceptionCode& ec)
+ExceptionOr<bool> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID, const String&, bool)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
-    return false;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-RefPtr<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue() const
+Ref<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue() const
 {
-    static const CSSPropertyID propertiesBeforeSlashSeperator[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage,
-                                                                     CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment,  
-                                                                     CSSPropertyBackgroundPosition };
-    static const CSSPropertyID propertiesAfterSlashSeperator[3] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, 
-                                                                    CSSPropertyBackgroundClip };
+    static const CSSPropertyID propertiesBeforeSlashSeperator[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition };
+    static const CSSPropertyID propertiesAfterSlashSeperator[3] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
 
-    RefPtr<CSSValueList> list = CSSValueList::createSlashSeparated();
+    auto list = CSSValueList::createSlashSeparated();
     list->append(*getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(CSSPropertyBackground, propertiesBeforeSlashSeperator)));
     list->append(*getCSSPropertyValuesForShorthandProperties(StylePropertyShorthand(CSSPropertyBackground, propertiesAfterSlashSeperator)));
     return list;

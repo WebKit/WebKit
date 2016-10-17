@@ -883,7 +883,7 @@ static CSSValue* consumeCounter(CSSParserTokenRange& range, int defaultValue)
             return nullptr;
         int i = defaultValue;
         if (CSSPrimitiveValue* counterValue = consumeInteger(range))
-            i = clampTo<int>(counterValue->getDoubleValue());
+            i = counterValue->intValue());
         list->append(*CSSValuePair::create(counterName,
             CSSPrimitiveValue::create(i, CSSPrimitiveValue::UnitType::Integer),
             CSSValuePair::DropIdenticalValues));
@@ -936,7 +936,7 @@ static CSSValue* consumeSnapHeight(CSSParserTokenRange& range, CSSParserMode css
     list->append(*unit);
 
     if (CSSPrimitiveValue* position = consumePositiveInteger(range)) {
-        if (position->getIntValue() > 100)
+        if (position->intValue() > 100)
             return nullptr;
         list->append(*position);
     }
@@ -1131,7 +1131,7 @@ static CSSValue* consumeColumnWidth(CSSParserTokenRange& range)
     // Always parse lengths in strict mode here, since it would be ambiguous otherwise when used in
     // the 'columns' shorthand property.
     CSSPrimitiveValue* columnWidth = consumeLength(range, HTMLStandardMode, ValueRangeNonNegative);
-    if (!columnWidth || (!columnWidth->isCalculated() && columnWidth->getDoubleValue() == 0))
+    if (!columnWidth || (!columnWidth->isCalculated() && columnWidth->doubleValue() == 0))
         return nullptr;
     return columnWidth;
 }
@@ -1168,8 +1168,8 @@ static CSSValue* consumeZoom(CSSParserTokenRange& range, const CSSParserContext&
     }
     if (zoom && context.useCounter()
         && !(token.id() == CSSValueNormal
-            || (token.type() == NumberToken && zoom->getDoubleValue() == 1)
-            || (token.type() == PercentageToken && zoom->getDoubleValue() == 100)))
+            || (token.type() == NumberToken && zoom->doubleValue() == 1)
+            || (token.type() == PercentageToken && zoom->doubleValue() == 100)))
         context.useCounter()->count(UseCounter::CSSZoomNotEqualToOne);
     return zoom;
 }
@@ -1249,7 +1249,7 @@ static CSSValue* consumeSteps(CSSParserTokenRange& range)
         return nullptr;
 
     range = rangeCopy;
-    return CSSStepsTimingFunctionValue::create(steps->getIntValue(), position);
+    return CSSStepsTimingFunctionValue::create(steps->intValue(), position);
 }
 
 static CSSValue* consumeCubicBezier(CSSParserTokenRange& range)
@@ -1328,7 +1328,7 @@ static bool isValidAnimationPropertyList(CSSPropertyID property, const CSSValueL
         return true;
     for (auto& value : valueList) {
         if (value->isPrimitiveValue() && toCSSPrimitiveValue(*value).isValueID()
-            && toCSSPrimitiveValue(*value).getValueID() == CSSValueNone)
+            && toCSSPrimitiveValue(*value).valueID() == CSSValueNone)
             return false;
     }
     return true;
@@ -1428,7 +1428,7 @@ static CSSShadowValue* parseSingleShadow(CSSParserTokenRange& range, CSSParserMo
     CSSPrimitiveValue* spreadDistance = nullptr;
     if (blurRadius) {
         // Blur radius must be non-negative.
-        if (blurRadius->getDoubleValue() < 0)
+        if (blurRadius->doubleValue() < 0)
             return nullptr;
         if (allowSpread)
             spreadDistance = consumeLength(range, cssParserMode, ValueRangeAll);
@@ -1496,7 +1496,7 @@ static CSSFunctionValue* consumeFilterFunction(CSSParserTokenRange& range, const
             if (parsedValue && filterType != CSSValueSaturate && filterType != CSSValueContrast) {
                 bool isPercentage = toCSSPrimitiveValue(parsedValue)->isPercentage();
                 double maxAllowed = isPercentage ? 100.0 : 1.0;
-                if (toCSSPrimitiveValue(parsedValue)->getDoubleValue() > maxAllowed) {
+                if (toCSSPrimitiveValue(parsedValue)->doubleValue() > maxAllowed) {
                     parsedValue = CSSPrimitiveValue::create(
                         maxAllowed,
                         isPercentage ? CSSPrimitiveValue::UnitType::Percentage : CSSPrimitiveValue::UnitType::Number);
@@ -2121,7 +2121,7 @@ static CSSPrimitiveValue* consumePerspective(CSSParserTokenRange& range, CSSPars
             return nullptr;
         parsedValue = CSSPrimitiveValue::create(perspective, CSSPrimitiveValue::UnitType::Pixels);
     }
-    if (parsedValue && (parsedValue->isCalculated() || parsedValue->getDoubleValue() > 0))
+    if (parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0))
         return parsedValue;
     return nullptr;
 }
@@ -2152,7 +2152,7 @@ static CSSValue* consumeScrollSnapPoints(CSSParserTokenRange& range, CSSParserMo
     if (range.peek().functionId() == CSSValueRepeat) {
         CSSParserTokenRange args = consumeFunction(range);
         CSSPrimitiveValue* parsedValue = consumeLengthOrPercent(args, cssParserMode, ValueRangeNonNegative);
-        if (args.atEnd() && parsedValue && (parsedValue->isCalculated() || parsedValue->getDoubleValue() > 0)) {
+        if (args.atEnd() && parsedValue && (parsedValue->isCalculated() || parsedValue->doubleValue() > 0)) {
             CSSFunctionValue* result = CSSFunctionValue::create(CSSValueRepeat);
             result->append(*parsedValue);
             return result;
@@ -2592,7 +2592,7 @@ static CSSValue* consumeImageOrientation(CSSParserTokenRange& range)
         return consumeIdent(range);
     if (range.peek().type() != NumberToken) {
         CSSPrimitiveValue* angle = consumeAngle(range);
-        if (angle && angle->getDoubleValue() == 0)
+        if (angle && angle->doubleValue() == 0)
             return angle;
     }
     return nullptr;
@@ -2847,9 +2847,9 @@ static CSSValue* consumeGridLine(CSSParserTokenRange& range)
 
     if (spanValue && !numericValue && !gridLineName)
         return nullptr; // "span" keyword alone is invalid.
-    if (spanValue && numericValue && numericValue->getIntValue() < 0)
+    if (spanValue && numericValue && numericValue->intValue() < 0)
         return nullptr; // Negative numbers are not allowed for span.
-    if (numericValue && numericValue->getIntValue() == 0)
+    if (numericValue && numericValue->intValue() == 0)
         return nullptr; // An <integer> value of zero makes the declaration invalid.
 
     CSSValueList* values = CSSValueList::createSpaceSeparated();
@@ -2865,7 +2865,7 @@ static CSSValue* consumeGridLine(CSSParserTokenRange& range)
 
 static bool isGridTrackFixedSized(const CSSPrimitiveValue& primitiveValue)
 {
-    CSSValueID valueID = primitiveValue.getValueID();
+    CSSValueID valueID = primitiveValue.valueID();
     if (valueID == CSSValueMinContent || valueID == CSSValueMaxContent || valueID == CSSValueAuto || primitiveValue.isFlex())
         return false;
 
@@ -3053,7 +3053,7 @@ static bool consumeGridTrackRepeatFunction(CSSParserTokenRange& range, CSSParser
         CSSPrimitiveValue* repetition = consumePositiveInteger(args);
         if (!repetition)
             return false;
-        repetitions = clampTo<size_t>(repetition->getDoubleValue(), 0, kGridMaxTracks);
+        repetitions = clampTo<size_t>(repetition->doubleValue(), 0, kGridMaxTracks);
         repeatedValues = CSSValueList::createSpaceSeparated();
     }
     if (!consumeCommaIncludingWhitespace(args))
@@ -4242,7 +4242,7 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
         return false;
     if (!m_range.atEnd())
         return false;
-    CSSValueID value = keyword->getValueID();
+    CSSValueID value = keyword->valueID();
     switch (property) {
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:

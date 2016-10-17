@@ -65,35 +65,25 @@
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    unsigned result = IMPL->insertRule(rule, index, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->insertRule(rule, index));
 }
 
 - (void)deleteRule:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteRule(index, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteRule(index));
 }
 
 - (int)addRule:(NSString *)selector style:(NSString *)style index:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    int result = IMPL->addRule(selector, style, index, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->addRule(selector, style, index));
 }
 
 - (void)removeRule:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->removeRule(index, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->removeRule(index));
 }
 
 @end

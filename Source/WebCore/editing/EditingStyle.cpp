@@ -144,13 +144,12 @@ int identifierForStyleProperty(T& style, CSSPropertyID propertyID)
     RefPtr<CSSValue> value = extractPropertyValue(style, propertyID);
     if (!is<CSSPrimitiveValue>(value.get()))
         return 0;
-    return downcast<CSSPrimitiveValue>(*value).getValueID();
+    return downcast<CSSPrimitiveValue>(*value).valueID();
 }
 
 template<typename T> PassRefPtr<MutableStyleProperties> getPropertiesNotIn(StyleProperties& styleWithRedundantProperties, T& baseStyle);
 enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
 static int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
-static bool isTransparentColorValue(CSSValue*);
 static bool hasTransparentBackgroundColor(StyleProperties*);
 static RefPtr<CSSValue> backgroundColorInEffect(Node*);
 
@@ -196,7 +195,7 @@ HTMLElementEquivalent::HTMLElementEquivalent(CSSPropertyID id, CSSValueID primit
 bool HTMLElementEquivalent::valueIsPresentInStyle(Element& element, const EditingStyle& style) const
 {
     RefPtr<CSSValue> value = style.m_mutableStyle->getPropertyCSSValue(m_propertyID);
-    return matches(element) && is<CSSPrimitiveValue>(value.get()) && downcast<CSSPrimitiveValue>(*value).getValueID() == m_primitiveValue->getValueID();
+    return matches(element) && is<CSSPrimitiveValue>(value.get()) && downcast<CSSPrimitiveValue>(*value).valueID() == m_primitiveValue->valueID();
 }
 
 void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
@@ -512,7 +511,7 @@ void EditingStyle::extractFontSizeDelta()
     if (!primitiveValue.isPx())
         return;
 
-    m_fontSizeDelta = primitiveValue.getFloatValue();
+    m_fontSizeDelta = primitiveValue.floatValue();
     m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
 }
 
@@ -553,13 +552,13 @@ bool EditingStyle::textDirection(WritingDirection& writingDirection) const
     if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
         return false;
 
-    CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).getValueID();
+    CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
         if (!is<CSSPrimitiveValue>(direction.get()))
             return false;
 
-        writingDirection = downcast<CSSPrimitiveValue>(*direction).getValueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
+        writingDirection = downcast<CSSPrimitiveValue>(*direction).valueID() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
 
         return true;
     }
@@ -1098,9 +1097,9 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
     if (is<CSSPrimitiveValue>(unicodeBidi.get())) {
-        m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*unicodeBidi).getValueID()));
+        m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*unicodeBidi).valueID()));
         if (is<CSSPrimitiveValue>(direction.get()))
-            m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*direction).getValueID()));
+            m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSValueID>(downcast<CSSPrimitiveValue>(*direction).valueID()));
     }
 }
 
@@ -1483,7 +1482,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
             if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
                 continue;
 
-            CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).getValueID();
+            CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
             if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
                 return NaturalWritingDirection;
         }
@@ -1512,7 +1511,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!is<CSSPrimitiveValue>(unicodeBidi.get()))
             continue;
 
-        CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).getValueID();
+        CSSValueID unicodeBidiValue = downcast<CSSPrimitiveValue>(*unicodeBidi).valueID();
         if (unicodeBidiValue == CSSValueNormal)
             continue;
 
@@ -1524,7 +1523,7 @@ WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection&
         if (!is<CSSPrimitiveValue>(direction.get()))
             continue;
 
-        CSSValueID directionValue = downcast<CSSPrimitiveValue>(*direction).getValueID();
+        CSSValueID directionValue = downcast<CSSPrimitiveValue>(*direction).valueID();
         if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
             continue;
 
@@ -1741,7 +1740,7 @@ static bool fontWeightIsBold(CSSValue& fontWeight)
 
     // Because b tag can only bold text, there are only two states in plain html: bold and not bold.
     // Collapse all other values to either one of these two states for editing purposes.
-    switch (downcast<CSSPrimitiveValue>(fontWeight).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(fontWeight).valueID()) {
         case CSSValue100:
         case CSSValue200:
         case CSSValue300:
@@ -1814,7 +1813,7 @@ int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, boo
     ASSERT(document); // FIXME: This method should take a Document&
 
     if (isCSSValueLength(value)) {
-        int pixelFontSize = value->getIntValue(CSSPrimitiveValue::CSS_PX);
+        int pixelFontSize = value->intValue(CSSPrimitiveValue::CSS_PX);
         int legacyFontSize = Style::legacyFontSizeForPixelSize(pixelFontSize, shouldUseFixedFontDefaultSize, *document);
         // Use legacy font size only if pixel value matches exactly to that of legacy font size.
         int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;
@@ -1824,34 +1823,33 @@ int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, boo
         return 0;
     }
 
-    if (CSSValueXSmall <= value->getValueID() && value->getValueID() <= CSSValueWebkitXxxLarge)
-        return value->getValueID() - CSSValueXSmall + 1;
+    if (CSSValueXSmall <= value->valueID() && value->valueID() <= CSSValueWebkitXxxLarge)
+        return value->valueID() - CSSValueXSmall + 1;
 
     return 0;
 }
 
-bool isTransparentColorValue(CSSValue* cssValue)
+static bool isTransparentColorValue(CSSValue* value)
 {
-    if (!cssValue)
+    if (!value)
         return true;
-    if (!is<CSSPrimitiveValue>(*cssValue))
+    if (!is<CSSPrimitiveValue>(*value))
         return false;
-    CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(*cssValue);
-    if (value.isRGBColor())
-        return value.color().alpha() == 0;
-    return value.getValueID() == CSSValueTransparent;
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+    if (primitiveValue.isRGBColor())
+        return !primitiveValue.color().alpha();
+    return primitiveValue.valueID() == CSSValueTransparent;
 }
 
 bool hasTransparentBackgroundColor(StyleProperties* style)
 {
-    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
-    return isTransparentColorValue(cssValue.get());
+    return isTransparentColorValue(style->getPropertyCSSValue(CSSPropertyBackgroundColor).get());
 }
 
 RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
     for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        if (RefPtr<CSSValue> value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor)) {
+        if (auto value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor)) {
             if (!isTransparentColorValue(value.get()))
                 return value;
         }

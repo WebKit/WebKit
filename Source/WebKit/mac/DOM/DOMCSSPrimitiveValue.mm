@@ -54,62 +54,43 @@
 - (void)setFloatValue:(unsigned short)unitType floatValue:(float)floatValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setFloatValue(unitType, floatValue, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setFloatValue(unitType, floatValue));
 }
 
 - (float)getFloatValue:(unsigned short)unitType
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    float result = IMPL->getFloatValue(unitType, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->getFloatValue(unitType));
 }
 
 - (void)setStringValue:(unsigned short)stringType stringValue:(NSString *)stringValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setStringValue(stringType, stringValue, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setStringValue(stringType, stringValue));
 }
 
 - (NSString *)getStringValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->getStringValue(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->getStringValue());
 }
 
 - (DOMCounter *)getCounterValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMCounter *result = kit(WTF::getPtr(IMPL->getCounterValue(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->getCounterValue()));
 }
 
 - (DOMRect *)getRectValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMRect *result = kit(WTF::getPtr(IMPL->getRectValue(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->getRectValue()));
 }
 
 - (DOMRGBColor *)getRGBColorValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMRGBColor *result = kit(WTF::getPtr(IMPL->getRGBColorValue(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->getRGBColorValue()).ptr());
 }
 
 @end

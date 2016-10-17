@@ -115,13 +115,13 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sx = 1.0;
             double sy = 1.0;
             if (transformValue.operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
-                sy = firstValue.getDoubleValue();
+                sy = firstValue.doubleValue();
             else {
-                sx = firstValue.getDoubleValue();
+                sx = firstValue.doubleValue();
                 if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.getDoubleValue();
+                        sy = secondValue.doubleValue();
                     } else
                         sy = sx;
                 }
@@ -135,19 +135,19 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             double sy = 1.0;
             double sz = 1.0;
             if (transformValue.operationType() == WebKitCSSTransformValue::ScaleZTransformOperation)
-                sz = firstValue.getDoubleValue();
+                sz = firstValue.doubleValue();
             else if (transformValue.operationType() == WebKitCSSTransformValue::ScaleYTransformOperation)
-                sy = firstValue.getDoubleValue();
+                sy = firstValue.doubleValue();
             else {
-                sx = firstValue.getDoubleValue();
+                sx = firstValue.doubleValue();
                 if (transformValue.operationType() != WebKitCSSTransformValue::ScaleXTransformOperation) {
                     if (transformValue.length() > 2) {
                         auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
-                        sz = thirdValue.getDoubleValue();
+                        sz = thirdValue.doubleValue();
                     }
                     if (transformValue.length() > 1) {
                         auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
-                        sy = secondValue.getDoubleValue();
+                        sy = secondValue.doubleValue();
                     } else
                         sy = sx;
                 }
@@ -235,9 +235,9 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
             auto& secondValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1));
             auto& thirdValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2));
             auto& fourthValue = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3));
-            double x = firstValue.getDoubleValue();
-            double y = secondValue.getDoubleValue();
-            double z = thirdValue.getDoubleValue();
+            double x = firstValue.doubleValue();
+            double y = secondValue.doubleValue();
+            double z = thirdValue.doubleValue();
             double angle = fourthValue.computeDegrees();
             operations.operations().append(RotateTransformOperation::create(x, y, z, angle, transformOperationType(transformValue.operationType())));
             break;
@@ -265,34 +265,34 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
         case WebKitCSSTransformValue::MatrixTransformOperation: {
             if (transformValue.length() < 6)
                 break;
-            double a = firstValue.getDoubleValue();
-            double b = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1)).getDoubleValue();
-            double c = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2)).getDoubleValue();
-            double d = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3)).getDoubleValue();
-            double e = conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(4)).getDoubleValue();
-            double f = conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(5)).getDoubleValue();
+            double a = firstValue.doubleValue();
+            double b = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1)).doubleValue();
+            double c = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2)).doubleValue();
+            double d = downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3)).doubleValue();
+            double e = conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(4)).doubleValue();
+            double f = conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(5)).doubleValue();
             operations.operations().append(MatrixTransformOperation::create(a, b, c, d, e, f));
             break;
         }
         case WebKitCSSTransformValue::Matrix3DTransformOperation: {
             if (transformValue.length() < 16)
                 break;
-            TransformationMatrix matrix(downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(4)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(5)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(6)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(7)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(8)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(9)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(10)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(11)).getDoubleValue(),
-                conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(12)).getDoubleValue(),
-                conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(13)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(14)).getDoubleValue(),
-                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(15)).getDoubleValue());
+            TransformationMatrix matrix(downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(0)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(1)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(2)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(3)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(4)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(5)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(6)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(7)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(8)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(9)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(10)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(11)).doubleValue(),
+                conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(12)).doubleValue(),
+                conversionData.zoom() * downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(13)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(14)).doubleValue(),
+                downcast<CSSPrimitiveValue>(*transformValue.itemWithoutBoundsCheck(15)).doubleValue());
             operations.operations().append(Matrix3DTransformOperation::create(matrix));
             break;
         }
@@ -302,7 +302,7 @@ bool transformsForValue(const CSSValue& value, const CSSToLengthConversionData& 
                 p = convertToFloatLength(&firstValue, conversionData);
             else {
                 // This is a quirk that should go away when 3d transforms are finalized.
-                double val = firstValue.getDoubleValue();
+                double val = firstValue.doubleValue();
                 p = val >= 0 ? Length(clampToPositiveInteger(val), Fixed) : Length(Undefined);
             }
 

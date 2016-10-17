@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleBuilderCustom_h
-#define StyleBuilderCustom_h
+#pragma once
 
 #include "CSSAspectRatioValue.h"
 #include "CSSCursorImageValue.h"
@@ -194,23 +193,23 @@ inline void StyleBuilderCustom::applyValueZoom(StyleResolver& styleResolver, CSS
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    if (primitiveValue.getValueID() == CSSValueNormal) {
+    if (primitiveValue.valueID() == CSSValueNormal) {
         resetEffectiveZoom(styleResolver);
         styleResolver.setZoom(RenderStyle::initialZoom());
-    } else if (primitiveValue.getValueID() == CSSValueReset) {
+    } else if (primitiveValue.valueID() == CSSValueReset) {
         styleResolver.setEffectiveZoom(RenderStyle::initialZoom());
         styleResolver.setZoom(RenderStyle::initialZoom());
-    } else if (primitiveValue.getValueID() == CSSValueDocument) {
+    } else if (primitiveValue.valueID() == CSSValueDocument) {
         float docZoom = styleResolver.rootElementStyle() ? styleResolver.rootElementStyle()->zoom() : RenderStyle::initialZoom();
         styleResolver.setEffectiveZoom(docZoom);
         styleResolver.setZoom(docZoom);
     } else if (primitiveValue.isPercentage()) {
         resetEffectiveZoom(styleResolver);
-        if (float percent = primitiveValue.getFloatValue())
+        if (float percent = primitiveValue.floatValue())
             styleResolver.setZoom(percent / 100.0f);
     } else if (primitiveValue.isNumber()) {
         resetEffectiveZoom(styleResolver);
-        if (float number = primitiveValue.getFloatValue())
+        if (float number = primitiveValue.floatValue())
             styleResolver.setZoom(number);
     }
 }
@@ -246,7 +245,7 @@ bool StyleBuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CS
     if (!pageSizeName)
         return false;
 
-    switch (pageSizeName->getValueID()) {
+    switch (pageSizeName->valueID()) {
     case CSSValueA5:
         width = a5Width;
         height = a5Height;
@@ -284,7 +283,7 @@ bool StyleBuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CS
     }
 
     if (pageOrientation) {
-        switch (pageOrientation->getValueID()) {
+        switch (pageOrientation->valueID()) {
         case CSSValueLandscape:
             std::swap(width, height);
             break;
@@ -301,7 +300,7 @@ bool StyleBuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CS
 inline void StyleBuilderCustom::applyValueVerticalAlign(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID())
+    if (primitiveValue.valueID())
         styleResolver.style()->setVerticalAlign(primitiveValue);
     else
         styleResolver.style()->setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData()));
@@ -316,12 +315,12 @@ static Length convertToIntLength(const CSSPrimitiveValue* primitiveValue, const 
 inline void StyleBuilderCustom::applyValueWebkitDashboardRegion(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNone) {
+    if (primitiveValue.valueID() == CSSValueNone) {
         styleResolver.style()->setDashboardRegions(RenderStyle::noneDashboardRegions());
         return;
     }
 
-    DashboardRegion* region = primitiveValue.getDashboardRegionValue();
+    auto* region = primitiveValue.dashboardRegionValue();
     if (!region)
         return;
 
@@ -374,12 +373,12 @@ inline void StyleBuilderCustom::applyValueImageResolution(StyleResolver& styleRe
     double resolution = RenderStyle::initialImageResolution();
     for (auto& item : downcast<CSSValueList>(value)) {
         CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
-        if (primitiveValue.getValueID() == CSSValueFromImage)
+        if (primitiveValue.valueID() == CSSValueFromImage)
             source = ImageResolutionFromImage;
-        else if (primitiveValue.getValueID() == CSSValueSnap)
+        else if (primitiveValue.valueID() == CSSValueSnap)
             snap = ImageResolutionSnapPixels;
         else
-            resolution = primitiveValue.getDoubleValue(CSSPrimitiveValue::CSS_DPPX);
+            resolution = primitiveValue.doubleValue(CSSPrimitiveValue::CSS_DPPX);
     }
     styleResolver.style()->setImageResolutionSource(source);
     styleResolver.style()->setImageResolutionSnap(snap);
@@ -435,7 +434,7 @@ inline void StyleBuilderCustom::applyValueSize(StyleResolver& styleResolver, CSS
             pageSizeType = PAGE_SIZE_RESOLVED;
             width = height = primitiveValue.computeLength<Length>(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         } else {
-            switch (primitiveValue.getValueID()) {
+            switch (primitiveValue.valueID()) {
             case 0:
                 return;
             case CSSValueAuto:
@@ -490,12 +489,12 @@ inline void StyleBuilderCustom::applyValueTextIndent(StyleResolver& styleResolve
 #endif
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
-        if (!primitiveValue.getValueID())
+        if (!primitiveValue.valueID())
             lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(styleResolver.state().cssToLengthConversionData());
 #if ENABLE(CSS3_TEXT)
-        else if (primitiveValue.getValueID() == CSSValueWebkitEachLine)
+        else if (primitiveValue.valueID() == CSSValueWebkitEachLine)
             textIndentLineValue = TextIndentEachLine;
-        else if (primitiveValue.getValueID() == CSSValueWebkitHanging)
+        else if (primitiveValue.valueID() == CSSValueWebkitHanging)
             textIndentTypeValue = TextIndentHanging;
 #endif
     }
@@ -680,7 +679,7 @@ inline void StyleBuilderCustom::applyValueClip(StyleResolver& styleResolver, CSS
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    if (Rect* rect = primitiveValue.getRectValue()) {
+    if (Rect* rect = primitiveValue.rectValue()) {
         auto conversionData = styleResolver.state().cssToLengthConversionData();
         Length top = rect->top()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
         Length right = rect->right()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
@@ -689,7 +688,7 @@ inline void StyleBuilderCustom::applyValueClip(StyleResolver& styleResolver, CSS
         styleResolver.style()->setClip(top, right, bottom, left);
         styleResolver.style()->setHasClip(true);
     } else {
-        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        ASSERT(primitiveValue.valueID() == CSSValueAuto);
         applyInitialClip(styleResolver);
     }
 }
@@ -699,10 +698,10 @@ inline void StyleBuilderCustom::applyValueWebkitLocale(StyleResolver& styleResol
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     FontCascadeDescription fontDescription = styleResolver.style()->fontDescription();
-    if (primitiveValue.getValueID() == CSSValueAuto)
+    if (primitiveValue.valueID() == CSSValueAuto)
         fontDescription.setLocale(nullAtom);
     else
-        fontDescription.setLocale(primitiveValue.getStringValue());
+        fontDescription.setLocale(primitiveValue.stringValue());
     styleResolver.setFontDescription(fontDescription);
 }
 
@@ -721,12 +720,12 @@ inline void StyleBuilderCustom::applyValueWebkitTextOrientation(StyleResolver& s
 inline void StyleBuilderCustom::applyValueWebkitTextSizeAdjust(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAuto)
+    if (primitiveValue.valueID() == CSSValueAuto)
         styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(AutoTextSizeAdjustment));
-    else if (primitiveValue.getValueID() == CSSValueNone)
+    else if (primitiveValue.valueID() == CSSValueNone)
         styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(NoTextSizeAdjustment));
     else
-        styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(primitiveValue.getFloatValue()));
+        styleResolver.style()->setTextSizeAdjust(TextSizeAdjustment(primitiveValue.floatValue()));
 
     styleResolver.state().setFontDirty(true);
 }
@@ -735,9 +734,9 @@ inline void StyleBuilderCustom::applyValueWebkitTextSizeAdjust(StyleResolver& st
 inline void StyleBuilderCustom::applyValueWebkitTextZoom(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNormal)
+    if (primitiveValue.valueID() == CSSValueNormal)
         styleResolver.style()->setTextZoom(TextZoomNormal);
-    else if (primitiveValue.getValueID() == CSSValueReset)
+    else if (primitiveValue.valueID() == CSSValueReset)
         styleResolver.style()->setTextZoom(TextZoomReset);
     styleResolver.state().setFontDirty(true);
 }
@@ -746,7 +745,7 @@ template <CSSPropertyID id>
 inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         if (id == CSSPropertyTextShadow)
             styleResolver.style()->setTextShadow(nullptr);
         else
@@ -762,7 +761,7 @@ inline void StyleBuilderCustom::applyTextOrBoxShadowValue(StyleResolver& styleRe
         int y = shadowValue.y->computeLength<int>(conversionData);
         int blur = shadowValue.blur ? shadowValue.blur->computeLength<int>(conversionData) : 0;
         int spread = shadowValue.spread ? shadowValue.spread->computeLength<int>(conversionData) : 0;
-        ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->getValueID() == CSSValueInset ? Inset : Normal;
+        ShadowStyle shadowStyle = shadowValue.style && shadowValue.style->valueID() == CSSValueInset ? Inset : Normal;
         Color color;
         if (shadowValue.color)
             color = styleResolver.colorFromPrimitiveValue(*shadowValue.color);
@@ -869,7 +868,7 @@ inline void StyleBuilderCustom::applyValueFontFamily(StyleResolver& styleResolve
             // If the family name was resolved by the CSS parser from a system font ID, then it is generic.
             isGenericFamily = fontFamily.fromSystemFontID;
         } else {
-            switch (contentValue.getValueID()) {
+            switch (contentValue.valueID()) {
             case CSSValueWebkitBody:
                 if (Settings* settings = styleResolver.document().settings())
                     family = settings->standardFontFamily();
@@ -948,7 +947,7 @@ inline void StyleBuilderCustom::applyValueBaselineShift(StyleResolver& styleReso
     SVGRenderStyle& svgStyle = styleResolver.style()->accessSVGStyle();
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isValueID()) {
-        switch (primitiveValue.getValueID()) {
+        switch (primitiveValue.valueID()) {
         case CSSValueBaseline:
             svgStyle.setBaselineShift(BS_BASELINE);
             break;
@@ -988,12 +987,12 @@ inline void StyleBuilderCustom::applyValueWebkitAspectRatio(StyleResolver& style
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-        if (primitiveValue.getValueID() == CSSValueFromDimensions)
+        if (primitiveValue.valueID() == CSSValueFromDimensions)
             return styleResolver.style()->setAspectRatioType(AspectRatioFromDimensions);
-        if (primitiveValue.getValueID() == CSSValueFromIntrinsic)
+        if (primitiveValue.valueID() == CSSValueFromIntrinsic)
             return styleResolver.style()->setAspectRatioType(AspectRatioFromIntrinsic);
 
-        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        ASSERT(primitiveValue.valueID() == CSSValueAuto);
         return styleResolver.style()->setAspectRatioType(AspectRatioAuto);
     }
 
@@ -1025,7 +1024,7 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
 
         for (auto& item : list) {
             CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(item.get());
-            if (value.getValueID() == CSSValueFilled || value.getValueID() == CSSValueOpen)
+            if (value.valueID() == CSSValueFilled || value.valueID() == CSSValueOpen)
                 styleResolver.style()->setTextEmphasisFill(value);
             else
                 styleResolver.style()->setTextEmphasisMark(value);
@@ -1038,13 +1037,13 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
     if (primitiveValue.isString()) {
         styleResolver.style()->setTextEmphasisFill(TextEmphasisFillFilled);
         styleResolver.style()->setTextEmphasisMark(TextEmphasisMarkCustom);
-        styleResolver.style()->setTextEmphasisCustomMark(primitiveValue.getStringValue());
+        styleResolver.style()->setTextEmphasisCustomMark(primitiveValue.stringValue());
         return;
     }
 
     styleResolver.style()->setTextEmphasisCustomMark(nullAtom);
 
-    if (primitiveValue.getValueID() == CSSValueFilled || primitiveValue.getValueID() == CSSValueOpen) {
+    if (primitiveValue.valueID() == CSSValueFilled || primitiveValue.valueID() == CSSValueOpen) {
         styleResolver.style()->setTextEmphasisFill(primitiveValue);
         styleResolver.style()->setTextEmphasisMark(TextEmphasisMarkAuto);
     } else {
@@ -1069,7 +1068,7 @@ inline void StyleBuilderCustom::applyInheritCounter(StyleResolver& styleResolver
 template <StyleBuilderCustom::CounterBehavior counterBehavior>
 inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, CSSValue& value)
 {
-    bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone;
+    bool setCounterIncrementToNone = counterBehavior == Increment && is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone;
 
     if (!is<CSSValueList>(value) && !setCounterIncrementToNone)
         return;
@@ -1086,12 +1085,12 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
         return;
 
     for (auto& item : downcast<CSSValueList>(value)) {
-        Pair* pair = downcast<CSSPrimitiveValue>(item.get()).getPairValue();
+        Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
         if (!pair || !pair->first() || !pair->second())
             continue;
 
-        AtomicString identifier = pair->first()->getStringValue();
-        int value = pair->second()->getIntValue();
+        AtomicString identifier = pair->first()->stringValue();
+        int value = pair->second()->intValue();
         CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->value;
         if (counterBehavior == Reset)
             directives.setResetValue(value);
@@ -1219,7 +1218,7 @@ inline void StyleBuilderCustom::applyValueWebkitSvgShadow(StyleResolver& styleRe
 {
     SVGRenderStyle& svgStyle = styleResolver.style()->accessSVGStyle();
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         svgStyle.setShadow(nullptr);
         return;
     }
@@ -1257,7 +1256,7 @@ inline void StyleBuilderCustom::applyValueFontWeight(StyleResolver& styleResolve
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     auto fontDescription = styleResolver.fontDescription();
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueInvalid:
         ASSERT_NOT_REACHED();
         break;
@@ -1290,7 +1289,7 @@ inline void StyleBuilderCustom::applyInheritColumnGap(StyleResolver& styleResolv
 
 inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal)
         styleResolver.style()->setHasNormalColumnGap();
     else
         styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
@@ -1333,7 +1332,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
 
         auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
         if (contentValue.isString()) {
-            styleResolver.style()->setContent(contentValue.getStringValue().impl(), didSet);
+            styleResolver.style()->setContent(contentValue.stringValue().impl(), didSet);
             didSet = true;
         } else if (contentValue.isAttr()) {
             // FIXME: Can a namespace be specified for an attr(foo)?
@@ -1341,7 +1340,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
                 styleResolver.style()->setHasAttrContent();
             else
                 const_cast<RenderStyle*>(styleResolver.parentStyle())->setHasAttrContent();
-            QualifiedName attr(nullAtom, contentValue.getStringValue().impl(), nullAtom);
+            QualifiedName attr(nullAtom, contentValue.stringValue().impl(), nullAtom);
             const AtomicString& value = styleResolver.element()->getAttribute(attr);
             styleResolver.style()->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
             didSet = true;
@@ -1349,7 +1348,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             styleResolver.ruleSets().mutableFeatures().attributeCanonicalLocalNamesInRules.add(attr.localName().impl());
             styleResolver.ruleSets().mutableFeatures().attributeLocalNamesInRules.add(attr.localName().impl());
         } else if (contentValue.isCounter()) {
-            Counter* counterValue = contentValue.getCounterValue();
+            auto* counterValue = contentValue.counterValue();
             EListStyleType listStyleType = NoneListStyle;
             CSSValueID listStyleIdent = counterValue->listStyleIdent();
             if (listStyleIdent != CSSValueNone)
@@ -1358,7 +1357,7 @@ inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, 
             styleResolver.style()->setContent(WTFMove(counter), didSet);
             didSet = true;
         } else {
-            switch (contentValue.getValueID()) {
+            switch (contentValue.valueID()) {
             case CSSValueOpenQuote:
                 styleResolver.style()->setContent(OPEN_QUOTE, didSet);
                 didSet = true;
@@ -1553,7 +1552,7 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     float size;
-    if (CSSValueID ident = primitiveValue.getValueID()) {
+    if (CSSValueID ident = primitiveValue.valueID()) {
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller || ident == CSSValueWebkitRubyText));
 
         // Keywords are being used.
@@ -1587,7 +1586,7 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
             size = primitiveValue.computeLength<float>(CSSToLengthConversionData(styleResolver.parentStyle(), styleResolver.rootElementStyle(), styleResolver.document().renderView(), 1.0f, true));
             styleResolver.state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
         } else if (primitiveValue.isPercentage())
-            size = (primitiveValue.getFloatValue() * parentSize) / 100.0f;
+            size = (primitiveValue.floatValue() * parentSize) / 100.0f;
         else if (primitiveValue.isCalculatedPercentageWithLength())
             size = primitiveValue.cssCalcValue()->createCalculationValue(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f))->evaluate(parentSize);
         else
@@ -1619,7 +1618,7 @@ inline void StyleBuilderCustom::applyInheritGridTemplateAreas(StyleResolver& sty
 inline void StyleBuilderCustom::applyValueGridTemplateAreas(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return;
     }
 
@@ -1706,7 +1705,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isString())
-        styleResolver.style()->setContentAltText(primitiveValue.getStringValue());
+        styleResolver.style()->setContentAltText(primitiveValue.stringValue());
     else if (primitiveValue.isAttr()) {
         // FIXME: Can a namespace be specified for an attr(foo)?
         if (styleResolver.style()->styleType() == NOPSEUDO)
@@ -1714,7 +1713,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
         else
             const_cast<RenderStyle*>(styleResolver.parentStyle())->setUnique();
 
-        QualifiedName attr(nullAtom, primitiveValue.getStringValue(), nullAtom);
+        QualifiedName attr(nullAtom, primitiveValue.stringValue(), nullAtom);
         const AtomicString& value = styleResolver.element()->getAttribute(attr);
         styleResolver.style()->setContentAltText(value.isNull() ? emptyAtom : value);
 
@@ -1726,6 +1725,7 @@ void StyleBuilderCustom::applyValueAlt(StyleResolver& styleResolver, CSSValue& v
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
+
 inline void StyleBuilderCustom::applyInitialWebkitScrollSnapPointsX(StyleResolver& styleResolver)
 {
     styleResolver.style()->setScrollSnapPointsX(nullptr);
@@ -1745,23 +1745,23 @@ inline void StyleBuilderCustom::applyInheritWebkitScrollSnapPointsY(StyleResolve
 {
     styleResolver.style()->setScrollSnapPointsY(styleResolver.parentStyle()->scrollSnapPointsY() ? std::make_unique<ScrollSnapPoints>(*styleResolver.parentStyle()->scrollSnapPointsY()) : nullptr);
 }
+
 #endif
 
 inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto);
         styleResolver.style()->setWillChange(nullptr);
         return;
     }
 
-    Ref<WillChangeData> willChange = WillChangeData::create();
+    auto willChange = WillChangeData::create();
     for (auto& item : downcast<CSSValueList>(value)) {
         if (!is<CSSPrimitiveValue>(item.get()))
             continue;
-
-        const auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
-        switch (primitiveValue.getValueID()) {
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
+        switch (primitiveValue.valueID()) {
         case CSSValueScrollPosition:
             willChange->addFeature(WillChangeData::Feature::ScrollPosition);
             break;
@@ -1770,14 +1770,11 @@ inline void StyleBuilderCustom::applyValueWillChange(StyleResolver& styleResolve
             break;
         default:
             if (primitiveValue.isPropertyID())
-                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.getPropertyID());
+                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
             break;
         }
     }
-
     styleResolver.style()->setWillChange(WTFMove(willChange));
 }
 
 } // namespace WebCore
-
-#endif // StyleBuilderCustom_h

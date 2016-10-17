@@ -42,17 +42,17 @@ public:
         String variant;
         String featureSettings;
     };
-    static RefPtr<FontFace> create(JSC::ExecState&, Document&, const String& family, JSC::JSValue source, const Descriptors&, ExceptionCode&);
+    static ExceptionOr<Ref<FontFace>> create(JSC::ExecState&, Document&, const String& family, JSC::JSValue source, const Descriptors&);
     static Ref<FontFace> create(CSSFontFace&);
     virtual ~FontFace();
 
-    void setFamily(const String&, ExceptionCode&);
-    void setStyle(const String&, ExceptionCode&);
-    void setWeight(const String&, ExceptionCode&);
-    void setStretch(const String&, ExceptionCode&);
-    void setUnicodeRange(const String&, ExceptionCode&);
-    void setVariant(const String&, ExceptionCode&);
-    void setFeatureSettings(const String&, ExceptionCode&);
+    ExceptionOr<void> setFamily(const String&);
+    ExceptionOr<void> setStyle(const String&);
+    ExceptionOr<void> setWeight(const String&);
+    ExceptionOr<void> setStretch(const String&);
+    ExceptionOr<void> setUnicodeRange(const String&);
+    ExceptionOr<void> setVariant(const String&);
+    ExceptionOr<void> setFeatureSettings(const String&);
 
     String family() const;
     String style() const;

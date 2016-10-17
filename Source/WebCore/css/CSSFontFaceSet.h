@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSFontFaceSet_h
-#define CSSFontFaceSet_h
+#pragma once
 
 #include "CSSFontFace.h"
 #include <wtf/HashMap.h>
@@ -64,23 +63,20 @@ public:
     void clear();
     CSSFontFace& operator[](size_t i);
 
-    CSSFontFace* lookupByCSSConnection(StyleRuleFontFace&);
+    CSSFontFace* lookUpByCSSConnection(StyleRuleFontFace&);
 
-    bool check(const String& font, const String& text, ExceptionCode&);
+    ExceptionOr<bool> check(const String& font, const String& text);
 
-    CSSSegmentedFontFace* getFontFace(FontTraitsMask, const AtomicString& family);
+    CSSSegmentedFontFace* fontFace(FontTraitsMask, const AtomicString& family);
 
-    enum class Status {
-        Loading,
-        Loaded
-    };
+    enum class Status { Loading, Loaded };
     Status status() const { return m_status; }
 
-    Vector<std::reference_wrapper<CSSFontFace>> matchingFaces(const String& font, const String& text, ExceptionCode&);
+    ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFaces(const String& font, const String& text);
 
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
-    void ref() override { RefCounted<CSSFontFaceSet>::ref(); }
-    void deref() override { RefCounted<CSSFontFaceSet>::deref(); }
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
 private:
     CSSFontFaceSet();
@@ -91,8 +87,8 @@ private:
     void incrementActiveCount();
     void decrementActiveCount();
 
-    void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) override;
-    void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) override;
+    void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
+    void fontPropertyChanged(CSSFontFace&, CSSValueList* oldFamilies = nullptr) final;
 
     void ensureLocalFontFacesForFamilyRegistered(const String&);
 
@@ -111,5 +107,3 @@ private:
 };
 
 }
-
-#endif

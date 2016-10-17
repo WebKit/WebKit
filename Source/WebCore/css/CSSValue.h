@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "URLHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT String cssText() const;
 
-    void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
+    ExceptionOr<void> setCssText(const String&) { return { }; } // FIXME: Not implemented.
 
     bool isPrimitiveValue() const { return m_classType == PrimitiveClass; }
     bool isValueList() const { return m_classType >= ValueListClass; }

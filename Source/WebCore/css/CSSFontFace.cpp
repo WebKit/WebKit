@@ -129,7 +129,7 @@ Optional<FontTraitsMask> CSSFontFace::calculateStyleMask(CSSValue& style)
     if (!is<CSSPrimitiveValue>(style))
         return Nullopt;
 
-    switch (downcast<CSSPrimitiveValue>(style).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(style).valueID()) {
     case CSSValueNormal:
         return FontStyleNormalMask;
     case CSSValueItalic:
@@ -164,7 +164,7 @@ Optional<FontTraitsMask> CSSFontFace::calculateWeightMask(CSSValue& weight)
     if (!is<CSSPrimitiveValue>(weight))
         return Nullopt;
 
-    switch (downcast<CSSPrimitiveValue>(weight).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(weight).valueID()) {
     case CSSValueBold:
     case CSSValueBolder:
     case CSSValue700:

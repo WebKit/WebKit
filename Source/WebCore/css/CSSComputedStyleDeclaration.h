@@ -18,8 +18,7 @@
  * 02110-1301  USA
  */
 
-#ifndef CSSComputedStyleDeclaration_h
-#define CSSComputedStyleDeclaration_h
+#pragma once
 
 #include "CSSStyleDeclaration.h"
 #include "RenderStyleConstants.h"
@@ -78,7 +77,7 @@ private:
 
     RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
     RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;
-    RefPtr<CSSValueList> getBackgroundShorthandValue() const;
+    Ref<CSSValueList> getBackgroundShorthandValue() const;
     RefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
 
     RefPtr<Node> m_node;
@@ -111,13 +110,13 @@ private:
     String getPropertyPriority(const String& propertyName) final;
     String getPropertyShorthand(const String& propertyName) final;
     bool isPropertyImplicit(const String& propertyName) final;
-    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) final;
-    String removeProperty(const String& propertyName, ExceptionCode&) final;
+    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
+    ExceptionOr<String> removeProperty(const String& propertyName) final;
     String cssText() const final;
-    void setCssText(const String&, ExceptionCode&) final;
+    ExceptionOr<void> setCssText(const String&) final;
     RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) final;
+    ExceptionOr<bool> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
@@ -129,5 +128,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // CSSComputedStyleDeclaration_h

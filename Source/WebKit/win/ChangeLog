@@ -1,3 +1,14 @@
+2016-10-16  Darin Adler  <darin@apple.com>
+
+        Move CSS classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163494
+
+        Reviewed by Sam Weinig.
+
+        * DOMCSSClasses.cpp:
+        (DOMCSSStyleDeclaration::setCssText): Remove ExceptionCode handling.
+        (DOMCSSStyleDeclaration::setProperty): Ditto.
+
 2016-10-12  Anders Carlsson  <andersca@apple.com>
 
         Copy BackForwardList from WebCore to WebKit/win

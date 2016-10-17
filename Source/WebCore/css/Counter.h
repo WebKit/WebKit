@@ -32,11 +32,11 @@ public:
         return adoptRef(*new Counter(WTFMove(identifier), WTFMove(listStyle), WTFMove(separator)));
     }
 
-    String identifier() const { return m_identifier->getStringValue(); }
-    String listStyle() const { return m_listStyle->getStringValue(); }
-    String separator() const { return m_separator->getStringValue(); }
+    String identifier() const { return m_identifier->stringValue(); }
+    String listStyle() const { return m_listStyle->stringValue(); }
+    String separator() const { return m_separator->stringValue(); }
 
-    CSSValueID listStyleIdent() const { return m_listStyle->getValueID(); }
+    CSSValueID listStyleIdent() const { return m_listStyle->valueID(); }
 
     void setIdentifier(Ref<CSSPrimitiveValue>&& identifier) { m_identifier = WTFMove(identifier); }
     void setListStyle(Ref<CSSPrimitiveValue>&& listStyle) { m_listStyle = WTFMove(listStyle); }

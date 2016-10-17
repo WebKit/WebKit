@@ -222,15 +222,14 @@ MediaList::~MediaList()
 {
 }
 
-void MediaList::setMediaText(const String& value, ExceptionCode& ec)
+ExceptionOr<void> MediaList::setMediaText(const String& value)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
-    if (!m_mediaQueries->parse(value)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    if (!m_mediaQueries->parse(value))
+        return Exception { SYNTAX_ERR };
     if (m_parentStyleSheet)
         m_parentStyleSheet->didMutate();
+    return { };
 }
 
 String MediaList::item(unsigned index) const
@@ -241,31 +240,30 @@ String MediaList::item(unsigned index) const
     return String();
 }
 
-void MediaList::deleteMedium(const String& medium, ExceptionCode& ec)
+ExceptionOr<void> MediaList::deleteMedium(const String& medium)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
 
     bool success = m_mediaQueries->remove(medium);
-    if (!success) {
-        ec = NOT_FOUND_ERR;
-        return;
-    }
+    if (!success)
+        return Exception { NOT_FOUND_ERR };
     if (m_parentStyleSheet)
         m_parentStyleSheet->didMutate();
+    return { };
 }
 
-void MediaList::appendMedium(const String& medium, ExceptionCode& ec)
+ExceptionOr<void> MediaList::appendMedium(const String& medium)
 {
     CSSStyleSheet::RuleMutationScope mutationScope(m_parentRule);
 
     bool success = m_mediaQueries->add(medium);
     if (!success) {
         // FIXME: Should this really be INVALID_CHARACTER_ERR?
-        ec = INVALID_CHARACTER_ERR;
-        return;
+        return Exception { INVALID_CHARACTER_ERR };
     }
     if (m_parentStyleSheet)
         m_parentStyleSheet->didMutate();
+    return { };
 }
 
 void MediaList::reattach(MediaQuerySet* mediaQueries)

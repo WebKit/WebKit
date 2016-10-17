@@ -1,3 +1,28 @@
+2016-10-16  Darin Adler  <darin@apple.com>
+
+        Move CSS classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163494
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp:
+        (webkit_dom_css_rule_set_css_text): Updated for ExceptionOr.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.cpp:
+        (webkit_dom_css_style_declaration_remove_property): Ditto.
+        (webkit_dom_css_style_declaration_set_property): Ditto.
+        (webkit_dom_css_style_declaration_set_css_text): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.cpp:
+        (webkit_dom_css_style_sheet_insert_rule): Ditto.
+        (webkit_dom_css_style_sheet_delete_rule): Ditto.
+        (webkit_dom_css_style_sheet_add_rule): Ditto.
+        (webkit_dom_css_style_sheet_remove_rule): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp:
+        (webkit_dom_css_value_set_css_text): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp:
+        (webkit_dom_media_list_delete_medium): Ditto.
+        (webkit_dom_media_list_append_medium): Ditto.
+        (webkit_dom_media_list_set_media_text): Ditto.
+
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Default WebKitWebsiteDataManager is always leaked in WebKitWebContext

@@ -114,13 +114,13 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
     if (primitiveValue.isNumber() || primitiveValue.isPx())
-        return primitiveValue.getFloatValue();
+        return primitiveValue.floatValue();
 
     if (primitiveValue.isFontRelativeLength())
-        return primitiveValue.getFloatValue() * m_document->documentElement()->renderStyle()->fontDescription().computedSize();
+        return primitiveValue.floatValue() * m_document->documentElement()->renderStyle()->fontDescription().computedSize();
 
     if (primitiveValue.isPercentage()) {
-        float percentValue = primitiveValue.getFloatValue() / 100.0f;
+        float percentValue = primitiveValue.floatValue() / 100.0f;
         switch (id) {
         case CSSPropertyMaxHeight:
         case CSSPropertyMinHeight:
@@ -140,7 +140,7 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
         }
     }
 
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueAuto:
         return defaultValue;
     case CSSValueDeviceHeight:

@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// Introduced in DOM Level ?:
 [
     Constructor(optional DOMString cssValue),
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
     ImplementationLacksVTable,
 ] interface WebKitCSSMatrix {
 
@@ -57,13 +56,13 @@
     attribute unrestricted double m44;
 
     // FIXME: Using "undefined" as default parameter value is wrong.
-    [MayThrowLegacyException] void setMatrixValue(optional DOMString string = "undefined");
+    [MayThrowException] void setMatrixValue(optional DOMString string = "undefined");
     
     // Multiply this matrix by secondMatrix, on the right (result = this * secondMatrix)
     [Immutable] WebKitCSSMatrix multiply(optional WebKitCSSMatrix? secondMatrix = null);
     
     // Return the inverse of this matrix. Throw an exception if the matrix is not invertible
-    [Immutable, MayThrowLegacyException] WebKitCSSMatrix inverse();
+    [Immutable, MayThrowException] WebKitCSSMatrix inverse();
     
     // Return this matrix translated by the passed values.
     // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations
@@ -103,4 +102,3 @@
 
     [NotEnumerable] DOMString toString();
 };
-

@@ -30,6 +30,7 @@
 #include "Comment.h"
 #include "DocumentFragment.h"
 #include "Event.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLBodyElement.h"

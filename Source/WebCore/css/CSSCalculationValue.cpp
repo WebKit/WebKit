@@ -217,7 +217,7 @@ public:
 private:
     bool isZero() const final
     {
-        return !m_value->getDoubleValue();
+        return !m_value->doubleValue();
     }
 
     String customCSSText() const final
@@ -229,7 +229,7 @@ private:
     {
         switch (category()) {
         case CalcNumber:
-            return std::make_unique<CalcExpressionNumber>(m_value->getFloatValue());
+            return std::make_unique<CalcExpressionNumber>(m_value->floatValue());
         case CalcLength:
             return std::make_unique<CalcExpressionLength>(Length(m_value->computeLength<float>(conversionData), WebCore::Fixed));
         case CalcPercent:
@@ -252,7 +252,7 @@ private:
     double doubleValue() const final
     {
         if (hasDoubleValue(primitiveType()))
-            return m_value->getDoubleValue();
+            return m_value->doubleValue();
         ASSERT_NOT_REACHED();
         return 0;
     }
@@ -264,7 +264,7 @@ private:
             return m_value->computeLength<double>(conversionData);
         case CalcPercent:
         case CalcNumber:
-            return m_value->getDoubleValue();
+            return m_value->doubleValue();
         case CalcPercentLength:
         case CalcPercentNumber:
         case CalcAngle:

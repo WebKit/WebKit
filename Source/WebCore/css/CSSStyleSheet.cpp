@@ -284,53 +284,43 @@ RefPtr<CSSRuleList> CSSStyleSheet::rules()
     return nonCharsetRules;
 }
 
-unsigned CSSStyleSheet::deprecatedInsertRule(const String& ruleString, ExceptionCode& ec)
+ExceptionOr<unsigned> CSSStyleSheet::deprecatedInsertRule(const String& ruleString)
 {
     if (auto* document = ownerDocument())
         document->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling CSSStyleSheet.insertRule() with one argument is deprecated. Please pass the index argument as well: insertRule(x, 0)."));
 
-    return insertRule(ruleString, 0, ec);
+    return insertRule(ruleString, 0);
 }
 
-unsigned CSSStyleSheet::insertRule(const String& ruleString, unsigned index, ExceptionCode& ec)
+ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
-    ec = 0;
-    if (index > length()) {
-        ec = INDEX_SIZE_ERR;
-        return 0;
-    }
+    if (index > length())
+        return Exception { INDEX_SIZE_ERR };
     CSSParser p(m_contents.get().parserContext());
     RefPtr<StyleRuleBase> rule = p.parseRule(m_contents.ptr(), ruleString);
 
-    if (!rule) {
-        ec = SYNTAX_ERR;
-        return 0;
-    }
+    if (!rule)
+        return Exception { SYNTAX_ERR };
 
     RuleMutationScope mutationScope(this, RuleInsertion, is<StyleRuleKeyframes>(*rule) ? downcast<StyleRuleKeyframes>(rule.get()) : nullptr);
 
     bool success = m_contents.get().wrapperInsertRule(rule.releaseNonNull(), index);
-    if (!success) {
-        ec = HIERARCHY_REQUEST_ERR;
-        return 0;
-    }        
+    if (!success)
+        return Exception { HIERARCHY_REQUEST_ERR };
     if (!m_childRuleCSSOMWrappers.isEmpty())
         m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
 
     return index;
 }
 
-void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
+ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());
 
-    ec = 0;
-    if (index >= length()) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (index >= length())
+        return Exception { INDEX_SIZE_ERR };
     RuleMutationScope mutationScope(this);
 
     m_contents->wrapperDeleteRule(index);
@@ -340,9 +330,11 @@ void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
             m_childRuleCSSOMWrappers[index]->setParentStyleSheet(nullptr);
         m_childRuleCSSOMWrappers.remove(index);
     }
+
+    return { };
 }
 
-int CSSStyleSheet::addRule(const String& selector, const String& style, Optional<unsigned> index, ExceptionCode& ec)
+ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, Optional<unsigned> index)
 {
     StringBuilder text;
     text.append(selector);
@@ -351,7 +343,9 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Optional
     if (!style.isEmpty())
         text.append(' ');
     text.append('}');
-    insertRule(text.toString(), index.valueOr(length()), ec);
+    auto insertRuleResult = insertRule(text.toString(), index.valueOr(length()));
+    if (insertRuleResult.hasException())
+        return insertRuleResult.releaseException();
     
     // As per Microsoft documentation, always return -1.
     return -1;

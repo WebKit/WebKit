@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PropertySetCSSStyleDeclaration_h
-#define PropertySetCSSStyleDeclaration_h
+#pragma once
 
 #include "CSSParserMode.h"
 #include "CSSStyleDeclaration.h"
@@ -44,14 +43,23 @@ class StyledElement;
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
 public:
     PropertySetCSSStyleDeclaration(MutableStyleProperties* propertySet) : m_propertySet(propertySet) { }
-    
+
     virtual void clearParentElement() { ASSERT_NOT_REACHED(); }
+
     StyleSheetContents* contextStyleSheet() const;
-    
+
+protected:
+    enum MutationType { NoChanges, PropertyChanged };
+
+    virtual CSSParserContext cssParserContext() const;
+
+    MutableStyleProperties* m_propertySet;
+    std::unique_ptr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
+
+private:
     void ref() override;
     void deref() override;
 
-private:
     CSSRule* parentRule() const override { return nullptr; }
     unsigned length() const final;
     String item(unsigned index) const final;
@@ -60,30 +68,23 @@ private:
     String getPropertyPriority(const String& propertyName) final;
     String getPropertyShorthand(const String& propertyName) final;
     bool isPropertyImplicit(const String& propertyName) final;
-    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&) final;
-    String removeProperty(const String& propertyName, ExceptionCode&) final;
+    ExceptionOr<void> setProperty(const String& propertyName, const String& value, const String& priority) final;
+    ExceptionOr<String> removeProperty(const String& propertyName) final;
     String cssText() const final;
-    void setCssText(const String&, ExceptionCode&) final;
+    ExceptionOr<void> setCssText(const String&) final;
     RefPtr<CSSValue> getPropertyCSSValueInternal(CSSPropertyID) final;
     String getPropertyValueInternal(CSSPropertyID) final;
-    bool setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) final;
+    ExceptionOr<bool> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     
     Ref<MutableStyleProperties> copyProperties() const final;
 
     CSSValue* cloneAndCacheForCSSOM(CSSValue*);
     
-protected:
-    enum MutationType { NoChanges, PropertyChanged };
     virtual bool willMutate() WARN_UNUSED_RETURN { return true; }
     virtual void didMutate(MutationType) { }
-    virtual CSSParserContext cssParserContext() const;
-
-    MutableStyleProperties* m_propertySet;
-    std::unique_ptr<HashMap<CSSValue*, RefPtr<CSSValue>>> m_cssomCSSValueClones;
 };
 
-class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration
-{
+class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
 public:
     static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
     {
@@ -91,7 +92,7 @@ public:
     }
     virtual ~StyleRuleCSSStyleDeclaration();
 
-    void clearParentRule() { m_parentRule = 0; }
+    void clearParentRule() { m_parentRule = nullptr; }
     
     void ref() final;
     void deref() final;
@@ -113,19 +114,18 @@ private:
     CSSRule* m_parentRule;
 };
 
-class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration
-{
+class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
 public:
     InlineCSSStyleDeclaration(MutableStyleProperties* propertySet, StyledElement* parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)
         , m_parentElement(parentElement) 
     {
     }
-    
+
 private:
     CSSStyleSheet* parentStyleSheet() const final;
     StyledElement* parentElement() const final { return m_parentElement; }
-    void clearParentElement() final { m_parentElement = 0; }
+    void clearParentElement() final { m_parentElement = nullptr; }
 
     void didMutate(MutationType) final;
     CSSParserContext cssParserContext() const final;
@@ -134,5 +134,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

@@ -36,19 +36,16 @@
     const unsigned short KEYFRAMES_RULE = 7;
     const unsigned short KEYFRAME_RULE = 8;
     const unsigned short SUPPORTS_RULE = 12;
-#if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
-    const unsigned short WEBKIT_VIEWPORT_RULE = 15;
-#endif
-#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
-    const unsigned short WEBKIT_REGION_RULE = 16;
-#endif
+    [Conditional=CSS_DEVICE_ADAPTATION] const unsigned short WEBKIT_VIEWPORT_RULE = 15;
+    [Conditional=CSS_REGIONS] const unsigned short WEBKIT_REGION_RULE = 16;
 
-    const unsigned short WEBKIT_KEYFRAMES_RULE = 7; // Avoid breaking existing content.
+    // Legacy synonyms for the above, kept to avoid breaking existing content.
+    const unsigned short WEBKIT_KEYFRAMES_RULE = 7;
     const unsigned short WEBKIT_KEYFRAME_RULE = 8;
 
     readonly attribute unsigned short type;
 
-    [SetterMayThrowLegacyException] attribute DOMString? cssText;
+    [SetterMayThrowException] attribute DOMString? cssText;
 
     readonly attribute CSSStyleSheet? parentStyleSheet;
     readonly attribute CSSRule? parentRule;

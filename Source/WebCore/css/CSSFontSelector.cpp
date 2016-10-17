@@ -205,7 +205,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (fontFace->allSourcesFailed())
         return;
 
-    if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookupByCSSConnection(fontFaceRule)) {
+    if (RefPtr<CSSFontFace> existingFace = m_cssFontFaceSet->lookUpByCSSConnection(fontFaceRule)) {
         m_cssFontFaceSet->remove(*existingFace);
         if (auto* existingWrapper = existingFace->existingWrapper())
             existingWrapper->adopt(fontFace.get());
@@ -286,7 +286,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     bool resolveGenericFamilyFirst = familyName == standardFamily;
 
     AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
-    CSSSegmentedFontFace* face = m_cssFontFaceSet->getFontFace(fontDescription.traitsMask(), familyForLookup);
+    auto* face = m_cssFontFaceSet->fontFace(fontDescription.traitsMask(), familyForLookup);
     if (!face) {
         if (!resolveGenericFamilyFirst)
             familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);

@@ -208,7 +208,7 @@ static Optional<double> doubleValue(CSSValue* value)
 {
     if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
         return Nullopt;
-    return downcast<CSSPrimitiveValue>(*value).getDoubleValue(CSSPrimitiveValue::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSPrimitiveValue::CSS_NUMBER);
 }
 
 static bool zeroEvaluate(CSSValue* value, MediaFeaturePrefix op)
@@ -245,7 +245,7 @@ static bool colorGamutEvaluate(CSSValue* value, const CSSToLengthConversionData&
     if (!value)
         return true;
 
-    switch (downcast<CSSPrimitiveValue>(*value).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(*value).valueID()) {
     case CSSValueSrgb:
         return true;
     case CSSValueP3:
@@ -271,7 +271,7 @@ static bool invertedColorsEvaluate(CSSValue* value, const CSSToLengthConversionD
     bool isInverted = screenHasInvertedColors();
     if (!value)
         return isInverted;
-    return downcast<CSSPrimitiveValue>(*value).getValueID() == (isInverted ? CSSValueInverted : CSSValueNone);
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (isInverted ? CSSValueInverted : CSSValueNone);
 }
 
 static bool orientationEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix)
@@ -288,7 +288,7 @@ static bool orientationEvaluate(CSSValue* value, const CSSToLengthConversionData
         return height >= 0 && width >= 0;
     }
 
-    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
     if (width > height) // Square viewport is portrait.
         return keyword == CSSValueLandscape;
     return keyword == CSSValuePortrait;
@@ -349,7 +349,7 @@ static bool evaluateResolution(CSSValue* value, Frame& frame, MediaFeaturePrefix
         return false;
 
     auto& resolution = downcast<CSSPrimitiveValue>(*value);
-    return compareValue(deviceScaleFactor, resolution.isNumber() ? resolution.getFloatValue() : resolution.getFloatValue(CSSPrimitiveValue::CSS_DPPX), op);
+    return compareValue(deviceScaleFactor, resolution.isNumber() ? resolution.floatValue() : resolution.floatValue(CSSPrimitiveValue::CSS_DPPX), op);
 }
 
 static bool devicePixelRatioEvaluate(CSSValue* value, const CSSToLengthConversionData&, Frame& frame, MediaFeaturePrefix op)
@@ -382,7 +382,7 @@ static bool computeLength(CSSValue* value, bool strict, const CSSToLengthConvers
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
 
     if (primitiveValue.isNumber()) {
-        result = primitiveValue.getIntValue();
+        result = primitiveValue.intValue();
         return !strict || !result;
     }
 
@@ -587,7 +587,7 @@ static bool viewModeEvaluate(CSSValue* value, const CSSToLengthConversionData&, 
     if (!value)
         return true;
 
-    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 
     switch (frame.page()->viewMode()) {
     case Page::ViewModeWindowed:
@@ -624,7 +624,7 @@ static bool hoverEvaluate(CSSValue* value, const CSSToLengthConversionData&, Fra
 #endif
     }
 
-    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 #if ENABLE(TOUCH_EVENTS)
     return keyword == CSSValueNone;
 #else
@@ -642,7 +642,7 @@ static bool pointerEvaluate(CSSValue* value, const CSSToLengthConversionData&, F
     if (!is<CSSPrimitiveValue>(value))
         return true;
 
-    auto keyword = downcast<CSSPrimitiveValue>(*value).getValueID();
+    auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 #if ENABLE(TOUCH_EVENTS)
     return keyword == CSSValueCoarse;
 #else
@@ -671,7 +671,7 @@ static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConve
     if (!value)
         return userPrefersReducedMotion;
 
-    return downcast<CSSPrimitiveValue>(*value).getValueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueDefault);
+    return downcast<CSSPrimitiveValue>(*value).valueID() == (userPrefersReducedMotion ? CSSValueReduce : CSSValueDefault);
 }
 
 // Use this function instead of calling add directly to avoid inlining.

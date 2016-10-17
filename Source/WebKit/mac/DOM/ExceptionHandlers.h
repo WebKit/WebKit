@@ -25,17 +25,31 @@
 
 #pragma once
 
-namespace WebCore {
-using ExceptionCode = int;
-}
+#include <WebCore/ExceptionOr.h>
 
 NO_RETURN void raiseDOMException(WebCore::ExceptionCode);
+NO_RETURN void raiseDOMException(WebCore::Exception&&);
 NO_RETURN void raiseTypeErrorException();
 
 void raiseOnDOMError(WebCore::ExceptionCode);
+void raiseOnDOMError(WebCore::ExceptionOr<void>&&);
+template<typename T> T raiseOnDOMError(WebCore::ExceptionOr<T>&&);
 
 inline void raiseOnDOMError(WebCore::ExceptionCode code)
 {
     if (code)
         raiseDOMException(code);
+}
+
+inline void raiseOnDOMError(WebCore::ExceptionOr<void>&& possibleException)
+{
+    if (possibleException.hasException())
+        raiseDOMException(possibleException.releaseException());
+}
+
+template<typename T> inline T raiseOnDOMError(WebCore::ExceptionOr<T>&& exceptionOrReturnValue)
+{
+    if (exceptionOrReturnValue.hasException())
+        raiseDOMException(exceptionOrReturnValue.releaseException());
+    return exceptionOrReturnValue.releaseReturnValue();
 }

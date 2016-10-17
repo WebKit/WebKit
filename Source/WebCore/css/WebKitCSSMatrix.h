@@ -23,29 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitCSSMatrix_h
-#define WebKitCSSMatrix_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include "TransformationMatrix.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class WebKitCSSMatrix final : public ScriptWrappable, public RefCounted<WebKitCSSMatrix> {
 public:
-    static Ref<WebKitCSSMatrix> create(const TransformationMatrix& m)
-    {
-        return adoptRef(*new WebKitCSSMatrix(m));
-    }
-    static Ref<WebKitCSSMatrix> create(const String& s, ExceptionCode& ec)
-    {
-        return adoptRef(*new WebKitCSSMatrix(s, ec));
-    }
+    static Ref<WebKitCSSMatrix> create(const TransformationMatrix&);
+    static ExceptionOr<Ref<WebKitCSSMatrix>> create(const String&);
 
     ~WebKitCSSMatrix();
 
@@ -97,7 +86,7 @@ public:
     void setM43(double f) { m_matrix.setM43(f); }
     void setM44(double f) { m_matrix.setM44(f); }
 
-    void setMatrixValue(const String&, ExceptionCode&);
+    ExceptionOr<void> setMatrixValue(const String&);
 
     // The following math function return a new matrix with the
     // specified operation applied. The this value is not modified.
@@ -106,57 +95,55 @@ public:
     RefPtr<WebKitCSSMatrix> multiply(WebKitCSSMatrix* secondMatrix) const;
 
     // Return the inverse of this matrix. Throw an exception if the matrix is not invertible
-    RefPtr<WebKitCSSMatrix> inverse(ExceptionCode&) const;
+    ExceptionOr<Ref<WebKitCSSMatrix>> inverse() const;
 
     // Return this matrix translated by the passed values.
     // Passing a NaN will use a value of 0. This allows the 3D form to used for 2D operations
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the translation values on the left (result = translation(x,y,z) * this)
-    RefPtr<WebKitCSSMatrix> translate(double x, double y, double z) const;
+    Ref<WebKitCSSMatrix> translate(double x, double y, double z) const;
 
     // Returns this matrix scaled by the passed values.
     // Passing scaleX or scaleZ as NaN uses a value of 1, but passing scaleY of NaN
     // makes it the same as scaleX. This allows the 3D form to used for 2D operations
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the scale values on the left (result = scale(x,y,z) * this)
-    RefPtr<WebKitCSSMatrix> scale(double scaleX, double scaleY, double scaleZ) const;
+    Ref<WebKitCSSMatrix> scale(double scaleX, double scaleY, double scaleZ) const;
 
     // Returns this matrix rotated by the passed values.
     // If rotY and rotZ are NaN, rotate about Z (rotX=0, rotateY=0, rotateZ=rotX).
     // Otherwise use a rotation value of 0 for any passed NaN.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the rotation values on the left (result = rotation(x,y,z) * this)
-    RefPtr<WebKitCSSMatrix> rotate(double rotX, double rotY, double rotZ) const;
+    Ref<WebKitCSSMatrix> rotate(double rotX, double rotY, double rotZ) const;
 
     // Returns this matrix rotated about the passed axis by the passed angle.
     // Passing a NaN will use a value of 0. If the axis is (0,0,0) use a value
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the rotation values on the left (result = rotation(x,y,z,angle) * this)
-    RefPtr<WebKitCSSMatrix> rotateAxisAngle(double x, double y, double z, double angle) const;
+    Ref<WebKitCSSMatrix> rotateAxisAngle(double x, double y, double z, double angle) const;
 
     // Return this matrix skewed along the X axis by the passed values.
     // Passing a NaN will use a value of 0.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the skew values on the left (result = skewX(angle) * this)
-    RefPtr<WebKitCSSMatrix> skewX(double angle) const;
+    Ref<WebKitCSSMatrix> skewX(double angle) const;
 
     // Return this matrix skewed along the Y axis by the passed values.
     // Passing a NaN will use a value of 0.
     // Operation is performed as though the this matrix is multiplied by a matrix with
     // the skew values on the left (result = skewY(angle) * this)
-    RefPtr<WebKitCSSMatrix> skewY(double angle) const;
+    Ref<WebKitCSSMatrix> skewY(double angle) const;
 
     const TransformationMatrix& transform() const { return m_matrix; }
 
     String toString() const;
 
-protected:
+private:
+    WebKitCSSMatrix() = default;
     WebKitCSSMatrix(const TransformationMatrix&);
-    WebKitCSSMatrix(const String&, ExceptionCode&);
 
     TransformationMatrix m_matrix;
 };
 
 } // namespace WebCore
-
-#endif // WebKitCSSMatrix_h

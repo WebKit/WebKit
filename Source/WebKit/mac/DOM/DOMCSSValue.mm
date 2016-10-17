@@ -59,9 +59,7 @@
 - (void)setCssText:(NSString *)newCssText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setCssText(newCssText, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setCssText(newCssText));
 }
 
 - (unsigned short)cssValueType

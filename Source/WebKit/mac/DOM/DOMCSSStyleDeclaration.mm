@@ -64,9 +64,7 @@
 - (void)setCssText:(NSString *)newCssText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setCssText(newCssText, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setCssText(newCssText));
 }
 
 - (unsigned)length
@@ -96,10 +94,7 @@
 - (NSString *)removeProperty:(NSString *)propertyName
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->removeProperty(propertyName, ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->removeProperty(propertyName));
 }
 
 - (NSString *)getPropertyPriority:(NSString *)propertyName
@@ -111,9 +106,7 @@
 - (void)setProperty:(NSString *)propertyName value:(NSString *)value priority:(NSString *)priority
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setProperty(propertyName, value, priority, ec);
-    raiseOnDOMError(ec);
+    return raiseOnDOMError(IMPL->setProperty(propertyName, value, priority));
 }
 
 - (NSString *)item:(unsigned)index

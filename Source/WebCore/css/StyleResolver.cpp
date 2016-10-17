@@ -227,7 +227,7 @@ void StyleResolver::MatchResult::addMatchedProperties(const StyleProperties& pro
 
                 // The value currentColor has implicitely the same side effect. It depends on the value of color,
                 // which is an inherited value, making the non-inherited property implicitly inherited.
-                if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueCurrentcolor) {
+                if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueCurrentcolor) {
                     isCacheable = false;
                     break;
                 }
@@ -1816,7 +1816,7 @@ static Color colorForCSSValue(CSSValueID cssValueId)
 
 bool StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(const CSSPrimitiveValue& value)
 {
-    int ident = value.getValueID();
+    int ident = value.valueID();
     switch (ident) {
     case CSSValueWebkitText:
     case CSSValueWebkitLink:
@@ -1834,7 +1834,7 @@ Color StyleResolver::colorFromPrimitiveValue(const CSSPrimitiveValue& value, boo
         return value.color();
 
     const State& state = m_state;
-    CSSValueID ident = value.getValueID();
+    CSSValueID ident = value.valueID();
     switch (ident) {
     case 0:
         return Color();
@@ -1905,7 +1905,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
     
     if (is<CSSPrimitiveValue>(inValue)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
-        if (primitiveValue.getValueID() == CSSValueNone)
+        if (primitiveValue.valueID() == CSSValueNone)
             return true;
     }
     
@@ -1929,7 +1929,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
                 continue;
 
             auto& primitiveValue = downcast<CSSPrimitiveValue>(argument);
-            String cssUrl = primitiveValue.getStringValue();
+            String cssUrl = primitiveValue.stringValue();
             URL url = m_state.document().completeURL(cssUrl);
 
             RefPtr<ReferenceFilterOperation> operation = ReferenceFilterOperation::create(cssUrl, url.fragmentIdentifier());
@@ -1960,7 +1960,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
         case WebKitCSSFilterValue::SaturateFilterOperation: {
             double amount = 1;
             if (filterValue.length() == 1) {
-                amount = firstValue->getDoubleValue();
+                amount = firstValue->doubleValue();
                 if (firstValue->isPercentage())
                     amount /= 100;
             }
@@ -1982,7 +1982,7 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
         case WebKitCSSFilterValue::OpacityFilterOperation: {
             double amount = (filterValue.operationType() == WebKitCSSFilterValue::BrightnessFilterOperation) ? 0 : 1;
             if (filterValue.length() == 1) {
-                amount = firstValue->getDoubleValue();
+                amount = firstValue->doubleValue();
                 if (firstValue->isPercentage())
                     amount /= 100;
             }

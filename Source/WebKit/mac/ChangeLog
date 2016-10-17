@@ -1,3 +1,46 @@
+2016-10-16  Darin Adler  <darin@apple.com>
+
+        Move CSS classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163494
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMCSSMediaRule.mm:
+        (-[DOMCSSMediaRule insertRule:index:]): Use raiseOnDOMError
+        the new way to handle ExceptionOr instead of ExceptionCode.
+        (-[DOMCSSMediaRule deleteRule:]): Ditto.
+        * DOM/DOMCSSPrimitiveValue.mm:
+        (-[DOMCSSPrimitiveValue setFloatValue:floatValue:]): Ditto.
+        (-[DOMCSSPrimitiveValue getFloatValue:]): Ditto.
+        (-[DOMCSSPrimitiveValue setStringValue:stringValue:]): Ditto.
+        (-[DOMCSSPrimitiveValue getStringValue]): Ditto.
+        (-[DOMCSSPrimitiveValue getCounterValue]): Ditto.
+        (-[DOMCSSPrimitiveValue getRectValue]): Ditto.
+        (-[DOMCSSPrimitiveValue getRGBColorValue]): Ditto.
+        * DOM/DOMCSSRule.mm:
+        (-[DOMCSSRule setCssText:]): Ditto.
+        * DOM/DOMCSSStyleDeclaration.mm:
+        (-[DOMCSSStyleDeclaration setCssText:]): Ditto.
+        (-[DOMCSSStyleDeclaration removeProperty:]): Ditto.
+        (-[DOMCSSStyleDeclaration setProperty:value:priority:]): Ditto.
+        * DOM/DOMCSSStyleSheet.mm:
+        (-[DOMCSSStyleSheet insertRule:index:]): Ditto.
+        (-[DOMCSSStyleSheet deleteRule:]): Ditto.
+        (-[DOMCSSStyleSheet addRule:style:index:]): Ditto.
+        (-[DOMCSSStyleSheet removeRule:]): Ditto.
+        * DOM/DOMCSSValue.mm:
+        (-[DOMCSSValue setCssText:]): Ditto.
+        * DOM/DOMMediaList.mm:
+        (-[DOMMediaList setMediaText:]): Ditto.
+        (-[DOMMediaList deleteMedium:]): Ditto.
+        (-[DOMMediaList appendMedium:]): Ditto.
+
+        * DOM/ExceptionHandlers.h: Added an overload of raiseDOMException
+        that works with a WebCore::Exception&& and overloads of
+        raiseOnDOMError that work with WebCore::ExceptionOr&&.
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMException): Implemented the new version.
+
 2016-10-15  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r191699): Contextual menu in Mail compose view doesn’t include any of the standard submenus

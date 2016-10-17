@@ -92,9 +92,7 @@ HRESULT DOMCSSStyleDeclaration::cssText(__deref_opt_out BSTR* result)
 HRESULT DOMCSSStyleDeclaration::setCssText(_In_ BSTR cssText)
 {
     WTF::String cssTextString(cssText);
-    // FIXME: <rdar://5148045> return DOM exception info
-    WebCore::ExceptionCode ec;
-    m_style->setCssText(cssTextString, ec);
+    m_style->setCssText(cssTextString);
     return S_OK;
 }
 
@@ -144,9 +142,7 @@ HRESULT DOMCSSStyleDeclaration::setProperty(_In_ BSTR propertyName, _In_ BSTR va
     WTF::String propertyNameString(propertyName);
     WTF::String valueString(value);
     WTF::String priorityString(priority);
-    // FIXME: <rdar://5148045> return DOM exception info
-    WebCore::ExceptionCode code;
-    m_style->setProperty(propertyNameString, valueString, priorityString, code);
+    m_style->setProperty(propertyNameString, valueString, priorityString);
     return S_OK;
 }
 

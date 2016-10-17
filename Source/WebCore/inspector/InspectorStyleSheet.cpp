@@ -708,9 +708,11 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     StringBuilder styleSheetText;
     styleSheetText.append(text);
 
-    m_pageStyleSheet->addRule(selector, emptyString(), Nullopt, ec);
-    if (ec)
+    auto addRuleResult = m_pageStyleSheet->addRule(selector, emptyString(), Nullopt);
+    if (addRuleResult.hasException()) {
+        ec = addRuleResult.releaseException().code();
         return nullptr;
+    }
     ASSERT(m_pageStyleSheet->length());
     unsigned lastRuleIndex = m_pageStyleSheet->length() - 1;
     CSSRule* rule = m_pageStyleSheet->item(lastRuleIndex);
@@ -720,7 +722,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     if (!styleRule) {
         // What we just added has to be a CSSStyleRule - we cannot handle other types of rules yet.
         // If it is not a style rule, pretend we never touched the stylesheet.
-        m_pageStyleSheet->deleteRule(lastRuleIndex, ASSERT_NO_EXCEPTION);
+        m_pageStyleSheet->deleteRule(lastRuleIndex);
         ec = SYNTAX_ERR;
         return nullptr;
     }
@@ -759,11 +761,13 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
         return false;
     }
 
-    styleSheet->deleteRule(id.ordinal(), ec);
+    auto deleteRuleResult = styleSheet->deleteRule(id.ordinal());
     // |rule| MAY NOT be addressed after this line!
 
-    if (ec)
+    if (deleteRuleResult.hasException()) {
+        ec = deleteRuleResult.releaseException().code();
         return false;
+    }
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
@@ -1153,11 +1157,14 @@ bool InspectorStyleSheet::setStyleText(CSSStyleDeclaration* style, const String&
     if (id.isEmpty())
         return false;
 
-    style->setCssText(text, ec);
-    if (!ec)
-        m_parsedStyleSheet->setText(patchedStyleSheetText);
+    auto setCssTextResult = style->setCssText(text);
+    if (setCssTextResult.hasException()) {
+        ec = setCssTextResult.releaseException().code();
+        return false;
+    }
 
-    return !ec;
+    m_parsedStyleSheet->setText(patchedStyleSheetText);
+    return true;
 }
 
 bool InspectorStyleSheet::styleSheetTextWithChangedStyle(CSSStyleDeclaration* style, const String& newStyleText, String* result)

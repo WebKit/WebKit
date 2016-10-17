@@ -125,12 +125,12 @@ void FontFaceSet::clear()
 
 void FontFaceSet::load(const String& font, const String& text, LoadPromise&& promise)
 {
-    ExceptionCode ec = 0;
-    auto matchingFaces = m_backing->matchingFaces(font, text, ec);
-    if (ec) {
-        promise.reject(ec);
+    auto matchingFacesResult = m_backing->matchingFaces(font, text);
+    if (matchingFacesResult.hasException()) {
+        promise.reject(matchingFacesResult.releaseException());
         return;
     }
+    auto matchingFaces = matchingFacesResult.releaseReturnValue();
 
     if (matchingFaces.isEmpty()) {
         promise.resolve(Vector<RefPtr<FontFace>>());
@@ -162,9 +162,9 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
         pendingPromise->promise.resolve(pendingPromise->faces);
 }
 
-bool FontFaceSet::check(const String& family, const String& text, ExceptionCode& ec)
+ExceptionOr<bool> FontFaceSet::check(const String& family, const String& text)
 {
-    return m_backing->check(family, text, ec);
+    return m_backing->check(family, text);
 }
 
 void FontFaceSet::registerReady(ReadyPromise&& promise)

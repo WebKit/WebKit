@@ -34,6 +34,7 @@
 #include "CSSSegmentedFontFace.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ExceptionCode.h"
 #include "FontCache.h"
 #include "StyleProperties.h"
 
@@ -128,7 +129,7 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
 
     // We need to use the raw text for all the generic family types, since @font-face is a way of actually
     // defining what font to use for those types.
-    switch (value.getValueID()) {
+    switch (value.valueID()) {
     case CSSValueSerif:
         return serifFamily;
     case CSSValueSansSerif:
@@ -247,7 +248,7 @@ void CSSFontFaceSet::remove(const CSSFontFace& face)
     ASSERT_NOT_REACHED();
 }
 
-CSSFontFace* CSSFontFaceSet::lookupByCSSConnection(StyleRuleFontFace& target)
+CSSFontFace* CSSFontFaceSet::lookUpByCSSConnection(StyleRuleFontFace& target)
 {
     return m_constituentCSSConnections.get(&target);
 }
@@ -324,35 +325,28 @@ static HashSet<UChar32> codePointsFromString(StringView stringView)
     return result;
 }
 
-Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const String& font, const String& string, ExceptionCode& ec)
+ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchingFaces(const String& font, const String& string)
 {
-    Vector<std::reference_wrapper<CSSFontFace>> result;
     auto style = MutableStyleProperties::create();
     auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode, nullptr);
-    if (parseResult == CSSParser::ParseResult::Error) {
-        ec = SYNTAX_ERR;
-        return result;
-    }
+    if (parseResult == CSSParser::ParseResult::Error)
+        return Exception { SYNTAX_ERR };
 
     FontTraitsMask fontTraitsMask;
     if (auto maskOptional = computeFontTraitsMask(style.get()))
         fontTraitsMask = maskOptional.value();
-    else {
-        ec = SYNTAX_ERR;
-        return result;
-    }
+    else
+        return Exception { SYNTAX_ERR };
 
-    RefPtr<CSSValue> family = style->getPropertyCSSValue(CSSPropertyFontFamily);
-    if (!is<CSSValueList>(family.get())) {
-        ec = SYNTAX_ERR;
-        return result;
-    }
+    auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
+    if (!is<CSSValueList>(family.get()))
+        return Exception { SYNTAX_ERR };
     CSSValueList& familyList = downcast<CSSValueList>(*family);
 
     HashSet<AtomicString> uniqueFamilies;
     Vector<AtomicString> familyOrder;
     for (auto& family : familyList) {
-        const CSSPrimitiveValue& primitive = downcast<CSSPrimitiveValue>(family.get());
+        auto& primitive = downcast<CSSPrimitiveValue>(family.get());
         if (!primitive.isFontFamily())
             continue;
         if (uniqueFamilies.add(primitive.fontFamily().familyName).isNewEntry)
@@ -363,7 +357,7 @@ Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const 
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {
-            CSSSegmentedFontFace* faces = getFontFace(fontTraitsMask, family);
+            auto* faces = fontFace(fontTraitsMask, family);
             if (!faces)
                 continue;
             for (auto& constituentFace : faces->constituentFaces()) {
@@ -378,19 +372,20 @@ Vector<std::reference_wrapper<CSSFontFace>> CSSFontFaceSet::matchingFaces(const 
         }
     }
 
+    Vector<std::reference_wrapper<CSSFontFace>> result;
+    result.reserveInitialCapacity(resultConstituents.size());
     for (auto* constituent : resultConstituents)
-        result.append(*constituent);
-
-    return result;
+        result.uncheckedAppend(*constituent);
+    return WTFMove(result);
 }
 
-bool CSSFontFaceSet::check(const String& font, const String& text, ExceptionCode& ec)
+ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)
 {
-    auto matchingFaces = this->matchingFaces(font, text, ec);
-    if (ec)
-        return false;
+    auto matchingFaces = this->matchingFaces(font, text);
+    if (matchingFaces.hasException())
+        return matchingFaces.releaseException();
 
-    for (auto& face : matchingFaces) {
+    for (auto& face : matchingFaces.releaseReturnValue()) {
         if (face.get().status() == CSSFontFace::Status::Pending)
             return false;
     }
@@ -456,7 +451,7 @@ static bool fontFaceComparator(FontTraitsMask desiredTraitsMaskForComparison, co
     return false;
 }
 
-CSSSegmentedFontFace* CSSFontFaceSet::getFontFace(FontTraitsMask traitsMask, const AtomicString& family)
+CSSSegmentedFontFace* CSSFontFaceSet::fontFace(FontTraitsMask traitsMask, const AtomicString& family)
 {
     auto iterator = m_facesLookupTable.find(family);
     if (iterator == m_facesLookupTable.end())

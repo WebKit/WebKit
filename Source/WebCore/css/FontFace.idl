@@ -41,16 +41,16 @@ dictionary FontFaceDescriptors {
 
 [
     ConstructorCallWith=Document&ScriptState,
-    ConstructorMayThrowLegacyException,
+    ConstructorMayThrowException,
     Constructor(DOMString family, any source, optional FontFaceDescriptors descriptors)
 ] interface FontFace {
-    [SetterMayThrowLegacyException] attribute DOMString family;
-    [SetterMayThrowLegacyException] attribute DOMString style;
-    [SetterMayThrowLegacyException] attribute DOMString weight;
-    [SetterMayThrowLegacyException] attribute DOMString stretch;
-    [SetterMayThrowLegacyException] attribute DOMString unicodeRange;
-    [SetterMayThrowLegacyException] attribute DOMString variant;
-    [SetterMayThrowLegacyException] attribute DOMString featureSettings;
+    [SetterMayThrowException] attribute DOMString family;
+    [SetterMayThrowException] attribute DOMString style;
+    [SetterMayThrowException] attribute DOMString weight;
+    [SetterMayThrowException] attribute DOMString stretch;
+    [SetterMayThrowException] attribute DOMString unicodeRange;
+    [SetterMayThrowException] attribute DOMString variant;
+    [SetterMayThrowException] attribute DOMString featureSettings;
 
     readonly attribute FontFaceLoadStatus status;
 

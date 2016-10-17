@@ -94,11 +94,8 @@ RefPtr<CSSValue> CSSParserValue::createCSSValue()
     if (id)
         return CSSPrimitiveValue::createIdentifier(id);
     
-    if (unit == CSSParserValue::Operator) {
-        auto primitiveValue = CSSPrimitiveValue::createParserOperator(iValue);
-        primitiveValue->setPrimitiveType(CSSPrimitiveValue::CSS_PARSER_OPERATOR);
-        return WTFMove(primitiveValue);
-    }
+    if (unit == CSSParserValue::Operator)
+        return CSSPrimitiveValue::createParserOperator(iValue);
     if (unit == CSSParserValue::Function)
         return CSSFunctionValue::create(function);
     if (unit == CSSParserValue::Variable)

@@ -441,8 +441,8 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
                         if (!is<CSSPrimitiveValue>(*value) || !is<CSSPrimitiveValue>(*yValue))
                             continue;
 
-                        CSSValueID xId = downcast<CSSPrimitiveValue>(*value).getValueID();
-                        CSSValueID yId = downcast<CSSPrimitiveValue>(*yValue).getValueID();
+                        CSSValueID xId = downcast<CSSPrimitiveValue>(*value).valueID();
+                        CSSValueID yId = downcast<CSSPrimitiveValue>(*yValue).valueID();
                         if (xId != yId) {
                             if (xId == CSSValueRepeat && yId == CSSValueNoRepeat) {
                                 useRepeatXShorthand = true;

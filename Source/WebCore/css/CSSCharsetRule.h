@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef CSSCharsetRule_h
-#define CSSCharsetRule_h
+#pragma once
 
 #include "CSSRule.h"
 
@@ -33,22 +32,17 @@ public:
         return adoptRef(*new CSSCharsetRule(parent, encoding));
     }
 
-    virtual ~CSSCharsetRule() { }
-
-    String cssText() const final;
-    void reattach(StyleRuleBase&) final { }
-
     const String& encoding() const { return m_encoding; }
-    void setEncoding(const String& encoding, ExceptionCode&) { m_encoding = encoding; }
+    ExceptionOr<void> setEncoding(const String& encoding) { m_encoding = encoding; return { }; }
 
 private:
-    CSSRule::Type type() const final { return CHARSET_RULE; }
-
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);
+
+    CSSRule::Type type() const final { return CHARSET_RULE; }
+    String cssText() const final;
+    void reattach(StyleRuleBase&) final { }
 
     String m_encoding;
 };
 
 } // namespace WebCore
-
-#endif // CSSCharsetRule_h

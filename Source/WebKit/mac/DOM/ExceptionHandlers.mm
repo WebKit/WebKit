@@ -76,3 +76,8 @@ void raiseTypeErrorException()
 {
     raiseDOMException(WebCore::TypeError);
 }
+
+void raiseDOMException(WebCore::Exception&& exception)
+{
+    raiseDOMException(exception.code());
+}

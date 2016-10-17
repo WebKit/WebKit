@@ -3206,9 +3206,9 @@ void Editor::applyEditingStyleToElement(Element* element) const
 
     // Mutate using the CSSOM wrapper so we get the same event behavior as a script.
     CSSStyleDeclaration* style = downcast<StyledElement>(*element).cssomStyle();
-    style->setPropertyInternal(CSSPropertyWordWrap, "break-word", false, IGNORE_EXCEPTION);
-    style->setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false, IGNORE_EXCEPTION);
-    style->setPropertyInternal(CSSPropertyWebkitLineBreak, "after-white-space", false, IGNORE_EXCEPTION);
+    style->setPropertyInternal(CSSPropertyWordWrap, "break-word", false);
+    style->setPropertyInternal(CSSPropertyWebkitNbspMode, "space", false);
+    style->setPropertyInternal(CSSPropertyWebkitLineBreak, "after-white-space", false);
 }
 
 bool Editor::findString(const String& target, FindOptions options)

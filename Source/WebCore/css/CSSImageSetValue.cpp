@@ -59,7 +59,7 @@ void CSSImageSetValue::fillImageSet()
         ++i;
         ASSERT_WITH_SECURITY_IMPLICATION(i < length);
         CSSValue* scaleFactorValue = item(i);
-        float scaleFactor = downcast<CSSPrimitiveValue>(*scaleFactorValue).getFloatValue();
+        float scaleFactor = downcast<CSSPrimitiveValue>(*scaleFactorValue).floatValue();
 
         ImageWithScale image;
         image.imageURL = imageURL;

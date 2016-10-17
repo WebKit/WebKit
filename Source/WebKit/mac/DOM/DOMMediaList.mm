@@ -61,9 +61,7 @@
 - (void)setMediaText:(NSString *)newMediaText
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->setMediaText(newMediaText, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->setMediaText(newMediaText));
 }
 
 - (unsigned)length
@@ -81,17 +79,13 @@
 - (void)deleteMedium:(NSString *)oldMedium
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->deleteMedium(oldMedium, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->deleteMedium(oldMedium));
 }
 
 - (void)appendMedium:(NSString *)newMedium
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    IMPL->appendMedium(newMedium, ec);
-    raiseOnDOMError(ec);
+    raiseOnDOMError(IMPL->appendMedium(newMedium));
 }
 
 @end

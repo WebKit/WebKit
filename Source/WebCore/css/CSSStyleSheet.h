@@ -21,6 +21,7 @@
 #pragma once
 
 #include "CSSParserMode.h"
+#include "ExceptionOr.h"
 #include "StyleSheet.h"
 #include <memory>
 #include <wtf/HashMap.h>
@@ -49,8 +50,6 @@ namespace Style {
 class Scope;
 }
 
-typedef int ExceptionCode;
-
 class CSSStyleSheet final : public StyleSheet {
 public:
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
@@ -68,14 +67,13 @@ public:
     void setDisabled(bool) final;
     
     WEBCORE_EXPORT RefPtr<CSSRuleList> cssRules();
-    WEBCORE_EXPORT unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
-    unsigned deprecatedInsertRule(const String& rule, ExceptionCode&);
-    WEBCORE_EXPORT void deleteRule(unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
+    ExceptionOr<unsigned> deprecatedInsertRule(const String& rule);
+    WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     
-    // IE Extensions
     WEBCORE_EXPORT RefPtr<CSSRuleList> rules();
-    WEBCORE_EXPORT int addRule(const String& selector, const String& style, Optional<unsigned> index, ExceptionCode&);
-    void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }
+    WEBCORE_EXPORT ExceptionOr<int> addRule(const String& selector, const String& style, Optional<unsigned> index);
+    ExceptionOr<void> removeRule(unsigned index) { return deleteRule(index); }
     
     // For CSSRuleList.
     unsigned length() const;

@@ -23,24 +23,22 @@
 #pragma once
 
 #include "CSSRule.h"
-#include "StyleRule.h"
 #include <memory>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CSSRuleList;
+class StyleRuleGroup;
 
 class CSSGroupingRule : public CSSRule {
 public:
     virtual ~CSSGroupingRule();
 
-    void reattach(StyleRuleBase&) override;
-
     WEBCORE_EXPORT CSSRuleList& cssRules() const;
 
-    WEBCORE_EXPORT unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
-    WEBCORE_EXPORT void deleteRule(unsigned index, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
+    WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
         
     // For CSSRuleList
     unsigned length() const;
@@ -49,9 +47,13 @@ public:
 protected:
     CSSGroupingRule(StyleRuleGroup& groupRule, CSSStyleSheet* parent);
     
+    void reattach(StyleRuleBase&) override;
+
     void appendCssTextForItems(StringBuilder&) const;
 
     Ref<StyleRuleGroup> m_groupRule;
+
+private:
     mutable Vector<RefPtr<CSSRule>> m_childRuleCSSOMWrappers;
     mutable std::unique_ptr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

@@ -187,7 +187,7 @@ inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver,
     }
 
     if (primitiveValue.isPercentage())
-        return Length(primitiveValue.getDoubleValue(), Percent);
+        return Length(primitiveValue.doubleValue(), Percent);
 
     if (primitiveValue.isCalculatedPercentageWithLength())
         return Length(primitiveValue.cssCalcValue()->createCalculationValue(conversionData));
@@ -198,7 +198,7 @@ inline Length StyleBuilderConverter::convertLength(StyleResolver& styleResolver,
 
 inline Length StyleBuilderConverter::convertLengthOrAuto(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
         return Length(Auto);
     return convertLength(styleResolver, value);
 }
@@ -206,7 +206,7 @@ inline Length StyleBuilderConverter::convertLengthOrAuto(StyleResolver& styleRes
 inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueInvalid:
         return convertLength(styleResolver, value);
     case CSSValueIntrinsic:
@@ -231,7 +231,7 @@ inline Length StyleBuilderConverter::convertLengthSizing(StyleResolver& styleRes
 
 inline Length StyleBuilderConverter::convertLengthMaxSizing(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return Length(Undefined);
     return convertLengthSizing(styleResolver, value);
 }
@@ -246,7 +246,7 @@ template <typename T>
 inline T StyleBuilderConverter::convertLineWidth(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueThin:
         return 1;
     case CSSValueMedium:
@@ -276,7 +276,7 @@ inline T StyleBuilderConverter::convertLineWidth(StyleResolver& styleResolver, C
 inline float StyleBuilderConverter::convertSpacing(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNormal)
+    if (primitiveValue.valueID() == CSSValueNormal)
         return 0.f;
 
     CSSToLengthConversionData conversionData = styleResolver.useSVGZoomRulesForLength() ?
@@ -288,7 +288,7 @@ inline float StyleBuilderConverter::convertSpacing(StyleResolver& styleResolver,
 inline Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversionData& conversionData, CSSPrimitiveValue& value)
 {
     if (value.isPercentage())
-        return Length(value.getDoubleValue(), Percent);
+        return Length(value.doubleValue(), Percent);
     if (value.isCalculatedPercentageWithLength())
         return Length(value.cssCalcValue()->createCalculationValue(conversionData));
     return value.computeLength<Length>(conversionData);
@@ -297,7 +297,7 @@ inline Length StyleBuilderConverter::convertToRadiusLength(CSSToLengthConversion
 inline LengthSize StyleBuilderConverter::convertRadius(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue.getPairValue();
+    Pair* pair = primitiveValue.pairValue();
     if (!pair || !pair->first() || !pair->second())
         return LengthSize(Length(0, Fixed), Length(0, Fixed));
 
@@ -333,11 +333,11 @@ inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& sty
     bool relativeToTrailingEdge = false;
     
     if (value.isPair()) {
-        auto& first = *value.getPairValue()->first();
-        if (first.getValueID() == CSSValueRight || first.getValueID() == CSSValueBottom)
+        auto& first = *value.pairValue()->first();
+        if (first.valueID() == CSSValueRight || first.valueID() == CSSValueBottom)
             relativeToTrailingEdge = true;
 
-        lengthValue = value.getPairValue()->second();
+        lengthValue = value.pairValue()->second();
     }
 
     length = convertLength(styleResolver, *lengthValue);
@@ -351,7 +351,7 @@ inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& sty
 inline LengthPoint StyleBuilderConverter::convertObjectPosition(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue.getPairValue();
+    Pair* pair = primitiveValue.pairValue();
     if (!pair || !pair->first() || !pair->second())
         return RenderStyle::initialObjectPosition();
 
@@ -374,13 +374,13 @@ inline TextDecoration StyleBuilderConverter::convertTextDecoration(StyleResolver
 template <typename T>
 inline T StyleBuilderConverter::convertNumber(StyleResolver&, CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).getValue<T>(CSSPrimitiveValue::CSS_NUMBER);
+    return downcast<CSSPrimitiveValue>(value).value<T>(CSSPrimitiveValue::CSS_NUMBER);
 }
 
 template <typename T>
 inline T StyleBuilderConverter::convertNumberOrAuto(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
         return -1;
     return convertNumber<T>(styleResolver, value);
 }
@@ -388,9 +388,9 @@ inline T StyleBuilderConverter::convertNumberOrAuto(StyleResolver& styleResolver
 inline short StyleBuilderConverter::convertWebkitHyphenateLimitLines(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNoLimit)
+    if (primitiveValue.valueID() == CSSValueNoLimit)
         return -1;
-    return primitiveValue.getValue<short>(CSSPrimitiveValue::CSS_NUMBER);
+    return primitiveValue.value<short>(CSSPrimitiveValue::CSS_NUMBER);
 }
 
 template <CSSPropertyID property>
@@ -425,19 +425,19 @@ inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver
 
 inline String StyleBuilderConverter::convertString(StyleResolver&, CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).getStringValue();
+    return downcast<CSSPrimitiveValue>(value).stringValue();
 }
 
 inline String StyleBuilderConverter::convertStringOrAuto(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
         return nullAtom;
     return convertString(styleResolver, value);
 }
 
 inline String StyleBuilderConverter::convertStringOrNone(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return nullAtom;
     return convertString(styleResolver, value);
 }
@@ -446,7 +446,7 @@ inline TextEmphasisPosition StyleBuilderConverter::valueToEmphasisPosition(CSSPr
 {
     ASSERT(primitiveValue.isValueID());
 
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueOver:
         return TextEmphasisPositionOver;
     case CSSValueUnder:
@@ -479,7 +479,7 @@ inline ETextAlign StyleBuilderConverter::convertTextAlign(StyleResolver& styleRe
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     ASSERT(primitiveValue.isValueID());
 
-    if (primitiveValue.getValueID() != CSSValueWebkitMatchParent)
+    if (primitiveValue.valueID() != CSSValueWebkitMatchParent)
         return primitiveValue;
 
     auto* parentStyle = styleResolver.parentStyle();
@@ -495,12 +495,12 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         if (primitiveValue.primitiveType() == CSSPrimitiveValue::CSS_URI) {
-            String cssURLValue = primitiveValue.getStringValue();
+            String cssURLValue = primitiveValue.stringValue();
             URL url = styleResolver.document().completeURL(cssURLValue);
             // FIXME: It doesn't work with external SVG references (see https://bugs.webkit.org/show_bug.cgi?id=126133)
             return ReferenceClipPathOperation::create(cssURLValue, url.fragmentIdentifier());
         }
-        ASSERT(primitiveValue.getValueID() == CSSValueNone);
+        ASSERT(primitiveValue.valueID() == CSSValueNone);
         return nullptr;
     }
 
@@ -511,15 +511,15 @@ inline RefPtr<ClipPathOperation> StyleBuilderConverter::convertClipPath(StyleRes
         auto& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
         if (primitiveValue.isShape()) {
             ASSERT(!operation);
-            operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver.state().cssToLengthConversionData(), *primitiveValue.getShapeValue()));
+            operation = ShapeClipPathOperation::create(basicShapeForValue(styleResolver.state().cssToLengthConversionData(), *primitiveValue.shapeValue()));
         } else {
-            ASSERT(primitiveValue.getValueID() == CSSValueContentBox
-                   || primitiveValue.getValueID() == CSSValueBorderBox
-                   || primitiveValue.getValueID() == CSSValuePaddingBox
-                   || primitiveValue.getValueID() == CSSValueMarginBox
-                   || primitiveValue.getValueID() == CSSValueFill
-                   || primitiveValue.getValueID() == CSSValueStroke
-                   || primitiveValue.getValueID() == CSSValueViewBox);
+            ASSERT(primitiveValue.valueID() == CSSValueContentBox
+                || primitiveValue.valueID() == CSSValueBorderBox
+                || primitiveValue.valueID() == CSSValuePaddingBox
+                || primitiveValue.valueID() == CSSValueMarginBox
+                || primitiveValue.valueID() == CSSValueFill
+                || primitiveValue.valueID() == CSSValueStroke
+                || primitiveValue.valueID() == CSSValueViewBox);
             ASSERT(referenceBox == BoxMissing);
             referenceBox = primitiveValue;
         }
@@ -539,7 +539,7 @@ inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     EResize resize = RESIZE_NONE;
-    if (primitiveValue.getValueID() == CSSValueAuto) {
+    if (primitiveValue.valueID() == CSSValueAuto) {
         if (Settings* settings = styleResolver.document().settings())
             resize = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
     } else
@@ -551,18 +551,18 @@ inline EResize StyleBuilderConverter::convertResize(StyleResolver& styleResolver
 inline int StyleBuilderConverter::convertMarqueeRepetition(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueInfinite)
+    if (primitiveValue.valueID() == CSSValueInfinite)
         return -1; // -1 means repeat forever.
 
     ASSERT(primitiveValue.isNumber());
-    return primitiveValue.getIntValue();
+    return primitiveValue.intValue();
 }
 
 inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     int speed = 85;
-    if (CSSValueID ident = primitiveValue.getValueID()) {
+    if (CSSValueID ident = primitiveValue.valueID()) {
         switch (ident) {
         case CSSValueSlow:
             speed = 500; // 500 msec.
@@ -582,7 +582,7 @@ inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& 
     else {
         // For scrollamount support.
         ASSERT(primitiveValue.isNumber());
-        speed = primitiveValue.getIntValue();
+        speed = primitiveValue.intValue();
     }
     return speed;
 }
@@ -590,7 +590,7 @@ inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& 
 inline PassRefPtr<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return QuotesData::create(Vector<std::pair<String, String>>());
     }
 
@@ -603,8 +603,8 @@ inline PassRefPtr<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver
         CSSValue* second = list.item(i + 1);
         if (!second)
             break;
-        String startQuote = downcast<CSSPrimitiveValue>(*first).getStringValue();
-        String endQuote = downcast<CSSPrimitiveValue>(*second).getStringValue();
+        String startQuote = downcast<CSSPrimitiveValue>(*first).stringValue();
+        String endQuote = downcast<CSSPrimitiveValue>(*second).stringValue();
         quotes.append(std::make_pair(startQuote, endQuote));
     }
     return QuotesData::create(quotes);
@@ -627,7 +627,7 @@ inline TextUnderlinePosition StyleBuilderConverter::convertTextUnderlinePosition
 inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return nullptr;
     }
 
@@ -649,15 +649,15 @@ inline IntSize StyleBuilderConverter::convertInitialLetter(StyleResolver&, CSSVa
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
-    if (primitiveValue.getValueID() == CSSValueNormal)
+    if (primitiveValue.valueID() == CSSValueNormal)
         return IntSize();
 
-    Pair* pair = primitiveValue.getPairValue();
+    Pair* pair = primitiveValue.pairValue();
     ASSERT(pair);
     ASSERT(pair->first());
     ASSERT(pair->second());
 
-    return IntSize(pair->first()->getIntValue(), pair->second()->getIntValue());
+    return IntSize(pair->first()->intValue(), pair->second()->intValue());
 }
 
 inline float StyleBuilderConverter::convertTextStrokeWidth(StyleResolver& styleResolver, CSSValue& value)
@@ -665,14 +665,14 @@ inline float StyleBuilderConverter::convertTextStrokeWidth(StyleResolver& styleR
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     float width = 0;
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueThin:
     case CSSValueMedium:
     case CSSValueThick: {
         double result = 1.0 / 48;
-        if (primitiveValue.getValueID() == CSSValueMedium)
+        if (primitiveValue.valueID() == CSSValueMedium)
             result *= 3;
-        else if (primitiveValue.getValueID() == CSSValueThick)
+        else if (primitiveValue.valueID() == CSSValueThick)
             result *= 5;
         Ref<CSSPrimitiveValue> emsValue(CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS));
         width = convertComputedLength<float>(styleResolver, emsValue);
@@ -693,7 +693,7 @@ inline float StyleBuilderConverter::convertTextStrokeWidth(StyleResolver& styleR
 inline LineBoxContain StyleBuilderConverter::convertLineBoxContain(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return LineBoxContainNone;
     }
 
@@ -704,7 +704,7 @@ inline TextDecorationSkip StyleBuilderConverter::valueToDecorationSkip(const CSS
 {
     ASSERT(primitiveValue.isValueID());
 
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueAuto:
         return TextDecorationSkipAuto;
     case CSSValueNone:
@@ -741,7 +741,7 @@ static inline bool isImageShape(const CSSValue& value)
 inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return nullptr;
     }
 
@@ -753,11 +753,11 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(currentValue.get());
         if (primitiveValue.isShape())
-            shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), *primitiveValue.getShapeValue());
-        else if (primitiveValue.getValueID() == CSSValueContentBox
-            || primitiveValue.getValueID() == CSSValueBorderBox
-            || primitiveValue.getValueID() == CSSValuePaddingBox
-            || primitiveValue.getValueID() == CSSValueMarginBox)
+            shape = basicShapeForValue(styleResolver.state().cssToLengthConversionData(), *primitiveValue.shapeValue());
+        else if (primitiveValue.valueID() == CSSValueContentBox
+            || primitiveValue.valueID() == CSSValueBorderBox
+            || primitiveValue.valueID() == CSSValuePaddingBox
+            || primitiveValue.valueID() == CSSValueMarginBox)
             referenceBox = primitiveValue;
         else {
             ASSERT_NOT_REACHED();
@@ -787,14 +787,14 @@ inline std::unique_ptr<ScrollSnapPoints> StyleBuilderConverter::convertScrollSna
     auto points = std::make_unique<ScrollSnapPoints>();
 
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueElements);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueElements);
         points->usesElements = true;
         return points;
     }
 
     for (auto& currentValue : downcast<CSSValueList>(value)) {
         auto& itemValue = downcast<CSSPrimitiveValue>(currentValue.get());
-        if (auto* lengthRepeat = itemValue.getLengthRepeatValue()) {
+        if (auto* lengthRepeat = itemValue.lengthRepeatValue()) {
             if (auto* interval = lengthRepeat->interval()) {
                 points->repeatOffset = parseSnapCoordinate(styleResolver, *interval);
                 points->hasRepeat = true;
@@ -829,15 +829,15 @@ inline Vector<LengthSize> StyleBuilderConverter::convertScrollSnapCoordinates(St
 #if ENABLE(CSS_GRID_LAYOUT)
 inline GridLength StyleBuilderConverter::createGridTrackBreadth(CSSPrimitiveValue& primitiveValue, StyleResolver& styleResolver)
 {
-    if (primitiveValue.getValueID() == CSSValueWebkitMinContent)
+    if (primitiveValue.valueID() == CSSValueWebkitMinContent)
         return Length(MinContent);
 
-    if (primitiveValue.getValueID() == CSSValueWebkitMaxContent)
+    if (primitiveValue.valueID() == CSSValueWebkitMaxContent)
         return Length(MaxContent);
 
     // Fractional unit.
     if (primitiveValue.isFlex())
-        return GridLength(primitiveValue.getDoubleValue());
+        return GridLength(primitiveValue.doubleValue());
 
     return primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | AutoConversion>(styleResolver.state().cssToLengthConversionData());
 }
@@ -864,7 +864,7 @@ static void createGridLineNamesList(const CSSValue& value, unsigned currentNamed
     ASSERT(value.isGridLineNamesValue());
 
     for (auto& namedGridLineValue : downcast<CSSGridLineNamesValue>(value)) {
-        String namedGridLine = downcast<CSSPrimitiveValue>(namedGridLineValue.get()).getStringValue();
+        String namedGridLine = downcast<CSSPrimitiveValue>(namedGridLineValue.get()).stringValue();
         auto result = namedGridLines.add(namedGridLine, Vector<unsigned>());
         result.iterator->value.append(currentNamedGridLine);
         auto orderedResult = orderedNamedGridLines.add(currentNamedGridLine, Vector<String>());
@@ -891,7 +891,7 @@ inline bool StyleBuilderConverter::createGridTrackList(CSSValue& value, TracksDa
 {
     // Handle 'none'.
     if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone;
+        return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone;
 
     if (!is<CSSValueList>(value))
         return false;
@@ -939,11 +939,11 @@ inline bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosit
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         // We translate <ident> to <string> during parsing as it makes handling it simpler.
         if (primitiveValue.isString()) {
-            position.setNamedGridArea(primitiveValue.getStringValue());
+            position.setNamedGridArea(primitiveValue.stringValue());
             return true;
         }
 
-        ASSERT(primitiveValue.getValueID() == CSSValueAuto);
+        ASSERT(primitiveValue.valueID() == CSSValueAuto);
         return true;
     }
 
@@ -953,7 +953,7 @@ inline bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosit
     auto it = values.begin();
     CSSPrimitiveValue* currentValue = &downcast<CSSPrimitiveValue>(it->get());
     bool isSpanPosition = false;
-    if (currentValue->getValueID() == CSSValueSpan) {
+    if (currentValue->valueID() == CSSValueSpan) {
         isSpanPosition = true;
         ++it;
         currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
@@ -961,14 +961,14 @@ inline bool StyleBuilderConverter::createGridPosition(CSSValue& value, GridPosit
 
     int gridLineNumber = 0;
     if (currentValue && currentValue->isNumber()) {
-        gridLineNumber = currentValue->getIntValue();
+        gridLineNumber = currentValue->intValue();
         ++it;
         currentValue = it != values.end() ? &downcast<CSSPrimitiveValue>(it->get()) : nullptr;
     }
 
     String gridLineName;
     if (currentValue && currentValue->isString()) {
-        gridLineName = currentValue->getStringValue();
+        gridLineName = currentValue->stringValue();
         ++it;
     }
 
@@ -1035,15 +1035,15 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, C
     auto* second = downcast<CSSPrimitiveValue>(list.item(1));
 
     GridAutoFlow autoFlow = RenderStyle::initialGridAutoFlow();
-    switch (first.getValueID()) {
+    switch (first.valueID()) {
     case CSSValueRow:
-        if (second && second->getValueID() == CSSValueDense)
+        if (second && second->valueID() == CSSValueDense)
             autoFlow =  AutoFlowRowDense;
         else
             autoFlow = AutoFlowRow;
         break;
     case CSSValueColumn:
-        if (second && second->getValueID() == CSSValueDense)
+        if (second && second->valueID() == CSSValueDense)
             autoFlow = AutoFlowColumnDense;
         else
             autoFlow = AutoFlowColumn;
@@ -1070,14 +1070,14 @@ inline Optional<Length> StyleBuilderConverter::convertWordSpacing(StyleResolver&
 {
     Optional<Length> wordSpacing;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNormal)
+    if (primitiveValue.valueID() == CSSValueNormal)
         wordSpacing = RenderStyle::initialWordSpacing();
     else if (primitiveValue.isLength())
         wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(styleResolver));
     else if (primitiveValue.isPercentage())
-        wordSpacing = Length(clampTo<float>(primitiveValue.getDoubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
+        wordSpacing = Length(clampTo<float>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), Percent);
     else if (primitiveValue.isNumber())
-        wordSpacing = Length(primitiveValue.getDoubleValue(), Fixed);
+        wordSpacing = Length(primitiveValue.doubleValue(), Fixed);
 
     return wordSpacing;
 }
@@ -1085,14 +1085,14 @@ inline Optional<Length> StyleBuilderConverter::convertWordSpacing(StyleResolver&
 inline Optional<float> StyleBuilderConverter::convertPerspective(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNone)
+    if (primitiveValue.valueID() == CSSValueNone)
         return 0.f;
 
     float perspective = -1;
     if (primitiveValue.isLength())
         perspective = primitiveValue.computeLength<float>(styleResolver.state().cssToLengthConversionData());
     else if (primitiveValue.isNumber())
-        perspective = primitiveValue.getDoubleValue() * styleResolver.state().cssToLengthConversionData().zoom();
+        perspective = primitiveValue.doubleValue() * styleResolver.state().cssToLengthConversionData().zoom();
     else
         ASSERT_NOT_REACHED();
 
@@ -1103,7 +1103,7 @@ inline Optional<Length> StyleBuilderConverter::convertMarqueeIncrement(StyleReso
 {
     Optional<Length> marqueeLength;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueSmall:
         marqueeLength = Length(1, Fixed); // 1px.
         break;
@@ -1136,7 +1136,7 @@ inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations
 inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
         return { };
     }
 
@@ -1152,7 +1152,7 @@ inline FontFeatureSettings StyleBuilderConverter::convertFontFeatureSettings(Sty
 inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
         return { };
     }
 
@@ -1168,7 +1168,7 @@ inline FontVariationSettings StyleBuilderConverter::convertFontVariationSettings
 #if PLATFORM(IOS)
 inline bool StyleBuilderConverter::convertTouchCallout(StyleResolver&, CSSValue& value)
 {
-    return !equalLettersIgnoringASCIICase(downcast<CSSPrimitiveValue>(value).getStringValue(), "none");
+    return !equalLettersIgnoringASCIICase(downcast<CSSPrimitiveValue>(value).stringValue(), "none");
 }
 #endif
 
@@ -1182,7 +1182,7 @@ inline Color StyleBuilderConverter::convertTapHighlightColor(StyleResolver& styl
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
 inline bool StyleBuilderConverter::convertOverflowScrolling(StyleResolver&, CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueTouch;
+    return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueTouch;
 }
 #endif
 
@@ -1206,7 +1206,7 @@ inline Vector<SVGLength> StyleBuilderConverter::convertSVGLengthVector(StyleReso
 inline Vector<SVGLength> StyleBuilderConverter::convertStrokeDashArray(StyleResolver& styleResolver, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return SVGRenderStyle::initialStrokeDashArray();
     }
 
@@ -1216,12 +1216,12 @@ inline Vector<SVGLength> StyleBuilderConverter::convertStrokeDashArray(StyleReso
 inline PaintOrder StyleBuilderConverter::convertPaintOrder(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNormal);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal);
         return PaintOrderNormal;
     }
 
     auto& orderTypeList = downcast<CSSValueList>(value);
-    switch (downcast<CSSPrimitiveValue>(*orderTypeList.itemWithoutBoundsCheck(0)).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(*orderTypeList.itemWithoutBoundsCheck(0)).valueID()) {
     case CSSValueFill:
         return orderTypeList.length() > 1 ? PaintOrderFillMarkers : PaintOrderFill;
     case CSSValueStroke:
@@ -1237,7 +1237,7 @@ inline PaintOrder StyleBuilderConverter::convertPaintOrder(StyleResolver&, CSSVa
 inline float StyleBuilderConverter::convertOpacity(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    float opacity = primitiveValue.getFloatValue();
+    float opacity = primitiveValue.floatValue();
     if (primitiveValue.isPercentage())
         opacity /= 100.0f;
     return opacity;
@@ -1248,7 +1248,7 @@ inline String StyleBuilderConverter::convertSVGURIReference(StyleResolver& style
     String s;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isURI())
-        s = primitiveValue.getStringValue();
+        s = primitiveValue.stringValue();
 
     return SVGURIReference::fragmentIdentifierFromIRIString(s, styleResolver.document());
 }
@@ -1263,8 +1263,8 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
 {
     StyleSelfAlignmentData alignmentData = RenderStyle::initialSelfAlignment();
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (Pair* pairValue = primitiveValue.getPairValue()) {
-        if (pairValue->first()->getValueID() == CSSValueLegacy) {
+    if (Pair* pairValue = primitiveValue.pairValue()) {
+        if (pairValue->first()->valueID() == CSSValueLegacy) {
             alignmentData.setPositionType(LegacyPosition);
             alignmentData.setPosition(*pairValue->second());
         } else {
@@ -1282,17 +1282,17 @@ inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentD
 #if ENABLE(CSS_GRID_LAYOUT)
     if (RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled()) {
         auto& contentValue = downcast<CSSContentDistributionValue>(value);
-        if (contentValue.distribution()->getValueID() != CSSValueInvalid)
+        if (contentValue.distribution()->valueID() != CSSValueInvalid)
             alignmentData.setDistribution(contentValue.distribution().get());
-        if (contentValue.position()->getValueID() != CSSValueInvalid)
+        if (contentValue.position()->valueID() != CSSValueInvalid)
             alignmentData.setPosition(contentValue.position().get());
-        if (contentValue.overflow()->getValueID() != CSSValueInvalid)
+        if (contentValue.overflow()->valueID() != CSSValueInvalid)
             alignmentData.setOverflow(contentValue.overflow().get());
         return alignmentData;
     }
 #endif
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueStretch:
     case CSSValueSpaceBetween:
     case CSSValueSpaceAround:
@@ -1311,7 +1311,7 @@ inline StyleContentAlignmentData StyleBuilderConverter::convertContentAlignmentD
 
 inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientation(StyleResolver&, CSSValue& value)
 {
-    float angle = fabsf(fmodf(downcast<CSSPrimitiveValue>(value).getFloatValue(), 360.0f));
+    float angle = fabsf(fmodf(downcast<CSSPrimitiveValue>(value).floatValue(), 360.0f));
     if (angle <= 45.0f || angle > 315.0f)
         return GO_0DEG;
     if (angle > 45.0f && angle <= 135.0f)
@@ -1323,7 +1323,7 @@ inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientation(StyleRes
 
 inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(StyleResolver& styleResolver, CSSValue& value)
 {
-    if (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueAuto)
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
         return GO_AUTO;
     return convertGlyphOrientation(styleResolver, value);
 }
@@ -1331,7 +1331,7 @@ inline EGlyphOrientation StyleBuilderConverter::convertGlyphOrientationOrAuto(St
 inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& styleResolver, CSSValue& value, float multiplier)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNormal)
+    if (primitiveValue.valueID() == CSSValueNormal)
         return RenderStyle::initialLineHeight();
 
     if (primitiveValue.isLength()) {
@@ -1342,11 +1342,11 @@ inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& 
     }
     if (primitiveValue.isPercentage()) {
         // FIXME: percentage should not be restricted to an integer here.
-        return Length((styleResolver.style()->computedFontSize() * primitiveValue.getIntValue()) / 100, Fixed);
+        return Length((styleResolver.style()->computedFontSize() * primitiveValue.intValue()) / 100, Fixed);
     }
     if (primitiveValue.isNumber()) {
         // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
-        return Length(primitiveValue.getDoubleValue() * multiplier * 100.0, Percent);
+        return Length(primitiveValue.doubleValue() * multiplier * 100.0, Percent);
     }
     return Nullopt;
 }
@@ -1354,14 +1354,14 @@ inline Optional<Length> StyleBuilderConverter::convertLineHeight(StyleResolver& 
 FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(downcast<CSSPrimitiveValue>(value).getValueID() == CSSValueNone);
+        ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);
         return FontSynthesisNone;
     }
 
     FontSynthesis result = FontSynthesisNone;
     ASSERT(is<CSSValueList>(value));
     for (CSSValue& v : downcast<CSSValueList>(value)) {
-        switch (downcast<CSSPrimitiveValue>(v).getValueID()) {
+        switch (downcast<CSSPrimitiveValue>(v).valueID()) {
         case CSSValueWeight:
             result |= FontSynthesisWeight;
             break;
@@ -1380,9 +1380,9 @@ FontSynthesis StyleBuilderConverter::convertFontSynthesis(StyleResolver&, CSSVal
 inline BreakBetween StyleBuilderConverter::convertPageBreakBetween(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAlways)
+    if (primitiveValue.valueID() == CSSValueAlways)
         return PageBreakBetween;
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidPageBreakBetween;
     return primitiveValue;
 }
@@ -1390,7 +1390,7 @@ inline BreakBetween StyleBuilderConverter::convertPageBreakBetween(StyleResolver
 inline BreakInside StyleBuilderConverter::convertPageBreakInside(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidPageBreakInside;
     return primitiveValue;
 }
@@ -1398,9 +1398,9 @@ inline BreakInside StyleBuilderConverter::convertPageBreakInside(StyleResolver&,
 inline BreakBetween StyleBuilderConverter::convertColumnBreakBetween(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAlways)
+    if (primitiveValue.valueID() == CSSValueAlways)
         return ColumnBreakBetween;
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidColumnBreakBetween;
     return primitiveValue;
 }
@@ -1408,7 +1408,7 @@ inline BreakBetween StyleBuilderConverter::convertColumnBreakBetween(StyleResolv
 inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidColumnBreakInside;
     return primitiveValue;
 }
@@ -1417,9 +1417,9 @@ inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver
 inline BreakBetween StyleBuilderConverter::convertRegionBreakBetween(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAlways)
+    if (primitiveValue.valueID() == CSSValueAlways)
         return RegionBreakBetween;
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidRegionBreakBetween;
     return primitiveValue;
 }
@@ -1427,7 +1427,7 @@ inline BreakBetween StyleBuilderConverter::convertRegionBreakBetween(StyleResolv
 inline BreakInside StyleBuilderConverter::convertRegionBreakInside(StyleResolver&, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAvoid)
+    if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidRegionBreakInside;
     return primitiveValue;
 }

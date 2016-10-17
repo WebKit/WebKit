@@ -81,7 +81,7 @@ void CSSToStyleMap::mapFillAttachment(CSSPropertyID propertyID, FillLayer& layer
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueFixed:
         layer.setAttachment(FixedBackgroundAttachment);
         break;
@@ -186,7 +186,7 @@ void CSSToStyleMap::mapFillRepeatY(CSSPropertyID propertyID, FillLayer& layer, c
 
 static inline bool convertToLengthSize(const CSSPrimitiveValue& primitiveValue, CSSToLengthConversionData conversionData, LengthSize& size)
 {
-    if (auto* pair = primitiveValue.getPairValue()) {
+    if (auto* pair = primitiveValue.pairValue()) {
         size.setWidth(pair->first()->convertToLength<AnyConversion>(conversionData));
         size.setHeight(pair->second()->convertToLength<AnyConversion>(conversionData));
     } else
@@ -207,7 +207,7 @@ void CSSToStyleMap::mapFillSize(CSSPropertyID propertyID, FillLayer& layer, cons
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     FillSize fillSize;
-    switch (primitiveValue.getValueID()) {
+    switch (primitiveValue.valueID()) {
     case CSSValueContain:
         fillSize.type = Contain;
         break;
@@ -234,7 +234,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
         return;
 
     auto* primitiveValue = &downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue->getPairValue();
+    Pair* pair = primitiveValue->pairValue();
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
         primitiveValue = pair->second();
@@ -244,7 +244,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
     if (primitiveValue->isLength())
         length = primitiveValue->computeLength<Length>(m_resolver->state().cssToLengthConversionData());
     else if (primitiveValue->isPercentage())
-        length = Length(primitiveValue->getDoubleValue(), Percent);
+        length = Length(primitiveValue->doubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
         length = Length(primitiveValue->cssCalcValue()->createCalculationValue(m_resolver->state().cssToLengthConversionData()));
     else
@@ -266,7 +266,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
         return;
 
     auto* primitiveValue = &downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue->getPairValue();
+    Pair* pair = primitiveValue->pairValue();
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
         primitiveValue = pair->second();
@@ -276,7 +276,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     if (primitiveValue->isLength())
         length = primitiveValue->computeLength<Length>(m_resolver->state().cssToLengthConversionData());
     else if (primitiveValue->isPercentage())
-        length = Length(primitiveValue->getDoubleValue(), Percent);
+        length = Length(primitiveValue->doubleValue(), Percent);
     else if (primitiveValue->isCalculatedPercentageWithLength())
         length = Length(primitiveValue->cssCalcValue()->createCalculationValue(m_resolver->state().cssToLengthConversionData()));
     else
@@ -298,7 +298,7 @@ void CSSToStyleMap::mapFillMaskSourceType(CSSPropertyID propertyID, FillLayer& l
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueAlpha:
         type = EMaskSourceType::MaskAlpha;
         break;
@@ -337,7 +337,7 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& valu
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueNormal:
         layer.setDirection(Animation::AnimationDirectionNormal);
         break;
@@ -378,7 +378,7 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
     case CSSValueNone:
         layer.setFillMode(AnimationFillModeNone);
         break;
@@ -407,10 +407,10 @@ void CSSToStyleMap::mapAnimationIterationCount(Animation& animation, const CSSVa
         return;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueInfinite)
+    if (primitiveValue.valueID() == CSSValueInfinite)
         animation.setIterationCount(Animation::IterationCountInfinite);
     else
-        animation.setIterationCount(primitiveValue.getFloatValue());
+        animation.setIterationCount(primitiveValue.floatValue());
 }
 
 void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
@@ -424,10 +424,10 @@ void CSSToStyleMap::mapAnimationName(Animation& layer, const CSSValue& value)
         return;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueNone)
+    if (primitiveValue.valueID() == CSSValueNone)
         layer.setIsNoneAnimation(true);
     else
-        layer.setName(primitiveValue.getStringValue());
+        layer.setName(primitiveValue.stringValue());
 }
 
 void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& value)
@@ -440,7 +440,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    EAnimPlayState playState = (downcast<CSSPrimitiveValue>(value).getValueID() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying;
+    EAnimPlayState playState = (downcast<CSSPrimitiveValue>(value).valueID() == CSSValuePaused) ? AnimPlayStatePaused : AnimPlayStatePlaying;
     layer.setPlayState(playState);
 }
 
@@ -456,15 +456,15 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
         return;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.getValueID() == CSSValueAll) {
+    if (primitiveValue.valueID() == CSSValueAll) {
         animation.setAnimationMode(Animation::AnimateAll);
         animation.setProperty(CSSPropertyInvalid);
-    } else if (primitiveValue.getValueID() == CSSValueNone) {
+    } else if (primitiveValue.valueID() == CSSValueNone) {
         animation.setAnimationMode(Animation::AnimateNone);
         animation.setProperty(CSSPropertyInvalid);
     } else {
         animation.setAnimationMode(Animation::AnimateSingleProperty);
-        animation.setProperty(primitiveValue.getPropertyID());
+        animation.setProperty(primitiveValue.propertyID());
     }
 }
 
@@ -476,7 +476,7 @@ void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSVa
     }
 
     if (is<CSSPrimitiveValue>(value)) {
-        switch (downcast<CSSPrimitiveValue>(value).getValueID()) {
+        switch (downcast<CSSPrimitiveValue>(value).valueID()) {
         case CSSValueLinear:
             animation.setTimingFunction(LinearTimingFunction::create());
             break;
@@ -526,7 +526,7 @@ void CSSToStyleMap::mapAnimationTrigger(Animation& animation, const CSSValue& va
 
     if (value.isPrimitiveValue()) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        if (primitiveValue.getValueID() == CSSValueAuto)
+        if (primitiveValue.valueID() == CSSValueAuto)
             animation.setTrigger(AutoAnimationTrigger::create());
         return;
     }
@@ -608,21 +608,21 @@ void CSSToStyleMap::mapNinePieceImageSlice(CSSValue& value, NinePieceImage& imag
     LengthBox box;
     Quad* slices = borderImageSlice.slices();
     if (slices->top()->isPercentage())
-        box.top() = Length(slices->top()->getDoubleValue(), Percent);
+        box.top() = Length(slices->top()->doubleValue(), Percent);
     else
-        box.top() = Length(slices->top()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.top() = Length(slices->top()->intValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->bottom()->isPercentage())
-        box.bottom() = Length(slices->bottom()->getDoubleValue(), Percent);
+        box.bottom() = Length(slices->bottom()->doubleValue(), Percent);
     else
-        box.bottom() = Length((int)slices->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.bottom() = Length((int)slices->bottom()->floatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->left()->isPercentage())
-        box.left() = Length(slices->left()->getDoubleValue(), Percent);
+        box.left() = Length(slices->left()->doubleValue(), Percent);
     else
-        box.left() = Length(slices->left()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.left() = Length(slices->left()->intValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     if (slices->right()->isPercentage())
-        box.right() = Length(slices->right()->getDoubleValue(), Percent);
+        box.right() = Length(slices->right()->doubleValue(), Percent);
     else
-        box.right() = Length(slices->right()->getIntValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+        box.right() = Length(slices->right()->intValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
     image.setImageSlices(box);
 
     // Set our fill mode.
@@ -642,33 +642,33 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
 
     // Set up a length box to represent our image slices.
     LengthBox box; // Defaults to 'auto' so we don't have to handle that explicitly below.
-    Quad* slices = borderWidths.getQuadValue();
+    Quad* slices = borderWidths.quadValue();
     if (slices->top()->isNumber())
-        box.top() = Length(slices->top()->getIntValue(), Relative);
+        box.top() = Length(slices->top()->intValue(), Relative);
     else if (slices->top()->isPercentage())
-        box.top() = Length(slices->top()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else if (slices->top()->getValueID() != CSSValueAuto)
+        box.top() = Length(slices->top()->doubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else if (slices->top()->valueID() != CSSValueAuto)
         box.top() = slices->top()->computeLength<Length>(conversionData);
 
     if (slices->right()->isNumber())
-        box.right() = Length(slices->right()->getIntValue(), Relative);
+        box.right() = Length(slices->right()->intValue(), Relative);
     else if (slices->right()->isPercentage())
-        box.right() = Length(slices->right()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else if (slices->right()->getValueID() != CSSValueAuto)
+        box.right() = Length(slices->right()->doubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else if (slices->right()->valueID() != CSSValueAuto)
         box.right() = slices->right()->computeLength<Length>(conversionData);
 
     if (slices->bottom()->isNumber())
-        box.bottom() = Length(slices->bottom()->getIntValue(), Relative);
+        box.bottom() = Length(slices->bottom()->intValue(), Relative);
     else if (slices->bottom()->isPercentage())
-        box.bottom() = Length(slices->bottom()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else if (slices->bottom()->getValueID() != CSSValueAuto)
+        box.bottom() = Length(slices->bottom()->doubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else if (slices->bottom()->valueID() != CSSValueAuto)
         box.bottom() = slices->bottom()->computeLength<Length>(conversionData);
 
     if (slices->left()->isNumber())
-        box.left() = Length(slices->left()->getIntValue(), Relative);
+        box.left() = Length(slices->left()->intValue(), Relative);
     else if (slices->left()->isPercentage())
-        box.left() = Length(slices->left()->getDoubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-    else if (slices->left()->getValueID() != CSSValueAuto)
+        box.left() = Length(slices->left()->doubleValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+    else if (slices->left()->valueID() != CSSValueAuto)
         box.left() = slices->left()->computeLength<Length>(conversionData);
 
     return box;
@@ -680,12 +680,12 @@ void CSSToStyleMap::mapNinePieceImageRepeat(CSSValue& value, NinePieceImage& ima
         return;
 
     CSSPrimitiveValue& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    Pair* pair = primitiveValue.getPairValue();
+    Pair* pair = primitiveValue.pairValue();
     if (!pair || !pair->first() || !pair->second())
         return;
 
-    CSSValueID firstIdentifier = pair->first()->getValueID();
-    CSSValueID secondIdentifier = pair->second()->getValueID();
+    CSSValueID firstIdentifier = pair->first()->valueID();
+    CSSValueID secondIdentifier = pair->second()->valueID();
 
     ENinePieceImageRule horizontalRule;
     switch (firstIdentifier) {
