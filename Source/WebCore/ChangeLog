@@ -1,3 +1,23 @@
+2016-10-17  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Use modern-media-controls module sources for media controls stylesheet and script injection
+        https://bugs.webkit.org/show_bug.cgi?id=163500
+        <rdar://problem/28792010>
+
+        Reviewed by Darin Adler.
+
+        Add files from the Modules/modern-media-controls directory to the Xcode project and add a copy phase
+        to copy those files with their directory stucture as a subdirectory of the WebCore.framework Resources
+        directory.
+
+        Additionally, use the modern-media-controls Module CSS and JS files when concatenating the media controls
+        scripts and styles in RenderTheme when the runtime flag is on.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2016-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix typo in error message.

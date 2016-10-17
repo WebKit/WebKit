@@ -64,6 +64,7 @@
 #import "RenderSlider.h"
 #import "RenderSnapshottedPlugIn.h"
 #import "RenderView.h"
+#import "RuntimeEnabledFeatures.h"
 #import "SharedBuffer.h"
 #import "StringTruncator.h"
 #import "StyleResolver.h"
@@ -235,7 +236,12 @@ String RenderThemeMac::mediaControlsStyleSheet()
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
     if (m_mediaControlsStyleSheet.isEmpty()) {
         StringBuilder styleSheetBuilder;
-        styleSheetBuilder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil]);
+        if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+            NSArray* paths = @[@"airplay-button", @"button", @"buttons-container", @"icon-button", @"macos-inline-media-controls", @"media-controls", @"placard", @"scrubber", @"slider", @"start-button", @"time-label", @"volume-slider"];
+            for (NSString* path in paths)
+                styleSheetBuilder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:path ofType:@"css" inDirectory:@"modern-media-controls/controls"] encoding:NSUTF8StringEncoding error:nil]);
+        } else
+            styleSheetBuilder.append([NSString stringWithContentsOfFile:[[NSBundle bundleForClass:[WebCoreRenderThemeBundle class]] pathForResource:@"mediaControlsApple" ofType:@"css"] encoding:NSUTF8StringEncoding error:nil]);
         m_mediaControlsStyleSheet = styleSheetBuilder.toString();
     }
     return m_mediaControlsStyleSheet;
@@ -250,8 +256,14 @@ String RenderThemeMac::mediaControlsScript()
     if (m_mediaControlsScript.isEmpty()) {
         StringBuilder scriptBuilder;
         NSBundle* bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
-        scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
+        if (RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled()) {
+            NSArray* controlsPaths = @[@"scheduler", @"layout-node", @"layout-item", @"icon-service", @"time-control", @"time-label", @"slider", @"volume-slider", @"scrubber", @"button", @"start-button", @"icon-button", @"play-pause-button", @"skip-back-button", @"mute-button", @"airplay-button", @"pip-button", @"tracks-button", @"fullscreen-button", @"aspect-ratio-button", @"rewind-button", @"forward-button", @"media-controls", @"macos-media-controls", @"macos-inline-media-controls", @"buttons-container", @"placard", @"airplay-placard", @"pip-placard"];
+            for (NSString* path in controlsPaths)
+                scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:path ofType:@"js" inDirectory:@"modern-media-controls/controls"] encoding:NSUTF8StringEncoding error:nil]);
+        } else {
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
+            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsApple" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
+        }
         m_mediaControlsScript = scriptBuilder.toString();
     }
     return m_mediaControlsScript;
