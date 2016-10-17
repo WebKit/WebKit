@@ -308,6 +308,7 @@ static void recomputeDependentOptions()
     Options::useJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
+    Options::useDOMJIT() = false;
 #endif
 #if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;

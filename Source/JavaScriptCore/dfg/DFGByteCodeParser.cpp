@@ -3302,7 +3302,7 @@ void ByteCodeParser::handleGetById(
 
     // Special path for custom accessors since custom's offset does not have any meanings.
     // So, this is completely different from Simple one. But we have a chance to optimize it when we use DOMJIT.
-    if (getByIdStatus.isCustom()) {
+    if (Options::useDOMJIT() && getByIdStatus.isCustom()) {
         ASSERT(getByIdStatus.numVariants() == 1);
         ASSERT(!getByIdStatus.makesCalls());
         GetByIdVariant variant = getByIdStatus[0];

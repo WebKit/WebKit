@@ -949,7 +949,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             return;
         }
 
-        if (m_type == CustomAccessorGetter && m_rareData->domJIT) {
+        if (Options::useDOMJIT() && m_type == CustomAccessorGetter && m_rareData->domJIT) {
             // We do not need to emit CheckDOM operation since structure check ensures
             // that the structure of the given base value is structure()! So all we should
             // do is performing the CheckDOM thingy in IC compiling time here.

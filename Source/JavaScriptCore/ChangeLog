@@ -1,3 +1,20 @@
+2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT][JSC] Add Option::useDOMJIT
+        https://bugs.webkit.org/show_bug.cgi?id=163457
+
+        Reviewed by Saam Barati.
+
+        Add an option to switch the DOMJIT optimization.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2016-10-17  Filip Pizlo  <fpizlo@apple.com>
 
         Air::IRC doesn't need to have a special-case for uncolored Tmps since they all get colored
