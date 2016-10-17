@@ -474,6 +474,7 @@ struct AccessGenerationState {
     void succeed();
 
     struct SpillState {
+        SpillState() = default;
         SpillState(RegisterSet&& regs, unsigned usedStackBytes)
             : spilledRegisters(WTFMove(regs))
             , numberOfStackBytesUsedForRegisterPreservation(usedStackBytes)
