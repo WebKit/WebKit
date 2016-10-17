@@ -44,12 +44,11 @@ public:
 
         Entry() = default;
 
-        Entry(RefPtr<UniquedStringImpl> impl, StructureID structureID, bool result)
-            : impl(impl)
+        Entry(RefPtr<UniquedStringImpl>&& impl, StructureID structureID, bool result)
+            : impl(WTFMove(impl))
             , structureID(structureID)
             , result(result)
-        {
-        }
+        { }
 
         Entry& operator=(Entry&& other)
         {
@@ -122,7 +121,7 @@ public:
             UniquedStringImpl* impl = propName.uid();
             StructureID id = structure->id();
             uint32_t index = HasOwnPropertyCache::hash(id, impl) & mask;
-            bitwise_cast<Entry*>(this)[index] = Entry{ RefPtr<UniquedStringImpl>(impl), id, result };
+            bitwise_cast<Entry*>(this)[index] = Entry { RefPtr<UniquedStringImpl>(impl), id, result };
         }
     }
 

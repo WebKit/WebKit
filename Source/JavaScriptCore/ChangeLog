@@ -1,3 +1,14 @@
+2016-10-17  Saam Barati  <sbarati@apple.com>
+
+        Build fix for HasOwnPropertyCache::Entry caused slowdown by introducing a constructor that doesn't use move semantics for the RefPtr<UniquedStringImpl> parameter
+        https://bugs.webkit.org/show_bug.cgi?id=163490
+
+        Reviewed by Darin Adler.
+
+        * runtime/HasOwnPropertyCache.h:
+        (JSC::HasOwnPropertyCache::Entry::Entry):
+        (JSC::HasOwnPropertyCache::tryAdd):
+
 2016-10-17  Mark Lam  <mark.lam@apple.com>
 
         Use the reject() helper function for conditionally throwing TypeErrors.
