@@ -487,7 +487,7 @@ sub showStatus($;$)
     } elsif ($isGit) {
         my @args = qw(--name-status);
         unshift @args, qw(--cached) if $isConflictResolved;
-        system($GIT, "diff", @args, $file);
+        system($GIT, "--no-pager", "diff", @args, $file);
     } else {
         die "Unknown version control system";
     }
