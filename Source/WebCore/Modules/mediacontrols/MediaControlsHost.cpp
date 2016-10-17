@@ -36,6 +36,7 @@
 #include "MediaControlElements.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
 #include "UUID.h"
@@ -281,6 +282,14 @@ void MediaControlsHost::setControlsDependOnPageScaleFactor(bool value)
 String MediaControlsHost::generateUUID() const
 {
     return createCanonicalUUIDString();
+}
+
+String MediaControlsHost::shadowRootCSSText() const
+{
+    Page* page = m_mediaElement->document().page();
+    if (!page)
+        return emptyString();
+    return RenderTheme::themeForPage(page)->mediaControlsStyleSheet();
 }
 
 }

@@ -59,4 +59,6 @@ enum DeviceType {
     void exitedFullscreen();
 
     DOMString generateUUID();
+
+    [EnabledAtRuntime=ModernMediaControls] readonly attribute DOMString shadowRootCSSText;
 };

@@ -82,6 +82,8 @@ public:
 
     String generateUUID() const;
 
+    String shadowRootCSSText() const;
+
 private:
     MediaControlsHost(HTMLMediaElement*);
 
