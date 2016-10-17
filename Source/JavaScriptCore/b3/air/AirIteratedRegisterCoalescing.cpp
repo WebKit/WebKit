@@ -88,9 +88,6 @@ protected:
         IndexType firstNonRegIndex = m_lastPrecoloredRegisterIndex + 1;
         for (IndexType i = firstNonRegIndex; i < m_degrees.size(); ++i) {
             unsigned degree = m_degrees[i];
-            if (!degree)
-                continue;
-
             if (degree >= m_regsInPriorityOrder.size())
                 addToSpill(i);
             else if (!m_moveList[i].isEmpty())

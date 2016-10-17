@@ -1,3 +1,41 @@
+2016-10-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::IRC needs to place all Tmps on some worklist, even if they have no interference edges
+        https://bugs.webkit.org/show_bug.cgi?id=163509
+
+        Reviewed by Mark Lam.
+        
+        The worklist building function in IRC skips temporaries that have no degree. This doesn't appear
+        to be necessary. This has been there since the original IRC commit. It hasn't caused bugs because
+        ordinarily, the only way to have a tmp with no degree is to not have any mention of that tmp. But
+        while working on bug 163371, I hit a crazy corner case where a temporary would have no
+        interference edges (i.e. no degree). Here's how it happens:
+        
+        A spill tmp from a previous iteration of IRC may have no degree: imagine a tmp that is live
+        everywhere and interferes with everyone, but has one use like:
+
+        Move %ourTmp, %someOtherTmp
+
+        Where there are no other tmps live.  After spill conversion, this may look like:
+
+        Move (ourSpill), %newTmp
+        Move %newTmp, %someOtherTmp
+
+        Of course, we'd rather not get this kind of spill code but it's totally possible because we now
+        have a bunch of random conditions under which we won't slap the spill address directly into the
+        Move.
+
+        After this happens, assuming that the only thing live was %someOtherTmp, we will have zero degree
+        for %newTmp because the Move is coalescable and does not contribute to interference.
+
+        Then, we might coalesce %someOtherTmp with %newTmp.  Once this happens, if we make the %newTmp be
+        the master, we're in deep trouble because %newTmp is not on any worklist.
+        
+        I don't know how to reproduce this except through the patch in bug 163371. Removing the two lines
+        of code that skipped no-degree tmps causes no regressions, and resolves the problem I was having.
+
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+
 2016-10-15  Mark Lam  <mark.lam@apple.com>
 
         Add a $vm.getpid() method.
