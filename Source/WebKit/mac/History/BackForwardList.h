@@ -43,31 +43,31 @@ public:
     WebView *webView() { return m_webView; }
 
     void addItem(Ref<WebCore::HistoryItem>&&) override;
-    WEBCORE_EXPORT void goBack();
-    WEBCORE_EXPORT void goForward();
+    void goBack();
+    void goForward();
     void goToItem(WebCore::HistoryItem*) override;
         
-    WEBCORE_EXPORT WebCore::HistoryItem* backItem();
-    WEBCORE_EXPORT WebCore::HistoryItem* currentItem();
-    WEBCORE_EXPORT WebCore::HistoryItem* forwardItem();
+    WebCore::HistoryItem* backItem();
+    WebCore::HistoryItem* currentItem();
+    WebCore::HistoryItem* forwardItem();
     WebCore::HistoryItem* itemAtIndex(int) override;
 
-    WEBCORE_EXPORT void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
-    WEBCORE_EXPORT void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
+    void backListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
+    void forwardListWithLimit(int, Vector<Ref<WebCore::HistoryItem>>&);
 
-    WEBCORE_EXPORT int capacity();
-    WEBCORE_EXPORT void setCapacity(int);
-    WEBCORE_EXPORT bool enabled();
-    WEBCORE_EXPORT void setEnabled(bool);
+    int capacity();
+    void setCapacity(int);
+    bool enabled();
+    void setEnabled(bool);
     int backListCount() override;
     int forwardListCount() override;
-    WEBCORE_EXPORT bool containsItem(WebCore::HistoryItem*);
+    bool containsItem(WebCore::HistoryItem*);
 
     void close() override;
-    WEBCORE_EXPORT bool closed();
+    bool closed();
 
-    WEBCORE_EXPORT void removeItem(WebCore::HistoryItem*);
-    WEBCORE_EXPORT Vector<Ref<WebCore::HistoryItem>>& entries();
+    void removeItem(WebCore::HistoryItem*);
+    Vector<Ref<WebCore::HistoryItem>>& entries();
 
 #if PLATFORM(IOS)
     unsigned current();
@@ -75,7 +75,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT explicit BackForwardList(WebView *);
+    explicit BackForwardList(WebView *);
 
     WebView* m_webView;
     Vector<Ref<WebCore::HistoryItem>> m_entries;

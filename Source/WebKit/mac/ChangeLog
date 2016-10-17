@@ -1,3 +1,12 @@
+2016-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove WEBCORE_EXPORT from BackForwardList, it lives in WebKit now
+        https://bugs.webkit.org/show_bug.cgi?id=163551
+
+        Reviewed by Tim Horton.
+
+        * History/BackForwardList.h:
+
 2016-10-16  Darin Adler  <darin@apple.com>
 
         Move CSS classes from ExceptionCode to Exception
