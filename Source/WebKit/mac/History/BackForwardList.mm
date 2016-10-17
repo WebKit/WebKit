@@ -211,11 +211,6 @@ HistoryItem* BackForwardList::itemAtIndex(int index)
     return m_entries[index + m_current].ptr();
 }
 
-Vector<Ref<HistoryItem>>& BackForwardList::entries()
-{
-    return m_entries;
-}
-
 #if PLATFORM(IOS)
 unsigned BackForwardList::current()
 {
@@ -243,15 +238,12 @@ bool BackForwardList::closed()
     return m_closed;
 }
 
-void BackForwardList::removeItem(HistoryItem* item)
+void BackForwardList::removeItem(HistoryItem& item)
 {
-    if (!item)
-        return;
-    
     for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].ptr() == item) {
+        if (m_entries[i].ptr() == &item) {
             m_entries.remove(i);
-            m_entryHash.remove(item);
+            m_entryHash.remove(&item);
             if (m_current == NoCurrentItemIndex || m_current < i)
                 break;
             if (m_current > i)
@@ -266,7 +258,7 @@ void BackForwardList::removeItem(HistoryItem* item)
     }
 }
 
-bool BackForwardList::containsItem(HistoryItem* entry)
+bool BackForwardList::containsItem(HistoryItem& entry)
 {
-    return m_entryHash.contains(entry);
+    return m_entryHash.contains(&entry);
 }

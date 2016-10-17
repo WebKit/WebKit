@@ -145,7 +145,10 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (void)removeItem:(WebHistoryItem *)item
 {
-    core(self)->removeItem(core(item));
+    if (!item)
+        return;
+
+    core(self)->removeItem(*core(item));
 }
 
 #if PLATFORM(IOS)
@@ -199,7 +202,10 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (BOOL)containsItem:(WebHistoryItem *)item
 {
-    return core(self)->containsItem(core(item));
+    if (!item)
+        return NO;
+
+    return core(self)->containsItem(*core(item));
 }
 
 - (void)goBack
@@ -306,9 +312,8 @@ static bool bumperCarBackForwardHackNeeded()
     
     BackForwardList* backForwardList = core(self);
     auto& entries = backForwardList->entries();
-    
-    unsigned size = entries.size();
-    for (unsigned i = 0; i < size; ++i) {
+
+    for (unsigned i = 0; i < entries.size(); ++i) {
         if (entries[i].ptr() == backForwardList->currentItem()) {
             [result appendString:@" >>>"]; 
         } else {
@@ -316,7 +321,7 @@ static bool bumperCarBackForwardHackNeeded()
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[kit(entries[i].ptr()) description]];
+        [result appendString:[kit(const_cast<HistoryItem*>(entries[i].ptr())) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };

@@ -61,13 +61,13 @@ public:
     void setEnabled(bool);
     int backListCount() override;
     int forwardListCount() override;
-    bool containsItem(WebCore::HistoryItem*);
+    bool containsItem(WebCore::HistoryItem&);
 
     void close() override;
     bool closed();
 
-    void removeItem(WebCore::HistoryItem*);
-    Vector<Ref<WebCore::HistoryItem>>& entries();
+    void removeItem(WebCore::HistoryItem&);
+    const Vector<Ref<WebCore::HistoryItem>>& entries() const { return m_entries; }
 
 #if PLATFORM(IOS)
     unsigned current();
