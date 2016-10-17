@@ -1,3 +1,77 @@
+2016-10-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Air::IRC doesn't need to have a special-case for uncolored Tmps since they all get colored
+        https://bugs.webkit.org/show_bug.cgi?id=163548
+        <rdar://problem/28804381>
+
+        Reviewed by Geoffrey Garen.
+        
+        Before r207408, IRC had a mode where it would silently assign the first assignable register (so
+        %rax, %xmm0, etc) to any tmp that was not colorable due to a pathological interference fencepost.
+        We reason about interference at instruction boundaries. This means that if you have, for example,
+        an instruction that clobbers all registers late followed by an instruction that has an early def
+        in the same register file, then the early def will not be colorable because it interferes with
+        all registers. This already happens in our tests, but IRC silently returns the first assignable
+        register to such tmps. For some reason the resulting code works OK - probably because this tends
+        to only be hit by fuzzing, which may not then stress that code enough to shake out the register
+        corruption. Also, this can only happen for floating point registers, so it's hard to get an
+        exciting crash. The worst case is that your numbers get all messed up.
+        
+        This change fixes the issue:
+        
+        - IRC will now crash if it can't color a tmp.
+        
+        - IRC doesn't crash on our tests anymore because I added a padInterference() utility that works
+          around the interference problem by inserting Nops to pad between those instructions where
+          conflating their early and late actions into one interference fencepost could create an
+          uncolorable graph.
+        
+        See https://bugs.webkit.org/show_bug.cgi?id=163548#c2 for a detailed discussion of how the
+        problem can arise.
+        
+        This problem almost made me want to abandon our use of interference at instruction boundaries,
+        and introduce something more comprehensive, like interference at various stages of an
+        instruction's execution. The reason why I didn't do this is that this problem only arises in well
+        confined corner cases: you need an instruction that does a late use or def followed by an
+        instruction that does an early def. Register clobbers count as defs for this equation.
+        Fortunately, early defs are rare, and even when they do happen, you still need the previous
+        instruction to have a late something. Late uses are rare and many instructions don't have defs at
+        all, which means that it's actually pretty common for an instruction to not have anything late.
+        This means that the padInterference() strategy is ideal: our algorithms stay simple because they
+        only have to worry about interference at boundaries, and we rarely insert any Nops in
+        padInterference() so the IR stays nice and compact. Those Nops get removed by any phase that does
+        DCE, which includes eliminateDeadCode(), allocateStack(), and reportUsedRegisters(). In practice
+        allocateStack() kills them.
+        
+        This also finally refactors our passing of RegisterSet to pass it by value, since it's small
+        enough that we're not gaining anything by using references. On x86, RegisterSet ought to be
+        smaller than a pointer.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::extraClobberedRegs):
+        (JSC::B3::StackmapSpecial::extraEarlyClobberedRegs):
+        * b3/B3StackmapSpecial.h:
+        * b3/air/AirCCallSpecial.cpp:
+        (JSC::B3::Air::CCallSpecial::extraEarlyClobberedRegs):
+        (JSC::B3::Air::CCallSpecial::extraClobberedRegs):
+        * b3/air/AirCCallSpecial.h:
+        * b3/air/AirInst.h:
+        * b3/air/AirInstInlines.h:
+        (JSC::B3::Air::Inst::extraClobberedRegs):
+        (JSC::B3::Air::Inst::extraEarlyClobberedRegs):
+        * b3/air/AirIteratedRegisterCoalescing.cpp:
+        (JSC::B3::Air::iteratedRegisterCoalescing):
+        * b3/air/AirPadInterference.cpp: Added.
+        (JSC::B3::Air::padInterference):
+        * b3/air/AirPadInterference.h: Added.
+        * b3/air/AirSpecial.h:
+        * b3/air/AirSpillEverything.cpp:
+        (JSC::B3::Air::spillEverything):
+        * jit/RegisterSet.h:
+        (JSC::RegisterSet::isEmpty):
+
 2016-10-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: implement basic stub

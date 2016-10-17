@@ -95,6 +95,7 @@ set(JavaScriptCore_SOURCES
     b3/air/AirLowerEntrySwitch.cpp
     b3/air/AirLowerMacros.cpp
     b3/air/AirOptimizeBlockOrder.cpp
+    b3/air/AirPadInterference.cpp
     b3/air/AirPhaseScope.cpp
     b3/air/AirReportUsedRegisters.cpp
     b3/air/AirSimplifyCFG.cpp

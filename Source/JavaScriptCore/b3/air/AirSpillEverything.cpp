@@ -33,6 +33,7 @@
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
+#include "AirPadInterference.h"
 #include "AirPhaseScope.h"
 #include <wtf/IndexMap.h>
 
@@ -41,6 +42,8 @@ namespace JSC { namespace B3 { namespace Air {
 void spillEverything(Code& code)
 {
     PhaseScope phaseScope(code, "spillEverything");
+    
+    padInterference(code);
 
     // We want to know the set of registers used at every point in every basic block.
     IndexMap<BasicBlock, Vector<RegisterSet>> usedRegisters(code.size());

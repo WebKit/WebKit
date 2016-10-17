@@ -128,8 +128,8 @@ public:
 
     // Reports any additional registers clobbered by this operation. Note that for efficiency,
     // extraClobberedRegs() only works for the Patch opcode.
-    const RegisterSet& extraClobberedRegs();
-    const RegisterSet& extraEarlyClobberedRegs();
+    RegisterSet extraClobberedRegs();
+    RegisterSet extraEarlyClobberedRegs();
 
     // Iterate over all Def's that happen at the end of an instruction. You supply a pair
     // instructions. The instructions must appear next to each other, in that order, in some basic

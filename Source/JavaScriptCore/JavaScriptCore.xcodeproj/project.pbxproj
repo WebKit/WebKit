@@ -570,6 +570,8 @@
 		0F9B1DB41C0E42A500E5BFD2 /* FTLOutput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB31C0E42A500E5BFD2 /* FTLOutput.cpp */; };
 		0F9B1DB71C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */; };
 		0F9B1DB81C0E42BD00E5BFD2 /* FTLOSRExitHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */; };
+		0F9CABC81DB54A780008E83B /* AirPadInterference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */; };
+		0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9CABC71DB54A760008E83B /* AirPadInterference.h */; };
 		0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D336E165DBB8D005AD387 /* Disassembler.cpp */; };
 		0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */; };
 		0F9D339717FFC4E60073C2BC /* DFGFlushedAt.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */; };
@@ -2840,6 +2842,8 @@
 		0F9B1DB31C0E42A500E5BFD2 /* FTLOutput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOutput.cpp; path = ftl/FTLOutput.cpp; sourceTree = "<group>"; };
 		0F9B1DB51C0E42BD00E5BFD2 /* FTLOSRExitHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLOSRExitHandle.cpp; path = ftl/FTLOSRExitHandle.cpp; sourceTree = "<group>"; };
 		0F9B1DB61C0E42BD00E5BFD2 /* FTLOSRExitHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOSRExitHandle.h; path = ftl/FTLOSRExitHandle.h; sourceTree = "<group>"; };
+		0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPadInterference.cpp; path = b3/air/AirPadInterference.cpp; sourceTree = "<group>"; };
+		0F9CABC71DB54A760008E83B /* AirPadInterference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPadInterference.h; path = b3/air/AirPadInterference.h; sourceTree = "<group>"; };
 		0F9D336E165DBB8D005AD387 /* Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Disassembler.cpp; path = disassembler/Disassembler.cpp; sourceTree = "<group>"; };
 		0F9D339417FFC4E60073C2BC /* DFGFlushedAt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGFlushedAt.cpp; path = dfg/DFGFlushedAt.cpp; sourceTree = "<group>"; };
 		0F9D339517FFC4E60073C2BC /* DFGFlushedAt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFlushedAt.h; path = dfg/DFGFlushedAt.h; sourceTree = "<group>"; };
@@ -5081,6 +5085,8 @@
 				264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */,
 				0FB3878C1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp */,
 				0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */,
+				0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */,
+				0F9CABC71DB54A760008E83B /* AirPadInterference.h */,
 				0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */,
 				0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */,
 				0F45703A1BE45F0A0062A629 /* AirReportUsedRegisters.cpp */,
@@ -7629,6 +7635,7 @@
 				0FF2CD5C1B61A4F8004955A8 /* DFGMultiGetByOffsetData.h in Headers */,
 				A737810E1799EA2E00817533 /* DFGNaturalLoops.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
+				0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */,
 				0FFB921B16D02F010055A5DB /* DFGNodeAllocator.h in Headers */,
 				0FA581BB150E953000B9A2D9 /* DFGNodeFlags.h in Headers */,
 				0F300B7818AB051100A6D72E /* DFGNodeOrigin.h in Headers */,
@@ -9546,6 +9553,7 @@
 				A74DEF95182D991400522C22 /* JSMapIterator.cpp in Sources */,
 				E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */,
 				E318CBC01B8AEF5100A2929D /* JSModuleNamespaceObject.cpp in Sources */,
+				0F9CABC81DB54A780008E83B /* AirPadInterference.cpp in Sources */,
 				E39DA4A61B7E8B7C0084F33A /* JSModuleRecord.cpp in Sources */,
 				0FB387921BFD31A100E3AB1E /* FTLCompile.cpp in Sources */,
 				E33E8D1C1B9013C300346B52 /* JSNativeStdFunction.cpp in Sources */,

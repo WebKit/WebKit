@@ -57,8 +57,8 @@ protected:
     bool admitsStack(Inst&, unsigned argIndex) override;
     void reportUsedRegisters(Inst&, const RegisterSet&) override;
     CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) override;
-    const RegisterSet& extraEarlyClobberedRegs(Inst&) override;
-    const RegisterSet& extraClobberedRegs(Inst&) override;
+    RegisterSet extraEarlyClobberedRegs(Inst&) override;
+    RegisterSet extraClobberedRegs(Inst&) override;
 
     void dumpImpl(PrintStream&) const override;
     void deepDumpImpl(PrintStream&) const override;

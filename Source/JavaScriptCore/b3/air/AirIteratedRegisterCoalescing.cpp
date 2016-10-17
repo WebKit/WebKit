@@ -32,6 +32,7 @@
 #include "AirInsertionSet.h"
 #include "AirInstInlines.h"
 #include "AirLiveness.h"
+#include "AirPadInterference.h"
 #include "AirPhaseScope.h"
 #include "AirTmpInlines.h"
 #include "AirTmpWidth.h"
@@ -844,9 +845,10 @@ public:
 
         Reg reg = m_coloredTmp[AbsoluteTmpMapper<type>::absoluteIndex(tmp)];
         if (!reg) {
-            // We only care about Tmps that interfere. A Tmp that never interfere with anything
-            // can take any register.
-            reg = m_code.regsInPriorityOrder(type).first();
+            dataLog("FATAL: No color for ", tmp, "\n");
+            dataLog("Code:\n");
+            dataLog(m_code);
+            RELEASE_ASSERT_NOT_REACHED();
         }
         return reg;
     }
@@ -928,6 +930,8 @@ private:
 
     void build(Inst* prevInst, Inst* nextInst, const typename TmpLiveness<type>::LocalCalc& localCalc)
     {
+        if (traceDebug)
+            dataLog("Building between ", pointerDump(prevInst), " and ", pointerDump(nextInst), ":\n");
         Inst::forEachDefWithExtraClobberedRegs<Tmp>(
             prevInst, nextInst,
             [&] (const Tmp& arg, Arg::Role, Arg::Type argType, Arg::Width) {
@@ -943,6 +947,8 @@ private:
                         if (argType != type)
                             return;
                         
+                        if (traceDebug)
+                            dataLog("    Adding def-def edge: ", arg, ", ", otherArg, "\n");
                         this->addEdge(arg, otherArg);
                     });
             });
@@ -979,8 +985,11 @@ private:
             }
 
             for (const Tmp& liveTmp : localCalc.live()) {
-                if (liveTmp != useTmp)
+                if (liveTmp != useTmp) {
+                    if (traceDebug)
+                        dataLog("    Adding def-live for coalescable: ", defTmp, ", ", liveTmp, "\n");
                     addEdge(defTmp, liveTmp);
+                }
             }
 
             // The next instruction could have early clobbers or early def's. We need to consider
@@ -1026,6 +1035,10 @@ private:
                 
                 for (const Tmp& liveTmp : liveTmps) {
                     ASSERT(liveTmp.isGP() == (type == Arg::GP));
+                    
+                    if (traceDebug)
+                        dataLog("    Adding def-live edge: ", arg, ", ", liveTmp, "\n");
+                    
                     addEdge(arg, liveTmp);
                 }
 
@@ -1256,6 +1269,8 @@ public:
 
     void run()
     {
+        padInterference(m_code);
+        
         iteratedRegisterCoalescingOnType<Arg::GP>();
         iteratedRegisterCoalescingOnType<Arg::FP>();
 
@@ -1569,7 +1584,7 @@ private:
 void iteratedRegisterCoalescing(Code& code)
 {
     PhaseScope phaseScope(code, "iteratedRegisterCoalescing");
-
+    
     IteratedRegisterCoalescing iteratedRegisterCoalescing(code);
     iteratedRegisterCoalescing.run();
 }

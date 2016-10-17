@@ -84,8 +84,8 @@ public:
     
     virtual CCallHelpers::Jump generate(Inst&, CCallHelpers&, GenerationContext&) = 0;
 
-    virtual const RegisterSet& extraEarlyClobberedRegs(Inst&) = 0;
-    virtual const RegisterSet& extraClobberedRegs(Inst&) = 0;
+    virtual RegisterSet extraEarlyClobberedRegs(Inst&) = 0;
+    virtual RegisterSet extraClobberedRegs(Inst&) = 0;
     
     // By default, this returns false.
     virtual bool isTerminal(Inst&);

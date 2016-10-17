@@ -44,13 +44,13 @@ void Inst::forEach(const Functor& functor)
         });
 }
 
-inline const RegisterSet& Inst::extraClobberedRegs()
+inline RegisterSet Inst::extraClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraClobberedRegs(*this);
 }
 
-inline const RegisterSet& Inst::extraEarlyClobberedRegs()
+inline RegisterSet Inst::extraEarlyClobberedRegs()
 {
     ASSERT(kind.opcode == Patch);
     return args[0].special()->extraEarlyClobberedRegs(*this);

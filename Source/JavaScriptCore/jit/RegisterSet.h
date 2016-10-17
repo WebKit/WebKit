@@ -107,6 +107,8 @@ public:
     size_t numberOfSetFPRs() const;
     size_t numberOfSetRegisters() const { return m_bits.count(); }
     
+    bool isEmpty() const { return m_bits.isEmpty(); }
+    
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     
     enum EmptyValueTag { EmptyValue };
