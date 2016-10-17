@@ -562,6 +562,7 @@ public:
     bool isSuperscriptStyleGroup() const;
     bool isFigure() const;
     bool isSummary() const { return roleValue() == SummaryRole; }
+    bool isOutput() const;
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }

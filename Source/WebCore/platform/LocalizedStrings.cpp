@@ -625,6 +625,11 @@ String AXFileUploadButtonText()
     return WEB_UI_STRING("file upload button", "accessibility role description for a file upload button");
 }
 
+String AXOutputText()
+{
+    return WEB_UI_STRING("output", "accessibility role description for an output element");
+}
+
 String AXAttachmentRoleText()
 {
     return WEB_UI_STRING("attachment", "accessibility role description for an attachment element");

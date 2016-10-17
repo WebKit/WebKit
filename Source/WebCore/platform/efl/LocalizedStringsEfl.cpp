@@ -413,6 +413,11 @@ String AXFigureText()
     return String::fromUTF8("figure");
 }
 
+String AXOutputText()
+{
+    return String::fromUTF8("output");
+}
+
 String AXEmailFieldText()
 {
     return String::fromUTF8("email field");

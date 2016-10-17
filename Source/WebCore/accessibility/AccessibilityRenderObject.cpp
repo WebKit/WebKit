@@ -2749,6 +2749,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return DetailsRole;
     if (is<HTMLSummaryElement>(node))
         return SummaryRole;
+    
+    // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html
+    // Output elements should be mapped to status role.
+    if (isOutput())
+        return ApplicationStatusRole;
 
 #if ENABLE(VIDEO)
     if (is<HTMLVideoElement>(node))

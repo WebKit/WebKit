@@ -1,3 +1,13 @@
+2016-10-17  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] mapping for output elements
+        https://bugs.webkit.org/show_bug.cgi?id=163471
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/output-element-expected.txt: Added.
+        * accessibility/mac/output-element.html: Added.
+
 2016-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMPoint/DOMPointReadOnly

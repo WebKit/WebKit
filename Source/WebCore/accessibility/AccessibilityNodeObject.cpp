@@ -1407,6 +1407,9 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
     if (isHeading() || isLink())
         useTextUnderElement = true;
     
+    if (isOutput())
+        useTextUnderElement = true;
+    
     if (useTextUnderElement) {
         AccessibilityTextUnderElementMode mode;
         

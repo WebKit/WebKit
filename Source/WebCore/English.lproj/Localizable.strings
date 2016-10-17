@@ -970,6 +970,9 @@
 /* accessibility help text for remaining time display */
 "number of seconds of movie remaining" = "number of seconds of movie remaining";
 
+/* accessibility role description for an output element */
+"output" = "output";
+
 /* HTTP result code string */
 "partial content" = "partial content";
 

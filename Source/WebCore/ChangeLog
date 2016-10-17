@@ -1,3 +1,33 @@
+2016-10-17  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] mapping for output elements
+        https://bugs.webkit.org/show_bug.cgi?id=163471
+
+        Reviewed by Chris Fleizach.
+
+        Mapped the output element to status role and exposed its text content
+        as AXTitle. 
+
+        Test: accessibility/mac/output-element.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::visibleText):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isOutput):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXOutputText):
+        * platform/LocalizedStrings.h:
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::AXOutputText):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::AXOutputText):
+
 2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Use DOMJIT::Patchpoint in IC

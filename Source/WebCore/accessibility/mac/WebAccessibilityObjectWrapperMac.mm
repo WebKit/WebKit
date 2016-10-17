@@ -2474,6 +2474,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {
         
+        if (m_object->isOutput())
+            return AXOutputText();
+        
         NSString *ariaLandmarkRoleDescription = [self ariaLandmarkRoleDescription];
         if (ariaLandmarkRoleDescription)
             return ariaLandmarkRoleDescription;
