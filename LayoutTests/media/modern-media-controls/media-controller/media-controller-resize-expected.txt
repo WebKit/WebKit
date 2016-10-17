@@ -1,0 +1,17 @@
+Testing the MediaController resizing behavior.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking initial size
+PASS mediaController.controls.width is 320
+PASS mediaController.controls.height is 240
+
+Resizing to 400x300
+PASS mediaController.controls.width is 400
+PASS mediaController.controls.height is 300
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

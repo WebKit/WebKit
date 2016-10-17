@@ -7315,12 +7315,12 @@
 		0F49669C1DB408C100A274BB /* DOMPointReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMPointReadOnly.idl; sourceTree = "<group>"; };
 		0F4966A11DB4090100A274BB /* DOMPointInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMPointInit.idl; sourceTree = "<group>"; };
 		0F4966A21DB4091000A274BB /* DOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPointInit.h; sourceTree = "<group>"; };
-		0F4966A41DB40C4300A274BB /* JSDOMPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPoint.cpp; path = JSDOMPoint.cpp; sourceTree = "<group>"; };
-		0F4966A51DB40C4300A274BB /* JSDOMPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPoint.h; path = JSDOMPoint.h; sourceTree = "<group>"; };
-		0F4966A61DB40C4300A274BB /* JSDOMPointInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPointInit.cpp; path = JSDOMPointInit.cpp; sourceTree = "<group>"; };
-		0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPointInit.h; path = JSDOMPointInit.h; sourceTree = "<group>"; };
-		0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMPointReadOnly.cpp; path = JSDOMPointReadOnly.cpp; sourceTree = "<group>"; };
-		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMPointReadOnly.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
+		0F4966A41DB40C4300A274BB /* JSDOMPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPoint.cpp; sourceTree = "<group>"; };
+		0F4966A51DB40C4300A274BB /* JSDOMPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPoint.h; sourceTree = "<group>"; };
+		0F4966A61DB40C4300A274BB /* JSDOMPointInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPointInit.cpp; sourceTree = "<group>"; };
+		0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointInit.h; sourceTree = "<group>"; };
+		0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPointReadOnly.cpp; sourceTree = "<group>"; };
+		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
 		0F4E57161313276200CF85AF /* RenderSVGAllInOne.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGAllInOne.cpp; sourceTree = "<group>"; };
 		0F54DCCC1880C6AB003EEDBB /* ios-encodings.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ios-encodings.txt"; sourceTree = "<group>"; };
 		0F54DCE31881051D003EEDBB /* TextAutoSizing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextAutoSizing.cpp; sourceTree = "<group>"; };
@@ -9788,6 +9788,8 @@
 		71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorLayerTreeAgent.h; sourceTree = "<group>"; };
 		71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInterfaceLayoutDirection.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
+		71D02D901DB55C4E00DD5CF5 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
+		71D02D921DB55C4E00DD5CF5 /* media-controller.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "media-controller.js"; sourceTree = "<group>"; };
 		71D6AA711DA4EAF700B23969 /* airplay-placard@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@1x.png"; sourceTree = "<group>"; };
 		71D6AA721DA4EAF700B23969 /* airplay-placard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@2x.png"; sourceTree = "<group>"; };
 		71D6AA731DA4EAF700B23969 /* airplay-placard@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "airplay-placard@3x.png"; sourceTree = "<group>"; };
@@ -17668,11 +17670,21 @@
 			path = "Modules/modern-media-controls/controls";
 			sourceTree = SOURCE_ROOT;
 		};
+		71D02D911DB55C4E00DD5CF5 /* media */ = {
+			isa = PBXGroup;
+			children = (
+				71D02D921DB55C4E00DD5CF5 /* media-controller.js */,
+			);
+			path = media;
+			sourceTree = "<group>";
+		};
 		71D6AA391DA4EAF700B23969 /* modern-media-controls */ = {
 			isa = PBXGroup;
 			children = (
+				71D02D901DB55C4E00DD5CF5 /* main.js */,
 				716FA0D71DB26591007323CC /* controls */,
 				71D6AA6F1DA4EAF700B23969 /* images */,
+				71D02D911DB55C4E00DD5CF5 /* media */,
 			);
 			path = "modern-media-controls";
 			sourceTree = "<group>";
