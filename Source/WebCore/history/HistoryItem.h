@@ -144,7 +144,6 @@ public:
     WEBCORE_EXPORT const Vector<Ref<HistoryItem>>& children() const;
     WEBCORE_EXPORT bool hasChildren() const;
     void clearChildren();
-    bool isAncestorOf(const HistoryItem&) const;
     
     bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
     bool hasSameFrames(HistoryItem& otherItem) const;
