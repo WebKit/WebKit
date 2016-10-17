@@ -1,3 +1,11 @@
+2016-10-16  Daniel Bates  <dabates@apple.com>
+
+        Fix Perl warning about masked variable following <http://trac.webkit.org/changeset/207382>
+        (https://bugs.webkit.org/show_bug.cgi?id=163456)
+
+        * Scripts/prepare-ChangeLog:
+        (actuallyGenerateFunctionLists):
+
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ unit test /webkit2/WebKitWebContext/languages after r206949.

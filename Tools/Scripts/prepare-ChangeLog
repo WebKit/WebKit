@@ -351,7 +351,6 @@ sub actuallyGenerateFunctionLists($$$$$$)
         $file =~ s/ /\\ /g;
 
         my %saw_function;
-        my @afterChangeFunctionRanges;
 
         # Find all the functions in the file.
         my $sourceFileHandle = $delegateHashRef->{openFile}($file);
