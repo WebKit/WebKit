@@ -86,7 +86,7 @@ void WebFullScreenManagerProxy::requestExitFullScreen()
 
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
-    supports = !withKeyboard;
+    supports = true;
 }
 
 void WebFullScreenManagerProxy::saveScrollPosition()

@@ -8659,7 +8659,7 @@ bool LayerFlushController::flushLayers()
     if (![[self preferences] fullScreenEnabled])
         return NO;
 
-    return !withKeyboard;
+    return true;
 }
 
 - (void)_enterFullScreenForElement:(WebCore::Element*)element

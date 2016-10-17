@@ -1,3 +1,15 @@
+2016-10-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable keyboard in fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=163146
+
+        Reviewed by Jer Noble.
+
+        Allow keyboard in fullscreen.
+
+        * WebView/WebView.mm:
+        (-[WebView _supportsFullScreenForElement:withKeyboard:]):
+
 2016-10-17  Chris Dumez  <cdumez@apple.com>
 
         Move form.reportValidity() behind InteractiveFormValidation setting
