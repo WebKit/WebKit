@@ -1884,3 +1884,5 @@ webkit.org/b/162645 imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fra
 webkit.org/b/162524 [ Release ] http/tests/cache/disk-cache/disk-cache-redirect.html [ Pass Timeout ]
 
 webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pass Failure ]
+
+webkit.org/b/163362 [ Debug ] platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html [ Pass Failure ]
