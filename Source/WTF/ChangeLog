@@ -1,3 +1,17 @@
+2016-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMRect/DOMRectReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=163464
+
+        Reviewed by Darin Adler.
+        
+        Implement min()/max() in a way that follows Math.min/Math.max, which return
+        NaN if either argument is NaN.
+
+        * wtf/MathExtras.h:
+        (WTF::nanPropagatingMin):
+        (WTF::nanPropagatingMax):
+
 2016-10-15  Sam Weinig  <sam@webkit.org>
 
         MessageEvent's source property should be a (DOMWindow or MessagePort)? rather than a EventTarget?

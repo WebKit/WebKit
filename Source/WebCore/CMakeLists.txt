@@ -389,6 +389,9 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DOMPoint.idl
     dom/DOMPointInit.idl
     dom/DOMPointReadOnly.idl
+    dom/DOMRect.idl
+    dom/DOMRectInit.idl
+    dom/DOMRectReadOnly.idl
     dom/DOMStringList.idl
     dom/DOMStringMap.idl
     dom/DataTransfer.idl

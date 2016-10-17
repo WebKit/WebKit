@@ -1,3 +1,50 @@
+2016-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMRect/DOMRectReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=163464
+
+        Reviewed by Darin Adler.
+        
+        Implement the DOMRectInit/DOMRectReadOnly/DOMRect interfaces specified in
+        https://dev.w3.org/fxtf/geometry/
+        
+        DOMRects allow negative height/width and require double storage, so we can't just
+        use FloatRect for storage. They also require handling of NaN and Infinity.
+        
+        To have the left/right/top/bottom accessors follow IEEE NaN rules, we need to use
+        custom min/max functions that return NaN if either argument is NaN, so add 
+        nanPropagatingMin/nanPropagatingMax helpers to MathExtras.h.
+
+        Test: fast/dom/domrect.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMRect.h: Added.
+        (WebCore::DOMRect::create):
+        (WebCore::DOMRect::fromRect):
+        (WebCore::DOMRect::setX):
+        (WebCore::DOMRect::setY):
+        (WebCore::DOMRect::setWidth):
+        (WebCore::DOMRect::setHeight):
+        (WebCore::DOMRect::DOMRect):
+        * dom/DOMRect.idl: Added.
+        * dom/DOMRectInit.h: Added.
+        * dom/DOMRectInit.idl: Added.
+        * dom/DOMRectReadOnly.h: Added.
+        (WebCore::DOMRectReadOnly::create):
+        (WebCore::DOMRectReadOnly::fromRect):
+        (WebCore::DOMRectReadOnly::x):
+        (WebCore::DOMRectReadOnly::y):
+        (WebCore::DOMRectReadOnly::width):
+        (WebCore::DOMRectReadOnly::height):
+        (WebCore::DOMRectReadOnly::top):
+        (WebCore::DOMRectReadOnly::right):
+        (WebCore::DOMRectReadOnly::bottom):
+        (WebCore::DOMRectReadOnly::left):
+        (WebCore::DOMRectReadOnly::DOMRectReadOnly):
+        * dom/DOMRectReadOnly.idl: Added.
+
 2016-10-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Basic MediaController

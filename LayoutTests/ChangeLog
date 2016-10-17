@@ -1,3 +1,23 @@
+2016-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMRect/DOMRectReadOnly
+        https://bugs.webkit.org/show_bug.cgi?id=163464
+
+        Reviewed by Darin Adler.
+        
+        New test and new results for global constructor tests.
+
+        * geometry/DOMRect-001-expected.txt: Added.
+        * geometry/DOMRect-001.html: Added.
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/efl/js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2016-10-17  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Basic MediaController
