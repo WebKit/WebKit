@@ -1,3 +1,17 @@
+2016-10-17  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] gobject-introspection on package build with webkit2gtk fails without active X session
+        https://bugs.webkit.org/show_bug.cgi?id=163105
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't call XCompositeQueryExtension() or XDamageQueryExtension()
+        if m_display is NULL.
+
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::supportsXComposite):
+        (WebCore::PlatformDisplayX11::supportsXDamage):
+
 2016-10-16  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] roleDescription for AXTextField input types
