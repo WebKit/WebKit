@@ -133,9 +133,6 @@
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
 
-/* Exit fullscreen button in fullscreen media controls */
-"Exit Fullscreen" = "Exit Fullscreen";
-
 /* menu item title for phone number */
 "Call Using iPhone:" = "Call Using iPhone:";
 
@@ -256,11 +253,11 @@
 /* Video Exit Fullscreen context menu item */
 "Exit Full Screen" = "Exit Full Screen";
 
+/* Button for exiting fullscreen when in fullscreen media playback */
+"Exit Fullscreen" = "Exit Fullscreen";
+
 /* menu item */
 "Exit Picture in Picture" = "Exit Picture in Picture";
-
-/* accessibility role description for a figure element */
-"figure" = "figure";
 
 /* Default application name for Open With context menu */
 "Finder" = "Finder";
@@ -838,6 +835,9 @@
 /* accessibility label for fast reverse button */
 "fast reverse" = "fast reverse";
 
+/* accessibility role description for a figure element. */
+"figure" = "figure";
+
 /* accessibility role description for a file upload button */
 "file upload button" = "file upload button";
 
@@ -1095,6 +1095,9 @@
 
 /* Validation message for form control elements with a value longer than maximum allowed length */
 "too long" = "too long";
+
+/* Validation message for form control elements with a value shorter than minimum allowed length */
+"too short" = "too short";
 
 /* An ARIA accessibility group that acts as a tooltip. */
 "tooltip" = "tooltip";

@@ -1,5 +1,19 @@
 2016-10-16  Chris Dumez  <cdumez@apple.com>
 
+        Update WebKit localizable strings
+        https://bugs.webkit.org/show_bug.cgi?id=163513
+
+        Reviewed by Dan Bernstein.
+
+        Update WebKit localizable strings as it was missing the "too short" one needed
+        by form validation. This was causing a "Localized string not found" message to
+        be shown when testing the following sample on WebKit ToT:
+        - https://googlechrome.github.io/samples/report-validity/
+
+        * English.lproj/Localizable.strings:
+
+2016-10-16  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r206750): Crash when pressing Caps Lock if “Use the Caps Lock key to switch to and from U.S.” is selected in Input Sources preferences
         https://bugs.webkit.org/show_bug.cgi?id=163506
         <rdar://problem/28792483>
