@@ -102,9 +102,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     // extensible, this is not the right thing to have done - so remove again.
     if (result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
-        if (shouldThrow)
-            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-        return false;
+        return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     
     return entry.put(exec, array, this, value, shouldThrow);
@@ -112,8 +110,12 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
 
 bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(value);
     
+    bool shouldThrow = (mode == PutDirectIndexShouldThrow);
+
     AddResult result = add(array, i);
     SparseArrayEntry& entry = result.iterator->value;
 
@@ -123,13 +125,13 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
         // extensible, this is not the right thing to have done - so remove again.
         if (result.isNewEntry) {
             remove(result.iterator);
-            return reject(exec, mode == PutDirectIndexShouldThrow, "Attempting to define property on object that is not extensible.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
         }
         if (entry.attributes & ReadOnly)
-            return reject(exec, mode == PutDirectIndexShouldThrow, ReadonlyPropertyWriteError);
+            return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     entry.attributes = attributes;
-    entry.set(exec->vm(), this, value);
+    entry.set(vm, this, value);
     return true;
 }
 
@@ -157,11 +159,8 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!(attributes & Accessor)) {
-        if (attributes & ReadOnly) {
-            if (shouldThrow)
-                throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-            return false;
-        }
+        if (attributes & ReadOnly)
+            return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 
         set(vm, map, value);
         return true;

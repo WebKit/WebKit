@@ -299,13 +299,13 @@ void shift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned current
             thisObj->putByIndexInline(exec, to, value, true);
             RETURN_IF_EXCEPTION(scope, void());
         } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return;
         }
     }
     for (unsigned k = length; k > length - count; --k) {
         if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, k - 1)) {
-            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return;
         }
     }
@@ -342,7 +342,7 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
             RETURN_IF_EXCEPTION(scope, void());
             thisObj->putByIndexInline(exec, to, value, true);
         } else if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, to)) {
-            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return;
         }
         RETURN_IF_EXCEPTION(scope, void());
@@ -692,7 +692,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
         result = thisObj->get(exec, length - 1);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!thisObj->methodTable(vm)->deletePropertyByIndex(thisObj, exec, length - 1)) {
-            throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+            throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return JSValue::encode(jsUndefined());
         }
         putLength(exec, vm, thisObj, jsNumber(length - 1));
@@ -805,7 +805,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, lower)) {
             if (!scope.exception())
-                throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return JSValue::encode(JSValue());
         }
 
@@ -814,7 +814,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         } else if (!thisObject->methodTable(vm)->deletePropertyByIndex(thisObject, exec, upper)) {
             if (!scope.exception())
-                throwTypeError(exec, scope, ASCIILiteral("Unable to delete property."));
+                throwTypeError(exec, scope, ASCIILiteral(UnableToDeletePropertyError));
             return JSValue::encode(JSValue());
         }
     }

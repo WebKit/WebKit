@@ -30,10 +30,8 @@
 
 namespace JSC {
 
-inline bool reject(ExecState* exec, bool throwException, const char* message)
+inline bool reject(ExecState* exec, ThrowScope& scope, bool throwException, ASCIILiteral message)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
     if (throwException)
         throwTypeError(exec, scope, message);
     return false;

@@ -244,7 +244,7 @@ static RefPtr<CryptoAlgorithmParametersDeprecated> createRsaKeyGenParams(ExecSta
 
     RefPtr<Uint8Array> publicExponentArray = toUint8Array(publicExponentValue);
     if (!publicExponentArray) {
-        throwTypeError(&state, scope, "Expected a Uint8Array in publicExponent");
+        throwTypeError(&state, scope, ASCIILiteral("Expected a Uint8Array in publicExponent"));
         return nullptr;
     }
     result->publicExponent.append(publicExponentArray->data(), publicExponentArray->byteLength());

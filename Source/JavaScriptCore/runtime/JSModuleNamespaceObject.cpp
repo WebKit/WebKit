@@ -204,7 +204,7 @@ bool JSModuleNamespaceObject::defineOwnProperty(JSObject*, ExecState* exec, Prop
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-defineownproperty-p-desc
     if (shouldThrow)
-        throwTypeError(exec, scope, ASCIILiteral("Attempting to define property on object that is not extensible."));
+        throwTypeError(exec, scope, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
     return false;
 }
 

@@ -446,18 +446,15 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         return Base::put(thisObject, exec, propertyName, value, dontCache);
     }
 
-    if ((thisObject->jsExecutable()->isStrictMode() || thisObject->jsExecutable()->isES6Function()) && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
+    if ((thisObject->jsExecutable()->isStrictMode() || thisObject->jsExecutable()->isES6Function()) && (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller)) {
         // This will trigger the property to be reified, if this is not already the case!
         bool okay = thisObject->hasProperty(exec, propertyName);
         ASSERT_UNUSED(okay, okay);
         scope.release();
         return Base::put(thisObject, exec, propertyName, value, slot);
     }
-    if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller) {
-        if (slot.isStrictMode())
-            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-        return false;
-    }
+    if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller)
+        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
     scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
@@ -510,7 +507,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     }
 
     bool valueCheck;
-    if (propertyName == exec->propertyNames().arguments) {
+    if (propertyName == vm.propertyNames->arguments) {
         if (thisObject->jsExecutable()->isClass()) {
             thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
@@ -522,7 +519,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
         }
         valueCheck = !descriptor.value() || sameValue(exec, descriptor.value(), retrieveArguments(exec, thisObject));
-    } else if (propertyName == exec->propertyNames().caller) {
+    } else if (propertyName == vm.propertyNames->caller) {
         if (thisObject->jsExecutable()->isClass()) {
             thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
             return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
@@ -539,31 +536,16 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
      
-    if (descriptor.configurablePresent() && descriptor.configurable()) {
-        if (throwException)
-            throwTypeError(exec, scope, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property."));
-        return false;
-    }
-    if (descriptor.enumerablePresent() && descriptor.enumerable()) {
-        if (throwException)
-            throwTypeError(exec, scope, ASCIILiteral("Attempting to change enumerable attribute of unconfigurable property."));
-        return false;
-    }
-    if (descriptor.isAccessorDescriptor()) {
-        if (throwException)
-            throwTypeError(exec, scope, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
-        return false;
-    }
-    if (descriptor.writablePresent() && descriptor.writable()) {
-        if (throwException)
-            throwTypeError(exec, scope, ASCIILiteral("Attempting to change writable attribute of unconfigurable property."));
-        return false;
-    }
-    if (!valueCheck) {
-        if (throwException)
-            throwTypeError(exec, scope, ASCIILiteral("Attempting to change value of a readonly property."));
-        return false;
-    }
+    if (descriptor.configurablePresent() && descriptor.configurable())
+        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+    if (descriptor.enumerablePresent() && descriptor.enumerable())
+        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+    if (descriptor.isAccessorDescriptor())
+        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+    if (descriptor.writablePresent() && descriptor.writable())
+        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+    if (!valueCheck)
+        return reject(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
     return true;
 }
 

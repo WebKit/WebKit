@@ -158,14 +158,11 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     if (UNLIKELY(!obj))
         return false;
     JSValue prototype;
-    if (propertyName != exec->propertyNames().underscoreProto) {
+    if (propertyName != vm.propertyNames->underscoreProto) {
         for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
             prototype = obj->getPrototypeDirect();
-            if (prototype.isNull()) {
-                if (slot.isStrictMode())
-                    throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-                return false;
-            }
+            if (prototype.isNull())
+                return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
         }
     }
 
@@ -173,11 +170,8 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         unsigned attributes;
         PropertyOffset offset = obj->structure()->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
-            if (attributes & ReadOnly) {
-                if (slot.isStrictMode())
-                    throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-                return false;
-            }
+            if (attributes & ReadOnly)
+                return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter())
@@ -197,9 +191,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             break;
     }
     
-    if (slot.isStrictMode())
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-    return false;
+    return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -221,9 +213,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult))
         return putResult;
     
-    if (shouldThrow)
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-    return false;
+    return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 void JSValue::dump(PrintStream& out) const

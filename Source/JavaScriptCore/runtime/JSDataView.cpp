@@ -117,14 +117,16 @@ bool JSDataView::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset)
-        return reject(exec, slot.isStrictMode(), "Attempting to write to read-only typed array property.");
+    if (propertyName == vm.propertyNames->byteLength
+        || propertyName == vm.propertyNames->byteOffset)
+        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to read-only typed array property."));
 
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
@@ -133,10 +135,12 @@ bool JSDataView::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
     const PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSDataView* thisObject = jsCast<JSDataView*>(object);
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset)
-        return reject(exec, shouldThrow, "Attempting to define read-only typed array property.");
+    if (propertyName == vm.propertyNames->byteLength
+        || propertyName == vm.propertyNames->byteOffset)
+        return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to define read-only typed array property."));
 
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }

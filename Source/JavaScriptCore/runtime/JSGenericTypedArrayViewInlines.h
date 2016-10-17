@@ -360,17 +360,19 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
     const PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (parseIndex(propertyName)) {
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, shouldThrow, "Attempting to store accessor indexed property on a typed array.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to store accessor indexed property on a typed array."));
 
         if (descriptor.configurable())
-            return reject(exec, shouldThrow, "Attempting to configure non-configurable property.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to configure non-configurable property."));
 
         if (!descriptor.enumerable() || !descriptor.writable())
-            return reject(exec, shouldThrow, "Attempting to store non-enumerable or non-writable indexed property on a typed array.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to store non-enumerable or non-writable indexed property on a typed array."));
 
         if (descriptor.value()) {
             PutPropertySlot unused(JSValue(thisObject), shouldThrow);
@@ -386,10 +388,12 @@ template<typename Adaptor>
 bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
     if (thisObject->isNeutered())
-        return reject(exec, true, typedArrayBufferHasBeenDetachedErrorMessage);
+        return reject(exec, scope, true, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
 
     if (parseIndex(propertyName))
         return false;

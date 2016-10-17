@@ -59,7 +59,7 @@ JSValue JSIDBDatabase::createObjectStore(ExecState& state)
 
     JSValue optionsValue = state.argument(1);
     if (!optionsValue.isUndefinedOrNull() && !optionsValue.isObject())
-        return throwTypeError(&state, scope, "Not an object.");
+        return throwTypeError(&state, scope, ASCIILiteral("Not an object."));
 
     IDBKeyPath keyPath;
     bool autoIncrement = false;

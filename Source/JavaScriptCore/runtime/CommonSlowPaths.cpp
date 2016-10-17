@@ -631,16 +631,16 @@ SLOW_PATH_DECL(slow_path_del_by_val)
     
     uint32_t i;
     if (subscript.getUInt32(i))
-        couldDelete = baseObject->methodTable()->deletePropertyByIndex(baseObject, exec, i);
+        couldDelete = baseObject->methodTable(vm)->deletePropertyByIndex(baseObject, exec, i);
     else {
         CHECK_EXCEPTION();
         auto property = subscript.toPropertyKey(exec);
         CHECK_EXCEPTION();
-        couldDelete = baseObject->methodTable()->deleteProperty(baseObject, exec, property);
+        couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, exec, property);
     }
     
     if (!couldDelete && exec->codeBlock()->isStrictMode())
-        THROW(createTypeError(exec, "Unable to delete property."));
+        THROW(createTypeError(exec, UnableToDeletePropertyError));
     
     RETURN(jsBoolean(couldDelete));
 }

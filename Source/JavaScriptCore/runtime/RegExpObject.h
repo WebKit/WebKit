@@ -22,6 +22,7 @@
 
 #include "JSObject.h"
 #include "RegExp.h"
+#include "Reject.h"
 #include "ThrowScope.h"
 
 namespace JSC {
@@ -50,7 +51,7 @@ public:
             m_lastIndex.setWithoutWriteBarrier(jsNumber(lastIndex));
             return true;
         }
-        throwTypeError(exec, scope, ReadonlyPropertyWriteError);
+        throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
         return false;
     }
     bool setLastIndex(ExecState* exec, JSValue lastIndex, bool shouldThrow)
@@ -59,13 +60,11 @@ public:
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         if (LIKELY(m_lastIndexIsWritable)) {
-            m_lastIndex.set(exec->vm(), this, lastIndex);
+            m_lastIndex.set(vm, this, lastIndex);
             return true;
         }
 
-        if (shouldThrow)
-            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-        return false;
+        return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     JSValue getLastIndex() const
     {

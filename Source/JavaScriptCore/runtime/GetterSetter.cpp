@@ -93,11 +93,8 @@ bool callSetter(ExecState* exec, JSValue base, JSValue getterSetter, JSValue val
 
     GetterSetter* getterSetterObj = jsCast<GetterSetter*>(getterSetter);
 
-    if (getterSetterObj->isSetterNull()) {
-        if (ecmaMode == StrictMode)
-            throwTypeError(exec, scope, ReadonlyPropertyWriteError);
-        return false;
-    }
+    if (getterSetterObj->isSetterNull())
+        return reject(exec, scope, ecmaMode == StrictMode, ASCIILiteral(ReadonlyPropertyWriteError));
 
     JSObject* setter = getterSetterObj->setter();
 

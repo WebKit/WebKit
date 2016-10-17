@@ -1,3 +1,100 @@
+2016-10-17  Mark Lam  <mark.lam@apple.com>
+
+        Use the reject() helper function for conditionally throwing TypeErrors.
+        https://bugs.webkit.org/show_bug.cgi?id=163491
+
+        Reviewed by Filip Pizlo.
+
+        In some places where we may conditionally throw a TypeError (e.g. when in strict
+        mode), we already use the reject() helper function to conditionally throw the
+        TypeError.  Doing so makes the code mode compact.  This patch applies this idiom
+        consistently in all places that throws TypeError where appropriate.
+
+        This patch also does the following:
+        1. Make the reject() helper function take an ASCIILiteral instead of a const char*
+           because we always pass it a literal string anyway.
+        2. Change the reject helper() to take a ThrowScope&.  This allows the thrown
+           error to be attributed to its caller.
+        3. When an error message string is instantiated repeatedly in more than 1 place,
+           create a common copy of that literal string in JSObject.cpp (if one doesn't
+           already exist) and use that common string in all those places.
+        4. Since I was auditing call sites of throwTypeError() to check if they should be
+           using the reject() helper instead, I also fixed those up to pass the error
+           message as an ASCIILiteral where appropriate.
+        5. In functions that I touched, change the code to not recompute the VM& when it
+           is already available.
+
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::shift):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncReverse):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/GetterSetter.cpp:
+        (JSC::callSetter):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::pop):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::put):
+        (JSC::JSArrayBuffer::defineOwnProperty):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::put):
+        (JSC::JSDataView::defineOwnProperty):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::setIndex):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::defineOwnProperty):
+        * runtime/JSObject.cpp:
+        (JSC::ordinarySetSlow):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInline):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setPrototype):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTablePut):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+        * runtime/Reject.h:
+        (JSC::reject):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayEntry::put):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::StringObject::putByIndex):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorKeyFor):
+
 2016-10-16  Filip Pizlo  <fpizlo@apple.com>
 
         Air::IRC needs to place all Tmps on some worklist, even if they have no interference edges

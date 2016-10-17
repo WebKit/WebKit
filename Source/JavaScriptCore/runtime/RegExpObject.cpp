@@ -101,19 +101,22 @@ void RegExpObject::getGenericPropertyNames(JSObject* object, ExecState* exec, Pr
 
 bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
-    if (propertyName == exec->propertyNames().lastIndex) {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return reject(exec, shouldThrow, "Attempting to change configurable attribute of unconfigurable property.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
         if (descriptor.enumerablePresent() && descriptor.enumerable())
-            return reject(exec, shouldThrow, "Attempting to change enumerable attribute of unconfigurable property.");
+            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, shouldThrow, UnconfigurablePropertyChangeAccessMechanismError);
+            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
         if (!regExp->m_lastIndexIsWritable) {
             if (descriptor.writablePresent() && descriptor.writable())
-                return reject(exec, shouldThrow, "Attempting to change writable attribute of unconfigurable property.");
+                return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
             if (!sameValue(exec, regExp->getLastIndex(), descriptor.value()))
-                return reject(exec, shouldThrow, "Attempting to change value of a readonly property.");
+                return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyChangeError));
             return true;
         }
         if (descriptor.value())

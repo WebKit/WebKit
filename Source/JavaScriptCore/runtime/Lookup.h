@@ -254,19 +254,22 @@ inline bool replaceStaticPropertySlot(VM& vm, JSObject* thisObject, PropertyName
 // 'slot.thisValue()' is the object the put was originally performed on (in the case of a proxy, the proxy itself).
 inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* base, JSObject* thisValue, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (entry->attributes() & BuiltinOrFunctionOrLazyProperty) {
         if (!(entry->attributes() & ReadOnly)) {
             // If this is a function or lazy property put then we just do the put because
             // logically the object already had the property, so this is just a replace.
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(thisValue))
-                thisObject->putDirect(exec->vm(), propertyName, value);
+                thisObject->putDirect(vm, propertyName, value);
             return true;
         }
-        return reject(exec, slot.isStrictMode(), ReadonlyPropertyWriteError);
+        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
 
     if (entry->attributes() & Accessor)
-        return reject(exec, slot.isStrictMode(), ReadonlyPropertyWriteError);
+        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
     if (!(entry->attributes() & ReadOnly)) {
         ASSERT_WITH_MESSAGE(!(entry->attributes() & DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
@@ -280,7 +283,7 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
         return result;
     }
 
-    return reject(exec, slot.isStrictMode(), ReadonlyPropertyWriteError);
+    return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,13 +90,15 @@ bool JSArrayBuffer::put(
     JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value,
     PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
     
-    if (propertyName == exec->propertyNames().byteLength)
-        return reject(exec, slot.isStrictMode(), "Attempting to write to a read-only array buffer property.");
+    if (propertyName == vm.propertyNames->byteLength)
+        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to a read-only array buffer property."));
     
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
@@ -105,10 +107,12 @@ bool JSArrayBuffer::defineOwnProperty(
     JSObject* object, ExecState* exec, PropertyName propertyName,
     const PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(object);
     
-    if (propertyName == exec->propertyNames().byteLength)
-        return reject(exec, shouldThrow, "Attempting to define read-only array buffer property.");
+    if (propertyName == vm.propertyNames->byteLength)
+        return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to define read-only array buffer property."));
     
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }

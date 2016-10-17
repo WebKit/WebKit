@@ -49,7 +49,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    JSValue constructor = exemplar->get(exec, exec->propertyNames().constructor);
+    JSValue constructor = exemplar->get(exec, vm.propertyNames->constructor);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (constructor.isUndefined())
@@ -59,7 +59,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
         return nullptr;
     }
 
-    JSValue species = constructor.get(exec, exec->propertyNames().speciesSymbol);
+    JSValue species = constructor.get(exec, vm.propertyNames->speciesSymbol);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (species.isUndefinedOrNull())
@@ -72,7 +72,7 @@ inline JSArrayBufferView* speciesConstruct(ExecState* exec, JSObject* exemplar, 
         if (!view->isNeutered())
             return view;
 
-        throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+        throwTypeError(exec, scope, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
         return nullptr;
     }
 
@@ -552,7 +552,7 @@ EncodedJSValue JSC_HOST_CALL genericTypedArrayViewPrivateFuncSubarrayCreate(VM&v
     if (jsDynamicCast<JSArrayBufferView*>(result))
         return JSValue::encode(result);
 
-    throwTypeError(exec, scope, "species constructor did not return a TypedArray View");
+    throwTypeError(exec, scope, ASCIILiteral("species constructor did not return a TypedArray View"));
     return JSValue::encode(JSValue());
 }
 

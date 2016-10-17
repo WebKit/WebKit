@@ -88,7 +88,7 @@ enum class CopyType {
     Unobservable,
 };
 
-static const char* typedArrayBufferHasBeenDetachedErrorMessage = "Underlying ArrayBuffer has been detached from the view";
+static const char* const typedArrayBufferHasBeenDetachedErrorMessage = "Underlying ArrayBuffer has been detached from the view";
 
 template<typename Adaptor>
 class JSGenericTypedArrayView : public JSArrayBufferView {
@@ -176,7 +176,7 @@ public:
         RETURN_IF_EXCEPTION(scope, false);
 
         if (isNeutered()) {
-            throwTypeError(exec, scope, typedArrayBufferHasBeenDetachedErrorMessage);
+            throwTypeError(exec, scope, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
             return false;
         }
 
