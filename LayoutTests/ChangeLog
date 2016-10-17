@@ -1,3 +1,10 @@
+2016-10-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * mathml/mathml-in-dashboard-expected.txt:
+        * platform/gtk/TestExpectations:
+
 2016-10-16  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Styles for StartButton are missing

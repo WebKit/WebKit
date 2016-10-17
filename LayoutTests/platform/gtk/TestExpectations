@@ -724,48 +724,6 @@ webkit.org/b/162815 animations/font-variation-settings-unlike.html [ ImageOnlyFa
 webkit.org/b/162815 animations/font-variation-settings-order.html [ Timeout ]
 webkit.org/b/162815 animations/font-variation-settings.html [ Timeout ]
 
-# Failing since a new URLParser has been enabled on r207162
-webkit.org/b/163335 fast/backgrounds/background-shorthand-after-set-backgroundSize.html [ Failure ]
-webkit.org/b/163335 fast/backgrounds/background-shorthand-with-backgroundSize-style.html [ Failure ]
-webkit.org/b/163335 fast/css/getComputedStyle/computed-style-border-image.html [ Failure ]
-webkit.org/b/163335 fast/css/getComputedStyle/computed-style-cross-fade.html [ Failure ]
-webkit.org/b/163335 fast/css/getComputedStyle/getComputedStyle-background-shorthand.html [ Failure ]
-webkit.org/b/163335 fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html [ Failure ]
-webkit.org/b/163335 fast/dom/DOMURL/parsing.html [ Failure ]
-webkit.org/b/163335 fast/dom/DOMURL/set-href-attribute-protocol.html [ Failure ]
-webkit.org/b/163335 fast/dom/HTMLAnchorElement/anchor-element-href-parsing.html [ Failure ]
-webkit.org/b/163335 fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html [ Failure ]
-webkit.org/b/163335 fast/forms/ValidityState-typeMismatch-url.html [ Failure ]
-webkit.org/b/163335 fast/url/anchor.html [ Failure ]
-webkit.org/b/163335 fast/url/file-http-base.html [ Failure ]
-webkit.org/b/163335 fast/url/file.html [ Failure ]
-webkit.org/b/163335 fast/url/host-lowercase-per-scheme.html [ Failure ]
-webkit.org/b/163335 fast/url/host.html [ Failure ]
-webkit.org/b/163335 fast/url/idna2003.html [ Failure ]
-webkit.org/b/163335 fast/url/invalid-urls-utf8.html [ Failure ]
-webkit.org/b/163335 fast/url/ipv4.html [ Failure ]
-webkit.org/b/163335 fast/url/ipv6.html [ Failure ]
-webkit.org/b/163335 fast/url/path.html [ Failure ]
-webkit.org/b/163335 fast/url/relative-win.html [ Failure ]
-webkit.org/b/163335 fast/url/relative.html [ Failure ]
-webkit.org/b/163335 fast/url/safari-extension.html [ Failure ]
-webkit.org/b/163335 fast/url/segments-from-data-url.html [ Failure ]
-webkit.org/b/163335 fast/url/segments.html [ Failure ]
-webkit.org/b/163335 fast/url/standard-url.html [ Failure ]
-webkit.org/b/163335 fetch/fetch-url-serialization.html [ Failure ]
-webkit.org/b/163335 http/tests/inspector/network/copy-as-curl.html [ Failure ]
-webkit.org/b/163335 http/tests/uri/resolve-encoding-relative.html [ Failure ]
-webkit.org/b/163335 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src.html [ Failure ]
-webkit.org/b/163335 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
-webkit.org/b/163335 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
-webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-constructor.html [ Failure ]
-webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-setters.html [ Failure ]
-webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
-
-webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
-webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
-webkit.org/b/163383 accessibility/roles-exposed.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -857,6 +815,8 @@ webkit.org/b/117756 media/track/media-element-enqueue-event-crash.html [ Timeout
 webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
 
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Timeout ]
+
+webkit.org/b/163510 media/track/track-in-band.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1400,6 +1360,8 @@ webkit.org/b/160136 http/tests/security/cross-origin-plugin-private-browsing-tog
 
 webkit.org/b/160137 svg/custom/non-scaling-stroke-update.svg [ ImageOnlyFailure Pass ]
 
+webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1618,7 +1580,7 @@ webkit.org/b/143473 editing/pasteboard/drag-and-drop-attachment-contenteditable.
 
 webkit.org/b/143477 fast/writing-mode/broken-ideograph-small-caps.html [ Timeout Pass ]
 
-webkit.org/b/143706 media/media-source/media-source-end-of-stream-readyState.html [ Timeout Pass ]
+webkit.org/b/143706 media/media-source/media-source-end-of-stream-readyState.html [ Failure ]
 webkit.org/b/143707 media/track/track-cue-rendering-on-resize.html [ Timeout Pass ]
 webkit.org/b/143708 media/track/track-cue-container-rendering-position.html [ Timeout Pass ]
 
@@ -1708,6 +1670,12 @@ webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Time
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-same-origin.html [ Timeout ]
+
+webkit.org/b/163522 crypto/workers/subtle/aes-postMessage-worker.html [ Timeout ]
+webkit.org/b/163522 crypto/workers/subtle/hmac-postMessage-worker.html [ Timeout ]
+webkit.org/b/163522 crypto/workers/subtle/hrsa-postMessage-worker.html [ Timeout ]
+webkit.org/b/163522 crypto/workers/subtle/multiple-postMessage-worker.html [ Timeout ]
+webkit.org/b/163522 crypto/workers/subtle/rsa-postMessage-worker.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1812,7 +1780,7 @@ webkit.org/b/157179 fast/forms/range/slider-delete-while-dragging-thumb.html [ F
 webkit.org/b/157179 fast/lists/drag-into-marker.html [ Failure ]
 webkit.org/b/157179 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
 webkit.org/b/157179 plugins/mouse-events-fixedpos.html [ Failure ]
-webkit.org/b/157179 plugins/mouse-events.html [ Failure ]
+webkit.org/b/157179 plugins/mouse-events.html [ Failure Timeout ]
 webkit.org/b/157179 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
@@ -2355,7 +2323,7 @@ webkit.org/b/133803 editing/input/option-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/input/scroll-viewport-page-up-down.html [ Failure ]
 webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 
-webkit.org/b/134976 media/media-controls-invalid-url.html [ Failure ]
+webkit.org/b/134976 media/media-controls-invalid-url.html [ Failure Timeout ]
 webkit.org/b/134976 media/video-fast-seek.html [ Failure ]
 
 webkit.org/b/134979 media/track/track-cue-mutable-text.html [ Failure ]
@@ -2661,6 +2629,67 @@ webkit.org/b/163185 editing/pasteboard/image-in-iframe.html [ Failure ]
 
 webkit.org/b/163186 editing/pasteboard/onpaste-text-html.html [ Failure ]
 
+# Failing since a new URLParser has been enabled on r207162
+webkit.org/b/163335 fast/backgrounds/background-shorthand-after-set-backgroundSize.html [ Failure ]
+webkit.org/b/163335 fast/backgrounds/background-shorthand-with-backgroundSize-style.html [ Failure ]
+webkit.org/b/163335 fast/css/getComputedStyle/computed-style-border-image.html [ Failure ]
+webkit.org/b/163335 fast/css/getComputedStyle/computed-style-cross-fade.html [ Failure ]
+webkit.org/b/163335 fast/css/getComputedStyle/getComputedStyle-background-shorthand.html [ Failure ]
+webkit.org/b/163335 fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html [ Failure ]
+webkit.org/b/163335 fast/dom/DOMURL/parsing.html [ Failure ]
+webkit.org/b/163335 fast/dom/DOMURL/set-href-attribute-protocol.html [ Failure ]
+webkit.org/b/163335 fast/dom/HTMLAnchorElement/anchor-element-href-parsing.html [ Failure ]
+webkit.org/b/163335 fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html [ Failure ]
+webkit.org/b/163335 fast/forms/ValidityState-typeMismatch-url.html [ Failure ]
+webkit.org/b/163335 fast/url/anchor.html [ Failure ]
+webkit.org/b/163335 fast/url/file-http-base.html [ Failure ]
+webkit.org/b/163335 fast/url/file.html [ Failure ]
+webkit.org/b/163335 fast/url/host-lowercase-per-scheme.html [ Failure ]
+webkit.org/b/163335 fast/url/host.html [ Failure ]
+webkit.org/b/163335 fast/url/idna2003.html [ Failure ]
+webkit.org/b/163335 fast/url/invalid-urls-utf8.html [ Failure ]
+webkit.org/b/163335 fast/url/ipv4.html [ Failure ]
+webkit.org/b/163335 fast/url/ipv6.html [ Failure ]
+webkit.org/b/163335 fast/url/path.html [ Failure ]
+webkit.org/b/163335 fast/url/relative-win.html [ Failure ]
+webkit.org/b/163335 fast/url/relative.html [ Failure ]
+webkit.org/b/163335 fast/url/safari-extension.html [ Failure ]
+webkit.org/b/163335 fast/url/segments-from-data-url.html [ Failure ]
+webkit.org/b/163335 fast/url/segments.html [ Failure ]
+webkit.org/b/163335 fast/url/standard-url.html [ Failure ]
+webkit.org/b/163335 fetch/fetch-url-serialization.html [ Failure ]
+webkit.org/b/163335 http/tests/inspector/network/copy-as-curl.html [ Failure ]
+webkit.org/b/163335 http/tests/uri/resolve-encoding-relative.html [ Failure ]
+webkit.org/b/163335 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/HTMLElement/HTMLTrackElement/src.html [ Failure ]
+webkit.org/b/163335 imported/w3c/web-platform-tests/url/a-element-xhtml.xhtml [ Failure ]
+webkit.org/b/163335 imported/w3c/web-platform-tests/url/a-element.html [ Failure ]
+webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-constructor.html [ Failure ]
+webkit.org/b/163335 imported/w3c/web-platform-tests/url/url-setters.html [ Failure ]
+webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
+
+webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
+webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
+webkit.org/b/163383 accessibility/roles-exposed.html [ Failure ]
+
+webkit.org/b/163514 media/media-source/media-source-sequence-timestamps.html [ Failure ]
+webkit.org/b/163515 media/media-source/media-source-stpp-crash.html [ Failure ]
+webkit.org/b/163516 media/media-source/media-source-timeoffset.html [ Failure ]
+
+webkit.org/b/163518 media/modern-media-controls/airplay-button/airplay-button-on.html [ Failure ]
+webkit.org/b/163519 media/modern-media-controls/icon-button/icon-button-active-state.html [ Failure ]
+webkit.org/b/163520 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html [ Failure ]
+
+webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
+webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
+webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
+webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
+webkit.org/b/163525 media/video-background-tab-playback.html [ Failure ]
+webkit.org/b/163526 media/video-controls-drop-and-restore-timeline.html [ Failure ]
+webkit.org/b/163527 media/video-controls-show-on-kb-or-ax-event.html [ Failure ]
+webkit.org/b/163529 media/video-playback-restriction-play-before-load.html [ Failure ]
+webkit.org/b/163530 media/video-restricted-no-preload-metadata.html [ Failure ]
+webkit.org/b/163531 media/video-volume-slider-drag.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2854,6 +2883,14 @@ webkit.org/b/160119 svg/repaint/remove-outline-property-on-root.html [ ImageOnly
 webkit.org/b/160119 animations/negative-delay.html [ Pass Failure ]
 
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/160119 mathml/opentype/large-operators-displaystyle-dynamic.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure ]
+
+# Threaded compositor failures caused by one of r203496, r203497, or r203498
+webkit.org/b/163528 media/video-object-fit.html [ Failure ]
+webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
