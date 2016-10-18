@@ -352,35 +352,10 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Game
 }
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS)
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<TouchList>& result)
 {
     result = JSTouchList::toWrapped(value);
-}
-#endif
-
-#if ENABLE(IOS_TOUCH_EVENTS)
-void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr<TouchList>& result)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* object = value.getObject();
-    if (!object) {
-        result = nullptr;
-        return;
-    }
-
-    // Allow both TouchList and sequence<Touch> as input.
-    const ClassInfo* classInfo = object->classInfo();
-    if (classInfo == JSTouchList::info()) {
-        result = JSTouchList::toWrapped(value);
-        return;
-    }
-
-    auto touches = toRefNativeArray<Touch, JSTouch>(*exec, value);
-    RETURN_IF_EXCEPTION(scope, void());
-    result = TouchList::create(WTFMove(touches));
 }
 #endif
 
