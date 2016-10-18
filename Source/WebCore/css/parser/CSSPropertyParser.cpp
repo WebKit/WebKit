@@ -754,6 +754,7 @@ static RefPtr<CSSValue> consumeTabSize(CSSParserTokenRange& range, CSSParserMode
     return consumeLength(range, cssParserMode, ValueRangeNonNegative);
 }
 
+#if ENABLE(TEXT_AUTOSIZING)
 static RefPtr<CSSValue> consumeTextSizeAdjust(CSSParserTokenRange& range, CSSParserMode /* cssParserMode */)
 {
     if (range.peek().id() == CSSValueAuto)
@@ -762,6 +763,7 @@ static RefPtr<CSSValue> consumeTextSizeAdjust(CSSParserTokenRange& range, CSSPar
         return consumeIdent(range);
     return consumePercent(range, ValueRangeNonNegative);
 }
+#endif
 
 static RefPtr<CSSValue> consumeFontSize(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless = UnitlessQuirk::Forbid)
 {
@@ -1900,6 +1902,7 @@ static RefPtr<CSSValueList> consumePositionList(CSSParserTokenRange& range, CSSP
     return positions;
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
 static RefPtr<CSSValue> consumeScrollSnapCoordinate(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNone)
@@ -1922,6 +1925,7 @@ static RefPtr<CSSValue> consumeScrollSnapPoints(CSSParserTokenRange& range, CSSP
     }
     return nullptr;
 }
+#endif
 
 static RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
@@ -2975,8 +2979,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeSpacing(m_range, m_context.mode);
     case CSSPropertyTabSize:
         return consumeTabSize(m_range, m_context.mode);
+#if ENABLE(TEXT_AUTOSIZING)
     case CSSPropertyWebkitTextSizeAdjust:
         return consumeTextSizeAdjust(m_range, m_context.mode);
+#endif
     case CSSPropertyFontSize:
         return consumeFontSize(m_range, m_context.mode, UnitlessQuirk::Allow);
     case CSSPropertyLineHeight:
@@ -3131,7 +3137,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBoxShadow:
         return consumeShadow(m_range, m_context.mode, property == CSSPropertyBoxShadow);
     case CSSPropertyFilter:
+#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
+#endif
         return consumeFilter(m_range, m_context);
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
@@ -3209,11 +3217,13 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeImageOrNone(m_range, m_context);
     case CSSPropertyPerspective:
         return consumePerspective(m_range, m_context.mode);
+#if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapCoordinate:
         return consumeScrollSnapCoordinate(m_range, m_context.mode);
     case CSSPropertyWebkitScrollSnapPointsX:
     case CSSPropertyWebkitScrollSnapPointsY:
         return consumeScrollSnapPoints(m_range, m_context.mode);
+#endif
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderBottomLeftRadius:

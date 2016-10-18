@@ -1,3 +1,10 @@
+2016-10-18  Dave Hyatt  <hyatt@apple.com>
+
+        Fix Windows build.
+ 
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-10-18  Antoine Quint  <graouts@apple.com>
 
         Modern media controls don't update their rendering correctly
