@@ -844,7 +844,8 @@ public:
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
-    bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&, const WebCore::Frame& mainFrame);
+    bool shouldUseCustomContentProviderForResponse(const WebCore::ResourceResponse&);
+    bool canPluginHandleResponse(const WebCore::ResourceResponse& response);
 
     bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
     void setAsynchronousPluginInitializationEnabled(bool enabled) { m_asynchronousPluginInitializationEnabled = enabled; }
@@ -1225,8 +1226,6 @@ private:
 
     void setResourceCachingDisabled(bool);
     void setUserInterfaceLayoutDirection(uint32_t);
-
-    bool canPluginHandleResponse(const WebCore::ResourceResponse&, const WebCore::Frame& mainFrame);
 
     uint64_t m_pageID;
 
