@@ -79,6 +79,28 @@ JSValueRef UIScriptController::didEndFormControlInteractionCallback() const
 {
     return m_context->callbackWithID(CallbackTypeDidEndFormControlInteraction);
 }
+    
+void UIScriptController::setDidShowForcePressPreviewCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidShowForcePressPreview);
+    platformSetDidShowForcePressPreviewCallback();
+}
+
+JSValueRef UIScriptController::didShowForcePressPreviewCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidShowForcePressPreview);
+}
+
+void UIScriptController::setDidDismissForcePressPreviewCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidDismissForcePressPreview);
+    platformSetDidDismissForcePressPreviewCallback();
+}
+
+JSValueRef UIScriptController::didDismissForcePressPreviewCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidDismissForcePressPreview);
+}
 
 void UIScriptController::setWillBeginZoomingCallback(JSValueRef callback)
 {
@@ -251,6 +273,14 @@ void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 }
 
 void UIScriptController::platformSetDidEndFormControlInteractionCallback()
+{
+}
+    
+void UIScriptController::platformSetDidShowForcePressPreviewCallback()
+{
+}
+
+void UIScriptController::platformSetDidDismissForcePressPreviewCallback()
 {
 }
 

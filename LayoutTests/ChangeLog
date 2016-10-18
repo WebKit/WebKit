@@ -1,3 +1,13 @@
+2016-10-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Add test and infrastructure for link popover
+        https://bugs.webkit.org/show_bug.cgi?id=163406
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/iphone7/force-press-on-link-expected.txt: Added.
+        * fast/events/touch/ios/iphone7/force-press-on-link.html: Added.
+
 2016-10-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add toggles for debugger pauses at console.assert failures

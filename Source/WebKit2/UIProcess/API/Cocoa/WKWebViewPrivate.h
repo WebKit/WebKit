@@ -268,6 +268,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (void)_didShowForcePressPreview WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_didDismissForcePressPreview WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 @property (nonatomic, readonly) NSArray<UIView *> *_uiTextSelectionRectViews WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #endif

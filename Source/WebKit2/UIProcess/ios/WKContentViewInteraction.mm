@@ -3849,6 +3849,11 @@ static bool isAssistableInputType(InputType type)
     if ([userInterfaceItem isEqualToString:@"actionSheet"])
         return @{ userInterfaceItem: [_actionSheetAssistant currentAvailableActionTitles] };
     
+    if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
+        NSString *url = [_previewItemController previewData][UIPreviewDataLink];
+        return @{ userInterfaceItem: @{ @"pageURL": url } };
+    }
+    
     return nil;
 }
 
@@ -4022,6 +4027,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 - (UIViewController *)_presentedViewControllerForPreviewItemController:(UIPreviewItemController *)controller
 {
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    
+    [_webView _didShowForcePressPreview];
 
     NSURL *targetURL = controller.previewData[UIPreviewDataLink];
     URL coreTargetURL = targetURL;
@@ -4128,6 +4135,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController committing:committing];
     else if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
+    
+    [_webView _didDismissForcePressPreview];
 }
 
 - (UIImage *)_presentationSnapshotForPreviewItemController:(UIPreviewItemController *)controller
@@ -4161,6 +4170,8 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 - (void)_previewItemControllerDidCancelPreview:(UIPreviewItemController *)controller
 {
     _highlightLongPressCanClick = NO;
+    
+    [_webView _didDismissForcePressPreview];
 }
 
 @end

@@ -75,6 +75,8 @@
 
     self.didStartFormControlInteractionCallback = nil;
     self.didEndFormControlInteractionCallback = nil;
+    self.didShowForcePressPreviewCallback = nil;
+    self.didDismissForcePressPreviewCallback = nil;
     self.willBeginZoomingCallback = nil;
     self.didEndZoomingCallback = nil;
     self.didShowKeyboardCallback = nil;
@@ -97,6 +99,18 @@
 {
     if (self.didEndFormControlInteractionCallback)
         self.didEndFormControlInteractionCallback();
+}
+
+- (void)_didShowForcePressPreview
+{
+    if (self.didShowForcePressPreviewCallback)
+        self.didShowForcePressPreviewCallback();
+}
+
+- (void)_didDismissForcePressPreview
+{
+    if (self.didDismissForcePressPreviewCallback)
+        self.didDismissForcePressPreviewCallback();
 }
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler

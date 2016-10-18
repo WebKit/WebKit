@@ -85,6 +85,12 @@ public:
 
     void setDidEndFormControlInteractionCallback(JSValueRef);
     JSValueRef didEndFormControlInteractionCallback() const;
+    
+    void setDidShowForcePressPreviewCallback(JSValueRef);
+    JSValueRef didShowForcePressPreviewCallback() const;
+    
+    void setDidDismissForcePressPreviewCallback(JSValueRef);
+    JSValueRef didDismissForcePressPreviewCallback() const;
 
     void setWillBeginZoomingCallback(JSValueRef);
     JSValueRef willBeginZoomingCallback() const;
@@ -118,6 +124,8 @@ private:
 
     void platformSetDidStartFormControlInteractionCallback();
     void platformSetDidEndFormControlInteractionCallback();
+    void platformSetDidShowForcePressPreviewCallback();
+    void platformSetDidDismissForcePressPreviewCallback();
     void platformSetWillBeginZoomingCallback();
     void platformSetDidEndZoomingCallback();
     void platformSetDidShowKeyboardCallback();

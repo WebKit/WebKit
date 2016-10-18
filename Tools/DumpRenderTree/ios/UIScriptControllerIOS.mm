@@ -173,6 +173,14 @@ void UIScriptController::platformSetDidStartFormControlInteractionCallback()
 void UIScriptController::platformSetDidEndFormControlInteractionCallback()
 {
 }
+    
+void UIScriptController::platformSetDidShowForcePressPreviewCallback()
+{
+}
+
+void UIScriptController::platformSetDidDismissForcePressPreviewCallback()
+{
+}
 
 void UIScriptController::platformSetWillBeginZoomingCallback()
 {

@@ -1,3 +1,22 @@
+2016-10-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Add test and infrastructure for link popover
+        https://bugs.webkit.org/show_bug.cgi?id=163406
+
+        Reviewed by Simon Fraser.
+
+        Add infrastructure to see when a link popover appears, and what URL it has loaded.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView didShowForcePressPreview]):
+        (-[WKWebView didDismissForcePressPreview]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:didDismissPreview:committing:]):
+        (-[WKContentView _previewItemControllerDidCancelPreview:]):
+
 2016-10-17  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r169805): WKWebView canGoBack returning YES when nothing is in the back-forward list after restoring session state

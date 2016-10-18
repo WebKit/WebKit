@@ -1,0 +1,111 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function getUIScript()
+        {
+            return `
+            (function() {
+                var eventStream = {
+                    events : [
+                        {
+                            interpolate : "linear",
+                            timestep: 0.025,
+                            startEvent : {
+                                inputType : "hand",
+                                timeOffset : 0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "began",
+                                        id : 1,
+                                        x : 20,
+                                        y : 40,
+                                        pressure : 0
+                                    }
+                                ]
+                            },
+                            endEvent : {
+                                inputType : "hand",
+                                timeOffset : 3.0,
+                                touches : [
+                                    {
+                                        inputType : "finger",
+                                        phase : "stationary",
+                                        id : 1,
+                                        x : 20,
+                                        y : 40,
+                                        pressure : 500
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                };
+
+                uiController.sendEventStream(JSON.stringify(eventStream), function() {});
+             
+                uiController.didShowForcePressPreviewCallback = function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('linkPreviewPopoverContents')));
+                };
+             
+            })();`
+        }
+    
+        function getUIFinishScript()
+        {
+            return `
+            (function() {
+                uiController.liftUpAtPoint(20, 40, 1, function() {
+                   uiController.uiScriptComplete();
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            if (!testRunner.runUIScript)
+                return;
+
+            var output = '';
+            var target = document.getElementById('target');
+            
+            if (testRunner.runUIScript) {
+                testRunner.runUIScript(getUIScript(), function(result) {
+                    var uiContentsDictionary = JSON.parse(result);
+                    var pageURL = uiContentsDictionary.linkPreviewPopoverContents.pageURL;
+                    if (pageURL = 'http://localhost:54321')
+                        output += 'PASS: correct page loaded in popover';
+                    document.getElementById('target').innerHTML = output;
+                                       
+                    testRunner.runUIScript(getUIFinishScript(), function() {
+                        testRunner.notifyDone();
+                    });
+               });
+            }
+        }
+
+        window.addEventListener('load', runTest, false);
+    </script>
+    <style>
+        #target {
+            height: 100px;
+            width: 200px;
+            background-color: silver;
+        }
+    </style>
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<div id="target">
+    <a href="http://localhost:54321">Link Test</a>
+    This test requires UIScriptController to run.
+</div>
+</body>
+</html>

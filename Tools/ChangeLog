@@ -1,3 +1,41 @@
+2016-10-17  Megan Gardner  <megan_gardner@apple.com>
+
+        Add test and infrastructure for link popover
+        https://bugs.webkit.org/show_bug.cgi?id=163406
+
+        Reviewed by Simon Fraser.
+
+        Added functionality test for link popovers.
+        Can query for what URL is loaded, and that the popover has appeared or has
+        been dismissed.
+        Added a link popover test.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformSetDidShowForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidDismissForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidEndFormControlInteractionCallback): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setDidShowForcePressPreviewCallback):
+        (WTR::UIScriptController::didShowForcePressPreviewCallback):
+        (WTR::UIScriptController::setDidDismissForcePressPreviewCallback):
+        (WTR::UIScriptController::didDismissForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidShowForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidDismissForcePressPreviewCallback):
+        (WTR::UIScriptController::didEndFormControlInteractionCallback): Deleted.
+        (WTR::UIScriptController::platformSetDidEndFormControlInteractionCallback): Deleted.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView didShowForcePressPreview]):
+        (-[TestRunnerWKWebView didDismissForcePressPreview]):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::platformSetDidShowForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidDismissForcePressPreviewCallback):
+        (WTR::UIScriptController::platformSetDidEndFormControlInteractionCallback): Deleted.
+
 2016-10-17  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r169805): WKWebView canGoBack returning YES when nothing is in the back-forward list after restoring session state

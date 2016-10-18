@@ -367,6 +367,26 @@ void UIScriptController::platformSetDidEndFormControlInteractionCallback()
         m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
     };
 }
+    
+void UIScriptController::platformSetDidShowForcePressPreviewCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didShowForcePressPreviewCallback = ^ {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidShowForcePressPreview);
+    };
+}
+
+void UIScriptController::platformSetDidDismissForcePressPreviewCallback()
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView.didDismissForcePressPreviewCallback = ^ {
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidEndFormControlInteraction);
+    };
+}
 
 void UIScriptController::platformSetWillBeginZoomingCallback()
 {
