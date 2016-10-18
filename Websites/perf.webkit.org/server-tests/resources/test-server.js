@@ -31,7 +31,7 @@ class TestServer {
     }
 
     start()
-    {        
+    {
         let testConfigContent = this.testConfig();
         fs.writeFileSync(this._testConfigPath, JSON.stringify(testConfigContent, null, '    '));
 
@@ -81,7 +81,8 @@ class TestServer {
             'clusterStart': [2000, 1, 1, 0, 0],
             'clusterSize': [0, 2, 0],
             'defaultDashboard': [[]],
-            'dashboards': {}
+            'dashboards': {},
+            'summaryPages': []
         }
     }
 

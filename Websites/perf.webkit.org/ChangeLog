@@ -1,3 +1,22 @@
+2016-10-18  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Update test cases for change r206465.
+        https://bugs.webkit.org/show_bug.cgi?id=163618
+
+        Reviewed by Ryosuke Niwa.
+
+        Update test case for change r206465 which added support for multiple summary pages.
+        Use deepStrictEqual instead of deepEqual as deepEqual will not complain in the case like 'deepEqual([],{})'.
+        Fix a test failure in tools-buildbot-triggerable-tests.js.
+        Fix a bug in generating manifest.
+
+        * config.json:
+        * public/include/manifest.php:
+        * server-tests/api-manifest.js:
+        (TestServer.remoteAPI.getJSON.string_appeared_here.then):
+        * server-tests/tools-buildbot-triggerable-tests.js:
+        (then):
+
 2016-09-27  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend perf dashboard to support multiple summary pages.

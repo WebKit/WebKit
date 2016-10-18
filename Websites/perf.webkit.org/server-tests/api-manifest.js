@@ -18,12 +18,12 @@ describe('/api/manifest', function () {
     it("should generate an empty manifest when database is empty", function (done) {
         TestServer.remoteAPI().getJSON('/api/manifest').then(function (manifest) {
             assert.deepEqual(Object.keys(manifest).sort(), ['all', 'bugTrackers', 'builders', 'dashboard', 'dashboards',
-                'elapsedTime', 'metrics', 'repositories', 'siteTitle', 'status', 'summary', 'tests']);
+                'elapsedTime', 'metrics', 'repositories', 'siteTitle', 'status', 'summaryPages', 'tests']);
 
             assert.equal(typeof(manifest.elapsedTime), 'number');
             delete manifest.elapsedTime;
 
-            assert.deepEqual(manifest, {
+            assert.deepStrictEqual(manifest, {
                 siteTitle: TestServer.testConfig().siteTitle,
                 all: {},
                 bugTrackers: {},
@@ -33,7 +33,7 @@ describe('/api/manifest', function () {
                 metrics: {},
                 repositories: {},
                 tests: {},
-                summary: {},
+                summaryPages: [],
                 status: 'OK'
             });
             done();

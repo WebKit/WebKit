@@ -770,6 +770,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests[2].url, '/builders/some-builder-1/force');
                 assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701'});
                 MockRemoteAPI.requests[2].resolve('OK');
+                return MockRemoteAPI.waitForRequest();
             }).then(function () {
                 assert.equal(MockRemoteAPI.requests.length, 4);
                 assert.equal(MockRemoteAPI.requests[3].method, 'GET');
