@@ -184,7 +184,7 @@ protected:
     IntSize m_size;
     mutable GMutex m_sampleMutex;
     GRefPtr<GstSample> m_sample;
-#if USE(GSTREAMER_GL) || USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(GSTREAMER_GL)
     RunLoop::Timer<MediaPlayerPrivateGStreamerBase> m_drawTimer;
 #endif
     mutable FloatSize m_videoSize;

@@ -1,3 +1,18 @@
+2016-10-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r207409.
+        https://bugs.webkit.org/show_bug.cgi?id=163602
+
+        Introduced many test failures and timeouts, causing release
+        bot to exit early (Requested by mcatanzaro on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Several tests crashing on debug bot in (anonymous
+        namespace)::MediaPlayerPrivateGStreamerBase::repaint"
+        https://bugs.webkit.org/show_bug.cgi?id=163511
+        http://trac.webkit.org/changeset/207409
+
 2016-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Resolve constraints and enumerate devices in the UI process
