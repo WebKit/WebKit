@@ -4502,6 +4502,8 @@ static BOOL currentScrollIsBlit(NSView *clipView)
 - (void)mouseDown:(WebEvent *)event
 #endif
 {
+    [[self _webView] prepareForMouseDown];
+
 #if !PLATFORM(IOS)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
@@ -4721,6 +4723,8 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 - (void)mouseUp:(WebEvent *)event
 #endif
 {
+    [[self _webView] prepareForMouseUp];
+
 #if !PLATFORM(IOS)
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing

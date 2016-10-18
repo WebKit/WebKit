@@ -1,3 +1,21 @@
+2016-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Showing and hiding candidates list is very distracting after selecting word
+        https://bugs.webkit.org/show_bug.cgi?id=163609
+        <rdar://problem/28747712>
+
+        Reviewed by Tim Horton.
+
+        Introduce WebView hooks for mousedown and mouseup. See radar for more details.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView mouseDown:mouseDown:]):
+        (-[WebHTMLView mouseUp:mouseUp:]):
+        * WebView/WebView.mm:
+        (-[WebView prepareForMouseDown]):
+        (-[WebView prepareForMouseUp]):
+        * WebView/WebViewInternal.h:
+
 2016-10-17  Anders Carlsson  <andersca@apple.com>
 
         Move some history specific HistoryItem code to WebHistoryItem

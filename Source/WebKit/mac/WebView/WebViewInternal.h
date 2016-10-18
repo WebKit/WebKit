@@ -296,6 +296,8 @@ OBJC_CLASS NSTextAlternatives;
 @end
 
 @interface WebView (WebUpdateWebViewAdditions)
+- (void)prepareForMouseUp;
+- (void)prepareForMouseDown;
 - (void)updateWebViewAdditions;
 - (void)webViewAdditionsWillDestroyView;
 - (id)candidateList;
