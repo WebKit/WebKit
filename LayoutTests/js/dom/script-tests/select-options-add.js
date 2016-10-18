@@ -53,8 +53,8 @@ shouldBe("select1.options[2].textContent", "'C'");
 debug("");
 
 debug("1.4 Add a non-Option element");
-option1 = document.createElement("DIV");
-shouldBeUndefined("select1.options.add(option1)");
+div = document.createElement("DIV");
+shouldThrowErrorName("select1.options.add(div)", "TypeError");
 shouldBe("select1.options.length", "3");
 shouldBe("select1.selectedIndex", "0");
 debug("");
@@ -264,8 +264,8 @@ shouldBe("select2.selectedIndex", "4");
 debug("");
 
 debug("2.12 Add a non-Option element");
-option2 = document.createElement("DIV");
-shouldBeUndefined("select2.options.add(option2, 1)");
+div = document.createElement("DIV");
+shouldThrowErrorName("select2.options.add(div, 1)", "TypeError");
 shouldBe("select2.options.length", "11");
 shouldBe("select2.selectedIndex", "4");
 debug("");

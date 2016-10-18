@@ -221,16 +221,27 @@ int HTMLSelectElement::activeSelectionEndListIndex() const
     return lastSelectedListIndex();
 }
 
-void HTMLSelectElement::add(HTMLElement& element, HTMLElement* beforeElement, ExceptionCode& ec)
+ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element, Optional<HTMLElementOrInt> before)
 {
-    if (!(is<HTMLOptionElement>(element) || is<HTMLHRElement>(element) || is<HTMLOptGroupElement>(element)))
-        return;
-    insertBefore(element, beforeElement, ec);
-}
+    HTMLElement* beforeElement = nullptr;
+    if (before) {
+        auto visitor = WTF::makeVisitor(
+            [](const RefPtr<HTMLElement>& element) -> HTMLElement* { return element.get(); },
+            [this](int index) -> HTMLElement* { return item(index); }
+        );
 
-void HTMLSelectElement::add(HTMLElement& element, int beforeIndex, ExceptionCode& ec)
-{
-    add(element, item(beforeIndex), ec);
+        beforeElement = std::experimental::visit(visitor, before.value());
+    }
+    HTMLElement& toInsert = std::experimental::visit([](const auto& htmlElement) -> HTMLElement& {
+        return *htmlElement;
+    }, element);
+
+
+    ExceptionCode ec = 0;
+    insertBefore(toInsert, beforeElement, ec);
+    if (ec)
+        return Exception { ec };
+    return { };
 }
 
 void HTMLSelectElement::removeByIndex(int optionIndex)
@@ -440,7 +451,9 @@ void HTMLSelectElement::setOption(unsigned index, HTMLOptionElement& option, Exc
     }
     // Finally add the new element.
     if (!ec) {
-        add(option, before.get(), ec);
+        auto exception = add(&option, HTMLElementOrInt(before.get()));
+        if (exception.hasException())
+            ec = exception.releaseException().code();
         if (diff >= 0 && option.selected())
             optionSelectionStateChanged(option, true);
     }
@@ -456,9 +469,11 @@ void HTMLSelectElement::setLength(unsigned newLength, ExceptionCode& ec)
     if (diff < 0) { // Add dummy elements.
         do {
             auto option = document().createElement(optionTag, false);
-            add(downcast<HTMLElement>(option.get()), nullptr, ec);
-            if (ec)
+            auto exception = add(downcast<HTMLOptionElement>(option.ptr()), Nullopt);
+            if (exception.hasException()) {
+                ec = exception.releaseException().code();
                 break;
+        }
         } while (++diff);
     } else {
         auto& items = listItems();

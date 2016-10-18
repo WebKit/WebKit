@@ -29,6 +29,7 @@
 #import "DOMInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
+#import <WebCore/HTMLOptGroupElement.h>
 #import <WebCore/HTMLOptionElement.h>
 #import <WebCore/HTMLOptionsCollection.h>
 #import <WebCore/JSMainThreadExecState.h>
@@ -38,6 +39,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
+#import <wtf/Variant.h>
 
 #define IMPL reinterpret_cast<WebCore::HTMLOptionsCollection*>(_internal)
 
@@ -90,9 +92,9 @@
     WebCore::JSMainThreadNullState state;
     if (!option)
         raiseTypeErrorException();
-    WebCore::ExceptionCode ec = 0;
-    IMPL->add(*core(option), index, ec);
-    raiseOnDOMError(ec);
+    auto exception = IMPL->add(core(option), Optional<WebCore::HTMLOptionsCollection::HTMLElementOrInt>(static_cast<int>(index)));
+    if (exception.hasException())
+        raiseOnDOMError(exception.releaseException().code());
 }
 
 - (void)remove:(unsigned)index

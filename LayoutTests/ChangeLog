@@ -1,3 +1,16 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Leverage new union type support for HTMLSelectElement.add() / HTMLOptionsCollection.add()
+        https://bugs.webkit.org/show_bug.cgi?id=163608
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline existing tests now that exception messages are different.
+
+        * fast/dom/HTMLSelectElement/add-expected.txt:
+        * fast/dom/HTMLSelectElement/options-collection-add-expected.txt:
+        * fast/dom/incompatible-operations-expected.txt:
+
 2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r201471): Keyboard remains visible when swiping back on twitter.com

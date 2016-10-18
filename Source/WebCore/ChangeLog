@@ -1,3 +1,37 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Leverage new union type support for HTMLSelectElement.add() / HTMLOptionsCollection.add()
+        https://bugs.webkit.org/show_bug.cgi?id=163608
+
+        Reviewed by Ryosuke Niwa.
+
+        Leverage new union type support for HTMLSelectElement.add() / HTMLOptionsCollection.add():
+        - https://html.spec.whatwg.org/#htmlselectelement
+        - https://html.spec.whatwg.org/#htmloptionscollection
+
+        No new tests, rebaseline existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalSequenceIsEmptyCaller):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::constructJSTestOverloadedConstructorsWithSequence1):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsPrototypeFunctionFuncCaller):
+        * html/HTMLOptGroupElement.idl:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add):
+        (WebCore::HTMLSelectElement::setOption):
+        (WebCore::HTMLSelectElement::setLength):
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.idl:
+
 2016-10-18  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: focused/focusable state should be based on Accessibility Object instead of Element

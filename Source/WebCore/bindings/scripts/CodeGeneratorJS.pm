@@ -996,25 +996,31 @@ sub GetDictionaryClassName
 
 sub GenerateDefaultValue
 {
-    my ($interface, $member) = @_;
+    my ($interface, $signature) = @_;
 
-    my $defaultValue = $member->default;
+    my $defaultValue = $signature->default;
 
-    if ($codeGenerator->IsEnumType($member->type)) {
+    if ($codeGenerator->IsEnumType($signature->type)) {
         # FIXME: Would be nice to report an error if the value does not have quote marks around it.
         # FIXME: Would be nice to report an error if the value is not one of the enumeration values.
-        my $className = GetEnumerationClassName($member->type, $interface);
+        my $className = GetEnumerationClassName($signature->type, $interface);
         my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
         return $className . "::" . $enumerationValueName;
     }
     if ($defaultValue eq "null") {
-        return "jsNull()" if $member->type eq "any";
-        return "nullptr" if $codeGenerator->IsWrapperType($member->type) || $codeGenerator->IsTypedArrayType($member->type);
-        return "String()" if $codeGenerator->IsStringType($member->type);
+        return "Nullopt" if $signature->idlType->isUnion;
+        return "jsNull()" if $signature->type eq "any";
+        return "nullptr" if $codeGenerator->IsWrapperType($signature->type) || $codeGenerator->IsTypedArrayType($signature->type);
+        return "String()" if $codeGenerator->IsStringType($signature->type);
         return "Nullopt";
     }
-    return "{ }" if $defaultValue eq "[]";
+    if ($defaultValue eq "[]") {
+        my $nativeType = GetNativeTypeFromSignature($interface, $signature);
+        return "$nativeType()"
+    }
+
     return "jsUndefined()" if $defaultValue eq "undefined";
+    return "PNaN" if $defaultValue eq "NaN";
 
     return $defaultValue;
 }
@@ -4342,10 +4348,7 @@ sub GenerateParametersCheck
                             $defaultValue = $useAtomicString ? "AtomicString($defaultValue, AtomicString::ConstructFromLiteral)" : "ASCIILiteral($defaultValue)";
                         }
                     } else {
-                        $defaultValue = "nullptr" if $defaultValue eq "null";
-                        $defaultValue = "PNaN" if $defaultValue eq "NaN";
-                        $defaultValue = "$nativeType()" if $defaultValue eq "[]";
-                        $defaultValue = "JSValue::JSUndefined" if $defaultValue eq "undefined";
+                        $defaultValue = GenerateDefaultValue($interface, $parameter);
                     }
 
                     $outer = "state->$argumentLookupMethod($argumentIndex).isUndefined() ? $defaultValue : ";

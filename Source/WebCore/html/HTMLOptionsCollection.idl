@@ -30,10 +30,7 @@
     getter HTMLOptionElement? item(unsigned long index);
     getter HTMLOptionElement? namedItem(DOMString name);
 
-    // FIXME: Should be:
-    // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [MayThrowLegacyException] void add(HTMLElement element, optional HTMLElement? before = null);
-    [MayThrowLegacyException] void add(HTMLElement element, long index);
+    [MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
 
     void remove(long index);
     // FIXME: This overload is not in the specification and has been dropped in Blink.

@@ -41,8 +41,9 @@ public:
     HTMLOptionElement* item(unsigned offset) const final;
     HTMLOptionElement* namedItem(const AtomicString& name) const final;
 
-    WEBCORE_EXPORT void add(HTMLElement&, HTMLElement* beforeElement, ExceptionCode&);
-    WEBCORE_EXPORT void add(HTMLElement&, int beforeIndex, ExceptionCode&);
+    using OptionOrOptGroupElement = std::experimental::variant<RefPtr<HTMLOptionElement>, RefPtr<HTMLOptGroupElement>>;
+    using HTMLElementOrInt = std::experimental::variant<RefPtr<HTMLElement>, int>;
+    WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, Optional<HTMLElementOrInt> before);
     WEBCORE_EXPORT void remove(int index);
     void remove(HTMLOptionElement&);
 

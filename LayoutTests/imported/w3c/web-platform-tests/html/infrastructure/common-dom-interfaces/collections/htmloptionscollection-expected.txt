@@ -23,5 +23,5 @@ PASS HTMLOptionsCollection.item(index) method return the item with index
 PASS HTMLOptionsCollection.item(name) method return the item with index 0 
 PASS HTMLOptionsCollection.add method insert HTMLOptionElement Option element 
 PASS HTMLOptionsCollection.remove method remove Option element by index 
-FAIL Add non-option to collection assert_throws: function "function () {b_opts.add(add);}" did not throw
+PASS Add non-option to collection 
 

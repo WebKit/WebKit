@@ -1,5 +1,17 @@
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
+        Leverage new union type support for HTMLSelectElement.add() / HTMLOptionsCollection.add()
+        https://bugs.webkit.org/show_bug.cgi?id=163608
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline W3C test now that one more check is passing. This is because we are now
+        correctly throwing a TypeError when calling add() with an unexpected HTMLElement type.
+
+        * web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmloptionscollection-expected.txt:
+
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
         Update TrackEvent to stop using legacy [ConstructorTemplate=Event]
         https://bugs.webkit.org/show_bug.cgi?id=163580
 

@@ -40,10 +40,7 @@
     getter HTMLOptionElement? item(unsigned long index);
     HTMLOptionElement? namedItem(DOMString name);
 
-    [MayThrowLegacyException] void add(HTMLElement element, optional HTMLElement? before = null);
-    // FIXME: Should be:
-    // void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-    [MayThrowLegacyException] void add(HTMLElement element, long index);
+    [MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
 
     [MayThrowLegacyException] void remove(); // ChildNode overload
     // FIXME: This overload is not in the specification and was dropped in Blink.
