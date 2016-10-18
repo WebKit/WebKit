@@ -1,3 +1,11 @@
+2016-10-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add flaky expectation for tiled-drawing/scrolling/latched-div-with-scroll-snap.html that was errantly removed.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property
