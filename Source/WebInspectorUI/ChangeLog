@@ -1,5 +1,19 @@
 2016-10-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CSS Autocompletion sometimes adds extra unexpected characters
+        https://bugs.webkit.org/show_bug.cgi?id=163612
+        <rdar://problem/28829557>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        Better handle completions in cases where we are in the middle of a property
+        to avoid orphaned characters, or at the end of a function name to avoid creating
+        duplicate parenthesis.
+
+2016-10-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION(r201171): Web Inspector: Timeline Recording playhead should always start immediately, not wait until first event
         https://bugs.webkit.org/show_bug.cgi?id=163583
         <rdar://problem/28815882>
