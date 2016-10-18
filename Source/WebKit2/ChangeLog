@@ -1,3 +1,17 @@
+2016-10-17  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r169805): WKWebView canGoBack returning YES when nothing is in the back-forward list after restoring session state
+        https://bugs.webkit.org/show_bug.cgi?id=163573
+        <rdar://problem/28744549>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        Update PageLoadState's canGoBack/canGoForward bits when restoring from
+        session state, because in the don't-navigate case, nothing else will make this happen,
+        and it will remain stale.
+
 2016-10-17  Andy Estes  <aestes@apple.com>
 
         Crash in ASCIICaseInsensitiveHash::hash() when a response has a null MIME type

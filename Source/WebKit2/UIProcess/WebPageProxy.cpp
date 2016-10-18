@@ -2397,6 +2397,10 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
 
+        auto transaction = m_pageLoadState.transaction();
+        m_pageLoadState.setCanGoBack(transaction, m_backForwardList->backItem());
+        m_pageLoadState.setCanGoForward(transaction, m_backForwardList->forwardItem());
+
         // The back / forward list was restored from a sessionState so we don't want to snapshot the current
         // page when navigating away. Suppress navigation snapshotting until the next load has committed
         m_suppressAutomaticNavigationSnapshotting = true;
