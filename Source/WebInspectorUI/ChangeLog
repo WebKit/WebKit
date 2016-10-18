@@ -1,3 +1,18 @@
+2016-10-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r201171): Web Inspector: Timeline Recording playhead should always start immediately, not wait until first event
+        https://bugs.webkit.org/show_bug.cgi?id=163583
+        <rdar://problem/28815882>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        Revert logic change introduced by r201171 with no explanation.
+        Whenever we get a start time we should use it, regardless of
+        of what the current time is, precisely because the backend is
+        informing us of the start time to use.
+
 2016-10-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add toggles for debugger pauses at console.assert failures
