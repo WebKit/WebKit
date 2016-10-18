@@ -27,14 +27,13 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <RealtimeMediaSource.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class SourceKind { Audio, Video };
+    enum class SourceKind { Unknown, Audio, Video };
 
     CaptureDevice(const String& persistentId, SourceKind kind, const String& label, const String& groupId)
         : m_persistentId(persistentId)
@@ -44,14 +43,23 @@ public:
     {
     }
 
+    CaptureDevice() = default;
+
     const String& persistentId() const { return m_persistentId; }
+    void setPersistentId(const String& id) { m_persistentId = id; }
+
     const String& label() const { return m_label; }
+    void setLabel(const String& label) { m_label = label; }
+
     const String& groupId() const { return m_groupId; }
+    void setGroupId(const String& id) { m_groupId = id; }
+
     SourceKind kind() const { return m_kind; }
+    void setKind(SourceKind kind) { m_kind = kind; }
 
 private:
     String m_persistentId;
-    SourceKind m_kind;
+    SourceKind m_kind { SourceKind::Unknown };
     String m_label;
     String m_groupId;
 };

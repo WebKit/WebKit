@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,56 +24,48 @@
  *
  */
 
-#ifndef UserMediaPermissionCheck_h
-#define UserMediaPermissionCheck_h
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include <wtf/RefCounted.h>
+#include <functional>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class CaptureDevice;
 class Document;
 class SecurityOrigin;
 
-class UserMediaPermissionCheckClient {
+class MediaDevicesEnumerationRequest final : public ContextDestructionObserver, public RefCounted<MediaDevicesEnumerationRequest> {
 public:
-    virtual ~UserMediaPermissionCheckClient() { }
+    using CompletionHandler = std::function<void(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)>;
 
-    virtual void didCompletePermissionCheck(const String&, bool) = 0;
-};
+    static Ref<MediaDevicesEnumerationRequest> create(Document&, CompletionHandler&&);
 
-class UserMediaPermissionCheck final : public ContextDestructionObserver, public RefCounted<UserMediaPermissionCheck> {
-public:
-    static Ref<UserMediaPermissionCheck> create(Document&, UserMediaPermissionCheckClient&);
-
-    virtual ~UserMediaPermissionCheck();
+    virtual ~MediaDevicesEnumerationRequest();
 
     void start();
-    void setClient(UserMediaPermissionCheckClient* client) { m_client = client; }
+    void cancel();
+
+    WEBCORE_EXPORT void setDeviceInfo(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 
     WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
 
-    WEBCORE_EXPORT void setUserMediaAccessInfo(const String&, bool);
-
-    WEBCORE_EXPORT String mediaDeviceIdentifierHashSalt() const { return m_mediaDeviceIdentifierHashSalt; }
-
 private:
-    UserMediaPermissionCheck(ScriptExecutionContext&, UserMediaPermissionCheckClient&);
+    MediaDevicesEnumerationRequest(ScriptExecutionContext&, CompletionHandler&&);
 
     // ContextDestructionObserver
     void contextDestroyed() final;
 
-    UserMediaPermissionCheckClient* m_client;
-    String m_mediaDeviceIdentifierHashSalt;
-    bool m_hasPersistentPermission { false };
+    CompletionHandler m_completionHandler;
+    Vector<CaptureDevice> m_deviceList;
+    String m_deviceIdentifierHashSalt;
+    bool m_originHasPersistentAccess { false };
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // UserMediaPermissionCheck_h

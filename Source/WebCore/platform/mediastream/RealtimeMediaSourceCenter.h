@@ -43,7 +43,6 @@ namespace WebCore {
 
 class CaptureDevice;
 class MediaConstraints;
-class MediaStreamCreationClient;
 class RealtimeMediaSourceSettings;
 class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
@@ -55,11 +54,12 @@ public:
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
     static void setSharedStreamCenterOverride(RealtimeMediaSourceCenter*);
 
-    virtual void validateRequestConstraints(MediaStreamCreationClient*, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) = 0;
+    using ValidConstraintsHandler = std::function<void(const Vector<RefPtr<RealtimeMediaSource>>&& audioTracks, const Vector<RefPtr<RealtimeMediaSource>>&& videoTracks)>;
+    using InvalidConstraintsHandler = std::function<void(const String& invalidConstraint)>;
+    virtual void validateRequestConstraints(ValidConstraintsHandler, InvalidConstraintsHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) = 0;
 
-    virtual void createMediaStream(MediaStreamCreationClient*, const String& audioDeviceID, const String& videoDeviceID) = 0;
-
-    virtual void createMediaStream(PassRefPtr<MediaStreamCreationClient>, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints) = 0;
+    using NewMediaStreamHandler = std::function<void(RefPtr<MediaStreamPrivate>&&)>;
+    virtual void createMediaStream(NewMediaStreamHandler, const String& audioDeviceID, const String& videoDeviceID) = 0;
 
     virtual Vector<CaptureDevice> getMediaStreamDevices() = 0;
     

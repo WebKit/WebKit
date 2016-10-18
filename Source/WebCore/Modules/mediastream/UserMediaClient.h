@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +34,16 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include <functional>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
+class MediaDevicesEnumerationRequest;
+class MediaConstraints;
 class Page;
-class UserMediaPermissionCheck;
+class RealtimeMediaSource;
 class UserMediaRequest;
 
 class UserMediaClient {
@@ -46,8 +53,8 @@ public:
     virtual void requestUserMediaAccess(UserMediaRequest&) = 0;
     virtual void cancelUserMediaAccessRequest(UserMediaRequest&) = 0;
 
-    virtual void checkUserMediaPermission(UserMediaPermissionCheck&) = 0;
-    virtual void cancelUserMediaPermissionCheck(UserMediaPermissionCheck&) = 0;
+    virtual void enumerateMediaDevices(MediaDevicesEnumerationRequest&) = 0;
+    virtual void cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest&) = 0;
 
 protected:
     virtual ~UserMediaClient() { }

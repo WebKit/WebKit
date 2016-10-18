@@ -37,7 +37,6 @@
 #include "RealtimeMediaSourceCenterOwr.h"
 
 #include "CaptureDevice.h"
-#include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
 #include "NotImplemented.h"
 #include "OpenWebRTCUtilities.h"
@@ -77,9 +76,10 @@ RealtimeMediaSourceCenterOwr::~RealtimeMediaSourceCenterOwr()
 {
 }
 
-void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreationClient* client, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterOwr::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
 {
-    m_client = client;
+    m_validConstraintsHandler = WTFMove(validHandler);
+    m_invalidConstraintsHandler = WTFMove(invalidHandler);
 
     // FIXME: Actually do constraints validation. The MediaConstraints
     // need to comply with the available audio/video device(s)
@@ -93,43 +93,8 @@ void RealtimeMediaSourceCenterOwr::validateRequestConstraints(MediaStreamCreatio
     owr_get_capture_sources(static_cast<OwrMediaType>(types), mediaSourcesAvailableCallback, this);
 }
 
-void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterOwr::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
 {
-    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
-    ASSERT(client);
-
-    UNUSED_PARAM(audioConstraints);
-    UNUSED_PARAM(videoConstraints);
-
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
-
-    if (audioConstraints.isValid()) {
-        // TODO: verify constraints according to registered
-        // sources. For now, unconditionally pick the first source, see bug #123345.
-        RefPtr<RealtimeMediaSource> audioSource = firstSource(RealtimeMediaSource::Audio);
-        if (audioSource) {
-            audioSource->reset();
-            audioSources.append(audioSource.release());
-        }
-    }
-
-    if (videoConstraints.isValid()) {
-        // TODO: verify constraints according to registered
-        // sources. For now, unconditionally pick the first source, see bug #123345.
-        RefPtr<RealtimeMediaSource> videoSource = firstSource(RealtimeMediaSource::Video);
-        if (videoSource) {
-            videoSource->reset();
-            videoSources.append(videoSource.release());
-        }
-    }
-
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
-}
-
-void RealtimeMediaSourceCenterOwr::createMediaStream(MediaStreamCreationClient* client, const String& audioDeviceID, const String& videoDeviceID)
-{
-    ASSERT(client);
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
@@ -150,7 +115,10 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(MediaStreamCreationClient* 
         }
     }
 
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+    if (videoSources.isEmpty() && audioSources.isEmpty())
+        completionHandler(nullptr);
+    else
+        completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
 Vector<CaptureDevice> RealtimeMediaSourceCenterOwr::getMediaStreamDevices()
@@ -196,7 +164,9 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
     }
 
     // TODO: Make sure contraints are actually validated by checking source types.
-    m_client->constraintsValidated(audioSources, videoSources);
+    m_validConstraintsHandler(WTFMove(audioSources), WTFMove(videoSources));
+    m_validConstraintsHandler = nullptr;
+    m_invalidConstraintsHandler = nullptr;
 }
 
 PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,7 +21,7 @@
 #define UserMediaPermissionRequestProxy_h
 
 #include "APIObject.h"
-#include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/UserMediaRequest.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,7 +37,9 @@ public:
     }
 
     void allow(const String& videoDeviceUID, const String& audioDeviceUID);
-    void deny();
+
+    enum class UserMediaAccessDenialReason { NoConstraints, UserMediaDisabled, NoCaptureDevices, InvalidConstraint, HardwareError, PermissionDenied, OtherFailure };
+    void deny(UserMediaAccessDenialReason);
 
     void invalidate();
 

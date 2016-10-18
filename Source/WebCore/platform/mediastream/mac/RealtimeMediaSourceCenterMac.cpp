@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple, Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #include "RealtimeMediaSourceCenterMac.h"
 
 #include "AVCaptureDeviceManager.h"
-#include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
 #include <wtf/MainThread.h>
 
@@ -66,10 +65,8 @@ RealtimeMediaSourceCenterMac::~RealtimeMediaSourceCenterMac()
 {
 }
 
-void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreationClient* client, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterMac::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
 {
-    ASSERT(client);
-
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
@@ -77,7 +74,7 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
         String invalidConstraint;
         AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Audio, audioConstraints, nullptr, invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
-            client->constraintsInvalid(invalidConstraint);
+            invalidHandler(invalidConstraint);
             return;
         }
 
@@ -88,60 +85,18 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(MediaStreamCreatio
         String invalidConstraint;
         AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Video, videoConstraints, nullptr, invalidConstraint);
         if (!invalidConstraint.isEmpty()) {
-            client->constraintsInvalid(invalidConstraint);
+            invalidHandler(invalidConstraint);
             return;
         }
 
         videoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
     }
-    client->constraintsValidated(audioSources, videoSources);
+
+    validHandler(WTFMove(audioSources), WTFMove(videoSources));
 }
 
-void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void RealtimeMediaSourceCenterMac::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
 {
-    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
-    
-    ASSERT(client);
-    
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
-    
-    if (audioConstraints.isValid()) {
-        String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Audio, audioConstraints, nullptr, invalidConstraint);
-        if (!invalidConstraint.isEmpty()) {
-            client->failedToCreateStreamWithConstraintsError(invalidConstraint);
-            return;
-        }
-        // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
-        // device of the appropriate type.
-        auto audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints).at(0);
-        ASSERT(audioSource);
-        
-        audioSources.append(WTFMove(audioSource));
-    }
-    
-    if (videoConstraints.isValid()) {
-        String invalidConstraint;
-        AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(RealtimeMediaSource::Video, videoConstraints, nullptr, invalidConstraint);
-        if (!invalidConstraint.isEmpty()) {
-            client->failedToCreateStreamWithConstraintsError(invalidConstraint);
-            return;
-        }
-        // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
-        // device of the appropriate type.
-        auto videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints).at(0);
-        ASSERT(videoSource);
-        
-        videoSources.append(WTFMove(videoSource));
-    }
-    
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
-}
-
-void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* client, const String& audioDeviceID, const String& videoDeviceID)
-{
-    ASSERT(client);
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
@@ -156,7 +111,10 @@ void RealtimeMediaSourceCenterMac::createMediaStream(MediaStreamCreationClient* 
             videoSources.append(WTFMove(videoSource));
     }
 
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+    if (videoSources.isEmpty() && audioSources.isEmpty())
+        completionHandler(nullptr);
+    else
+        completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
 Vector<CaptureDevice> RealtimeMediaSourceCenterMac::getMediaStreamDevices()

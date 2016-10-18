@@ -91,7 +91,7 @@ static void webkitUserMediaPermissionRequestDeny(WebKitPermissionRequest* reques
         return;
 
     priv->madeDecision = true;
-    priv->request->deny();
+    priv->request->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
 }
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)

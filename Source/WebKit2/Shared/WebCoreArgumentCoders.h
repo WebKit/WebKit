@@ -127,6 +127,13 @@ class MediaSessionMetadata;
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+namespace WebCore {
+class CaptureDevice;
+struct MediaConstraintsData;
+}
+#endif
+
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -526,6 +533,18 @@ template<> struct ArgumentCoder<WebCore::PaymentRequest::TotalAndLineItems> {
     static bool decode(Decoder&, WebCore::PaymentRequest::TotalAndLineItems&);
 };
 
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+template<> struct ArgumentCoder<WebCore::MediaConstraintsData> {
+    static void encode(Encoder&, const WebCore::MediaConstraintsData&);
+    static bool decode(Decoder&, WebCore::MediaConstraintsData&);
+};
+
+template<> struct ArgumentCoder<WebCore::CaptureDevice> {
+    static void encode(Encoder&, const WebCore::CaptureDevice&);
+    static bool decode(Decoder&, WebCore::CaptureDevice&);
+};
 #endif
 
 } // namespace IPC

@@ -51,7 +51,6 @@ class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
 class NotificationPermissionRequest;
-class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
 class WebColorPickerResultListenerProxy;
 class WebFrameProxy;

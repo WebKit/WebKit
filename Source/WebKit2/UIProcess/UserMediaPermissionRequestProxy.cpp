@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -39,18 +40,18 @@ void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const 
     if (!m_manager)
         return;
 
-    m_manager->didReceiveUserMediaPermissionDecision(m_userMediaID, true, audioDeviceUID, videoDeviceUID);
-    m_manager = nullptr;
+    m_manager->userMediaAccessWasGranted(m_userMediaID, audioDeviceUID, videoDeviceUID);
+    invalidate();
 }
 
-void UserMediaPermissionRequestProxy::deny()
+void UserMediaPermissionRequestProxy::deny(UserMediaAccessDenialReason reason)
 {
     ASSERT(m_manager);
     if (!m_manager)
         return;
 
-    m_manager->didReceiveUserMediaPermissionDecision(m_userMediaID, false, emptyString(), emptyString());
-    m_manager = nullptr;
+    m_manager->userMediaAccessWasDenied(m_userMediaID, reason);
+    invalidate();
 }
 
 void UserMediaPermissionRequestProxy::invalidate()

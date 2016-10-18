@@ -686,6 +686,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKCookieManagerDeleteAllCookies(WKContextGetCookieManager(m_context.get()));
 
+    WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
+
     platformResetPreferencesToConsistentValues();
 }
 
@@ -1956,26 +1958,32 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         if (settings)
             persistentPermission = settings->persistentPermission();
 
+        if (!m_isUserMediaPermissionAllowed && !persistentPermission) {
+            WKUserMediaPermissionRequestDeny(request, kWKPermissionDenied);
+            continue;
+        }
+
         WKRetainPtr<WKArrayRef> audioDeviceUIDs = WKUserMediaPermissionRequestAudioDeviceUIDs(request);
         WKRetainPtr<WKArrayRef> videoDeviceUIDs = WKUserMediaPermissionRequestVideoDeviceUIDs(request);
 
-        if ((m_isUserMediaPermissionAllowed || persistentPermission) && (WKArrayGetSize(videoDeviceUIDs.get()) || WKArrayGetSize(audioDeviceUIDs.get()))) {
-            WKRetainPtr<WKStringRef> videoDeviceUID;
-            if (WKArrayGetSize(videoDeviceUIDs.get()))
-                videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));
-            else
-                videoDeviceUID = WKStringCreateWithUTF8CString("");
+        if (!WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
+            WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
+            continue;
+        }
 
-            WKRetainPtr<WKStringRef> audioDeviceUID;
-            if (WKArrayGetSize(audioDeviceUIDs.get()))
-                audioDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(audioDeviceUIDs.get(), 0));
-            else
-                audioDeviceUID = WKStringCreateWithUTF8CString("");
+        WKRetainPtr<WKStringRef> videoDeviceUID;
+        if (WKArrayGetSize(videoDeviceUIDs.get()))
+            videoDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(videoDeviceUIDs.get(), 0));
+        else
+            videoDeviceUID = WKStringCreateWithUTF8CString("");
 
-            WKUserMediaPermissionRequestAllow(request, audioDeviceUID.get(), videoDeviceUID.get());
+        WKRetainPtr<WKStringRef> audioDeviceUID;
+        if (WKArrayGetSize(audioDeviceUIDs.get()))
+            audioDeviceUID = reinterpret_cast<WKStringRef>(WKArrayGetItemAtIndex(audioDeviceUIDs.get(), 0));
+        else
+            audioDeviceUID = WKStringCreateWithUTF8CString("");
 
-        } else
-            WKUserMediaPermissionRequestDeny(request);
+        WKUserMediaPermissionRequestAllow(request, audioDeviceUID.get(), videoDeviceUID.get());
     }
     m_userMediaPermissionRequests.clear();
 }

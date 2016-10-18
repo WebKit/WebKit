@@ -33,7 +33,6 @@
 #include "CaptureDevice.h"
 #include "MediaConstraintsMock.h"
 #include "MediaStream.h"
-#include "MediaStreamCreationClient.h"
 #include "MediaStreamPrivate.h"
 #include "MediaStreamTrack.h"
 #include "MockRealtimeAudioSource.h"
@@ -67,17 +66,15 @@ MockRealtimeMediaSourceCenter::MockRealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsDeviceId(true);
 }
 
-void MockRealtimeMediaSourceCenter::validateRequestConstraints(MediaStreamCreationClient* client, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void MockRealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandler validHandler, InvalidConstraintsHandler invalidHandler, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
 {
-    ASSERT(client);
-
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
     if (audioConstraints.isValid()) {
         String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Audio, audioConstraints);
         if (!invalidQuery.isEmpty()) {
-            client->constraintsInvalid(invalidQuery);
+            invalidHandler(invalidQuery);
             return;
         }
 
@@ -88,7 +85,7 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(MediaStreamCreati
     if (videoConstraints.isValid()) {
         String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Video, videoConstraints);
         if (!invalidQuery.isEmpty()) {
-            client->constraintsInvalid(invalidQuery);
+            invalidHandler(invalidQuery);
             return;
         }
 
@@ -96,59 +93,24 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(MediaStreamCreati
         videoSources.append(WTFMove(videoSource));
     }
 
-    client->constraintsValidated(audioSources, videoSources);
+    validHandler(WTFMove(audioSources), WTFMove(videoSources));
 }
 
-void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, MediaConstraints& audioConstraints, MediaConstraints& videoConstraints)
+void MockRealtimeMediaSourceCenter::createMediaStream(NewMediaStreamHandler completionHandler, const String& audioDeviceID, const String& videoDeviceID)
 {
-    RefPtr<MediaStreamCreationClient> client = prpQueryClient;
-
-    ASSERT(client);
-    
     Vector<RefPtr<RealtimeMediaSource>> audioSources;
     Vector<RefPtr<RealtimeMediaSource>> videoSources;
 
-    if (audioConstraints.isValid()) {
-        const String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Audio, audioConstraints);
-        if (!invalidQuery.isEmpty()) {
-            client->failedToCreateStreamWithConstraintsError(invalidQuery);
-            return;
-        }
+    if (audioDeviceID == MockRealtimeMediaSource::mockAudioSourcePersistentID())
+        audioSources.append(MockRealtimeAudioSource::create());
 
-        auto audioSource = MockRealtimeAudioSource::create();
-        audioSources.append(WTFMove(audioSource));
-    }
+    if (videoDeviceID == MockRealtimeMediaSource::mockVideoSourcePersistentID())
+        videoSources.append(MockRealtimeVideoSource::create());
 
-    if (videoConstraints.isValid()) {
-        const String invalidQuery = MediaConstraintsMock::verifyConstraints(RealtimeMediaSource::Video, videoConstraints);
-        if (!invalidQuery.isEmpty()) {
-            client->failedToCreateStreamWithConstraintsError(invalidQuery);
-            return;
-        }
-
-        auto videoSource = MockRealtimeVideoSource::create();
-        videoSources.append(WTFMove(videoSource));
-    }
-    
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
-}
-
-void MockRealtimeMediaSourceCenter::createMediaStream(MediaStreamCreationClient* client, const String& audioDeviceID, const String& videoDeviceID)
-{
-    ASSERT(client);
-    Vector<RefPtr<RealtimeMediaSource>> audioSources;
-    Vector<RefPtr<RealtimeMediaSource>> videoSources;
-
-    if (!audioDeviceID.isEmpty() && audioDeviceID == MockRealtimeMediaSource::mockAudioSourcePersistentID()) {
-        auto audioSource = MockRealtimeAudioSource::create();
-        audioSources.append(WTFMove(audioSource));
-    }
-    if (!videoDeviceID.isEmpty() && videoDeviceID == MockRealtimeMediaSource::mockVideoSourcePersistentID()) {
-        auto videoSource = MockRealtimeVideoSource::create();
-        videoSources.append(WTFMove(videoSource));
-    }
-
-    client->didCreateStream(MediaStreamPrivate::create(audioSources, videoSources));
+    if (videoSources.isEmpty() && audioSources.isEmpty())
+        completionHandler(nullptr);
+    else
+        completionHandler(MediaStreamPrivate::create(audioSources, videoSources));
 }
 
 Vector<CaptureDevice> MockRealtimeMediaSourceCenter::getMediaStreamDevices()

@@ -44,7 +44,8 @@
             function error1(e) {
                 errorArg = e;
                 testPassed('Error callback called.');
-                shouldBeEqualToString('errorArg.name', 'OverConstrainedError');
+                shouldBeEqualToString('errorArg.name', 'OverconstrainedError');
+                shouldBeEqualToString('errorArg.message', 'Invalid constraint');
 
                 shouldThrow("navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, 0);");
                 shouldNotThrow("navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, error);");

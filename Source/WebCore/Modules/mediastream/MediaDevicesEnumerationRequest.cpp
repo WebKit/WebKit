@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,46 @@
  */
 
 #include "config.h"
-#include "UserMediaPermissionCheck.h"
+#include "MediaDevicesEnumerationRequest.h"
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "JSMediaDeviceInfo.h"
 #include "MainFrame.h"
-#include "RealtimeMediaSourceCenter.h"
 #include "SecurityOrigin.h"
 #include "UserMediaController.h"
 
 namespace WebCore {
 
-Ref<UserMediaPermissionCheck> UserMediaPermissionCheck::create(Document& document, UserMediaPermissionCheckClient& client)
+Ref<MediaDevicesEnumerationRequest> MediaDevicesEnumerationRequest::create(Document& document, CompletionHandler&& completionHandler)
 {
-    return adoptRef(*new UserMediaPermissionCheck(document, client));
+    return adoptRef(*new MediaDevicesEnumerationRequest(document, WTFMove(completionHandler)));
 }
 
-UserMediaPermissionCheck::UserMediaPermissionCheck(ScriptExecutionContext& context, UserMediaPermissionCheckClient& client)
+MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest(ScriptExecutionContext& context, CompletionHandler&& completionHandler)
     : ContextDestructionObserver(&context)
-    , m_client(&client)
+    , m_completionHandler(WTFMove(completionHandler))
 {
 }
 
-UserMediaPermissionCheck::~UserMediaPermissionCheck()
+MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest()
 {
 }
 
-SecurityOrigin* UserMediaPermissionCheck::userMediaDocumentOrigin() const
+SecurityOrigin* MediaDevicesEnumerationRequest::userMediaDocumentOrigin() const
 {
-    if (m_scriptExecutionContext)
-        return m_scriptExecutionContext->securityOrigin();
+    if (!scriptExecutionContext())
+        return nullptr;
 
-    return nullptr;
+    return scriptExecutionContext()->securityOrigin();
 }
 
-SecurityOrigin* UserMediaPermissionCheck::topLevelDocumentOrigin() const
+SecurityOrigin* MediaDevicesEnumerationRequest::topLevelDocumentOrigin() const
 {
-    if (!m_scriptExecutionContext)
+    if (!scriptExecutionContext())
         return nullptr;
 
     if (Frame* frame = downcast<Document>(*scriptExecutionContext()).frame()) {
@@ -73,33 +72,41 @@ SecurityOrigin* UserMediaPermissionCheck::topLevelDocumentOrigin() const
             return nullptr;
     }
 
-    return m_scriptExecutionContext->topOrigin();
+    return scriptExecutionContext()->topOrigin();
 }
 
-void UserMediaPermissionCheck::contextDestroyed()
+void MediaDevicesEnumerationRequest::contextDestroyed()
 {
+    cancel();
     ContextDestructionObserver::contextDestroyed();
 }
 
-void UserMediaPermissionCheck::start()
+void MediaDevicesEnumerationRequest::start()
 {
     ASSERT(scriptExecutionContext());
 
     auto& document = downcast<Document>(*scriptExecutionContext());
-    UserMediaController* controller = UserMediaController::from(document.page());
+    auto* controller = UserMediaController::from(document.page());
     if (!controller)
         return;
 
-    controller->checkUserMediaPermission(*this);
+    controller->enumerateMediaDevices(*this);
 }
 
-void UserMediaPermissionCheck::setUserMediaAccessInfo(const String& mediaDeviceIdentifierHashSalt, bool hasPersistentPermission)
+void MediaDevicesEnumerationRequest::cancel()
 {
-    m_hasPersistentPermission = hasPersistentPermission;
-    m_mediaDeviceIdentifierHashSalt = mediaDeviceIdentifierHashSalt;
+    m_completionHandler = nullptr;
+}
 
-    if (m_client)
-        m_client->didCompletePermissionCheck(m_mediaDeviceIdentifierHashSalt, m_hasPersistentPermission);
+void MediaDevicesEnumerationRequest::setDeviceInfo(const Vector<CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
+{
+    m_deviceList = deviceList;
+    m_deviceIdentifierHashSalt = deviceIdentifierHashSalt;
+    m_originHasPersistentAccess = originHasPersistentAccess;
+
+    if (m_completionHandler)
+        m_completionHandler(m_deviceList, m_deviceIdentifierHashSalt, m_originHasPersistentAccess);
+    m_completionHandler = nullptr;
 }
 
 } // namespace WebCore

@@ -39,32 +39,36 @@
 
 namespace WebCore {
 
-class ArrayValue;
-class Dictionary;
+struct MediaConstraintsData {
+    MediaTrackConstraintSetMap mandatoryConstraints;
+    Vector<MediaTrackConstraintSetMap> advancedConstraints;
+    bool isValid { false };
+};
 
 class MediaConstraintsImpl final : public MediaConstraints {
 public:
-    static Ref<MediaConstraintsImpl> create();
     static Ref<MediaConstraintsImpl> create(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid);
+    WEBCORE_EXPORT static Ref<MediaConstraintsImpl> create(const MediaConstraintsData&);
 
-    virtual ~MediaConstraintsImpl();
+    MediaConstraintsImpl() = default;
+    virtual ~MediaConstraintsImpl() = default;
 
-    const MediaTrackConstraintSetMap& mandatoryConstraints() const final { return m_mandatoryConstraints; }
-    const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const final { return m_advancedConstraints; }
-    bool isValid() const final { return m_isValid; }
+    const MediaTrackConstraintSetMap& mandatoryConstraints() const final { return m_data.mandatoryConstraints; }
+    const Vector<MediaTrackConstraintSetMap>& advancedConstraints() const final { return m_data.advancedConstraints; }
+    bool isValid() const final { return m_data.isValid; }
+    const MediaConstraintsData& data() const { return m_data; }
 
 private:
-    MediaConstraintsImpl() { }
     MediaConstraintsImpl(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)
-        : m_mandatoryConstraints(WTFMove(mandatoryConstraints))
-        , m_advancedConstraints(WTFMove(advancedConstraints))
-        , m_isValid(isValid)
+        : m_data({ WTFMove(mandatoryConstraints), WTFMove(advancedConstraints), isValid })
+    {
+    }
+    explicit MediaConstraintsImpl(const MediaConstraintsData& data)
+        : m_data(data)
     {
     }
 
-    MediaTrackConstraintSetMap m_mandatoryConstraints;
-    Vector<MediaTrackConstraintSetMap> m_advancedConstraints;
-    bool m_isValid;
+    MediaConstraintsData m_data;
 };
 
 } // namespace WebCore

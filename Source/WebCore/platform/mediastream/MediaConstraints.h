@@ -48,12 +48,6 @@ class MediaConstraint {
 public:
     enum class DataType { None, Integer, Double, Boolean, String };
 
-    virtual ~MediaConstraint() { };
-
-    virtual bool isEmpty() const { return true; }
-    virtual bool isMandatory() const { return false; }
-    virtual void merge(const MediaConstraint&) { }
-
     bool isInt() const { return m_dataType == DataType::Integer; }
     bool isDouble() const { return m_dataType == DataType::Double; }
     bool isBoolean() const { return m_dataType == DataType::Boolean; }
@@ -63,19 +57,42 @@ public:
     MediaConstraintType constraintType() const { return m_constraintType; }
     const String& name() const { return m_name; }
 
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder.encodeEnum(m_constraintType);
+        encoder << m_name;
+        encoder.encodeEnum(m_dataType);
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, MediaConstraint& constraint)
+    {
+        if (!decoder.decodeEnum(constraint.m_constraintType))
+            return false;
+
+        if (!decoder.decode(constraint.m_name))
+            return false;
+
+        if (!decoder.decodeEnum(constraint.m_dataType))
+            return false;
+
+        return true;
+    }
+
 protected:
-    explicit MediaConstraint(const AtomicString& name, MediaConstraintType constraintType, DataType dataType)
+    MediaConstraint(const String& name, MediaConstraintType constraintType, DataType dataType)
         : m_name(name)
         , m_constraintType(constraintType)
         , m_dataType(dataType)
     {
     }
 
+    MediaConstraint() = default;
+    ~MediaConstraint() = default;
 
 private:
-    AtomicString m_name;
-    MediaConstraintType m_constraintType;
-    DataType m_dataType;
+    String m_name;
+    MediaConstraintType m_constraintType { MediaConstraintType::Unknown };
+    DataType m_dataType { DataType::None };
 };
 
 template<class ValueType>
@@ -212,14 +229,43 @@ public:
         return 0;
     }
 
-    bool isEmpty() const override { return !m_min && !m_max && !m_exact && !m_ideal; }
-    bool isMandatory() const override { return m_min || m_max || m_exact; }
+    bool isEmpty() const { return !m_min && !m_max && !m_exact && !m_ideal; }
+    bool isMandatory() const { return m_min || m_max || m_exact; }
+
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        MediaConstraint::encode(encoder);
+
+        encoder << m_min;
+        encoder << m_max;
+        encoder << m_exact;
+        encoder << m_ideal;
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, NumericConstraint& constraint)
+    {
+        if (!MediaConstraint::decode(decoder, constraint))
+            return false;
+
+        if (!decoder.decode(constraint.m_min))
+            return false;
+        if (!decoder.decode(constraint.m_max))
+            return false;
+        if (!decoder.decode(constraint.m_exact))
+            return false;
+        if (!decoder.decode(constraint.m_ideal))
+            return false;
+    
+        return true;
+    }
 
 protected:
-    explicit NumericConstraint(const AtomicString& name, MediaConstraintType type, DataType dataType)
+    NumericConstraint(const String& name, MediaConstraintType type, DataType dataType)
         : MediaConstraint(name, type, dataType)
     {
     }
+
+    NumericConstraint() = default;
 
     void innerMerge(const NumericConstraint& other)
     {
@@ -255,12 +301,15 @@ protected:
 
 class IntConstraint final : public NumericConstraint<int> {
 public:
-    explicit IntConstraint(const AtomicString& name, MediaConstraintType type)
+    IntConstraint(const String& name, MediaConstraintType type)
         : NumericConstraint<int>(name, type, DataType::Integer)
     {
     }
 
-    void merge(const MediaConstraint& other) final {
+    IntConstraint() = default;
+
+    void merge(const MediaConstraint& other)
+    {
         ASSERT(other.isInt());
         NumericConstraint::innerMerge(downcast<const IntConstraint>(other));
     }
@@ -268,12 +317,15 @@ public:
 
 class DoubleConstraint final : public NumericConstraint<double> {
 public:
-    explicit DoubleConstraint(const AtomicString& name, MediaConstraintType type)
+    DoubleConstraint(const String& name, MediaConstraintType type)
         : NumericConstraint<double>(name, type, DataType::Double)
     {
     }
 
-    void merge(const MediaConstraint& other) final {
+    DoubleConstraint() = default;
+
+    void merge(const MediaConstraint& other)
+    {
         ASSERT(other.isDouble());
         NumericConstraint::innerMerge(downcast<DoubleConstraint>(other));
     }
@@ -281,16 +333,33 @@ public:
 
 class BooleanConstraint final : public MediaConstraint {
 public:
-    explicit BooleanConstraint(const AtomicString& name, MediaConstraintType type)
+    BooleanConstraint(const String& name, MediaConstraintType type)
         : MediaConstraint(name, type, DataType::Boolean)
     {
     }
 
+    BooleanConstraint() = default;
+
     void setExact(bool value) { m_exact = value; }
     void setIdeal(bool value) { m_ideal = value; }
 
-    bool getExact(bool&) const;
-    bool getIdeal(bool&) const;
+    bool getExact(bool& exact) const
+    {
+        if (!m_exact)
+            return false;
+
+        exact = m_exact.value();
+        return true;
+    }
+
+    bool getIdeal(bool& ideal) const
+    {
+        if (!m_ideal)
+            return false;
+
+        ideal = m_ideal.value();
+        return true;
+    }
 
     double fitnessDistance(bool value) const
     {
@@ -315,7 +384,8 @@ public:
         return 1;
     }
 
-    void merge(const MediaConstraint& other) final {
+    void merge(const MediaConstraint& other)
+    {
         ASSERT(other.isBoolean());
         const BooleanConstraint& typedOther = downcast<BooleanConstraint>(other);
 
@@ -332,37 +402,113 @@ public:
         }
     }
 
-    bool isEmpty() const final { return !m_exact && !m_ideal; };
-    bool isMandatory() const final { return bool(m_exact); }
+    bool isEmpty() const { return !m_exact && !m_ideal; };
+    bool isMandatory() const { return bool(m_exact); }
+
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        MediaConstraint::encode(encoder);
+        encoder << m_exact;
+        encoder << m_ideal;
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, BooleanConstraint& constraint)
+    {
+        if (!MediaConstraint::decode(decoder, constraint))
+            return false;
+
+        if (!decoder.decode(constraint.m_exact))
+            return false;
+        if (!decoder.decode(constraint.m_ideal))
+            return false;
+
+        return true;
+    }
 
 private:
     Optional<bool> m_exact;
     Optional<bool> m_ideal;
 };
 
-class StringConstraint final : public MediaConstraint {
+class StringConstraint : public MediaConstraint {
 public:
-    explicit StringConstraint(const AtomicString& name, MediaConstraintType type)
+    StringConstraint(const String& name, MediaConstraintType type)
         : MediaConstraint(name, type, DataType::String)
     {
     }
 
-    void setExact(const String&);
-    void appendExact(const String&);
-    void setIdeal(const String&);
-    void appendIdeal(const String&);
+    StringConstraint() = default;
 
-    bool getExact(Vector<String>&) const;
-    bool getIdeal(Vector<String>&) const;
+    void setExact(const String& value)
+    {
+        m_exact.clear();
+        m_exact.append(value);
+    }
+
+    void appendExact(const String& value)
+    {
+        m_exact.clear();
+        m_exact.append(value);
+    }
+
+    void setIdeal(const String& value)
+    {
+        m_ideal.clear();
+        m_ideal.append(value);
+    }
+
+    void appendIdeal(const String& value)
+    {
+        m_ideal.append(value);
+    }
+
+    bool getExact(Vector<String>& exact) const
+    {
+        if (!m_exact.isEmpty())
+            return false;
+
+        exact = m_exact;
+        return true;
+    }
+
+    bool getIdeal(Vector<String>& ideal) const
+    {
+        if (!m_ideal.isEmpty())
+            return false;
+
+        ideal = m_ideal;
+        return true;
+    }
 
     double fitnessDistance(const String&) const;
     double fitnessDistance(const Vector<String>&) const;
 
     const String& find(std::function<bool(const String&)>) const;
-    void merge(const MediaConstraint&) final;
 
-    bool isEmpty() const final { return m_exact.isEmpty() && m_ideal.isEmpty(); }
-    bool isMandatory() const final { return !m_exact.isEmpty(); }
+    bool isEmpty() const { return m_exact.isEmpty() && m_ideal.isEmpty(); }
+    bool isMandatory() const { return !m_exact.isEmpty(); }
+    WEBCORE_EXPORT void merge(const MediaConstraint&);
+
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        MediaConstraint::encode(encoder);
+
+        encoder << m_exact;
+        encoder << m_ideal;
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, StringConstraint& constraint)
+    {
+        if (!MediaConstraint::decode(decoder, constraint))
+            return false;
+
+        if (!decoder.decode(constraint.m_exact))
+            return false;
+        if (!decoder.decode(constraint.m_ideal))
+            return false;
+
+        return true;
+    }
 
 private:
     Vector<String> m_exact;
@@ -371,27 +517,77 @@ private:
 
 class UnknownConstraint final : public MediaConstraint {
 public:
-    explicit UnknownConstraint(const AtomicString& name, MediaConstraintType type)
+    UnknownConstraint(const String& name, MediaConstraintType type)
         : MediaConstraint(name, type, DataType::None)
     {
     }
 
 private:
-    bool isEmpty() const final { return true; }
-    bool isMandatory() const final { return false; }
-    void merge(const MediaConstraint&) final { }
+    bool isEmpty() const { return true; }
+    bool isMandatory() const { return false; }
+    void merge(const MediaConstraint&) { }
 };
 
 class MediaTrackConstraintSetMap {
 public:
-    void forEach(std::function<void(const MediaConstraint&)>) const;
+    WEBCORE_EXPORT void forEach(std::function<void(const MediaConstraint&)>) const;
     void filter(std::function<bool(const MediaConstraint&)>) const;
     bool isEmpty() const;
+    WEBCORE_EXPORT size_t size() const;
 
-    void set(MediaConstraintType, Optional<IntConstraint>&&);
-    void set(MediaConstraintType, Optional<DoubleConstraint>&&);
-    void set(MediaConstraintType, Optional<BooleanConstraint>&&);
-    void set(MediaConstraintType, Optional<StringConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, Optional<IntConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, Optional<DoubleConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, Optional<BooleanConstraint>&&);
+    WEBCORE_EXPORT void set(MediaConstraintType, Optional<StringConstraint>&&);
+
+    template <class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << m_width;
+        encoder << m_height;
+        encoder << m_sampleRate;
+        encoder << m_sampleSize;
+
+        encoder << m_aspectRatio;
+        encoder << m_frameRate;
+        encoder << m_volume;
+
+        encoder << m_echoCancellation;
+
+        encoder << m_facingMode;
+        encoder << m_deviceId;
+        encoder << m_groupId;
+    }
+
+    template <class Decoder> static bool decode(Decoder& decoder, MediaTrackConstraintSetMap& map)
+    {
+        if (!decoder.decode(map.m_width))
+            return false;
+        if (!decoder.decode(map.m_height))
+            return false;
+        if (!decoder.decode(map.m_sampleRate))
+            return false;
+        if (!decoder.decode(map.m_sampleSize))
+            return false;
+
+        if (!decoder.decode(map.m_aspectRatio))
+            return false;
+        if (!decoder.decode(map.m_frameRate))
+            return false;
+        if (!decoder.decode(map.m_volume))
+            return false;
+
+        if (!decoder.decode(map.m_echoCancellation))
+            return false;
+
+        if (!decoder.decode(map.m_facingMode))
+            return false;
+        if (!decoder.decode(map.m_deviceId))
+            return false;
+        if (!decoder.decode(map.m_groupId))
+            return false;
+
+        return true;
+    }
 
 private:
     Optional<IntConstraint> m_width;

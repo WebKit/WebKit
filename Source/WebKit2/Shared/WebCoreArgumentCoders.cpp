@@ -93,6 +93,11 @@
 #include <WebCore/MediaSessionMetadata.h>
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include <WebCore/CaptureDevice.h>
+#include <WebCore/MediaConstraintsImpl.h>
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -2218,6 +2223,85 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
     
     return true;
 }
+
+#if ENABLE(MEDIA_STREAM)
+void ArgumentCoder<MediaConstraintsData>::encode(Encoder& encoder, const WebCore::MediaConstraintsData& constraint)
+{
+    encoder << constraint.mandatoryConstraints;
+
+    auto& advancedConstraints = constraint.advancedConstraints;
+    encoder << static_cast<uint64_t>(advancedConstraints.size());
+    for (const auto& advancedConstraint : advancedConstraints)
+        encoder << advancedConstraint;
+
+    encoder << constraint.isValid;
+}
+
+bool ArgumentCoder<MediaConstraintsData>::decode(Decoder& decoder, WebCore::MediaConstraintsData& constraints)
+{
+    MediaTrackConstraintSetMap mandatoryConstraints;
+    if (!decoder.decode(mandatoryConstraints))
+        return false;
+
+    uint64_t advancedCount;
+    if (!decoder.decode(advancedCount))
+        return false;
+
+    Vector<MediaTrackConstraintSetMap> advancedConstraints;
+    advancedConstraints.reserveInitialCapacity(advancedCount);
+    for (size_t i = 0; i < advancedCount; ++i) {
+        MediaTrackConstraintSetMap map;
+        if (!decoder.decode(map))
+            return false;
+
+        advancedConstraints.uncheckedAppend(WTFMove(map));
+    }
+
+    bool isValid;
+    if (!decoder.decode(isValid))
+        return false;
+
+    constraints.mandatoryConstraints = WTFMove(mandatoryConstraints);
+    constraints.advancedConstraints = WTFMove(advancedConstraints);
+    constraints.isValid = isValid;
+
+    return true;
+}
+
+void ArgumentCoder<CaptureDevice>::encode(Encoder& encoder, const WebCore::CaptureDevice& device)
+{
+    encoder << device.persistentId();
+    encoder << device.label();
+    encoder << device.groupId();
+    encoder.encodeEnum(device.kind());
+}
+
+bool ArgumentCoder<CaptureDevice>::decode(Decoder& decoder, WebCore::CaptureDevice& device)
+{
+    String persistentId;
+    if (!decoder.decode(persistentId))
+        return false;
+
+    String label;
+    if (!decoder.decode(label))
+        return false;
+
+    String groupId;
+    if (!decoder.decode(groupId))
+        return false;
+
+    CaptureDevice::SourceKind kind;
+    if (!decoder.decodeEnum(kind))
+        return false;
+
+    device.setPersistentId(persistentId);
+    device.setLabel(label);
+    device.setGroupId(groupId);
+    device.setKind(kind);
+
+    return true;
+}
+#endif
 
 
 } // namespace IPC

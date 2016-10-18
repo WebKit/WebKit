@@ -1159,8 +1159,10 @@ private:
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
 #if ENABLE(MEDIA_STREAM)
-    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID);
-    void didCompleteUserMediaPermissionCheck(uint64_t userMediaID, const String&, bool allowed);
+    void userMediaAccessWasGranted(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID);
+    void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint);
+
+    void didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<WebCore::CaptureDevice>& devices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);

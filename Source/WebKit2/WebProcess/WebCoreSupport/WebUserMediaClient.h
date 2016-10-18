@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,6 +31,7 @@ class WebPage;
 class WebUserMediaClient : public WebCore::UserMediaClient {
 public:
     WebUserMediaClient(WebPage&);
+    ~WebUserMediaClient() { }
 
 private:
     void pageDestroyed() override;
@@ -37,8 +39,8 @@ private:
     void requestUserMediaAccess(WebCore::UserMediaRequest&) override;
     void cancelUserMediaAccessRequest(WebCore::UserMediaRequest&) override;
 
-    void checkUserMediaPermission(WebCore::UserMediaPermissionCheck&) override;
-    void cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck&) override;
+    void enumerateMediaDevices(WebCore::MediaDevicesEnumerationRequest&) final;
+    void cancelMediaDevicesEnumerationRequest(WebCore::MediaDevicesEnumerationRequest&) final;
 
     WebPage& m_page;
 };

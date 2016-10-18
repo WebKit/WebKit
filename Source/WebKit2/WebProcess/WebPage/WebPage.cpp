@@ -3681,14 +3681,19 @@ void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, 
 }
 
 #if ENABLE(MEDIA_STREAM)
-void WebPage::didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, const String& audioDeviceUID, const String& videoDeviceUID)
+void WebPage::userMediaAccessWasGranted(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID)
 {
-    m_userMediaPermissionRequestManager.didReceiveUserMediaPermissionDecision(userMediaID, allowed, audioDeviceUID, videoDeviceUID);
+    m_userMediaPermissionRequestManager.userMediaAccessWasGranted(userMediaID, audioDeviceUID, videoDeviceUID);
 }
 
-void WebPage::didCompleteUserMediaPermissionCheck(uint64_t userMediaID, const String& mediaDeviceIdentifierHashSalt, bool allowed)
+void WebPage::userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
 {
-    m_userMediaPermissionRequestManager.didCompleteUserMediaPermissionCheck(userMediaID, mediaDeviceIdentifierHashSalt, allowed);
+    m_userMediaPermissionRequestManager.userMediaAccessWasDenied(userMediaID, static_cast<UserMediaRequest::MediaAccessDenialReason>(reason), invalidConstraint);
+}
+
+void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<CaptureDevice>& devices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
+{
+    m_userMediaPermissionRequestManager.didCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess);
 }
 #endif
 

@@ -355,6 +355,7 @@ def headers_for_type(type):
         'WebCore::Highlight': ['<WebCore/InspectorOverlay.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
+        'WebCore::MediaConstraintsData': ['<WebCore/MediaConstraintsImpl.h>'],
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardWebContent': ['<WebCore/Pasteboard.h>'],
         'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],

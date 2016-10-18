@@ -38,65 +38,6 @@
 
 namespace WebCore {
 
-bool BooleanConstraint::getExact(bool& exact) const
-{
-    if (!m_exact)
-        return false;
-    
-    exact = m_exact.value();
-    return true;
-}
-
-bool BooleanConstraint::getIdeal(bool& ideal) const
-{
-    if (!m_ideal)
-        return false;
-    
-    ideal = m_ideal.value();
-    return true;
-}
-
-void StringConstraint::setExact(const String& value)
-{
-    m_exact.clear();
-    m_exact.append(value);
-}
-
-void StringConstraint::appendExact(const String& value)
-{
-    m_exact.clear();
-    m_exact.append(value);
-}
-
-void StringConstraint::setIdeal(const String& value)
-{
-    m_ideal.clear();
-    m_ideal.append(value);
-}
-
-void StringConstraint::appendIdeal(const String& value)
-{
-    m_ideal.append(value);
-}
-
-bool StringConstraint::getExact(Vector<String>& exact) const
-{
-    if (!m_exact.isEmpty())
-        return false;
-
-    exact = m_exact;
-    return true;
-}
-
-bool StringConstraint::getIdeal(Vector<String>& ideal) const
-{
-    if (!m_ideal.isEmpty())
-        return false;
-
-    ideal = m_ideal;
-    return true;
-}
-
 const String& StringConstraint::find(std::function<bool(const String&)> filter) const
 {
     for (auto& constraint : m_exact) {
@@ -153,7 +94,7 @@ void StringConstraint::merge(const MediaConstraint& other)
     ASSERT(other.isString());
     const StringConstraint& typedOther = downcast<StringConstraint>(other);
 
-    if (other.isEmpty())
+    if (typedOther.isEmpty())
         return;
 
     Vector<String> values;
@@ -229,36 +170,14 @@ void FlattenedConstraint::append(const MediaConstraint& constraint)
 #endif
 
     m_variants.append(ConstraintHolder::create(constraint));
-
 }
 
 void MediaTrackConstraintSetMap::forEach(std::function<void(const MediaConstraint&)> callback) const
 {
-    if (m_width && !m_width->isEmpty())
-        callback(*m_width);
-    if (m_height && !m_height->isEmpty())
-        callback(*m_height);
-    if (m_sampleRate && !m_sampleRate->isEmpty())
-        callback(*m_sampleRate);
-    if (m_sampleSize && !m_sampleSize->isEmpty())
-        callback(*m_sampleSize);
-
-    if (m_aspectRatio && !m_aspectRatio->isEmpty())
-        callback(*m_aspectRatio);
-    if (m_frameRate && !m_frameRate->isEmpty())
-        callback(*m_frameRate);
-    if (m_volume && !m_volume->isEmpty())
-        callback(*m_volume);
-
-    if (m_echoCancellation && !m_echoCancellation->isEmpty())
-        callback(*m_echoCancellation);
-
-    if (m_facingMode && !m_facingMode->isEmpty())
-        callback(*m_facingMode);
-    if (m_deviceId && !m_deviceId->isEmpty())
-        callback(*m_deviceId);
-    if (m_groupId && !m_groupId->isEmpty())
-        callback(*m_groupId);
+    filter([callback] (const MediaConstraint& constraint) mutable {
+        callback(constraint);
+        return false;
+    });
 }
 
 void MediaTrackConstraintSetMap::filter(std::function<bool(const MediaConstraint&)> callback) const
@@ -288,21 +207,6 @@ void MediaTrackConstraintSetMap::filter(std::function<bool(const MediaConstraint
         return;
     if (m_groupId && !m_groupId->isEmpty() && callback(*m_groupId))
         return;
-}
-
-bool MediaTrackConstraintSetMap::isEmpty() const
-{
-    return (!m_width || m_width->isEmpty())
-        && (!m_height || m_height->isEmpty())
-        && (!m_sampleRate || m_sampleRate->isEmpty())
-        && (!m_sampleSize || m_sampleSize->isEmpty())
-        && (!m_aspectRatio || m_aspectRatio->isEmpty())
-        && (!m_frameRate || m_frameRate->isEmpty())
-        && (!m_volume || m_volume->isEmpty())
-        && (!m_echoCancellation || m_echoCancellation->isEmpty())
-        && (!m_facingMode || m_facingMode->isEmpty())
-        && (!m_deviceId || m_deviceId->isEmpty())
-        && (!m_groupId || m_groupId->isEmpty());
 }
 
 void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optional<IntConstraint>&& constraint)
@@ -409,6 +313,21 @@ void MediaTrackConstraintSetMap::set(MediaConstraintType constraintType, Optiona
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+size_t MediaTrackConstraintSetMap::size() const
+{
+    size_t count = 0;
+    forEach([&count] (const MediaConstraint&) mutable {
+        ++count;
+    });
+
+    return count;
+}
+
+bool MediaTrackConstraintSetMap::isEmpty() const
+{
+    return !size();
 }
 
 }

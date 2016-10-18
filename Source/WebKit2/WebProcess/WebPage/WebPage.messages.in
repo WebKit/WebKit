@@ -288,8 +288,9 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam
-    DidReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed, String audioDeviceUID, String videoDeviceUID)
-    DidCompleteUserMediaPermissionCheck(uint64_t userMediaID, String mediaDeviceIdentifierHashSalt, bool allowed)
+    UserMediaAccessWasGranted(uint64_t userMediaID, String audioDeviceUID, String videoDeviceUID)
+    UserMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint)
+    DidCompleteMediaDeviceEnumeration(uint64_t userMediaID, Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt, bool hasPersistentAccess)
 #endif
 
     # Notification

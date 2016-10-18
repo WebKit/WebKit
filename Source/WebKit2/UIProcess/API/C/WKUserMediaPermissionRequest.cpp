@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -38,9 +39,40 @@ void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef userMedia
     toImpl(userMediaPermissionRequestRef)->allow(toWTFString(audioDeviceUID), toWTFString(videoDeviceUID));
 }
 
-void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef)
+static UserMediaPermissionRequestProxy::UserMediaAccessDenialReason toWK(UserMediaPermissionRequestDenialReason reason)
 {
-    toImpl(userMediaPermissionRequestRef)->deny();
+    switch (reason) {
+    case kWKNoConstraints:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints;
+        break;
+    case kWKUserMediaDisabled:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled;
+        break;
+    case kWKNoCaptureDevices:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoCaptureDevices;
+        break;
+    case kWKInvalidConstraint:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::InvalidConstraint;
+        break;
+    case kWKHardwareError:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError;
+        break;
+    case kWKPermissionDenied:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied;
+        break;
+    case kWKOtherFailure:
+        return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure;
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure;
+    
+}
+
+void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef userMediaPermissionRequestRef, UserMediaPermissionRequestDenialReason reason)
+{
+    toImpl(userMediaPermissionRequestRef)->deny(toWK(reason));
 }
 
 WKArrayRef WKUserMediaPermissionRequestVideoDeviceUIDs(WKUserMediaPermissionRequestRef userMediaPermissionRef)

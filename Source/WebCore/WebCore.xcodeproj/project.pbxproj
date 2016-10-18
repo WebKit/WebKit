@@ -136,8 +136,6 @@
 		07277E5317D018CC0015534D /* JSMediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4717D018CC0015534D /* JSMediaStreamTrack.h */; };
 		07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */; };
 		07277E5517D018CC0015534D /* JSMediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */; };
-		07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */; };
-		07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072A70401D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */; };
 		072A70431D7396B300DF0AFC /* JSMediaDevicesCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 072A70421D7396B200DF0AFC /* JSMediaDevicesCustom.h */; };
 		072AE1E5183C0741000A5988 /* PluginReplacement.h in Headers */ = {isa = PBXBuildFile; fileRef = 072AE1DF183C0741000A5988 /* PluginReplacement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -235,7 +233,6 @@
 		078E092F17D14D1C00420AA1 /* UserMediaController.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B8F17CEC32700848E51 /* UserMediaController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093017D14D1C00420AA1 /* UserMediaRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9117CEC32700848E51 /* UserMediaRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9D17CF0AD400848E51 /* MediaStreamPrivate.h */; };
-		078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B9917CF0AD400848E51 /* MediaConstraints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093C17D16E1C00420AA1 /* RTCDataChannelHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E093D17D16E1C00420AA1 /* RTCDataChannelHandlerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -290,6 +287,8 @@
 		07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996718DA3C010018771E /* RTCIceServer.h */; };
 		07AB996F18DA3C740018771E /* RTCConfigurationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */; };
 		07AB997018DA3C740018771E /* RTCIceServerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */; };
+		07ABEF6C1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */; };
+		07ABEF6E1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */; };
 		07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AC47001952102100EE9723 /* ISOVTTCue.h */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
@@ -299,7 +298,7 @@
 		07B5A2DB1464320A00A81ECE /* JSTextTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A2D91464320A00A81ECE /* JSTextTrackList.cpp */; };
 		07B5A2DC1464320A00A81ECE /* JSTextTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B5A2DA1464320A00A81ECE /* JSTextTrackList.h */; };
 		07B5A30D14687D7100A81ECE /* JSTextTrackListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */; };
-		07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116A1D899E63009F0FFB /* CaptureDevice.h */; };
+		07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116A1D899E63009F0FFB /* CaptureDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07B7116E1D899E63009F0FFB /* CaptureDeviceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B7116B1D899E63009F0FFB /* CaptureDeviceManager.cpp */; };
 		07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B7116C1D899E63009F0FFB /* CaptureDeviceManager.h */; };
 		07BDD6EC1469B4C2009C9F85 /* JSTrackEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */; };
@@ -1888,7 +1887,7 @@
 		4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */; };
 		4A0DA2FF129B241900AB61E1 /* FormAssociatedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A0FFA9D1AAF5E750062803B /* MockRealtimeMediaSourceCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0FFA9B1AAF5E6C0062803B /* MockRealtimeMediaSourceCenter.cpp */; };
-		4A0FFA9E1AAF5E7E0062803B /* MockRealtimeMediaSourceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0FFA9C1AAF5E6C0062803B /* MockRealtimeMediaSourceCenter.h */; };
+		4A0FFA9E1AAF5E7E0062803B /* MockRealtimeMediaSourceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0FFA9C1AAF5E6C0062803B /* MockRealtimeMediaSourceCenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A0FFAA11AAF5EA20062803B /* RealtimeMediaSourceCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0FFA9F1AAF5EA20062803B /* RealtimeMediaSourceCenter.cpp */; };
 		4A0FFAA21AAF5EA20062803B /* RealtimeMediaSourceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A0FFAA01AAF5EA20062803B /* RealtimeMediaSourceCenter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4A0FFAA51AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0FFAA31AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp */; };
@@ -6990,7 +6989,6 @@
 		07221B9117CEC32700848E51 /* UserMediaRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaRequest.h; sourceTree = "<group>"; };
 		07221B9917CF0AD400848E51 /* MediaConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstraints.h; sourceTree = "<group>"; };
 		07221B9D17CF0AD400848E51 /* MediaStreamPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamPrivate.h; sourceTree = "<group>"; };
-		07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamCreationClient.h; sourceTree = "<group>"; };
 		07221BA217CF0AD400848E51 /* RTCDataChannelHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandler.h; sourceTree = "<group>"; };
 		07221BA317CF0AD400848E51 /* RTCDataChannelHandlerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerClient.h; sourceTree = "<group>"; };
 		07221BA417CF0AD400848E51 /* RTCDTMFSenderHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDTMFSenderHandler.h; sourceTree = "<group>"; };
@@ -7017,8 +7015,6 @@
 		07277E4817D018CC0015534D /* JSMediaStreamTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamTrackEvent.cpp; sourceTree = "<group>"; };
 		07277E4917D018CC0015534D /* JSMediaStreamTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamTrackEvent.h; sourceTree = "<group>"; };
 		072847E216EBC5B00043CFA4 /* PlatformTextTrack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformTextTrack.h; sourceTree = "<group>"; };
-		07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionCheck.cpp; sourceTree = "<group>"; };
-		07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaPermissionCheck.h; sourceTree = "<group>"; };
 		072A703E1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OverconstrainedErrorEvent.h; sourceTree = "<group>"; };
 		072A703F1D6E8F6200DF0AFC /* OverconstrainedErrorEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OverconstrainedErrorEvent.idl; sourceTree = "<group>"; };
 		072A70421D7396B200DF0AFC /* JSMediaDevicesCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaDevicesCustom.h; sourceTree = "<group>"; };
@@ -7127,6 +7123,8 @@
 		07AB996818DA3C010018771E /* RTCIceServer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceServer.idl; sourceTree = "<group>"; };
 		07AB996D18DA3C740018771E /* RTCConfigurationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfigurationPrivate.h; sourceTree = "<group>"; };
 		07AB996E18DA3C740018771E /* RTCIceServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCIceServerPrivate.h; sourceTree = "<group>"; };
+		07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesEnumerationRequest.cpp; sourceTree = "<group>"; };
+		07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesEnumerationRequest.h; sourceTree = "<group>"; };
 		07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOVTTCue.cpp; sourceTree = "<group>"; };
 		07AC47001952102100EE9723 /* ISOVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOVTTCue.h; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
@@ -14694,6 +14692,8 @@
 				5EA725CD1ACABCD900EAD17B /* MediaDevices.cpp */,
 				5EA725CE1ACABCD900EAD17B /* MediaDevices.h */,
 				5EA725CF1ACABCD900EAD17B /* MediaDevices.idl */,
+ 				07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */,
+ 				07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */,
 				07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */,
 				07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */,
 				5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */,
@@ -14796,8 +14796,6 @@
 				07221B8D17CEC32700848E51 /* UserMediaClient.h */,
 				07221B8E17CEC32700848E51 /* UserMediaController.cpp */,
 				07221B8F17CEC32700848E51 /* UserMediaController.h */,
-				07297FA51C1881C5003F0735 /* UserMediaPermissionCheck.cpp */,
-				07297FA61C1881C5003F0735 /* UserMediaPermissionCheck.h */,
 				07221B9017CEC32700848E51 /* UserMediaRequest.cpp */,
 				07221B9117CEC32700848E51 /* UserMediaRequest.h */,
 			);
@@ -14822,7 +14820,6 @@
 				5EBB892E1C7777D000C65D41 /* MediaEndpointSessionConfiguration.h */,
 				5EBB892F1C7777D000C65D41 /* MediaPayload.h */,
 				070F549717F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h */,
-				07221BA017CF0AD400848E51 /* MediaStreamCreationClient.h */,
 				0711588F17DF633700EDFE2B /* MediaStreamPrivate.cpp */,
 				07221B9D17CF0AD400848E51 /* MediaStreamPrivate.h */,
 				07FFDE66181AED420072D409 /* MediaStreamTrackPrivate.cpp */,
@@ -25501,6 +25498,7 @@
 				7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */,
 				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,
 				BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */,
+				07ABEF6E1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
 				460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */,
 				BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */,
@@ -26169,7 +26167,6 @@
 				0783228518013ED800999E0C /* MediaStreamAudioSource.h in Headers */,
 				FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */,
 				070F549817F12F6B00169E04 /* MediaStreamConstraintsValidationClient.h in Headers */,
-				078E093917D16B2C00420AA1 /* MediaStreamCreationClient.h in Headers */,
 				078E091617D14D1C00420AA1 /* MediaStreamEvent.h in Headers */,
 				078E093717D16B2C00420AA1 /* MediaStreamPrivate.h in Headers */,
 				078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */,
@@ -27416,7 +27413,6 @@
 				71C916081D1483A300ACA47D /* UserInterfaceLayoutDirection.h in Headers */,
 				078E092E17D14D1C00420AA1 /* UserMediaClient.h in Headers */,
 				078E092F17D14D1C00420AA1 /* UserMediaController.h in Headers */,
-				07297FA81C1881C5003F0735 /* UserMediaPermissionCheck.h in Headers */,
 				078E093017D14D1C00420AA1 /* UserMediaRequest.h in Headers */,
 				7C3B79721908757B00B47A2D /* UserMessageHandler.h in Headers */,
 				7CE68345192143A800F4D928 /* UserMessageHandlerDescriptor.h in Headers */,
@@ -29867,6 +29863,7 @@
 				CDAB6D2817C7DE6C00C60B34 /* MediaControlsHost.cpp in Sources */,
 				159AE82B1B3A402F0037478B /* MediaDeviceInfo.cpp in Sources */,
 				5EA725D21ACABD4700EAD17B /* MediaDevices.cpp in Sources */,
+				07ABEF6C1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp in Sources */,
 				07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */,
 				97205AB71239291000B17380 /* MediaDocument.cpp in Sources */,
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,
@@ -30880,7 +30877,6 @@
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,
 				9920398218B95BC600B39AF9 /* UserInputBridge.cpp in Sources */,
 				078E091217D14CEE00420AA1 /* UserMediaController.cpp in Sources */,
-				07297FA71C1881C5003F0735 /* UserMediaPermissionCheck.cpp in Sources */,
 				078E091317D14CEE00420AA1 /* UserMediaRequest.cpp in Sources */,
 				7C3B79711908757B00B47A2D /* UserMessageHandler.cpp in Sources */,
 				7CE68344192143A800F4D928 /* UserMessageHandlerDescriptor.cpp in Sources */,

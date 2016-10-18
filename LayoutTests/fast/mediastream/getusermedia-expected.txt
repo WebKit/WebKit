@@ -28,7 +28,8 @@ PASS stream.getVideoTracks().length is 1
 PASS navigator.webkitGetUserMedia({audio:true, video:{width:{exact:11}}}, gotStreamInError, null); threw exception TypeError: Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function.
 PASS navigator.webkitGetUserMedia({audio:true, video:{width:{exact:11}}}, gotStreamInError, error1); did not throw exception.
 PASS Error callback called.
-FAIL errorArg.name should be OverConstrainedError. Was DataError.
+FAIL errorArg.name should be OverconstrainedError. Was Error.
+PASS errorArg.message is "Invalid constraint"
 PASS navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, 0); threw exception TypeError: Argument 3 ('errorCallback') to Navigator.webkitGetUserMedia must be a function.
 PASS navigator.webkitGetUserMedia({audio:{volume:{exact:1}}, video:true}, gotStream5, error); did not throw exception.
 PASS Stream generated.

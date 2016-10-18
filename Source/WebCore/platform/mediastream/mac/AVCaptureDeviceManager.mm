@@ -174,7 +174,6 @@ void AVCaptureDeviceManager::refreshCaptureDeviceList()
             //    application restarts, and reboots, so it could be used to figerprint a user.
             captureDevice.m_persistentDeviceID = platformDevice.uniqueID;
             captureDevice.m_enabled = true;
-            captureDevice.m_groupID = createCanonicalUUIDString();
             captureDevice.m_localizedName = platformDevice.localizedName;
             if ([platformDevice position] == AVCaptureDevicePositionFront)
                 captureDevice.m_position = RealtimeMediaSourceSettings::User;

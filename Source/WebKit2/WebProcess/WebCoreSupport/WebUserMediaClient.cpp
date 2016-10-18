@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -49,14 +50,14 @@ void WebUserMediaClient::cancelUserMediaAccessRequest(UserMediaRequest& request)
     m_page.userMediaPermissionRequestManager().cancelUserMediaRequest(request);
 }
 
-void WebUserMediaClient::checkUserMediaPermission(WebCore::UserMediaPermissionCheck& request)
+void WebUserMediaClient::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
 {
-    m_page.userMediaPermissionRequestManager().startUserMediaPermissionCheck(request);
+    m_page.userMediaPermissionRequestManager().enumerateMediaDevices(request);
 }
 
-void WebUserMediaClient::cancelUserMediaPermissionCheck(WebCore::UserMediaPermissionCheck& request)
+void WebUserMediaClient::cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest& request)
 {
-    m_page.userMediaPermissionRequestManager().cancelUserMediaPermissionCheck(request);
+    m_page.userMediaPermissionRequestManager().cancelMediaDevicesEnumeration(request);
 }
 
 } // namespace WebKit;

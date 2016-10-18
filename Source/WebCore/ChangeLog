@@ -1,3 +1,108 @@
+2016-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Resolve constraints and enumerate devices in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=162147
+        <rdar://problem/28803569>
+
+        Reviewed by Darin Adler.
+
+        Restructure gUM constraint validation and MediaDevices.enumerateDevices so all media device
+        access happens in the UI process.
+
+        No new tests, updated results of existing tests.
+
+        * CMakeLists.txt: Add MediaDevicesEnumerationRequest.cpp, delete UserMediaPermissionCheck.cpp.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::MediaConstraintsImpl::create): Only create from MediaConstraintsData.
+        (WebCore::MediaConstraintsImpl::initialize): Deleted.
+        * Modules/mediastream/MediaConstraintsImpl.h:
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp: Added.
+        (WebCore::MediaDevicesEnumerationRequest::create):
+        (WebCore::MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest):
+        (WebCore::MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest):
+        (WebCore::MediaDevicesEnumerationRequest::userMediaDocumentOrigin):
+        (WebCore::MediaDevicesEnumerationRequest::topLevelDocumentOrigin):
+        (WebCore::MediaDevicesEnumerationRequest::contextDestroyed):
+        (WebCore::MediaDevicesEnumerationRequest::start):
+        (WebCore::MediaDevicesEnumerationRequest::cancel):
+        (WebCore::MediaDevicesEnumerationRequest::setDeviceInfo):
+        (WebCore::MediaDevicesEnumerationRequest::finish):
+        * Modules/mediastream/MediaDevicesEnumerationRequest.h: Added.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::~MediaDevicesRequest): Clear the enumeration request.
+        (WebCore::MediaDevicesRequest::contextDestroyed): Ditto.
+        (WebCore::MediaDevicesRequest::start): Create and use a MediaDevicesEnumerationRequest.
+        (WebCore::MediaDevicesRequest::didCompletePermissionCheck): Deleted.
+        * Modules/mediastream/MediaDevicesRequest.h:
+
+        * Modules/mediastream/UserMediaClient.h:
+        * Modules/mediastream/UserMediaController.h:
+        (WebCore::UserMediaController::enumerateMediaDevices): New.
+        (WebCore::UserMediaController::cancelMediaDevicesEnumerationRequest): New.
+        (WebCore::UserMediaController::checkUserMediaPermission): Deleted.
+        (WebCore::UserMediaController::cancelUserMediaPermissionCheck): Deleted.
+
+        * Modules/mediastream/UserMediaPermissionCheck.h: Deleted.
+        * Modules/mediastream/UserMediaPermissionCheck.cpp: Deleted.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::UserMediaRequest):
+        (WebCore::UserMediaRequest::start):
+        (WebCore::UserMediaRequest::allow):
+        (WebCore::UserMediaRequest::deny):
+        (WebCore::UserMediaRequest::constraintsValidated): Deleted.
+        (WebCore::UserMediaRequest::userMediaAccessGranted): Deleted.
+        (WebCore::UserMediaRequest::userMediaAccessDenied): Deleted.
+        (WebCore::UserMediaRequest::constraintsInvalid): Deleted.
+        (WebCore::UserMediaRequest::didCreateStream): Deleted.
+        (WebCore::UserMediaRequest::failedToCreateStreamWithConstraintsError): Deleted.
+        (WebCore::UserMediaRequest::failedToCreateStreamWithPermissionError): Deleted.
+        * Modules/mediastream/UserMediaRequest.h:
+
+        * WebCore.xcodeproj/project.pbxproj: Add MediaDevicesEnumerationRequest.*.
+
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::CaptureDevice):
+        (WebCore::CaptureDevice::setPersistentId): Add setter for argument decoder.
+        (WebCore::CaptureDevice::setLabel): Ditto.
+        (WebCore::CaptureDevice::setGroupId): Ditto.
+        (WebCore::CaptureDevice::setKind): Ditto.
+
+        * platform/mediastream/CaptureDeviceManager.h: Remove unnecessary include.
+
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaConstraint::encode): New.
+        (WebCore::MediaConstraint::decode): Ditto.
+        (WebCore::NumericConstraint::encode): Ditto.
+        (WebCore::NumericConstraint::decode): Ditto.
+
+        * platform/mediastream/MediaStreamCreationClient.h: Deleted.
+
+        * platform/mediastream/RealtimeMediaSourceCenter.h: Use completion handlers instead of client interface.
+
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDeviceList): Drive-by fix: don't initialize
+        group id, we don't support it.
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::validateRequestConstraints): Update for interface change.
+        (WebCore::RealtimeMediaSourceCenterMac::createMediaStream): Ditto.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.cpp:
+        (WebCore::RealtimeMediaSourceCenterOwr::validateRequestConstraints): Ditto.
+        (WebCore::RealtimeMediaSourceCenterOwr::createMediaStream): Ditto.
+        (WebCore::RealtimeMediaSourceCenterOwr::mediaSourcesAvailable): Ditto.
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceCenterOwr.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::validateRequestConstraints): Ditto.
+        (WebCore::MockRealtimeMediaSourceCenter::createMediaStream): Ditto.
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
 2016-10-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebIDL] Support BufferSource

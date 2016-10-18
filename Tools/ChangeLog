@@ -1,3 +1,15 @@
+2016-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Resolve constraints and enumerate devices in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=162147
+        <rdar://problem/28803569>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues): Enable mock capture devices.
+        (WTR::TestController::decidePolicyForUserMediaPermissionRequestIfPossible): Update for API changes.
+
 2016-10-17  Megan Gardner  <megan_gardner@apple.com>
 
         Add test and infrastructure for link popover

@@ -178,6 +178,10 @@
 #include "WebPlaybackSessionManagerProxy.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include <WebCore/MediaConstraintsImpl.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -5630,39 +5634,29 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     request->deny();
 }
 
-void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
+void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier, const WebCore::MediaConstraintsData& audioConstraintsData, const WebCore::MediaConstraintsData& videoConstraintsData)
 {
 #if ENABLE(MEDIA_STREAM)
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(m_process->webFrame(frameID));
 
-    RefPtr<API::SecurityOrigin> userMediaOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(userMediaDocumentOriginIdentifier));
-    RefPtr<API::SecurityOrigin> topLevelOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(topLevelDocumentOriginIdentifier));
-    RefPtr<UserMediaPermissionRequestProxy> request = m_userMediaPermissionRequestManager.createRequest(userMediaID, audioDeviceUIDs, videoDeviceUIDs);
-
-    if (!m_uiClient->decidePolicyForUserMediaPermissionRequest(*this, *frame, *userMediaOrigin.get(), *topLevelOrigin.get(), *request.get()))
-        request->deny();
+    m_userMediaPermissionRequestManager.requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier, audioConstraintsData, videoConstraintsData);
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginIdentifier);
     UNUSED_PARAM(topLevelDocumentOriginIdentifier);
-    UNUSED_PARAM(audioDeviceUIDs);
-    UNUSED_PARAM(videoDeviceUIDs);
+    UNUSED_PARAM(audioConstraintsData);
+    UNUSED_PARAM(videoConstraintsData);
 #endif
 }
 
-void WebPageProxy::checkUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier)
+void WebPageProxy::enumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, String userMediaDocumentOriginIdentifier, String topLevelDocumentOriginIdentifier)
 {
 #if ENABLE(MEDIA_STREAM)
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    RefPtr<UserMediaPermissionCheckProxy> request = m_userMediaPermissionRequestManager.createUserMediaPermissionCheck(userMediaID);
-    RefPtr<API::SecurityOrigin> userMediaOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(userMediaDocumentOriginIdentifier));
-    RefPtr<API::SecurityOrigin> topLevelOrigin = API::SecurityOrigin::create(SecurityOrigin::createFromDatabaseIdentifier(topLevelDocumentOriginIdentifier));
-    if (!m_uiClient->checkUserMediaPermissionForOrigin(*this, *frame, *userMediaOrigin.get(), *topLevelOrigin.get(), *request.get()))
-        request->setUserMediaAccessInfo(emptyString(), false);
+    m_userMediaPermissionRequestManager.enumerateMediaDevicesForFrame(userMediaID, frameID, userMediaDocumentOriginIdentifier, topLevelDocumentOriginIdentifier);
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
@@ -5670,6 +5664,7 @@ void WebPageProxy::checkUserMediaPermissionForFrame(uint64_t userMediaID, uint64
     UNUSED_PARAM(topLevelDocumentOriginIdentifier);
 #endif
 }
+
 
 void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originString)
 {

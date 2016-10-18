@@ -1,3 +1,92 @@
+2016-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Resolve constraints and enumerate devices in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=162147
+        <rdar://problem/28803569>
+
+        Reviewed by Darin Adler.
+        
+        Restructure gUM constraint validation and MediaDevices.enumerateDevices so all media device
+        access happens in the UI process.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type): Special case MediaConstraintsData.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeMediaTrackConstraintSetMap): MediaTrackConstraintSetMap encoder.
+        (IPC::ArgumentCoder<MediaConstraintsData>::encode): MediaConstraintsData encoder.
+        (IPC::decodeMediaTrackConstraintSetMap): MediaTrackConstraintSetMap decoder.
+        (IPC::ArgumentCoder<MediaConstraintsData>::decode): MediaConstraintsData decoder.
+        (IPC::ArgumentCoder<CaptureDevice>::encode): CaptureDevice enoder.
+        (IPC::ArgumentCoder<CaptureDevice>::decode): CaptureDevice decoder.
+        * Shared/WebCoreArgumentCoders.h:
+
+        * UIProcess/API/APIUIClient.h:  Remove UserMediaPermissionCheckProxy forward declaration.
+
+        * UIProcess/API/C/WKUserMediaPermissionRequest.cpp:
+        (toWK): Translate UserMediaPermissionRequestDenialReason to UserMediaAccessDenialReason.
+        (WKUserMediaPermissionRequestDeny): Add "reason" parameter.
+        * UIProcess/API/C/WKUserMediaPermissionRequest.h:
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::invalidateRequests): Invalidate pending device requests.
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest): Make private.
+        (WebKit::toWebCore): Map from UserMediaAccessDenialReason to MediaAccessDenialReason, cast to
+          uint64_t to pass to web process.
+        (WebKit::UserMediaPermissionRequestManagerProxy::denyRequest): Send to web process.
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Ditto.
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame): Validate
+          constraints and make sure gUM is enabled before prompting user.
+        (WebKit::UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame): New.
+        (WebKit::UserMediaPermissionRequestManagerProxy::didCompleteUserMediaPermissionCheck): Send 
+          results of device enumeration to web process.
+        (WebKit::UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision): Deleted.
+        (WebKit::UserMediaPermissionRequestManagerProxy::createUserMediaPermissionCheck): Deleted.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::allow):
+        (WebKit::UserMediaPermissionRequestProxy::deny): Take "reason" parameter.
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        (WebKit::WebPageProxy::enumerateMediaDevicesForFrame):
+        (WebKit::WebPageProxy::checkUserMediaPermissionForFrame): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaRequest): userMediaAccessDenied -> deny.
+          Pass the audio and video constraints to the UI process.
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasGranted): 
+        (WebKit::UserMediaPermissionRequestManager::userMediaAccessWasDenied):
+        (WebKit::UserMediaPermissionRequestManager::enumerateMediaDevices): Send the enumeration request
+          to the UI process.
+        (WebKit::UserMediaPermissionRequestManager::cancelMediaDevicesEnumeration):
+        (WebKit::UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration):
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::startUserMediaPermissionCheck): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::cancelUserMediaPermissionCheck): Deleted.
+        (WebKit::UserMediaPermissionRequestManager::didCompleteUserMediaPermissionCheck): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp:
+        (WebKit::WebUserMediaClient::enumerateMediaDevices): New.
+        (WebKit::WebUserMediaClient::cancelMediaDevicesEnumerationRequest): New.
+        (WebKit::WebUserMediaClient::checkUserMediaPermission): Deleted.
+        (WebKit::WebUserMediaClient::cancelUserMediaPermissionCheck): Deleted.
+        * WebProcess/WebCoreSupport/WebUserMediaClient.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userMediaAccessWasGranted): New.
+        (WebKit::WebPage::userMediaAccessWasDenied): Ditto.
+        (WebKit::WebPage::didCompleteMediaDeviceEnumeration):
+        (WebKit::WebPage::didReceiveUserMediaPermissionDecision): Deleted.
+        (WebKit::WebPage::didCompleteUserMediaPermissionCheck): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2016-10-17  Antti Koivisto  <antti@apple.com>
 
         Rename setNeedsStyleRecalc to invalidateStyle

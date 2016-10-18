@@ -1,3 +1,15 @@
+2016-10-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Resolve constraints and enumerate devices in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=162147
+        <rdar://problem/28803569>
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/getusermedia-expected.txt: Updated.
+        * fast/mediastream/getusermedia.html: Ditto.
+        * fast/mediastream/mock-media-source-expected.txt: Ditto.
+
 2016-10-18  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ES6 Method functions should not have prototype
