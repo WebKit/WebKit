@@ -183,7 +183,7 @@ void Plan::compileInThread(LongLivedState& longLivedState, ThreadData* threadDat
     
     CompilationScope compilationScope;
 
-    if (logCompilationChanges(mode))
+    if (logCompilationChanges(mode) || Options::reportDFGPhaseTimes())
         dataLog("DFG(Plan) compiling ", *codeBlock, " with ", mode, ", number of instructions = ", codeBlock->instructionCount(), "\n");
 
     CompilationPath path = compileInThreadImpl(longLivedState);

@@ -1,3 +1,23 @@
+2016-10-18  Michael Saboff  <msaboff@apple.com>
+
+        Add JSC option to show time spent in each optimization phase
+        https://bugs.webkit.org/show_bug.cgi?id=163617
+
+        Reviewed by Saam Barati.
+
+        Added reportDFGPhaseTimes option.  This outputs one line per phase similar to
+            Phase CPS rethreading took 0.2661 ms
+
+        One line is output for each phase run.
+
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThread):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+
 2016-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         WTF should make it easier to create threads that die automatically after inactivity

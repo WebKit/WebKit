@@ -173,6 +173,7 @@ typedef const char* optionString;
     v(bool, reportBaselineCompileTimes, false, Normal, "dumps JS function signature and the time it took to BaselineJIT compile") \
     v(bool, reportDFGCompileTimes, false, Normal, "dumps JS function signature and the time it took to DFG and FTL compile") \
     v(bool, reportFTLCompileTimes, false, Normal, "dumps JS function signature and the time it took to FTL compile") \
+    v(bool, reportDFGPhaseTimes, false, Normal, "dumps JS function name and the time is took for each DFG phase") \
     v(bool, reportTotalCompileTimes, false, Normal, nullptr) \
     v(bool, verboseExitProfile, false, Normal, nullptr) \
     v(bool, verboseCFA, false, Normal, nullptr) \
