@@ -85,6 +85,7 @@
 		2EFF06CD1D8A429A0004BB30 /* input-field-in-scrollable-document.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06CC1D8A42910004BB30 /* input-field-in-scrollable-document.html */; };
 		2EFF06D41D8AEDBB0004BB30 /* TestWKWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D31D8AEDBB0004BB30 /* TestWKWebViewMac.mm */; };
 		2EFF06D71D8AF34A0004BB30 /* WKWebViewCandidateTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */; };
+		315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3151180F1DB1ADD500176304 /* ExtendedColor.cpp */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -822,6 +823,7 @@
 		2EFF06D21D8AEDBB0004BB30 /* TestWKWebViewMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWKWebViewMac.h; sourceTree = "<group>"; };
 		2EFF06D31D8AEDBB0004BB30 /* TestWKWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWKWebViewMac.mm; sourceTree = "<group>"; };
 		2EFF06D61D8AF34A0004BB30 /* WKWebViewCandidateTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewCandidateTests.mm; sourceTree = "<group>"; };
+		3151180F1DB1ADD500176304 /* ExtendedColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedColor.cpp; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -1456,6 +1458,7 @@
 				260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */,
 				260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */,
 				26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */,
+				3151180F1DB1ADD500176304 /* ExtendedColor.cpp */,
 				41973B5A1AF2286A006C7B36 /* FileSystem.cpp */,
 				83B88A331C80056D00BB2418 /* HTMLParserIdioms.cpp */,
 				14464012167A8305000BD218 /* LayoutUnit.cpp */,
@@ -2431,6 +2434,7 @@
 				7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
 				7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
 				7C83E0B71D0A64B800FEBCF3 /* MenuTypesForMouseEvents.cpp in Sources */,
+				315118101DB1AE4000176304 /* ExtendedColor.cpp in Sources */,
 				51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */,
 				7C83E0B61D0A64B300FEBCF3 /* ModalAlertsSPI.cpp in Sources */,
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,

@@ -1683,7 +1683,7 @@ Color RenderStyle::colorIncludingFallback(int colorProperty, bool visitedLink) c
 
     if (!result.isValid()) {
         if (!visitedLink && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
-            result.setRGB(238, 238, 238);
+            result = Color(238, 238, 238);
         else
             result = visitedLink ? visitedLinkColor() : color();
     }

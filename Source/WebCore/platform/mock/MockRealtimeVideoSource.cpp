@@ -199,6 +199,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
     static const RGBA32 blue = 0xff0000ff;
     static const RGBA32 red = 0xffff0000;
     static const RGBA32 green = 0xff008000;
+    static const RGBA32 cyan = 0xFF00FFFF;
 
     IntSize size = this->size();
     float boxSize = size.width() * .035;
@@ -248,7 +249,7 @@ void MockRealtimeVideoSource::drawBoxes(GraphicsContext& context)
 
     boxTop += boxSize + 2;
     boxLeft = boxSize;
-    Color boxColors[] = { Color::white, yellow, Color::cyan, green, magenta, red, blue };
+    Color boxColors[] = { Color::white, yellow, cyan, green, magenta, red, blue };
     for (unsigned i = 0; i < sizeof(boxColors) / sizeof(boxColors[0]); i++) {
         context.fillRect(FloatRect(boxLeft, boxTop, boxSize + 1, boxSize + 1), boxColors[i]);
         boxLeft += boxSize + 1;

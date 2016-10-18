@@ -396,7 +396,7 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
     bool unused;
     Color color = captionsTextColor(unused);
     if (!color.isValid())
-        color.setNamedColor("black");
+        color = Color { Color::black };
     color = captionsEdgeColorForTextColor(color);
 
     MACaptionAppearanceBehavior behavior;

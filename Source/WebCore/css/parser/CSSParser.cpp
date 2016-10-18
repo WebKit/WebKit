@@ -7550,8 +7550,7 @@ Color CSSParser::fastParseColor(const StringType& name, bool strict)
         return color;
 
     // Try named colors.
-    color.setNamedColor(name);
-    return color;
+    return Color { name };
 }
     
 inline double CSSParser::parsedDouble(ValueWithCalculation& valueWithCalculation)

@@ -222,6 +222,22 @@ int differenceSquared(const Color& c1, const Color& c2)
     return dR * dR + dG * dG + dB * dB;
 }
 
+static inline const NamedColor* findNamedColor(const String& name)
+{
+    char buffer[64]; // easily big enough for the longest color name
+    unsigned length = name.length();
+    if (length > sizeof(buffer) - 1)
+        return nullptr;
+    for (unsigned i = 0; i < length; ++i) {
+        UChar c = name[i];
+        if (!c || !WTF::isASCII(c))
+            return nullptr;
+        buffer[i] = toASCIILower(static_cast<char>(c));
+    }
+    buffer[length] = '\0';
+    return findColor(buffer, length);
+}
+
 Color::Color(const String& name)
 {
     if (name[0] == '#') {
@@ -235,8 +251,12 @@ Color::Color(const String& name)
 
         if (valid)
             setRGB(color);
-    } else
-        setNamedColor(name);
+    } else {
+        if (auto* foundColor = findNamedColor(name))
+            setRGB(foundColor->ARGBValue);
+        else
+            m_colorData.rgbaAndFlags = invalidRGBAColor;
+    }
 }
 
 Color::Color(const char* name)
@@ -265,6 +285,13 @@ Color::Color(const Color& other)
 Color::Color(Color&& other)
 {
     *this = WTFMove(other);
+}
+
+Color::Color(float r, float g, float b, float a, ColorSpace colorSpace)
+{
+    auto extendedColorRef = ExtendedColor::create(r, g, b, a, colorSpace);
+    m_colorData.extendedColor = &extendedColorRef.leakRef();
+    ASSERT(isExtended());
 }
 
 Color::~Color()
@@ -301,6 +328,9 @@ Color& Color::operator=(Color&& other)
 
 String Color::serialized() const
 {
+    if (isExtended())
+        return asExtended().cssText();
+
     if (!hasAlpha()) {
         StringBuilder builder;
         builder.reserveCapacity(7);
@@ -316,6 +346,9 @@ String Color::serialized() const
 
 String Color::cssText() const
 {
+    if (isExtended())
+        return asExtended().cssText();
+
     StringBuilder builder;
     builder.reserveCapacity(28);
     bool colorHasAlpha = hasAlpha();
@@ -350,31 +383,6 @@ String Color::nameForRenderTreeAsText() const
     if (alpha() < 0xFF)
         return String::format("#%02X%02X%02X%02X", red(), green(), blue(), alpha());
     return String::format("#%02X%02X%02X", red(), green(), blue());
-}
-
-static inline const NamedColor* findNamedColor(const String& name)
-{
-    char buffer[64]; // easily big enough for the longest color name
-    unsigned length = name.length();
-    if (length > sizeof(buffer) - 1)
-        return 0;
-    for (unsigned i = 0; i < length; ++i) {
-        UChar c = name[i];
-        if (!c || c > 0x7F)
-            return 0;
-        buffer[i] = toASCIILower(static_cast<char>(c));
-    }
-    buffer[length] = '\0';
-    return findColor(buffer, length);
-}
-
-void Color::setNamedColor(const String& name)
-{
-    const NamedColor* foundColor = findNamedColor(name);
-    if (foundColor)
-        setRGB(foundColor->ARGBValue);
-    else
-        m_colorData.rgbaAndFlags = invalidRGBAColor;
 }
 
 Color Color::light() const
@@ -624,25 +632,15 @@ void Color::tagAsValid()
     m_colorData.rgbaAndFlags |= validRGBAColor;
 }
 
-void Color::tagAsExtended()
-{
-    // FIXME: Is this method necessary? Will colors ever change from RGBA32 to Extended?
-    // Valid colors should not change type.
-    ASSERT(!isValid());
-    m_colorData.rgbaAndFlags &= ~(invalidRGBAColor);
-}
-
 bool Color::isExtended() const
 {
     return !(m_colorData.rgbaAndFlags & invalidRGBAColor);
 }
 
-ExtendedColor* Color::asExtended() const
+ExtendedColor& Color::asExtended() const
 {
     ASSERT(isExtended());
-    if (!isExtended())
-        return nullptr;
-    return m_colorData.extendedColor;
+    return *m_colorData.extendedColor;
 }
 
 } // namespace WebCore

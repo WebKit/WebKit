@@ -29,6 +29,7 @@
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -42,6 +43,8 @@ public:
     float alpha() const { return m_alpha; }
 
     ColorSpace colorSpace() const { return m_colorSpace; }
+
+    WEBCORE_EXPORT String cssText() const;
 
 private:
     ExtendedColor(float r, float g, float b, float a, ColorSpace colorSpace)

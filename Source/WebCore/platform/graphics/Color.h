@@ -158,7 +158,10 @@ public:
         ASSERT(!isExtended());
     }
 
-    // FIXME: Add constructor for ExtendedColor type.
+    // This creates an ExtendedColor.
+    // FIXME: If the colorSpace is sRGB and the values can all be
+    // converted exactly to integers, we should make a normal Color.
+    WEBCORE_EXPORT Color(float r, float g, float b, float a, ColorSpace colorSpace);
 
     Color(RGBA, ColorSpace);
     WEBCORE_EXPORT Color(const Color&);
@@ -181,13 +184,11 @@ public:
     // <https://html.spec.whatwg.org/multipage/scripting.html#fill-and-stroke-styles> (10 September 2015)
     WEBCORE_EXPORT String serialized() const;
 
-    String cssText() const;
+    WEBCORE_EXPORT String cssText() const;
 
     // Returns the color serialized as either #RRGGBB or #RRGGBBAA
     // The latter format is not a valid CSS color, and should only be seen in DRT dumps.
     String nameForRenderTreeAsText() const;
-
-    void setNamedColor(const String&);
 
     bool isValid() const { return m_colorData.rgbaAndFlags & validRGBAColorBit; }
 
@@ -199,8 +200,6 @@ public:
     int alpha() const { return alphaChannel(rgb()); }
     
     RGBA32 rgb() const { ASSERT(!isExtended()); return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32); }
-    void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
-    void setRGB(RGBA32);
     uint64_t asUint64() const { return m_colorData.rgbaAndFlags; }
 
     WEBCORE_EXPORT void getRGBA(float& r, float& g, float& b, float& a) const;
@@ -256,7 +255,7 @@ public:
 #endif
 
     WEBCORE_EXPORT bool isExtended() const;
-    WEBCORE_EXPORT ExtendedColor* asExtended() const;
+    WEBCORE_EXPORT ExtendedColor& asExtended() const;
 
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);
@@ -264,6 +263,8 @@ public:
     friend bool operator==(const Color& a, const Color& b);
 
 private:
+    void setRGB(int r, int g, int b) { setRGB(makeRGB(r, g, b)); }
+    void setRGB(RGBA32);
 
     // 0x_______00 is an ExtendedColor pointer.
     // 0x_______01 is an invalid RGBA32.
@@ -274,7 +275,6 @@ private:
     static const uint64_t validRGBAColor = 0x3;
 
     WEBCORE_EXPORT void tagAsValid();
-    void tagAsExtended();
 
     union {
         uint64_t rgbaAndFlags { invalidRGBAColor };

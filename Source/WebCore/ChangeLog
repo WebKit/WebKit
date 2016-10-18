@@ -1,3 +1,57 @@
+2016-10-17  Dean Jackson  <dino@apple.com>
+
+        Allow creation of ExtendedColors and make Color immutable
+        https://bugs.webkit.org/show_bug.cgi?id=163557
+        <rdar://problem/28805360>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        1. Support the creation of ExtendedColor objects via the
+        Color class.
+
+        2. Fix the remaining few places where a Color object is
+        modified after creation, instead creating a new Color.
+        Move all the mutation methods into the private section,
+        making Color now immutable.
+
+        Changes to Color are covered by existing tests. Changes
+        to ExtendedColor are covered by the ExtendedColor API test.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::fastParseColor): Return a new named Color.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resetActiveLinkColor): Set to be the named "red" color.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLColorToStyle): Use the string-based constructor
+        where possible.
+
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionsTextEdgeCSS): No need to
+        use the string "black" here - we have a constant value.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Don't use setRGB.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::findNamedColor): Move this up in the file.
+        (WebCore::Color::Color): Copy in the code from setNamedColor. Also
+        add a constructor for ExtendedColor.
+        (WebCore::Color::serialized): Call ExtendedColor's serializer if necessary.
+        (WebCore::Color::cssText): Ditto.
+        (WebCore::Color::setNamedColor): Deleted.
+        (WebCore::Color::tagAsExtended): Deleted.
+
+        * platform/graphics/Color.h: Add a new constructor.
+        (WebCore::Color::setRGB): Move to private.
+
+        * platform/graphics/ExtendedColor.cpp:
+        (WebCore::ExtendedColor::cssText): Implement serializer.
+        * platform/graphics/ExtendedColor.h:
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback): Construct a new Color rather than changing an existing object.
+
 2016-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMRect/DOMRectReadOnly

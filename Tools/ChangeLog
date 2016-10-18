@@ -1,3 +1,18 @@
+2016-10-17  Dean Jackson  <dino@apple.com>
+
+        Allow creation of ExtendedColors and make Color immutable
+        https://bugs.webkit.org/show_bug.cgi?id=163557
+        <rdar://problem/28805360>
+
+        Reviewed by Darin Adler and Dave Hyatt.
+
+        API tests for ExtendedColor.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ExtendedColor.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::makeColor):
+
 2016-10-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: implement basic stub

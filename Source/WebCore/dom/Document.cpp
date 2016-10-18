@@ -820,7 +820,7 @@ void Document::resetVisitedLinkColor()
 
 void Document::resetActiveLinkColor()
 {
-    m_activeLinkColor.setNamedColor("red");
+    m_activeLinkColor = Color(255, 0, 0);
 }
 
 DOMImplementation& Document::implementation()

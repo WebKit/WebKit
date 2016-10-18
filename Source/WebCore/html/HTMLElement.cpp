@@ -1037,18 +1037,13 @@ void HTMLElement::addHTMLColorToStyle(MutableStyleProperties& style, CSSProperty
     if (equalLettersIgnoringASCIICase(colorString, "transparent"))
         return;
 
-    // If the string is a named CSS color or a 3/6-digit hex color, use that.
-    // We can't use the default Color constructor because it accepts
-    // 4/8-digit hex, which conflict with some legacy HTML content using attributes.
-
     Color color;
-
-    if ((colorString.length() == 4 || colorString.length() == 7) && colorString[0] == '#')
+    // We can't always use the default Color constructor because it accepts
+    // 4/8-digit hex, which conflict with some legacy HTML content using attributes.
+    if ((colorString.length() != 5 && colorString.length() != 9) || colorString[0] != '#')
         color = Color(colorString);
     if (!color.isValid())
-        color.setNamedColor(colorString);
-    if (!color.isValid())
-        color.setRGB(parseColorStringWithCrazyLegacyRules(colorString));
+        color = Color(parseColorStringWithCrazyLegacyRules(colorString));
 
     style.setProperty(propertyID, CSSValuePool::singleton().createColorValue(color.rgb()));
 }

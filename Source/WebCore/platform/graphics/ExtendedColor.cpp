@@ -27,12 +27,51 @@
 #include "ExtendedColor.h"
 
 #include "ColorSpace.h"
+#include <wtf/MathExtras.h>
+#include <wtf/dtoa.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 Ref<ExtendedColor> ExtendedColor::create(float r, float g, float b, float a, ColorSpace colorSpace)
 {
     return adoptRef(*new ExtendedColor(r, g, b, a, colorSpace));
+}
+
+String ExtendedColor::cssText() const
+{
+    StringBuilder builder;
+    builder.reserveCapacity(40);
+    builder.appendLiteral("color(");
+
+    switch (m_colorSpace) {
+    case ColorSpaceSRGB:
+        builder.appendLiteral("srgb ");
+        break;
+    case ColorSpaceDisplayP3:
+        builder.appendLiteral("display-p3 ");
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return WTF::emptyString();
+    }
+
+    NumberToStringBuffer buffer;
+    bool shouldTruncateTrailingZeros = true;
+
+    builder.append(numberToFixedPrecisionString(red(), 6, buffer, shouldTruncateTrailingZeros));
+    builder.append(' ');
+
+    builder.append(numberToFixedPrecisionString(green(), 6, buffer, shouldTruncateTrailingZeros));
+    builder.append(' ');
+
+    builder.append(numberToFixedPrecisionString(blue(), 6, buffer, shouldTruncateTrailingZeros));
+    builder.appendLiteral(" / ");
+
+    builder.append(numberToFixedPrecisionString(alpha(), 6, buffer, shouldTruncateTrailingZeros));
+    builder.append(')');
+
+    return builder.toString();
 }
 
 }
