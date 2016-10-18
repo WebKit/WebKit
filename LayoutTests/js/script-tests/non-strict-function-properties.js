@@ -49,7 +49,7 @@ var doSetCaller = function (value, doDelete) {
 
 var value = "property-value";
 
-shouldThrow("doSetCaller(value, false)", "'TypeError: \\'arguments\\', \\'callee\\', and \\'caller\\' cannot be accessed in strict mode.'");
+shouldThrow("doSetCaller(value, false)", "'TypeError: \\'arguments\\', \\'callee\\', and \\'caller\\' cannot be accessed in this context.'");
 shouldBe("doSetCaller(value, true).__proto__.caller", "value");
 
 
@@ -61,5 +61,5 @@ var doSetArguments = function (value, doDelete) {
 	return f;
 };
 
-shouldThrow("doSetArguments(value, false)", "'TypeError: \\'arguments\\', \\'callee\\', and \\'caller\\' cannot be accessed in strict mode.'");
+shouldThrow("doSetArguments(value, false)", "'TypeError: \\'arguments\\', \\'callee\\', and \\'caller\\' cannot be accessed in this context.'");
 shouldBe("doSetArguments(value, true).__proto__.arguments", "value");

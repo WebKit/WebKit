@@ -855,11 +855,9 @@ namespace JSC {
             // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
             // https://bugs.webkit.org/show_bug.cgi?id=151547
             SourceParseMode parseMode = metadata->parseMode();
-            ConstructAbility constructAbility = ConstructAbility::CanConstruct;
-            if (parseMode == SourceParseMode::GetterMode || parseMode == SourceParseMode::SetterMode || parseMode == SourceParseMode::ArrowFunctionMode || parseMode == SourceParseMode::GeneratorWrapperFunctionMode)
-                constructAbility = ConstructAbility::CannotConstruct;
-            else if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() == ConstructorKind::None)
-                constructAbility = ConstructAbility::CannotConstruct;
+            ConstructAbility constructAbility = constructAbilityForParseMode(parseMode);
+            if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() != ConstructorKind::None)
+                constructAbility = ConstructAbility::CanConstruct;
 
             return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), variablesUnderTDZ, newDerivedContextType);
         }

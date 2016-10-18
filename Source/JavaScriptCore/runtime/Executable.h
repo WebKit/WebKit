@@ -649,8 +649,22 @@ public:
     bool isArrowFunction() const { return parseMode() == SourceParseMode::ArrowFunctionMode; }
     bool isGetter() const { return parseMode() == SourceParseMode::GetterMode; }
     bool isSetter() const { return parseMode() == SourceParseMode::SetterMode; }
-    bool isGenerator() const { return parseMode() == SourceParseMode::GeneratorBodyMode || parseMode() == SourceParseMode::GeneratorWrapperFunctionMode; }
-    bool isES6Function() const { return isClassConstructorFunction() || isArrowFunction() || isGenerator() || parseMode() == SourceParseMode::MethodMode;}
+    bool isGenerator() const { return SourceParseModeSet(SourceParseMode::GeneratorBodyMode, SourceParseMode::GeneratorWrapperFunctionMode).contains(parseMode()); }
+    bool isMethod() const { return parseMode() == SourceParseMode::MethodMode; }
+    bool hasCallerAndArgumentsProperties() const
+    {
+        // Per https://tc39.github.io/ecma262/#sec-forbidden-extensions, only sloppy-mode non-builtin functions in old-style (pre-ES6) syntactic forms can contain
+        // "caller" and "arguments".
+        return !isStrictMode() && parseMode() == SourceParseMode::NormalFunctionMode && !isClassConstructorFunction();
+    }
+    bool hasPrototypeProperty() const
+    {
+        return SourceParseModeSet(
+            SourceParseMode::NormalFunctionMode,
+            SourceParseMode::GeneratorBodyMode,
+            SourceParseMode::GeneratorWrapperFunctionMode
+        ).contains(parseMode()) || isClass();
+    }
     DerivedContextType derivedContextType() const { return m_unlinkedExecutable->derivedContextType(); }
     bool isClassConstructorFunction() const { return m_unlinkedExecutable->isClassConstructorFunction(); }
     const Identifier& name() { return m_unlinkedExecutable->name(); }

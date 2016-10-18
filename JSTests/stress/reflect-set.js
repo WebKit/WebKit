@@ -879,10 +879,10 @@ var symbol = Symbol();
 
         shouldThrow(() => {
             Reflect.set(object, 'callee', 'Cappuccino');
-        }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.`);
+        }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.`);
         shouldThrow(() => {
             Reflect.get(object, 'callee');
-        }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.`);
+        }, `TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context.`);
     }
 
     function test4() {

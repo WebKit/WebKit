@@ -1,3 +1,27 @@
+2016-10-18  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] ES6 Method functions should not have prototype
+        https://bugs.webkit.org/show_bug.cgi?id=162530
+
+        Reviewed by Saam Barati.
+
+        Update expected error message to no longer indicate "strict mode"
+        (which is not always true), and add additional tests for the presence
+        of "caller" and "arguments" on accessor MethodDefinitions.
+
+        * js/basic-strict-mode-expected.txt:
+        * js/caller-property-expected.txt:
+        * js/class-syntax-method-names-expected.txt:
+        * js/es6-function-properties-expected.txt:
+        * js/non-strict-function-properties-expected.txt:
+        * js/script-tests/caller-property.js:
+        * js/script-tests/class-syntax-method-names.js:
+        * js/script-tests/es6-function-properties.js:
+        (k.get getter):
+        (k.set setter):
+        (get checkProperties):
+        * js/script-tests/non-strict-function-properties.js:
+
 2016-10-18  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Different width of grid container between initial load and refresh

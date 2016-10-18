@@ -32,8 +32,8 @@ PASS (class X {static get arguments() {return staticMethodValue;}}).arguments is
 PASS (class X {static get caller() {return staticMethodValue;}}).caller is staticMethodValue
 PASS (class X {static get arguments() {return staticMethodValue;}}).hasOwnProperty('arguments') is true
 PASS (class X {static get caller() {return staticMethodValue;}}).hasOwnProperty('caller') is true
-PASS class X {static caller() {return staticMethodValue;}};X.arguments = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
-PASS class X {static arguments() {return staticMethodValue;}}; X.caller = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode..
+PASS class X {static caller() {return staticMethodValue;}};X.arguments = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
+PASS class X {static arguments() {return staticMethodValue;}}; X.caller = function(){} threw exception TypeError: 'arguments', 'callee', and 'caller' cannot be accessed in this context..
 PASS class X {static caller() {return "";}} X.caller = function(){ return staticMethodValue; };X.caller() is staticMethodValue
 PASS class X {static arguments() {return "";}}; X.arguments = function(){ return staticMethodValue; };X.arguments() is staticMethodValue
 PASS class X {static caller() {return "";}} X["caller"] = function(){ return staticMethodValue; };X.caller() is staticMethodValue

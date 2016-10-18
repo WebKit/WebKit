@@ -27,9 +27,9 @@ function nonStrictCaller(x) { return x(); }
 function strictCaller(x) { "use strict"; var result = x(); return result; }
 function strictTailCaller(x) { "use strict"; return x(); }
 shouldBe("nonStrictCaller(nonStrictCallee)", "nonStrictCaller");
-shouldThrow("nonStrictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow("nonStrictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
 shouldThrow("strictCaller(nonStrictCallee)");
-shouldThrow("strictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow("strictCaller(strictCallee)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
 shouldBe("strictTailCaller(nonStrictCallee)", "null");
 shouldThrow("strictTailCaller(strictCallee)");
 
@@ -43,7 +43,7 @@ shouldThrow("strictCaller(boundStrictCallee)");
 shouldBe("strictTailCaller(boundNonStrictCallee)", "null");
 shouldThrow("strictTailCaller(boundStrictCallee)");
 
-// Check that .caller works (or throws) as expected, over an accessor call.
+// Check that .caller throws as expected, over an accessor call. (per https://tc39.github.io/ecma262/#sec-forbidden-extensions)
 function getFooGetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').get; }
 function getFooSetter(x) { return Object.getOwnPropertyDescriptor(x, 'foo').set; }
 var nonStrictAccessor = {
@@ -58,11 +58,9 @@ function nonStrictGetter(x) { return x.foo; }
 function nonStrictSetter(x) { x.foo = nonStrictSetter; return true; }
 function strictGetter(x) { "use strict"; return x.foo; }
 function strictSetter(x) { "use strict"; x.foo = nonStrictSetter; return true; }
-shouldBe("nonStrictGetter(nonStrictAccessor)", "nonStrictGetter");
-shouldBeTrue("nonStrictSetter(nonStrictAccessor)");
-shouldThrow("nonStrictGetter(strictAccessor)");
-shouldThrow("nonStrictSetter(strictAccessor)");
-shouldThrow("strictGetter(nonStrictAccessor)", '"TypeError: Function.caller used to retrieve strict caller"');
-shouldThrow("strictSetter(nonStrictAccessor)", '"TypeError: Function.caller used to retrieve strict caller"');
+shouldThrow("nonStrictGetter(nonStrictAccessor)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
+shouldThrow("nonStrictGetter(strictAccessor)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
+shouldThrow("strictGetter(nonStrictAccessor)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
+shouldThrow("strictSetter(nonStrictAccessor)", '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
 shouldThrow("strictGetter(strictAccessor)");
 shouldThrow("strictSetter(strictAccessor)");

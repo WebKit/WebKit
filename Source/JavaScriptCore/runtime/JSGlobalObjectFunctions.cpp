@@ -862,7 +862,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(Ex
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return throwVMTypeError(exec, scope, "'arguments', 'callee', and 'caller' cannot be accessed in strict mode.");
+    return throwVMTypeError(exec, scope, "'arguments', 'callee', and 'caller' cannot be accessed in this context.");
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)

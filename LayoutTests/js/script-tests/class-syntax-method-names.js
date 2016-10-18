@@ -31,8 +31,8 @@ shouldBe("(class X {static get arguments() {return staticMethodValue;}}).argumen
 shouldBe("(class X {static get caller() {return staticMethodValue;}}).caller", "staticMethodValue");
 shouldBe("(class X {static get arguments() {return staticMethodValue;}}).hasOwnProperty('arguments')", "true");
 shouldBe("(class X {static get caller() {return staticMethodValue;}}).hasOwnProperty('caller')", "true");
-shouldThrow('class X {static caller() {return staticMethodValue;}};X.arguments = function(){}', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
-shouldThrow('class X {static arguments() {return staticMethodValue;}}; X.caller = function(){}', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."');
+shouldThrow('class X {static caller() {return staticMethodValue;}};X.arguments = function(){}', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
+shouldThrow('class X {static arguments() {return staticMethodValue;}}; X.caller = function(){}', '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."');
 shouldBe('class X {static caller() {return "";}} X.caller = function(){ return staticMethodValue; };X.caller()', 'staticMethodValue');
 shouldBe('class X {static arguments() {return "";}}; X.arguments = function(){ return staticMethodValue; };X.arguments()', 'staticMethodValue');
 shouldBe('class X {static caller() {return "";}} X["caller"] = function(){ return staticMethodValue; };X.caller()', 'staticMethodValue');

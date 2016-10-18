@@ -1,3 +1,16 @@
+2016-10-18  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] ES6 Method functions should not have prototype
+        https://bugs.webkit.org/show_bug.cgi?id=162530
+
+        Reviewed by Saam Barati.
+
+        Fix test262 expectations about MethodDefinitions
+
+        * ChakraCore/test/strict/05.arguments_sm.baseline-jsc:
+        * stress/reflect-set.js:
+        * test262.yaml:
+
 2016-10-17  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM Memory.

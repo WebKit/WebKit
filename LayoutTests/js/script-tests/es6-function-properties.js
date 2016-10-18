@@ -24,7 +24,7 @@ function shouldBe(a, b) {
         testFailed(r1 + ":::" + r2);
 }
 
- var typeErrorText = '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in strict mode."';
+ var typeErrorText = '"TypeError: \'arguments\', \'callee\', and \'caller\' cannot be accessed in this context."';
 
 class A { };
 class B extends A { };
@@ -106,21 +106,21 @@ check('(new D()).constructor');
 var e = new E;
 
 checkProperties(e.constructor, "length,name,prototype", "e.constructor");
-checkProperties((new E()).getItem, "length,name,prototype", "(new E()).getItem");
+checkProperties((new E()).getItem, "length,name", "(new E()).getItem");
 
 check('e.constructor');
 check('(new E()).getItem');
 
 var f = new F;
 
-checkProperties(f.getItem, "length,name,prototype", "f.getItem");
-checkProperties(f.getElement, "length,name,prototype", "f.getElement");
+checkProperties(f.getItem, "length,name", "f.getItem");
+checkProperties(f.getElement, "length,name", "f.getElement");
 
 check('f.getItem');
 check('f.getElement');
 
-checkProperties((new F()).getItem, "length,name,prototype", "(new F()).getItem");
-checkProperties((new F()).getElement, "length,name,prototype", "(new F()).getElement");
+checkProperties((new F()).getItem, "length,name", "(new F()).getItem");
+checkProperties((new F()).getElement, "length,name", "(new F()).getElement");
 
 check('(new F()).getItem');
 check('(new F()).getElement');
@@ -151,8 +151,8 @@ var h = new H;
 shouldBe('h.caller()', '"value"');
 shouldBe('h.arguments()', '"value"');
 
-checkProperties(h.caller, "length,name,prototype", "h.caller");
-checkProperties(h.arguments, "length,name,prototype", "h.arguments");
+checkProperties(h.caller, "length,name", "h.caller");
+checkProperties(h.arguments, "length,name", "h.arguments");
 
 check('h.caller');
 
@@ -187,5 +187,24 @@ checkProperties((new J).get, "length,name,prototype", "(new J).get");
 
 check('(new J).gen');
 check('(new J).get');
+
+var k = {
+    method() {},
+    *gen() {},
+    get getter() { },
+    set setter(v) { }
+};
+
+checkProperties(k.method, "length,name", "k.method");
+check("k.method");
+
+checkProperties(k.gen, "length,name,prototype", "k.gen");
+check("k.gen");
+
+checkProperties(Object.getOwnPropertyDescriptor(k, "getter").get, "length,name", "k.getter");
+check("Object.getOwnPropertyDescriptor(k, 'getter').get");
+
+checkProperties(Object.getOwnPropertyDescriptor(k, "setter").set, "length,name", "k.setter");
+check("Object.getOwnPropertyDescriptor(k, 'setter').set");
 
 var successfullyParsed = true;

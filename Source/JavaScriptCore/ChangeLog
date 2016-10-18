@@ -1,3 +1,42 @@
+2016-10-18  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] ES6 Method functions should not have prototype
+        https://bugs.webkit.org/show_bug.cgi?id=162530
+
+        Reviewed by Saam Barati.
+
+        ECMA-262 only adds "prototype" properties to specific syntactic function forms.
+        Specific items which do not contain "prototype" include (most) built-in functions (such as Math.pow),
+        MethodDefinitions which are not either class "constructor" methods or GeneratorMethods, AsyncFunctions,
+        and ArrowFunctions.
+        
+        For details, see the following spec text, and the difference between GeneratorMethod evaluation and
+        the evaluation of other MethodDefinition forms.
+        
+        - https://tc39.github.io/ecma262/#sec-method-definitions-runtime-semantics-propertydefinitionevaluation
+        - https://tc39.github.io/ecma262/#sec-arrow-function-definitions-runtime-semantics-evaluation
+        - https://tc39.github.io/ecmascript-asyncawait/#async-function-instances
+        - https://tc39.github.io/ecma262/#sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
+        
+
+        * runtime/Executable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::callerGetter):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::deleteProperty):
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * runtime/Executable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::deleteProperty):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncThrowTypeErrorArgumentsCalleeAndCaller):
+
 2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Use NativeCallFrameTracer for operations used for DOMJIT slow calls

@@ -18,7 +18,7 @@ arguments.caller:setter       : function () {
     [native code]
 }
 arguments.caller:value        : undefined
-Exception: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
-Exception: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
-Exception: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
-Exception: 'arguments', 'callee', and 'caller' cannot be accessed in strict mode.
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
+Exception: 'arguments', 'callee', and 'caller' cannot be accessed in this context.
