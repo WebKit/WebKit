@@ -1,3 +1,14 @@
+2016-10-18  Keith Miller  <keith_miller@apple.com>
+
+        GetByVal to GetById conversion in the DFG is incorrect for getters with control flow
+        https://bugs.webkit.org/show_bug.cgi?id=163629
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/get-by-val-to-id-with-getter.js: Added.
+        (foo):
+        (o.get hello):
+
 2016-10-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should be able to use DirectCall ICs when they proved the callee or its executable

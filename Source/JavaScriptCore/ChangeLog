@@ -1,3 +1,21 @@
+2016-10-18  Keith Miller  <keith_miller@apple.com>
+
+        GetByVal to GetById conversion in the DFG is incorrect for getters with control flow
+        https://bugs.webkit.org/show_bug.cgi?id=163629
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes a bug in the DFG when attempt to convert a
+        GetByVal into a GetById. While converting the GetByVal, during
+        handleGetById in the Bytecode parser, we would mistakenly use the
+        opcode length of op_get_by_id rather than op_get_by_val. This causes
+        the new basic block we create to point to the wrong offset. In the
+        added test this will cause us to infinite loop.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2016-10-18  Dean Jackson  <dino@apple.com>
 
         Remove CSS_SHAPES feature definition. This should always be on.
