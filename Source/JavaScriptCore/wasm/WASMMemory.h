@@ -39,7 +39,7 @@ struct PinnedSizeRegisterInfo {
 };
 
 // FIXME: We should support more than one memory size register. Right now we take a vector with only one
-// entry. Specifically an extry where the sizeOffset == 0. If we have more than one size register,
+// entry. Specifically an entry where the sizeOffset == 0. If we have more than one size register,
 // we can have one for each load size class. see: https://bugs.webkit.org/show_bug.cgi?id=162952
 struct PinnedRegisterInfo {
     Vector<PinnedSizeRegisterInfo> sizeRegisters;

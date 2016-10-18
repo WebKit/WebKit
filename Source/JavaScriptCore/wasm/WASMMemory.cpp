@@ -40,15 +40,17 @@ Memory::Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>&
 {
     ASSERT(pinnedSizeRegisters.size() > 0);
 
-    void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, 0, 0);
+    // FIXME: It would be nice if we had a VM tag for wasm memory. https://bugs.webkit.org/show_bug.cgi?id=163600
+    void* result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
     if (result == MAP_FAILED) {
         // Try again with a different number.
         m_mappedCapacity = m_capacity;
-        result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, 0, 0);
+        result = mmap(nullptr, m_mappedCapacity, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
         if (result == MAP_FAILED)
             return;
     }
 
+    ASSERT(startingSize <= m_mappedCapacity);
     if (mprotect(result, startingSize, PROT_READ | PROT_WRITE)) {
         munmap(result, m_mappedCapacity);
         return;
