@@ -332,23 +332,10 @@ HRESULT WebHistoryItem::setLastVisitWasHTTPNonGet(BOOL)
     return E_NOTIMPL;
 }
 
+// FIXME: This function should be removed from the IWebHistoryItem interface.
 HRESULT WebHistoryItem::redirectURLs(_COM_Outptr_opt_ IEnumVARIANT** urls)
 {
-    if (!urls) {
-        ASSERT_NOT_REACHED();
-        return E_POINTER;
-    }
-
-    Vector<String>* urlVector = m_historyItem->redirectURLs();
-    if (!urlVector) {
-        *urls = 0;
-        return S_OK;
-    }
-
-    COMPtr<COMEnumVariant<Vector<String> > > enumVariant(AdoptCOM, COMEnumVariant<Vector<String> >::createInstance(*urlVector));
-    *urls = enumVariant.leakRef();
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 // FIXME: This function should be removed from the IWebHistoryItem interface.

@@ -1,5 +1,12 @@
 2016-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Try to fix the Windows build.
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::redirectURLs):
+
+2016-10-18  Anders Carlsson  <andersca@apple.com>
+
         Move some history specific HistoryItem code to WebHistoryItem
         https://bugs.webkit.org/show_bug.cgi?id=163567
 
