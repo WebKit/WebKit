@@ -1,3 +1,16 @@
+2016-10-18  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Different width of grid container between initial load and refresh
+        https://bugs.webkit.org/show_bug.cgi?id=163535
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Tests to ensure repeated layouts on grid elements produce the same results when using
+        orthogonal grid items.
+
+        * fast/css-grid-layout/repeating-layout-must-produce-the-same-results-expected.txt: Added.
+        * fast/css-grid-layout/repeating-layout-must-produce-the-same-results.html: Added.
+
 2016-10-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Constrain by min|max-height on auto repeat computation

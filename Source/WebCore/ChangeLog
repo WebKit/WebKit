@@ -1,3 +1,35 @@
+2016-10-18  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Different width of grid container between initial load and refresh
+        https://bugs.webkit.org/show_bug.cgi?id=163535
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Grid's layout logic manages two different override sizes; one it's
+        designed to implement the grid item's stretching behavior, identified
+        with the concept of 'overrideContentLogicalSize'; there is another
+        override size, known as overrideContainingBlockContentLogicalSize,
+        used to implement the Grid Area abstraction, which will behave as
+        the actual containing block of any grid item.
+
+        During grid's layout logic these override sizes are set according
+        to the CSS style rules. This affects how the grid container and its
+        children are going to be sized during layout. Grid Tracks sizing
+        algorithm depends on these override sizes.
+
+        In order to ensure that the tracks sizing algorithm produces the
+        same results when it's run consecutively several times, we need to
+        clear these override sizes and perform a layout of the affected grid
+        items. Otherwise, the affected items will return sizing values which
+        depend on the override values set in the previous layout, which in
+        some cases, like orthogonal flows, may change through different runs
+        of the sizing algorithm.
+
+        Test: fast/css-grid-layout/repeating-layout-must-produce-the-same-results.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2016-10-18  Youenn Fablet  <youenn@apple.com>
 
         CachedResourceLoader should not need to remove fragment identifier

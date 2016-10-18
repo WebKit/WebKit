@@ -460,6 +460,19 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     LayoutSize previousSize = size();
 
+    // We need to clear both own and containingBlock override sizes of orthogonal items to ensure we get the
+    // same result when grid's intrinsic size is computed again in the updateLogicalWidth call bellow.
+    if (sizesLogicalWidthToFitContent(MaxSize) || style().logicalWidth().isIntrinsicOrAuto()) {
+        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            if (child->isOutOfFlowPositioned() || !isOrthogonalChild(*child))
+                continue;
+            child->clearOverrideSize();
+            child->clearContainingBlockOverrideSize();
+            child->setNeedsLayout();
+            child->layoutIfNeeded();
+        }
+    }
+
     setLogicalHeight(0);
     updateLogicalWidth();
 
