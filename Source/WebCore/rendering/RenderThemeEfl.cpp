@@ -441,11 +441,11 @@ static bool fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Colo
         return false;
 
     if (color1)
-        color1->setRGB(makeRGBA(r1, g1, b1, a1));
+        *color1 = Color(makeRGBA(r1, g1, b1, a1));
     if (color2)
-        color2->setRGB(makeRGBA(r2, g2, b2, a2));
+        *color2 = Color(makeRGBA(r2, g2, b2, a2));
     if (color3)
-        color3->setRGB(makeRGBA(r3, g3, b3, a3));
+        *color3 = Color(makeRGBA(r3, g3, b3, a3));
 
     return true;
 }
