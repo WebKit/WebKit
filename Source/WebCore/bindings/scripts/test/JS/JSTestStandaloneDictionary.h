@@ -25,6 +25,6 @@
 
 namespace WebCore {
 
-template<> Optional<DictionaryImplName> convertDictionary<DictionaryImplName>(JSC::ExecState&, JSC::JSValue);
+template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSC::ExecState&, JSC::JSValue);
 
 } // namespace WebCore

@@ -207,17 +207,17 @@ template<> Optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(J
 template<> TestObj::Confidence convertEnumeration<TestObj::Confidence>(JSC::ExecState&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::Confidence>();
 
-template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(JSC::ExecState&, JSC::JSValue);
+template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSC::ExecState&, JSC::JSValue);
 
-template<> Optional<TestObj::DictionaryThatShouldNotTolerateNull> convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(JSC::ExecState&, JSC::JSValue);
+template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>(JSC::ExecState&, JSC::JSValue);
 
-template<> Optional<TestObj::DictionaryThatShouldTolerateNull> convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(JSC::ExecState&, JSC::JSValue);
+template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::DictionaryThatShouldTolerateNull>(JSC::ExecState&, JSC::JSValue);
 
-template<> Optional<AlternateDictionaryName> convertDictionary<AlternateDictionaryName>(JSC::ExecState&, JSC::JSValue);
+template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(JSC::ExecState&, JSC::JSValue);
 
-template<> Optional<TestObj::ParentDictionary> convertDictionary<TestObj::ParentDictionary>(JSC::ExecState&, JSC::JSValue);
+template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary>(JSC::ExecState&, JSC::JSValue);
 
-template<> Optional<TestObj::ChildDictionary> convertDictionary<TestObj::ChildDictionary>(JSC::ExecState&, JSC::JSValue);
+template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(JSC::ExecState&, JSC::JSValue);
 
 
 } // namespace WebCore

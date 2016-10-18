@@ -42,7 +42,7 @@ template<typename T> EnableIfNotIntegralType<T> convert(JSC::ExecState&, JSC::JS
 template<typename T> EnableIfIntegralType<T> convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration = NormalConversion);
 
 // Specialized by generated code for IDL dictionary conversion.
-template<typename T> Optional<T> convertDictionary(JSC::ExecState&, JSC::JSValue);
+template<typename T> T convertDictionary(JSC::ExecState&, JSC::JSValue);
 
 // Specialized by generated code for IDL enumeration conversion.
 template<typename T> Optional<T> parseEnumeration(JSC::ExecState&, JSC::JSValue);

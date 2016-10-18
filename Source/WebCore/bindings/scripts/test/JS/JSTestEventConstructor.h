@@ -71,7 +71,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 template<> struct JSDOMWrapperConverterTraits<TestEventConstructor> {
     using WrapperClass = JSTestEventConstructor;
 };
-template<> Optional<TestEventConstructor::Init> convertDictionary<TestEventConstructor::Init>(JSC::ExecState&, JSC::JSValue);
+template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(JSC::ExecState&, JSC::JSValue);
 
 
 } // namespace WebCore

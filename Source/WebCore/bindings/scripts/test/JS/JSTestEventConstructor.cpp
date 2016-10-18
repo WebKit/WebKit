@@ -33,7 +33,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-template<> Optional<TestEventConstructor::Init> convertDictionary<TestEventConstructor::Init>(ExecState& state, JSValue value)
+template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::Init>(ExecState& state, JSValue value)
 {
     VM& vm = state.vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -41,44 +41,44 @@ template<> Optional<TestEventConstructor::Init> convertDictionary<TestEventConst
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
         throwTypeError(&state, throwScope);
-        return Nullopt;
+        return { };
     }
     if (UNLIKELY(object && object->type() == RegExpObjectType)) {
         throwTypeError(&state, throwScope);
-        return Nullopt;
+        return { };
     }
     TestEventConstructor::Init result;
     JSValue bubblesValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bubbles"));
     if (!bubblesValue.isUndefined()) {
         result.bubbles = convert<IDLBoolean>(state, bubblesValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+        RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.bubbles = false;
     JSValue cancelableValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "cancelable"));
     if (!cancelableValue.isUndefined()) {
         result.cancelable = convert<IDLBoolean>(state, cancelableValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+        RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.cancelable = false;
     JSValue composedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "composed"));
     if (!composedValue.isUndefined()) {
         result.composed = convert<IDLBoolean>(state, composedValue);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+        RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.composed = false;
     JSValue attr2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr2"));
     if (!attr2Value.isUndefined()) {
         result.attr2 = convert<IDLDOMString>(state, attr2Value);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+        RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr2 = "";
     JSValue attr3Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "attr3"));
     if (!attr3Value.isUndefined()) {
         result.attr3 = convert<IDLDOMString>(state, attr3Value);
-        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+        RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.attr3 = "";
-    return WTFMove(result);
+    return result;
 }
 
 // Attributes
