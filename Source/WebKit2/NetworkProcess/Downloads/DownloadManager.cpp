@@ -158,15 +158,30 @@ void DownloadManager::resumeDownload(SessionID, DownloadID downloadID, const IPC
 void DownloadManager::cancelDownload(DownloadID downloadID)
 {
     if (Download* download = m_downloads.get(downloadID)) {
+#if USE(NETWORK_SESSION)
+        ASSERT(!m_downloadsWaitingForDestination.contains(downloadID));
+        ASSERT(!m_pendingDownloads.contains(downloadID));
+#endif
         download->cancel();
         return;
     }
 #if USE(NETWORK_SESSION)
-    if (auto completionHandler = m_downloadsWaitingForDestination.take(downloadID).second) {
-        m_client.pendingDownloadCanceled(downloadID);
+    auto pendingDownload = m_pendingDownloads.take(downloadID);
+    if (m_downloadsWaitingForDestination.contains(downloadID)) {
+        auto pair = m_downloadsWaitingForDestination.take(downloadID);
+        auto networkDataTask = WTFMove(pair.first);
+        auto completionHandler = WTFMove(pair.second);
+        ASSERT(networkDataTask);
+        ASSERT(completionHandler);
+
+        networkDataTask->cancel();
         completionHandler(PolicyIgnore);
+        m_client.pendingDownloadCanceled(downloadID);
         return;
     }
+
+    if (pendingDownload)
+        pendingDownload->cancel();
 #endif
 }
 

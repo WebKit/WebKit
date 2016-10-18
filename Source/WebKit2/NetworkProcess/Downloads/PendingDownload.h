@@ -51,6 +51,7 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate);
 #endif
+    void cancel();
 
 private:    
     // NetworkLoadClient.

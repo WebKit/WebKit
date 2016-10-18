@@ -1,3 +1,23 @@
+2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        NetworkSession: PendingDownload is leaked if canceled before willDecidePendingDownloadDestination
+        https://bugs.webkit.org/show_bug.cgi?id=163545
+
+        Reviewed by Alex Christensen.
+
+        If a download started by DownloadManager::startDownload() is cancelled before
+        DownloadManager::willDecidePendingDownloadDestination() is called, DownloadManager::cancelDownload() does
+        nothing, because the Download hasn't been created yet and m_downloadsWaitingForDestination map doesn't contain
+        the download ID, and the PendingDownload is never removed from the m_pendingDownloads map.
+
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::cancelDownload): Always take the PendingDownload from m_pendingDownloads map. Then, if
+        the download was already in m_downloadsWaitingForDestination map, get the network data task to properly cancel
+        it and then call the completion handler to ignore the request. Otherwise cancel the pending download if exists.
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        (WebKit::PendingDownload::cancel): Cancel the network load and notify the UI process that the download was canceled.
+        * NetworkProcess/Downloads/PendingDownload.h:
+
 2016-10-17  Megan Gardner  <megan_gardner@apple.com>
 
         Add test and infrastructure for link popover
