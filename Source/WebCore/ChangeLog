@@ -1,3 +1,21 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Update TrackEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163580
+
+        Reviewed by Sam Weinig.
+
+        Update TrackEvent to stop using legacy [ConstructorTemplate=Event]
+        and use a regular constructor as in the specification:
+        - https://html.spec.whatwg.org/#the-trackevent-interface
+
+        No new tests, updated existing tests.
+
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        * html/track/TrackEvent.h:
+        * html/track/TrackEvent.idl:
+
 2016-10-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207409.

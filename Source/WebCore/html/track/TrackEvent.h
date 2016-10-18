@@ -28,14 +28,12 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "AudioTrack.h"
 #include "Event.h"
-#include "TrackBase.h"
+#include "TextTrack.h"
+#include "VideoTrack.h"
 
 namespace WebCore {
-
-struct TrackEventInit : public EventInit {
-    RefPtr<TrackBase> track;
-};
 
 class TrackEvent final : public Event {
 public:
@@ -46,9 +44,15 @@ public:
         return adoptRef(*new TrackEvent(type, canBubble, cancelable, WTFMove(track)));
     }
 
-    static Ref<TrackEvent> createForBindings(const AtomicString& type, const TrackEventInit& initializer)
+    using TrackEventTrack = std::experimental::variant<RefPtr<VideoTrack>, RefPtr<AudioTrack>, RefPtr<TextTrack>>;
+
+    struct Init : public EventInit {
+        Optional<TrackEventTrack> track;
+    };
+
+    static Ref<TrackEvent> create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new TrackEvent(type, initializer));
+        return adoptRef(*new TrackEvent(type, initializer, isTrusted));
     }
 
     EventInterface eventInterface() const override;
@@ -57,7 +61,7 @@ public:
 
 private:
     TrackEvent(const AtomicString& type, bool canBubble, bool cancelable, Ref<TrackBase>&&);
-    TrackEvent(const AtomicString& type, const TrackEventInit& initializer);
+    TrackEvent(const AtomicString& type, const Init& initializer, IsTrusted);
 
     RefPtr<TrackBase> m_track;
 };

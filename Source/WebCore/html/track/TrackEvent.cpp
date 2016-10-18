@@ -39,10 +39,14 @@ TrackEvent::TrackEvent(const AtomicString& type, bool canBubble, bool cancelable
 {
 }
 
-TrackEvent::TrackEvent(const AtomicString& type, const TrackEventInit& initializer)
-    : Event(type, initializer)
-    , m_track(initializer.track)
+TrackEvent::TrackEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+    : Event(type, initializer, isTrusted)
 {
+    if (initializer.track) {
+        m_track = std::experimental::visit([](const auto& trackbase) -> TrackBase* {
+            return trackbase.get();
+        }, *initializer.track);
+    }
 }
 
 TrackEvent::~TrackEvent()

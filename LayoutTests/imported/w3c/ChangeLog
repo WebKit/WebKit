@@ -1,3 +1,16 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Update TrackEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163580
+
+        Reviewed by Sam Weinig.
+
+        Incorporate https://github.com/w3c/web-platform-tests/pull/3999 as the
+        test was incorrect. Rebaseline now that we are passing the test.
+
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TrackEvent/constructor-expected.txt:
+        * web-platform-tests/html/semantics/embedded-content/media-elements/interfaces/TrackEvent/constructor.html:
+
 2016-10-15  Chris Dumez  <cdumez@apple.com>
 
         Add support for reportValidity() on form and form control elements

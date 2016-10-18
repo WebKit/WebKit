@@ -14,20 +14,16 @@ PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true }).bubbles i
 PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true }).cancelable is true
 PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true }).track is null
 
-*** Bubbles and cancelable true, invalid track ***
-PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: HTMLTrackElement }).bubbles is true
-PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: HTMLTrackElement }).cancelable is true
-PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: HTMLTrackElement }).track is null
-
-*** Initialize 'track' with a invalid values ***
-PASS new TrackEvent('TrackEvent', { track: 10 }).track is null
-PASS new TrackEvent('TrackEvent', { track: 'string' }).track is null
-PASS new TrackEvent('TrackEvent', { track: emptyObject }).track is null
-PASS new TrackEvent('TrackEvent', { track: document }).track is null
+*** Invalid track ***
+PASS new TrackEvent('TrackEvent', { track: HTMLTrackElement }) threw exception TypeError: Type error.
+PASS new TrackEvent('TrackEvent', { track: 10 }) threw exception TypeError: Type error.
+PASS new TrackEvent('TrackEvent', { track: 'string' }) threw exception TypeError: Type error.
+PASS new TrackEvent('TrackEvent', { track: emptyObject }) threw exception TypeError: Type error.
+PASS new TrackEvent('TrackEvent', { track: document }) threw exception TypeError: Type error.
 
 *** Bubbles and cancelable true, valid track ***
-PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: HTMLTrackElement }).bubbles is true
-PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: HTMLTrackElement }).cancelable is true
+PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: trackElement.track }).bubbles is true
+PASS new TrackEvent('TrackEvent', { bubbles: true, cancelable: true, track: trackElement.track }).cancelable is true
 PASS new TrackEvent('TrackEvent', { track: trackElement.track }).track is trackElement.track
 
 *** Initialize 'track' with valid track object ***

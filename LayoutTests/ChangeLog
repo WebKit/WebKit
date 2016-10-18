@@ -1,3 +1,16 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Update TrackEvent to stop using legacy [ConstructorTemplate=Event]
+        https://bugs.webkit.org/show_bug.cgi?id=163580
+
+        Reviewed by Sam Weinig.
+
+        Update existing test to reflect behavior change. We now correctly throw a TypeError
+        when passing an unexpected track object type to the TrackEvent constructor.
+
+        * fast/events/constructors/track-event-constructor-expected.txt:
+        * fast/events/constructors/track-event-constructor.html:
+
 2016-10-18  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Rebase test in fast/mediastream
