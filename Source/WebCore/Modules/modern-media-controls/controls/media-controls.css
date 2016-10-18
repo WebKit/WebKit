@@ -23,7 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.media-controls,
+/* We need to use relative positioning due to webkit.org/b/163603 */
+.media-controls {
+    position: relative;
+}
+
 .media-controls > .controls-bar {
     position: absolute;
 }

@@ -1,3 +1,20 @@
+2016-10-18  Antoine Quint  <graouts@apple.com>
+
+        Modern media controls don't update their rendering correctly
+        https://bugs.webkit.org/show_bug.cgi?id=163603
+        <rdar://problem/28826022>
+
+        Reviewed by Dean Jackson.
+
+        There are rendering issues when we use an absolutely-positioned element
+        as the top-most element in a media element's shadow root (webkit.org/b/163592).
+        Since we only need for that element to be positioned, we can use "position: relative"
+        instead, which removes the rendering issues.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls):
+        (.media-controls,): Deleted.
+
 2016-10-18  Dean Jackson  <dino@apple.com>
 
         Add preliminary support for extended colors to WebCore::Color
