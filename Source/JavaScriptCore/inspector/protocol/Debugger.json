@@ -237,10 +237,17 @@
         },
         {
             "name": "setPauseOnExceptions",
+            "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>.",
             "parameters": [
                 { "name": "state", "type": "string", "enum": ["none", "uncaught", "all"], "description": "Pause on exceptions mode." }
-            ],
-            "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions. Initial pause on exceptions state is <code>none</code>."
+            ]
+        },
+        {
+            "name": "setPauseOnAssertions",
+            "description": "Set pause on assertions state. Assertions are console.assert assertions.",
+            "parameters": [
+                { "name": "enabled", "type": "boolean" }
+            ]
         },
         {
             "name": "evaluateOnCallFrame",

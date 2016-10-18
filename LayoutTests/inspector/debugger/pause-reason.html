@@ -47,6 +47,7 @@ function test()
     }
 
     WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+    WebInspector.debuggerManager.assertionsBreakpoint.disabled = false;
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.ScriptAdded, function(event) {
         var scriptObject = event.data.script;

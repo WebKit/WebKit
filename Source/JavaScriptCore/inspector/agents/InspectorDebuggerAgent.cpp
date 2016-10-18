@@ -113,6 +113,8 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     if (m_listener)
         m_listener->debuggerWasDisabled();
 
+    m_pauseOnAssertionFailures = false;
+
     m_enabled = false;
 }
 
@@ -193,7 +195,7 @@ RefPtr<InspectorObject> InspectorDebuggerAgent::buildExceptionPauseReason(JSC::J
 
 void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
-    if (m_scriptDebugServer.pauseOnExceptionsState() != JSC::Debugger::DontPauseOnExceptions)
+    if (m_pauseOnAssertionFailures)
         breakProgram(DebuggerFrontendDispatcher::Reason::Assert, buildAssertPauseReason(message));
 }
 
@@ -626,6 +628,11 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString& errorString, cons
     m_scriptDebugServer.setPauseOnExceptionsState(static_cast<JSC::Debugger::PauseOnExceptionsState>(pauseState));
     if (m_scriptDebugServer.pauseOnExceptionsState() != pauseState)
         errorString = ASCIILiteral("Internal error. Could not change pause on exceptions state");
+}
+
+void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
+{
+    m_pauseOnAssertionFailures = enabled;
 }
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex)

@@ -1,3 +1,19 @@
+2016-10-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add toggles for debugger pauses at console.assert failures
+        https://bugs.webkit.org/show_bug.cgi?id=139542
+        <rdar://problem/19281600>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/debugger/pause-on-assert.html:
+        * inspector/debugger/pause-reason.html:
+        These tests need to enable pause on assertions.
+
+        * inspector/debugger/setPauseOnAssertions-expected.txt: Added.
+        * inspector/debugger/setPauseOnAssertions.html: Added.
+        Specific tests for the new protocol method.
+
 2016-10-17  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking platform/ios-simulator/ios/plugin/youtube-flash-plugin-iframe.html as flaky on ios-simulator debug.

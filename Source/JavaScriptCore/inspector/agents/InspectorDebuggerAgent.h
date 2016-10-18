@@ -77,6 +77,7 @@ public:
     void stepInto(ErrorString&) final;
     void stepOut(ErrorString&) final;
     void setPauseOnExceptions(ErrorString&, const String& pauseState) final;
+    void setPauseOnAssertions(ErrorString&, bool enabled) final;
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex) final;
     void setOverlayMessage(ErrorString&, const String*) override;
 
@@ -168,6 +169,7 @@ private:
     bool m_javaScriptPauseScheduled { false };
     bool m_hasExceptionValue { false };
     bool m_didPauseStopwatch { false };
+    bool m_pauseOnAssertionFailures { false };
 };
 
 } // namespace Inspector

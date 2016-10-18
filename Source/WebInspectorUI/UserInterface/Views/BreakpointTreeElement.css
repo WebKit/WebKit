@@ -50,6 +50,10 @@
     content: url(../Images/Exception.svg);
 }
 
+.breakpoint-assertion-icon .icon {
+    content: url(../Images/Assertion.svg);
+}
+
 .breakpoint-paused-icon .icon {
     content: url(../Images/PausedBreakpoint.svg);
 }

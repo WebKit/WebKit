@@ -47,6 +47,7 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
         this._allExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-exceptions", false);
         this._allUncaughtExceptionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-all-uncaught-exceptions", false);
+        this._assertionsBreakpointEnabledSetting = new WebInspector.Setting("break-on-assertions", false);
 
         let specialBreakpointLocation = new WebInspector.SourceCodeLocation(null, Infinity, Infinity);
 
@@ -54,6 +55,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         this._allExceptionsBreakpoint.resolved = true;
 
         this._allUncaughtExceptionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._allUncaughtExceptionsBreakpointEnabledSetting.value);
+        
+        this._assertionsBreakpoint = new WebInspector.Breakpoint(specialBreakpointLocation, !this._assertionsBreakpointEnabledSetting.value);
+        this._assertionsBreakpoint.resolved = true;
 
         this._breakpoints = [];
         this._breakpointContentIdentifierMap = new Map;
@@ -84,6 +88,10 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         DebuggerAgent.setBreakpointsActive(this._breakpointsEnabledSetting.value);
 
         this._updateBreakOnExceptionsState();
+
+        // COMPATIBILITY (iOS 10): DebuggerAgent.setPauseOnAssertions did not exist yet.
+        if (DebuggerAgent.setPauseOnAssertions)
+            DebuggerAgent.setPauseOnAssertions(this._assertionsBreakpointEnabledSetting.value);
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
@@ -146,6 +154,11 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
         return this._allUncaughtExceptionsBreakpoint;
     }
 
+    get assertionsBreakpoint()
+    {
+        return this._assertionsBreakpoint;
+    }
+
     get breakpoints()
     {
         return this._breakpoints;
@@ -186,7 +199,9 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
 
     isBreakpointRemovable(breakpoint)
     {
-        return breakpoint !== this._allExceptionsBreakpoint && breakpoint !== this._allUncaughtExceptionsBreakpoint;
+        return breakpoint !== this._allExceptionsBreakpoint
+            && breakpoint !== this._allUncaughtExceptionsBreakpoint
+            && breakpoint !== this._assertionsBreakpoint;
     }
 
     isBreakpointEditable(breakpoint)
@@ -846,6 +861,14 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
                 this.breakpointsEnabled = true;
             this._allUncaughtExceptionsBreakpointEnabledSetting.value = !breakpoint.disabled;
             this._updateBreakOnExceptionsState();
+            return;
+        }
+
+        if (breakpoint === this._assertionsBreakpoint) {
+            if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
+                this.breakpointsEnabled = true;
+            this._assertionsBreakpointEnabledSetting.value = !breakpoint.disabled;
+            DebuggerAgent.setPauseOnAssertions(this._assertionsBreakpointEnabledSetting.value);
             return;
         }
 

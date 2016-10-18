@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerAssertions() {
+    console.assert(true, "Passing assertion");
+    console.assert(false, "Failing assertion");
+}
+
+function test()
+{
+    // Pause on all exceptions should not affect pausing on assertions.
+    WebInspector.debuggerManager.allExceptionsBreakpoint.disabled = false;
+
+    let suite = InspectorTest.createAsyncSuite("Debugger.setPauseOnAssertions");
+
+    suite.addTestCase({
+        name: "Debugger.setPauseOnAssertions.Disabled",
+        description: "Do not pause on assertions when disabled.",
+        test(resolve, reject) {
+            WebInspector.debuggerManager.assertionsBreakpoint.disabled = true;
+
+            let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.fail("Should not have paused.");
+                reject();
+            });
+
+            InspectorTest.evaluateInPage("triggerAssertions()", () => {
+                InspectorTest.pass("Should not pause.");
+                WebInspector.debuggerManager.removeEventListener(WebInspector.DebuggerManager.Event.Paused, listener);
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setPauseOnAssertions.Enabled",
+        description: "Pause on assertions when enabled.",
+        test(resolve, reject) {
+            WebInspector.debuggerManager.assertionsBreakpoint.disabled = false;
+
+            let didPause = false;
+            let listener = WebInspector.debuggerManager.singleFireEventListener(WebInspector.DebuggerManager.Event.Paused, (event) => {
+                InspectorTest.pass("Should paused.");
+                WebInspector.debuggerManager.resume();
+                didPause = true;
+            });
+
+            InspectorTest.evaluateInPage("triggerAssertions()", () => {
+                if (!didPause)
+                    InspectorTest.fail("Should have paused.");
+                resolve();
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setPauseOnAssertions</p>
+</body>
+</html>
