@@ -29,6 +29,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
+#include "ElementChildIterator.h"
 #include "ExceptionCode.h"
 #include "ExceptionCodePlaceholder.h"
 #include "GenericCachedHTMLCollection.h"
@@ -265,27 +266,28 @@ void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
     row->remove(ec);
 }
 
-static inline bool isTableCellAncestor(Node* n)
+static inline bool isTableCellAncestor(const Element& element)
 {
-    return n->hasTagName(theadTag) || n->hasTagName(tbodyTag) ||
-           n->hasTagName(tfootTag) || n->hasTagName(trTag) ||
-           n->hasTagName(thTag);
+    return element.hasTagName(theadTag)
+        || element.hasTagName(tbodyTag)
+        || element.hasTagName(tfootTag)
+        || element.hasTagName(trTag)
+        || element.hasTagName(thTag);
 }
 
-static bool setTableCellsChanged(Node* n)
+static bool setTableCellsChanged(Element& element)
 {
-    ASSERT(n);
     bool cellChanged = false;
 
-    if (n->hasTagName(tdTag))
+    if (element.hasTagName(tdTag))
         cellChanged = true;
-    else if (isTableCellAncestor(n)) {
-        for (Node* child = n->firstChild(); child; child = child->nextSibling())
+    else if (isTableCellAncestor(element)) {
+        for (auto& child : childrenOfType<Element>(element))
             cellChanged |= setTableCellsChanged(child);
     }
 
     if (cellChanged)
-       n->setNeedsStyleRecalc();
+        element.invalidateStyleForSubtree();
 
     return cellChanged;
 }
@@ -422,10 +424,10 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = nullptr;
         bool cellChanged = false;
-        for (Node* child = firstChild(); child; child = child->nextSibling())
+        for (auto& child : childrenOfType<Element>(*this))
             cellChanged |= setTableCellsChanged(child);
         if (cellChanged)
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
     }
 }
 

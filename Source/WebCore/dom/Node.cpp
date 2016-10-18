@@ -666,7 +666,7 @@ void Node::inspect()
 static Node::Editability computeEditabilityFromComputedStyle(const Node& startNode, Node::UserSelectAllTreatment treatment)
 {
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
-    // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion
+    // ContainerNode::setFocus() calls invalidateStyleForSubtree(), so the assertion
     // would fire in the middle of Document::setFocusedElement().
 
     for (const Node* node = &startNode; node; node = node->parentNode()) {
@@ -750,6 +750,16 @@ void Node::derefEventTarget()
     deref();
 }
 
+void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode mode)
+{
+    if (validity > styleValidity()) {
+        m_nodeFlags &= ~StyleValidityMask;
+        m_nodeFlags |= static_cast<unsigned>(validity) << StyleValidityShift;
+    }
+    if (mode == Style::InvalidationMode::RecompositeLayer)
+        setFlag(StyleResolutionShouldRecompositeLayerFlag);
+}
+
 inline void Node::updateAncestorsForStyleRecalc()
 {
     auto composedAncestors = composedTreeAncestors(*this);
@@ -758,10 +768,8 @@ inline void Node::updateAncestorsForStyleRecalc()
     if (it != end) {
         it->setDirectChildNeedsStyleRecalc();
 
-        if (it->childrenAffectedByPropertyBasedBackwardPositionalRules()) {
-            if (it->styleChangeType() < FullStyleChange)
-                it->setStyleChange(FullStyleChange);
-        }
+        if (it->childrenAffectedByPropertyBasedBackwardPositionalRules())
+            it->adjustStyleValidity(Style::Validity::SubtreeInvalid, Style::InvalidationMode::Normal);
 
         for (; it != end; ++it) {
             // Iterator skips over shadow roots.
@@ -782,9 +790,9 @@ inline void Node::updateAncestorsForStyleRecalc()
     document().scheduleStyleRecalc();
 }
 
-void Node::setNeedsStyleRecalc(StyleChangeType changeType)
+void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mode)
 {
-    ASSERT(changeType != NoStyleChange);
+    ASSERT(validity != Style::Validity::Valid);
     if (!inRenderedDocument())
         return;
 
@@ -792,11 +800,12 @@ void Node::setNeedsStyleRecalc(StyleChangeType changeType)
     if (document().inRenderTreeUpdate())
         return;
 
-    StyleChangeType existingChangeType = styleChangeType();
-    if (changeType > existingChangeType)
-        setStyleChange(changeType);
+    // FIXME: Why the second condition?
+    bool markAncestors = styleValidity() == Style::Validity::Valid || validity == Style::Validity::SubtreeAndRenderersInvalid;
 
-    if (existingChangeType == NoStyleChange || changeType == ReconstructRenderTree)
+    adjustStyleValidity(validity, mode);
+
+    if (markAncestors)
         updateAncestorsForStyleRecalc();
 }
 
@@ -1196,7 +1205,7 @@ Node::InsertionNotificationRequest Node::insertedInto(ContainerNode& insertionPo
     if (parentOrShadowHostNode()->isInShadowTree())
         setFlag(IsInShadowTreeFlag);
 
-    setNeedsStyleRecalc(ReconstructRenderTree);
+    invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 
     return InsertionDone;
 }

@@ -221,7 +221,7 @@ Ref<Text> Text::createWithLengthLimit(Document& document, const String& data, un
 void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
     ASSERT(parentNode());
-    if (styleChangeType() == ReconstructRenderTree)
+    if (styleValidity() >= Style::Validity::SubtreeAndRenderersInvalid)
         return;
 
     auto textUpdate = std::make_unique<Style::Update>(document());
@@ -233,7 +233,6 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (auto* renderer = this->renderer())
         renderer->setTextWithOffset(data(), offsetOfReplacedData, lengthOfReplacedData);
 }
-
 
 #if ENABLE(TREE_DEBUGGING)
 void Text::formatForDebugger(char* buffer, unsigned length) const

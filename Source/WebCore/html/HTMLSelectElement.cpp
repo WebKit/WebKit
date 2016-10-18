@@ -303,7 +303,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         m_size = size;
         updateValidity();
         if (m_size != oldSize) {
-            setNeedsStyleRecalc(ReconstructRenderTree);
+            invalidateStyleAndRenderersForSubtree();
             setRecalcListItems();
             updateValidity();
         }
@@ -744,7 +744,7 @@ void HTMLSelectElement::setRecalcListItems()
     // Manual selection anchor is reset when manipulating the select programmatically.
     m_activeSelectionAnchorIndex = -1;
     setOptionsChangedOnRenderer();
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
     if (!inDocument()) {
         if (HTMLCollection* collection = cachedHTMLCollection(SelectOptions))
             collection->invalidateCache(document());
@@ -1022,7 +1022,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
     m_multiple = !value.isNull();
     updateValidity();
     if (oldUsesMenuList != usesMenuList())
-        setNeedsStyleRecalc(ReconstructRenderTree);
+        invalidateStyleAndRenderersForSubtree();
 }
 
 bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
@@ -1071,7 +1071,7 @@ void HTMLSelectElement::reset()
         firstOption->setSelectedState(true);
 
     setOptionsChangedOnRenderer();
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
     updateValidity();
 }
 

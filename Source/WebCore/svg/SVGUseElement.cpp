@@ -514,7 +514,7 @@ void SVGUseElement::invalidateShadowTree()
     if (m_shadowTreeNeedsUpdate)
         return;
     m_shadowTreeNeedsUpdate = true;
-    setNeedsStyleRecalc(ReconstructRenderTree);
+    invalidateStyleAndRenderersForSubtree();
     invalidateDependentShadowTrees();
 }
 

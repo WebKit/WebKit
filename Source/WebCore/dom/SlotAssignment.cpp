@@ -77,7 +77,7 @@ void SlotAssignment::addSlotElementByName(const AtomicString& name, HTMLSlotElem
 #endif
 
     // FIXME: We should be able to do a targeted reconstruction.
-    shadowRoot.host()->setNeedsStyleRecalc(ReconstructRenderTree);
+    shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
 
     const AtomicString& slotName = slotNameFromAttributeValue(name);
     auto addResult = m_slots.add(slotName, std::unique_ptr<SlotInfo>());
@@ -109,7 +109,7 @@ void SlotAssignment::removeSlotElementByName(const AtomicString& name, HTMLSlotE
 #endif
 
     if (auto* host = shadowRoot.host()) // FIXME: We should be able to do a targeted reconstruction.
-        host->setNeedsStyleRecalc(ReconstructRenderTree);
+        host->invalidateStyleAndRenderersForSubtree();
 
     auto it = m_slots.find(slotNameFromAttributeValue(name));
     RELEASE_ASSERT(it != m_slots.end());
@@ -154,7 +154,7 @@ void SlotAssignment::didChangeSlot(const AtomicString& slotAttrValue, ChangeType
         return;
 
     if (changeType == ChangeType::DirectChild) {
-        shadowRoot.host()->setNeedsStyleRecalc(ReconstructRenderTree);
+        shadowRoot.host()->invalidateStyleAndRenderersForSubtree();
         m_slotAssignmentsIsValid = false;
     }
 

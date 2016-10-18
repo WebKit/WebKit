@@ -174,12 +174,12 @@ void HTMLOptionElement::parseAttribute(const QualifiedName& name, const AtomicSt
         bool oldDisabled = m_disabled;
         m_disabled = !value.isNull();
         if (oldDisabled != m_disabled) {
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
             if (renderer() && renderer()->style().hasAppearance())
                 renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
         }
     } else if (name == selectedAttr) {
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 
         // FIXME: This doesn't match what the HTML specification says.
         // The specification implies that removing the selected attribute or
@@ -229,7 +229,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
         return;
 
     m_isSelected = selected;
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->invalidateSelectedItems();

@@ -206,7 +206,7 @@ void MathMLSelectElement::updateSelectedChild()
         RenderTreeUpdater::tearDownRenderers(*m_selectedChild);
 
     m_selectedChild = newSelectedChild;
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 void MathMLSelectElement::defaultEventHandler(Event& event)

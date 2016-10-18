@@ -118,14 +118,8 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 
 void ShadowRoot::setResetStyleInheritance(bool value)
 {
-    if (isOrphan())
-        return;
-
-    if (value != m_resetStyleInheritance) {
-        m_resetStyleInheritance = value;
-        if (host())
-            setNeedsStyleRecalc();
-    }
+    // If this was ever changed after initialization, child styles would need to be invalidated here.
+    m_resetStyleInheritance = value;
 }
 
 Ref<Node> ShadowRoot::cloneNodeInternal(Document&, CloningOperation)

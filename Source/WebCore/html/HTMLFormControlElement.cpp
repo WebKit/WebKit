@@ -174,7 +174,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
 void HTMLFormControlElement::disabledStateChanged()
 {
     setNeedsWillValidateCheck();
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::EnabledState);
 }
@@ -182,7 +182,7 @@ void HTMLFormControlElement::disabledStateChanged()
 void HTMLFormControlElement::readOnlyAttributeChanged()
 {
     setNeedsWillValidateCheck();
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 void HTMLFormControlElement::requiredAttributeChanged()
@@ -190,7 +190,7 @@ void HTMLFormControlElement::requiredAttributeChanged()
     updateValidity();
     // Style recalculation is needed because style selectors may include
     // :required and :optional pseudo-classes.
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 static bool shouldAutofocus(HTMLFormControlElement* element)
@@ -445,7 +445,7 @@ void HTMLFormControlElement::setNeedsWillValidateCheck()
     m_willValidate = newWillValidate;
 
     updateValidity();
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 
     if (!m_willValidate && !wasValid) {
         removeInvalidElementToAncestorFromInsertionPoint(*this, parentNode());
@@ -555,7 +555,7 @@ void HTMLFormControlElement::updateValidity()
 
     if (willValidate && m_isValid != wasValid) {
         // Update style for pseudo classes such as :valid :invalid.
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 
         if (!m_isValid) {
             addInvalidElementToAncestorFromInsertionPoint(*this, parentNode());

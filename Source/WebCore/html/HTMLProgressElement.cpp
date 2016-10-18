@@ -141,7 +141,7 @@ void HTMLProgressElement::didElementStateChange()
         bool wasDeterminate = render->isDeterminate();
         render->updateFromElement();
         if (wasDeterminate != isDeterminate())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
     }
 }
 

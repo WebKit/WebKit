@@ -112,7 +112,7 @@ bool AnimationControllerPrivate::clear(RenderElement& renderer)
     });
     
     // Return false if we didn't do anything OR we are suspended (so we don't try to
-    // do a setNeedsStyleRecalc() when suspended).
+    // do a invalidateStyleForSubtree() when suspended).
     RefPtr<CompositeAnimation> animation = m_compositeAnimations.take(&renderer);
     ASSERT(animation);
     renderer.setIsCSSAnimating(false);
@@ -138,7 +138,7 @@ double AnimationControllerPrivate::updateAnimations(SetChanged callSetChanged/* 
                 Element* element = compositeAnimation.key->element();
                 ASSERT(element);
                 ASSERT(element->document().pageCacheState() == Document::NotInPageCache);
-                element->setNeedsStyleRecalc(SyntheticStyleChange);
+                element->invalidateStyleAndLayerComposition();
                 calledSetChanged = true;
             }
         }
@@ -211,7 +211,7 @@ void AnimationControllerPrivate::fireEventsAndUpdateStyle()
     }
 
     for (auto& change : m_elementChangesToDispatch)
-        change->setNeedsStyleRecalc(SyntheticStyleChange);
+        change->invalidateStyleAndLayerComposition();
 
     m_elementChangesToDispatch.clear();
 
@@ -358,7 +358,7 @@ bool AnimationControllerPrivate::pauseAnimationAtTime(RenderElement* renderer, c
 
     CompositeAnimation& compositeAnimation = ensureCompositeAnimation(*renderer);
     if (compositeAnimation.pauseAnimationAtTime(name, t)) {
-        renderer->element()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer->element()->invalidateStyleAndLayerComposition();
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -373,7 +373,7 @@ bool AnimationControllerPrivate::pauseTransitionAtTime(RenderElement* renderer, 
 
     CompositeAnimation& compositeAnimation = ensureCompositeAnimation(*renderer);
     if (compositeAnimation.pauseTransitionAtTime(cssPropertyID(property), t)) {
-        renderer->element()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer->element()->invalidateStyleAndLayerComposition();
         startUpdateStyleIfNeededDispatcher();
         return true;
     }
@@ -590,7 +590,7 @@ void AnimationController::cancelAnimations(RenderElement& renderer)
     Element* element = renderer.element();
     ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
     if (element)
-        element->setNeedsStyleRecalc(SyntheticStyleChange);
+        element->invalidateStyleAndLayerComposition();
 }
 
 bool AnimationController::updateAnimations(RenderElement& renderer, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle)

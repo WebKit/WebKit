@@ -235,7 +235,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-            setNeedsStyleRecalc(SyntheticStyleChange);
+            invalidateStyleAndLayerComposition();
 #endif
         }
         return m_context.get();
@@ -250,7 +250,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
                 m_context = WebGLRenderingContextBase::create(this, static_cast<WebGLContextAttributes*>(attrs), type);
                 if (m_context) {
                     // Need to make sure a RenderLayer and compositing layer get created for the Canvas
-                    setNeedsStyleRecalc(SyntheticStyleChange);
+                    invalidateStyleAndLayerComposition();
                 }
             }
             return m_context.get();
@@ -662,7 +662,7 @@ void HTMLCanvasElement::createImageBuffer() const
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context && m_context->is2d())
         // Recalculate compositing requirements if acceleration state changed.
-        const_cast<HTMLCanvasElement*>(this)->setNeedsStyleRecalc(SyntheticStyleChange);
+        const_cast<HTMLCanvasElement*>(this)->invalidateStyleAndLayerComposition();
 #endif
 }
 

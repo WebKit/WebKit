@@ -6252,6 +6252,7 @@
 		E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */; };
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E47E276816036EDC00EE2AFB /* ExtensionStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */; };
+		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48944A2180B57D800F165D8 /* SimpleLineLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4916FF7195DF6A0005AB349 /* LayerFlushThrottleState.h in Headers */ = {isa = PBXBuildFile; fileRef = E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14015,6 +14016,7 @@
 		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
+		E48137B81DB3B526005C59BF /* StyleValidity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleValidity.h; sourceTree = "<group>"; };
 		E48944A0180B57D800F165D8 /* SimpleLineLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayout.cpp; sourceTree = "<group>"; };
 		E48944A1180B57D800F165D8 /* SimpleLineLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayout.h; sourceTree = "<group>"; };
 		E4916FF6195DF6A0005AB349 /* LayerFlushThrottleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerFlushThrottleState.h; sourceTree = "<group>"; };
@@ -22696,6 +22698,7 @@
 				E4DEAA1617A93DC3000E0430 /* StyleTreeResolver.h */,
 				E42E76D91C7AF76C00E3614D /* StyleUpdate.cpp */,
 				E42E76DB1C7AF77600E3614D /* StyleUpdate.h */,
+				E48137B81DB3B526005C59BF /* StyleValidity.h */,
 			);
 			path = style;
 			sourceTree = "<group>";
@@ -25565,6 +25568,8 @@
 				BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */,
 				A80E7B150A19D606007FB8C5 /* JSHTMLHeadElement.h in Headers */,
 				1AE2AA2F0A1CDAB400B42B25 /* JSHTMLHeadingElement.h in Headers */,
+				E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */,
+				1A299FE81D7F5FA600A60093 /* RenderThemeCocoa.h in Headers */,
 				1AE2AA310A1CDAB400B42B25 /* JSHTMLHRElement.h in Headers */,
 				1A85B1900A1B18A200D8C87C /* JSHTMLHtmlElement.h in Headers */,
 				BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */,

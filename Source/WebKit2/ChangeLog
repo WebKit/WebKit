@@ -1,3 +1,14 @@
+2016-10-17  Antti Koivisto  <antti@apple.com>
+
+        Rename setNeedsStyleRecalc to invalidateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=163542
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin):
+        (WebKit::PluginView::pluginProcessCrashed):
+
 2016-10-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: PendingDownload is leaked if canceled before willDecidePendingDownloadDestination

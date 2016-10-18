@@ -239,14 +239,14 @@ static inline void applyCSSPropertyToTarget(SVGElement& targetElement, CSSProper
     if (!targetElement.ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
         return;
 
-    targetElement.setNeedsStyleRecalc(SyntheticStyleChange);
+    targetElement.invalidateStyleAndLayerComposition();
 }
 
 static inline void removeCSSPropertyFromTarget(SVGElement& targetElement, CSSPropertyID id)
 {
     ASSERT(!targetElement.m_deletionHasBegun);
     targetElement.ensureAnimatedSMILStyleProperties().removeProperty(id);
-    targetElement.setNeedsStyleRecalc(SyntheticStyleChange);
+    targetElement.invalidateStyleAndLayerComposition();
 }
 
 static inline void applyCSSPropertyToTargetAndInstances(SVGElement& targetElement, const QualifiedName& attributeName, const String& valueAsString)

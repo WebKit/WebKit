@@ -65,16 +65,16 @@ void AttributeChangeInvalidation::invalidateStyle(const QualifiedName& attribute
         return;
 
     if (!isHTML) {
-        m_element.setNeedsStyleRecalc(FullStyleChange);
+        m_element.invalidateStyleForSubtree();
         return;
     }
 
     if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
-        m_element.setNeedsStyleRecalc(FullStyleChange);
+        m_element.invalidateStyleForSubtree();
         return;
     }
 
-    m_element.setNeedsStyleRecalc(InlineStyleChange);
+    m_element.invalidateStyle();
 
     if (!childrenOfType<Element>(m_element).first())
         return;

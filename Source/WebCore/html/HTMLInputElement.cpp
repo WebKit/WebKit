@@ -549,7 +549,7 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
 #endif
 
     if (renderer())
-        setNeedsStyleRecalc(ReconstructRenderTree);
+        invalidateStyleAndRenderersForSubtree();
 
     if (document().focusedElement() == this)
         updateFocusAppearance(SelectionRestorationMode::Restore, SelectionRevealMode::Reveal);
@@ -695,14 +695,14 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         // We only need to setChanged if the form is looking at the default value right now.
         if (!hasDirtyValue()) {
             updatePlaceholderVisibility();
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         }
         setFormControlValueMatchesRenderer(false);
         updateValidity();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
     } else if (name == checkedAttr) {
         if (m_inputType->isCheckable())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
 
         // Another radio button in the same group might be checked by state
         // restore. We shouldn't call setChecked() even if this has the checked
@@ -731,9 +731,9 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_maxResults = !value.isNull() ? std::min(value.toInt(), maxSavedResults) : -1;
         m_inputType->maxResultsAttributeChanged();
     } else if (name == autosaveAttr) {
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
     } else if (name == incrementalAttr) {
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
     } else if (name == minAttr) {
         m_inputType->minOrMaxAttributeChanged();
         updateValidity();
@@ -895,7 +895,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
 
     m_reflectsCheckedAttribute = false;
     m_isChecked = nowChecked;
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 
     if (RadioButtonGroups* buttons = radioButtonGroups())
         buttons->updateCheckedState(this);
@@ -921,7 +921,7 @@ void HTMLInputElement::setChecked(bool nowChecked, TextFieldEventBehavior eventB
         dispatchFormControlChangeEvent();
     }
 
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setIndeterminate(bool newValue)
@@ -931,7 +931,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 
     m_isIndeterminate = newValue;
 
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 
     if (renderer() && renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::CheckedState);
@@ -1330,7 +1330,7 @@ void HTMLInputElement::setAutoFilled(bool autoFilled)
         return;
 
     m_isAutoFilled = autoFilled;
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonType)
@@ -1786,7 +1786,7 @@ void HTMLInputElement::maxLengthAttributeChanged(const AtomicString& newValue)
         updateValueIfNeeded();
 
     // FIXME: Do we really need to do this if the effective maxLength has not changed?
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
     updateValidity();
 }
 
@@ -1802,7 +1802,7 @@ void HTMLInputElement::minLengthAttributeChanged(const AtomicString& newValue)
         updateValueIfNeeded();
 
     // FIXME: Do we really need to do this if the effective minLength has not changed?
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
     updateValidity();
 }
 

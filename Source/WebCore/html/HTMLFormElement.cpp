@@ -591,7 +591,7 @@ void HTMLFormElement::registerFormElement(FormAssociatedElement* e)
         HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*e);
         if (control.isSuccessfulSubmitButton()) {
             if (!m_defaultButton)
-                control.setNeedsStyleRecalc();
+                control.invalidateStyleForSubtree();
             else
                 resetDefaultButton();
         }
@@ -619,7 +619,7 @@ void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControl
     ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
 
     if (m_invalidAssociatedFormControls.isEmpty())
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
     m_invalidAssociatedFormControls.add(&formControlElement);
 }
 
@@ -627,7 +627,7 @@ void HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded(const HTMLFormC
 {
     if (m_invalidAssociatedFormControls.remove(&formControlElement)) {
         if (m_invalidAssociatedFormControls.isEmpty())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
     }
 }
 
@@ -737,9 +737,9 @@ void HTMLFormElement::resetDefaultButton()
     defaultButton();
     if (m_defaultButton != oldDefault) {
         if (oldDefault)
-            oldDefault->setNeedsStyleRecalc();
+            oldDefault->invalidateStyleForSubtree();
         if (m_defaultButton)
-            m_defaultButton->setNeedsStyleRecalc();
+            m_defaultButton->invalidateStyleForSubtree();
     }
 }
 

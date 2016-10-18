@@ -116,11 +116,11 @@ void ClassChangeInvalidation::invalidateStyle(const SpaceSplitString& oldClasses
         return;
 
     if (shadowRoot && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
-        m_element.setNeedsStyleRecalc(FullStyleChange);
+        m_element.invalidateStyleForSubtree();
         return;
     }
 
-    m_element.setNeedsStyleRecalc(InlineStyleChange);
+    m_element.invalidateStyle();
 
     if (!childrenOfType<Element>(m_element).first())
         return;

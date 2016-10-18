@@ -100,24 +100,23 @@ StyleInvalidationAnalysis::CheckDescendants StyleInvalidationAnalysis::invalidat
     if (m_hasShadowPseudoElementRulesInAuthorSheet) {
         // FIXME: This could do actual rule matching too.
         if (element.shadowRoot())
-            element.setNeedsStyleRecalc();
+            element.invalidateStyleForSubtree();
     }
 
-    switch (element.styleChangeType()) {
-    case NoStyleChange: {
+    switch (element.styleValidity()) {
+    case Style::Validity::Valid: {
         ElementRuleCollector ruleCollector(element, m_ruleSet, filter);
         ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
         ruleCollector.matchAuthorRules(false);
 
         if (ruleCollector.hasMatchedRules())
-            element.setNeedsStyleRecalc(InlineStyleChange);
+            element.invalidateStyle();
         return CheckDescendants::Yes;
     }
-    case InlineStyleChange:
+    case Style::Validity::ElementInvalid:
         return CheckDescendants::Yes;
-    case FullStyleChange:
-    case SyntheticStyleChange:
-    case ReconstructRenderTree:
+    case Style::Validity::SubtreeInvalid:
+    case Style::Validity::SubtreeAndRenderersInvalid:
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();

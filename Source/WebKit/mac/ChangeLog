@@ -1,3 +1,15 @@
+2016-10-17  Antti Koivisto  <antti@apple.com>
+
+        Rename setNeedsStyleRecalc to invalidateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=163542
+
+        Reviewed by Darin Adler.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPluginLayer]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+
 2016-10-17  Jeremy Jones  <jeremyj@apple.com>
 
         Enable keyboard in fullscreen.

@@ -75,7 +75,7 @@ void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString
         bool wasLink = isLink();
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
     } else if (name == rowspanAttr) {
         if (is<RenderTableCell>(renderer()) && hasTagName(mtdTag))
             downcast<RenderTableCell>(*renderer()).colSpanOrRowSpanChanged();

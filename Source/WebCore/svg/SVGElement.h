@@ -90,7 +90,7 @@ public:
     {
         ensureUniqueElementData().setPresentationAttributeStyleIsDirty(true);
         // Trigger style recalculation for "elements as resource" (e.g. referenced by feImage).
-        setNeedsStyleRecalc(InlineStyleChange);
+        invalidateStyle();
     }
 
     // The instances of an element are clones made in shadow trees to implement <use>.

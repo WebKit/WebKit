@@ -193,7 +193,7 @@ bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedN
         return false;
     if (!targetElement->inDocument())
         return true;
-    targetElement->setNeedsStyleRecalc(ReconstructRenderTree);
+    targetElement->invalidateStyleAndRenderersForSubtree();
     return true;
 }
 

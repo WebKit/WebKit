@@ -153,7 +153,7 @@ void HTMLFrameElementBase::finishedInsertingSubtree()
         return;
 
     if (!renderer())
-        setNeedsStyleRecalc(ReconstructRenderTree);
+        invalidateStyleAndRenderersForSubtree();
     setNameAndOpenURL();
 }
 

@@ -1983,7 +1983,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // RenderTheme::isFocused() check if the frame is active, we have to
     // update style and theme state that depended on those.
     if (Element* element = document->focusedElement()) {
-        element->setNeedsStyleRecalc();
+        element->invalidateStyleForSubtree();
         if (RenderObject* renderer = element->renderer())
             if (renderer && renderer->style().hasAppearance())
                 renderer->theme().stateChanged(*renderer, ControlStates::FocusState);

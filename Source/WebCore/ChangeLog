@@ -1,3 +1,242 @@
+2016-10-18  Antti Koivisto  <antti@apple.com>
+
+        Rename setNeedsStyleRecalc to invalidateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=163542
+
+        Reviewed by Darin Adler.
+
+        Also rename StyleChangeType enum and some related functions for clarity. For example
+
+            element.setNeedsStyleRecalc(SyntheticStyleChange);
+
+        becomes
+
+            element.invalidateStyleAndLayerComposition();
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleInvalidationAnalysis.cpp:
+        (WebCore::StyleInvalidationAnalysis::invalidateIfNeeded):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        (WebCore::Document::updateViewportUnitsOnResize):
+        (WebCore::Document::setCSSTarget):
+        (WebCore::unwrapFullScreenRenderer):
+        (WebCore::Document::setAnimatingFullScreen):
+        * dom/Element.cpp:
+        (WebCore::Element::setActive):
+        (WebCore::Element::setFocus):
+        (WebCore::Element::setHovered):
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::invalidateStyle):
+        (WebCore::Element::invalidateStyleAndLayerComposition):
+        (WebCore::Element::invalidateStyleForSubtree):
+        (WebCore::Element::invalidateStyleAndRenderersForSubtree):
+
+            Move public invalidation functions to Element tightening typing.
+            Use separate functions instead of enum values.
+            This way the call sites look nicer and only useful combinations are exposed.
+
+        (WebCore::Element::addShadowRoot):
+        (WebCore::checkForEmptyStyleChange):
+        (WebCore::checkForSiblingStyleChanges):
+        (WebCore::Element::needsStyleInvalidation):
+        (WebCore::Element::setContainsFullScreenElement):
+        * dom/Element.h:
+        (WebCore::Element::setHasFocusWithin):
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle):
+        (WebCore::Node::adjustStyleValidity):
+
+            Update validity and mode separately. There was a potential bug here where
+            SyntheticStyleChange could overwrite FullStyleChange (no known repro).
+
+        (WebCore::Node::updateAncestorsForStyleRecalc):
+        (WebCore::Node::invalidateStyle):
+        (WebCore::Node::insertedInto):
+        (WebCore::Node::setNeedsStyleRecalc): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::needsStyleRecalc):
+        (WebCore::Node::styleValidity):
+        (WebCore::Node::styleResolutionShouldRecompositeLayer):
+        (WebCore::Node::setHasValidStyle):
+        (WebCore::Node::styleChangeType): Deleted.
+        (WebCore::Node::clearNeedsStyleRecalc): Deleted.
+        (WebCore::Node::setStyleChange): Deleted.
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::remove):
+        (WebCore::RadioButtonGroup::setNeedsStyleRecalcForAllButtons):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::addSlotElementByName):
+        (WebCore::SlotAssignment::removeSlotElementByName):
+        (WebCore::SlotAssignment::didChangeSlot):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        * dom/Text.cpp:
+        (WebCore::Text::updateRendererAfterContentChange):
+        * dom/VisitedLinkState.cpp:
+        (WebCore::VisitedLinkState::invalidateStyleForAllLinks):
+        (WebCore::VisitedLinkState::invalidateStyleForLink):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::minOrMaxAttributeChanged):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setValue):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged):
+        (WebCore::HTMLElement::calculateAndAdjustDirectionality):
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::addInvalidDescendant):
+        (WebCore::HTMLFieldSetElement::removeInvalidDescendant):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledStateChanged):
+        (WebCore::HTMLFormControlElement::readOnlyAttributeChanged):
+        (WebCore::HTMLFormControlElement::requiredAttributeChanged):
+        (WebCore::HTMLFormControlElement::setNeedsWillValidateCheck):
+        (WebCore::HTMLFormControlElement::updateValidity):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::registerInvalidAssociatedFormControl):
+        (WebCore::HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded):
+        (WebCore::HTMLFormElement::resetDefaultButton):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::finishedInsertingSubtree):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::scheduleinvalidateStyleAndLayerComposition):
+        (WebCore::HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc): Deleted.
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        (WebCore::HTMLFrameSetElement::willRecalcStyle):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::runPostTypeUpdateTasks):
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::setChecked):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        (WebCore::HTMLInputElement::setAutoFilled):
+        (WebCore::HTMLInputElement::maxLengthAttributeChanged):
+        (WebCore::HTMLInputElement::minLengthAttributeChanged):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingModeChanged):
+        (WebCore::HTMLMediaElement::setVideoFullscreenLayer):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        (WebCore::HTMLObjectElement::childrenChanged):
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::parseAttribute):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        (WebCore::HTMLOptionElement::setSelectedState):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::didAddUserAgentShadowRoot):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::setDisplayState):
+        (WebCore::HTMLPlugInImageElement::willRecalcStyle):
+        (WebCore::HTMLPlugInImageElement::finishParsingChildren):
+        (WebCore::HTMLPlugInImageElement::resumeFromDocumentSuspension):
+        (WebCore::HTMLPlugInImageElement::removeSnapshotTimerFired):
+        (WebCore::HTMLPlugInImageElement::restartSnapshottedPlugIn):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        (WebCore::HTMLSelectElement::reset):
+        * html/HTMLTableElement.cpp:
+        (WebCore::isTableCellAncestor):
+        (WebCore::setTableCellsChanged):
+        (WebCore::HTMLTableElement::parseAttribute):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::updatePlaceholderVisibility):
+        * html/InputType.cpp:
+        (WebCore::InputType::setValue):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::minOrMaxAttributeChanged):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::subtreeHasChanged):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseAttribute):
+        * mathml/MathMLSelectElement.cpp:
+        (WebCore::MathMLSelectElement::updateSelectedChild):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::setNeedsStyleRecalc):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::clear):
+        (WebCore::AnimationControllerPrivate::updateAnimations):
+        (WebCore::AnimationControllerPrivate::fireEventsAndUpdateStyle):
+        (WebCore::AnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::AnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::AnimationController::cancelAnimations):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateDragState):
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyle):
+        * style/IdChangeInvalidation.cpp:
+        (WebCore::Style::IdChangeInvalidation::invalidateStyle):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::resetStyleForNonRenderedDescendants):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        (WebCore::Style::TreeResolver::popParent):
+        (WebCore::Style::clearNeedsStyleResolution):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        * style/StyleUpdate.h:
+        * style/StyleValidity.h: Added.
+
+            StyleChangeType enum splits into Style::Validity and Style::InvalidationMode.
+            Move to a file of its own.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::svgAttributeChanged):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::applyCSSPropertyToTarget):
+        (WebCore::removeCSSPropertyFromTarget):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::willRecalcStyle):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGPresentationAttributeStyle):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::handleAttributeChange):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::invalidateShadowTree):
+        * testing/Internals.cpp:
+        (WebCore::styleValidityToToString):
+        (WebCore::Internals::styleChangeType):
+        (WebCore::styleChangeTypeToString): Deleted.
+
 2016-10-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Constrain by min|max-height on auto repeat computation

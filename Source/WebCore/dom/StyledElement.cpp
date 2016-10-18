@@ -159,7 +159,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomicStri
         styleAttributeChanged(newValue, reason);
     else if (isPresentationAttribute(name)) {
         elementData()->setPresentationAttributeStyleIsDirty(true);
-        setNeedsStyleRecalc(InlineStyleChange);
+        invalidateStyle();
     }
 
     Element::attributeChanged(name, oldValue, newValue, reason);
@@ -216,7 +216,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
 
     elementData()->setStyleAttributeIsDirty(false);
 
-    setNeedsStyleRecalc(InlineStyleChange);
+    invalidateStyle();
     InspectorInstrumentation::didInvalidateStyleAttr(document(), *this);
 }
 
@@ -226,7 +226,7 @@ void StyledElement::invalidateStyleAttribute()
         document().setHasElementUsingStyleBasedEditability();
 
     elementData()->setStyleAttributeIsDirty(true);
-    setNeedsStyleRecalc(InlineStyleChange);
+    invalidateStyle();
 }
 
 void StyledElement::inlineStyleChanged()

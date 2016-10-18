@@ -86,7 +86,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const Atomic
         if (!value.isNull()) {
             m_rowLengths = newLengthArray(value.string(), m_totalRows);
             // FIXME: Would be nice to optimize the case where m_rowLengths did not change.
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         }
         return;
     }
@@ -97,7 +97,7 @@ void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const Atomic
         if (!value.isNull()) {
             m_colLengths = newLengthArray(value.string(), m_totalCols);
             // FIXME: Would be nice to optimize the case where m_colLengths did not change.
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         }
         return;
     }
@@ -202,10 +202,8 @@ void HTMLFrameSetElement::defaultEventHandler(Event& event)
 
 bool HTMLFrameSetElement::willRecalcStyle(Style::Change)
 {
-    if (needsStyleRecalc() && renderer()) {
+    if (needsStyleRecalc() && renderer())
         renderer()->setNeedsLayout();
-        clearNeedsStyleRecalc();
-    }
     return true;
 }
 

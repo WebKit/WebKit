@@ -166,7 +166,7 @@ void HTMLTextFormControlElement::updatePlaceholderVisibility()
     if (placeHolderWasVisible == m_isPlaceholderVisible)
         return;
 
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 }
 
 void HTMLTextFormControlElement::setSelectionStart(int start)

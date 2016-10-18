@@ -23,66 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleUpdate_h
-#define StyleUpdate_h
-
-#include "Node.h"
-#include "StyleChange.h"
-#include "StyleRelations.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
-#include <wtf/RefPtr.h>
+#pragma once
 
 namespace WebCore {
-
-class ContainerNode;
-class Document;
-class Element;
-class Node;
-class RenderStyle;
-class Text;
-
 namespace Style {
 
-struct ElementUpdate {
-    std::unique_ptr<RenderStyle> style;
-    Change change { NoChange };
-    bool recompositeLayer { false };
+enum class Validity {
+    Valid,
+    ElementInvalid,
+    SubtreeInvalid,
+    SubtreeAndRenderersInvalid
 };
 
-class Update {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    Update(Document&);
-
-    const ListHashSet<ContainerNode*>& roots() const { return m_roots; }
-
-    const ElementUpdate* elementUpdate(const Element&) const;
-    ElementUpdate* elementUpdate(const Element&);
-
-    bool textUpdate(const Text&) const;
-
-    const RenderStyle* elementStyle(const Element&) const;
-    RenderStyle* elementStyle(const Element&);
-
-    const Document& document() const { return m_document; }
-
-    unsigned size() const { return m_elements.size() + m_texts.size(); }
-
-    void addElement(Element&, Element* parent, ElementUpdate&&);
-    void addText(Text&, Element* parent);
-    void addText(Text&);
-
-private:
-    void addPossibleRoot(Element*);
-
-    Document& m_document;
-    ListHashSet<ContainerNode*> m_roots;
-    HashMap<const Element*, ElementUpdate> m_elements;
-    HashSet<const Text*> m_texts;
+enum class InvalidationMode {
+    Normal,
+    RecompositeLayer
 };
 
 }
 }
-#endif

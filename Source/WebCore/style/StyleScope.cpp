@@ -392,7 +392,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
     if (requiresFullStyleRecalc) {
         if (m_shadowRoot) {
             for (auto& shadowChild : childrenOfType<Element>(*m_shadowRoot))
-                shadowChild.setNeedsStyleRecalc();
+                shadowChild.invalidateStyleForSubtree();
         } else
             m_document.scheduleForcedStyleRecalc();
     }

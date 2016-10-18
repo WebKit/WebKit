@@ -241,7 +241,7 @@ void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
     // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
     m_fileList->clear();
     m_icon = nullptr;
-    element().setNeedsStyleRecalc();
+    element().invalidateStyleForSubtree();
 }
 
 PassRefPtr<FileList> FileInputType::createFileList(const Vector<FileChooserFileInfo>& files) const

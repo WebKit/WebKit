@@ -897,7 +897,7 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildAttributeChanged(Element
         return;
     for (auto& elementToAdjust : elementLineage(this)) {
         if (elementAffectsDirectionality(elementToAdjust)) {
-            elementToAdjust.setNeedsStyleRecalc();
+            elementToAdjust.invalidateStyleForSubtree();
             return;
         }
     }
@@ -909,7 +909,7 @@ void HTMLElement::calculateAndAdjustDirectionality()
     TextDirection textDirection = directionality(&strongDirectionalityTextNode);
     setHasDirAutoFlagRecursively(this, true, strongDirectionalityTextNode);
     if (renderer() && renderer()->style().direction() != textDirection)
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 }
 
 void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChangeType changeType)

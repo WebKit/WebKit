@@ -63,7 +63,7 @@ void VisitedLinkState::invalidateStyleForAllLinks()
         return;
     for (auto& element : descendantsOfType<Element>(m_document)) {
         if (element.isLink())
-            element.setNeedsStyleRecalc();
+            element.invalidateStyleForSubtree();
     }
 }
 
@@ -82,7 +82,7 @@ void VisitedLinkState::invalidateStyleForLink(LinkHash linkHash)
         return;
     for (auto& element : descendantsOfType<Element>(m_document)) {
         if (linkHashForElement(m_document, element) == linkHash)
-            element.setNeedsStyleRecalc();
+            element.invalidateStyleForSubtree();
     }
 }
 

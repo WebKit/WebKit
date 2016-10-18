@@ -169,7 +169,7 @@ void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicStri
             }
         }
 
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
         return;
     }
 

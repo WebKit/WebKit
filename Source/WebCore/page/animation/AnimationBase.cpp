@@ -91,7 +91,7 @@ void AnimationBase::setNeedsStyleRecalc(Element* element)
 {
     ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
     if (element)
-        element->setNeedsStyleRecalc(SyntheticStyleChange);
+        element->invalidateStyleAndLayerComposition();
 }
 
 double AnimationBase::duration() const

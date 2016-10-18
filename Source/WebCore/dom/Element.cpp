@@ -567,7 +567,7 @@ void Element::setActive(bool flag, bool pause)
     const RenderStyle* renderStyle = this->renderStyle();
     bool reactsToPress = (renderStyle && renderStyle->affectedByActive()) || styleAffectedByActive();
     if (reactsToPress)
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 
     if (!renderer())
         return;
@@ -612,7 +612,7 @@ void Element::setFocus(bool flag)
         return;
 
     document().userActionElements().setFocused(this, flag);
-    setNeedsStyleRecalc();
+    invalidateStyleForSubtree();
 
     for (Element* element = this; element; element = element->parentOrShadowHostElement())
         element->setHasFocusWithin(flag);
@@ -632,13 +632,13 @@ void Element::setHovered(bool flag)
         // style, it would never go back to its normal style and remain
         // stuck in its hovered style).
         if (!flag)
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
 
         return;
     }
 
     if (renderer()->style().affectedByHover() || childrenAffectedByHover())
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 
     if (renderer()->style().hasAppearance())
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
@@ -1322,7 +1322,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
             elementData()->setHasNameAttribute(!newValue.isNull());
         else if (name == HTMLNames::pseudoAttr) {
             if (needsStyleInvalidation() && isInShadowTree())
-                setNeedsStyleRecalc(FullStyleChange);
+                invalidateStyleForSubtree();
         }
         else if (name == HTMLNames::slotAttr) {
             if (auto* parent = parentElement()) {
@@ -1438,6 +1438,26 @@ StyleResolver& Element::styleResolver()
 ElementStyle Element::resolveStyle(const RenderStyle* parentStyle)
 {
     return styleResolver().styleForElement(*this, parentStyle);
+}
+
+void Element::invalidateStyle()
+{
+    Node::invalidateStyle(Style::Validity::ElementInvalid);
+}
+
+void Element::invalidateStyleAndLayerComposition()
+{
+    Node::invalidateStyle(Style::Validity::ElementInvalid, Style::InvalidationMode::RecompositeLayer);
+}
+
+void Element::invalidateStyleForSubtree()
+{
+    Node::invalidateStyle(Style::Validity::SubtreeInvalid);
+}
+
+void Element::invalidateStyleAndRenderersForSubtree()
+{
+    Node::invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
 }
 
 #if ENABLE(WEB_ANIMATIONS)
@@ -1754,7 +1774,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     for (auto& target : postInsertionNotificationTargets)
         target->finishedInsertingSubtree();
 
-    setNeedsStyleRecalc(ReconstructRenderTree);
+    invalidateStyleAndRenderersForSubtree();
 
     InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 
@@ -1936,7 +1956,7 @@ static void checkForEmptyStyleChange(Element& element)
     if (element.styleAffectedByEmpty()) {
         auto* style = element.renderStyle();
         if (!style || (!style->emptyState() || element.hasChildNodes()))
-            element.setNeedsStyleRecalc();
+            element.invalidateStyleForSubtree();
     }
 }
 
@@ -1947,7 +1967,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
     // :empty selector.
     checkForEmptyStyleChange(parent);
 
-    if (parent.styleChangeType() >= FullStyleChange)
+    if (parent.styleValidity() >= Style::Validity::SubtreeInvalid)
         return;
 
     // :first-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
@@ -1962,14 +1982,14 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if (newFirstElement != elementAfterChange) {
             auto* style = elementAfterChange->renderStyle();
             if (!style || style->firstChildState())
-                elementAfterChange->setNeedsStyleRecalc();
+                elementAfterChange->invalidateStyleForSubtree();
         }
 
         // We also have to handle node removal.
         if (checkType == SiblingElementRemoved && newFirstElement == elementAfterChange && newFirstElement) {
             auto* style = newFirstElement->renderStyle();
             if (!style || !style->firstChildState())
-                newFirstElement->setNeedsStyleRecalc();
+                newFirstElement->invalidateStyleForSubtree();
         }
     }
 
@@ -1982,7 +2002,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if (newLastElement != elementBeforeChange) {
             auto* style = elementBeforeChange->renderStyle();
             if (!style || style->lastChildState())
-                elementBeforeChange->setNeedsStyleRecalc();
+                elementBeforeChange->invalidateStyleForSubtree();
         }
 
         // We also have to handle node removal.  The parser callback case is similar to node removal as well in that we need to change the last child
@@ -1990,13 +2010,13 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
         if ((checkType == SiblingElementRemoved || checkType == FinishedParsingChildren) && newLastElement == elementBeforeChange && newLastElement) {
             auto* style = newLastElement->renderStyle();
             if (!style || !style->lastChildState())
-                newLastElement->setNeedsStyleRecalc();
+                newLastElement->invalidateStyleForSubtree();
         }
     }
 
     if (elementAfterChange) {
         if (elementAfterChange->styleIsAffectedByPreviousSibling())
-            elementAfterChange->setNeedsStyleRecalc();
+            elementAfterChange->invalidateStyleForSubtree();
         else if (elementAfterChange->affectsNextSiblingElementStyle()) {
             Element* elementToInvalidate = elementAfterChange;
             do {
@@ -2004,7 +2024,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
             } while (elementToInvalidate && !elementToInvalidate->styleIsAffectedByPreviousSibling());
 
             if (elementToInvalidate)
-                elementToInvalidate->setNeedsStyleRecalc();
+                elementToInvalidate->invalidateStyleForSubtree();
         }
     }
 
@@ -2015,7 +2035,7 @@ static void checkForSiblingStyleChanges(Element& parent, SiblingCheckType checkT
     // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
     // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
     if (parent.childrenAffectedByBackwardPositionalRules() && elementBeforeChange)
-        parent.setNeedsStyleRecalc();
+        parent.invalidateStyleForSubtree();
 }
 
 void Element::childrenChanged(const ChildChange& change)
@@ -2704,7 +2724,7 @@ bool Element::needsStyleInvalidation() const
 {
     if (!inRenderedDocument())
         return false;
-    if (styleChangeType() >= FullStyleChange)
+    if (styleValidity() >= Style::Validity::SubtreeInvalid)
         return false;
     if (document().hasPendingForcedStyleRecalc())
         return false;
@@ -3071,7 +3091,7 @@ bool Element::containsFullScreenElement() const
 void Element::setContainsFullScreenElement(bool flag)
 {
     ensureElementRareData().setContainsFullScreenElement(flag);
-    setNeedsStyleRecalc(SyntheticStyleChange);
+    invalidateStyleAndLayerComposition();
 }
 
 static Element* parentCrossingFrameBoundaries(Element* element)

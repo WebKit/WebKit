@@ -486,18 +486,16 @@ bool Internals::nodeNeedsStyleRecalc(Node& node)
     return node.needsStyleRecalc();
 }
 
-static String styleChangeTypeToString(StyleChangeType type)
+static String styleValidityToToString(Style::Validity validity)
 {
-    switch (type) {
-    case NoStyleChange:
+    switch (validity) {
+    case Style::Validity::Valid:
         return "NoStyleChange";
-    case InlineStyleChange:
+    case Style::Validity::ElementInvalid:
         return "InlineStyleChange";
-    case FullStyleChange:
+    case Style::Validity::SubtreeInvalid:
         return "FullStyleChange";
-    case SyntheticStyleChange:
-        return "SyntheticStyleChange";
-    case ReconstructRenderTree:
+    case Style::Validity::SubtreeAndRenderersInvalid:
         return "ReconstructRenderTree";
     }
     ASSERT_NOT_REACHED();
@@ -506,7 +504,7 @@ static String styleChangeTypeToString(StyleChangeType type)
 
 String Internals::styleChangeType(Node& node)
 {
-    return styleChangeTypeToString(node.styleChangeType());
+    return styleValidityToToString(node.styleValidity());
 }
 
 String Internals::description(JSC::JSValue value)

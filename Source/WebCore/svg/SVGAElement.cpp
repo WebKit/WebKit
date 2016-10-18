@@ -98,7 +98,7 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
         setIsLink(!href().isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink()) {
             InstanceInvalidationGuard guard(*this);
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         }
     }
 

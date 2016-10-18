@@ -61,19 +61,19 @@ void IdChangeInvalidation::invalidateStyle(const AtomicString& changedId)
         return;
 
     if (m_element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules()) {
-        m_element.setNeedsStyleRecalc(FullStyleChange);
+        m_element.invalidateStyleForSubtree();
         return;
     }
 
-    m_element.setNeedsStyleRecalc(InlineStyleChange);
+    m_element.invalidateStyle();
 
     // This could be easily optimized for fine-grained descendant invalidation similar to ClassChangeInvalidation.
     // However using ids for dynamic styling is rare and this is probably not worth the memory cost of the required data structures.
     bool mayAffectDescendantStyle = ruleSets.features().idsMatchingAncestorsInRules.contains(changedId.impl());
     if (mayAffectDescendantStyle)
-        m_element.setNeedsStyleRecalc(FullStyleChange);
+        m_element.invalidateStyleForSubtree();
     else
-        m_element.setNeedsStyleRecalc(InlineStyleChange);
+        m_element.invalidateStyle();
 }
 
 }

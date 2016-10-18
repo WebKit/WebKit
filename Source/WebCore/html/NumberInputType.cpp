@@ -300,7 +300,7 @@ void NumberInputType::minOrMaxAttributeChanged()
 {
     InputType::minOrMaxAttributeChanged();
     HTMLInputElement& element = this->element();
-    element.setNeedsStyleRecalc();
+    element.invalidateStyleForSubtree();
     if (RenderObject* renderer = element.renderer())
         renderer->setNeedsLayoutAndPrefWidthsRecalc();
 }

@@ -153,7 +153,7 @@ void RadioButtonGroup::remove(HTMLInputElement* button)
         --m_requiredCount;
     }
     if (m_checkedButton) {
-        button->setNeedsStyleRecalc();
+        button->invalidateStyleForSubtree();
         if (m_checkedButton == button) {
             m_checkedButton = nullptr;
             setNeedsStyleRecalcForAllButtons();
@@ -176,7 +176,7 @@ void RadioButtonGroup::setNeedsStyleRecalcForAllButtons()
 {
     for (auto& button : m_members) {
         ASSERT(button->isRadioButton());
-        button->setNeedsStyleRecalc();
+        button->invalidateStyleForSubtree();
     }
 }
 

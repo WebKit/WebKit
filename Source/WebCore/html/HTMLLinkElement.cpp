@@ -157,7 +157,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         bool wasLink = isLink();
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         process();
         return;
     }

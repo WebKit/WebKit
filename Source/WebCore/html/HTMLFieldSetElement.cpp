@@ -214,7 +214,7 @@ void HTMLFieldSetElement::addInvalidDescendant(const HTMLFormControlElement& inv
     ASSERT_WITH_MESSAGE(!m_invalidDescendants.contains(&invalidFormControlElement), "Updating the fieldset on validity change is not an efficient operation, it should only be done when necessary.");
 
     if (m_invalidDescendants.isEmpty())
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
     m_invalidDescendants.add(&invalidFormControlElement);
 }
 
@@ -225,7 +225,7 @@ void HTMLFieldSetElement::removeInvalidDescendant(const HTMLFormControlElement& 
 
     m_invalidDescendants.remove(&formControlElement);
     if (m_invalidDescendants.isEmpty())
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 }
 
 } // namespace

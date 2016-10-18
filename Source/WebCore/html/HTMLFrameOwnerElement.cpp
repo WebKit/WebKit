@@ -122,15 +122,15 @@ SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
     return nullptr;
 }
 
-void HTMLFrameOwnerElement::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
+void HTMLFrameOwnerElement::scheduleinvalidateStyleAndLayerComposition()
 {
     if (Style::postResolutionCallbacksAreSuspended()) {
         RefPtr<HTMLFrameOwnerElement> element = this;
-        Style::queuePostResolutionCallback([element, changeType]{
-            element->setNeedsStyleRecalc(changeType);
+        Style::queuePostResolutionCallback([element] {
+            element->invalidateStyleAndLayerComposition();
         });
     } else
-        setNeedsStyleRecalc(changeType);
+        invalidateStyleAndLayerComposition();
 }
 
 bool SubframeLoadingDisabler::canLoadFrame(HTMLFrameOwnerElement& owner)

@@ -81,7 +81,7 @@ void HTMLOptGroupElement::parseAttribute(const QualifiedName& name, const Atomic
     recalcSelectOptions();
 
     if (name == disabledAttr)
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

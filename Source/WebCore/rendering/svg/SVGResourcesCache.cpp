@@ -121,7 +121,7 @@ void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDiffere
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (renderer.element() && !renderer.element()->isSVGElement())
-        renderer.element()->setNeedsStyleRecalc(SyntheticStyleChange);
+        renderer.element()->invalidateStyleAndLayerComposition();
 }
 
 void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)

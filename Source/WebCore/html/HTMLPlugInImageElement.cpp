@@ -139,7 +139,7 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
     if (state == RestartingWithPendingMouseClick || state == Restarting) {
         m_isRestartedPlugin = true;
         m_snapshotDecision = NeverSnapshot;
-        setNeedsStyleRecalc(SyntheticStyleChange);
+        invalidateStyleAndLayerComposition();
         if (displayState() == DisplayingSnapshot)
             m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
     }
@@ -239,13 +239,13 @@ bool HTMLPlugInImageElement::childShouldCreateRenderer(const Node& child) const
 bool HTMLPlugInImageElement::willRecalcStyle(Style::Change change)
 {
     // Make sure style recalcs scheduled by a child shadow tree don't trigger reconstruction and cause flicker.
-    if (change == Style::NoChange && styleChangeType() == NoStyleChange)
+    if (change == Style::NoChange && styleValidity() == Style::Validity::Valid)
         return true;
 
     // FIXME: There shoudn't be need to force render tree reconstruction here.
     // It is only done because loading and load event dispatching is tied to render tree construction.
     if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
-        setNeedsStyleRecalc(ReconstructRenderTree);
+        invalidateStyleAndRenderersForSubtree();
     return true;
 }
 
@@ -306,7 +306,7 @@ void HTMLPlugInImageElement::finishParsingChildren()
 
     setNeedsWidgetUpdate(true);
     if (inDocument())
-        setNeedsStyleRecalc();
+        invalidateStyleForSubtree();
 }
 
 void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
@@ -332,7 +332,7 @@ void HTMLPlugInImageElement::prepareForDocumentSuspension()
 
 void HTMLPlugInImageElement::resumeFromDocumentSuspension()
 {
-    setNeedsStyleRecalc(ReconstructRenderTree);
+    invalidateStyleAndRenderersForSubtree();
 
     HTMLPlugInElement::resumeFromDocumentSuspension();
 }
@@ -437,7 +437,7 @@ void HTMLPlugInImageElement::removeSnapshotTimerFired()
 {
     m_snapshotImage = nullptr;
     m_isRestartedPlugin = false;
-    setNeedsStyleRecalc(SyntheticStyleChange);
+    invalidateStyleAndLayerComposition();
     if (renderer())
         renderer()->repaint();
 }
@@ -515,7 +515,7 @@ void HTMLPlugInImageElement::restartSnapshottedPlugIn()
         return;
 
     setDisplayState(Restarting);
-    setNeedsStyleRecalc(ReconstructRenderTree);
+    invalidateStyleAndRenderersForSubtree();
 }
 
 void HTMLPlugInImageElement::dispatchPendingMouseClick()

@@ -683,7 +683,7 @@ bool InputType::storesValueSeparateFromAttribute()
 void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
     element().setValueInternal(sanitizedValue, eventBehavior);
-    element().setNeedsStyleRecalc();
+    element().invalidateStyleForSubtree();
     if (!valueChanged)
         return;
     switch (eventBehavior) {

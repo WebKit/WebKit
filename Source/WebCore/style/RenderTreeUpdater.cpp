@@ -289,7 +289,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, Style::ElementUp
         return;
     auto& renderer = *element.renderer();
 
-    if (update.isSynthetic) {
+    if (update.recompositeLayer) {
         renderer.setStyle(WTFMove(*update.style), StyleDifferenceRecompositeLayer);
         return;
     }

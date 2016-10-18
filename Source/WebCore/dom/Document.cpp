@@ -1853,7 +1853,7 @@ void Document::recalcStyle(Style::Change change)
 
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
 
-        clearNeedsStyleRecalc();
+        setHasValidStyle();
         clearChildNeedsStyleRecalc();
         unscheduleStyleRecalc();
 
@@ -3500,7 +3500,7 @@ void Document::updateViewportUnitsOnResize()
     for (Element* element = ElementTraversal::firstWithin(rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         auto* renderer = element->renderer();
         if (renderer && renderer->style().hasViewportUnits())
-            element->setNeedsStyleRecalc(InlineStyleChange);
+            element->invalidateStyle();
     }
 }
 
@@ -3818,10 +3818,10 @@ Element* Document::focusNavigationStartingNode(FocusDirection direction) const
 void Document::setCSSTarget(Element* n)
 {
     if (m_cssTarget)
-        m_cssTarget->setNeedsStyleRecalc();
+        m_cssTarget->invalidateStyleForSubtree();
     m_cssTarget = n;
     if (n)
-        n->setNeedsStyleRecalc();
+        n->invalidateStyleForSubtree();
 }
 
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
@@ -5835,8 +5835,8 @@ static void unwrapFullScreenRenderer(RenderFullScreen* fullScreenRenderer, Eleme
     bool requiresRenderTreeRebuild;
     fullScreenRenderer->unwrapRenderer(requiresRenderTreeRebuild);
 
-    if (requiresRenderTreeRebuild && fullScreenElement && fullScreenElement->parentNode())
-        fullScreenElement->parentNode()->setNeedsStyleRecalc(ReconstructRenderTree);
+    if (requiresRenderTreeRebuild && fullScreenElement && fullScreenElement->parentElement())
+        fullScreenElement->parentElement()->invalidateStyleAndRenderersForSubtree();
 }
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
@@ -6027,7 +6027,7 @@ void Document::setAnimatingFullScreen(bool flag)
     m_isAnimatingFullScreen = flag;
 
     if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(this)) {
-        m_fullScreenElement->setNeedsStyleRecalc();
+        m_fullScreenElement->invalidateStyleForSubtree();
         scheduleForcedStyleRecalc();
     }
 }

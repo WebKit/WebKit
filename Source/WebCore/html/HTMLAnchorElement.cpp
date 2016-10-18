@@ -237,7 +237,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         bool wasLink = isLink();
         setIsLink(!value.isNull() && !shouldProhibitLinks(this));
         if (wasLink != isLink())
-            setNeedsStyleRecalc();
+            invalidateStyleForSubtree();
         if (isLink()) {
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(value);
             if (document().isDNSPrefetchEnabled() && document().frame()) {
