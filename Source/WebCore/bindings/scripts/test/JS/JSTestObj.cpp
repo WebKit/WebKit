@@ -503,6 +503,11 @@ template<> Optional<TestObj::Dictionary> convertDictionary<TestObj::Dictionary>(
         result.booleanWithoutDefault = convert<IDLBoolean>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, Nullopt);
     }
+    JSValue bufferSourceValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bufferSourceValue"));
+    if (!bufferSourceValueValue.isUndefined()) {
+        result.bufferSourceValue = convert<IDLBufferSource>(state, bufferSourceValueValue);
+        RETURN_IF_EXCEPTION(throwScope, Nullopt);
+    }
     JSValue dictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
     if (!dictionaryMemberValue.isUndefined()) {
         auto dictionaryMemberOptional = convert<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(state, dictionaryMemberValue);
@@ -993,6 +998,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalOverload(
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionSingleConditionalOverload(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAttachShadowRoot(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionBufferSourceParameter(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToString(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionToJSON(JSC::ExecState*);
 
@@ -1604,6 +1610,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "singleConditionalOverload", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionSingleConditionalOverload), (intptr_t) (1) } },
     { "attachShadowRoot", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionAttachShadowRoot), (intptr_t) (1) } },
     { "operationWithExternalDictionaryParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOperationWithExternalDictionaryParameter), (intptr_t) (1) } },
+    { "bufferSourceParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionBufferSourceParameter), (intptr_t) (1) } },
     { "toString", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToString), (intptr_t) (0) } },
     { "toJSON", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionToJSON), (intptr_t) (0) } },
 #if ENABLE(Condition1)
@@ -7726,6 +7733,26 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExterna
     auto dict = convert<IDLDictionary<DictionaryImplName>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.operationWithExternalDictionaryParameter(dict.value());
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParameterCaller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionBufferSourceParameter(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionBufferSourceParameterCaller>(state, "bufferSourceParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionBufferSourceParameterCaller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto data = convert<IDLBufferSource>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.bufferSourceParameter(WTFMove(data));
     return JSValue::encode(jsUndefined());
 }
 

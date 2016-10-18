@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackList.h"
+#include "BufferSource.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
@@ -231,15 +232,9 @@ ExceptionOr<void> SourceBuffer::setAppendWindowEnd(double newValue)
     return { };
 }
 
-
-ExceptionOr<void> SourceBuffer::appendBuffer(ArrayBuffer& data)
+ExceptionOr<void> SourceBuffer::appendBuffer(const BufferSource& data)
 {
-    return appendBufferInternal(static_cast<unsigned char*>(data.data()), data.byteLength());
-}
-
-ExceptionOr<void> SourceBuffer::appendBuffer(ArrayBufferView& data)
-{
-    return appendBufferInternal(static_cast<unsigned char*>(data.baseAddress()), data.byteLength());
+    return appendBufferInternal(static_cast<const unsigned char*>(data.data), data.length);
 }
 
 void SourceBuffer::resetParserState()
@@ -496,7 +491,7 @@ void SourceBuffer::scheduleEvent(const AtomicString& eventName)
     m_asyncEventQueue.enqueueEvent(WTFMove(event));
 }
 
-ExceptionOr<void> SourceBuffer::appendBufferInternal(unsigned char* data, unsigned size)
+ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, unsigned size)
 {
     // Section 3.2 appendBuffer()
     // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#widl-SourceBuffer-appendBuffer-void-ArrayBufferView-data

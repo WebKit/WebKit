@@ -415,6 +415,8 @@ enum TestConfidence { "high", "kinda-low" };
     stringifier attribute USVString stringifierAttribute;
 
     serializer = {create, readOnlyStringAttr, enumAttr, longAttr};
+
+    void bufferSourceParameter(BufferSource data);
 };
 
 // The following comment should not generate any code.
@@ -460,6 +462,7 @@ dictionary TestDictionary {
     TestDictionaryThatShouldTolerateNull dictionaryMember;
     (long or Node) unionMember;
     (long or Node)? nullableUnionMember = null;
+    BufferSource bufferSourceValue;
 };
 
 dictionary TestDictionaryThatShouldNotTolerateNull {

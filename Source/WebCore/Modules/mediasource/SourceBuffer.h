@@ -47,6 +47,7 @@
 namespace WebCore {
 
 class AudioTrackList;
+class BufferSource;
 class MediaSource;
 class PlatformTimeRanges;
 class TextTrackList;
@@ -74,8 +75,7 @@ public:
     double appendWindowEnd() const;
     ExceptionOr<void> setAppendWindowEnd(double);
 
-    ExceptionOr<void> appendBuffer(ArrayBuffer&);
-    ExceptionOr<void> appendBuffer(ArrayBufferView&);
+    ExceptionOr<void> appendBuffer(const BufferSource&);
     ExceptionOr<void> abort();
     ExceptionOr<void> remove(double start, double end);
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
@@ -150,7 +150,7 @@ private:
     bool isRemoved() const;
     void scheduleEvent(const AtomicString& eventName);
 
-    ExceptionOr<void> appendBufferInternal(unsigned char*, unsigned);
+    ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
     void appendBufferTimerFired();
     void resetParserState();
 

@@ -35,6 +35,7 @@ class JSValue;
 
 namespace WebCore {
 
+class BufferSource;
 template <typename Value> class DOMPromise;
 
 template<typename T>
@@ -118,6 +119,7 @@ struct IDLUnion : IDLType<std::experimental::variant<typename Ts::Implementation
     using TypeList = brigand::list<Ts...>;
 };
 
+struct IDLBufferSource : IDLType<BufferSource> { };
 
 // Helper predicates
 

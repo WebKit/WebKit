@@ -371,6 +371,7 @@ sub SkipIncludeHeader
     return 1 if $object->IsPrimitiveType($type);
     return 1 if $object->IsTypedArrayType($type);
     return 1 if $type eq "Array";
+    return 1 if $type eq "BufferSource";
     return 1 if $type eq "DOMString" or $type eq "USVString";
     return 1 if $type eq "DOMTimeStamp";
     return 1 if $type eq "SVGNumber";
@@ -866,6 +867,7 @@ sub IsWrapperType
 
     return 0 if !$object->IsRefPtrType($type);
     return 0 if $object->IsTypedArrayType($type);
+    return 0 if $type eq "BufferSource";
     return 0 if $type eq "UNION";
     return 0 if $webCoreTypeHash{$type};
 

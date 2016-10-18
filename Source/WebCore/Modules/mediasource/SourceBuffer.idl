@@ -57,8 +57,7 @@
     [SetterMayThrowException] attribute unrestricted double appendWindowEnd;
 
     // Append segment data.
-    [MayThrowException] void appendBuffer(ArrayBuffer data);
-    [MayThrowException] void appendBuffer(ArrayBufferView data);
+    [MayThrowException] void appendBuffer(BufferSource data);
 
     // Abort the current segment append sequence.
     [MayThrowException] void abort();

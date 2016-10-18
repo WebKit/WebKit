@@ -1256,6 +1256,7 @@
 		2DE70023192FE82A00B0975C /* DisplayRefreshMonitorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE70022192FE82A00B0975C /* DisplayRefreshMonitorMac.h */; };
 		2DF512CD1D873E47001D6780 /* ReplaceRangeWithTextCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DF512CB1D873E47001D6780 /* ReplaceRangeWithTextCommand.cpp */; };
 		2DF512CE1D873E47001D6780 /* ReplaceRangeWithTextCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF512CC1D873E47001D6780 /* ReplaceRangeWithTextCommand.h */; };
+		2DFA488F1DB541D000362B99 /* BufferSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFA488E1DB541C200362B99 /* BufferSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
 		2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0888D31148848A00AF4265 /* JSDOMFormData.h */; };
 		2E19516B1B6598D200DF6EEF /* WheelEventDeltaFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E19516A1B6598D200DF6EEF /* WheelEventDeltaFilter.cpp */; };
@@ -5974,6 +5975,7 @@
 		E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */; };
 		E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */; };
 		E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */; };
+
 		E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */; };
 		E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */; };
 		E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */; };
@@ -8235,6 +8237,7 @@
 		2DE70022192FE82A00B0975C /* DisplayRefreshMonitorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitorMac.h; sourceTree = "<group>"; };
 		2DF512CB1D873E47001D6780 /* ReplaceRangeWithTextCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceRangeWithTextCommand.cpp; sourceTree = "<group>"; };
 		2DF512CC1D873E47001D6780 /* ReplaceRangeWithTextCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceRangeWithTextCommand.h; sourceTree = "<group>"; };
+		2DFA488E1DB541C200362B99 /* BufferSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferSource.h; sourceTree = "<group>"; };
 		2E0888C3114883A900AF4265 /* DOMFormData.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMFormData.idl; sourceTree = "<group>"; };
 		2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormData.cpp; sourceTree = "<group>"; };
 		2E0888D31148848A00AF4265 /* JSDOMFormData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMFormData.h; sourceTree = "<group>"; };
@@ -21415,6 +21418,7 @@
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				49B3760A15C6C6840059131D /* ArrayValue.cpp */,
 				49B3760B15C6C6840059131D /* ArrayValue.h */,
+				2DFA488E1DB541C200362B99 /* BufferSource.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
@@ -26798,6 +26802,7 @@
 				0FC4E40D187F82E10045882C /* ScrollingCoordinatorIOS.h in Headers */,
 				9391A991162746CB00297330 /* ScrollingCoordinatorMac.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,
+				2DFA488F1DB541D000362B99 /* BufferSource.h in Headers */,
 				0FEA3E7B191B2FC5000F1B55 /* ScrollingStateFrameScrollingNode.h in Headers */,
 				931CBD0D161A44E900E4C874 /* ScrollingStateNode.h in Headers */,
 				0FEA3E84191B31BF000F1B55 /* ScrollingStateOverflowScrollingNode.h in Headers */,

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BufferSource.h"
 #include "IDLTypes.h"
 #include "JSDOMBinding.h"
 
@@ -637,5 +638,26 @@ template<typename IDLType> typename Detail::VariadicConverter<IDLType>::Result c
 
     return { length, WTFMove(result) };
 }
+
+// MARK: -
+// MARK: BufferSource type
+
+template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource> {
+    using ReturnType = BufferSource;
+
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (JSC::ArrayBuffer* buffer = JSC::toArrayBuffer(value))
+            return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
+        if (RefPtr<JSC::ArrayBufferView> bufferView = toArrayBufferView(value))
+            return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
+
+        throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as BufferSource arguments"));
+        return { nullptr, 0 };
+    }
+};
 
 } // namespace WebCore

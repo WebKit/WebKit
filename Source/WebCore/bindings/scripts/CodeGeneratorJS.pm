@@ -319,7 +319,9 @@ sub AddClassForwardIfNeeded
 
     # SVGAnimatedLength/Number/etc. are not classes so they can't be forward declared as classes.
     return if $codeGenerator->IsSVGAnimatedType($interfaceName);
+
     return if $codeGenerator->IsTypedArrayType($interfaceName);
+    return if $interfaceName eq "BufferSource";
 
     push(@headerContent, "class $interfaceName;\n\n");
 }
@@ -4993,6 +4995,7 @@ sub GetBaseIDLType
     return "IDLSequence<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsSequenceType($idlType->name);
     return "IDLFrozenArray<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsFrozenArrayType($idlType->name);
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $idlType)) . ">" if $idlType->isUnion;
+    return "IDLBufferSource" if $idlType->name eq "BufferSource";
     return "IDLInterface<" . $idlType->name . ">";
 }
 
@@ -5114,6 +5117,7 @@ sub IsHandledByDOMConvert
     my $idlType = shift;
 
     return 1 if $idlType->isUnion;
+    return 1 if $idlType->name eq "BufferSource";
     return 1 if $idlType->name eq "any";
     return 1 if $idlType->name eq "boolean";
     return 1 if $codeGenerator->IsIntegerType($idlType->name);

@@ -1,3 +1,46 @@
+2016-10-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebIDL] Support BufferSource
+        https://bugs.webkit.org/show_bug.cgi?id=163541
+
+        Reviewed by Youenn Fablet.
+
+        Add support for the BufferSource typedef in WebIDL. The implementation
+        adds the necessary handling for this type in the generator scripts and
+        the specialization of the Converter<> template for the IDLBufferSource
+        struct that enables exposing ArrayBuffer or ArrayBufferView objects by
+        having WebCore::BufferSource objects pointing to their data.
+
+        The SourceBuffer interface in the MSE module has the appendBuffer()
+        operation modified to accept a BufferSource parameter, instead of
+        overloading it for ArrayBuffer and ArrayBufferView parameters.
+
+        The bindings generator tests cover BufferSource as both an operation
+        parameter and as a dictionary member.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBuffer):
+        (WebCore::SourceBuffer::appendBufferInternal):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBuffer.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/IDLTypes.h:
+        * bindings/js/BufferSource.h: Added.
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLBufferSource>::convert):
+        * bindings/scripts/CodeGenerator.pm:
+        (SkipIncludeHeader):
+        (IsWrapperType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddClassForwardIfNeeded):
+        (GetBaseIDLType):
+        (IsHandledByDOMConvert):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+        (WebCore::jsTestObjPrototypeFunctionBufferSourceParameter):
+        (WebCore::jsTestObjPrototypeFunctionBufferSourceParameterCaller):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-10-18  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Different width of grid container between initial load and refresh
