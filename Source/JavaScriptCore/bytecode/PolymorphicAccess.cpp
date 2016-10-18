@@ -1535,9 +1535,11 @@ void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGe
     state.succeed();
 
     CCallHelpers::JumpList exceptions = params.emitSlowPathCalls(state, registersToSpillForCCall, jit);
-    exceptions.link(&jit);
-    allocator.restoreReusedRegistersByPopping(jit, preservedState);
-    state.emitExplicitExceptionHandler();
+    if (!exceptions.empty()) {
+        exceptions.link(&jit);
+        allocator.restoreReusedRegistersByPopping(jit, preservedState);
+        state.emitExplicitExceptionHandler();
+    }
 }
 
 PolymorphicAccess::PolymorphicAccess() { }

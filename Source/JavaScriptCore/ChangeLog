@@ -1,3 +1,16 @@
+2016-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Not emit exception case if it is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=163589
+
+        Reviewed by Sam Weinig.
+
+        We should not emit exception case if we do not use the slow path calls.
+        For example, nodeType accessor does not use the slow path calls.
+
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::emitDOMJITGetter):
+
 2016-10-18  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ES6 Method functions should not have prototype
