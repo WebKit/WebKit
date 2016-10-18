@@ -129,6 +129,7 @@ public:
     bool isCustomPropertyDeclaration() const { return m_classType == CustomPropertyDeclarationClass; }
     bool isCustomIdentValue() const { return m_classType == CustomIdentClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
+    bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
 
     bool isCSSOMSafe() const { return m_isCSSOMSafe; }
     bool isSubtypeExposedToCSSOM() const
@@ -210,6 +211,7 @@ protected:
         CustomPropertyDeclarationClass,
         CustomIdentClass,
         VariableReferenceClass,
+        PendingSubstitutionValueClass,
 
         // List class types must appear after ValueListClass.
         ValueListClass,

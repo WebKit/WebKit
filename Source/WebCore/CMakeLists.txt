@@ -1298,6 +1298,7 @@ set(WebCore_SOURCES
     css/CSSMediaRule.cpp
     css/CSSNamedImageValue.cpp
     css/CSSPageRule.cpp
+    css/CSSPendingSubstitutionValue.cpp
     css/CSSPrimitiveValue.cpp
     css/CSSProperty.cpp
     css/CSSPropertySourceData.cpp

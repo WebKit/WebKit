@@ -1,3 +1,220 @@
+2016-10-18  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Get all the properties turned on
+        https://bugs.webkit.org/show_bug.cgi?id=163605
+
+        Reviewed by Dean Jackson.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFunctionValue.h:
+        * css/CSSPendingSubstitutionValue.cpp: Added.
+        (WebCore::CSSPendingSubstitutionValue::customCSSText):
+        * css/CSSPendingSubstitutionValue.h: Added.
+        (WebCore::CSSPendingSubstitutionValue::create):
+        (WebCore::CSSPendingSubstitutionValue::shorthandValue):
+        (WebCore::CSSPendingSubstitutionValue::shorthandPropertyId):
+        (WebCore::CSSPendingSubstitutionValue::equals):
+        (WebCore::CSSPendingSubstitutionValue::CSSPendingSubstitutionValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isPendingSubstitutionValue):
+        * css/CSSValueKeywords.in:
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::transitionShorthandForParsing):
+        * css/StylePropertyShorthand.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::completeURL):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseValue):
+        (WebCore::CSSParserImpl::consumeDeclaration):
+        (WebCore::CSSParserImpl::consumeDeclarationValue):
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContext::completeURL):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::parseAsCSSPropertyID):
+        (WebCore::CSSParserToken::parseAsUnresolvedCSSPropertyID): Deleted.
+        * css/parser/CSSParserToken.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::cssPropertyID):
+        (WebCore::CSSPropertyParser::addProperty):
+        (WebCore::CSSPropertyParser::addExpandedPropertyForValue):
+        (WebCore::CSSPropertyParser::parseValue):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseValueStart):
+        (WebCore::CSSPropertyParser::consumeCSSWideKeyword):
+        (WebCore::consumeTransformOrigin):
+        (WebCore::consumeWillChange):
+        (WebCore::consumeFontFeatureTag):
+        (WebCore::consumeFontFeatureSettings):
+        (WebCore::consumePage):
+        (WebCore::consumeQuotes):
+        (WebCore::FontVariantLigaturesParser::consumeLigature):
+        (WebCore::FontVariantLigaturesParser::finalizeValue):
+        (WebCore::consumeFontVariantLigatures):
+        (WebCore::consumeFontVariantCaps):
+        (WebCore::FontVariantNumericParser::consumeNumeric):
+        (WebCore::FontVariantNumericParser::finalizeValue):
+        (WebCore::consumeFontVariantNumeric):
+        (WebCore::consumeFontVariantCSS21):
+        (WebCore::consumeFontVariantList):
+        (WebCore::consumeFontWeight):
+        (WebCore::consumeFamilyName):
+        (WebCore::consumeGenericFamily):
+        (WebCore::consumeFontFamily):
+        (WebCore::consumeSpacing):
+        (WebCore::consumeTabSize):
+        (WebCore::consumeTextSizeAdjust):
+        (WebCore::consumeFontSize):
+        (WebCore::consumeLineHeight):
+        (WebCore::createPrimitiveValuePair):
+        (WebCore::consumeCounter):
+        (WebCore::consumePageSize):
+        (WebCore::consumeSize):
+        (WebCore::consumeTextIndent):
+        (WebCore::validWidthOrHeightKeyword):
+        (WebCore::consumeMaxWidthOrHeight):
+        (WebCore::consumeWidthOrHeight):
+        (WebCore::consumeMarginOrOffset):
+        (WebCore::consumeClipComponent):
+        (WebCore::consumeClip):
+        (WebCore::consumeTouchAction):
+        (WebCore::consumeLineClamp):
+        (WebCore::consumeLocale):
+        (WebCore::consumeColumnWidth):
+        (WebCore::consumeColumnCount):
+        (WebCore::consumeColumnGap):
+        (WebCore::consumeColumnSpan):
+        (WebCore::consumeZoom):
+        (WebCore::consumeAnimationIterationCount):
+        (WebCore::consumeAnimationName):
+        (WebCore::consumeTransitionProperty):
+        (WebCore::consumeCubicBezier):
+        (WebCore::consumeAnimationTimingFunction):
+        (WebCore::consumeAnimationValue):
+        (WebCore::isValidAnimationPropertyList):
+        (WebCore::consumeAnimationPropertyList):
+        (WebCore::CSSPropertyParser::consumeAnimationShorthand):
+        (WebCore::consumeZIndex):
+        (WebCore::parseSingleShadow):
+        (WebCore::consumeShadow):
+        (WebCore::consumeFilterFunction):
+        (WebCore::consumeFilter):
+        (WebCore::consumeTextDecorationLine):
+        (WebCore::consumeTextEmphasisStyle):
+        (WebCore::consumeOutlineColor):
+        (WebCore::consumeLineWidth):
+        (WebCore::consumeBorderWidth):
+        (WebCore::consumeTextStrokeWidth):
+        (WebCore::consumeColumnRuleWidth):
+        (WebCore::consumeTranslate3d):
+        (WebCore::consumeNumbers):
+        (WebCore::consumePerspective):
+        (WebCore::consumeTransformValue):
+        (WebCore::consumeTransform):
+        (WebCore::consumePositionLonghand):
+        (WebCore::consumePositionX):
+        (WebCore::consumePositionY):
+        (WebCore::consumePaintStroke):
+        (WebCore::consumePaintOrder):
+        (WebCore::consumeNoneOrURI):
+        (WebCore::consumeFlexBasis):
+        (WebCore::consumeStrokeDasharray):
+        (WebCore::consumeBaselineShift):
+        (WebCore::consumeRxOrRy):
+        (WebCore::consumeCursor):
+        (WebCore::consumeAttr):
+        (WebCore::consumeCounterContent):
+        (WebCore::consumeContent):
+        (WebCore::consumePositionList):
+        (WebCore::consumeScrollSnapCoordinate):
+        (WebCore::consumeScrollSnapPoints):
+        (WebCore::consumeBorderRadiusCorner):
+        (WebCore::consumeVerticalAlign):
+        (WebCore::consumeShapeRadius):
+        (WebCore::consumeBasicShapeCircle):
+        (WebCore::consumeBasicShapeEllipse):
+        (WebCore::consumeBasicShapePolygon):
+        (WebCore::complete4Sides):
+        (WebCore::consumeRadii):
+        (WebCore::consumeBasicShapeInset):
+        (WebCore::consumeBasicShape):
+        (WebCore::consumeWebkitClipPath):
+        (WebCore::consumeShapeOutside):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::consumeBorderImageRepeatKeyword):
+        (WebCore::consumeBorderImageRepeat):
+        (WebCore::consumeBorderImageSlice):
+        (WebCore::consumeBorderImageOutset):
+        (WebCore::consumeBorderImageWidth):
+        (WebCore::consumeBorderImageComponents):
+        (WebCore::consumeWebkitBorderImage):
+        (WebCore::consumeReflect):
+        (WebCore::consumeImageOrientation):
+        (WebCore::consumeBackgroundBlendMode):
+        (WebCore::consumeBackgroundAttachment):
+        (WebCore::consumeBackgroundBox):
+        (WebCore::consumeBackgroundComposite):
+        (WebCore::consumePrefixedBackgroundBox):
+        (WebCore::consumeBackgroundSize):
+        (WebCore::consumeGridAutoFlow):
+        (WebCore::consumeBackgroundComponent):
+        (WebCore::addBackgroundValue):
+        (WebCore::consumeCommaSeparatedBackgroundComponent):
+        (WebCore::consumeSelfPositionKeyword):
+        (WebCore::consumeSelfPositionOverflowPosition):
+        (WebCore::consumeAlignItems):
+        (WebCore::consumeJustifyItems):
+        (WebCore::consumeFitContent):
+        (WebCore::consumeCustomIdentForGridLine):
+        (WebCore::consumeGridLine):
+        (WebCore::isGridTrackFixedSized):
+        (WebCore::consumeGridBreadth):
+        (WebCore::consumeGridTrackSize):
+        (WebCore::consumeGridLineNames):
+        (WebCore::consumeGridTrackRepeatFunction):
+        (WebCore::consumeGridTrackList):
+        (WebCore::consumeGridTemplatesRowsOrColumns):
+        (WebCore::consumeGridTemplateAreas):
+        (WebCore::consumeFontFaceUnicodeRange):
+        (WebCore::consumeFontFaceSrcURI):
+        (WebCore::consumeFontFaceSrcLocal):
+        (WebCore::consumeFontFaceSrc):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        (WebCore::CSSPropertyParser::consumeSystemFont):
+        (WebCore::CSSPropertyParser::consumeFont):
+        (WebCore::CSSPropertyParser::consumeFontVariantShorthand):
+        (WebCore::CSSPropertyParser::consumeBorderSpacing):
+        (WebCore::consumeSingleViewportDescriptor):
+        (WebCore::CSSPropertyParser::parseViewportDescriptor):
+        (WebCore::consumeColumnWidthOrCount):
+        (WebCore::CSSPropertyParser::consumeColumns):
+        (WebCore::CSSPropertyParser::consumeShorthandGreedily):
+        (WebCore::CSSPropertyParser::consumeFlex):
+        (WebCore::CSSPropertyParser::consumeBorder):
+        (WebCore::CSSPropertyParser::consume4Values):
+        (WebCore::CSSPropertyParser::consumeBorderImage):
+        (WebCore::CSSPropertyParser::consumeLegacyBreakProperty):
+        (WebCore::consumeBackgroundPosition):
+        (WebCore::consumeRepeatStyleComponent):
+        (WebCore::consumeRepeatStyle):
+        (WebCore::CSSPropertyParser::consumeBackgroundShorthand):
+        (WebCore::CSSPropertyParser::consumeGridItemPositionShorthand):
+        (WebCore::CSSPropertyParser::consumeGridAreaShorthand):
+        (WebCore::CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns):
+        (WebCore::CSSPropertyParser::consumeGridTemplateShorthand):
+        (WebCore::CSSPropertyParser::consumeGridShorthand):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        (WebCore::unresolvedCSSPropertyID): Deleted.
+        * css/parser/CSSPropertyParser.h:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeCustomIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeString):
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        * css/parser/CSSPropertyParserHelpers.h:
+
 2016-10-18  Brent Fulgham  <bfulgham@apple.com>
 
         Correct Document::removeAllEventListeners

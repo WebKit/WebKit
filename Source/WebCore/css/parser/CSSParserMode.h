@@ -31,6 +31,7 @@
 #ifndef CSSParserMode_h
 #define CSSParserMode_h
 
+#include "TextEncoding.h"
 #include "URL.h"
 #include "URLHash.h"
 #include <wtf/HashFunctions.h>
@@ -107,6 +108,16 @@ public:
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
     bool useNewParser { false };
+    
+    URL completeURL(const String& url) const
+    {
+        if (url.isNull())
+            return URL();
+        if (charset.isEmpty())
+            return URL(baseURL, url);
+        return URL(baseURL, url, TextEncoding(charset));
+    }
+
 #if ENABLE(VARIATION_FONTS)
     bool variationFontsEnabled { false };
 #endif

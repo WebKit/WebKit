@@ -71,7 +71,7 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange&, CSSValueID low
 template<CSSValueID, CSSValueID...> inline bool identMatches(CSSValueID id);
 template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 
-RefPtr<CSSCustomIdentValue> consumeCustomIdent(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 StringView consumeUrlAsStringView(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);

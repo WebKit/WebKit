@@ -55,6 +55,8 @@ public:
     String customCSSText() const;
 
     bool equals(const CSSFunctionValue&) const;
+    
+    CSSValueID name() const { return m_name; }
 
     CSSValueList* arguments() const { return m_args.get(); }
 

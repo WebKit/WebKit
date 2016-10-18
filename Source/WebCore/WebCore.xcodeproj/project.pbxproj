@@ -3387,6 +3387,8 @@
 		93FDAFCA0B11307400E2746F /* EditorInsertAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDAFC90B11307400E2746F /* EditorInsertAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9418278A1D8B244000492764 /* StyleColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941827881D8B242200492764 /* StyleColor.cpp */; };
 		9418278B1D8B244000492764 /* StyleColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 941827891D8B242200492764 /* StyleColor.h */; };
+		9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */; };
+		9418278F1D8CAF9200492764 /* CSSPendingSubstitutionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */; };
 		9444CBD31D860C8B0073A074 /* SizesCalcParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD01D860C740073A074 /* SizesCalcParser.cpp */; };
 		9444CBD41D860C8B0073A074 /* SizesCalcParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9444CBCF1D860C740073A074 /* SizesCalcParser.h */; };
 		9444CBD51D860C8B0073A074 /* SizesAttributeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9444CBD21D860C740073A074 /* SizesAttributeParser.cpp */; };
@@ -10739,6 +10741,8 @@
 		93FDAFC90B11307400E2746F /* EditorInsertAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditorInsertAction.h; sourceTree = "<group>"; };
 		941827881D8B242200492764 /* StyleColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColor.cpp; sourceTree = "<group>"; };
 		941827891D8B242200492764 /* StyleColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleColor.h; sourceTree = "<group>"; };
+		9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPendingSubstitutionValue.cpp; sourceTree = "<group>"; };
+		9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPendingSubstitutionValue.h; sourceTree = "<group>"; };
 		9444CBCF1D860C740073A074 /* SizesCalcParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesCalcParser.h; path = parser/SizesCalcParser.h; sourceTree = "<group>"; };
 		9444CBD01D860C740073A074 /* SizesCalcParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SizesCalcParser.cpp; path = parser/SizesCalcParser.cpp; sourceTree = "<group>"; };
 		9444CBD11D860C740073A074 /* SizesAttributeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizesAttributeParser.h; path = parser/SizesAttributeParser.h; sourceTree = "<group>"; };
@@ -22832,6 +22836,8 @@
 				A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */,
 				A80E6CD60A1989CA007FB8C5 /* CSSPageRule.h */,
 				85C56CA60AA89D5F00D95755 /* CSSPageRule.idl */,
+				9418278C1D8CAE9500492764 /* CSSPendingSubstitutionValue.cpp */,
+				9418278D1D8CAE9500492764 /* CSSPendingSubstitutionValue.h */,
 				A80E6CDB0A1989CA007FB8C5 /* CSSPrimitiveValue.cpp */,
 				A80E6CBC0A1989CA007FB8C5 /* CSSPrimitiveValue.h */,
 				9307059009E0C75800B17FE4 /* CSSPrimitiveValue.idl */,
@@ -26431,6 +26437,7 @@
 				297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */,
 				297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */,
 				297BE3D716C03C0E003316BD /* PlatformSpeechSynthesizer.h in Headers */,
+				9418278F1D8CAF9200492764 /* CSSPendingSubstitutionValue.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
 				0F7D07331884C56C00B4AF86 /* PlatformTextTrack.h in Headers */,
 				074E82BB18A69F0E007EF54C /* PlatformTimeRanges.h in Headers */,
@@ -30920,6 +30927,7 @@
 				AAA728F816D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.mm in Sources */,
 				AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */,
 				2D3EF4491917915C00034184 /* WebActionDisablingCALayerDelegate.mm in Sources */,
+				9418278E1D8CAF9200492764 /* CSSPendingSubstitutionValue.cpp in Sources */,
 				120DE3ED1C86CA3E00B6D4DD /* WebAnimation.cpp in Sources */,
 				07D637411BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.mm in Sources */,
 				CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */,

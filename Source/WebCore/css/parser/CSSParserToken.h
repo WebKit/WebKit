@@ -136,7 +136,7 @@ public:
 
     bool hasStringBacking() const;
 
-    CSSPropertyID parseAsUnresolvedCSSPropertyID() const;
+    CSSPropertyID parseAsCSSPropertyID() const;
 
     void serialize(StringBuilder&) const;
 

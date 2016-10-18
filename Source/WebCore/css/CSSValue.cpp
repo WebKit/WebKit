@@ -52,6 +52,7 @@
 #include "CSSInitialValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSNamedImageValue.h"
+#include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSReflectValue.h"
@@ -365,6 +366,8 @@ String CSSValue::cssText() const
         return downcast<CSSCustomIdentValue>(*this).customCSSText();
     case VariableReferenceClass:
         return downcast<CSSVariableReferenceValue>(*this).customCSSText();
+    case PendingSubstitutionValueClass:
+        return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
     }
 
     ASSERT_NOT_REACHED();
@@ -521,6 +524,9 @@ void CSSValue::destroy()
         return;
     case VariableReferenceClass:
         delete downcast<CSSVariableReferenceValue>(this);
+        return;
+    case PendingSubstitutionValueClass:
+        delete downcast<CSSPendingSubstitutionValue>(this);
         return;
     }
     ASSERT_NOT_REACHED();

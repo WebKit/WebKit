@@ -50,6 +50,16 @@ StylePropertyShorthand animationShorthandForParsing()
     return StylePropertyShorthand(CSSPropertyAnimation, animationPropertiesForParsing);
 }
 
+StylePropertyShorthand transitionShorthandForParsing()
+{
+    // Similar to animations, we have property after timing-function and delay after
+    // duration.
+    static const CSSPropertyID transitionProperties[] = {
+        CSSPropertyTransitionDuration, CSSPropertyTransitionTimingFunction,
+        CSSPropertyTransitionDelay, CSSPropertyTransitionProperty};
+    return StylePropertyShorthand(CSSPropertyTransition, transitionProperties);
+}
+
 bool isShorthandCSSProperty(CSSPropertyID id)
 {
     return shorthandForProperty(id).length();

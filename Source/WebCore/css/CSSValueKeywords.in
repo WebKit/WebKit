@@ -1195,6 +1195,8 @@ contrast
 blur
 drop-shadow
 url
+cubic-bezier
+steps
 
 // colors
 rgb
@@ -1248,6 +1250,9 @@ markers
 
 // grid-{column-start|column-end|row-start|row-end}
 span
+
+// grid-template-{columns|rows}
+minmax
 
 // grid-auto-flow
 auto-flow
