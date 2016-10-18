@@ -23,7 +23,9 @@
 .gridMultipleNames { grid-template-rows: [start] 20px [foo] 50% repeat(auto-fill, [bar] 20px [start foo]) [foo] 10% [end bar]; }
 .gridMultipleTracks { grid-template-rows: [start] 20px repeat(auto-fill, [a] 2em [b c] 10% [d]) [e] minmax(75px, 1fr) [last]; }
 
-.item { background-color: cyan; }
+.item { background-color: blue; }
+.item:nth-child(2) { background: green; }
+.item:nth-child(3) { background: orange; }
 
 .gap { grid-row-gap: 20px; }
 
@@ -49,6 +51,18 @@
 
 <div class="grid gridOnlyAutoRepeat gap">
     <div class="item" style="grid-row: autobar 2 / span 3" data-offset-y="100" data-offset-x="0" data-expected-height="257" data-expected-width="25"></div>
+</div>
+
+<div class="grid gridOnlyAutoRepeat gap" style="height: auto; max-height: 90px;" data-expected-height="94" data-expected-width="29">
+    <div class="item" data-offset-y="0" data-offset-x="0" data-expected-height="30" data-expected-width="25"></div>
+    <div class="item" data-offset-y="50" data-offset-x="0" data-expected-height="30" data-expected-width="25"></div>
+    <div class="item" data-offset-y="100" data-offset-x="0" data-expected-height="157" data-expected-width="25"></div>
+</div>
+
+<div class="grid gridOnlyAutoRepeat gap" style="height: auto; max-height: 90px; min-height: 130px;" data-expected-height="134" data-expected-width="29">
+    <div class="item" data-offset-y="0" data-offset-x="0" data-expected-height="30" data-expected-width="25"></div>
+    <div class="item" data-offset-y="50" data-offset-x="0" data-expected-height="30" data-expected-width="25"></div>
+    <div class="item" data-offset-y="100" data-offset-x="0" data-expected-height="30" data-expected-width="25"></div>
 </div>
 
 <div class="grid gridAutoRepeatAndFixedBefore">

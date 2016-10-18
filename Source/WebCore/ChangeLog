@@ -1,3 +1,23 @@
+2016-10-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Constrain by min|max-height on auto repeat computation
+        https://bugs.webkit.org/show_bug.cgi?id=163540
+
+        Reviewed by Darin Adler.
+
+        The max-height (if definite) is used to compute the number of auto repeat rows whenever the
+        height is indefinite. We were using the min-height only in case both values were indefinite.
+
+        Although not explicitly mentioned by grid specs, it's reasonable to assume that
+        the min-height trumps the used value of height/max-height like it always does, per CSS
+        2.2. Note that the number of rows still needs to fit within that size even if using
+        min-height, because we're just using min-height to compute the used value of the height
+        property. If both height and max-height are indefinite we keep doing the same, i.e., compute
+        the minimum number of rows that fulfill min-height (if definite).
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeAutoRepeatTracksCount):
+
 2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Use NativeCallFrameTracer for operations used for DOMJIT slow calls

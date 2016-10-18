@@ -1,3 +1,18 @@
+2016-10-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Constrain by min|max-height on auto repeat computation
+        https://bugs.webkit.org/show_bug.cgi?id=163540
+
+        Reviewed by Darin Adler.
+
+        Some new test cases to verify that min-height is used on the auto repeat tracks computation
+        whenever the height is indefinite and max-height is not.
+
+        * fast/css-grid-layout/grid-auto-fill-rows-expected.txt:
+        * fast/css-grid-layout/grid-auto-fill-rows.html:
+        * fast/css-grid-layout/grid-indefinite-size-auto-repeat-crash-expected.txt:
+        * fast/css-grid-layout/grid-indefinite-size-auto-repeat-crash.html:
+
 2016-10-17  Megan Gardner  <megan_gardner@apple.com>
 
         Add test and infrastructure for link popover
