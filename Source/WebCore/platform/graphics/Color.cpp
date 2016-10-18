@@ -289,6 +289,9 @@ Color::Color(Color&& other)
 
 Color::Color(float r, float g, float b, float a, ColorSpace colorSpace)
 {
+    // Zero the union, just in case a 32-bit system only assigns the
+    // top 32 bits when copying the extendedColor pointer below.
+    m_colorData.rgbaAndFlags = 0;
     auto extendedColorRef = ExtendedColor::create(r, g, b, a, colorSpace);
     m_colorData.extendedColor = &extendedColorRef.leakRef();
     ASSERT(isExtended());

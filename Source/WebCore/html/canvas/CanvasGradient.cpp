@@ -57,7 +57,7 @@ void CanvasGradient::addColorStop(float value, const String& colorString, Except
         return;
     }
 
-    Color color = parseColorOrCurrentColor(colorString, 0 /*canvas*/);
+    Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
     if (!color.isValid()) {
 #if ENABLE(DASHBOARD_SUPPORT)
         if (!m_dashboardCompatibilityMode)

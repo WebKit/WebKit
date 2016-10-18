@@ -31,13 +31,13 @@
 namespace WTF {
 
 struct ColorHash {
-    static unsigned hash(const WebCore::Color& key) { return intHash(key.asUint64()); }
+    static unsigned hash(const WebCore::Color& key) { return key.hash(); }
     static bool equal(const WebCore::Color& a, const WebCore::Color& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
 template<> struct DefaultHash<WebCore::Color> {
-    typedef ColorHash Hash;
+    using Hash = ColorHash;
 };
 
 template<> struct HashTraits<WebCore::Color> : GenericHashTraits<WebCore::Color> {

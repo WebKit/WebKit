@@ -32,6 +32,7 @@
 #include <cmath>
 #include <unicode/uchar.h>
 #include <wtf/Forward.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/Optional.h>
 #include <wtf/text/LChar.h>
 
@@ -143,18 +144,23 @@ public:
 
     explicit Color(WTF::HashTableDeletedValueType)
     {
-        m_colorData.rgbaAndFlags = 0xfffffffffffffffd;
+        static_assert(deletedHashValue & invalidRGBAColor, "Color's deleted hash value must not look like an ExtendedColor");
+        static_assert(!(deletedHashValue & validRGBAColorBit), "Color's deleted hash value must not look like a valid RGBA32 Color");
+        static_assert(deletedHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an RGBA32 Color wouldn't have");
+        m_colorData.rgbaAndFlags = deletedHashValue;
         ASSERT(!isExtended());
     }
 
     bool isHashTableDeletedValue() const
     {
-        return m_colorData.rgbaAndFlags == 0xfffffffffffffffd;
+        return m_colorData.rgbaAndFlags == deletedHashValue;
     }
 
     explicit Color(WTF::HashTableEmptyValueType)
     {
-        m_colorData.rgbaAndFlags = 0xffffffffffffffb;
+        static_assert(emptyHashValue & invalidRGBAColor, "Color's empty hash value must not look like an ExtendedColor");
+        static_assert(emptyHashValue & (1 << 4), "Color's deleted hash value must have some bits set that an RGBA32 Color wouldn't have");
+        m_colorData.rgbaAndFlags = emptyHashValue;
         ASSERT(!isExtended());
     }
 
@@ -200,7 +206,10 @@ public:
     int alpha() const { return alphaChannel(rgb()); }
     
     RGBA32 rgb() const { ASSERT(!isExtended()); return static_cast<RGBA32>(m_colorData.rgbaAndFlags >> 32); }
-    uint64_t asUint64() const { return m_colorData.rgbaAndFlags; }
+
+    // FIXME: Like operator==, this will give different values for ExtendedColors that
+    // should be identical, since the respective pointer will be different.
+    unsigned hash() const { return WTF::intHash(m_colorData.rgbaAndFlags); }
 
     WEBCORE_EXPORT void getRGBA(float& r, float& g, float& b, float& a) const;
     WEBCORE_EXPORT void getRGBA(double& r, double& g, double& b, double& a) const;
@@ -274,6 +283,9 @@ private:
     static const uint64_t validRGBAColorBit = 0x2;
     static const uint64_t validRGBAColor = 0x3;
 
+    static const uint64_t deletedHashValue = 0xFFFFFFFFFFFFFFFD;
+    static const uint64_t emptyHashValue = 0xFFFFFFFFFFFFFFFB;
+
     WEBCORE_EXPORT void tagAsValid();
 
     union {
@@ -282,6 +294,8 @@ private:
     } m_colorData;
 };
 
+// FIXME: These do not work for ExtendedColor because
+// they become just pointer comparison.
 bool operator==(const Color&, const Color&);
 bool operator!=(const Color&, const Color&);
 
