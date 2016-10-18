@@ -1275,7 +1275,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
             LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, callee, scope, kind, *codeBlockSlot);
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
         if (error)
             LLINT_CALL_THROW(exec, error);
         codeBlock = *codeBlockSlot;

@@ -1109,8 +1109,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.addLinkTask(
                 [=, &vm] (LinkBuffer& linkBuffer) {
                     m_rareData->callLinkInfo->setCallLocations(
-                        linkBuffer.locationOfNearCall(slowPathCall),
-                        linkBuffer.locationOf(addressOfLinkFunctionCheck),
+                        CodeLocationLabel(linkBuffer.locationOfNearCall(slowPathCall)),
+                        CodeLocationLabel(linkBuffer.locationOf(addressOfLinkFunctionCheck)),
                         linkBuffer.locationOfNearCall(fastPathCall));
 
                     linkBuffer.link(

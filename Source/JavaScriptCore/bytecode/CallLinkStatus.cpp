@@ -258,6 +258,12 @@ void CallLinkStatus::computeDFGStatuses(
     CodeBlock* baselineCodeBlock = dfgCodeBlock->alternative();
     for (auto iter = dfgCodeBlock->callLinkInfosBegin(); !!iter; ++iter) {
         CallLinkInfo& info = **iter;
+        if (info.isDirect()) {
+            // If the DFG was able to get a direct call then probably so will we. However, there is
+            // a remote chance that it's bad news to lose information about what the DFG did. We'd
+            // ideally like to just know that the DFG had emitted a DirectCall.
+            continue;
+        }
         CodeOrigin codeOrigin = info.codeOrigin();
         
         // Check if we had already previously made a terrible mistake in the FTL for this

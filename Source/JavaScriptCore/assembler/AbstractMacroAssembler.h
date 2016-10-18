@@ -932,6 +932,11 @@ public:
     {
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
     }
+    
+    static void repatchJumpToNop(CodeLocationJump jump)
+    {
+        AssemblerType::relinkJumpToNop(jump.dataLocation());
+    }
 
     static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)
     {

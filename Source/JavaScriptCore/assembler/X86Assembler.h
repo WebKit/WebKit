@@ -2778,6 +2778,11 @@ public:
         setRel32(from, to);
     }
     
+    static void relinkJumpToNop(void* from)
+    {
+        setInt32(from, 0);
+    }
+    
     static void relinkCall(void* from, void* to)
     {
         setRel32(from, to);

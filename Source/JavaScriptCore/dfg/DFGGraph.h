@@ -790,6 +790,8 @@ public:
     BytecodeKills& killsFor(CodeBlock*);
     BytecodeKills& killsFor(InlineCallFrame*);
     
+    static unsigned parameterSlotsForArgCount(unsigned);
+    
     unsigned frameRegisterCount();
     unsigned stackPointerOffset();
     unsigned requiredRegisterCountForExit();

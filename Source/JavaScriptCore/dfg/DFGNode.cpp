@@ -195,6 +195,31 @@ void Node::convertToPutClosureVarHint()
         child1().node(), child2().node());
 }
 
+void Node::convertToDirectCall(FrozenValue* executable)
+{
+    NodeType newOp = LastNodeType;
+    switch (op()) {
+    case Call:
+        newOp = DirectCall;
+        break;
+    case Construct:
+        newOp = DirectConstruct;
+        break;
+    case TailCallInlinedCaller:
+        newOp = DirectTailCallInlinedCaller;
+        break;
+    case TailCall:
+        newOp = DirectTailCall;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+    
+    m_op = newOp;
+    m_opInfo = executable;
+}
+
 String Node::tryGetString(Graph& graph)
 {
     if (hasConstant())

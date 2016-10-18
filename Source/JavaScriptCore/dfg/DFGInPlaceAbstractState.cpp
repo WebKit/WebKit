@@ -364,6 +364,7 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
         
     case Return:
     case TailCall:
+    case DirectTailCall:
     case TailCallVarargs:
     case TailCallForwardVarargs:
     case Unreachable:

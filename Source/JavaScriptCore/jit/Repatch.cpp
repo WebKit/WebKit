@@ -583,6 +583,28 @@ void linkFor(
     linkSlowFor(vm, callLinkInfo);
 }
 
+void linkDirectFor(
+    ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
+    MacroAssemblerCodePtr codePtr)
+{
+    ASSERT(!callLinkInfo.stub());
+    
+    CodeBlock* callerCodeBlock = exec->codeBlock();
+
+    VM* vm = callerCodeBlock->vm();
+    
+    ASSERT(!callLinkInfo.isLinked());
+    callLinkInfo.setCodeBlock(*vm, callerCodeBlock, jsCast<FunctionCodeBlock*>(calleeCodeBlock));
+    if (shouldDumpDisassemblyFor(callerCodeBlock))
+        dataLog("Linking call in ", *callerCodeBlock, " at ", callLinkInfo.codeOrigin(), " to ", pointerDump(calleeCodeBlock), ", entrypoint at ", codePtr, "\n");
+    if (callLinkInfo.callType() == CallLinkInfo::DirectTailCall)
+        MacroAssembler::repatchJumpToNop(callLinkInfo.patchableJump());
+    MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), CodeLocationLabel(codePtr));
+    
+    if (calleeCodeBlock)
+        calleeCodeBlock->linkIncomingCall(exec, &callLinkInfo);
+}
+
 void linkSlowFor(
     ExecState* exec, CallLinkInfo& callLinkInfo)
 {
@@ -594,12 +616,20 @@ void linkSlowFor(
 
 static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
 {
-    MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
-        MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
-        static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
-    linkSlowFor(vm, callLinkInfo, codeRef);
+    if (callLinkInfo.isDirect()) {
+        callLinkInfo.clearCodeBlock();
+        if (callLinkInfo.callType() == CallLinkInfo::DirectTailCall)
+            MacroAssembler::repatchJump(callLinkInfo.patchableJump(), callLinkInfo.slowPathStart());
+        else
+            MacroAssembler::repatchNearCall(callLinkInfo.hotPathOther(), callLinkInfo.slowPathStart());
+    } else {
+        MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(
+            MacroAssembler::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
+            static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
+        linkSlowFor(vm, callLinkInfo, codeRef);
+        callLinkInfo.clearCallee();
+    }
     callLinkInfo.clearSeen();
-    callLinkInfo.clearCallee();
     callLinkInfo.clearStub();
     callLinkInfo.clearSlowStub();
     if (callLinkInfo.isOnList())
@@ -609,7 +639,7 @@ static void revertCall(VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef
 void unlinkFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
     if (Options::dumpDisassembly())
-        dataLog("Unlinking call from ", callLinkInfo.callReturnLocation(), "\n");
+        dataLog("Unlinking call at ", callLinkInfo.hotPathOther(), "\n");
     
     revertCall(&vm, callLinkInfo, vm.getCTIStub(linkCallThunkGenerator));
 }

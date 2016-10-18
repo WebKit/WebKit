@@ -270,12 +270,15 @@ namespace JSC { namespace DFG {
     \
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(DirectCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(DirectConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(CallVarargs, NodeResultJS | NodeMustGenerate) \
     macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(TailCallInlinedCaller, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(DirectTailCallInlinedCaller, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(TailCallVarargsInlinedCaller, NodeResultJS | NodeMustGenerate) \
     macro(TailCallForwardVarargsInlinedCaller, NodeResultJS | NodeMustGenerate) \
     macro(CallEval, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
@@ -358,6 +361,7 @@ namespace JSC { namespace DFG {
     macro(Switch, NodeMustGenerate) \
     macro(Return, NodeMustGenerate) \
     macro(TailCall, NodeMustGenerate | NodeHasVarArgs) \
+    macro(DirectTailCall, NodeMustGenerate | NodeHasVarArgs) \
     macro(TailCallVarargs, NodeMustGenerate) \
     macro(TailCallForwardVarargs, NodeMustGenerate) \
     macro(Unreachable, NodeMustGenerate) \

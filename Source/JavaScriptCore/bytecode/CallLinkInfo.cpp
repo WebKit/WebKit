@@ -59,7 +59,9 @@ CallLinkInfo::CallLinkInfo()
     , m_hasSeenClosure(false)
     , m_clearedByGC(false)
     , m_allowStubs(true)
+    , m_isLinked(false)
     , m_callType(None)
+    , m_calleeGPR(255)
     , m_maxNumArguments(0)
     , m_slowPathCount(0)
 {
@@ -84,30 +86,123 @@ void CallLinkInfo::clearStub()
 
 void CallLinkInfo::unlink(VM& vm)
 {
-    if (!isLinked()) {
-        // We could be called even if we're not linked anymore because of how polymorphic calls
-        // work. Each callsite within the polymorphic call stub may separately ask us to unlink().
-        RELEASE_ASSERT(!isOnList());
-        return;
-    }
-    
-    unlinkFor(vm, *this);
+    // We could be called even if we're not linked anymore because of how polymorphic calls
+    // work. Each callsite within the polymorphic call stub may separately ask us to unlink().
+    if (isLinked())
+        unlinkFor(vm, *this);
 
-    // It will be on a list if the callee has a code block.
-    if (isOnList())
-        remove();
+    // Either we were unlinked, in which case we should not have been on any list, or we unlinked
+    // ourselves so that we're not on any list anymore.
+    RELEASE_ASSERT(!isOnList());
+}
+
+CodeLocationNearCall CallLinkInfo::callReturnLocation()
+{
+    RELEASE_ASSERT(!isDirect());
+    return CodeLocationNearCall(m_callReturnLocationOrPatchableJump, Regular);
+}
+
+CodeLocationJump CallLinkInfo::patchableJump()
+{
+    RELEASE_ASSERT(callType() == DirectTailCall);
+    return CodeLocationJump(m_callReturnLocationOrPatchableJump);
+}
+
+CodeLocationDataLabelPtr CallLinkInfo::hotPathBegin()
+{
+    RELEASE_ASSERT(!isDirect());
+    return CodeLocationDataLabelPtr(m_hotPathBeginOrSlowPathStart);
+}
+
+CodeLocationLabel CallLinkInfo::slowPathStart()
+{
+    RELEASE_ASSERT(isDirect());
+    return m_hotPathBeginOrSlowPathStart;
 }
 
 void CallLinkInfo::setCallee(VM& vm, JSCell* owner, JSFunction* callee)
 {
-    MacroAssembler::repatchPointer(m_hotPathBegin, callee);
-    m_callee.set(vm, owner, callee);
+    RELEASE_ASSERT(!isDirect());
+    MacroAssembler::repatchPointer(hotPathBegin(), callee);
+    m_calleeOrCodeBlock.set(vm, owner, callee);
+    m_isLinked = true;
 }
 
 void CallLinkInfo::clearCallee()
 {
-    MacroAssembler::repatchPointer(m_hotPathBegin, nullptr);
-    m_callee.clear();
+    RELEASE_ASSERT(!isDirect());
+    MacroAssembler::repatchPointer(hotPathBegin(), nullptr);
+    m_calleeOrCodeBlock.clear();
+    m_isLinked = false;
+}
+
+JSFunction* CallLinkInfo::callee()
+{
+    RELEASE_ASSERT(!isDirect());
+    return jsCast<JSFunction*>(m_calleeOrCodeBlock.get());
+}
+
+void CallLinkInfo::setCodeBlock(VM& vm, JSCell* owner, FunctionCodeBlock* codeBlock)
+{
+    RELEASE_ASSERT(isDirect());
+    m_calleeOrCodeBlock.setMayBeNull(vm, owner, codeBlock);
+    m_isLinked = true;
+}
+
+void CallLinkInfo::clearCodeBlock()
+{
+    RELEASE_ASSERT(isDirect());
+    m_calleeOrCodeBlock.clear();
+    m_isLinked = false;
+}
+
+FunctionCodeBlock* CallLinkInfo::codeBlock()
+{
+    RELEASE_ASSERT(isDirect());
+    return jsCast<FunctionCodeBlock*>(m_calleeOrCodeBlock.get());
+}
+
+void CallLinkInfo::setLastSeenCallee(VM& vm, const JSCell* owner, JSFunction* callee)
+{
+    RELEASE_ASSERT(!isDirect());
+    m_lastSeenCalleeOrExecutable.set(vm, owner, callee);
+}
+
+void CallLinkInfo::clearLastSeenCallee()
+{
+    RELEASE_ASSERT(!isDirect());
+    m_lastSeenCalleeOrExecutable.clear();
+}
+
+JSFunction* CallLinkInfo::lastSeenCallee()
+{
+    RELEASE_ASSERT(!isDirect());
+    return jsCast<JSFunction*>(m_lastSeenCalleeOrExecutable.get());
+}
+
+bool CallLinkInfo::haveLastSeenCallee()
+{
+    RELEASE_ASSERT(!isDirect());
+    return !!m_lastSeenCalleeOrExecutable;
+}
+
+void CallLinkInfo::setExecutableDuringCompilation(ExecutableBase* executable)
+{
+    RELEASE_ASSERT(isDirect());
+    m_lastSeenCalleeOrExecutable.setWithoutWriteBarrier(executable);
+}
+
+ExecutableBase* CallLinkInfo::executable()
+{
+    RELEASE_ASSERT(isDirect());
+    return jsCast<ExecutableBase*>(m_lastSeenCalleeOrExecutable.get());
+}
+
+void CallLinkInfo::setMaxNumArguments(unsigned value)
+{
+    RELEASE_ASSERT(isDirect());
+    RELEASE_ASSERT(value);
+    m_maxNumArguments = value;
 }
 
 void CallLinkInfo::visitWeak(VM& vm)
@@ -131,19 +226,37 @@ void CallLinkInfo::visitWeak(VM& vm)
                 unlink(vm);
                 m_clearedByGC = true;
             }
-        } else if (!Heap::isMarked(m_callee.get())) {
+        } else if (!Heap::isMarked(m_calleeOrCodeBlock.get())) {
+            if (isDirect()) {
+                if (Options::verboseOSR()) {
+                    dataLog(
+                        "Clearing call to ", RawPointer(codeBlock()), " (",
+                        pointerDump(codeBlock()), ").\n");
+                }
+            } else {
+                if (Options::verboseOSR()) {
+                    dataLog(
+                        "Clearing call to ",
+                        RawPointer(callee()), " (",
+                        callee()->executable()->hashFor(specializationKind()),
+                        ").\n");
+                }
+                handleSpecificCallee(callee());
+            }
+            unlink(vm);
+        } else if (isDirect() && !Heap::isMarked(m_lastSeenCalleeOrExecutable.get())) {
             if (Options::verboseOSR()) {
                 dataLog(
-                    "Clearing call to ",
-                    RawPointer(m_callee.get()), " (",
-                    m_callee.get()->executable()->hashFor(specializationKind()),
-                    ").\n");
+                    "Clearing call to ", RawPointer(executable()),
+                    " because the executable is dead.\n");
             }
-            handleSpecificCallee(m_callee.get());
             unlink(vm);
+            // We should only get here once the owning CodeBlock is dying, since the executable must
+            // already be in the owner's weak references.
+            m_lastSeenCalleeOrExecutable.clear();
         }
     }
-    if (haveLastSeenCallee() && !Heap::isMarked(lastSeenCallee())) {
+    if (!isDirect() && haveLastSeenCallee() && !Heap::isMarked(lastSeenCallee())) {
         handleSpecificCallee(lastSeenCallee());
         clearLastSeenCallee();
     }

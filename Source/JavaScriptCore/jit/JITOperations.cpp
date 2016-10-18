@@ -861,6 +861,8 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
     CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
     
+    RELEASE_ASSERT(!callLinkInfo->isDirect());
+    
     JSValue calleeAsValue = execCallee->calleeAsValue();
     JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) {
@@ -902,7 +904,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
         }
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, callee, scope, kind, *codeBlockSlot);
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, *codeBlockSlot);
         ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
         if (error) {
             throwException(exec, throwScope, error);
@@ -924,6 +926,60 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
         linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr);
     
     return encodeResult(codePtr.executableAddress(), reinterpret_cast<void*>(callLinkInfo->callMode() == CallMode::Tail ? ReuseTheFrame : KeepTheFrame));
+}
+
+void JIT_OPERATION operationLinkDirectCall(ExecState* exec, CallLinkInfo* callLinkInfo, JSFunction* callee)
+{
+    VM* vm = &exec->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(*vm);
+
+    CodeSpecializationKind kind = callLinkInfo->specializationKind();
+    NativeCallFrameTracer tracer(vm, exec);
+    
+    RELEASE_ASSERT(callLinkInfo->isDirect());
+    
+    // This would happen if the executable died during GC but the CodeBlock did not die. That should
+    // not happen because the CodeBlock should have a weak reference to any executable it uses for
+    // this purpose.
+    RELEASE_ASSERT(callLinkInfo->executable());
+    
+    // Having a CodeBlock indicates that this is linked. We shouldn't be taking this path if it's
+    // linked.
+    RELEASE_ASSERT(!callLinkInfo->codeBlock());
+    
+    // We just don't support this yet.
+    RELEASE_ASSERT(!callLinkInfo->isVarargs());
+    
+    ExecutableBase* executable = callLinkInfo->executable();
+    RELEASE_ASSERT(callee->executable() == callLinkInfo->executable());
+
+    JSScope* scope = callee->scopeUnchecked();
+
+    MacroAssemblerCodePtr codePtr;
+    CodeBlock* codeBlock = nullptr;
+    if (executable->isHostFunction())
+        codePtr = executable->entrypointFor(kind, MustCheckArity);
+    else {
+        FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
+
+        RELEASE_ASSERT(isCall(kind) || functionExecutable->constructAbility() != ConstructAbility::CannotConstruct);
+        
+        JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, callee, scope, kind, codeBlock);
+        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+        if (error) {
+            throwException(exec, throwScope, error);
+            return;
+        }
+        ArityCheckMode arity;
+        unsigned argumentStackSlots = callLinkInfo->maxNumArguments();
+        if (argumentStackSlots < static_cast<size_t>(codeBlock->numParameters()))
+            arity = MustCheckArity;
+        else
+            arity = ArityCheckNotRequired;
+        codePtr = functionExecutable->entrypointFor(kind, arity);
+    }
+    
+    linkDirectFor(exec, *callLinkInfo, codeBlock, codePtr);
 }
 
 inline SlowPathReturnType virtualForWithFunction(
@@ -960,7 +1016,7 @@ inline SlowPathReturnType virtualForWithFunction(
             }
 
             CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
-            JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(execCallee, function, scope, kind, *codeBlockSlot);
+            JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(*vm, function, scope, kind, *codeBlockSlot);
             if (error) {
                 throwException(exec, throwScope, error);
                 return encodeResult(

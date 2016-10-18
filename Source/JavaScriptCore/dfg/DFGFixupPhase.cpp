@@ -1736,9 +1736,12 @@ private:
         case GetGlobalLexicalVariable:
         case NotifyWrite:
         case Call:
+        case DirectCall:
         case CheckTypeInfoFlags:
         case TailCallInlinedCaller:
+        case DirectTailCallInlinedCaller:
         case Construct:
+        case DirectConstruct:
         case CallVarargs:
         case CallEval:
         case TailCallVarargsInlinedCaller:
@@ -1766,6 +1769,7 @@ private:
         case Jump:
         case Return:
         case TailCall:
+        case DirectTailCall:
         case TailCallVarargs:
         case Throw:
         case ThrowStaticError:

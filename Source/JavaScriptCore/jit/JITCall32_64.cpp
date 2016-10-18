@@ -171,12 +171,9 @@ void JIT::compileSetupVarargsFrame(OpcodeID opcode, Instruction* instruction, Ca
 
     // Profile the argument count.
     load32(Address(regT1, CallFrameSlot::argumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
-    load8(info->addressOfMaxNumArguments(), regT0);
+    load32(info->addressOfMaxNumArguments(), regT0);
     Jump notBiggest = branch32(Above, regT0, regT2);
-    Jump notSaturated = branch32(BelowOrEqual, regT2, TrustedImm32(255));
-    move(TrustedImm32(255), regT2);
-    notSaturated.link(this);
-    store8(regT2, info->addressOfMaxNumArguments());
+    store32(regT2, info->addressOfMaxNumArguments());
     notBiggest.link(this);
     
     // Initialize 'this'.

@@ -1,3 +1,39 @@
+2016-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should be able to use DirectCall ICs when they proved the callee or its executable
+        https://bugs.webkit.org/show_bug.cgi?id=163371
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+        
+        Add microbenchmarks for all of the cases that this patch optimizes.
+
+        * microbenchmarks/direct-call-arity-mismatch.js: Added.
+        (foo):
+        (bar):
+        * microbenchmarks/direct-call.js: Added.
+        (foo):
+        (bar):
+        * microbenchmarks/direct-construct-arity-mismatch.js: Added.
+        (Foo):
+        (bar):
+        * microbenchmarks/direct-construct.js: Added.
+        (Foo):
+        (bar):
+        * microbenchmarks/direct-tail-call-arity-mismatch.js: Added.
+        (foo):
+        (bar):
+        * microbenchmarks/direct-tail-call-inlined-caller-arity-mismatch.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * microbenchmarks/direct-tail-call-inlined-caller.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * microbenchmarks/direct-tail-call.js: Added.
+        (foo):
+        (bar):
+
 2016-10-18  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] ES6 Method functions should not have prototype

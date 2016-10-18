@@ -276,11 +276,29 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         JSCallRecord& record = m_jsCalls[i];
-        CallLinkInfo& info = *record.m_info;
-        linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
-        info.setCallLocations(linkBuffer.locationOfNearCall(record.m_slowCall),
-            linkBuffer.locationOf(record.m_targetToCheck),
-            linkBuffer.locationOfNearCall(record.m_fastCall));
+        CallLinkInfo& info = *record.info;
+        linkBuffer.link(record.slowCall, FunctionPtr(m_vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
+        info.setCallLocations(
+            CodeLocationLabel(linkBuffer.locationOfNearCall(record.slowCall)),
+            CodeLocationLabel(linkBuffer.locationOf(record.targetToCheck)),
+            linkBuffer.locationOfNearCall(record.fastCall));
+    }
+    
+    for (JSDirectCallRecord& record : m_jsDirectCalls) {
+        CallLinkInfo& info = *record.info;
+        linkBuffer.link(record.call, linkBuffer.locationOf(record.slowPath));
+        info.setCallLocations(
+            CodeLocationLabel(),
+            linkBuffer.locationOf(record.slowPath),
+            linkBuffer.locationOfNearCall(record.call));
+    }
+    
+    for (JSDirectTailCallRecord& record : m_jsDirectTailCalls) {
+        CallLinkInfo& info = *record.info;
+        info.setCallLocations(
+            linkBuffer.locationOf(record.patchableJump),
+            linkBuffer.locationOf(record.slowPath),
+            linkBuffer.locationOfNearCall(record.call));
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);

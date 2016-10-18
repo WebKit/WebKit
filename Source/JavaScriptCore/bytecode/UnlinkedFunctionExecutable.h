@@ -76,7 +76,7 @@ public:
     const Identifier& ecmaName() const { return m_ecmaName; }
     void setEcmaName(const Identifier& name) { m_ecmaName = name; }
     const Identifier& inferredName() const { return m_inferredName; }
-    unsigned parameterCount() const { return m_parameterCount; };
+    unsigned parameterCount() const { return m_parameterCount; }; // Excluding 'this'!
     unsigned functionLength() const { return m_functionLength; }
     SourceParseMode parseMode() const { return static_cast<SourceParseMode>(m_sourceParseMode); };
 

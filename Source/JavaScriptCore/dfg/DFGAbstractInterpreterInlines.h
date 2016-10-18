@@ -1779,6 +1779,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case TailCall:
+    case DirectTailCall:
     case TailCallVarargs:
     case TailCallForwardVarargs:
         clobberWorld(node->origin.semantic, clobberLimit);
@@ -2824,6 +2825,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ConstructForwardVarargs:
     case TailCallForwardVarargsInlinedCaller:
     case CallEval:
+    case DirectCall:
+    case DirectConstruct:
+    case DirectTailCallInlinedCaller:
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeHeapTop();
         break;

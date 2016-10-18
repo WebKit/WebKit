@@ -760,8 +760,9 @@ CompilationResult JIT::link()
     for (unsigned i = 0; i < m_callCompilationInfo.size(); ++i) {
         CallCompilationInfo& compilationInfo = m_callCompilationInfo[i];
         CallLinkInfo& info = *compilationInfo.callLinkInfo;
-        info.setCallLocations(patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation),
-            patchBuffer.locationOf(compilationInfo.hotPathBegin),
+        info.setCallLocations(
+            CodeLocationLabel(patchBuffer.locationOfNearCall(compilationInfo.callReturnLocation)),
+            CodeLocationLabel(patchBuffer.locationOf(compilationInfo.hotPathBegin)),
             patchBuffer.locationOfNearCall(compilationInfo.hotPathOther));
     }
 

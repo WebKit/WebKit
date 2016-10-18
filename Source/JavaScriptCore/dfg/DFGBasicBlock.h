@@ -90,6 +90,7 @@ struct BasicBlock : RefCounted<BasicBlock> {
             case Switch:
             case Return:
             case TailCall:
+            case DirectTailCall:
             case TailCallVarargs:
             case TailCallForwardVarargs:
             case Unreachable:

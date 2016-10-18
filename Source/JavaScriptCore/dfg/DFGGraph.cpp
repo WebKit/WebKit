@@ -1159,6 +1159,13 @@ BitVector Graph::localsLiveInBytecode(CodeOrigin codeOrigin)
     return result;
 }
 
+unsigned Graph::parameterSlotsForArgCount(unsigned argCount)
+{
+    size_t frameSize = CallFrame::headerSizeInRegisters + argCount;
+    size_t alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+    return alignedFrameSize - CallerFrameAndPC::sizeInRegisters;
+}
+
 unsigned Graph::frameRegisterCount()
 {
     unsigned result = m_nextMachineLocal + std::max(m_parameterSlots, static_cast<unsigned>(maxFrameExtentForSlowPathCallInRegisters));

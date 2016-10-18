@@ -1,3 +1,195 @@
+2016-10-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should be able to use DirectCall ICs when they proved the callee or its executable
+        https://bugs.webkit.org/show_bug.cgi?id=163371
+
+        Reviewed by Geoffrey Garen and Saam Barati.
+        
+        This adds a new kind of call inline cache for when the DFG can prove what the callee
+        executable is. In those cases, we can skip some of the things that the traditional call IC
+        would do:
+        
+        - No need to check who the callee is.
+        - No need to do arity checks.
+        
+        This case isn't as simple as just emitting a call instruction since the callee may not be
+        compiled at the time that the caller is compiled. So, we need lazy resolution. Also, the
+        callee may be jettisoned independently of the caller, so we need to be able to revert the
+        call to an unlinked state. This means that we need almost all of the things that
+        CallLinkInfo has. CallLinkInfo already knows about different kinds of calls. This patch
+        teaches it about new "Direct" call types.
+        
+        The direct non-tail call IC looks like this:
+        
+                set up arguments
+            FastPath:
+                call _SlowPath
+                lea -FrameSize(%rbp), %rsp
+            
+            SlowPath:
+                pop
+                call operationLinkDirectCall
+                check exception
+                jmp FastPath
+        
+        The job of operationLinkDirectCall is to link the fast path's call entrypoint of the callee.
+        This means that in steady state, a call is just that: a call. There are no extra branches or
+        checks.
+        
+        The direct tail call IC is a bit more complicated because the act of setting up arguments
+        destroys our frame, which would prevent us from being able to throw an exception if we
+        failed to compile the callee. So, direct tail call ICs look like this:
+        
+                jmp _SlowPath
+            FastPath:
+                set up arguments
+                jmp 0 // patch to jump to callee
+            
+            SlowPath:
+                silent spill
+                call operationLinkDirectCall
+                silent fill
+                check exception
+                jmp FastPath
+        
+        The jmp to the slow path is patched to be a fall-through jmp when we link the call.
+        
+        Direct calls mean less code at call sites, fewer checks on the steady state call fast path,
+        and no need for arity fixup. This looks like a slight speed-up (~0.8%) on both Octane and
+        AsmBench.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::relinkJumpToNop):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::relinkJumpToNop):
+        (JSC::ARMv7Assembler::relinkJump): Deleted.
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::repatchJumpToNop):
+        (JSC::AbstractMacroAssembler::repatchJump): Deleted.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::relinkJumpToNop):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::callReturnLocation):
+        (JSC::CallLinkInfo::patchableJump):
+        (JSC::CallLinkInfo::hotPathBegin):
+        (JSC::CallLinkInfo::slowPathStart):
+        (JSC::CallLinkInfo::setCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::callee):
+        (JSC::CallLinkInfo::setCodeBlock):
+        (JSC::CallLinkInfo::clearCodeBlock):
+        (JSC::CallLinkInfo::codeBlock):
+        (JSC::CallLinkInfo::setLastSeenCallee):
+        (JSC::CallLinkInfo::clearLastSeenCallee):
+        (JSC::CallLinkInfo::lastSeenCallee):
+        (JSC::CallLinkInfo::haveLastSeenCallee):
+        (JSC::CallLinkInfo::setExecutableDuringCompilation):
+        (JSC::CallLinkInfo::executable):
+        (JSC::CallLinkInfo::setMaxNumArguments):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::specializationKindFor):
+        (JSC::CallLinkInfo::callModeFor):
+        (JSC::CallLinkInfo::isDirect):
+        (JSC::CallLinkInfo::nearCallMode):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::setCallLocations):
+        (JSC::CallLinkInfo::addressOfMaxNumArguments):
+        (JSC::CallLinkInfo::maxNumArguments):
+        (JSC::CallLinkInfo::isTailCall): Deleted.
+        (JSC::CallLinkInfo::setUpCallFromFTL): Deleted.
+        (JSC::CallLinkInfo::callReturnLocation): Deleted.
+        (JSC::CallLinkInfo::hotPathBegin): Deleted.
+        (JSC::CallLinkInfo::callee): Deleted.
+        (JSC::CallLinkInfo::setLastSeenCallee): Deleted.
+        (JSC::CallLinkInfo::clearLastSeenCallee): Deleted.
+        (JSC::CallLinkInfo::lastSeenCallee): Deleted.
+        (JSC::CallLinkInfo::haveLastSeenCallee): Deleted.
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::forEachReg):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::findTerminal):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addCallWithoutSettingResult):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::parameterSlotsForArgCount):
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSDirectCall):
+        (JSC::DFG::JITCompiler::addJSDirectTailCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectCallRecord::JSDirectCallRecord):
+        (JSC::DFG::JITCompiler::JSDirectTailCallRecord::JSDirectTailCallRecord):
+        (JSC::DFG::JITCompiler::currentJSCallIndex): Deleted.
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToDirectCall):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/Repatch.cpp:
+        (JSC::linkDirectFor):
+        (JSC::revertCall):
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/Executable.cpp:
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::prepareForExecution):
+        * runtime/Options.h:
+
 2016-10-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Not emit exception case if it is not necessary

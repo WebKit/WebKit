@@ -805,9 +805,7 @@ private:
         OpInfo prediction)
     {
         addVarArgChild(callee);
-        size_t frameSize = CallFrame::headerSizeInRegisters + argCount;
-        size_t alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
-        size_t parameterSlots = alignedFrameSize - CallerFrameAndPC::sizeInRegisters;
+        size_t parameterSlots = Graph::parameterSlotsForArgCount(argCount);
 
         if (parameterSlots > m_parameterSlots)
             m_parameterSlots = parameterSlots;
@@ -1294,15 +1292,13 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
     
     unsigned nextOffset = m_currentIndex + instructionSize;
     
-    OpInfo callOpInfo;
-    
     if (handleInlining(callTarget, result, callLinkStatus, registerOffset, virtualRegisterForArgument(0, registerOffset), VirtualRegister(), 0, argumentCountIncludingThis, nextOffset, op, kind, prediction)) {
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedCall();
         return NonTerminal;
     }
     
-    Node* callNode = addCall(result, op, callOpInfo, callTarget, argumentCountIncludingThis, registerOffset, prediction);
+    Node* callNode = addCall(result, op, OpInfo(), callTarget, argumentCountIncludingThis, registerOffset, prediction);
     if (callNode->op() == TailCall)
         return Terminal;
     ASSERT(callNode->op() != TailCallVarargs && callNode->op() != TailCallForwardVarargs);

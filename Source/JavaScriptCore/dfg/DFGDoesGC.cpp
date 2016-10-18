@@ -145,8 +145,11 @@ bool doesGC(Graph& graph, Node* node)
     case CompareStrictEq:
     case CompareEqPtr:
     case Call:
+    case DirectCall:
     case TailCallInlinedCaller:
+    case DirectTailCallInlinedCaller:
     case Construct:
+    case DirectConstruct:
     case CallVarargs:
     case CallEval:
     case TailCallVarargsInlinedCaller:
@@ -183,6 +186,7 @@ bool doesGC(Graph& graph, Node* node)
     case Switch:
     case Return:
     case TailCall:
+    case DirectTailCall:
     case TailCallVarargs:
     case Throw:
     case CountExecution:

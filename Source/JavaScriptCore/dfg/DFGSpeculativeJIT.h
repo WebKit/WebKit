@@ -1155,6 +1155,12 @@ public:
         return appendCall(operation);
     }
 
+    JITCompiler::Call callOperation(V_JITOperation_ECliJsf operation, CallLinkInfo* callLinkInfo, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(callLinkInfo), arg1);
+        return appendCall(operation);
+    }
+
     JITCompiler::Call callOperation(V_JITOperation_EC operation, JSCell* arg1)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(arg1));

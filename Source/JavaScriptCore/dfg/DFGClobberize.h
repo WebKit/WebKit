@@ -515,8 +515,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ArrayPush:
     case ArrayPop:
     case Call:
+    case DirectCall:
     case TailCallInlinedCaller:
+    case DirectTailCallInlinedCaller:
     case Construct:
+    case DirectConstruct:
     case CallVarargs:
     case CallForwardVarargs:
     case TailCallVarargsInlinedCaller:
@@ -544,6 +547,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case TailCall:
+    case DirectTailCall:
     case TailCallVarargs:
     case TailCallForwardVarargs:
         read(World);

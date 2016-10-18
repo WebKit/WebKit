@@ -691,8 +691,11 @@ private:
         case MultiGetByOffset:
         case GetDirectPname:
         case Call:
+        case DirectCall:
         case TailCallInlinedCaller:
+        case DirectTailCallInlinedCaller:
         case Construct:
+        case DirectConstruct:
         case CallVarargs:
         case CallEval:
         case TailCallVarargsInlinedCaller:
@@ -1043,6 +1046,7 @@ private:
         case PutToArguments:
         case Return:
         case TailCall:
+        case DirectTailCall:
         case TailCallVarargs:
         case TailCallForwardVarargs:
         case Throw:

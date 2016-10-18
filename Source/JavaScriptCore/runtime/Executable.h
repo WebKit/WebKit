@@ -371,13 +371,13 @@ public:
     // to point to it. This forces callers to have a CodeBlock* in a register or on the stack that will be marked
     // by conservative GC if a GC happens after we create the CodeBlock.
     template <typename ExecutableType>
-    JSObject* prepareForExecution(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
+    JSObject* prepareForExecution(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*& resultCodeBlock);
 
     template <typename Functor> void forEachCodeBlock(Functor&&);
 
 private:
     friend class ExecutableBase;
-    JSObject* prepareForExecutionImpl(ExecState*, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
+    JSObject* prepareForExecutionImpl(VM&, JSFunction*, JSScope*, CodeSpecializationKind, CodeBlock*&);
 
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, bool isInStrictContext, DerivedContextType, bool isInArrowFunctionContext, EvalContextType, Intrinsic);
@@ -735,7 +735,7 @@ public:
 
     DECLARE_INFO;
 
-    void prepareForExecution(ExecState*);
+    void prepareForExecution(VM&);
 
     WebAssemblyCodeBlock* codeBlockForCall()
     {
@@ -757,7 +757,7 @@ private:
 #endif
 
 template <typename ExecutableType>
-JSObject* ScriptExecutable::prepareForExecution(ExecState* exec, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
+JSObject* ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope* scope, CodeSpecializationKind kind, CodeBlock*& resultCodeBlock)
 {
     if (hasJITCodeFor(kind)) {
         if (std::is_same<ExecutableType, EvalExecutable>::value)
@@ -772,7 +772,7 @@ JSObject* ScriptExecutable::prepareForExecution(ExecState* exec, JSFunction* fun
             RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
     }
-    return prepareForExecutionImpl(exec, function, scope, kind, resultCodeBlock);
+    return prepareForExecutionImpl(vm, function, scope, kind, resultCodeBlock);
 }
 
 } // namespace JSC

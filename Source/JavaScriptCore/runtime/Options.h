@@ -301,6 +301,8 @@ typedef const char* optionString;
     v(double, structureCheckVoteRatioForHoisting, 1, Normal, nullptr) \
     v(double, checkArrayVoteRatioForHoisting, 1, Normal, nullptr) \
     \
+    v(unsigned, maximumDirectCallStackSize, 200, Normal, nullptr) \
+    \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100, Normal, nullptr) \
     v(unsigned, numberOfGCMarkers, computeNumberOfGCMarkers(7), Normal, nullptr) \
     v(unsigned, opaqueRootMergeThreshold, 1000, Normal, nullptr) \

@@ -760,6 +760,38 @@ private:
             m_node->origin = origin;
             break;
         }
+            
+        case Call:
+        case Construct:
+        case TailCallInlinedCaller:
+        case TailCall: {
+            ExecutableBase* executable = nullptr;
+            Edge callee = m_graph.varArgChild(m_node, 0);
+            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
+                executable = function->executable();
+            else if (callee->isFunctionAllocation())
+                executable = callee->castOperand<FunctionExecutable*>();
+            
+            if (!executable)
+                break;
+            
+            if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
+                // We need to update m_parameterSlots before we get to the backend, but we don't
+                // want to do too much of this.
+                unsigned numAllocatedArgs =
+                    static_cast<unsigned>(functionExecutable->parameterCount()) + 1;
+                
+                if (numAllocatedArgs <= Options::maximumDirectCallStackSize()) {
+                    m_graph.m_parameterSlots = std::max(
+                        m_graph.m_parameterSlots,
+                        Graph::parameterSlotsForArgCount(numAllocatedArgs));
+                }
+            }
+            
+            m_node->convertToDirectCall(m_graph.freeze(executable));
+            m_changed = true;
+            break;
+        }
 
         default:
             break;

@@ -643,6 +643,8 @@ public:
         m_op = ArithNegate;
     }
     
+    void convertToDirectCall(FrozenValue*);
+    
     JSValue asJSValue()
     {
         return constant()->value();
@@ -1254,6 +1256,7 @@ public:
         case Switch:
         case Return:
         case TailCall:
+        case DirectTailCall:
         case TailCallVarargs:
         case TailCallForwardVarargs:
         case Unreachable:
@@ -1425,8 +1428,11 @@ public:
         case GetByVal:
         case GetByValWithThis:
         case Call:
+        case DirectCall:
         case TailCallInlinedCaller:
+        case DirectTailCallInlinedCaller:
         case Construct:
+        case DirectConstruct:
         case CallVarargs:
         case CallEval:
         case TailCallVarargsInlinedCaller:
@@ -1477,6 +1483,10 @@ public:
         case MaterializeCreateActivation:
         case NewRegexp:
         case CompareEqPtr:
+        case DirectCall:
+        case DirectTailCall:
+        case DirectConstruct:
+        case DirectTailCallInlinedCaller:
             return true;
         default:
             return false;
@@ -2405,8 +2415,7 @@ private:
     unsigned m_refCount;
     // The prediction ascribed to this node after propagation.
     SpeculatedType m_prediction { SpecNone };
-    // Immediate values, accesses type-checked via accessors above. The first one is
-    // big enough to store a pointer.
+    // Immediate values, accesses type-checked via accessors above.
     struct OpInfoWrapper {
         OpInfoWrapper()
         {
