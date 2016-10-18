@@ -104,7 +104,7 @@ WebInspector.CSSCompletions = class CSSCompletions
             {
                 // CodeMirror parses the vendor prefix separate from the property or keyword name,
                 // so we need to strip vendor prefixes from our names. Also strip function parenthesis.
-                return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "");
+                return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "").toLowerCase();
             }
 
             function collectPropertyNameForCodeMirror(propertyName)
