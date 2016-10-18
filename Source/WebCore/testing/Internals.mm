@@ -31,9 +31,11 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Frame.h"
+#include "SoftLinking.h"
 
 #if PLATFORM(IOS)
-#import <UIKit/UIKit.h>
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK(UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), ())
 #endif
 
 namespace WebCore {
