@@ -354,7 +354,7 @@ WebHistoryItem *kit(HistoryItem* item)
             redirectURLsVector->uncheckedAppend((NSString *)redirectURL);
         }
 
-        core(_private)->setRedirectURLs(WTFMove(redirectURLsVector));
+        _private->_redirectURLs = WTFMove(redirectURLsVector);
     }
 
     NSArray *childDicts = [dict objectForKey:childrenKey];
@@ -441,12 +441,12 @@ WebHistoryItem *kit(HistoryItem* item)
     }
     if (coreItem->lastVisitWasFailure())
         [dict setObject:[NSNumber numberWithBool:YES] forKey:lastVisitWasFailureKey];
-    if (Vector<String>* redirectURLs = coreItem->redirectURLs()) {
+    if (Vector<String>* redirectURLs = _private->_redirectURLs.get()) {
         size_t size = redirectURLs->size();
         ASSERT(size);
         NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:size];
         for (size_t i = 0; i < size; ++i)
-            [result addObject:(NSString*)redirectURLs->at(i)];
+            [result addObject:(NSString *)redirectURLs->at(i)];
         [dict setObject:result forKey:redirectURLsKey];
         [result release];
     }
@@ -554,7 +554,7 @@ WebHistoryItem *kit(HistoryItem* item)
 
 - (NSArray *)_redirectURLs
 {
-    Vector<String>* redirectURLs = core(_private)->redirectURLs();
+    Vector<String>* redirectURLs = _private->_redirectURLs.get();
     if (!redirectURLs)
         return nil;
 

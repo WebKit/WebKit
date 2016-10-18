@@ -897,7 +897,7 @@ static inline WebHistoryDateKey dateKey(NSTimeInterval date)
     HistoryItem* item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
 
-    item->setRedirectURLs(nullptr);
+    entry->_private->_redirectURLs = nullptr;
 
     NSArray *entries = [[NSArray alloc] initWithObjects:entry, nil];
     [self _sendNotification:WebHistoryItemsAddedNotification entries:entries];

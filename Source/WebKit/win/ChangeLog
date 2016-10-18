@@ -1,3 +1,20 @@
+2016-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Move some history specific HistoryItem code to WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=163567
+
+        Reviewed by Tim Horton.
+
+        Remove these, they aren't used.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::dictionaryRepresentation):
+
 2016-10-16  Darin Adler  <darin@apple.com>
 
         Move CSS classes from ExceptionCode to Exception

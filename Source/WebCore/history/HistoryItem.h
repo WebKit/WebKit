@@ -148,10 +148,6 @@ public:
     bool shouldDoSameDocumentNavigationTo(HistoryItem& otherItem) const;
     bool hasSameFrames(HistoryItem& otherItem) const;
 
-    WEBCORE_EXPORT void addRedirectURL(const String&);
-    WEBCORE_EXPORT Vector<String>* redirectURLs() const;
-    WEBCORE_EXPORT void setRedirectURLs(std::unique_ptr<Vector<String>>);
-
     bool isCurrentDocument(Document&) const;
     
 #if PLATFORM(COCOA)

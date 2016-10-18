@@ -479,27 +479,6 @@ bool HistoryItem::isCurrentDocument(Document& document) const
     return equalIgnoringFragmentIdentifier(url(), document.url());
 }
 
-void HistoryItem::addRedirectURL(const String& url)
-{
-    if (!m_redirectURLs)
-        m_redirectURLs = std::make_unique<Vector<String>>();
-
-    // Our API allows us to store all the URLs in the redirect chain, but for
-    // now we only have a use for the final URL.
-    (*m_redirectURLs).resize(1);
-    (*m_redirectURLs)[0] = url;
-}
-
-Vector<String>* HistoryItem::redirectURLs() const
-{
-    return m_redirectURLs.get();
-}
-
-void HistoryItem::setRedirectURLs(std::unique_ptr<Vector<String>> redirectURLs)
-{
-    m_redirectURLs = WTFMove(redirectURLs);
-}
-
 void HistoryItem::notifyChanged()
 {
     notifyHistoryItemChanged(this);

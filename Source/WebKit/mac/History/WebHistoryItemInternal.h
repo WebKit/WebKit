@@ -29,6 +29,8 @@
 #import "WebBackForwardList.h"
 #import "WebHistoryItemPrivate.h"
 #import <wtf/RefPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
     class HistoryItem;
@@ -61,5 +63,6 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
     RefPtr<WebCore::HistoryItem> _historyItem;
 
     NSTimeInterval _lastVisitedTime;
+    std::unique_ptr<Vector<String>> _redirectURLs;
 }
 @end

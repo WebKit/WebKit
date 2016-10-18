@@ -1040,6 +1040,17 @@ void WebFrameLoaderClient::updateGlobalHistory()
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() withTitle:loader->title().string() method:loader->originalRequestCopy().httpMethod() wasFailure:loader->urlForHistoryReflectsFailure()];
 }
 
+static void addRedirectURL(WebHistoryItem *item, const String& url)
+{
+    if (!item->_private->_redirectURLs)
+        item->_private->_redirectURLs = std::make_unique<Vector<String>>();
+
+    // Our API allows us to store all the URLs in the redirect chain, but for
+    // now we only have a use for the final URL.
+    item->_private->_redirectURLs->resize(1);
+    item->_private->_redirectURLs->at(0) = url;
+}
+
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     WebView* view = getWebView(m_webFrame.get());
@@ -1055,7 +1066,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
                     m_webFrame->_private->url.get(), loader->clientRedirectDestinationForHistory(), m_webFrame.get());
             }
         } else if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->clientRedirectSourceForHistory()])
-            core(item)->addRedirectURL(loader->clientRedirectDestinationForHistory());
+            addRedirectURL(item, loader->clientRedirectDestinationForHistory());
     }
 
     if (!loader->serverRedirectSourceForHistory().isNull()) {
@@ -1065,7 +1076,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
                     loader->serverRedirectSourceForHistory(), loader->serverRedirectDestinationForHistory(), m_webFrame.get());
             }
         } else if (WebHistoryItem *item = [[WebHistory optionalSharedHistory] _itemForURLString:loader->serverRedirectSourceForHistory()])
-            core(item)->addRedirectURL(loader->serverRedirectDestinationForHistory());
+            addRedirectURL(item, loader->serverRedirectDestinationForHistory());
     }
 }
 

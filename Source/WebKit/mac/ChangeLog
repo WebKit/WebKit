@@ -1,3 +1,21 @@
+2016-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Move some history specific HistoryItem code to WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=163567
+
+        Reviewed by Tim Horton.
+
+        * History/HistoryPropertyList.mm:
+        (HistoryPropertyListWriter::writeHistoryItem):
+        * History/WebHistory.mm:
+        (-[WebHistory _visitedURL:withTitle:method:wasFailure:]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History/WebHistoryItemInternal.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (addRedirectURL):
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+
 2016-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Resolve constraints and enumerate devices in the UI process

@@ -1,3 +1,16 @@
+2016-10-17  Anders Carlsson  <andersca@apple.com>
+
+        Move some history specific HistoryItem code to WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=163567
+
+        Reviewed by Tim Horton.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::addRedirectURL): Deleted.
+        (WebCore::HistoryItem::redirectURLs): Deleted.
+        (WebCore::HistoryItem::setRedirectURLs): Deleted.
+        * history/HistoryItem.h:
+
 2016-10-18  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Get all the properties turned on

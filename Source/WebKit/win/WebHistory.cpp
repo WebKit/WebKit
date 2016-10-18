@@ -522,7 +522,6 @@ void WebHistory::visitedURL(const URL& url, const String& title, const String& h
     entryPrivate->setLastVisitWasFailure(wasFailure);
 
     COMPtr<WebHistoryItem> item(Query, entry);
-    item->historyItem()->setRedirectURLs(nullptr);
 
     COMPtr<IPropertyBag> userInfo = createUserInfoFromHistoryItem(
         getNotificationString(kWebHistoryItemsAddedNotification), entry);

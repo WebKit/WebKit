@@ -90,7 +90,7 @@ void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream&
     const String& title = item->title();
     const String& displayTitle = item->alternateTitle();
     double lastVisitedDate = webHistoryItem->_private->_lastVisitedTime;
-    Vector<String>* redirectURLs = item->redirectURLs();
+    Vector<String>* redirectURLs = webHistoryItem->_private->_redirectURLs.get();
 
     // keys
     stream.writeString(m_urlKey);

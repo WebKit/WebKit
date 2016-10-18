@@ -124,9 +124,6 @@ HRESULT WebHistoryItem::initFromDictionaryRepresentation(_In_opt_ void* dictiona
     if (lastVisitWasFailure)
         m_historyItem->setLastVisitWasFailure(true);
 
-    if (redirectURLsVector.get())
-        m_historyItem->setRedirectURLs(WTFMove(redirectURLsVector));
-
     return S_OK;
 }
 
@@ -153,22 +150,6 @@ HRESULT WebHistoryItem::dictionaryRepresentation(__deref_out_opt void** dictiona
     if (m_historyItem->lastVisitWasFailure()) {
         keys[keyCount] = lastVisitWasFailureKey;
         values[keyCount] = CFRetain(kCFBooleanTrue);
-        ++keyCount;
-    }
-
-    if (Vector<String>* redirectURLs = m_historyItem->redirectURLs()) {
-        size_t size = redirectURLs->size();
-        ASSERT(size);
-        CFStringRef* items = new CFStringRef[size];
-        for (size_t i = 0; i < size; ++i)
-            items[i] = redirectURLs->at(i).createCFString().leakRef();
-        CFArrayRef result = CFArrayCreate(0, (const void**)items, size, &kCFTypeArrayCallBacks);
-        for (size_t i = 0; i < size; ++i)
-            CFRelease(items[i]);
-        delete[] items;
-
-        keys[keyCount] = redirectURLsKey;
-        values[keyCount] = result;
         ++keyCount;
     }
 

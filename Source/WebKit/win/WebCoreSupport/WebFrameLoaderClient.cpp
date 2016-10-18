@@ -740,13 +740,6 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
             BString sourceURL(loader->clientRedirectSourceForHistory());
             BString destURL(loader->clientRedirectDestinationForHistory());
             historyDelegate->didPerformClientRedirectFromURL(webView, sourceURL, destURL, m_webFrame);
-        } else {
-            if (history) {
-                if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->clientRedirectSourceForHistory())) {
-                    COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
-                    webHistoryItem->historyItem()->addRedirectURL(loader->clientRedirectDestinationForHistory());
-                }
-            }
         }
     }
 
@@ -755,13 +748,6 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
             BString sourceURL(loader->serverRedirectSourceForHistory());
             BString destURL(loader->serverRedirectDestinationForHistory());
             historyDelegate->didPerformServerRedirectFromURL(webView, sourceURL, destURL, m_webFrame);
-        } else {
-            if (history) {
-                if (COMPtr<IWebHistoryItem> iWebHistoryItem = history->itemForURLString(loader->serverRedirectSourceForHistory())) {
-                    COMPtr<WebHistoryItem> webHistoryItem(Query, iWebHistoryItem);
-                    webHistoryItem->historyItem()->addRedirectURL(loader->serverRedirectDestinationForHistory());
-                }
-            }
         }
     }
 }
