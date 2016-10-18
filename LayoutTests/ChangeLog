@@ -1,5 +1,14 @@
 2016-10-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Marking media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=163598
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2016-10-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Add flaky expectation for tiled-drawing/scrolling/latched-div-with-scroll-snap.html that was errantly removed.
 
         Unreviewed test gardening.
