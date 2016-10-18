@@ -1,3 +1,18 @@
+2016-10-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remote Web Inspector: Timeline UI not updating while recording
+        https://bugs.webkit.org/show_bug.cgi?id=163582
+        <rdar://problem/28766837>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebPage/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::frontendLoaded):
+        Local inspector windows keep the web view alive and toggle the
+        WebInspector.visible state depending on whether or not an inspector is
+        open. Remote Inspector windows go away when closed, so they can always
+        be marked as open. This matches earlier remote inspector behavior.
+
 2016-10-18  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Resolve constraints and enumerate devices in the UI process

@@ -95,6 +95,8 @@ void RemoteWebInspectorUI::frontendLoaded()
 {
     m_frontendAPIDispatcher.frontendLoaded();
 
+    m_frontendAPIDispatcher.dispatchCommand(ASCIILiteral("setIsVisible"), true);
+
     bringToFront();
 }
 
