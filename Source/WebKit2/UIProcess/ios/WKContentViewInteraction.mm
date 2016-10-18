@@ -3848,11 +3848,13 @@ static bool isAssistableInputType(InputType type)
 {
     if ([userInterfaceItem isEqualToString:@"actionSheet"])
         return @{ userInterfaceItem: [_actionSheetAssistant currentAvailableActionTitles] };
-    
+
+#if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"linkPreviewPopoverContents"]) {
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
         return @{ userInterfaceItem: @{ @"pageURL": url } };
     }
+#endif
     
     return nil;
 }

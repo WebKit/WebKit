@@ -1,3 +1,15 @@
+2016-10-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix build for platforms where HAVE(LINK_PREVIEW) is false
+        https://bugs.webkit.org/show_bug.cgi?id=163607
+
+        Reviewed by Tim Horton.
+
+        Added needed # for link preview
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+
 2016-10-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remote Web Inspector: Timeline UI not updating while recording
