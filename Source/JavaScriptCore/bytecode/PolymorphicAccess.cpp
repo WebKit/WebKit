@@ -1426,7 +1426,6 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGetGPR)
 {
     CCallHelpers& jit = *state.jit;
-    VM& vm = *jit.vm();
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = state.valueRegs;
     GPRReg baseGPR = state.baseGPR;
@@ -1535,7 +1534,7 @@ void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGe
     allocator.restoreReusedRegistersByPopping(jit, preservedState);
     state.succeed();
 
-    CCallHelpers::JumpList exceptions = params.emitSlowPathCalls(vm, state, registersToSpillForCCall, jit);
+    CCallHelpers::JumpList exceptions = params.emitSlowPathCalls(state, registersToSpillForCCall, jit);
     exceptions.link(&jit);
     allocator.restoreReusedRegistersByPopping(jit, preservedState);
     state.emitExplicitExceptionHandler();

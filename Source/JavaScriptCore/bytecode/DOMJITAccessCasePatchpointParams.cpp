@@ -47,7 +47,7 @@ public:
     }
 
     template<size_t... ArgumentsIndex>
-    CCallHelpers::JumpList generateImpl(VM& vm, AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
+    CCallHelpers::JumpList generateImpl(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit, std::index_sequence<ArgumentsIndex...>)
     {
         CCallHelpers::JumpList exceptions;
         // We spill (1) the used registers by IC and (2) the used registers by DOMJIT::Patchpoint.
@@ -58,8 +58,6 @@ public:
             CCallHelpers::tagFor(static_cast<VirtualRegister>(CallFrameSlot::argumentCount)));
 
         jit.makeSpaceOnStackForCCall();
-
-        jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
         // FIXME: Currently, we do not check any ARM EABI / SH4 things here.
         // But it is OK because a compile error happens when you pass JSValueRegs as an argument.
@@ -88,10 +86,10 @@ public:
         return exceptions;
     }
 
-    CCallHelpers::JumpList generate(VM& vm, AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit) override
+    CCallHelpers::JumpList generate(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit) override
     {
         m_from.link(&jit);
-        CCallHelpers::JumpList exceptions = generateImpl(vm, state, usedRegistersByPatchpoint, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
+        CCallHelpers::JumpList exceptions = generateImpl(state, usedRegistersByPatchpoint, jit, std::make_index_sequence<std::tuple_size<std::tuple<Arguments...>>::value>());
         jit.jump().linkTo(m_to, &jit);
         return exceptions;
     }
@@ -114,11 +112,11 @@ protected:
 DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
 #undef JSC_DEFINE_CALL_OPERATIONS
 
-CCallHelpers::JumpList DOMJITAccessCasePatchpointParams::emitSlowPathCalls(VM& vm, AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit)
+CCallHelpers::JumpList DOMJITAccessCasePatchpointParams::emitSlowPathCalls(AccessGenerationState& state, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers& jit)
 {
     CCallHelpers::JumpList exceptions;
     for (auto& generator : m_generators)
-        exceptions.append(generator->generate(vm, state, usedRegistersByPatchpoint, jit));
+        exceptions.append(generator->generate(state, usedRegistersByPatchpoint, jit));
     return exceptions;
 }
 

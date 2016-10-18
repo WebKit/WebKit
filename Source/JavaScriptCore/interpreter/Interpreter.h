@@ -31,6 +31,7 @@
 
 #include "ArgList.h"
 #include "CatchScope.h"
+#include "FrameTracers.h"
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -83,78 +84,6 @@ namespace JSC {
         StackFrameModuleCode,
         StackFrameFunctionCode,
         StackFrameNativeCode
-    };
-
-    class SuspendExceptionScope {
-    public:
-        SuspendExceptionScope(VM* vm)
-            : m_vm(vm)
-        {
-            auto scope = DECLARE_CATCH_SCOPE(*vm);
-            oldException = scope.exception();
-            scope.clearException();
-        }
-        ~SuspendExceptionScope()
-        {
-            m_vm->restorePreviousException(oldException);
-        }
-    private:
-        Exception* oldException;
-        VM* m_vm;
-    };
-    
-    class TopCallFrameSetter {
-    public:
-        TopCallFrameSetter(VM& currentVM, CallFrame* callFrame)
-            : vm(currentVM)
-            , oldCallFrame(currentVM.topCallFrame) 
-        {
-            currentVM.topCallFrame = callFrame;
-        }
-        
-        ~TopCallFrameSetter() 
-        {
-            vm.topCallFrame = oldCallFrame;
-        }
-    private:
-        VM& vm;
-        CallFrame* oldCallFrame;
-    };
-    
-    class NativeCallFrameTracer {
-    public:
-        ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame)
-        {
-            ASSERT(vm);
-            ASSERT(callFrame);
-            ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topVMEntryFrame));
-            vm->topCallFrame = callFrame;
-        }
-    };
-
-    class NativeCallFrameTracerWithRestore {
-    public:
-        ALWAYS_INLINE NativeCallFrameTracerWithRestore(VM* vm, VMEntryFrame* vmEntryFrame, CallFrame* callFrame)
-            : m_vm(vm)
-        {
-            ASSERT(vm);
-            ASSERT(callFrame);
-            m_savedTopVMEntryFrame = vm->topVMEntryFrame;
-            m_savedTopCallFrame = vm->topCallFrame;
-            vm->topVMEntryFrame = vmEntryFrame;
-            vm->topCallFrame = callFrame;
-        }
-
-        ALWAYS_INLINE ~NativeCallFrameTracerWithRestore()
-        {
-            m_vm->topVMEntryFrame = m_savedTopVMEntryFrame;
-            m_vm->topCallFrame = m_savedTopCallFrame;
-        }
-
-    private:
-        VM* m_vm;
-        VMEntryFrame* m_savedTopVMEntryFrame;
-        CallFrame* m_savedTopCallFrame;
     };
 
     class Interpreter {

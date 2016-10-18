@@ -33,6 +33,7 @@
 #include "Node.h"
 #include <domjit/DOMJITPatchpoint.h>
 #include <domjit/DOMJITPatchpointParams.h>
+#include <interpreter/FrameTracers.h>
 
 using namespace JSC;
 
@@ -41,11 +42,12 @@ namespace WebCore {
 enum class IsContainerGuardRequirement { Required, NotRequired };
 
 template<typename WrappedNode>
-EncodedJSValue toWrapperSlow(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, void* result)
+EncodedJSValue JIT_OPERATION toWrapperSlow(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, void* result)
 {
     ASSERT(exec);
     ASSERT(result);
     ASSERT(globalObject);
+    JSC::NativeCallFrameTracer tracer(&exec->vm(), exec);
     return JSValue::encode(toJS(exec, static_cast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
 }
 

@@ -1,3 +1,23 @@
+2016-10-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Use NativeCallFrameTracer for operations used for DOMJIT slow calls
+        https://bugs.webkit.org/show_bug.cgi?id=163586
+
+        Reviewed by Saam Barati.
+
+        C functions called from the DOMJIT slow path calls should use NativeCallFrameTracer.
+        This fixes the debug assertion caused in r207427.
+
+        * bytecode/DOMJITAccessCasePatchpointParams.cpp:
+        (JSC::SlowPathCallGeneratorWithArguments::generateImpl):
+        (JSC::DOMJITAccessCasePatchpointParams::emitSlowPathCalls):
+        * bytecode/DOMJITAccessCasePatchpointParams.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::emitDOMJITGetter):
+        * jsc.cpp:
+        (WTF::DOMJITGetter::DOMJITNodeDOMJIT::slowCall):
+        (WTF::DOMJITGetterComplex::DOMJITNodeDOMJIT::slowCall):
+
 2016-10-17  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM Memory.

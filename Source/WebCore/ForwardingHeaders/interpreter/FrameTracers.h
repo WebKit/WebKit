@@ -23,38 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(JIT)
-
-#include "DOMJITPatchpointParams.h"
-
-namespace JSC {
-
-struct AccessGenerationState;
-
-class DOMJITAccessCasePatchpointParams : public DOMJIT::PatchpointParams {
-public:
-    DOMJITAccessCasePatchpointParams(Vector<DOMJIT::Value>&& regs, Vector<GPRReg>&& gpScratch, Vector<FPRReg>&& fpScratch)
-        : DOMJIT::PatchpointParams(WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch))
-    {
-    }
-
-    class SlowPathCallGenerator {
-    public:
-        virtual ~SlowPathCallGenerator() { }
-        virtual CCallHelpers::JumpList generate(AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&) = 0;
-    };
-
-    CCallHelpers::JumpList emitSlowPathCalls(AccessGenerationState&, const RegisterSet& usedRegistersByPatchpoint, CCallHelpers&);
-
-private:
-#define JSC_DEFINE_CALL_OPERATIONS(OperationType, ResultType, ...) void addSlowPathCallImpl(CCallHelpers::JumpList, CCallHelpers&, OperationType, ResultType, std::tuple<__VA_ARGS__> args) override;
-    DOMJIT_SLOW_PATH_CALLS(JSC_DEFINE_CALL_OPERATIONS)
-#undef JSC_DEFINE_CALL_OPERATIONS
-    Vector<std::unique_ptr<SlowPathCallGenerator>> m_generators;
-};
-
-}
-
+#ifndef WebCore_FWD_FrameTracers_h
+#define WebCore_FWD_FrameTracers_h
+#include <JavaScriptCore/FrameTracers.h>
 #endif

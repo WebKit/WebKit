@@ -626,6 +626,12 @@ public:
             return DOMJITNode::checkDOMJITNode();
         }
 
+        static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
+        {
+            NativeCallFrameTracer tracer(&exec->vm(), exec);
+            return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
+        }
+
         Ref<DOMJIT::CallDOMPatchpoint> callDOM() override
         {
             Ref<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
@@ -633,10 +639,7 @@ public:
             patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
                 GPRReg dom = params[1].gpr();
-
-                params.addSlowPathCall(jit.jump(), jit, static_cast<EncodedJSValue(*)(ExecState*, void*)>([](ExecState*, void* pointer) {
-                    return JSValue::encode(jsNumber(static_cast<DOMJITGetter*>(pointer)->value()));
-                }), results, dom);
+                params.addSlowPathCall(jit.jump(), jit, slowCall, results, dom);
                 return CCallHelpers::JumpList();
 
             });
@@ -708,6 +711,20 @@ public:
             return DOMJITNode::checkDOMJITNode();
         }
 
+        static EncodedJSValue JIT_OPERATION slowCall(ExecState* exec, void* pointer)
+        {
+            VM& vm = exec->vm();
+            NativeCallFrameTracer tracer(&vm, exec);
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            auto* object = static_cast<DOMJITNode*>(pointer);
+            auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(object);
+            if (domjitGetterComplex) {
+                if (domjitGetterComplex->m_enableException)
+                    return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("DOMJITGetterComplex slow call exception"))));
+            }
+            return JSValue::encode(jsNumber(object->value()));
+        }
+
         Ref<DOMJIT::CallDOMPatchpoint> callDOM() override
         {
             RefPtr<DOMJIT::CallDOMPatchpoint> patchpoint = DOMJIT::CallDOMPatchpoint::create();
@@ -720,17 +737,7 @@ public:
                 for (unsigned i = 0; i < patchpoint->numGPScratchRegisters; ++i)
                     jit.move(CCallHelpers::TrustedImm32(42), params.gpScratch(i));
 
-                params.addSlowPathCall(jit.jump(), jit, static_cast<EncodedJSValue(*)(ExecState*, void*)>([](ExecState* exec, void* pointer) {
-                    VM& vm = exec->vm();
-                    auto scope = DECLARE_THROW_SCOPE(vm);
-                    auto* object = static_cast<DOMJITNode*>(pointer);
-                    auto* domjitGetterComplex = jsDynamicCast<DOMJITGetterComplex*>(object);
-                    if (domjitGetterComplex) {
-                        if (domjitGetterComplex->m_enableException)
-                            return JSValue::encode(throwException(exec, scope, createError(exec, ASCIILiteral("DOMJITGetterComplex slow call exception"))));
-                    }
-                    return JSValue::encode(jsNumber(object->value()));
-                }), results, domGPR);
+                params.addSlowPathCall(jit.jump(), jit, slowCall, results, domGPR);
                 return CCallHelpers::JumpList();
 
             });
