@@ -500,9 +500,7 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
 #endif
-#if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeMargin:
-#endif
         acceptsNegativeNumbers = false;
         return true;
     case CSSPropertyBottom:
@@ -2978,7 +2976,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitClipPath:
         parsedValue = parseClipPath();
         break;
-#if ENABLE(CSS_SHAPES)
     case CSSPropertyWebkitShapeOutside:
         parsedValue = parseShapeProperty(propId);
         break;
@@ -2988,7 +2985,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitShapeImageThreshold:
         validPrimitive = !id && validateUnit(valueWithCalculation, FNumber);
         break;
-#endif
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:
         validPrimitive = !id && validateUnit(valueWithCalculation, FAngle);
@@ -6675,7 +6671,6 @@ RefPtr<CSSValueList> CSSParser::parseBasicShapeAndOrBox(CSSPropertyID propId)
     return WTFMove(list);
 }
 
-#if ENABLE(CSS_SHAPES)
 RefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
 {
     CSSParserValue& value = *m_valueList->current();
@@ -6694,7 +6689,6 @@ RefPtr<CSSValue> CSSParser::parseShapeProperty(CSSPropertyID propId)
 
     return parseBasicShapeAndOrBox(propId);
 }
-#endif
 
 RefPtr<CSSValue> CSSParser::parseClipPath()
 {

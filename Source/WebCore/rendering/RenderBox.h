@@ -27,9 +27,7 @@
 #include "RenderBoxModelObject.h"
 #include "RenderOverflow.h"
 #include "ScrollTypes.h"
-#if ENABLE(CSS_SHAPES)
 #include "ShapeOutsideInfo.h"
-#endif
 
 namespace WebCore {
 
@@ -604,7 +602,6 @@ public:
         return nullptr;
     }
 
-#if ENABLE(CSS_SHAPES)
     ShapeOutsideInfo* shapeOutsideInfo() const
     {
         return ShapeOutsideInfo::isEnabledFor(*this) ? ShapeOutsideInfo::info(*this) : nullptr;
@@ -615,7 +612,6 @@ public:
         if (isFloating())
             removeFloatingOrPositionedChildFromBlockLists();
     }
-#endif
 
     // True if this box can have a range in an outside fragmentation context.
     bool canHaveOutsideRegionRange() const { return !isInFlowRenderFlowThread(); }
@@ -666,9 +662,7 @@ protected:
     RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
  
 private:
-#if ENABLE(CSS_SHAPES)
     void updateShapeOutsideInfoAfterStyleChange(const RenderStyle&, const RenderStyle* oldStyle);
-#endif
 
 #if ENABLE(CSS_GRID_LAYOUT)
     bool isGridItem() const { return parent() && parent()->isRenderGrid(); }

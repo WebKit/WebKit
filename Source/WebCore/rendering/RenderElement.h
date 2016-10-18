@@ -189,11 +189,7 @@ public:
     bool hasBlendMode() const { return false; }
 #endif
 
-#if ENABLE(CSS_SHAPES)
     bool hasShapeOutside() const { return style().shapeOutside(); }
-#else
-    bool hasShapeOutside() const { return false; }
-#endif
 
     void registerForVisibleInViewportCallback();
     void unregisterForVisibleInViewportCallback();
@@ -311,9 +307,7 @@ private:
 
     void updateFillImages(const FillLayer*, const FillLayer*);
     void updateImage(StyleImage*, StyleImage*);
-#if ENABLE(CSS_SHAPES)
     void updateShapeImage(const ShapeValue*, const ShapeValue*);
-#endif
 
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
     const RenderStyle* cachedFirstLineStyle() const;

@@ -93,9 +93,7 @@ public:
     static float convertTextStrokeWidth(StyleResolver&, CSSValue&);
     static LineBoxContain convertLineBoxContain(StyleResolver&, CSSValue&);
     static TextDecorationSkip convertTextDecorationSkip(StyleResolver&, CSSValue&);
-#if ENABLE(CSS_SHAPES)
     static PassRefPtr<ShapeValue> convertShapeValue(StyleResolver&, CSSValue&);
-#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     static std::unique_ptr<ScrollSnapPoints> convertScrollSnapPoints(StyleResolver&, CSSValue&);
     static LengthSize convertSnapCoordinatePair(StyleResolver&, CSSValue&, size_t offset = 0);
@@ -732,7 +730,6 @@ inline TextDecorationSkip StyleBuilderConverter::convertTextDecorationSkip(Style
     return skip;
 }
 
-#if ENABLE(CSS_SHAPES)
 static inline bool isImageShape(const CSSValue& value)
 {
     return is<CSSImageValue>(value) || is<CSSImageSetValue>(value) || is<CSSImageGeneratorValue>(value);
@@ -774,7 +771,6 @@ inline PassRefPtr<ShapeValue> StyleBuilderConverter::convertShapeValue(StyleReso
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif // ENABLE(CSS_SHAPES)
 
 #if ENABLE(CSS_SCROLL_SNAP)
 inline Length StyleBuilderConverter::parseSnapCoordinate(StyleResolver& styleResolver, const CSSValue& value)

@@ -27,10 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef ShapeOutsideInfo_h
-#define ShapeOutsideInfo_h
-
-#if ENABLE(CSS_SHAPES)
+#pragma once
 
 #include "LayoutSize.h"
 #include "Shape.h"
@@ -144,5 +141,3 @@ private:
 };
 
 }
-#endif
-#endif

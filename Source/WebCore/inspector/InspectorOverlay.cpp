@@ -588,7 +588,6 @@ static RefPtr<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Frag
     return WTFMove(arrayOfFragments);
 }
 
-#if ENABLE(CSS_SHAPES)
 static FloatPoint localPointToRoot(RenderObject* renderer, const FrameView* mainView, const FrameView* view, const FloatPoint& point)
 {
     FloatPoint result = renderer->localToAbsolute(point);
@@ -690,7 +689,6 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
 
     return WTFMove(shapeObject);
 }
-#endif
 
 static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElementData(Node* node, HighlightType type)
 {
@@ -769,13 +767,11 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
         elementData->setContentFlowData(WTFMove(contentFlowData));
     }
 
-#if ENABLE(CSS_SHAPES)
     if (is<RenderBox>(*renderer)) {
         auto& renderBox = downcast<RenderBox>(*renderer);
         if (RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> shapeObject = buildObjectForShapeOutside(containingFrame, &renderBox))
             elementData->setShapeOutsideData(WTFMove(shapeObject));
     }
-#endif
 
     // Need to enable AX to get the computed role.
     if (!WebCore::AXObjectCache::accessibilityEnabled())

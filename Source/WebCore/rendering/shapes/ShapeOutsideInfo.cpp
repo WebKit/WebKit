@@ -29,8 +29,6 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_SHAPES)
-
 #include "ShapeOutsideInfo.h"
 
 #include "BoxShape.h"
@@ -340,5 +338,3 @@ ShapeOutsideDeltas ShapeOutsideInfo::computeDeltasForContainingBlockLine(const R
 }
 
 }
-
-#endif

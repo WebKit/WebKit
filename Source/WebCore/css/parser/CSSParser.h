@@ -255,9 +255,7 @@ public:
     bool parseItemPositionOverflowPosition(CSSPropertyID, bool important);
     RefPtr<CSSContentDistributionValue> parseContentDistributionOverflowPosition();
 
-#if ENABLE(CSS_SHAPES)
     RefPtr<CSSValue> parseShapeProperty(CSSPropertyID);
-#endif
 
     RefPtr<CSSValueList> parseBasicShapeAndOrBox(CSSPropertyID propId);
     RefPtr<CSSPrimitiveValue> parseBasicShape();

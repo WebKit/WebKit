@@ -29,8 +29,6 @@
 
 #pragma once
 
-#if ENABLE(CSS_SHAPES)
-
 #include "BasicShapes.h"
 #include "CSSValueKeywords.h"
 #include "StyleImage.h"
@@ -113,5 +111,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(CSS_SHAPES)

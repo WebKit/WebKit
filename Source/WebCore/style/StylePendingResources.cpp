@@ -87,10 +87,8 @@ void loadPendingResources(RenderStyle& style, Document& document, const Element*
     for (auto* maskLayer = style.maskLayers(); maskLayer; maskLayer = maskLayer->next())
         loadPendingImage(document, maskLayer->image(), element);
 
-#if ENABLE(CSS_SHAPES)
     if (style.shapeOutside())
         loadPendingImage(document, style.shapeOutside()->image(), element, LoadPolicy::ShapeOutside);
-#endif
 }
 
 }

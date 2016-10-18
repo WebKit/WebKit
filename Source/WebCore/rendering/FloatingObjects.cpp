@@ -221,14 +221,12 @@ inline void FindNextFloatLogicalBottomAdapter::collectIfNeeded(const IntervalTyp
     if (m_nextLogicalBottom < floatBottom)
         return;
 
-#if ENABLE(CSS_SHAPES)
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
         LayoutUnit shapeBottom = m_renderer.logicalTopForFloat(floatingObject) + m_renderer.marginBeforeForChild(floatingObject.renderer()) + shapeOutside->shapeLogicalBottom();
         // Use the shapeBottom unless it extends outside of the margin box, in which case it is clipped.
         m_nextShapeLogicalBottom = std::min(shapeBottom, floatBottom);
     } else
         m_nextShapeLogicalBottom = floatBottom;
-#endif
     m_nextLogicalBottom = floatBottom;
 }
 
@@ -477,7 +475,6 @@ template<>
 inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
     LayoutUnit logicalRight = m_renderer.logicalRightForFloat(floatingObject);
-#if ENABLE(CSS_SHAPES)
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
         ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
         if (!shapeDeltas.lineOverlapsShape())
@@ -485,7 +482,6 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::u
 
         logicalRight += shapeDeltas.rightMarginBoxDelta();
     }
-#endif
     if (logicalRight > m_offset) {
         m_offset = logicalRight;
         return true;
@@ -498,7 +494,6 @@ template<>
 inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
     LayoutUnit logicalLeft = m_renderer.logicalLeftForFloat(floatingObject);
-#if ENABLE(CSS_SHAPES)
     if (ShapeOutsideInfo* shapeOutside = floatingObject.renderer().shapeOutsideInfo()) {
         ShapeOutsideDeltas shapeDeltas = shapeOutside->computeDeltasForContainingBlockLine(m_renderer, floatingObject, m_lineTop, m_lineBottom - m_lineTop);
         if (!shapeDeltas.lineOverlapsShape())
@@ -506,7 +501,6 @@ inline bool ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::
 
         logicalLeft += shapeDeltas.leftMarginBoxDelta();
     }
-#endif
     if (logicalLeft < m_offset) {
         m_offset = logicalLeft;
         return true;

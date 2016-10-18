@@ -143,12 +143,10 @@ RenderElement::~RenderElement()
         if (StyleImage* maskBoxImage = m_style.maskBoxImage().image())
             maskBoxImage->removeClient(this);
 
-#if ENABLE(CSS_SHAPES)
         if (auto shapeValue = m_style.shapeOutside()) {
             if (auto shapeImage = shapeValue->image())
                 shapeImage->removeClient(this);
         }
-#endif
     }
     if (m_hasPausedImageAnimations)
         view().removeRendererWithPausedImageAnimations(*this);
@@ -367,13 +365,11 @@ void RenderElement::updateImage(StyleImage* oldImage, StyleImage* newImage)
         newImage->addClient(this);
 }
 
-#if ENABLE(CSS_SHAPES)
 void RenderElement::updateShapeImage(const ShapeValue* oldShapeValue, const ShapeValue* newShapeValue)
 {
     if (oldShapeValue || newShapeValue)
         updateImage(oldShapeValue ? oldShapeValue->image() : nullptr, newShapeValue ? newShapeValue->image() : nullptr);
 }
-#endif
 
 void RenderElement::initializeStyle()
 {
@@ -388,10 +384,7 @@ void RenderElement::initializeStyle()
 
     updateImage(nullptr, m_style.borderImage().image());
     updateImage(nullptr, m_style.maskBoxImage().image());
-
-#if ENABLE(CSS_SHAPES)
     updateShapeImage(nullptr, m_style.shapeOutside());
-#endif
 
     styleDidChange(StyleDifferenceNewStyle, nullptr);
 
@@ -430,10 +423,7 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
 
     updateImage(oldStyle.borderImage().image(), m_style.borderImage().image());
     updateImage(oldStyle.maskBoxImage().image(), m_style.maskBoxImage().image());
-
-#if ENABLE(CSS_SHAPES)
     updateShapeImage(oldStyle.shapeOutside(), m_style.shapeOutside());
-#endif
 
     bool doesNotNeedLayout = !parent();
 

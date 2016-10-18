@@ -155,11 +155,9 @@ public:
     LengthSize m_pageSize;
     LengthPoint m_objectPosition;
 
-#if ENABLE(CSS_SHAPES)
     RefPtr<ShapeValue> m_shapeOutside;
     Length m_shapeMargin;
     float m_shapeImageThreshold;
-#endif
 
     RefPtr<ClipPathOperation> m_clipPath;
 

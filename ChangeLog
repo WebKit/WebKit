@@ -1,3 +1,17 @@
+2016-10-18  Dean Jackson  <dino@apple.com>
+
+        Remove CSS_SHAPES feature definition. This should always be on.
+        https://bugs.webkit.org/show_bug.cgi?id=163628
+        <rdar://problem/28834613>
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmake/tools/vsprops/FeatureDefines.props:
+        * Source/cmake/tools/vsprops/FeatureDefinesCairo.props:
+
 2016-10-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Private/unsupported build options should be marked as advanced

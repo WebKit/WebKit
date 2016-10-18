@@ -68,6 +68,7 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "ShapeOutsideInfo.h"
 #include <wtf/text/TextBreakIterator.h>
 #include "TransformState.h"
 
@@ -75,10 +76,6 @@
 #include <wtf/Optional.h>
 #include <wtf/StackStats.h>
 #include <wtf/TemporaryChange.h>
-
-#if ENABLE(CSS_SHAPES)
-#include "ShapeOutsideInfo.h"
-#endif
 
 using namespace WTF;
 using namespace Unicode;

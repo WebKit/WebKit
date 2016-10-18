@@ -654,11 +654,9 @@ transform-style [NameForMethods=TransformStyle3D]
 -webkit-region-break-before [Initial=initialBreakBetween, NameForMethods=BreakBefore, Converter=RegionBreakBetween]
 -webkit-region-break-inside [Initial=initialBreakInside, NameForMethods=BreakInside, Converter=RegionBreakInside]
 #endif
-#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
 -webkit-shape-outside [Converter=ShapeValue]
 -webkit-shape-margin [Converter=Length]
 -webkit-shape-image-threshold [Converter=NumberOrAuto<float>]
-#endif
 #if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
 max-zoom [SkipBuilder]
 min-zoom [SkipBuilder]

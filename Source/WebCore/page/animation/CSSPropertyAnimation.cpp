@@ -144,7 +144,6 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
     return ShapeClipPathOperation::create(toShape.blend(fromShape, progress));
 }
 
-#if ENABLE(CSS_SHAPES)
 static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue* from, ShapeValue* to, double progress)
 {
     if (!from || !to)
@@ -164,7 +163,6 @@ static inline PassRefPtr<ShapeValue> blendFunc(const AnimationBase*, ShapeValue*
 
     return ShapeValue::createShapeValue(toShape.blend(fromShape, progress), to->cssBox());
 }
-#endif
 
 static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* animation, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
 {
@@ -562,7 +560,6 @@ public:
 };
 #endif
 
-#if ENABLE(CSS_SHAPES)
 class PropertyWrapperShape : public RefCountedPropertyWrapper<ShapeValue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -589,7 +586,6 @@ public:
         return *shapeA == *shapeB;
     }
 };
-#endif
 
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -1436,11 +1432,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath),
 
-#if ENABLE(CSS_SHAPES)
         new PropertyWrapperShape(CSSPropertyWebkitShapeOutside, &RenderStyle::shapeOutside, &RenderStyle::setShapeOutside),
         new LengthPropertyWrapper<Length>(CSSPropertyWebkitShapeMargin, &RenderStyle::shapeMargin, &RenderStyle::setShapeMargin),
         new PropertyWrapper<float>(CSSPropertyWebkitShapeImageThreshold, &RenderStyle::shapeImageThreshold, &RenderStyle::setShapeImageThreshold),
-#endif
 
         new PropertyWrapperVisitedAffectedColor(CSSPropertyColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor),
         new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextStrokeColor, MaybeInvalidColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::visitedLinkTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor),

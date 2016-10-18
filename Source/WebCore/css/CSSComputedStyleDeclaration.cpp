@@ -381,9 +381,7 @@ static const CSSPropertyID computedProperties[] = {
 #if PLATFORM(IOS)
     CSSPropertyWebkitTouchCallout,
 #endif
-#if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeOutside,
-#endif
 #if ENABLE(TOUCH_EVENTS)
     CSSPropertyWebkitTapHighlightColor,
 #endif
@@ -414,10 +412,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitRegionFragment,
 #endif
-#if ENABLE(CSS_SHAPES)
     CSSPropertyWebkitShapeMargin,
     CSSPropertyWebkitShapeImageThreshold,
-#endif
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
@@ -2382,7 +2378,6 @@ static inline const RenderStyle* computeRenderStyleForProperty(Node* styledNode,
     return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
 }
 
-#if ENABLE(CSS_SHAPES)
 static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
 {
     if (!shapeValue)
@@ -2405,7 +2400,6 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
         list->append(CSSValuePool::singleton().createValue(shapeValue->cssBox()));
     return list.releaseNonNull();
 }
-#endif
 
 static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSelfAlignmentData& data)
 {
@@ -3684,14 +3678,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitRegionFragment:
             return cssValuePool.createValue(style->regionFragment());
 #endif
-#if ENABLE(CSS_SHAPES)
         case CSSPropertyWebkitShapeMargin:
             return cssValuePool.createValue(style->shapeMargin(), *style);
         case CSSPropertyWebkitShapeImageThreshold:
             return cssValuePool.createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitShapeOutside:
             return shapePropertyValue(*style, style->shapeOutside());
-#endif
         case CSSPropertyFilter:
             return valueForFilter(*style, style->filter());
 #if ENABLE(FILTERS_LEVEL_2)

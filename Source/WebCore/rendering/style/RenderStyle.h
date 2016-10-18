@@ -1792,7 +1792,6 @@ public:
     SVGLength kerning() const { return svgStyle().kerning(); }
     void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
 
-#if ENABLE(CSS_SHAPES)
     void setShapeOutside(PassRefPtr<ShapeValue> value)
     {
         if (rareNonInheritedData->m_shapeOutside == value)
@@ -1814,7 +1813,6 @@ public:
         SET_VAR(rareNonInheritedData, m_shapeImageThreshold, clampedShapeImageThreshold); 
     }
     static float initialShapeImageThreshold() { return 0; }
-#endif
 
     void setClipPath(PassRefPtr<ClipPathOperation> operation)
     {

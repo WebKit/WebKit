@@ -1,3 +1,78 @@
+2016-10-18  Dean Jackson  <dino@apple.com>
+
+        Remove CSS_SHAPES feature definition. This should always be on.
+        https://bugs.webkit.org/show_bug.cgi?id=163628
+        <rdar://problem/28834613>
+
+        Reviewed by Tim Horton.
+
+        CSS Shapes is in Candidate Recommendation. It's a core part
+        of CSS. It should always be enabled.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::shapePropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertShapeValue):
+        * css/parser/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseShapeProperty):
+        * css/parser/CSSParser.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForShapeOutside):
+        (WebCore::buildObjectForElementData):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FindNextFloatLogicalBottomAdapter::collectIfNeeded):
+        (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded):
+        (WebCore::ComputeFloatOffsetForLineLayoutAdapter<FloatingObject::FloatRight>::updateOffsetIfNeeded):
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::~RenderBox):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::updateShapeOutsideInfoAfterStyleChange):
+        (WebCore::isCandidateForOpaquenessTest):
+        (WebCore::RenderBox::imageChanged):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::markShapeOutsideDependentsForLayout):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::~RenderElement):
+        (WebCore::RenderElement::updateShapeImage):
+        (WebCore::RenderElement::initializeStyle):
+        (WebCore::RenderElement::setStyle):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasShapeOutside):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+        (WebCore::LineWidth::wrapNextToShapeOutside):
+        (WebCore::LineWidth::fitBelowFloats):
+        * rendering/line/LineWidth.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        * rendering/shapes/ShapeOutsideInfo.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout):
+        (WebCore::RenderStyle::changeRequiresRepaint):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialShapeImageThreshold):
+        * rendering/style/ShapeValue.cpp:
+        * rendering/style/ShapeValue.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        * style/StylePendingResources.cpp:
+        (WebCore::Style::loadPendingResources):
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         convertDictionary<>() no longer needs to return an Optional<> type
