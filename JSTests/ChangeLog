@@ -1,3 +1,17 @@
+2016-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM Memory.
+        https://bugs.webkit.org/show_bug.cgi?id=161710
+
+        Reviewed by Geoffrey Garen.
+
+        Add store and load opcodes to wasm.json. Additionally, add new
+        enums for those opcodes in the generator.
+
+        * stress/wasm/generate-wasmops-header.js:
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.LoadOpType):
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.StoreOpType):
+
 2016-10-17  Saam Barati  <sbarati@apple.com>
 
         Add more tests for the double->String conversion in ValueAdd constant folding

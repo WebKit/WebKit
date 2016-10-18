@@ -30,6 +30,7 @@
 
 #include "B3Compilation.h"
 #include "WASMB3IRGenerator.h"
+#include "WASMCallingConvention.h"
 #include "WASMModuleParser.h"
 #include <wtf/DataLog.h>
 
@@ -53,8 +54,9 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     for (const FunctionInformation& info : moduleParser.functionInformation()) {
         if (verbose)
             dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
-        result.append(parseAndCompile(vm, source, info));
+        result.append(parseAndCompile(vm, source, moduleParser.memory().get(), info));
     }
+    memory = WTFMove(moduleParser.memory());
 }
 
 } } // namespace JSC::WASM

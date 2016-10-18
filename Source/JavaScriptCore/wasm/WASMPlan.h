@@ -29,23 +29,20 @@
 
 #include "CompilationResult.h"
 #include "VM.h"
+#include "WASMFormat.h"
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-
-namespace B3 {
-class Compilation;
-} // namespace B3
-
-namespace WASM {
+namespace JSC { namespace WASM {
+class Memory;
 
 // TODO: This should create a WASM Module not a list of functions.
 class Plan {
 public:
     JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t> source);
 
-    Vector<std::unique_ptr<B3::Compilation>> result;
+    Vector<std::unique_ptr<FunctionCompilation>> result;
+    std::unique_ptr<Memory> memory;
 };
 
 } } // namespace JSC::WASM

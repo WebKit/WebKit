@@ -33,6 +33,7 @@ struct Sections {
     enum Section : uint8_t {
         FunctionTypes = 1,
         Signatures = 3,
+        Memory = 5,
         Definitions = 10,
         Unknown
     };

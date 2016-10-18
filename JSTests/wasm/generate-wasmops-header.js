@@ -36,6 +36,10 @@ const defines = [
     ...opcodeMacroizer(op => op.category === "arithmetic" && op.parameter.length === 1),
     "\n\n#define FOR_EACH_WASM_BINARY_OP(macro)",
     ...opcodeMacroizer(op => (op.category === "arithmetic" || op.category === "comparison") && op.parameter.length === 2),
+    "\n\n#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro)",
+    ...opcodeMacroizer(op => (op.category === "memory" && op.return.length === 1)),
+    "\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)",
+    ...opcodeMacroizer(op => (op.category === "memory" && op.return.length === 0)),
     "\n\n"].join("");
 
 const opValueSet = new Set(opcodeIterator(op => true, op => opcodes[op].value)());
@@ -94,7 +98,9 @@ ${defines}
     FOR_EACH_WASM_SPECIAL_OP(macro) \\
     FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \\
     FOR_EACH_WASM_UNARY_OP(macro) \\
-    FOR_EACH_WASM_BINARY_OP(macro)
+    FOR_EACH_WASM_BINARY_OP(macro) \\
+    FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
+    FOR_EACH_WASM_MEMORY_STORE_OP(macro)
 
 #define CREATE_ENUM_VALUE(name, id, b3op) name = id,
 
@@ -116,6 +122,14 @@ enum class BinaryOpType : uint8_t {
 
 enum class UnaryOpType : uint8_t {
     FOR_EACH_WASM_UNARY_OP(CREATE_ENUM_VALUE)
+};
+
+enum class LoadOpType : uint8_t {
+    FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_ENUM_VALUE)
+};
+
+enum class StoreOpType : uint8_t {
+    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_ENUM_VALUE)
 };
 
 #undef CREATE_ENUM_VALUE

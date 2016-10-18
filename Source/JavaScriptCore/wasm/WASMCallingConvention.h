@@ -27,23 +27,27 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "AllowMacroScratchRegisterUsage.h"
 #include "B3ArgumentRegValue.h"
 #include "B3BasicBlock.h"
 #include "B3Const64Value.h"
+#include "B3ConstrainedValue.h"
 #include "B3MemoryValue.h"
+#include "B3PatchpointValue.h"
+#include "B3Procedure.h"
+#include "B3StackmapGenerationParams.h"
 #include "CallFrame.h"
+#include "LinkBuffer.h"
 #include "RegisterSet.h"
 #include "WASMFormat.h"
 
 namespace JSC { namespace WASM {
 
-typedef unsigned (*NextOffset)(unsigned currentOffset, Type type);
+typedef unsigned (*NextOffset)(unsigned currentOffset, B3::Type type);
 
-template<unsigned offset, NextOffset updateOffset>
+template<unsigned headerSize, NextOffset updateOffset>
 class CallingConvention {
 public:
-    static const unsigned headerSize = offset;
-
     CallingConvention(Vector<GPRReg>&& registerArguments, RegisterSet&& calleeSaveRegisters)
         : m_registerArguments(registerArguments)
         , m_calleeSaveRegisters(calleeSaveRegisters)
@@ -64,10 +68,47 @@ public:
                 B3::Value* address = block->appendNew<B3::Value>(proc, B3::Add, origin, framePointer,
                     block->appendNew<B3::Const64Value>(proc, origin, currentOffset));
                 argument = block->appendNew<B3::MemoryValue>(proc, B3::Load, toB3Type(argumentTypes[i]), origin, address);
-                currentOffset = updateOffset(currentOffset, argumentTypes[i]);
+                currentOffset = updateOffset(currentOffset, toB3Type(argumentTypes[i]));
             }
             functor(argument, i);
         }
+    }
+
+    template<typename Functor>
+    B3::Value* setupCall(B3::Procedure& proc, B3::BasicBlock* block, B3::Origin origin, MacroAssemblerCodePtr target, const Vector<B3::Value*>& arguments, B3::Type returnType, const Functor& patchpointFunctor) const
+    {
+        size_t stackArgumentCount = arguments.size() < m_registerArguments.size() ? 0 : arguments.size() - m_registerArguments.size();
+        unsigned offset = headerSize - sizeof(CallerFrameAndPC);
+
+        proc.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), headerSize + (stackArgumentCount * sizeof(Register))));
+        Vector<B3::ConstrainedValue> constrainedArguments;
+        for (unsigned i = 0; i < arguments.size(); ++i) {
+            B3::ValueRep rep;
+            if (i < m_registerArguments.size())
+                rep = B3::ValueRep::reg(m_registerArguments[i]);
+            else
+                rep = B3::ValueRep::stackArgument(offset);
+            constrainedArguments.append(B3::ConstrainedValue(arguments[i], rep));
+            offset = updateOffset(offset, arguments[i]->type());
+        }
+
+        B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, returnType, origin);
+        patchpoint->appendVector(constrainedArguments);
+        patchpointFunctor(patchpoint);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            CCallHelpers::Call call = jit.call();
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(call, FunctionPtr(target.executableAddress()));
+            });
+        });
+
+        if (returnType == B3::Void)
+            return nullptr;
+
+        patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
+        return patchpoint;
     }
 
     const Vector<GPRReg> m_registerArguments;
@@ -75,7 +116,7 @@ public:
     const RegisterSet m_callerSaveRegisters;
 };
 
-inline unsigned nextJSCOffset(unsigned currentOffset, Type)
+inline unsigned nextJSCOffset(unsigned currentOffset, B3::Type)
 {
     return currentOffset + sizeof(Register);
 }

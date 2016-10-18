@@ -32,7 +32,9 @@
 #include "LLIntThunks.h"
 #include "ProtoCallFrame.h"
 #include "VM.h"
+#include "WASMMemory.h"
 #include "WASMPlan.h"
+
 #include <wtf/DataLog.h>
 #include <wtf/LEBDecoder.h>
 
@@ -242,8 +244,469 @@ static void runWASMTests()
 {
     {
         // Generated from:
+        // (module
+        //  (memory 1)
+        //  (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //   (i64.store (get_local $ptr) (get_local $i))
+        //   (return (i64.load (get_local $ptr)))
+        //   )
+        //  )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x02, 0x01, 0x01, 0x02, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x34, 0x03, 0x00, 0x14,
+            0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+    }
+
+    {
+        // Generated from:
+        // (module
+        //  (memory 1)
+        //  (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //   (i32.store (get_local $ptr) (get_local $i))
+        //   (return (i32.load (get_local $ptr)))
+        //   )
+        //  )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x33, 0x02, 0x00, 0x14,
+            0x01, 0x2a, 0x02, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+    }
+
+    {
+        // Generated from:
         //    (module
-        //     (func (export "dumb-eq") (param $x i32) (param $y i32) (result i32)
+        //     (memory 1)
+        //     (func (export "write_array") (param $x i32) (param $p i32) (param $length i32) (local $i i32)
+        //      (set_local $i (i32.const 0))
+        //      (block
+        //       (loop
+        //        (br_if 1 (i32.ge_u (get_local $i) (get_local $length)))
+        //        (i32.store (i32.add (get_local $p) (i32.mul (get_local $i) (i32.const 4))) (get_local $x))
+        //        (set_local $i (i32.add (i32.const 1) (get_local $i)))
+        //        (br 0)
+        //        )
+        //       )
+        //      (return)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x03, 0x01, 0x01, 0x01, 0x00, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x77, 0x72,
+            0x69, 0x74, 0x65, 0x5f, 0x61, 0x72, 0x72, 0x61, 0x79, 0x00, 0x00, 0x0a, 0xb2, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0xac, 0x80, 0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x10, 0x00, 0x15, 0x03, 0x01, 0x00,
+            0x02, 0x00, 0x14, 0x03, 0x14, 0x02, 0x56, 0x07, 0x01, 0x14, 0x01, 0x14, 0x03, 0x10, 0x04, 0x42,
+            0x40, 0x14, 0x00, 0x33, 0x02, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f,
+            0x0f, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        unsigned length = 5;
+        unsigned offset = sizeof(uint32_t);
+        uint32_t* memory = static_cast<uint32_t*>(plan.memory->memory());
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(100), box(offset), box(length) });
+        offset /= sizeof(uint32_t);
+        CHECK_EQ(memory[offset - 1], 0u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 100u);
+
+        length = 10;
+        offset = 5 * sizeof(uint32_t);
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(5), box(offset), box(length) });
+        offset /= sizeof(uint32_t);
+        CHECK_EQ(memory[offset - 1], 100u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 5u);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "write_array") (param $x i32) (param $p i32) (param $length i32) (local $i i32)
+        //      (set_local $i (i32.const 0))
+        //      (block
+        //       (loop
+        //        (br_if 1 (i32.ge_u (get_local $i) (get_local $length)))
+        //        (i32.store8 (i32.add (get_local $p) (get_local $i)) (get_local $x))
+        //        (set_local $i (i32.add (i32.const 1) (get_local $i)))
+        //        (br 0)
+        //        )
+        //       )
+        //      (return)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x03, 0x01, 0x01, 0x01, 0x00, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x77, 0x72,
+            0x69, 0x74, 0x65, 0x5f, 0x61, 0x72, 0x72, 0x61, 0x79, 0x00, 0x00, 0x0a, 0xaf, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0xa9, 0x80, 0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x10, 0x00, 0x15, 0x03, 0x01, 0x00,
+            0x02, 0x00, 0x14, 0x03, 0x14, 0x02, 0x56, 0x07, 0x01, 0x14, 0x01, 0x14, 0x03, 0x40, 0x14, 0x00,
+            0x2e, 0x00, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f, 0x0f, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        unsigned length = 5;
+        unsigned offset = 1;
+        uint8_t* memory = static_cast<uint8_t*>(plan.memory->memory());
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(100), box(offset), box(length) });
+        CHECK_EQ(memory[offset - 1], 0u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 100u);
+
+        length = 10;
+        offset = 5;
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(5), box(offset), box(length) });
+        CHECK_EQ(memory[offset - 1], 100u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 5u);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //      (i32.store8 (get_local $ptr) (get_local $i))
+        //      (return (i32.load8_s (get_local $ptr)))
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x2e, 0x00, 0x00, 0x14,
+            0x01, 0x20, 0x00, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "i32_load8_s") (param $i i32) (result i32)
+        //      (i32.store8 (i32.const 8) (get_local $i))
+        //      (return (i32.load8_s (i32.const 8)))
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x86, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80, 0x80,
+            0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33, 0x32,
+            0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80, 0x00,
+            0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x10, 0x08, 0x14, 0x00, 0x2e, 0x00, 0x00, 0x10, 0x08,
+            0x20, 0x00, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1) }), 1);
+    }
+
+    {
+        // Generated from:
+        // (module
+        //  (memory 1)
+        //  (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //   (i32.store (get_local $ptr) (get_local $i))
+        //   (return (i32.load (get_local $ptr)))
+        //   )
+        //  )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x02, 0x01, 0x01, 0x02, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x34, 0x03, 0x00, 0x14,
+            0x01, 0x2b, 0x03, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(-12), box(plan.memory->size() - sizeof(uint64_t)) }), -12);
+    }
+
+    {
+        // Generated from:
+        // (module
+        //  (memory 1)
+        //  (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //   (i32.store (get_local $ptr) (get_local $i))
+        //   (return (i32.load (get_local $ptr)))
+        //   )
+        //  )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x33, 0x02, 0x00, 0x14,
+            0x01, 0x2a, 0x02, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "write_array") (param $x i32) (param $p i32) (param $length i32) (local $i i32)
+        //      (set_local $i (i32.const 0))
+        //      (block
+        //       (loop
+        //        (br_if 1 (i32.ge_u (get_local $i) (get_local $length)))
+        //        (i32.store (i32.add (get_local $p) (i32.mul (get_local $i) (i32.const 4))) (get_local $x))
+        //        (set_local $i (i32.add (i32.const 1) (get_local $i)))
+        //        (br 0)
+        //        )
+        //       )
+        //      (return)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x03, 0x01, 0x01, 0x01, 0x00, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x77, 0x72,
+            0x69, 0x74, 0x65, 0x5f, 0x61, 0x72, 0x72, 0x61, 0x79, 0x00, 0x00, 0x0a, 0xb2, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0xac, 0x80, 0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x10, 0x00, 0x15, 0x03, 0x01, 0x00,
+            0x02, 0x00, 0x14, 0x03, 0x14, 0x02, 0x56, 0x07, 0x01, 0x14, 0x01, 0x14, 0x03, 0x10, 0x04, 0x42,
+            0x40, 0x14, 0x00, 0x33, 0x02, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f,
+            0x0f, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        unsigned length = 5;
+        unsigned offset = sizeof(uint32_t);
+        uint32_t* memory = static_cast<uint32_t*>(plan.memory->memory());
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(100), box(offset), box(length) });
+        offset /= sizeof(uint32_t);
+        CHECK_EQ(memory[offset - 1], 0u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 100u);
+
+        length = 10;
+        offset = 5 * sizeof(uint32_t);
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(5), box(offset), box(length) });
+        offset /= sizeof(uint32_t);
+        CHECK_EQ(memory[offset - 1], 100u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 5u);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "write_array") (param $x i32) (param $p i32) (param $length i32) (local $i i32)
+        //      (set_local $i (i32.const 0))
+        //      (block
+        //       (loop
+        //        (br_if 1 (i32.ge_u (get_local $i) (get_local $length)))
+        //        (i32.store8 (i32.add (get_local $p) (get_local $i)) (get_local $x))
+        //        (set_local $i (i32.add (i32.const 1) (get_local $i)))
+        //        (br 0)
+        //        )
+        //       )
+        //      (return)
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x03, 0x01, 0x01, 0x01, 0x00, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x77, 0x72,
+            0x69, 0x74, 0x65, 0x5f, 0x61, 0x72, 0x72, 0x61, 0x79, 0x00, 0x00, 0x0a, 0xaf, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0xa9, 0x80, 0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x10, 0x00, 0x15, 0x03, 0x01, 0x00,
+            0x02, 0x00, 0x14, 0x03, 0x14, 0x02, 0x56, 0x07, 0x01, 0x14, 0x01, 0x14, 0x03, 0x40, 0x14, 0x00,
+            0x2e, 0x00, 0x00, 0x10, 0x01, 0x14, 0x03, 0x40, 0x15, 0x03, 0x06, 0x00, 0x0f, 0x0f, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        unsigned length = 5;
+        unsigned offset = 1;
+        uint8_t* memory = static_cast<uint8_t*>(plan.memory->memory());
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(100), box(offset), box(length) });
+        CHECK_EQ(memory[offset - 1], 0u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 100u);
+
+        length = 10;
+        offset = 5;
+        invoke<void>(*plan.result[0]->jsEntryPoint, { box(5), box(offset), box(length) });
+        CHECK_EQ(memory[offset - 1], 100u);
+        CHECK_EQ(memory[offset + length], 0u);
+        for (unsigned i = 0; i < length; ++i)
+            CHECK_EQ(memory[i + offset], 5u);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "i32_load8_s") (param $i i32) (param $ptr i32) (result i32)
+        //      (i32.store8 (get_local $ptr) (get_local $i))
+        //      (return (i32.load8_s (get_local $ptr)))
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80,
+            0x80, 0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33,
+            0x32, 0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80,
+            0x00, 0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x01, 0x14, 0x00, 0x2e, 0x00, 0x00, 0x14,
+            0x01, 0x20, 0x00, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+        ASSERT(plan.memory->size());
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(10) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(2) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(100) }), 1);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (memory 1)
+        //     (func (export "i32_load8_s") (param $i i32) (result i32)
+        //      (i32.store8 (i32.const 8) (get_local $i))
+        //      (return (i32.load8_s (i32.const 8)))
+        //      )
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x86, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x01, 0x01, 0x01, 0x01, 0x03, 0x82, 0x80, 0x80, 0x80, 0x00, 0x01, 0x00, 0x05, 0x83, 0x80, 0x80,
+            0x80, 0x00, 0x01, 0x01, 0x01, 0x07, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x01, 0x0b, 0x69, 0x33, 0x32,
+            0x5f, 0x6c, 0x6f, 0x61, 0x64, 0x38, 0x5f, 0x73, 0x00, 0x00, 0x0a, 0x95, 0x80, 0x80, 0x80, 0x00,
+            0x01, 0x8f, 0x80, 0x80, 0x80, 0x00, 0x00, 0x10, 0x08, 0x14, 0x00, 0x2e, 0x00, 0x00, 0x10, 0x08,
+            0x20, 0x00, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 1 || !plan.result[0]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100) }), 100);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1) }), 1);
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (func "dumb-eq" (param $x i32) (param $y i32) (result i32)
         //      (if (i32.eq (get_local $x) (get_local $y))
         //       (then (br 0))
         //       (else (return (i32.const 1))))
@@ -265,14 +728,14 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0), box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(0) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(2) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(2) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(6) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(6) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(0) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(2) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(2) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(6) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(6) }), 1);
     }
 
     {
@@ -306,14 +769,14 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0), box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(0) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(2) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(2) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(6) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(6) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(2) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(2) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(6) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(6) }), 0);
     }
 
 
@@ -333,7 +796,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { }), 5);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { }), 5);
     }
 
 
@@ -354,7 +817,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { }), 11);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { }), 11);
     }
 
     {
@@ -374,7 +837,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { }), 11);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { }), 11);
     }
 
     {
@@ -394,7 +857,7 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { }), 11);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { }), 11);
     }
 
     {
@@ -413,10 +876,10 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0), box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(1) }), 101);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(-1), box(1)}), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(std::numeric_limits<int>::max()), box(1) }), std::numeric_limits<int>::min());
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(1) }), 101);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(-1), box(1)}), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(std::numeric_limits<int>::max()), box(1) }), std::numeric_limits<int>::min());
     }
 
     {
@@ -442,8 +905,8 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(10) }), 10);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(10) }), 10);
     }
 
     {
@@ -478,10 +941,10 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2)}), 3);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100) }), 5050);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2)}), 3);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100) }), 5050);
     }
 
     {
@@ -522,14 +985,14 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(0) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(1) }), 2);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(2) }), 2);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(2) }), 4);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(6) }), 12);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(6) }), 600);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(100) }), 10000);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(1) }), 2);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(2) }), 2);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(2) }), 4);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(6) }), 12);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(6) }), 600);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(100) }), 10000);
     }
 
     {
@@ -575,14 +1038,14 @@ static void runWASMTests()
         }
 
         // Test this doesn't crash.
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(0), box(1) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(0) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(2) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(2) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(1), box(1) }), 0);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(2), box(6) }), 1);
-        CHECK_EQ(invoke<int>(*plan.result[0], { box(100), box(6) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(0), box(1) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(0) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(2) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(2) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(1), box(1) }), 0);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(2), box(6) }), 1);
+        CHECK_EQ(invoke<int>(*plan.result[0]->jsEntryPoint, { box(100), box(6) }), 0);
     }
 
 }
@@ -595,7 +1058,6 @@ int main(int argc, char** argv)
 
     if (options.m_runLEBTests)
         runLEBTests();
-
 
     if (options.m_runWASMTests) {
 #if ENABLE(WEBASSEMBLY)

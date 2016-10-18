@@ -44,6 +44,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "B3Compilation.h"
 #include "B3Type.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -124,6 +125,11 @@ struct FunctionInformation {
     Signature* signature;
     size_t start;
     size_t end;
+};
+
+struct FunctionCompilation {
+    std::unique_ptr<B3::Compilation> code;
+    std::unique_ptr<B3::Compilation> jsEntryPoint;
 };
 
 } } // namespace JSC::WASM

@@ -154,6 +154,37 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+    FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_CASE) {
+        uint32_t alignment;
+        if (!parseVarUInt32(alignment))
+            return false;
+
+        uint32_t offset;
+        if (!parseVarUInt32(offset))
+            return false;
+
+        ExpressionType pointer = m_expressionStack.takeLast();
+        ExpressionType result;
+        if (!m_context.load(static_cast<LoadOpType>(op), pointer, result, offset))
+            return false;
+        m_expressionStack.append(result);
+        return true;
+    }
+
+    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE) {
+        uint32_t alignment;
+        if (!parseVarUInt32(alignment))
+            return false;
+
+        uint32_t offset;
+        if (!parseVarUInt32(offset))
+            return false;
+
+        ExpressionType value = m_expressionStack.takeLast();
+        ExpressionType pointer = m_expressionStack.takeLast();
+        return m_context.store(static_cast<StoreOpType>(op), pointer, value, offset);
+    }
+
     case OpType::I32Const: {
         uint32_t constant;
         if (!parseVarUInt32(constant))

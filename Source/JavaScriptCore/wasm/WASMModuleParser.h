@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WASMMemory.h"
 #include "WASMOps.h"
 #include "WASMParser.h"
 #include <wtf/Vector.h>
@@ -45,18 +46,19 @@ public:
 
     bool WARN_UNUSED_RETURN parse();
 
-    const Vector<FunctionInformation>& functionInformation() { return m_functions; }
+    const Vector<FunctionInformation>& functionInformation() const { return m_functions; }
+    std::unique_ptr<Memory>& memory() { return m_memory; }
 
 private:
+    bool WARN_UNUSED_RETURN parseMemory();
     bool WARN_UNUSED_RETURN parseFunctionTypes();
     bool WARN_UNUSED_RETURN parseFunctionSignatures();
     bool WARN_UNUSED_RETURN parseFunctionDefinitions();
     bool WARN_UNUSED_RETURN parseFunctionDefinition(uint32_t number);
-    bool WARN_UNUSED_RETURN parseBlock();
-    bool WARN_UNUSED_RETURN parseExpression(OpType);
 
     Vector<FunctionInformation> m_functions;
     Vector<Signature> m_signatures;
+    std::unique_ptr<Memory> m_memory;
 };
 
 } } // namespace JSC::WASM

@@ -159,13 +159,42 @@ namespace JSC { namespace WASM {
     macro(F64Gt, 0x9b, Oops) \
     macro(F64Ge, 0x9c, Oops)
 
+#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \
+    macro(I32Load8S, 0x20, Oops) \
+    macro(I32Load8U, 0x21, Oops) \
+    macro(I32Load16S, 0x22, Oops) \
+    macro(I32Load16U, 0x23, Oops) \
+    macro(I64Load8S, 0x24, Oops) \
+    macro(I64Load8U, 0x25, Oops) \
+    macro(I64Load16S, 0x26, Oops) \
+    macro(I64Load16U, 0x27, Oops) \
+    macro(I64Load32S, 0x28, Oops) \
+    macro(I64Load32U, 0x29, Oops) \
+    macro(I32Load, 0x2a, Oops) \
+    macro(I64Load, 0x2b, Oops) \
+    macro(F32Load, 0x2c, Oops) \
+    macro(F64Load, 0x2d, Oops)
+
+#define FOR_EACH_WASM_MEMORY_STORE_OP(macro) \
+    macro(I32Store8, 0x2e, Oops) \
+    macro(I32Store16, 0x2f, Oops) \
+    macro(I64Store8, 0x30, Oops) \
+    macro(I64Store16, 0x31, Oops) \
+    macro(I64Store32, 0x32, Oops) \
+    macro(I32Store, 0x33, Oops) \
+    macro(I64Store, 0x34, Oops) \
+    macro(F32Store, 0x35, Oops) \
+    macro(F64Store, 0x36, Oops)
+
 
 
 #define FOR_EACH_WASM_OP(macro) \
     FOR_EACH_WASM_SPECIAL_OP(macro) \
     FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
     FOR_EACH_WASM_UNARY_OP(macro) \
-    FOR_EACH_WASM_BINARY_OP(macro)
+    FOR_EACH_WASM_BINARY_OP(macro) \
+    FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \
+    FOR_EACH_WASM_MEMORY_STORE_OP(macro)
 
 #define CREATE_ENUM_VALUE(name, id, b3op) name = id,
 
@@ -187,6 +216,14 @@ enum class BinaryOpType : uint8_t {
 
 enum class UnaryOpType : uint8_t {
     FOR_EACH_WASM_UNARY_OP(CREATE_ENUM_VALUE)
+};
+
+enum class LoadOpType : uint8_t {
+    FOR_EACH_WASM_MEMORY_LOAD_OP(CREATE_ENUM_VALUE)
+};
+
+enum class StoreOpType : uint8_t {
+    FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_ENUM_VALUE)
 };
 
 #undef CREATE_ENUM_VALUE

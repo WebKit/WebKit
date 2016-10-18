@@ -1,3 +1,63 @@
+2016-10-17  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM Memory.
+        https://bugs.webkit.org/show_bug.cgi?id=161710
+
+        Reviewed by Geoffrey Garen.
+
+        This patch add initial support for WASM memory operations. First,
+        it adds the concept of a WASM Module memory management object.
+        This object currently mmaps a 32-bit address space for WASM use,
+        although it marks all the memory outside the current breakpoint as
+        PROT_NONE. For now, we do a range check on each store and load. In
+        the future, we should change this to be an signal handler that
+        checks what module the program trapped in.
+
+        Additionally, this patch changes the way that our temporary tests
+        call into WASM code. There is now a true "thunk" that relocates
+        arguments and calls into WASM. This thunk does not tail call
+        because we use pinned values to memory base-pointer and
+        size. We use the new B3 pinned register api to pin the values.
+
+        * CMakeLists.txt:
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * testWASM.cpp:
+        (runWASMTests):
+        (main):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::createJSWrapper):
+        (JSC::WASM::parseAndCompile):
+        * wasm/WASMB3IRGenerator.h:
+        * wasm/WASMCallingConvention.h:
+        (JSC::WASM::CallingConvention::iterate):
+        (JSC::WASM::CallingConvention::setupCall):
+        (JSC::WASM::nextJSCOffset):
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        * wasm/WASMMemory.cpp: Copied from Source/JavaScriptCore/wasm/WASMPlan.cpp.
+        (JSC::WASM::Memory::Memory):
+        * wasm/WASMMemory.h: Copied from Source/JavaScriptCore/wasm/WASMModuleParser.h.
+        (JSC::WASM::Memory::~Memory):
+        (JSC::WASM::Memory::memory):
+        (JSC::WASM::Memory::size):
+        (JSC::WASM::Memory::pinnedRegisters):
+        (JSC::WASM::Memory::mode):
+        (JSC::WASM::Memory::growMemory):
+        (JSC::WASM::Memory::offsetOfSize):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parse):
+        (JSC::WASM::ModuleParser::parseMemory):
+        * wasm/WASMModuleParser.h:
+        (JSC::WASM::ModuleParser::functionInformation):
+        (JSC::WASM::ModuleParser::memory):
+        * wasm/WASMOps.h:
+        * wasm/WASMPlan.cpp:
+        (JSC::WASM::Plan::Plan):
+        * wasm/WASMPlan.h:
+        * wasm/WASMSections.h:
+
 2016-10-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add toggles for debugger pauses at console.assert failures

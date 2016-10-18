@@ -28,9 +28,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSWASMModule.h"
 #include "WASMFormat.h"
 #include "WASMOps.h"
 #include "WASMSections.h"
+
+#include <sys/mman.h>
 
 namespace JSC { namespace WASM {
 
@@ -62,15 +65,16 @@ bool ModuleParser::parse()
         if (verbose)
             dataLogLn("Starting to parse next section at offset: ", m_offset);
 
-        Sections::Section section = Sections::Unknown;
         uint8_t sectionByte;
         if (!parseUInt7(sectionByte))
             return false;
 
+        if (verbose)
+            dataLogLn("Section byte: ", sectionByte);
+
+        Sections::Section section = Sections::Unknown;
         if (sectionByte) {
-            if (sectionByte >= Sections::Unknown)
-                section = Sections::Unknown;
-            else
+            if (sectionByte < Sections::Unknown)
                 section = static_cast<Sections::Section>(sectionByte);
         } else {
             uint32_t sectionNameLength;
@@ -96,6 +100,15 @@ bool ModuleParser::parse()
         unsigned end = m_offset + sectionLength;
 
         switch (section) {
+
+        case Sections::Memory: {
+            if (verbose)
+                dataLogLn("Parsing Memory.");
+            if (!parseMemory())
+                return false;
+            break;
+        }
+
         case Sections::FunctionTypes: {
             if (verbose)
                 dataLogLn("Parsing types.");
@@ -141,6 +154,34 @@ bool ModuleParser::parse()
 
     // TODO
     return true;
+}
+
+bool ModuleParser::parseMemory()
+{
+    uint8_t flags;
+    if (!parseVarUInt1(flags))
+        return false;
+
+    uint32_t size;
+    if (!parseVarUInt32(size))
+        return false;
+    if (size > maxPageCount)
+        return false;
+
+    uint32_t capacity = maxPageCount;
+    if (flags) {
+        if (!parseVarUInt32(capacity))
+            return false;
+        if (size > capacity || capacity > maxPageCount)
+            return false;
+    }
+
+    capacity *= pageSize;
+    size *= pageSize;
+
+    Vector<unsigned> pinnedSizes = { 0 };
+    m_memory = std::make_unique<Memory>(size, capacity, pinnedSizes);
+    return m_memory->memory();
 }
 
 bool ModuleParser::parseFunctionTypes()

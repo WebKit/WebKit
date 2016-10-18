@@ -35,7 +35,9 @@ extern "C" void dumpProcedure(void*);
 
 namespace JSC { namespace WASM {
 
-std::unique_ptr<B3::Compilation> parseAndCompile(VM&, Vector<uint8_t>&, FunctionInformation, unsigned optLevel = 1);
+class Memory;
+
+std::unique_ptr<FunctionCompilation> parseAndCompile(VM&, Vector<uint8_t>&, Memory*, FunctionInformation, unsigned optLevel = 1);
 
 } } // namespace JSC::WASM
 

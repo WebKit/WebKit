@@ -863,6 +863,7 @@ set(JavaScriptCore_SOURCES
     wasm/JSWASMModule.cpp
     wasm/WASMB3IRGenerator.cpp
     wasm/WASMCallingConvention.cpp
+    wasm/WASMMemory.cpp
     wasm/WASMModuleParser.cpp
     wasm/WASMPlan.cpp
     wasm/WebAssemblyObject.cpp
