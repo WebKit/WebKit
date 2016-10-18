@@ -1,3 +1,22 @@
+2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r201471): Keyboard remains visible when swiping back on twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=163581
+        <rdar://problem/27739558>
+
+        Reviewed by Simon Fraser.
+
+        The bug was caused by Chrome::elementDidBlur not getting called, which resulted in
+        StopAssistingNode not getting sent to the UI process.
+
+        Test: fast/forms/ios/hide-keyboard-on-node-removal.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement): Restore the behavior prior to r201471 by calling
+        Chrome::elementDidBlur explicitly.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent): Added a comment about ordering.
+
 2016-10-17  Anders Carlsson  <andersca@apple.com>
 
         Move some history specific HistoryItem code to WebHistoryItem
