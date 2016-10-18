@@ -4572,11 +4572,12 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
     frameView->setScrollingPerformanceLoggingEnabled(enabled);
 }
 
-bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
+bool WebPage::canPluginHandleResponse(const ResourceResponse& response, const Frame& mainFrame)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
+    ASSERT(mainFrame.isMainFrame());
     uint32_t pluginLoadPolicy;
-    bool allowOnlyApplicationPlugins = !m_mainFrame->coreFrame()->loader().subframeLoader().allowPlugins();
+    bool allowOnlyApplicationPlugins = !mainFrame.loader().subframeLoader().allowPlugins();
 
     uint64_t pluginProcessToken;
     String newMIMEType;
@@ -4588,14 +4589,19 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
     return !isBlockedPlugin && pluginProcessToken;
 #else
     UNUSED_PARAM(response);
+    UNUSED_PARAM(mainFrame);
     return false;
 #endif
 }
 
-bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& response)
+bool WebPage::shouldUseCustomContentProviderForResponse(const ResourceResponse& response, const Frame& mainFrame)
 {
     // If a plug-in exists that claims to support this response, it should take precedence over the custom content provider.
-    return m_mimeTypesWithCustomContentProviders.contains(response.mimeType()) && !canPluginHandleResponse(response);
+    if (canPluginHandleResponse(response, mainFrame))
+        return false;
+
+    auto& mimeType = response.mimeType();
+    return mimeType.isNull() ? false : m_mimeTypesWithCustomContentProviders.contains(mimeType);
 }
 
 #if PLATFORM(COCOA)
@@ -5020,7 +5026,7 @@ bool WebPage::canShowMIMEType(const String& MIMEType) const
     if (MIMETypeRegistry::canShowMIMEType(MIMEType))
         return true;
 
-    if (m_mimeTypesWithCustomContentProviders.contains(MIMEType))
+    if (!MIMEType.isNull() && m_mimeTypesWithCustomContentProviders.contains(MIMEType))
         return true;
 
     const PluginData& pluginData = m_page->pluginData();

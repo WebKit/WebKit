@@ -1,3 +1,39 @@
+2016-10-17  Andy Estes  <aestes@apple.com>
+
+        Crash in ASCIICaseInsensitiveHash::hash() when a response has a null MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=163476
+        <rdar://problem/26941395>
+
+        Reviewed by Tim Horton.
+
+        When custom content providers are registered and a response has a null MIME type, WebPage
+        will pass a null String to HashSet::contains(). This results in a null pointer dereference,
+        since the String hash functions do not support null Strings and unconditionally dereference
+        their StringImpls. Fixed by checking that Strings are non-null before calling
+        HashSet::contains() on m_mimeTypesWithCustomContentProviders.
+
+        Rearranging WebPage::shouldUseCustomContentProviderForResponse() to call
+        canPluginHandleResponse() before checking m_mimeTypesWithCustomContentProviders uncovered a
+        crash in existing layout tests where WebPage::m_mainFrame can be NULL during WebPage
+        construction (m_mainFrame isn't yet initialized). Fixed this by passing the main Frame to
+        canPluginHandleResponseInFrame() instead of relying on m_mainFrame.
+
+        New API test: WebKit2.LoadDataWithNilMIMEType.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame): Passed
+        m_frame->coreFrame() to shouldUseCustomContentProviderForResponse().
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage): Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canPluginHandleResponse): Added a mainFrame parameter and used it instead
+        of m_mainFrame->coreFrame().
+        (WebKit::WebPage::shouldUseCustomContentProviderForResponse): Passed mainFrame to
+        canPluginHandleResponse(), and checked if mimeType is null before calling
+        m_mimeTypesWithCustomContentProviders.contains().
+        (WebKit::WebPage::canShowMIMEType): Checked if MIMEType is null before calling
+        m_mimeTypesWithCustomContentProviders.contains().
+        * WebProcess/WebPage/WebPage.h: Made canPluginHandleResponse() a private declaration.
+
 2016-10-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] PendingFrameLoad objects are sometimes leaked

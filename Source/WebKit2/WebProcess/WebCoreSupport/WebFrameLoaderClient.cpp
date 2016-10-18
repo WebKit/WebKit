@@ -1294,8 +1294,9 @@ void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFram
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
-    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
-    m_frameHasCustomContentProvider = m_frame->isMainFrame() && m_frame->page()->shouldUseCustomContentProviderForResponse(response);
+    auto& coreFrame = *m_frame->coreFrame();
+    const ResourceResponse& response = coreFrame.loader().documentLoader()->response();
+    m_frameHasCustomContentProvider = m_frame->isMainFrame() && m_frame->page()->shouldUseCustomContentProviderForResponse(response, coreFrame);
     m_frameCameFromPageCache = true;
 }
 
@@ -1310,49 +1311,51 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
     bool shouldHideScrollbars = shouldDisableScrolling;
     IntRect fixedVisibleContentRect;
+    auto& coreFrame = *m_frame->coreFrame();
 
 #if USE(COORDINATED_GRAPHICS)
-    if (m_frame->coreFrame()->view())
-        fixedVisibleContentRect = m_frame->coreFrame()->view()->fixedVisibleContentRect();
+    if (FrameView* frameView = coreFrame.view())
+        fixedVisibleContentRect = frameView->fixedVisibleContentRect();
     if (shouldUseFixedLayout)
         shouldHideScrollbars = true;
 #endif
 
-    const ResourceResponse& response = m_frame->coreFrame()->loader().documentLoader()->response();
-    m_frameHasCustomContentProvider = isMainFrame && webPage->shouldUseCustomContentProviderForResponse(response);
+    const ResourceResponse& response = coreFrame.loader().documentLoader()->response();
+    m_frameHasCustomContentProvider = isMainFrame && webPage->shouldUseCustomContentProviderForResponse(response, coreFrame);
     m_frameCameFromPageCache = false;
 
     ScrollbarMode defaultScrollbarMode = shouldHideScrollbars ? ScrollbarAlwaysOff : ScrollbarAuto;
 
-    m_frame->coreFrame()->createView(webPage->size(), backgroundColor, isTransparent,
+    coreFrame.createView(webPage->size(), backgroundColor, isTransparent,
         webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
         defaultScrollbarMode, /* lock */ shouldHideScrollbars, defaultScrollbarMode, /* lock */ shouldHideScrollbars);
 
+    FrameView* frameView = coreFrame.view();
     if (int minimumLayoutWidth = webPage->minimumLayoutSize().width()) {
         int minimumLayoutHeight = std::max(webPage->minimumLayoutSize().height(), 1);
         int maximumSize = std::numeric_limits<int>::max();
-        m_frame->coreFrame()->view()->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
+        frameView->enableAutoSizeMode(true, IntSize(minimumLayoutWidth, minimumLayoutHeight), IntSize(maximumSize, maximumSize));
 
         if (webPage->autoSizingShouldExpandToViewHeight())
-            m_frame->coreFrame()->view()->setAutoSizeFixedMinimumHeight(webPage->size().height());
+            frameView->setAutoSizeFixedMinimumHeight(webPage->size().height());
     }
 
-    m_frame->coreFrame()->view()->setProhibitsScrolling(shouldDisableScrolling);
-    m_frame->coreFrame()->view()->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
+    frameView->setProhibitsScrolling(shouldDisableScrolling);
+    frameView->setVisualUpdatesAllowedByClient(!webPage->shouldExtendIncrementalRenderingSuppression());
 #if PLATFORM(COCOA)
-    m_frame->coreFrame()->view()->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
+    frameView->setViewExposedRect(webPage->drawingArea()->viewExposedRect());
 #endif
 #if PLATFORM(IOS)
-    m_frame->coreFrame()->view()->setDelegatesScrolling(true);
+    frameView->setDelegatesScrolling(true);
 #endif
 
     if (webPage->scrollPinningBehavior() != DoNotPin)
-        m_frame->coreFrame()->view()->setScrollPinningBehavior(webPage->scrollPinningBehavior());
+        frameView->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
 #if USE(COORDINATED_GRAPHICS)
     if (shouldUseFixedLayout) {
-        m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
-        m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
+        frameView->setDelegatesScrolling(shouldUseFixedLayout);
+        frameView->setPaintsEntireContents(shouldUseFixedLayout);
         return;
     }
 #endif
