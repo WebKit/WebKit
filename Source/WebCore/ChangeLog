@@ -1,3 +1,43 @@
+2016-10-18  Youenn Fablet  <youenn@apple.com>
+
+        CachedResourceLoader should not need to remove fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=163015
+
+        Reviewed by Darin Adler.
+
+        No expected change for non-window port.
+        For window port, CachedResourceLoader will strip the fragment identifier of the URL passed to subresourceForURL
+        before querying the memory cache.
+
+        Removing the fragment identifier from the request stored in CachedResourceRequest.
+        The fragment identifier is stored in a separate field.
+
+        This allows CachedResourceLoader to not care about fragment identifier.
+        CachedResource can then get access to it.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::finishRequestInitialization): Deleted.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::cachedResource):
+        Updated the method taking a const String& to strip the fragment identifier if needed.
+        Updated the method taking a const URL& to assert if the fragment identifier is present.
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        (WebCore::CachedResourceRequest::splitFragmentIdentifierFromRequestURL):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::releaseFragmentIdentifier):
+        (WebCore::CachedResourceRequest::clearFragmentIdentifier):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::shouldRemoveFragmentIdentifier):
+        (WebCore::MemoryCache::removeFragmentIdentifierIfNeeded):
+        (WebCore::MemoryCache::revalidationSucceeded):
+        (WebCore::MemoryCache::resourceForRequest):
+        * loader/cache/MemoryCache.h:
+
 2016-10-18  Antti Koivisto  <antti@apple.com>
 
         Rename setNeedsStyleRecalc to invalidateStyle

@@ -97,16 +97,17 @@ public:
     bool add(CachedResource&);
     void remove(CachedResource&);
 
-    static URL removeFragmentIdentifierIfNeeded(const URL& originalURL);
-    
+    static bool shouldRemoveFragmentIdentifier(const URL&);
+    static URL removeFragmentIdentifierIfNeeded(const URL&);
+
     void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource& revalidatingResource);
 
     void forEachResource(const std::function<void(CachedResource&)>&);
     void forEachSessionResource(SessionID, const std::function<void(CachedResource&)>&);
     void destroyDecodedDataForAllImages();
-    
-    // Sets the cache's memory capacities, in bytes. These will hold only approximately, 
+
+    // Sets the cache's memory capacities, in bytes. These will hold only approximately,
     // since the decoded cost of resources like scripts and stylesheets is not known.
     //  - minDeadBytes: The maximum number of bytes that dead resources should consume when the cache is under pressure.
     //  - maxDeadBytes: The maximum number of bytes that dead resources should consume when the cache is not under pressure.
@@ -120,7 +121,7 @@ public:
 
     WEBCORE_EXPORT void evictResources();
     WEBCORE_EXPORT void evictResources(SessionID);
-    
+
     void prune();
     void pruneSoon();
     unsigned size() const { return m_liveSize + m_deadSize; }

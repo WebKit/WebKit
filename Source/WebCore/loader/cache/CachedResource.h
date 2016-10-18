@@ -302,8 +302,6 @@ protected:
 private:
     class Callback;
 
-    void finishRequestInitialization();
-
     bool addClientToSet(CachedResourceClient&);
 
     void decodedDataDeletionTimerFired();

@@ -121,13 +121,16 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
     , m_type(type)
 {
     ASSERT(sessionID.isValid());
 
     setLoadPriority(request.priority());
-    finishRequestInitialization();
+#ifndef NDEBUG
+    cachedResourceLeakCounter.increment();
+#endif
 
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == CachedResource::MainResource);
@@ -138,31 +141,20 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
         setCrossOrigin();
 }
 
+// FIXME: For this constructor, we should probably mandate that the URL has no fragment identifier.
 CachedResource::CachedResource(const URL& url, Type type, SessionID sessionID)
     : m_resourceRequest(url)
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_fragmentIdentifierForRequest(CachedResourceRequest::splitFragmentIdentifierFromRequestURL(m_resourceRequest))
     , m_type(type)
     , m_status(Cached)
 {
     ASSERT(sessionID.isValid());
-    finishRequestInitialization();
-}
-
-void CachedResource::finishRequestInitialization()
-{
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
-
-    if (!m_resourceRequest.url().hasFragmentIdentifier())
-        return;
-    URL urlForCache = MemoryCache::removeFragmentIdentifierIfNeeded(m_resourceRequest.url());
-    if (urlForCache.hasFragmentIdentifier())
-        return;
-    m_fragmentIdentifierForRequest = m_resourceRequest.url().fragmentIdentifier();
-    m_resourceRequest.setURL(urlForCache);
 }
 
 CachedResource::~CachedResource()

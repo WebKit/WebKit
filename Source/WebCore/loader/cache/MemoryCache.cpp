@@ -89,14 +89,19 @@ auto MemoryCache::ensureSessionResourceMap(SessionID sessionID) -> CachedResourc
     return *map;
 }
 
-URL MemoryCache::removeFragmentIdentifierIfNeeded(const URL& originalURL)
+bool MemoryCache::shouldRemoveFragmentIdentifier(const URL& originalURL)
 {
     if (!originalURL.hasFragmentIdentifier())
-        return originalURL;
+        return false;
     // Strip away fragment identifier from HTTP URLs.
-    // Data URLs must be unmodified. For file and custom URLs clients may expect resources 
+    // Data URLs must be unmodified. For file and custom URLs clients may expect resources
     // to be unique even when they differ by the fragment identifier only.
-    if (!originalURL.protocolIsInHTTPFamily())
+    return originalURL.protocolIsInHTTPFamily();
+}
+
+URL MemoryCache::removeFragmentIdentifierIfNeeded(const URL& originalURL)
+{
+    if (!shouldRemoveFragmentIdentifier(originalURL))
         return originalURL;
     URL url = originalURL;
     url.removeFragmentIdentifier();
@@ -154,7 +159,7 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
         insertInLiveDecodedResourcesList(resource);
     if (delta)
         adjustSize(resource.hasClients(), delta);
-    
+
     revalidatingResource.switchClientsToRevalidatedResource();
     ASSERT(!revalidatingResource.m_deleted);
     // this deletes the revalidating resource
@@ -171,6 +176,8 @@ void MemoryCache::revalidationFailed(CachedResource& revalidatingResource)
 
 CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request, SessionID sessionID)
 {
+    // FIXME: Change all clients to make sure HTTP(s) URLs have no fragment identifiers before calling here.
+    // CachedResourceLoader is now doing this. Add an assertion once all other clients are doing it too.
     auto* resources = sessionResourceMap(sessionID);
     if (!resources)
         return nullptr;

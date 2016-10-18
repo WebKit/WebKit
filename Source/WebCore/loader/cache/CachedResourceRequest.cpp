@@ -42,7 +42,19 @@ CachedResourceRequest::CachedResourceRequest(ResourceRequest&& resourceRequest, 
     , m_charset(WTFMove(charset))
     , m_options(options)
     , m_priority(priority)
+    , m_fragmentIdentifier(splitFragmentIdentifierFromRequestURL(m_resourceRequest))
 {
+}
+
+String CachedResourceRequest::splitFragmentIdentifierFromRequestURL(ResourceRequest& request)
+{
+    if (!MemoryCache::shouldRemoveFragmentIdentifier(request.url()))
+        return { };
+    URL url = request.url();
+    String fragmentIdentifier = url.fragmentIdentifier();
+    url.removeFragmentIdentifier();
+    request.setURL(url);
+    return fragmentIdentifier;
 }
 
 void CachedResourceRequest::setInitiator(PassRefPtr<Element> element)

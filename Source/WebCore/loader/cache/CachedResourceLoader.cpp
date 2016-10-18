@@ -148,17 +148,16 @@ CachedResourceLoader::~CachedResourceLoader()
     ASSERT(m_requestCount == 0);
 }
 
-CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const 
+CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) const
 {
     ASSERT(!resourceURL.isNull());
-    URL url = m_document->completeURL(resourceURL);
-    return cachedResource(url); 
+    return cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(m_document->completeURL(resourceURL)));
 }
 
-CachedResource* CachedResourceLoader::cachedResource(const URL& resourceURL) const
+CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
 {
-    URL url = MemoryCache::removeFragmentIdentifierIfNeeded(resourceURL);
-    return m_documentResources.get(url).get(); 
+    ASSERT(!MemoryCache::shouldRemoveFragmentIdentifier(url));
+    return m_documentResources.get(url).get();
 }
 
 Frame* CachedResourceLoader::frame() const
@@ -656,9 +655,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     URL url = request.resourceRequest().url();
 
     LOG(ResourceLoading, "CachedResourceLoader::requestResource '%s', charset '%s', priority=%d, forPreload=%u", url.stringCenterEllipsizedToLength().latin1().data(), request.charset().latin1().data(), request.priority() ? static_cast<int>(request.priority().value()) : -1, forPreload == ForPreload::Yes);
-
-    // If only the fragment identifiers differ, it is the same resource.
-    url = MemoryCache::removeFragmentIdentifierIfNeeded(url);
 
     if (!url.isValid()) {
         RELEASE_LOG_IF_ALLOWED("requestResource: URL is invalid (frame = %p)", frame());

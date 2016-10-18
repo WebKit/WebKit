@@ -78,6 +78,11 @@ public:
     RefPtr<SecurityOrigin> releaseOrigin() { return WTFMove(m_origin); }
     SecurityOrigin* origin() const { return m_origin.get(); }
 
+    String&& releaseFragmentIdentifier() { return WTFMove(m_fragmentIdentifier); }
+    void clearFragmentIdentifier() { m_fragmentIdentifier = { }; }
+
+    static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
+
 private:
     ResourceRequest m_resourceRequest;
     String m_charset;
@@ -86,6 +91,7 @@ private:
     RefPtr<Element> m_initiatorElement;
     AtomicString m_initiatorName;
     RefPtr<SecurityOrigin> m_origin;
+    String m_fragmentIdentifier;
 };
 
 } // namespace WebCore
