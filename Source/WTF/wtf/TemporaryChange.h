@@ -43,9 +43,13 @@ template<typename T>
 class TemporaryChange {
     WTF_MAKE_NONCOPYABLE(TemporaryChange);
 public:
-    TemporaryChange(T& scopedVariable, T newValue)
+    TemporaryChange(T& scopedVariable)
         : m_scopedVariable(scopedVariable)
         , m_originalValue(scopedVariable)
+    {
+    }
+    TemporaryChange(T& scopedVariable, T newValue)
+        : TemporaryChange(scopedVariable)
     {
         m_scopedVariable = newValue;
     }
@@ -54,7 +58,6 @@ public:
     {
         m_scopedVariable = m_originalValue;
     }
-
 
 private:
     T& m_scopedVariable;

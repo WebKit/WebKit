@@ -1,3 +1,32 @@
+2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=116470
+
+        Reviewed by Simon Fraser.
+
+        When we encounter a shorthand css property, we set m_implicitShorthand
+        to true to tell addProperty() later that the individual properties are
+        all set through a short hand one. We need to make sure that setting 
+        m_implicitShorthand to true will not be leaked after finishing parsing
+        the short hand property.
+
+        Test: fast/css/implicit-property-restore.html
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WTF::ImplicitScope::ImplicitScope): Deleted.
+        (WTF::ImplicitScope::~ImplicitScope): Deleted.
+        Get rid of ImplicitScope and replace its calls by TemporaryChange<bool>.
+        
+        * css/parser/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        Restore m_implicitShorthand value after setting it temporarily to true.
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         Update TrackEvent to stop using legacy [ConstructorTemplate=Event]

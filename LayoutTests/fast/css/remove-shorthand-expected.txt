@@ -48,7 +48,7 @@ Removing -webkit-column-rule
 removes "column-rule-width, column-rule-style, column-rule-color"
 and adds "".
 Removing list-style
-removes "list-style-type, list-style-position, list-style-image"
+removes "list-style"
 and adds "".
 Removing margin
 removes "margin"
