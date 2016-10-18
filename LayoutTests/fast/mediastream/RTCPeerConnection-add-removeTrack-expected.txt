@@ -7,9 +7,9 @@ Test bad addTrack() arguments
 PASS pc.addTrack() threw exception TypeError: Not enough arguments.
 PASS pc.addTrack(null) threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
 PASS pc.addTrack({}) threw exception TypeError: Argument 1 ('track') to webkitRTCPeerConnection.addTrack must be an instance of MediaStreamTrack.
-PASS pc.addTrack(track, null) threw exception TypeError: Argument 2 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
-PASS pc.addTrack(track, {}) threw exception TypeError: Argument 2 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
-PASS pc.addTrack(track, stream, null) threw exception TypeError: Argument 3 ('streams') to webkitRTCPeerConnection.addTrack must be an instance of MediaStream.
+PASS pc.addTrack(track, null) threw exception TypeError: Type error.
+PASS pc.addTrack(track, {}) threw exception TypeError: Type error.
+PASS pc.addTrack(track, stream, null) threw exception TypeError: Type error.
 
 Test bad removeTrack() arguments
 PASS pc.removeTrack() threw exception TypeError: Not enough arguments.
