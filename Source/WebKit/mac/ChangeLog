@@ -1,3 +1,14 @@
+2016-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of more WebHistoryItem cruft
+        https://bugs.webkit.org/show_bug.cgi?id=163623
+
+        Reviewed by Tim Horton.
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History/WebHistoryItemPrivate.h:
+
 2016-10-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Showing and hiding candidates list is very distracting after selecting word

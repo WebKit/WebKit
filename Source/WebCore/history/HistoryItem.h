@@ -192,11 +192,6 @@ public:
 
     const ViewportArguments& viewportArguments() const { return m_viewportArguments; }
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
-
-    uint32_t bookmarkID() const { return m_bookmarkID; }
-    void setBookmarkID(uint32_t bookmarkID) { m_bookmarkID = bookmarkID; }
-    String sharedLinkUniqueIdentifier() const { return m_sharedLinkUniqueIdentifier; }
-    void setSharedLinkUniqueIdentifier(const String& sharedLinkUniqueidentifier) { m_sharedLinkUniqueIdentifier = sharedLinkUniqueidentifier; }
 #endif
 
     void notifyChanged();
@@ -265,9 +260,6 @@ private:
     float m_scale { 0 }; // Note that UIWebView looks for a non-zero value, so this has to start as 0.
     bool m_scaleIsInitial { false };
     ViewportArguments m_viewportArguments;
-
-    uint32_t m_bookmarkID { 0 };
-    String m_sharedLinkUniqueIdentifier;
 #endif
 
 #if PLATFORM(COCOA)

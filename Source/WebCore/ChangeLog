@@ -1,3 +1,19 @@
+2016-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of more WebHistoryItem cruft
+        https://bugs.webkit.org/show_bug.cgi?id=163623
+
+        Reviewed by Tim Horton.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::setViewportArguments):
+        (WebCore::HistoryItem::bookmarkID): Deleted.
+        (WebCore::HistoryItem::setBookmarkID): Deleted.
+        (WebCore::HistoryItem::sharedLinkUniqueIdentifier): Deleted.
+        (WebCore::HistoryItem::setSharedLinkUniqueIdentifier): Deleted.
+
 2016-10-18  Dave Hyatt  <hyatt@apple.com>
 
         Fix Windows build.

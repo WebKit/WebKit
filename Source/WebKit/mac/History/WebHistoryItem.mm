@@ -71,9 +71,6 @@ static NSString *scaleKey = @"scale";
 static NSString *scaleIsInitialKey = @"scaleIsInitial";
 static NSString *scrollPointXKey = @"scrollPointX";
 static NSString *scrollPointYKey = @"scrollPointY";
-
-static NSString * const bookmarkIDKey = @"bookmarkID";
-static NSString * const sharedLinkUniqueIdentifierKey = @"sharedLinkUniqueIdentifier";
 #endif
 
 // Private keys used in the WebHistoryItem's dictionary representation.
@@ -379,14 +376,6 @@ WebHistoryItem *kit(HistoryItem* item)
     NSNumber *scrollPointYValue = [dict objectForKey:scrollPointYKey];
     if (scrollPointXValue && scrollPointYValue)
         core(_private)->setScrollPosition(IntPoint([scrollPointXValue intValue], [scrollPointYValue intValue]));
-
-    uint32_t bookmarkIDValue = [[dict objectForKey:bookmarkIDKey] unsignedIntValue];
-    if (bookmarkIDValue)
-        core(_private)->setBookmarkID(bookmarkIDValue);
-
-    NSString *sharedLinkUniqueIdentifierValue = [dict objectForKey:sharedLinkUniqueIdentifierKey];
-    if (sharedLinkUniqueIdentifierValue)
-        core(_private)->setSharedLinkUniqueIdentifier(sharedLinkUniqueIdentifierValue);
 #endif
 
     return self;
@@ -475,14 +464,6 @@ WebHistoryItem *kit(HistoryItem* item)
     IntPoint scrollPosition = core(_private)->scrollPosition();
     [dict setObject:[NSNumber numberWithInt:scrollPosition.x()] forKey:scrollPointXKey];
     [dict setObject:[NSNumber numberWithInt:scrollPosition.y()] forKey:scrollPointYKey];
-
-    uint32_t bookmarkID = core(_private)->bookmarkID();
-    if (bookmarkID)
-        [dict setObject:[NSNumber numberWithUnsignedInt:bookmarkID] forKey:bookmarkIDKey];
-
-    NSString *sharedLinkUniqueIdentifier = [self _sharedLinkUniqueIdentifier];
-    if (sharedLinkUniqueIdentifier)
-        [dict setObject:sharedLinkUniqueIdentifier forKey:sharedLinkUniqueIdentifierKey];
 #endif
 
     return dict;
@@ -619,25 +600,6 @@ WebHistoryItem *kit(HistoryItem* item)
     core(_private)->setScrollPosition(IntPoint(scrollPoint));
 }
 
-- (uint32_t)_bookmarkID
-{
-    return core(_private)->bookmarkID();
-}
-
-- (void)_setBookmarkID:(uint32_t)bookmarkID
-{
-    core(_private)->setBookmarkID(bookmarkID);
-}
-
-- (NSString *)_sharedLinkUniqueIdentifier
-{
-    return nsStringNilIfEmpty(core(_private)->sharedLinkUniqueIdentifier());
-}
-
-- (void)_setSharedLinkUniqueIdentifier:(NSString *)identifier
-{
-    core(_private)->setSharedLinkUniqueIdentifier(identifier);
-}
 #endif // PLATFORM(IOS)
 
 - (BOOL)_isInPageCache

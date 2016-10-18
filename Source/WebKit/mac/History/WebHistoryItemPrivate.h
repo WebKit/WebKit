@@ -75,11 +75,6 @@ extern NSString *WebViewportHeightKey;
 - (void)_setViewportArguments:(NSDictionary *)arguments;
 - (CGPoint)_scrollPoint;
 - (void)_setScrollPoint:(CGPoint)scrollPoint;
-
-- (uint32_t)_bookmarkID;
-- (void)_setBookmarkID:(uint32_t)bookmarkID;
-- (NSString *)_sharedLinkUniqueIdentifier;
-- (void)_setSharedLinkUniqueIdentifier:(NSString *)identifier;
 #endif
 
 - (BOOL)_isInPageCache;

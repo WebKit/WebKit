@@ -120,8 +120,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_obscuredInset(item.m_obscuredInset)
     , m_scale(item.m_scale)
     , m_scaleIsInitial(item.m_scaleIsInitial)
-    , m_bookmarkID(item.m_bookmarkID)
-    , m_sharedLinkUniqueIdentifier(item.m_sharedLinkUniqueIdentifier)
 #endif
 {
     if (item.m_formData)
