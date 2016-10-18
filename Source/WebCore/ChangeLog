@@ -1,3 +1,20 @@
+2016-10-18  Aaron Chu  <aaron_chu@apple.com>
+
+        Web Inspector: AXI: focused/focusable state should be based on Accessibility Object instead of Element
+        https://bugs.webkit.org/show_bug.cgi?id=163088
+        <rdar://problem/16421985>
+
+        Reviewed by Darin Adler.
+
+        Changed code in InspectDOMAgent so that it determines the focusability of a Node based
+        on the AccessibilityNodeObject and not the Element class.
+
+        Covered by existing tests: 
+        LayoutTests/inspector/dom/getAccessibilityPropertiesForNode.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-10-18  Anders Carlsson  <andersca@apple.com>
 
         Get rid of more WebHistoryItem cruft

@@ -1675,7 +1675,7 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             }
             
             if (is<Element>(*node)) {
-                supportsFocused = downcast<Element>(*node).isFocusable();
+                supportsFocused = axObject->canSetFocusAttribute();
                 if (supportsFocused)
                     focused = axObject->isFocused();
             }
