@@ -843,6 +843,7 @@ static EncodedJSValue JSC_HOST_CALL functionPrintStdErr(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDebug(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionSleepSeconds(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionGCAndSweep(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFullGC(ExecState*);
@@ -1067,6 +1068,7 @@ protected:
         addFunction(vm, "readFile", functionReadFile, 2);
         addFunction(vm, "read", functionReadFile, 2);
         addFunction(vm, "checkSyntax", functionCheckSyntax, 1);
+        addFunction(vm, "sleepSeconds", functionSleepSeconds, 1);
         addFunction(vm, "jscStack", functionJSCStack, 1);
         addFunction(vm, "readline", functionReadline, 0);
         addFunction(vm, "preciseTime", functionPreciseTime, 0);
@@ -1491,6 +1493,13 @@ EncodedJSValue JSC_HOST_CALL functionDescribeArray(ExecState* exec)
     if (!object)
         return JSValue::encode(jsNontrivialString(exec, ASCIILiteral("<not object>")));
     return JSValue::encode(jsNontrivialString(exec, toString("<Butterfly: ", RawPointer(object->butterfly()), "; public length: ", object->getArrayLength(), "; vector length: ", object->getVectorLength(), ">")));
+}
+
+EncodedJSValue JSC_HOST_CALL functionSleepSeconds(ExecState* exec)
+{
+    if (exec->argumentCount() >= 1)
+        sleep(exec->argument(0).toNumber(exec));
+    return JSValue::encode(jsUndefined());
 }
 
 class FunctionJSCStackFunctor {

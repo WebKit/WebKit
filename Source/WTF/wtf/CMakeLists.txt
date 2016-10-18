@@ -2,6 +2,7 @@ set(WTF_HEADERS
     ASCIICType.h
     Assertions.h
     Atomics.h
+    AutomaticThread.h
     BackwardsGraph.h
     Bag.h
     BagToHashMap.h
@@ -173,6 +174,7 @@ set(WTF_HEADERS
 set(WTF_SOURCES
     Assertions.cpp
     Atomics.cpp
+    AutomaticThread.cpp
     BitVector.cpp
     CompilationThread.cpp
     CrossThreadCopier.cpp

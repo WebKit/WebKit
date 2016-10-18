@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ParallelHelperPool.h"
 
+#include "AutomaticThread.h"
 #include "DataLog.h"
 #include "StringPrintStream.h"
 
@@ -34,14 +35,14 @@ namespace WTF {
 ParallelHelperClient::ParallelHelperClient(RefPtr<ParallelHelperPool> pool)
     : m_pool(pool)
 {
-    LockHolder locker(m_pool->m_lock);
+    LockHolder locker(*m_pool->m_lock);
     RELEASE_ASSERT(!m_pool->m_isDying);
     m_pool->m_clients.append(this);
 }
 
 ParallelHelperClient::~ParallelHelperClient()
 {
-    LockHolder locker(m_pool->m_lock);
+    LockHolder locker(*m_pool->m_lock);
     finish(locker);
 
     for (size_t i = 0; i < m_pool->m_clients.size(); ++i) {
@@ -55,7 +56,7 @@ ParallelHelperClient::~ParallelHelperClient()
 
 void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>> task)
 {
-    LockHolder locker(m_pool->m_lock);
+    LockHolder locker(*m_pool->m_lock);
     RELEASE_ASSERT(!m_task);
     m_task = task;
     m_pool->didMakeWorkAvailable(locker);
@@ -63,7 +64,7 @@ void ParallelHelperClient::setTask(RefPtr<SharedTask<void ()>> task)
 
 void ParallelHelperClient::finish()
 {
-    LockHolder locker(m_pool->m_lock);
+    LockHolder locker(*m_pool->m_lock);
     finish(locker);
 }
 
@@ -71,7 +72,7 @@ void ParallelHelperClient::doSomeHelping()
 {
     RefPtr<SharedTask<void ()>> task;
     {
-        LockHolder locker(m_pool->m_lock);
+        LockHolder locker(*m_pool->m_lock);
         task = claimTask(locker);
         if (!task)
             return;
@@ -91,7 +92,7 @@ void ParallelHelperClient::finish(const LockHolder&)
 {
     m_task = nullptr;
     while (m_numActive)
-        m_pool->m_workCompleteCondition.wait(m_pool->m_lock);
+        m_pool->m_workCompleteCondition.wait(*m_pool->m_lock);
 }
 
 RefPtr<SharedTask<void ()>> ParallelHelperClient::claimTask(const LockHolder&)
@@ -111,7 +112,7 @@ void ParallelHelperClient::runTask(RefPtr<SharedTask<void ()>> task)
     task->run();
 
     {
-        LockHolder locker(m_pool->m_lock);
+        LockHolder locker(*m_pool->m_lock);
         RELEASE_ASSERT(m_numActive);
         // No new task could have been installed, since we were still active.
         RELEASE_ASSERT(!m_task || m_task == task);
@@ -123,6 +124,8 @@ void ParallelHelperClient::runTask(RefPtr<SharedTask<void ()>> task)
 }
 
 ParallelHelperPool::ParallelHelperPool()
+    : m_lock(Box<Lock>::create())
+    , m_workAvailableCondition(AutomaticThreadCondition::create())
 {
 }
 
@@ -131,18 +134,18 @@ ParallelHelperPool::~ParallelHelperPool()
     RELEASE_ASSERT(m_clients.isEmpty());
     
     {
-        LockHolder locker(m_lock);
+        LockHolder locker(*m_lock);
         m_isDying = true;
-        m_workAvailableCondition.notifyAll();
+        m_workAvailableCondition->notifyAll(locker);
     }
 
-    for (ThreadIdentifier threadIdentifier : m_threads)
-        waitForThreadCompletion(threadIdentifier);
+    for (RefPtr<AutomaticThread>& thread : m_threads)
+        thread->join();
 }
 
 void ParallelHelperPool::ensureThreads(unsigned numThreads)
 {
-    LockHolder locker(m_lock);
+    LockHolder locker(*m_lock);
     if (numThreads < m_numThreads)
         return;
     m_numThreads = numThreads;
@@ -155,7 +158,7 @@ void ParallelHelperPool::doSomeHelping()
     ParallelHelperClient* client;
     RefPtr<SharedTask<void ()>> task;
     {
-        LockHolder locker(m_lock);
+        LockHolder locker(*m_lock);
         client = getClientWithTask(locker);
         if (!client)
             return;
@@ -165,38 +168,46 @@ void ParallelHelperPool::doSomeHelping()
     client->runTask(task);
 }
 
-void ParallelHelperPool::didMakeWorkAvailable(const LockHolder&)
-{
-    while (m_numThreads > m_threads.size()) {
-        ThreadIdentifier threadIdentifier = createThread(
-            "WTF Parallel Helper Thread",
-            [this] () {
-                helperThreadBody();
-            });
-        m_threads.append(threadIdentifier);
+class ParallelHelperPool::Thread : public AutomaticThread {
+public:
+    Thread(const LockHolder& locker, ParallelHelperPool& pool)
+        : AutomaticThread(locker, pool.m_lock, pool.m_workAvailableCondition)
+        , m_pool(pool)
+    {
     }
-    m_workAvailableCondition.notifyAll();
-}
-
-void ParallelHelperPool::helperThreadBody()
-{
-    for (;;) {
-        ParallelHelperClient* client;
-        RefPtr<SharedTask<void ()>> task;
-
-        {
-            LockHolder locker(m_lock);
-            client = waitForClientWithTask(locker);
-            if (!client) {
-                RELEASE_ASSERT(m_isDying);
-                return;
-            }
-
-            task = client->claimTask(locker);
+    
+protected:
+    PollResult poll(const LockHolder& locker) override
+    {
+        if (m_pool.m_isDying)
+            return PollResult::Stop;
+        m_client = m_pool.getClientWithTask(locker);
+        if (m_client) {
+            m_task = m_client->claimTask(locker);
+            return PollResult::Work;
         }
-
-        client->runTask(task);
+        return PollResult::Wait;
     }
+    
+    WorkResult work() override
+    {
+        m_client->runTask(m_task);
+        m_client = nullptr;
+        m_task = nullptr;
+        return WorkResult::Continue;
+    }
+    
+private:
+    ParallelHelperPool& m_pool;
+    ParallelHelperClient* m_client { nullptr };
+    RefPtr<SharedTask<void ()>> m_task;
+};
+
+void ParallelHelperPool::didMakeWorkAvailable(const LockHolder& locker)
+{
+    while (m_numThreads > m_threads.size())
+        m_threads.append(adoptRef(new Thread(locker, *this)));
+    m_workAvailableCondition->notifyAll(locker);
 }
 
 bool ParallelHelperPool::hasClientWithTask(const LockHolder& locker)
@@ -220,21 +231,6 @@ ParallelHelperClient* ParallelHelperPool::getClientWithTask(const LockHolder&)
     }
 
     return nullptr;
-}
-
-ParallelHelperClient* ParallelHelperPool::waitForClientWithTask(const LockHolder& locker)
-{
-    for (;;) {
-        // It might be quittin' time.
-        if (m_isDying)
-            return nullptr;
-
-        if (ParallelHelperClient* result = getClientWithTask(locker))
-            return result;
-
-        // Wait until work becomes available.
-        m_workAvailableCondition.wait(m_lock);
-    }
 }
 
 } // namespace WTF

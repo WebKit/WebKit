@@ -1,3 +1,80 @@
+2016-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should make it easier to create threads that die automatically after inactivity
+        https://bugs.webkit.org/show_bug.cgi?id=163576
+
+        Reviewed by Andreas Kling.
+        
+        For a long time now, I've been adding threads to WTF/JSC and each time I do this, I feel
+        guilty because those threads don't shut down when they are inactive. For example, in bug
+        163562, I need to add a new GC thread. There will be one of them per VM. This means that a
+        JSC API client that starts a lot of VMs will have a lot of threads. I don't think that's
+        good.
+        
+        A common pattern for all of these threads is that they have some well-defined trigger that
+        causes them to run. This trigger has a lock, a condition variable, some logic that determines
+        if there is work to do, and then of course the logic for the thread's actual work. The thread
+        bodies usually look like this:
+        
+        void Thingy::runThread()
+        {
+            for (;;) {
+                Work work;
+                {
+                    LockHolder locker(m_lock);
+                    while (!hasWork())
+                        m_cond.wait(m_lock);
+                    work = takeWork();
+                }
+                doWork(work);
+            }
+        }
+        
+        If you look at ParallelHelperPool (the GC's threads) and DFG::Worklist (some of the JIT's
+        threads), you will see this pattern.
+        
+        This change adds a new kind of thread, called AutomaticThread, that lets you write threads to
+        this pattern while getting automatic thread shutdown for free: instead of just waiting on a
+        condition variable, AutomaticThread will have a timeout that causes the thread to die. The
+        condition variable associated with AutomaticThread, called AutomaticThreadCondition, is smart
+        enough to restart any threads that have decided to stop due to inactivity. The inactivity
+        threshold is current just 1 second.
+        
+        In this patch I only adopt AutomaticThread for ParallelHelperPool. I plan to adopt it in more
+        places soon.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AutomaticThread.cpp: Added.
+        (WTF::AutomaticThreadCondition::create):
+        (WTF::AutomaticThreadCondition::AutomaticThreadCondition):
+        (WTF::AutomaticThreadCondition::~AutomaticThreadCondition):
+        (WTF::AutomaticThreadCondition::notifyAll):
+        (WTF::AutomaticThreadCondition::add):
+        (WTF::AutomaticThreadCondition::remove):
+        (WTF::AutomaticThreadCondition::contains):
+        (WTF::AutomaticThread::AutomaticThread):
+        (WTF::AutomaticThread::~AutomaticThread):
+        (WTF::AutomaticThread::join):
+        (WTF::AutomaticThread::start):
+        * wtf/AutomaticThread.h: Added.
+        * wtf/CMakeLists.txt:
+        * wtf/ParallelHelperPool.cpp:
+        (WTF::ParallelHelperClient::ParallelHelperClient):
+        (WTF::ParallelHelperClient::~ParallelHelperClient):
+        (WTF::ParallelHelperClient::setTask):
+        (WTF::ParallelHelperClient::finish):
+        (WTF::ParallelHelperClient::doSomeHelping):
+        (WTF::ParallelHelperClient::runTask):
+        (WTF::ParallelHelperPool::ParallelHelperPool):
+        (WTF::ParallelHelperPool::~ParallelHelperPool):
+        (WTF::ParallelHelperPool::ensureThreads):
+        (WTF::ParallelHelperPool::doSomeHelping):
+        (WTF::ParallelHelperPool::Thread::Thread):
+        (WTF::ParallelHelperPool::didMakeWorkAvailable):
+        (WTF::ParallelHelperPool::helperThreadBody): Deleted.
+        (WTF::ParallelHelperPool::waitForClientWithTask): Deleted.
+        * wtf/ParallelHelperPool.h:
+
 2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property

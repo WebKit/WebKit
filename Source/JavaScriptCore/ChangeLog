@@ -1,3 +1,19 @@
+2016-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        WTF should make it easier to create threads that die automatically after inactivity
+        https://bugs.webkit.org/show_bug.cgi?id=163576
+
+        Reviewed by Andreas Kling.
+        
+        Added a sleepSeconds() function, which made it easier for me to test this change.
+        
+        The WTF changes in this patch change how the JSC GC manages threads: the GC threads will now
+        shut down automatically after 1 second of inactivity. Maybe this will save some memory.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionSleepSeconds):
+
 2016-10-18  Keith Miller  <keith_miller@apple.com>
 
         Cleanup Wasm memory.

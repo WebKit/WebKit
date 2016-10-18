@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #ifndef ParallelHelperPool_h
 #define ParallelHelperPool_h
 
+#include <wtf/Box.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
@@ -36,6 +37,9 @@
 #include <wtf/WeakRandom.h>
 
 namespace WTF {
+
+class AutomaticThread;
+class AutomaticThreadCondition;
 
 // A ParallelHelperPool is a shared pool of threads that can be asked to help with some finite-time
 // parallel activity. It's designed to work well when there are multiple concurrent tasks that may
@@ -186,22 +190,23 @@ public:
 
 private:
     friend class ParallelHelperClient;
+    class Thread;
+    friend class Thread;
 
     void didMakeWorkAvailable(const LockHolder&);
-    void helperThreadBody();
 
     bool hasClientWithTask(const LockHolder&);
     ParallelHelperClient* getClientWithTask(const LockHolder&);
     ParallelHelperClient* waitForClientWithTask(const LockHolder&);
     
-    Lock m_lock;
-    Condition m_workAvailableCondition;
+    Box<Lock> m_lock; // AutomaticThread wants this in a box for safety.
+    RefPtr<AutomaticThreadCondition> m_workAvailableCondition;
     Condition m_workCompleteCondition;
 
     WeakRandom m_random;
     
     Vector<ParallelHelperClient*> m_clients;
-    Vector<ThreadIdentifier> m_threads;
+    Vector<RefPtr<AutomaticThread>> m_threads;
     unsigned m_numThreads { 0 }; // This can be larger than m_threads.size() because we start threads only once there is work.
     bool m_isDying { false };
 };
