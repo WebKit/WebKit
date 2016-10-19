@@ -106,11 +106,6 @@ public:
     // XMLHttpRequests.
     bool canRequest(const URL&) const;
 
-    // Returns true if drawing an image from this URL taints a canvas from
-    // this security origin. For example, call this function before
-    // drawing an image onto an HTML canvas element with the drawImage API.
-    bool taintsCanvas(const URL&) const;
-
     // Returns true if this SecurityOrigin can receive drag content from the
     // initiator. For example, call this function before allowing content to be
     // dropped onto a target.

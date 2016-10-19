@@ -101,13 +101,10 @@ bool CanvasRenderingContext::wouldTaintOrigin(const URL& url)
     if (!canvas()->originClean())
         return false;
 
-    if (canvas()->securityOrigin()->taintsCanvas(url))
-        return true;
-
     if (url.protocolIsData())
         return false;
 
-    return false;
+    return !canvas()->securityOrigin()->canRequest(url);
 }
 
 void CanvasRenderingContext::checkOrigin(const URL& url)
