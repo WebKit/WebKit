@@ -1084,6 +1084,9 @@ webkit.org/b/161725 [ Yosemite+ ] imported/w3c/web-platform-tests/media-source/m
 
 # This test times out.
 [ Yosemite+ ] media/media-source/media-source-seek-complete.html [ Timeout ]
+
+# <rdar://problem/18858636>
+media/media-source/media-source-init-segment-duration.html
 # --- End Media Source Tests ---
 
 # These tests used to only fail with WK2, but on Yosemite, they also fail with WK1.
