@@ -186,7 +186,7 @@ typedef bool
 @abstract The callback invoked when collecting the names of an object's properties.
 @param ctx The execution context to use.
 @param object The JSObject whose property names are being collected.
-@param accumulator A JavaScript property name accumulator in which to accumulate the names of object's properties.
+@param propertyNames A JavaScript property name accumulator in which to accumulate the names of object's properties.
 @discussion If you named your function GetPropertyNames, you would declare it like this:
 
 void GetPropertyNames(JSContextRef ctx, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames);

@@ -64,7 +64,7 @@ JS_EXPORT JSWeakObjectMapRef JSWeakObjectMapCreate(JSContextRef ctx, void* data,
  @param key The key to associate a weak reference with.
  @param object The user defined object to associate with the key.
  */
-JS_EXPORT void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef);
+JS_EXPORT void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef object);
 
 /*!
  @function

@@ -85,14 +85,14 @@ typedef bool
  need to call JSContextGroupSetExecutionTimeLimit before you start executing
  any scripts.
 */
-JS_EXPORT void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef, double limit, JSShouldTerminateCallback, void* context) CF_AVAILABLE(10_6, 7_0);
+JS_EXPORT void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, JSShouldTerminateCallback callback, void* context) CF_AVAILABLE(10_6, 7_0);
 
 /*!
 @function
 @abstract Clears the script execution time limit.
 @param group The JavaScript context group that the time limit is cleared on.
 */
-JS_EXPORT void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef) CF_AVAILABLE(10_6, 7_0);
+JS_EXPORT void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group) CF_AVAILABLE(10_6, 7_0);
 
 /*!
 @function
@@ -124,7 +124,7 @@ JS_EXPORT bool JSGlobalContextGetIncludesNativeCallStackWhenReportingExceptions(
 @function
 @abstract Sets the include native call stack when reporting exceptions setting for a context.
 @param ctx The JSGlobalContext that you want to change.
-@param includeNativeCallStack The new value of the setting for the context.
+@param includesNativeCallStack The new value of the setting for the context.
 */
 JS_EXPORT void JSGlobalContextSetIncludesNativeCallStackWhenReportingExceptions(JSGlobalContextRef ctx, bool includesNativeCallStack) CF_AVAILABLE(10_10, 8_0);
 

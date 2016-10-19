@@ -174,14 +174,6 @@ OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(JSC::ExecState
     return contextData(exec).staticFunctions.get();
 }
 
-/*!
-// Doc here in case we make this public. (Hopefully we won't.)
-@function
- @abstract Returns the prototype that will be used when constructing an object with a given class.
- @param ctx The execution context to use.
- @param jsClass A JSClass whose prototype you want to get.
- @result The JSObject prototype that was automatically generated for jsClass, or NULL if no prototype was automatically generated. This is the prototype that will be used when constructing an object using jsClass.
-*/
 JSObject* OpaqueJSClass::prototype(ExecState* exec)
 {
     /* Class (C++) and prototype (JS) inheritance are parallel, so:

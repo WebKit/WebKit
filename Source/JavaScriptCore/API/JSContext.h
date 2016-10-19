@@ -125,8 +125,9 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 + (NSArray *)currentArguments;
 
 /*!
-@methodgroup Global Properties
+@functiongroup Global Properties
 */
+
 /*!
 @property
 @abstract Get the global object of the context.
@@ -197,18 +198,15 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @interface JSContext (SubscriptSupport)
 
 /*!
-method
+@method
 @abstract Get a particular property on the global object.
-@param key
 @result The JSValue for the global object's property.
 */
 - (JSValue *)objectForKeyedSubscript:(id)key;
 
 /*!
-method
+@method
 @abstract Set a particular property on the global object.
-@param object
-@param key
 */
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key;
 
@@ -223,7 +221,6 @@ method
 /*!
 @method
 @abstract Create a JSContext, wrapping its C API counterpart.
-@param jsGlobalContextRef
 @result The JSContext equivalent of the provided JSGlobalContextRef.
 */
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)jsGlobalContextRef;

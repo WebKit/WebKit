@@ -50,7 +50,7 @@ JS_EXPORT CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx)
 @param ctx The JSGlobalContext that you want to change.
 @param runLoop The new value of the setting for the context.
 */
-JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef) CF_AVAILABLE(10_10, 8_0);
+JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef runLoop) CF_AVAILABLE(10_10, 8_0);
 #endif
 
 #ifdef __cplusplus
