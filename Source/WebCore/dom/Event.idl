@@ -19,7 +19,7 @@
  */
 
 [
-    LegacyConstructorTemplate=Event,
+    Constructor(DOMString type, optional EventInit eventInitDict),
     CustomToJSObject,
     ExportToWrappedFunction,
     Exposed=(Window,Worker),
@@ -51,9 +51,9 @@
     readonly attribute EventTarget target;
     readonly attribute EventTarget currentTarget;
     readonly attribute unsigned short eventPhase;
-    [LegacyInitializedByEventConstructor] readonly attribute boolean bubbles;
-    [LegacyInitializedByEventConstructor] readonly attribute boolean cancelable;
-    [LegacyInitializedByEventConstructor, EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
+    readonly attribute boolean bubbles;
+    readonly attribute boolean cancelable;
+    [EnabledAtRuntime=ShadowDOM] readonly attribute boolean composed;
     readonly attribute DOMTimeStamp timeStamp;
 
     [EnabledAtRuntime=ShadowDOM] sequence<Node> composedPath();

@@ -21,8 +21,7 @@ PASS (new Event('eventType', null)).bubbles is false
 PASS (new Event('eventType', null)).cancelable is false
 PASS (new Event('eventType', undefined)).bubbles is false
 PASS (new Event('eventType', undefined)).cancelable is false
-PASS (new Event('eventType', 0)).bubbles is false
-PASS (new Event('eventType', 0)).cancelable is false
+PASS new Event('eventType', 0) threw exception TypeError: Type error.
 PASS (new Event('eventType', window)).bubbles is false
 PASS (new Event('eventType', window)).cancelable is false
 PASS (new Event('eventType', window)).bubbles is true

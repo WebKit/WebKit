@@ -1750,6 +1750,8 @@
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
+		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
+		465307D11DB6EE4A00E4137C /* JSUIEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E045EE1DAA104F00B0D8B9 /* JSUIEventInit.cpp */; };
 		465A8E791C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465A8E781C8A24CE00E7D3E4 /* RuntimeApplicationChecks.mm */; };
 		4669B2871B852A0B000F905F /* JSDOMNamedFlowCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46F2768E1B85297F005C2556 /* JSDOMNamedFlowCollectionCustom.cpp */; };
 		4671E0651D67A59600C6B497 /* CanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4671E0631D67A57B00C6B497 /* CanvasPath.cpp */; };
@@ -5976,7 +5978,6 @@
 		E125F83A1824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8391824104800D84CD9 /* CryptoAlgorithmAesCbcParamsDeprecated.h */; };
 		E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83B182411E700D84CD9 /* JSCryptoOperationData.cpp */; };
 		E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F83C182411E700D84CD9 /* JSCryptoOperationData.h */; };
-
 		E125F8411824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F83F1824253A00D84CD9 /* CryptoAlgorithmAES_CBC.cpp */; };
 		E125F8421824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h in Headers */ = {isa = PBXBuildFile; fileRef = E125F8401824253A00D84CD9 /* CryptoAlgorithmAES_CBC.h */; };
 		E125F845182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E125F843182425C900D84CD9 /* CryptoAlgorithmAES_CBCMac.cpp */; };
@@ -7327,12 +7328,12 @@
 		0F4710AC1DB56AFC002DCEC3 /* DOMRectInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMRectInit.idl; sourceTree = "<group>"; };
 		0F4710AD1DB56AFC002DCEC3 /* DOMRectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRectReadOnly.h; sourceTree = "<group>"; };
 		0F4710AE1DB56AFC002DCEC3 /* DOMRectReadOnly.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMRectReadOnly.idl; sourceTree = "<group>"; };
-		0F4710B51DB56BE8002DCEC3 /* JSDOMRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMRect.cpp; path = JSDOMRect.cpp; sourceTree = "<group>"; };
-		0F4710B61DB56BE8002DCEC3 /* JSDOMRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMRect.h; path = JSDOMRect.h; sourceTree = "<group>"; };
-		0F4710B71DB56BE8002DCEC3 /* JSDOMRectInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMRectInit.cpp; path = JSDOMRectInit.cpp; sourceTree = "<group>"; };
-		0F4710B81DB56BE8002DCEC3 /* JSDOMRectInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMRectInit.h; path = JSDOMRectInit.h; sourceTree = "<group>"; };
-		0F4710B91DB56BE8002DCEC3 /* JSDOMRectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMRectReadOnly.cpp; path = JSDOMRectReadOnly.cpp; sourceTree = "<group>"; };
-		0F4710BA1DB56BE8002DCEC3 /* JSDOMRectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMRectReadOnly.h; path = JSDOMRectReadOnly.h; sourceTree = "<group>"; };
+		0F4710B51DB56BE8002DCEC3 /* JSDOMRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMRect.cpp; sourceTree = "<group>"; };
+		0F4710B61DB56BE8002DCEC3 /* JSDOMRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRect.h; sourceTree = "<group>"; };
+		0F4710B71DB56BE8002DCEC3 /* JSDOMRectInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMRectInit.cpp; sourceTree = "<group>"; };
+		0F4710B81DB56BE8002DCEC3 /* JSDOMRectInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRectInit.h; sourceTree = "<group>"; };
+		0F4710B91DB56BE8002DCEC3 /* JSDOMRectReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMRectReadOnly.cpp; sourceTree = "<group>"; };
+		0F4710BA1DB56BE8002DCEC3 /* JSDOMRectReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMRectReadOnly.h; sourceTree = "<group>"; };
 		0F4966991DB408C100A274BB /* DOMPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPoint.h; sourceTree = "<group>"; };
 		0F49669A1DB408C100A274BB /* DOMPoint.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMPoint.idl; sourceTree = "<group>"; };
 		0F49669B1DB408C100A274BB /* DOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPointReadOnly.h; sourceTree = "<group>"; };
@@ -14696,8 +14697,8 @@
 				5EA725CD1ACABCD900EAD17B /* MediaDevices.cpp */,
 				5EA725CE1ACABCD900EAD17B /* MediaDevices.h */,
 				5EA725CF1ACABCD900EAD17B /* MediaDevices.idl */,
- 				07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */,
- 				07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */,
+				07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */,
+				07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */,
 				07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */,
 				07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */,
 				5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */,
@@ -24214,6 +24215,7 @@
 				29D7BCFA1444AF7D0070619C /* AccessibilitySpinButton.h in Headers */,
 				69A6CBAD1C6BE42C00B836E9 /* AccessibilitySVGElement.h in Headers */,
 				AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */,
+				465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */,
 				29A8122B0FBB9C1D00510293 /* AccessibilityTable.h in Headers */,
 				29A812320FBB9C1D00510293 /* AccessibilityTableCell.h in Headers */,
 				29A812410FBB9C1D00510293 /* AccessibilityTableColumn.h in Headers */,
@@ -28161,6 +28163,7 @@
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				1AFFC4541D5E81CB00267A66 /* BlacklistUpdater.mm in Sources */,
 				976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */,
+				465307D11DB6EE4A00E4137C /* JSUIEventInit.cpp in Sources */,
 				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,
 				E1D31CDC19196020001005A3 /* BlobDataFileReference.cpp in Sources */,
 				E164A2ED191AE6350010737D /* BlobDataFileReferenceMac.mm in Sources */,

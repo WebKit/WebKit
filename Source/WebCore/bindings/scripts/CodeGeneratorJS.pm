@@ -1272,7 +1272,6 @@ sub GenerateHeader
     }
 
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
-    AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($interface, "Event");
 
     my $exportMacro = GetExportMacroForJSClass($interface);
 
@@ -1723,10 +1722,6 @@ sub GenerateHeader
     if (HasCustomConstructor($interface)) {
         push(@headerContent, "// Custom constructor\n");
         push(@headerContent, "JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState&);\n\n");
-    }
-
-    if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
-        push(@headerContent, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
     }
 
     if (NeedsImplementationClass($interface)) {
@@ -5703,84 +5698,7 @@ sub GenerateConstructorDefinition
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
 
     if (IsConstructable($interface)) {
-        if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
-            $implIncludes{"JSDictionary.h"} = 1;
-            $implIncludes{"<runtime/Error.h>"} = 1;
-
-            push(@$outputArray, <<END);
-template<> EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(ExecState* state)
-{
-    VM& vm = state->vm();
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto* jsConstructor = jsCast<${constructorClassName}*>(state->callee());
-    ASSERT(jsConstructor);
-
-    if (!jsConstructor->scriptExecutionContext())
-        return throwConstructorScriptExecutionContextUnavailableError(*state, throwScope, \"${visibleInterfaceName}\");
-
-    if (UNLIKELY(state->argumentCount() < 1))
-        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-
-    AtomicString eventType = state->uncheckedArgument(0).toString(state)->toAtomicString(state);
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-
-    ${interfaceName}Init eventInit;
-
-    JSValue initializerValue = state->argument(1);
-    if (!initializerValue.isUndefinedOrNull()) {
-        // Given the above test, this will always yield an object.
-        JSObject* initializerObject = initializerValue.toObject(state);
-        ASSERT(!throwScope.exception());
-
-        // Create the dictionary wrapper from the initializer object.
-        JSDictionary dictionary(state, initializerObject);
-
-        // Attempt to fill in the EventInit.
-        if (!fill${interfaceName}Init(eventInit, dictionary))
-            return JSValue::encode(jsUndefined());
-    }
-
-    Ref<${interfaceName}> event = ${interfaceName}::createForBindings(eventType, eventInit);
-    return JSValue::encode(createWrapper<${interfaceName}>(jsConstructor->globalObject(), WTFMove(event)));
-}
-
-bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dictionary)
-{
-END
-
-            if ($interface->parent) {
-                my $interfaceBase = $interface->parent;
-                push(@implContent, <<END);
-    if (!fill${interfaceBase}Init(eventInit, dictionary))
-        return false;
-
-END
-            }
-
-            for (my $index = 0; $index < @{$interface->attributes}; $index++) {
-                my $attribute = @{$interface->attributes}[$index];
-                if ($attribute->signature->extendedAttributes->{LegacyInitializedByEventConstructor}) {
-                    my $attributeName = $attribute->signature->name;
-                    my $attributeImplName = $attribute->signature->extendedAttributes->{ImplementedAs} || $attributeName;
-                    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
-
-                    push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-
-                    push(@implContent, <<END);
-    if (!dictionary.tryGetProperty("${attributeName}", eventInit.${attributeImplName}))
-        return false;
-END
-                    push(@implContent, "#endif\n") if $conditionalString;
-
-                }
-            }
-
-            push(@$outputArray, <<END);
-    return true;
-}
-
-END
-         } elsif ($interface->extendedAttributes->{CustomConstructor}) {
+        if ($interface->extendedAttributes->{CustomConstructor}) {
             push(@$outputArray, "template<> JSC::EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct(JSC::ExecState* exec)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    ASSERT(exec);\n");
@@ -5904,9 +5822,7 @@ sub GenerateConstructorHelperMethods
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
     my $leastConstructorLength = 0;
-    if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
-        $leastConstructorLength = 1;
-    } elsif ($interface->extendedAttributes->{Constructor} || $interface->extendedAttributes->{CustomConstructor}) {
+    if ($interface->extendedAttributes->{Constructor} || $interface->extendedAttributes->{CustomConstructor}) {
         my @constructors = @{$interface->constructors};
         my @customConstructors = @{$interface->customConstructors};
         $leastConstructorLength = 255;
@@ -6014,7 +5930,6 @@ sub IsConstructable
     return HasCustomConstructor($interface)
         || $interface->extendedAttributes->{Constructor}
         || $interface->extendedAttributes->{NamedConstructor}
-        || $interface->extendedAttributes->{LegacyConstructorTemplate}
         || $interface->extendedAttributes->{JSBuiltinConstructor};
 }
 

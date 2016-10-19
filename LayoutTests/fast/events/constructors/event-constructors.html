@@ -51,8 +51,7 @@ test("new Event('eventType', null)", false, false);
 test("new Event('eventType', undefined)", false, false);
 
 // A number as the initializer.
-// FIXME: Should this throw?
-test("new Event('eventType', 0)", false, false);
+shouldThrowErrorName("new Event('eventType', 0)", "TypeError");
 
 // The window as the initializer.
 test("new Event('eventType', window)", false, false);

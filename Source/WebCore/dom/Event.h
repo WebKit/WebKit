@@ -87,9 +87,9 @@ public:
         return adoptRef(*new Event);
     }
 
-    static Ref<Event> createForBindings(const AtomicString& type, const EventInit& initializer)
+    static Ref<Event> create(const AtomicString& type, const EventInit& initializer, IsTrusted isTrusted = IsTrusted::No)
     {
-        return adoptRef(*new Event(type, initializer));
+        return adoptRef(*new Event(type, initializer, isTrusted));
     }
 
     virtual ~Event();
@@ -193,7 +193,7 @@ protected:
     Event(IsTrusted = IsTrusted::No);
     WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
     Event(const AtomicString& type, bool canBubble, bool cancelable, double timestamp);
-    Event(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);
+    Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget();
     bool dispatched() const { return m_target; }

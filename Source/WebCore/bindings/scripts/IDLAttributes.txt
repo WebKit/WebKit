@@ -92,8 +92,6 @@ JSCustomToNativeObject
 JSGenerateToJSObject
 JSGenerateToNativeObject
 JSLegacyParent=*
-LegacyConstructorTemplate=Event
-LegacyInitializedByEventConstructor
 LenientThis
 MasqueradesAsUndefined
 MayThrowException

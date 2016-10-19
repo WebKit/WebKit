@@ -1,5 +1,18 @@
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
+        [Web IDL] Kill support for [LegacyConstructorTemplate=Event] / [LegacyInitializedByEventConstructor]
+        https://bugs.webkit.org/show_bug.cgi?id=163630
+
+        Reviewed by Darin Adler.
+
+        Update / rebaseline existing tests to reflect minor behavior changes.
+
+        * fast/events/constructors/event-constructors-expected.txt:
+        * fast/events/constructors/event-constructors.html:
+        * fast/events/constructors/ui-event-constructor-expected.txt:
+
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
         Changing details.open should cause a toggle event to be fired asynchronously
         https://bugs.webkit.org/show_bug.cgi?id=163568
 

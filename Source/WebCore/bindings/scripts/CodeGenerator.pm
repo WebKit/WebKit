@@ -380,15 +380,6 @@ sub SkipIncludeHeader
     return 0;
 }
 
-sub IsConstructorTemplate
-{
-    my $object = shift;
-    my $interface = shift;
-    my $template = shift;
-
-    return $interface->extendedAttributes->{"LegacyConstructorTemplate"} && $interface->extendedAttributes->{"LegacyConstructorTemplate"} eq $template;
-}
-
 sub IsNumericType
 {
     my ($object, $type) = @_;
