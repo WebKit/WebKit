@@ -32,12 +32,12 @@ PASS removeAttributeNode on Element must enqueue an attributeChanged reaction wh
 PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
 PASS insertAdjacentElement on Element must enqueue a connected reaction 
 PASS insertAdjacentElement on Element must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-FAIL innerHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
-FAIL innerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
-FAIL innerHTML on Element must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL outerHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
-FAIL outerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
-FAIL outerHTML on Element must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
-FAIL insertAdjacentHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
-FAIL insertAdjacentHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
+PASS innerHTML on Element must enqueue a connected reaction for a newly constructed custom element 
+PASS innerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element 
+PASS innerHTML on Element must enqueue a disconnected reaction 
+PASS outerHTML on Element must enqueue a connected reaction for a newly constructed custom element 
+PASS outerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element 
+PASS outerHTML on Element must enqueue a disconnected reaction 
+PASS insertAdjacentHTML on Element must enqueue a connected reaction for a newly constructed custom element 
+PASS insertAdjacentHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element 
 

@@ -44,7 +44,7 @@
     [MayThrowException] void collapseToEnd();
     [MayThrowException] void collapseToStart();
 
-    void deleteFromDocument();
+    [CEReactions] void deleteFromDocument();
     boolean containsNode(Node node, optional boolean allowPartial = false);
     void selectAllChildren(Node node);
 

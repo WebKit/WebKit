@@ -97,8 +97,8 @@
     sequence<DOMString> getAttributeNames();
 
     HTMLCollection getElementsByClassName(DOMString name);
-    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
-    [TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString outerHTML;
+    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString innerHTML;
+    [CEReactions, TreatNullAs=EmptyString, SetterMayThrowLegacyException] attribute DOMString outerHTML;
 
     [CEReactions, Reflect=class] attribute DOMString className;
     [PutForwards=value] readonly attribute DOMTokenList classList;
@@ -125,7 +125,7 @@
 #endif
 
     [CEReactions, MayThrowLegacyException] Element insertAdjacentElement(DOMString where, Element element);
-    [MayThrowLegacyException] void insertAdjacentHTML(DOMString where, DOMString html);
+    [CEReactions, MayThrowLegacyException] void insertAdjacentHTML(DOMString where, DOMString html);
     [MayThrowLegacyException] void insertAdjacentText(DOMString where, DOMString text);
 
     [Conditional=POINTER_LOCK] void requestPointerLock();

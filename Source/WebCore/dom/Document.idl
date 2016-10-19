@@ -83,7 +83,7 @@
     [MayThrowException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult);
 
     // FIXME: The default value for the last parameter should be the empty string.
-    boolean execCommand(DOMString command, optional boolean userInterface = false, optional DOMString? value = null);
+    [CEReactions] boolean execCommand(DOMString command, optional boolean userInterface = false, optional DOMString? value = null);
 
     boolean queryCommandEnabled(DOMString command);
     boolean queryCommandIndeterm(DOMString command);
