@@ -1,5 +1,16 @@
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
+        Changing details.open should cause a toggle event to be fired asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=163568
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing test now that a new ontoggle attribute is exposed.
+
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
         Provide better form validation messages
         https://bugs.webkit.org/show_bug.cgi?id=163584
 

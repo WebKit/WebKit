@@ -91,7 +91,7 @@
     attribute EventHandler onsubmit;
     attribute EventHandler onsuspend;
     attribute EventHandler ontimeupdate;
-    // attribute EventHandler ontoggle;
+    attribute EventHandler ontoggle;
     attribute EventHandler onvolumechange;
     attribute EventHandler onwaiting;
 

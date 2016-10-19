@@ -27,13 +27,20 @@ namespace WebCore {
 
 class HTMLSlotElement;
 
+template<typename T> class EventSender;
+typedef EventSender<HTMLDetailsElement> DetailEventSender;
+
 class HTMLDetailsElement final : public HTMLElement {
 public:
     static Ref<HTMLDetailsElement> create(const QualifiedName& tagName, Document&);
+    ~HTMLDetailsElement();
+
     void toggleOpen();
 
     bool isOpen() const { return m_isOpen; }
     bool isActiveSummary(const HTMLSummaryElement&) const;
+
+    void dispatchPendingEvent(DetailEventSender*);
     
 private:
     HTMLDetailsElement(const QualifiedName&, Document&);

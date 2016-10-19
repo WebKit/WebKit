@@ -99,6 +99,7 @@ PASS a["onstalled"] is null
 PASS a["onsubmit"] is null
 PASS a["onsuspend"] is null
 PASS a["ontimeupdate"] is null
+PASS a["ontoggle"] is null
 PASS a["onvolumechange"] is null
 PASS a["onwaiting"] is null
 PASS a["tagName"] is A
@@ -109,7 +110,7 @@ PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["prefix"] is null
 PASS a["localName"] is a
 PASS a["offsetLeft"] is 8
-PASS a["offsetTop"] is 1674
+PASS a["offsetTop"] is 1689
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["clientLeft"] is 0

@@ -266,6 +266,7 @@ onstorage
 onsuspend
 onsubmit
 ontimeupdate
+ontoggle
 ontouchforcechange
 ontouchstart
 ontouchmove

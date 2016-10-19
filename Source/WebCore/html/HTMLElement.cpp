@@ -295,6 +295,7 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
         &onsubmitAttr,
         &onsuspendAttr,
         &ontimeupdateAttr,
+        &ontoggleAttr,
         &ontouchcancelAttr,
         &ontouchendAttr,
         &ontouchforcechangeAttr,

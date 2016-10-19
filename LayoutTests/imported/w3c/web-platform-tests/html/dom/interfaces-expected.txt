@@ -114,7 +114,7 @@ PASS Document interface: attribute onstalled
 PASS Document interface: attribute onsubmit 
 PASS Document interface: attribute onsuspend 
 PASS Document interface: attribute ontimeupdate 
-FAIL Document interface: attribute ontoggle assert_true: The prototype object must have a property "ontoggle" expected true got false
+PASS Document interface: attribute ontoggle 
 PASS Document interface: attribute onvolumechange 
 PASS Document interface: attribute onwaiting 
 FAIL Document interface: attribute oncopy assert_true: property is not enumerable expected true got false
@@ -300,7 +300,7 @@ PASS Document interface: iframe.contentDocument must inherit property "onstalled
 PASS Document interface: iframe.contentDocument must inherit property "onsubmit" with the proper type (144) 
 PASS Document interface: iframe.contentDocument must inherit property "onsuspend" with the proper type (145) 
 PASS Document interface: iframe.contentDocument must inherit property "ontimeupdate" with the proper type (146) 
-FAIL Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (147) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: iframe.contentDocument must inherit property "ontoggle" with the proper type (147) 
 PASS Document interface: iframe.contentDocument must inherit property "onvolumechange" with the proper type (148) 
 PASS Document interface: iframe.contentDocument must inherit property "onwaiting" with the proper type (149) 
 PASS Document interface: iframe.contentDocument must inherit property "oncopy" with the proper type (150) 
@@ -548,7 +548,7 @@ PASS Document interface: new Document() must inherit property "onstalled" with t
 PASS Document interface: new Document() must inherit property "onsubmit" with the proper type (144) 
 PASS Document interface: new Document() must inherit property "onsuspend" with the proper type (145) 
 PASS Document interface: new Document() must inherit property "ontimeupdate" with the proper type (146) 
-FAIL Document interface: new Document() must inherit property "ontoggle" with the proper type (147) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: new Document() must inherit property "ontoggle" with the proper type (147) 
 PASS Document interface: new Document() must inherit property "onvolumechange" with the proper type (148) 
 PASS Document interface: new Document() must inherit property "onwaiting" with the proper type (149) 
 PASS Document interface: new Document() must inherit property "oncopy" with the proper type (150) 
@@ -796,7 +796,7 @@ PASS Document interface: document.implementation.createDocument(null, "", null) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsubmit" with the proper type (144) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onsuspend" with the proper type (145) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontimeupdate" with the proper type (146) 
-FAIL Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (147) assert_inherits: property "ontoggle" not found in prototype chain
+PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "ontoggle" with the proper type (147) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onvolumechange" with the proper type (148) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "onwaiting" with the proper type (149) 
 PASS Document interface: document.implementation.createDocument(null, "", null) must inherit property "oncopy" with the proper type (150) 
@@ -1013,7 +1013,7 @@ PASS HTMLElement interface: attribute onstalled
 PASS HTMLElement interface: attribute onsubmit 
 PASS HTMLElement interface: attribute onsuspend 
 PASS HTMLElement interface: attribute ontimeupdate 
-FAIL HTMLElement interface: attribute ontoggle assert_true: The prototype object must have a property "ontoggle" expected true got false
+PASS HTMLElement interface: attribute ontoggle 
 PASS HTMLElement interface: attribute onvolumechange 
 PASS HTMLElement interface: attribute onwaiting 
 FAIL HTMLElement interface: attribute oncopy assert_own_property: expected property "oncopy" missing
@@ -1098,7 +1098,7 @@ PASS HTMLElement interface: document.createElement("noscript") must inherit prop
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsubmit" with the proper type (72) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onsuspend" with the proper type (73) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontimeupdate" with the proper type (74) 
-FAIL HTMLElement interface: document.createElement("noscript") must inherit property "ontoggle" with the proper type (75) assert_inherits: property "ontoggle" not found in prototype chain
+PASS HTMLElement interface: document.createElement("noscript") must inherit property "ontoggle" with the proper type (75) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onvolumechange" with the proper type (76) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "onwaiting" with the proper type (77) 
 PASS HTMLElement interface: document.createElement("noscript") must inherit property "oncopy" with the proper type (78) 
@@ -5032,7 +5032,7 @@ PASS Window interface: attribute onstalled
 PASS Window interface: attribute onsubmit 
 PASS Window interface: attribute onsuspend 
 PASS Window interface: attribute ontimeupdate 
-FAIL Window interface: attribute ontoggle assert_own_property: The global object must have a property "ontoggle" expected property "ontoggle" missing
+PASS Window interface: attribute ontoggle 
 PASS Window interface: attribute onvolumechange 
 PASS Window interface: attribute onwaiting 
 FAIL Window interface: attribute onafterprint assert_own_property: The global object must have a property "onafterprint" expected property "onafterprint" missing
@@ -5159,7 +5159,7 @@ PASS Window interface: window must inherit property "onstalled" with the proper 
 PASS Window interface: window must inherit property "onsubmit" with the proper type (92) 
 PASS Window interface: window must inherit property "onsuspend" with the proper type (93) 
 PASS Window interface: window must inherit property "ontimeupdate" with the proper type (94) 
-FAIL Window interface: window must inherit property "ontoggle" with the proper type (95) assert_own_property: expected property "ontoggle" missing
+PASS Window interface: window must inherit property "ontoggle" with the proper type (95) 
 PASS Window interface: window must inherit property "onvolumechange" with the proper type (96) 
 PASS Window interface: window must inherit property "onwaiting" with the proper type (97) 
 FAIL Window interface: window must inherit property "onafterprint" with the proper type (98) assert_own_property: expected property "onafterprint" missing

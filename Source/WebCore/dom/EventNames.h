@@ -218,6 +218,7 @@ namespace WebCore {
     macro(textInput) \
     macro(timeout) \
     macro(timeupdate) \
+    macro(toggle) \
     macro(tonechange) \
     macro(touchcancel) \
     macro(touchend) \
