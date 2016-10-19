@@ -6,15 +6,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 No message
 PASS testIt("", "", "") is ""
 Value missing
-PASS testIt("", "", "") is "value missing"
+FAIL testIt("", "", "") should be value missing. Was Please fill out this field..
 Type mismatch
 PASS testIt("foo", "", "") is ""
 Range overflow
-PASS testIt("1982-11-02", "", "1970-12-31") is "range overflow"
+FAIL testIt("1982-11-02", "", "1970-12-31") should be range overflow. Was Value must be less than or equal to 1970-12-31..
 Range underflow
-PASS testIt("1982-11-02", "1990-05-25", "1990-12-24") is "range underflow"
+FAIL testIt("1982-11-02", "1990-05-25", "1990-12-24") should be range underflow. Was Value must be greater than or equal to 1990-05-25..
 Step mismatch
-PASS testIt("1982-11-02", "", "", "123") is "step mismatch"
+FAIL testIt("1982-11-02", "", "", "123") should be step mismatch. Was Please enter a valid value..
 PASS successfullyParsed is true
 
 TEST COMPLETE

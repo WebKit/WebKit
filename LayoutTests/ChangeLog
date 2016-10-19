@@ -1,3 +1,17 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        Provide better form validation messages
+        https://bugs.webkit.org/show_bug.cgi?id=163584
+
+        Reviewed by Darin Adler.
+
+        Update existing tests now that form validation messages differ.
+
+        * fast/forms/number/number-validation-message-expected.txt:
+        * fast/forms/number/number-validation-message.html:
+        * fast/forms/validationMessage-expected.txt:
+        * platform/mac/fast/forms/validation-message-appearance-expected.txt:
+
 2016-10-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html as flaky on Sierra.

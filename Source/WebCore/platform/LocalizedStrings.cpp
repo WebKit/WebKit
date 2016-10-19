@@ -1050,88 +1050,97 @@ String localizedMediaTimeDescription(float time)
 
 String validationMessageValueMissingText()
 {
-    return WEB_UI_STRING("value missing", "Validation message for required form control elements that have no value");
+    return WEB_UI_STRING("Please fill out this field.", "Validation message for required form control elements that have no value");
 }
 
 String validationMessageValueMissingForCheckboxText()
 {
-    return validationMessageValueMissingText();
+    return WEB_UI_STRING("Please check this box if you want to proceed.", "Validation message for required checkboxes that have not be checked");
 }
 
 String validationMessageValueMissingForFileText()
 {
-    return validationMessageValueMissingText();
+    return WEB_UI_STRING("Please select a file.", "Validation message for required file inputs that have no value");
 }
 
 String validationMessageValueMissingForMultipleFileText()
 {
-    return validationMessageValueMissingText();
+    return validationMessageValueMissingForFileText();
 }
 
 String validationMessageValueMissingForRadioText()
 {
-    return validationMessageValueMissingText();
+    return WEB_UI_STRING("Please select one of these options.", "Validation message for required radio boxes that have no selection");
 }
 
 String validationMessageValueMissingForSelectText()
 {
-    return validationMessageValueMissingText();
+    return WEB_UI_STRING("Please select an item in the list.", "Validation message for required menu list controls that have no selection");
 }
 
 String validationMessageTypeMismatchText()
 {
-    return WEB_UI_STRING("type mismatch", "Validation message for input form controls with a value not matching type");
+    return WEB_UI_STRING("Invalid value.", "Validation message for input form controls with a value not matching type");
 }
 
 String validationMessageTypeMismatchForEmailText()
 {
-    return validationMessageTypeMismatchText();
+    return WEB_UI_STRING("Please enter an email address.", "Validation message for input form controls of type 'email' that have an invalid value");
 }
 
 String validationMessageTypeMismatchForMultipleEmailText()
 {
-    return validationMessageTypeMismatchText();
+    return validationMessageTypeMismatchForEmailText();
 }
 
 String validationMessageTypeMismatchForURLText()
 {
-    return validationMessageTypeMismatchText();
+    return WEB_UI_STRING("Please enter a URL.", "Validation message for input form controls of type 'url' that have an invalid value");
 }
 
 String validationMessagePatternMismatchText()
 {
-    return WEB_UI_STRING("pattern mismatch", "Validation message for input form controls requiring a constrained value according to pattern");
+    return WEB_UI_STRING("Please match the requested format.", "Validation message for input form controls requiring a constrained value according to pattern");
 }
 
-String validationMessageTooShortText(int, int)
+String validationMessageTooShortText(int, int minLength)
 {
-    return WEB_UI_STRING("too short", "Validation message for form control elements with a value shorter than minimum allowed length");
+    return formatLocalizedString(WEB_UI_STRING("Please use at least %d characters.", "Validation message for form control elements with a value shorter than minimum allowed length"), minLength);
 }
 
-String validationMessageTooLongText(int, int)
+String validationMessageTooLongText(int, int maxLength)
 {
-    return WEB_UI_STRING("too long", "Validation message for form control elements with a value longer than maximum allowed length");
+    return formatLocalizedString(WEB_UI_STRING("Please use no more than %d characters.", "Validation message for form control elements with a value shorter than maximum allowed length"), maxLength);
 }
 
-String validationMessageRangeUnderflowText(const String&)
+String validationMessageRangeUnderflowText(const String& minimum)
 {
+#if PLATFORM(COCOA)
+    return formatLocalizedString(WEB_UI_STRING("Value must be greater than or equal to %@.", "Validation message for input form controls with value lower than allowed minimum"), minimum.createCFString().get());
+#else
+    UNUSED_PARAM(minimum);
     return WEB_UI_STRING("range underflow", "Validation message for input form controls with value lower than allowed minimum");
+#endif
 }
 
-String validationMessageRangeOverflowText(const String&)
+String validationMessageRangeOverflowText(const String& maximum)
 {
+#if PLATFORM(COCOA)
+    return formatLocalizedString(WEB_UI_STRING("Value must be less than or equal to %@.", "Validation message for input form controls with value higher than allowed maximum"), maximum.createCFString().get());
+#else
+    UNUSED_PARAM(maximum);
     return WEB_UI_STRING("range overflow", "Validation message for input form controls with value higher than allowed maximum");
+#endif
 }
 
 String validationMessageStepMismatchText(const String&, const String&)
 {
-    return WEB_UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute");
+    return WEB_UI_STRING("Please enter a valid value.", "Validation message for input form controls with value not respecting the step attribute");
 }
 
 String validationMessageBadInputForNumberText()
 {
-    notImplemented();
-    return validationMessageTypeMismatchText();
+    return WEB_UI_STRING("Please enter a number.", "Validation message for number fields where the user entered a non-number string");
 }
 
 String clickToExitFullScreenText()

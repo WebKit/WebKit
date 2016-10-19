@@ -25,20 +25,20 @@ shouldBeEqualToString('testIt("", "", "")', '');
 
 debug('Value missing')
 input.setAttribute("required", "");
-shouldBeEqualToString('testIt("", "", "")', 'value missing');
+shouldBeEqualToString('testIt("", "", "")', 'Please fill out this field.');
 input.removeAttribute("required");
 
 debug('Type mismatch');
 shouldBeEqualToString('testIt("foo", "", "")', '');
 
 debug('Range overflow')
-shouldBeEqualToString('testIt("200", "", "100")', 'range overflow');
+shouldBeEqualToString('testIt("200", "", "100")', 'Value must be less than or equal to 100.');
 
 debug('Range underflow')
-shouldBeEqualToString('testIt("10", "50", "100")', 'range underflow');
+shouldBeEqualToString('testIt("10", "50", "100")', 'Value must be greater than or equal to 50.');
 
 debug('Step mismatch')
-shouldBeEqualToString('testIt("55", "0", "100", "10")', 'step mismatch');
+shouldBeEqualToString('testIt("55", "0", "100", "10")', 'Please enter a valid value.');
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
