@@ -603,7 +603,7 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
     }
     
     // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
-    for (AccessibilityObject* stopSearchElement = parentObjectUnignored(); startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+    for (AccessibilityObject* stopSearchElement = parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
 
         // Only append the children after/before the previous element, so that the search does not check elements that are 
         // already behind/ahead of start element.
