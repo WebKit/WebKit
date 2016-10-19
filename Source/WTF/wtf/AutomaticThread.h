@@ -78,6 +78,13 @@ public:
     WTF_EXPORT_PRIVATE void notifyOne(const LockHolder&);
     WTF_EXPORT_PRIVATE void notifyAll(const LockHolder&);
     
+    // You can reuse this condition for other things, just as you would any other condition.
+    // However, since conflating conditions could lead to thundering herd, it's best to avoid it.
+    // One known-good case for one-true-condition is when the communication involves just two
+    // threads. In such cases, the thread doing the notifyAll() can wake up at most one thread -
+    // its partner.
+    WTF_EXPORT_PRIVATE void wait(Lock&);
+    
 private:
     friend class AutomaticThread;
     

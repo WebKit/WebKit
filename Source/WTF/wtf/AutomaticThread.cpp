@@ -65,6 +65,11 @@ void AutomaticThreadCondition::notifyAll(const LockHolder& locker)
     m_threads.clear();
 }
 
+void AutomaticThreadCondition::wait(Lock& lock)
+{
+    m_condition.wait(lock);
+}
+
 void AutomaticThreadCondition::add(const LockHolder&, AutomaticThread* thread)
 {
     ASSERT(!m_threads.contains(thread));

@@ -1,3 +1,28 @@
+2016-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should use AutomaticThread
+        https://bugs.webkit.org/show_bug.cgi?id=163686
+
+        Reviewed by Geoffrey Garen.
+        
+        Change the JITWorklist to use AutomaticThread, so that the Baseline JIT's concurrent
+        compiler thread shuts down automatically after inactivity.
+        
+        With this change, all of JSC's threads shut down automatically. If you run splay for a few
+        seconds (which fires up all threads - compiler and GC) and then go to sleep for a second,
+        you'll see that the only threads left are the main thread and the bmalloc thread.
+
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Thread::Thread):
+        (JSC::JITWorklist::JITWorklist):
+        (JSC::JITWorklist::completeAllForVM):
+        (JSC::JITWorklist::poll):
+        (JSC::JITWorklist::compileLater):
+        (JSC::JITWorklist::compileNow):
+        (JSC::JITWorklist::finalizePlans):
+        (JSC::JITWorklist::runThread): Deleted.
+        * jit/JITWorklist.h:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9

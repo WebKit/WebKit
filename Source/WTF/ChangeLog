@@ -1,3 +1,24 @@
+2016-10-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should use AutomaticThread
+        https://bugs.webkit.org/show_bug.cgi?id=163686
+
+        Reviewed by Geoffrey Garen.
+        
+        Added a AutomaticThreadCondition::wait() method, so that if you really want to use one
+        common condition for your thread and something else, you can do it. This trivially works
+        if you only use notifyAll(), and behaves as you'd expect for notifyOne() (i.e. it's
+        dangerous, since you don't know who will wake up).
+        
+        The Baseline JIT used the one-true-Condition idiom because it used notifyAll() in an
+        optimal way: there are just two threads talking to each other, so it wakes up at most one
+        thread and that thread is exactly the one you want woken up. Adding wait() means that I did
+        not have to change that code.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::wait):
+        * wtf/AutomaticThread.h:
+
 2016-10-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG worklist should use AutomaticThread
