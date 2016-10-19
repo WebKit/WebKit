@@ -26,6 +26,7 @@
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
+#include "LocalizedStrings.h"
 #include "RenderMeter.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
@@ -166,6 +167,32 @@ HTMLMeterElement* AccessibilityProgressIndicator::meterElement() const
         return nullptr;
 
     return downcast<RenderMeter>(*m_renderer).meterElement();
+}
+
+String AccessibilityProgressIndicator::gaugeRegionValueDescription() const
+{
+#if PLATFORM(COCOA)
+    if (!m_renderer || !m_renderer->isMeter())
+        return String();
+    
+    // Only expose this when the author has explicitly specified the following attributes.
+    if (!hasAttribute(lowAttr) && !hasAttribute(highAttr) && !hasAttribute(optimumAttr))
+        return String();
+    
+    if (HTMLMeterElement* element = meterElement()) {
+        switch (element->gaugeRegion()) {
+        case HTMLMeterElement::GaugeRegionOptimum:
+            return AXMeterGaugeRegionOptimumText();
+        case HTMLMeterElement::GaugeRegionSuboptimal:
+            return AXMeterGaugeRegionSuboptimalText();
+        case HTMLMeterElement::GaugeRegionEvenLessGood:
+            return AXMeterGaugeRegionLessGoodText();
+        default:
+            break;
+        }
+    }
+#endif
+    return String();
 }
 #endif
 

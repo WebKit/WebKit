@@ -36,6 +36,7 @@
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "AccessibilityListBox.h"
+#import "AccessibilityProgressIndicator.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
 #import "AccessibilitySpinButton.h"
@@ -76,7 +77,7 @@
 #import "WebCoreSystemInterface.h"
 #import "htmlediting.h"
 #import <wtf/ObjcRuntimeExtras.h>
-#if ENABLE(TREE_DEBUGGING)
+#if ENABLE(TREE_DEBUGGING) || ENABLE(METER_ELEMENT)
 #import <wtf/text/StringBuilder.h>
 #endif
 
@@ -2602,6 +2603,29 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return [self remoteAccessibilityParentObject];
 }
 
+- (NSString *)valueDescriptionForMeter
+{
+    if (!m_object)
+        return nil;
+    
+    String valueDescription = m_object->valueDescription();
+#if ENABLE(METER_ELEMENT)
+    if (!is<AccessibilityProgressIndicator>(m_object))
+        return valueDescription;
+    auto &meter = downcast<AccessibilityProgressIndicator>(*m_object);
+    String gaugeRegionValue = meter.gaugeRegionValueDescription();
+    if (!gaugeRegionValue.isEmpty()) {
+        StringBuilder builder;
+        builder.append(valueDescription);
+        if (builder.length())
+            builder.appendLiteral(", ");
+        builder.append(gaugeRegionValue);
+        return builder.toString();
+    }
+#endif
+    return valueDescription;
+}
+
 // FIXME: split up this function in a better way.
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
@@ -3199,8 +3223,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
-    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute])
+    if ([attributeName isEqualToString:NSAccessibilityValueDescriptionAttribute]) {
+        if (m_object->isMeter())
+            return [self valueDescriptionForMeter];
         return m_object->valueDescription();
+    }
     
     if ([attributeName isEqualToString:NSAccessibilityOrientationAttribute]) {
         AccessibilityOrientation elementOrientation = m_object->orientation();

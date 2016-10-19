@@ -931,6 +931,9 @@
 /* HTTP result code string */
 "length required" = "length required";
 
+/* The less good value description for a meter element */
+"less good" = "critical value";
+
 /* accessibility role description for link */
 "link" = "link";
 
@@ -1017,6 +1020,9 @@
 
 /* accessibility role description for an output element */
 "output" = "output";
+
+/* The optimum value description for a meter element */
+"optimum" = "optimal value";
 
 /* HTTP result code string */
 "partial content" = "partial content";
@@ -1119,6 +1125,9 @@
 
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
+
+/* The suboptimal value description for a meter element */
+"suboptimal" = "suboptimal value";
 
 /* HTTP result code string */
 "success" = "success";

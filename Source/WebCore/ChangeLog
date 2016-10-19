@@ -1,3 +1,27 @@
+2016-10-19  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Meter element should use AXValueDescription to descrbe the status of the value
+        https://bugs.webkit.org/show_bug.cgi?id=163610
+
+        Reviewed by Chris Fleizach.
+
+        Exposed the goodness of the meter value in AXValueDescription.
+
+        Test: accessibility/mac/meter-gauge-value-description.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityProgressIndicator.cpp:
+        (WebCore::AccessibilityProgressIndicator::gaugeRegionValueDescription):
+        * accessibility/AccessibilityProgressIndicator.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper valueDescriptionForMeter]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXMeterGaugeRegionOptimumText):
+        (WebCore::AXMeterGaugeRegionSuboptimalText):
+        (WebCore::AXMeterGaugeRegionLessGoodText):
+        * platform/LocalizedStrings.h:
+
 2016-10-19  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix named color parsing

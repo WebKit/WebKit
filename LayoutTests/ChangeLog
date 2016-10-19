@@ -1,3 +1,13 @@
+2016-10-19  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Meter element should use AXValueDescription to descrbe the status of the value
+        https://bugs.webkit.org/show_bug.cgi?id=163610
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/mac/meter-gauge-value-description-expected.txt: Added.
+        * accessibility/mac/meter-gauge-value-description.html: Added.
+
 2016-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking WPT html/webappapis/animation-frames/callback-* tests as flaky on mac-wk1.

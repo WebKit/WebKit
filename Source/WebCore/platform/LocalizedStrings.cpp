@@ -781,6 +781,22 @@ String AXHorizontalRuleDescriptionText()
     return WEB_UI_STRING("separator", "accessibility role description for a horizontal rule [<hr>]");
 }
     
+#if ENABLE(METER_ELEMENT)
+String AXMeterGaugeRegionOptimumText()
+{
+    return WEB_UI_STRING("optimum", "The optimum value description for a meter element.");
+}
+
+String AXMeterGaugeRegionSuboptimalText()
+{
+    return WEB_UI_STRING("suboptimal", "The suboptimal value description for a meter element.");
+}
+
+String AXMeterGaugeRegionLessGoodText()
+{
+    return WEB_UI_STRING("less good", "The less good value description for a meter element.");
+}
+#endif // ENABLE(METER_ELEMENT)
 #endif // PLATFORM(COCOA)
 
 String missingPluginText()

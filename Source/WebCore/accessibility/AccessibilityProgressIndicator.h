@@ -38,6 +38,7 @@ public:
     static Ref<AccessibilityProgressIndicator> create(RenderProgress*);
 #if ENABLE(METER_ELEMENT)
     static Ref<AccessibilityProgressIndicator> create(RenderMeter*);
+    String gaugeRegionValueDescription() const;
 #endif
     Element* element() const override;
 
@@ -64,5 +65,7 @@ private:
 
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityProgressIndicator, isProgressIndicator())
 
 #endif // AccessibilityProgressIndicator_h
