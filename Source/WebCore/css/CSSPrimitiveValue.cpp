@@ -936,9 +936,9 @@ ExceptionOr<String> CSSPrimitiveValue::getStringValue() const
     case CSS_FONT_FAMILY:
         return String { m_value.fontFamily->familyName };
     case CSS_VALUE_ID:
-        return String { valueName(m_value.valueID) };
+        return String { valueName(m_value.valueID).string() };
     case CSS_PROPERTY_ID:
-        return String { propertyName(m_value.propertyID) };
+        return String { propertyName(m_value.propertyID).string() };
     default:
         return Exception { INVALID_ACCESS_ERR };
     }

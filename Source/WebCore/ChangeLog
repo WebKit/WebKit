@@ -1,3 +1,13 @@
+2016-10-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] REGRESSION(r207396) Build broken with Clang.
+        https://bugs.webkit.org/show_bug.cgi?id=163599
+
+        Suggested and reviewed by Darin Adler.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getStringValue):
+
 2016-10-19  Darin Adler  <darin@apple.com>
 
         Try to fix build.
