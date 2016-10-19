@@ -120,3 +120,8 @@ WKStringRef WKBundleHitTestResultCopyLinkTitle(WKBundleHitTestResultRef hitTestR
 {
     return toCopiedAPI(toImpl(hitTestResultRef)->linkTitle());
 }
+
+WKStringRef WKBundleHitTestResultCopyLinkSuggestedFilename(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toCopiedAPI(toImpl(hitTestResultRef)->linkSuggestedFilename());
+}

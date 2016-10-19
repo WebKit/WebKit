@@ -34,6 +34,8 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLAnchorElement.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,7 +43,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const WebCore::HitTestResult& hitTestResult)
+Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const HitTestResult& hitTestResult)
 {
     return adoptRef(*new InjectedBundleHitTestResult(hitTestResult));
 }
@@ -118,7 +120,7 @@ BundleHitTestResultMediaType InjectedBundleHitTestResult::mediaType() const
 #if !ENABLE(VIDEO)
     return BundleHitTestResultMediaTypeNone;
 #else
-    WebCore::Node* node = m_hitTestResult.innerNonSharedNode();
+    Node* node = m_hitTestResult.innerNonSharedNode();
     if (!is<Element>(*node))
         return BundleHitTestResultMediaTypeNone;
     
@@ -139,23 +141,31 @@ String InjectedBundleHitTestResult::linkTitle() const
     return m_hitTestResult.titleDisplayString();
 }
 
-WebCore::IntRect InjectedBundleHitTestResult::imageRect() const
+String InjectedBundleHitTestResult::linkSuggestedFilename() const
 {
-    WebCore::IntRect imageRect = m_hitTestResult.imageRect();
+    auto* urlElement = m_hitTestResult.URLElement();
+    if (!is<HTMLAnchorElement>(urlElement))
+        return String();
+    return urlElement->attributeWithoutSynchronization(HTMLNames::downloadAttr);
+}
+
+IntRect InjectedBundleHitTestResult::imageRect() const
+{
+    IntRect imageRect = m_hitTestResult.imageRect();
     if (imageRect.isEmpty())
         return imageRect;
         
-    // The image rect in WebCore::HitTestResult is in frame coordinates, but we need it in WKView
+    // The image rect in HitTestResult is in frame coordinates, but we need it in WKView
     // coordinates since WebKit2 clients don't have enough context to do the conversion themselves.
     WebFrame* webFrame = frame();
     if (!webFrame)
         return imageRect;
     
-    WebCore::Frame* coreFrame = webFrame->coreFrame();
+    Frame* coreFrame = webFrame->coreFrame();
     if (!coreFrame)
         return imageRect;
     
-    WebCore::FrameView* view = coreFrame->view();
+    FrameView* view = coreFrame->view();
     if (!view)
         return imageRect;
     

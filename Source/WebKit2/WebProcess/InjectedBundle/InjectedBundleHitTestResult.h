@@ -60,6 +60,7 @@ public:
 
     String linkLabel() const;
     String linkTitle() const;
+    String linkSuggestedFilename() const;
     
     WebCore::IntRect imageRect() const;
     
