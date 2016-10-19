@@ -25,17 +25,16 @@
  */
 
 #include "config.h"
-
 #include "WorkerThread.h"
 
 #include "ContentSecurityPolicyResponseHeaders.h"
-#include "DedicatedWorkerGlobalScope.h"
 #include "IDBConnectionProxy.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "SocketProvider.h"
 #include "ThreadGlobalData.h"
 #include "URL.h"
+#include "WorkerGlobalScope.h"
 #include <utility>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -99,9 +98,6 @@ WorkerThread::WorkerThread(const URL& scriptURL, const String& userAgent, const 
     , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerReportingProxy(workerReportingProxy)
     , m_startupData(std::make_unique<WorkerThreadStartupData>(scriptURL, userAgent, sourceCode, startMode, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, topOrigin))
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    , m_notificationClient(0)
-#endif
 #if ENABLE(INDEXED_DATABASE)
     , m_idbConnectionProxy(connectionProxy)
 #endif

@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerRunLoop_h
-#define WorkerRunLoop_h
+#pragma once
 
 #include "ScriptExecutionContext.h"
 #include <memory>
@@ -92,5 +91,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerRunLoop_h

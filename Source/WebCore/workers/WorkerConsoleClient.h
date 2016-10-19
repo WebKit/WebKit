@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerConsoleClient_h
-#define WorkerConsoleClient_h
+#pragma once
 
 #include "WorkerGlobalScope.h"
 #include <runtime/ConsoleClient.h>
@@ -57,5 +56,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WorkerConsoleClient_h

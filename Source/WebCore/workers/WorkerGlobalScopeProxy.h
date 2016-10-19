@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerGlobalScopeProxy_h
-#define WorkerGlobalScopeProxy_h
+#pragma once
 
 #include "MessagePort.h"
 #include "WorkerThread.h"
@@ -63,5 +62,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerGlobalScopeProxy_h

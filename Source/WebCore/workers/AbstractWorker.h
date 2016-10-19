@@ -28,14 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AbstractWorker_h
-#define AbstractWorker_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -62,5 +60,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // AbstractWorker_h

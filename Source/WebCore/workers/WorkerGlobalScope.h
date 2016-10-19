@@ -34,7 +34,6 @@
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
 #include <memory>
-#include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,7 +45,6 @@ class ConsoleMessage;
 
 namespace WebCore {
 
-class Blob;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class ScheduledAction;
@@ -164,7 +162,7 @@ protected:
 
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) override;
     void addMessageToWorkerConsole(std::unique_ptr<Inspector::ConsoleMessage>);
-    void addMessageToWorkerConsole(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0);
+    void addMessageToWorkerConsole(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0);
 
 private:
     void refScriptExecutionContext() override { ref(); }
@@ -173,7 +171,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = 0, unsigned long requestIdentifier = 0) override;
+    void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) override;
 
     EventTarget* errorEventTarget() override;
 

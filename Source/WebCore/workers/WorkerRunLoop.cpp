@@ -116,7 +116,7 @@ public:
     {
         m_runLoop.m_nestedCount--;
         if (!m_runLoop.m_nestedCount)
-            threadGlobalData().threadTimers().setSharedTimer(0);
+            threadGlobalData().threadTimers().setSharedTimer(nullptr);
     }
 private:
     WorkerRunLoop& m_runLoop;

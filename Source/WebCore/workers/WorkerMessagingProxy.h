@@ -21,11 +21,9 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- *
  */
 
-#ifndef WorkerMessagingProxy_h
-#define WorkerMessagingProxy_h
+#pragma once
 
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScopeProxy.h"
@@ -42,7 +40,6 @@ namespace WebCore {
 
     class ContentSecurityPolicyResponseHeaders;
     class DedicatedWorkerThread;
-    class ScriptExecutionContext;
     class Worker;
 
     class WorkerMessagingProxy : public WorkerGlobalScopeProxy, public WorkerObjectProxy, public WorkerLoaderProxy {
@@ -84,11 +81,6 @@ namespace WebCore {
         virtual ~WorkerMessagingProxy();
 
     private:
-        friend class MessageWorkerTask;
-        friend class WorkerGlobalScopeDestroyedTask;
-        friend class WorkerExceptionTask;
-        friend class WorkerThreadActivityReportTask;
-
         void workerGlobalScopeDestroyedInternal();
         void reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity);
         Worker* workerObject() const { return m_workerObject; }
@@ -107,5 +99,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerMessagingProxy_h

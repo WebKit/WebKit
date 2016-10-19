@@ -22,28 +22,24 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- *
  */
 
 #include "config.h"
-
 #include "WorkerScriptLoader.h"
 
 #include "ContentSecurityPolicy.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
-#include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
 #include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 WorkerScriptLoader::WorkerScriptLoader()
-    : m_client(0)
+    : m_client(nullptr)
     , m_failed(false)
     , m_identifier(0)
     , m_finishing(false)
@@ -114,7 +110,7 @@ const URL& WorkerScriptLoader::responseURL() const
 std::unique_ptr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     auto request = std::make_unique<ResourceRequest>(m_url);
-    request->setHTTPMethod("GET");
+    request->setHTTPMethod(ASCIILiteral("GET"));
     return request;
 }
     
@@ -137,9 +133,9 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
 
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
-            m_decoder = TextResourceDecoder::create("text/javascript", m_responseEncoding);
+            m_decoder = TextResourceDecoder::create(ASCIILiteral("text/javascript"), m_responseEncoding);
         else
-            m_decoder = TextResourceDecoder::create("text/javascript", "UTF-8");
+            m_decoder = TextResourceDecoder::create(ASCIILiteral("text/javascript"), "UTF-8");
     }
 
     if (!len)

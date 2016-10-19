@@ -1,3 +1,13 @@
+2016-10-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup WebCore/workers
+        https://bugs.webkit.org/show_bug.cgi?id=163635
+
+        Reviewed by Chris Dumez.
+
+        * workers/*:
+        Cleanup like pragma once, nullptr, remove stale includes, declarations.
+
 2016-10-19  Chris Dumez  <cdumez@apple.com>
 
         MouseEvent's coordinates should be 0 for simulated clicks

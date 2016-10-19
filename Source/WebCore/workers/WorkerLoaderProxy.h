@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerLoaderProxy_h
-#define WorkerLoaderProxy_h
+#pragma once
 
 #include "ScriptExecutionContext.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -55,5 +53,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerLoaderProxy_h

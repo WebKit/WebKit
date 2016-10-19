@@ -190,7 +190,7 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread>
 
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
-    m_workerObject = 0;
+    m_workerObject = nullptr;
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         m_mayBeDestroyed = true;
         if (m_workerThread)
@@ -218,12 +218,10 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         workerGlobalScopeDestroyedInternal();
     });
-    // Will execute workerGlobalScopeDestroyedInternal() on context's thread.
 }
 
 void WorkerMessagingProxy::workerGlobalScopeClosed()
 {
-    // Executes terminateWorkerGlobalScope() on parent context's thread.
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         terminateWorkerGlobalScope();
     });
@@ -231,7 +229,7 @@ void WorkerMessagingProxy::workerGlobalScopeClosed()
 
 void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
 {
-    // WorkerGlobalScopeDestroyedTask is always the last to be performed, so the proxy is not needed for communication
+    // This is always the last task to be performed, so the proxy is not needed for communication
     // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
     m_askedToTerminate = true;
     m_workerThread = nullptr;
@@ -255,7 +253,6 @@ void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivit
     m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(true, hasPendingActivity);
     });
-    // Will execute reportPendingActivityInternal() on context's thread.
 }
 
 void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
@@ -263,7 +260,6 @@ void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
     m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(false, hasPendingActivity);
     });
-    // Will execute reportPendingActivityInternal() on context's thread.
 }
 
 void WorkerMessagingProxy::reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity)

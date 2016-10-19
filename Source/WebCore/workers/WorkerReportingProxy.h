@@ -28,11 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerReportingProxy_h
-#define WorkerReportingProxy_h
+#pragma once
 
 #include <runtime/ConsoleTypes.h>
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -53,5 +51,3 @@ namespace WebCore {
     };
 
 } // namespace WebCore
-
-#endif // WorkerReportingProxy_h

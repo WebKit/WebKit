@@ -28,18 +28,13 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
-#include "ActiveDOMObject.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
 #include "DOMTimer.h"
-#include "DOMURL.h"
-#include "DOMWindow.h"
-#include "ErrorEvent.h"
 #include "Event.h"
 #include "ExceptionCode.h"
 #include "IDBConnectionProxy.h"
 #include "InspectorConsoleInstrumentation.h"
-#include "MessagePort.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -49,18 +44,12 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
-#include "WorkerObjectProxy.h"
+#include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include "WorkerThreadableLoader.h"
-#include <bindings/ScriptValue.h>
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
-#include <wtf/RefPtr.h>
-
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-#include "NotificationCenter.h"
-#endif
 
 using namespace Inspector;
 
@@ -289,7 +278,7 @@ void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel lev
     }
 
     thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, 0, 0, String());
-    addMessageToWorkerConsole(source, level, message, String(), 0, 0, 0, 0, requestIdentifier);
+    addMessageToWorkerConsole(source, level, message, String(), 0, 0, nullptr, nullptr, requestIdentifier);
 }
 
 void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -352,7 +341,7 @@ void WorkerGlobalScope::Observer::stopObserving()
         return;
     ASSERT(m_context->isContextThread());
     m_context->unregisterObserver(this);
-    m_context = 0;
+    m_context = nullptr;
 }
 
 void WorkerGlobalScope::registerObserver(Observer* observer)

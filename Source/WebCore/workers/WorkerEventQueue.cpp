@@ -21,23 +21,20 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- *
  */
 
 #include "config.h"
 #include "WorkerEventQueue.h"
 
-#include "DOMWindow.h"
-#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "EventTarget.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
 WorkerEventQueue::WorkerEventQueue(ScriptExecutionContext& context)
     : m_scriptExecutionContext(context)
-    , m_isClosed(false)
 {
 }
 
@@ -52,7 +49,6 @@ public:
     EventDispatcher(RefPtr<Event>&& event, WorkerEventQueue& eventQueue)
         : m_event(WTFMove(event))
         , m_eventQueue(eventQueue)
-        , m_isCancelled(false)
     {
     }
 
@@ -80,7 +76,7 @@ public:
 private:
     RefPtr<Event> m_event;
     WorkerEventQueue& m_eventQueue;
-    bool m_isCancelled;
+    bool m_isCancelled { false };
 };
 
 bool WorkerEventQueue::enqueueEvent(Ref<Event>&& event)
@@ -115,4 +111,4 @@ void WorkerEventQueue::close()
     m_eventDispatcherMap.clear();
 }
 
-}
+} // namespace WebCore
