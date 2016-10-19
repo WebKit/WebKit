@@ -640,10 +640,14 @@ NEVER_INLINE ParkingLot::ParkResult ParkingLot::parkConditionallyImpl(
 
     // Make sure that no matter what, me->address is null after this point.
     {
-        std::lock_guard<std::mutex> locker(me->parkingLock);
+        std::unique_lock<std::mutex> locker(me->parkingLock);
         if (!didDequeue) {
-            // If we were unparked then our address would have been reset by the unparker.
-            RELEASE_ASSERT(!me->address);
+            // If we did not dequeue ourselves, then someone else did. They will set our address to
+            // null. We don't want to proceed until they do this, because otherwise, they may set
+            // our address to null in some distant future when we're already trying to wait for
+            // other things.
+            while (me->address)
+                me->parkingCondition.wait(locker);
         }
         me->address = nullptr;
     }
@@ -735,6 +739,7 @@ NEVER_INLINE void ParkingLot::unparkOneImpl(
         std::unique_lock<std::mutex> locker(threadData->parkingLock);
         threadData->address = nullptr;
     }
+    // At this point, the threadData may die. Good thing we have a RefPtr<> on it.
     threadData->parkingCondition.notify_one();
 }
 
