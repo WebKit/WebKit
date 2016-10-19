@@ -385,11 +385,6 @@ void NetworkDataTask::setSuggestedFilename(const String& suggestedName)
     m_suggestedFilename = suggestedName;
 }
 
-WebCore::ResourceRequest NetworkDataTask::currentRequest()
-{
-    return [m_task currentRequest];
-}
-
 void NetworkDataTask::cancel()
 {
     [m_task cancel];

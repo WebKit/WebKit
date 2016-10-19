@@ -133,7 +133,6 @@ public:
     const String& pendingDownloadLocation() { return m_pendingDownloadLocation; }
 
     const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
-    WebCore::ResourceRequest currentRequest();
     String suggestedFilename();
     void setSuggestedFilename(const String&);
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);

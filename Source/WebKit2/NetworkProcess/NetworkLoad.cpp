@@ -189,12 +189,13 @@ void NetworkLoad::convertTaskToDownload(DownloadID downloadID, const ResourceReq
     if (!m_task)
         return;
 
-    NetworkProcess::singleton().downloadManager().downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(updatedRequest, String()), downloadID.downloadID());
+    m_currentRequest = updatedRequest;
+    NetworkProcess::singleton().downloadManager().downloadProxyConnection()->send(Messages::DownloadProxy::DidStart(m_currentRequest, String()), downloadID.downloadID());
     m_task->setPendingDownloadID(downloadID);
     
     ASSERT(m_responseCompletionHandler);
     if (m_responseCompletionHandler)
-        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), std::exchange(m_responseCompletionHandler, nullptr), updatedRequest, response);
+        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), std::exchange(m_responseCompletionHandler, nullptr), response);
 }
 
 void NetworkLoad::setPendingDownloadID(DownloadID downloadID)
@@ -271,7 +272,7 @@ void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, 
 {
     ASSERT(isMainThread());
     if (m_task && m_task->pendingDownloadID().downloadID())
-        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), m_task->currentRequest(), response);
+        NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
     else if (sharedDidReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);
     else

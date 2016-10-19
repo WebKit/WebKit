@@ -1,5 +1,25 @@
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        NetworkSession: updatedRequest parameter of NetworkProcess::findPendingDownloadLocation is unused since r206988
+        https://bugs.webkit.org/show_bug.cgi?id=163588
+
+        Reviewed by Alex Christensen.
+
+        The parameter was used only for the DownloadProxy::DidStart message that is no longer sent from
+        findPendingDownloadLocation since r206988.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::currentRequest): Removed since it's unused now.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::convertTaskToDownload): Update the m_currentRequest and pass it to DidStart message.
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm: Remove currentRequest() implementation.
+
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r207522.
 
         * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
