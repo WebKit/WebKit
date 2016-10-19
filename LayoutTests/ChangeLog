@@ -1,3 +1,17 @@
+2016-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207557.
+
+        This change caused animations/font-variations tests to time
+        out on pre-Sierra Macs.
+
+        Reverted changeset:
+
+        "[macOS] [iOS] Disable variation fonts on macOS El Capitan and
+        iOS 9"
+        https://bugs.webkit.org/show_bug.cgi?id=163374
+        http://trac.webkit.org/changeset/207557
+
 2016-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: crash: com.apple.WebCore: WebCore::AccessibilityObject::findMatchingObjects + 600
