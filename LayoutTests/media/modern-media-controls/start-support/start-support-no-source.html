@@ -30,13 +30,11 @@
 <script src="../../../../Source/WebCore/Modules/modern-media-controls/media/start-support.js" type="text/javascript"></script>
 <script src="../../../../Source/WebCore/Modules/modern-media-controls/main.js" type="text/javascript"></script>
 <body>
-<video src="../../content/test.mp4" style="width: 320px; height: 240px;"></video>
+<video style="width: 320px; height: 240px;"></video>
 <div id="shadow"></div>
 <script type="text/javascript">
 
-window.jsTestIsAsync = true;
-
-description("Testing the <code>MediaController</code> resizing behavior.");
+description("Testing the <code>StartSupport</code> behavior with no source.");
 
 iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
 
@@ -44,30 +42,10 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
-let numberOfFrames = 0;
-scheduler.frameDidFire = function()
-{
-    numberOfFrames++;
+shouldBeFalse("mediaController.controls.showsStartButton");
 
-    if (numberOfFrames == 1) {
-        debug("Checking initial size");
-        shouldBe("mediaController.controls.width", "320");
-        shouldBe("mediaController.controls.height", "240");
-        
-        debug("");
-        debug("Resizing to 400x300");
-        media.style.width = "400px";
-        media.style.height = "300px";
-    } else {
-        shouldBe("mediaController.controls.width", "400");
-        shouldBe("mediaController.controls.height", "300");
-
-        debug("");
-        shadowRoot.host.remove();
-        media.remove();
-        finishJSTest();
-    }
-};
+shadowRoot.host.remove();
+media.remove();
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

@@ -36,7 +36,7 @@
 
 window.jsTestIsAsync = true;
 
-description("Testing the <code>MediaController</code> resizing behavior.");
+description("Testing the <code>MediaController</code> click-to-start behavior.");
 
 iconService.directoryPath = "../../../../Source/WebCore/Modules/modern-media-controls/images";
 
@@ -44,30 +44,22 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
-let numberOfFrames = 0;
-scheduler.frameDidFire = function()
-{
-    numberOfFrames++;
+media.addEventListener("loadedmetadata", function() {
+    shouldBeTrue("mediaController.controls.showsStartButton");
+    debug("");
+    debug("Dispatching click event to the start button");
+    mediaController.controls.startButton.element.click();
+});
 
-    if (numberOfFrames == 1) {
-        debug("Checking initial size");
-        shouldBe("mediaController.controls.width", "320");
-        shouldBe("mediaController.controls.height", "240");
-        
-        debug("");
-        debug("Resizing to 400x300");
-        media.style.width = "400px";
-        media.style.height = "300px";
-    } else {
-        shouldBe("mediaController.controls.width", "400");
-        shouldBe("mediaController.controls.height", "300");
+media.addEventListener("play", function() {
+    debug("Media is playing");
+    shouldBeFalse("mediaController.controls.showsStartButton");
+    debug("");
+    shadowRoot.host.remove();
+    media.remove();
+    finishJSTest();
+});
 
-        debug("");
-        shadowRoot.host.remove();
-        media.remove();
-        finishJSTest();
-    }
-};
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

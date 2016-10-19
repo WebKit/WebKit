@@ -23,51 +23,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class StartSupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new StartSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.startButton;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        return ["loadedmetadata", "play", "error", "webkitfullscreenchange"];
+    }
+
+    buttonWasClicked(control)
+    {
+        this.mediaController.media.play();
     }
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        if (event.type === "play")
+            this._hasPlayed = true;
+
+        super.handleEvent(event);
+    }
+
+    syncControl()
+    {
+        this.mediaController.controls.showsStartButton = this._shouldShowStartButton();
     }
 
     // Private
 
-    _updateControlsSize()
+    _shouldShowStartButton()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        const media = this.mediaController.media;
+
+        if (this._hasPlayed)
+            return false;
+
+        if (!media.paused)
+            return false;
+
+        if (media.autoplay)
+            return false;
+
+        if (media instanceof HTMLAudioElement)
+            return false;
+
+        if (media.webkitDisplayingFullscreen)
+            return false;
+
+        if (!media.currentSrc)
+            return false;
+
+        if (media.error)
+            return false;
+
+        const host = this.mediaController.host;
+        if (!media.controls && host && host.allowsInlineMediaPlayback)
+            return false;
+
+        return true;
     }
 
 }

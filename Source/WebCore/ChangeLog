@@ -1,3 +1,51 @@
+2016-10-19  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: click-to-start support
+        https://bugs.webkit.org/show_bug.cgi?id=163659
+        <rdar://problem/28845656>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the MediaControllerSupport class which will allow a number of media controller
+        features to be implemented by subclasses each devoted to implementing a specific subset of
+        media controller features. With this bug, we add the correct behavior for click-to-start,
+        only showing the start button under the right circumstances.
+
+        A MediaController object indicates which media control to attach click event listeners to
+        through the `control` property, and a list of media events it should register on the media
+        element through the `mediaEvents` property. Then, as the user interacts with the specified
+        control and the media, the Button delegation method `buttonWasClicked()` and the `syncControl()`
+        methods are called to allow for the media state to be correctly set and represented in the
+        media controls. Custom event handling for the specified events can also be achieved by
+        subclassing the `handleEvent()` method.
+
+        Tests: media/modern-media-controls/start-support/start-support-audio.html
+               media/modern-media-controls/start-support/start-support-autoplay.html
+               media/modern-media-controls/start-support/start-support-click-to-start.html
+               media/modern-media-controls/start-support/start-support-error.html
+               media/modern-media-controls/start-support/start-support-fullscreen.html
+               media/modern-media-controls/start-support/start-support-manual-play.html
+               media/modern-media-controls/start-support/start-support-no-source.html
+
+        * Modules/modern-media-controls/media/media-controller-support.js: Added.
+        (MediaControllerSupport):
+        (MediaControllerSupport.prototype.get control):
+        (MediaControllerSupport.prototype.get mediaEvents):
+        (MediaControllerSupport.prototype.buttonWasClicked):
+        (MediaControllerSupport.prototype.handleEvent):
+        (MediaControllerSupport.prototype.syncControl):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        (MediaController.prototype.buttonWasClicked): Deleted.
+        * Modules/modern-media-controls/media/start-support.js: Added.
+        (StartSupport.prototype.get control):
+        (StartSupport.prototype.get mediaEvents):
+        (StartSupport.prototype.buttonWasClicked):
+        (StartSupport.prototype.handleEvent):
+        (StartSupport.prototype.syncControl):
+        (StartSupport.prototype._shouldShowStartButton):
+        (StartSupport):
+
 2016-10-19  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: expose computed tree node and heading level

@@ -23,51 +23,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class MediaControllerSupport
 {
 
-    constructor(shadowRoot, media, host)
+    constructor(mediaController)
     {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
+        this.mediaController = mediaController;
 
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
+        for (let eventType of this.mediaEvents)
+            mediaController.media.addEventListener(eventType, this);
 
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
+        if (!this.control)
+            return;
 
-        new StartSupport(this);
+        this.control.uiDelegate = this;
 
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
+        this.syncControl();
     }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        // Implemented by subclasses.
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        // Implemented by subclasses.
+        return [];
+    }
+
+    buttonWasClicked(control)
+    {
+        // Implemented by subclasses.
     }
 
     handleEvent(event)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        // Implemented by subclasses.
+        if (this.control)
+            this.syncControl();
     }
 
-    // Private
-
-    _updateControlsSize()
+    syncControl()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        // Implemented by subclasses.
     }
-
 }

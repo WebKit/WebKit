@@ -1,3 +1,31 @@
+2016-10-19  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: click-to-start support
+        https://bugs.webkit.org/show_bug.cgi?id=163659
+        <rdar://problem/28845656>
+
+        Reviewed by Dean Jackson.
+
+        New test coverage for the StartSupport class.
+
+        * media/modern-media-controls/media-controller/media-controller-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/start-support/start-support-audio-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-audio.html: Added.
+        * media/modern-media-controls/start-support/start-support-autoplay-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-autoplay.html: Added.
+        * media/modern-media-controls/start-support/start-support-click-to-start-expected.txt: Renamed from LayoutTests/media/modern-media-controls/media-controller/media-controller-click-to-start-expected.txt.
+        * media/modern-media-controls/start-support/start-support-click-to-start.html: Renamed from LayoutTests/media/modern-media-controls/media-controller/media-controller-click-to-start.html.
+        * media/modern-media-controls/start-support/start-support-error-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-error.html: Added.
+        * media/modern-media-controls/start-support/start-support-fullscreen-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-fullscreen.html: Added.
+        * media/modern-media-controls/start-support/start-support-manual-play-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-manual-play.html: Added.
+        * media/modern-media-controls/start-support/start-support-no-source-expected.txt: Added.
+        * media/modern-media-controls/start-support/start-support-no-source.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-19  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: expose computed tree node and heading level
