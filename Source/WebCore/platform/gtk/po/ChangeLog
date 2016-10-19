@@ -1,3 +1,12 @@
+2016-10-19  Gabor Kelemen  <kelemeng@ubuntu.com>
+
+        [GTK] [L10n] Updated Hungarian translation
+        https://bugs.webkit.org/show_bug.cgi?id=163650
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * hu.po:
+
 2016-09-25  Benedikt M. Thoma  <gnome@thomba.net>
 
         [GTK] German translation update
