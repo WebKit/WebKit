@@ -1,3 +1,12 @@
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build with GCC 4.9 after r207463.
+
+        Add constructors to MediaConstraintsData.
+
+        * Modules/mediastream/MediaConstraintsImpl.h:
+        (WebCore::MediaConstraintsData::MediaConstraintsData):
+
 2016-10-19  Jer Noble  <jer.noble@apple.com>
 
         [Mac][MSE] Movies with a 'mehd' box have a zero-duration

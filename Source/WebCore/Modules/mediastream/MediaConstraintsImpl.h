@@ -40,6 +40,14 @@
 namespace WebCore {
 
 struct MediaConstraintsData {
+    MediaConstraintsData() = default;
+    MediaConstraintsData(MediaTrackConstraintSetMap&& mandatoryConstraints, Vector<MediaTrackConstraintSetMap>&& advancedConstraints, bool isValid)
+        : mandatoryConstraints(WTFMove(mandatoryConstraints))
+        , advancedConstraints(WTFMove(advancedConstraints))
+        , isValid(isValid)
+    {
+    }
+
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;
     bool isValid { false };
