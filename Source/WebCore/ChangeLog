@@ -1,3 +1,11 @@
+2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the status of shadow DOM API to "Done" with a comment saying we're still fixing bugs.
+
+        Also update my contact information since I'm no longer on Twitter.
+
+        * features.json:
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         Provide better form validation messages
