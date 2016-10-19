@@ -1,3 +1,21 @@
+2016-10-19  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix background-position parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163681
+
+        Reviewed by Dean Jackson.
+
+        The new parser has a more efficient parsed representation of background positions. When
+        background-position is "center" or when no length unit is specified for a dimension,
+        then rather than creating a pair, the new parser makes a singleton primitive value.
+
+        Patch the StyleBuilder code to handle this case, resolving center to (left,50%) or
+        (top,50%) as appropriate and also handling top/left without any associated length.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+
 2016-10-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: click-to-start support

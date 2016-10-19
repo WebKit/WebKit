@@ -238,6 +238,15 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
         primitiveValue = pair->second();
+    } else if (primitiveValue->isValueID()) {
+        if (primitiveValue->valueID() == CSSValueCenter) {
+            layer.setBackgroundXOrigin(Edge::Left);
+            layer.setXPosition(Length(50, Percent));
+        } else {
+            layer.setBackgroundXOrigin(*primitiveValue);
+            layer.setXPosition(Length());
+        }
+        return;
     }
 
     Length length;
@@ -270,6 +279,15 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     if (pair) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
         primitiveValue = pair->second();
+    } else if (primitiveValue->isValueID()) {
+        if (primitiveValue->valueID() == CSSValueCenter) {
+            layer.setBackgroundYOrigin(Edge::Top);
+            layer.setYPosition(Length(50, Percent));
+        } else {
+            layer.setBackgroundYOrigin(*primitiveValue);
+            layer.setYPosition(Length());
+        }
+        return;
     }
 
     Length length;
