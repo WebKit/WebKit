@@ -1,3 +1,10 @@
+2016-10-18  Dave Hyatt  <hyatt@apple.com>
+
+        Fix GTK build.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-10-18  Sam Weinig  <sam@webkit.org>
 
         Simplify SerializedScriptValue, MessagePortArray and ArrayBufferArray to ease generation

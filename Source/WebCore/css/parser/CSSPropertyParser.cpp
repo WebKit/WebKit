@@ -3263,7 +3263,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeReflect(m_range, m_context);
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:
-        return consumeImageOrientation(m_range);
+        return consumeImageOrientation(m_range, m_context.mode);
 #endif
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundBlendMode:
