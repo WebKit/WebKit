@@ -854,6 +854,8 @@ WebView *createWebViewAndOffscreenWindow()
     }
 #endif
 
+    [webView setMediaVolume:0];
+
     return webView;
 }
 

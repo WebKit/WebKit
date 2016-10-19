@@ -753,6 +753,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, TestController::viewWidth, TestController::viewHeight));
 #endif
 
+    WKPageSetMuted(m_mainWebView->page(), true);
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
 

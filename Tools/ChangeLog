@@ -1,3 +1,15 @@
+2016-10-19  Jer Noble  <jer.noble@apple.com>
+
+        Modify testrunner to mute audio during tests
+        https://bugs.webkit.org/show_bug.cgi?id=162582
+
+        Reviewed by Alexey Proskuryakov.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2016-10-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         check-webkit-style: fix false-positive warnings about using #pragma once header guard
