@@ -505,8 +505,8 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     if (UNLIKELY(state.argumentCount() < 2))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    MessagePortArray messagePorts;
-    ArrayBufferArray arrayBuffers;
+    Vector<RefPtr<MessagePort>> messagePorts;
+    Vector<RefPtr<JSC::ArrayBuffer>> arrayBuffers;
 
     // This function has variable arguments and can be:
     // Per current spec:
@@ -521,11 +521,11 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
             targetOriginArgIndex = 2;
             transferablesArgIndex = 1;
         }
-        fillMessagePortArray(state, state.argument(transferablesArgIndex), messagePorts, arrayBuffers);
+        extractTransferables(state, state.argument(transferablesArgIndex), messagePorts, arrayBuffers);
     }
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto message = SerializedScriptValue::create(&state, state.uncheckedArgument(0), &messagePorts, &arrayBuffers);
+    auto message = SerializedScriptValue::create(state, state.uncheckedArgument(0), messagePorts, WTFMove(arrayBuffers));
 
     RETURN_IF_EXCEPTION(scope, JSValue());
 
@@ -533,7 +533,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     ExceptionCode ec = 0;
-    impl.postMessage(WTFMove(message), &messagePorts, targetOrigin, callerDOMWindow(&state), ec);
+    impl.postMessage(WTFMove(message), WTFMove(messagePorts), targetOrigin, callerDOMWindow(&state), ec);
     setDOMException(&state, ec);
 
     return jsUndefined();

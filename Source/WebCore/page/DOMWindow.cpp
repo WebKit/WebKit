@@ -906,7 +906,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
     return m_localStorage.get();
 }
 
-void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray* ports, const String& targetOrigin, DOMWindow& source, ExceptionCode& ec)
+void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, Vector<RefPtr<MessagePort>>&& ports, const String& targetOrigin, DOMWindow& source, ExceptionCode& ec)
 {
     if (!isCurrentlyDisplayedInFrame())
         return;
@@ -930,7 +930,7 @@ void DOMWindow::postMessage(PassRefPtr<SerializedScriptValue> message, const Mes
         }
     }
 
-    auto channels = MessagePort::disentanglePorts(ports, ec);
+    auto channels = MessagePort::disentanglePorts(WTFMove(ports), ec);
     if (ec)
         return;
 

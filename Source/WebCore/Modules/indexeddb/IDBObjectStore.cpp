@@ -236,7 +236,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     if (m_transaction->isReadOnly())
         return Exception { IDBDatabaseException::ReadOnlyError, ASCIILiteral("Failed to store record in an IDBObjectStore: The transaction is read-only.") };
 
-    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(&state, value, nullptr, nullptr);
+    auto serializedValue = SerializedScriptValue::create(state, value);
     if (UNLIKELY(scope.exception())) {
         // Clear the DOM exception from the serializer so we can give a more targeted exception.
         scope.clearException();

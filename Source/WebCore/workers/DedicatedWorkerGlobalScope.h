@@ -53,7 +53,7 @@ namespace WebCore {
         // EventTarget
         EventTargetInterface eventTargetInterface() const override;
 
-        void postMessage(RefPtr<SerializedScriptValue>&&, const MessagePortArray*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&&, Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
 
         DedicatedWorkerThread& thread();
 

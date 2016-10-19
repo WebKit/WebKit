@@ -107,10 +107,10 @@ Worker::~Worker()
     m_contextProxy->workerObjectDestroyed();
 }
 
-void Worker::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
+void Worker::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports, ExceptionCode& ec)
 {
     // Disentangle the port in preparation for sending it to the remote context.
-    auto channels = MessagePort::disentanglePorts(ports, ec);
+    auto channels = MessagePort::disentanglePorts(WTFMove(ports), ec);
     if (ec)
         return;
     m_contextProxy->postMessageToWorkerGlobalScope(WTFMove(message), WTFMove(channels));

@@ -1,3 +1,103 @@
+2016-10-18  Sam Weinig  <sam@webkit.org>
+
+        Simplify SerializedScriptValue, MessagePortArray and ArrayBufferArray to ease generation
+        https://bugs.webkit.org/show_bug.cgi?id=163625
+
+        Reviewed by Chris Dumez.
+
+        - Replace uses of MessagePortArray (a.k.a. Vector<RefPtr<MessagePort>, 1>) with Vector<RefPtr<MessagePort>>.
+        - Replace uses of ArrayBufferArray (a.k.a. Vector<RefPtr<ArrayBuffer>, 1>) with Vector<RefPtr<ArrayBuffer>>.
+        - Add convenience functions to SerializedScriptValue to allow calling with fewer parameters.
+        - Move MessagePorts and ArrayBuffers more where possible.
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::putOrAdd):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValueToJSValue):
+        * bindings/js/JSCustomEventCustom.cpp:
+        (WebCore::JSCustomEvent::detail):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::state):
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state):
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::trySerializeDetail):
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::sanitizedErrorValue):
+        (WebCore::ErrorEvent::trySerializeError):
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::trySerializeState):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/DOMWindow.h:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+        * workers/Worker.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDictionary.h:
+        Updated for new SerializedScriptValue interface/vector naming.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        Update handleInitMessageEvent to check for exceptions and use convert for the MessagePort sequence.
+
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::extractTransferables):
+        (WebCore::fillMessagePortArray): Deleted.
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage):
+        Rename fillMessagePortArray to extractTransferables to better express what it does.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::CloneSerializer):
+        (WebCore::CloneSerializer::fillTransferMap):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readTerminal):
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        * bindings/js/SerializedScriptValue.h:
+        Simplify interface to allow more callers to avoid passing default arguments. Use ExecState& more.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetNativeVectorType):
+        Remove special case for MessagePort.
+        (JSValueToNative):
+        (NativeToJSValue):
+        Updated for new SerializedScriptValue interface.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::create):
+        (WebCore::MessageEvent::initMessageEvent):
+        (WebCore::MessageEvent::trySerializeData):
+        * dom/MessageEvent.h:
+        Store the MessagePort sequence as a Vector<RefPtr<MessagePort>> rather than in a unique_ptr.
+
+        * dom/MessageEvent.idl:
+        Update last type in init functions to be sequence<MessagePort> rather than Array. They are still
+        custom, as we don't quite generate these correctly yet. 
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::disentanglePorts):
+        (WebCore::MessagePort::entanglePorts):
+        * dom/MessagePort.h:
+        Update interface to take MessagePort vectors by rvalue reference.
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Drop JSDictionary::convertValue() overload taking a TouchList

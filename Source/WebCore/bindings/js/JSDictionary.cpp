@@ -30,10 +30,11 @@
 #include "DOMWindow.h"
 #include "Dictionary.h"
 #include "JSCSSFontFaceRule.h"
+#include "JSDOMConvert.h"
 #include "JSDOMError.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
-#include "JSMessagePortCustom.h"
+#include "JSMessagePort.h"
 #include "JSNode.h"
 #include "JSStorage.h"
 #include "JSTrackCustom.h"
@@ -177,7 +178,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, Deprecated::Scri
 
 void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)
 {
-    result = SerializedScriptValue::create(exec, value, 0, 0);
+    result = SerializedScriptValue::create(*exec, value);
 }
 
 void JSDictionary::convertValue(ExecState* state, JSValue value, RefPtr<DOMWindow>& result)
@@ -208,10 +209,9 @@ void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& resu
     result = JSStorage::toWrapped(value);
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
+void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<RefPtr<MessagePort>>& result)
 {
-    ArrayBufferArray arrayBuffers;
-    fillMessagePortArray(*exec, value, result, arrayBuffers);
+    result = convert<IDLSequence<IDLInterface<MessagePort>>>(*exec, value);
 }
 
 #if ENABLE(VIDEO_TRACK)

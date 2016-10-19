@@ -48,7 +48,7 @@ JSValue JSHistory::state(ExecState& state) const
         return cachedValue;
 
     RefPtr<SerializedScriptValue> serialized = history.state();
-    JSValue result = serialized ? serialized->deserialize(&state, globalObject(), 0) : jsNull();
+    JSValue result = serialized ? serialized->deserialize(state, globalObject()) : jsNull();
     m_state.set(state.vm(), this, result);
     return result;
 }
@@ -62,7 +62,7 @@ JSValue JSHistory::pushState(ExecState& state)
     if (UNLIKELY(argCount < 2))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
+    auto historyState = SerializedScriptValue::create(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     // FIXME: title should not be nullable.
@@ -91,7 +91,7 @@ JSValue JSHistory::replaceState(ExecState& state)
     if (UNLIKELY(argCount < 2))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    auto historyState = SerializedScriptValue::create(&state, state.uncheckedArgument(0), 0, 0);
+    auto historyState = SerializedScriptValue::create(state, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     // FIXME: title should not be nullable.

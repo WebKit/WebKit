@@ -88,8 +88,6 @@ namespace WebCore {
 
     struct WindowFeatures;
 
-    typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
-
     typedef int ExceptionCode;
 
     enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
@@ -241,7 +239,7 @@ namespace WebCore {
         void printErrorMessage(const String&);
         String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
+        void postMessage(PassRefPtr<SerializedScriptValue> message, Vector<RefPtr<MessagePort>>&&, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
         void postMessageTimerFired(PostMessageTimer&);
         void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
 

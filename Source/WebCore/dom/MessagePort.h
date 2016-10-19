@@ -42,15 +42,12 @@ namespace WebCore {
     class MessagePort;
     class ScriptExecutionContext;
 
-    // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
-    typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
-
     class MessagePort final : public RefCounted<MessagePort>, public EventTargetWithInlineData {
     public:
         static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
         virtual ~MessagePort();
 
-        void postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
 
         void start();
         void close();
@@ -59,10 +56,9 @@ namespace WebCore {
         std::unique_ptr<MessagePortChannel> disentangle();
 
         // Returns 0 if there is an exception, or if the passed-in array is 0/empty.
-        static std::unique_ptr<MessagePortChannelArray> disentanglePorts(const MessagePortArray*, ExceptionCode&);
+        static std::unique_ptr<MessagePortChannelArray> disentanglePorts(Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
 
-        // Returns 0 if the passed array is 0/empty.
-        static std::unique_ptr<MessagePortArray> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>);
+        static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>);
 
         void messageAvailable();
         bool started() const { return m_started; }

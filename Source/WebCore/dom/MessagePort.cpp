@@ -53,7 +53,7 @@ MessagePort::~MessagePort()
         m_scriptExecutionContext->destroyedMessagePort(*this);
 }
 
-void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
+void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports, ExceptionCode& ec)
 {
     if (!isEntangled())
         return;
@@ -61,14 +61,14 @@ void MessagePort::postMessage(RefPtr<SerializedScriptValue>&& message, const Mes
 
     std::unique_ptr<MessagePortChannelArray> channels;
     // Make sure we aren't connected to any of the passed-in ports.
-    if (ports) {
-        for (auto& dataPort : *ports) {
+    if (!ports.isEmpty()) {
+        for (auto& dataPort : ports) {
             if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort.get())) {
                 ec = DATA_CLONE_ERR;
                 return;
             }
         }
-        channels = MessagePort::disentanglePorts(ports, ec);
+        channels = MessagePort::disentanglePorts(WTFMove(ports), ec);
         if (ec)
             return;
     }
@@ -152,7 +152,7 @@ void MessagePort::dispatchMessages()
         if (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
             return;
 
-        std::unique_ptr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(channels));
+        Vector<RefPtr<MessagePort>> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(channels));
         Ref<Event> event = MessageEvent::create(WTFMove(ports), WTFMove(message));
         dispatchEvent(event);
     }
@@ -174,16 +174,16 @@ MessagePort* MessagePort::locallyEntangledPort()
     return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : nullptr;
 }
 
-std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessagePortArray* ports, ExceptionCode& ec)
+std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(Vector<RefPtr<MessagePort>>&& ports, ExceptionCode& ec)
 {
-    if (!ports || !ports->size())
+    if (ports.isEmpty())
         return nullptr;
 
     // HashSet used to efficiently check for duplicates in the passed-in array.
     HashSet<MessagePort*> portSet;
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
-    for (auto& port : *ports) {
+    for (auto& port : ports) {
         if (!port || port->isNeutered() || portSet.contains(port.get())) {
             ec = DATA_CLONE_ERR;
             return nullptr;
@@ -192,24 +192,25 @@ std::unique_ptr<MessagePortChannelArray> MessagePort::disentanglePorts(const Mes
     }
 
     // Passed-in ports passed validity checks, so we can disentangle them.
-    auto portArray = std::make_unique<MessagePortChannelArray>(ports->size());
-    for (unsigned int i = 0 ; i < ports->size() ; ++i) {
-        std::unique_ptr<MessagePortChannel> channel = (*ports)[i]->disentangle();
+    auto portArray = std::make_unique<MessagePortChannelArray>(ports.size());
+    for (unsigned int i = 0 ; i < ports.size() ; ++i) {
+        std::unique_ptr<MessagePortChannel> channel = ports[i]->disentangle();
         (*portArray)[i] = WTFMove(channel);
     }
     return portArray;
 }
 
-std::unique_ptr<MessagePortArray> MessagePort::entanglePorts(ScriptExecutionContext& context, std::unique_ptr<MessagePortChannelArray> channels)
+Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& context, std::unique_ptr<MessagePortChannelArray> channels)
 {
     if (!channels || !channels->size())
-        return nullptr;
+        return { };
 
-    auto portArray = std::make_unique<MessagePortArray>(channels->size());
+    Vector<RefPtr<MessagePort>> portArray;
+    portArray.reserveInitialCapacity(channels->size());
     for (unsigned int i = 0; i < channels->size(); ++i) {
         auto port = MessagePort::create(context);
         port->entangle(WTFMove((*channels)[i]));
-        (*portArray)[i] = WTFMove(port);
+        portArray.uncheckedAppend(WTFMove(port));
     }
     return portArray;
 }

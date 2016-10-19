@@ -39,11 +39,10 @@
 
     [Custom] void initMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
         optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional (DOMWindow or MessagePort)? sourceArg,
-        optional Array messagePorts);
-
+        optional sequence<MessagePort> messagePorts);
     [Custom] void webkitInitMessageEvent(optional DOMString typeArg, optional boolean canBubbleArg, optional boolean cancelableArg,
         optional any dataArg, optional USVString originArg, optional DOMString lastEventIdArg, optional (DOMWindow or MessagePort)? sourceArg,
-        optional Array transferables);
+        optional sequence<MessagePort> messagePorts);
 };
 
 dictionary MessageEventInit : EventInit {

@@ -136,7 +136,7 @@ private:
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Storage>& result);
-    static void convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, Vector<RefPtr<MessagePort>>& result);
 #if ENABLE(VIDEO_TRACK)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
 #endif

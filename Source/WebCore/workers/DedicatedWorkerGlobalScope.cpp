@@ -63,10 +63,10 @@ EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
     return DedicatedWorkerGlobalScopeEventTargetInterfaceType;
 }
 
-void DedicatedWorkerGlobalScope::postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray* ports, ExceptionCode& ec)
+void DedicatedWorkerGlobalScope::postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&& ports, ExceptionCode& ec)
 {
     // Disentangle the port in preparation for sending it to the remote context.
-    auto channels = MessagePort::disentanglePorts(ports, ec);
+    auto channels = MessagePort::disentanglePorts(WTFMove(ports), ec);
     if (ec)
         return;
     thread().workerObjectProxy().postMessageToWorkerObject(WTFMove(message), WTFMove(channels));

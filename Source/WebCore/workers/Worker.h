@@ -54,7 +54,7 @@ namespace WebCore {
 
         EventTargetInterface eventTargetInterface() const override { return WorkerEventTargetInterfaceType; }
 
-        void postMessage(RefPtr<SerializedScriptValue>&& message, const MessagePortArray*, ExceptionCode&);
+        void postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
 
         void terminate();
 

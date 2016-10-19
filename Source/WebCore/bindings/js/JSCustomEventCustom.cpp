@@ -50,7 +50,7 @@ JSValue JSCustomEvent::detail(ExecState& state) const
         auto serializedDetail = event.trySerializeDetail(state);
         if (!serializedDetail)
             return jsNull();
-        return serializedDetail->deserialize(&state, globalObject(), nullptr);
+        return serializedDetail->deserialize(state, globalObject());
     }
 
     return detail;

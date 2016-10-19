@@ -4905,7 +4905,6 @@ sub GetNativeVectorType
     die "This should only be called for sequence or array types" unless $codeGenerator->IsSequenceOrFrozenArrayType($type);
 
     my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
-    return "MessagePortArray" if $innerType eq "MessagePort";
     return "Vector<" . GetNativeVectorInnerType($innerType) . ">";
 }
 
@@ -5168,7 +5167,7 @@ sub JSValueToNative
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
-        return ("SerializedScriptValue::create($statePointer, $value, 0, 0)", 1);
+        return ("SerializedScriptValue::create($stateReference, $value)", 1);
     }
 
     if ($type eq "Dictionary") {
@@ -5274,7 +5273,7 @@ sub NativeToJSValue
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("SerializedScriptValue.h", $conditional);
-        return "$value ? $value->deserialize($statePointer, $globalObject, 0) : jsNull()";
+        return "$value ? $value->deserialize($stateReference, $globalObject) : jsNull()";
     }
 
     AddToImplIncludes("StyleProperties.h", $conditional) if $type eq "CSSStyleDeclaration";
