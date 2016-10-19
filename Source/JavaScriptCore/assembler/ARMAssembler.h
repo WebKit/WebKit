@@ -960,6 +960,11 @@ namespace JSC {
             patchPointerInternal(getAbsoluteJumpAddress(from), to);
         }
 
+        static void relinkJumpToNop(void* from)
+        {
+            relinkJump(from, from);
+        }
+
         static void linkCall(void* code, AssemblerLabel from, void* to)
         {
             patchPointerInternal(getAbsoluteJumpAddress(code, from.m_offset), to);

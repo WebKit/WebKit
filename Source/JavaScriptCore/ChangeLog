@@ -1,3 +1,10 @@
+2016-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed ARM buildfix after r207475.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::relinkJumpToNop):
+
 2016-10-18  Mark Lam  <mark.lam@apple.com>
 
         Invoking Object.prototype.__proto__ accessors directly should throw a TypeError.
