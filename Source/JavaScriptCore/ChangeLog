@@ -1,3 +1,20 @@
+2016-10-19  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] forbid "use strict" directive in generator functions with non-simple parameters
+        https://bugs.webkit.org/show_bug.cgi?id=163683
+
+        Reviewed by Geoffrey Garen.
+
+        Because generator functions and async functions both have an implicit
+        inner function whose arguments are inherited from its parent, "use strict"
+        directives within these functions did not yield a SyntaxError.
+
+        Now, the correct syntax error is reported, fixing several test262 failures
+        for generators and async functions.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+
 2016-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207557.

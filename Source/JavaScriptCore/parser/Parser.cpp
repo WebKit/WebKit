@@ -2353,6 +2353,11 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         generatorBodyScope->setConstructorKind(ConstructorKind::None);
         generatorBodyScope->setExpectedSuperBinding(expectedSuperBinding);
 
+        // Disallow 'use strict' directives in the implicit inner function if
+        // needed.
+        if (functionScope->hasNonSimpleParameterList())
+            generatorBodyScope->setHasNonSimpleParameterList();
+
         functionInfo.body = performParsingFunctionBody();
 
         // When a generator has a "use strict" directive, a generator function wrapping it should be strict mode.
