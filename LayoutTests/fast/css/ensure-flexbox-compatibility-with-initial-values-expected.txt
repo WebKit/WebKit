@@ -25,19 +25,19 @@ PASS CSS.supports('justify-content', 'normal') is true
 Verifying initial values are supported when grid is DISABLED.
 PASS CSS.supports('align-items', 'stretch') is true
 PASS CSS.supports('align-self', 'stretch') is true
-PASS CSS.supports('align-content', 'flex-start') is true
+PASS CSS.supports('align-content', 'stretch') is true
 PASS CSS.supports('justify-content', 'flex-start') is true
 PASS CSS.supports('align-items', 'stretch') is true
 PASS CSS.supports('align-self', 'stretch') is true
-PASS CSS.supports('align-content', 'flex-start') is true
+PASS CSS.supports('align-content', 'stretch') is true
 PASS CSS.supports('justify-content', 'flex-start') is true
 PASS CSS.supports('align-items', 'stretch') is true
 PASS CSS.supports('align-self', 'stretch') is true
-PASS CSS.supports('align-content', 'flex-start') is true
+PASS CSS.supports('align-content', 'stretch') is true
 PASS CSS.supports('justify-content', 'flex-start') is true
 PASS CSS.supports('align-items', 'stretch') is true
 PASS CSS.supports('align-self', 'stretch') is true
-PASS CSS.supports('align-content', 'flex-start') is true
+PASS CSS.supports('align-content', 'stretch') is true
 PASS CSS.supports('justify-content', 'flex-start') is true
 PASS successfullyParsed is true
 

@@ -1,3 +1,34 @@
+2016-10-19  Javier Fernandez  <jfernandez@igalia.com>
+
+        Web Inspector: Debugger buttons positioned incorrectly, align-content default value is unexpected
+        https://bugs.webkit.org/show_bug.cgi?id=163572
+
+        Reviewed by Sergio Villar Senin.
+
+        We only allow the new CSS Box Alignment syntax when the Grid Layout
+        feature is enabled. Due to flexbox backward compatibility we have
+        implemented a different code path for the style initial/default values
+        assignment. However, we have incorrectly resolved both align-content
+        and justify-content to 'flex-start' when grid layout is disabled.
+
+        This patch changes the approach, so we set 'normal' (the value specified
+        by the new syntax) for both properties, but using the values defined in
+        the old syntax (Flexbox specification) at computed style resolution.
+
+        Since 'stretch' is the default value for the align-content property, this
+        issue implies that any flexbox line with an undefined height will be
+        laid out incorrectly, if not explicitly set via CSS, because flex items
+        can't use the available height, even though they use 'stretch' for their
+        'align-self' properties.
+
+        Test: css3/flexbox/flexbox-lines-must-be-stretched-by-default.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialContentAlignment):
+
 2016-10-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] REGRESSION(r207396) Build broken with Clang.

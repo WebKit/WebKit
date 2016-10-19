@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<style>
+.flex-container {
+    display: flex;
+    height:100px;
+    width:200px;
+    background-color:pink;
+    flex-wrap: wrap;
+}
+.flex-item1 {
+    width: 100%;
+    background-color:blue;
+    border:1px solid;
+    border-color:red;
+}
+.flex-item2 {
+    width: 100%;
+    background-color:blue;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body>
+<p>'Test for BUG=647694 - align-content "stretch" is not applied by default when grid is disabled.'</p>
+<script>
+function runTest(gridEnabled)
+{
+    if (window.internals)
+        window.internals.setCSSGridLayoutEnabled(gridEnabled);
+
+    var flexContainer = document.createElement("div");
+    if (gridEnabled)
+        flexContainer.className += "gridEnabled flex-container";
+    else
+        flexContainer.className += "gridDisabled flex-container";
+    document.body.appendChild(flexContainer);
+
+    var flexItem1 = document.createElement("div");
+    flexItem1.id = "flexItem1";
+    flexItem1.className += "flex-item1";
+    flexItem1.setAttribute("data-expected-height", "51");
+    flexContainer.appendChild(flexItem1);
+
+    var flexItem2 = document.createElement("div");
+    flexItem2.id = "flexItem2";
+    flexItem2.className += "flex-item2";
+    flexItem2.setAttribute("data-expected-height", "49");
+    flexContainer.appendChild(flexItem2);
+
+    var br = document.createElement("br");
+    document.body.appendChild(br);
+
+    flexContainer.style.alignContent = "initial";
+
+    if (gridEnabled)
+        checkLayout('.gridEnabled');
+    else
+        checkLayout('.gridDisabled');
+}
+
+runTest(false);
+runTest(true);
+</script>
+</body>
