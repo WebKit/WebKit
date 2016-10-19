@@ -1,5 +1,17 @@
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the build after r207519.
+
+        The build error is:
+        IDL ATTRIBUTE CHECKER ERROR: Unknown IDL attribute [PassContext] is found at TestRunner.idl.
+
+        Because PassContext was removed from IDLAttributes.txt in rr207519, but it's implemented by
+        CodeGeneratorTestRunner.pm and used by TestRunner.idl.
+
+        * bindings/scripts/IDLAttributes.txt: Bring back PassContext.
+
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix the build with GCC 4.9 after r207463.
 
         Add constructors to MediaConstraintsData.
