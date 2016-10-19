@@ -1,3 +1,9 @@
+2016-10-19  Darin Adler  <darin@apple.com>
+
+        Try to fix build.
+
+        * page/PerformanceUserTiming.cpp: Add back class name; needed by some compiler versions.
+
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix the build after r207522.
