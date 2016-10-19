@@ -371,4 +371,21 @@
     [alert release];
 }
 
+- (BOOL)webView:(WebView *)sender runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    alert.messageText = [NSString stringWithFormat:@"JavaScript before unload dialog from %@.", frame.dataSource.request.URL.absoluteString];
+    alert.informativeText = message;
+
+    [alert addButtonWithTitle:@"Leave Page"];
+    [alert addButtonWithTitle:@"Stay On Page"];
+
+    NSModalResponse response = [alert runModal];
+    
+    [alert release];
+
+    return response == NSAlertFirstButtonReturn;
+}
+
 @end
