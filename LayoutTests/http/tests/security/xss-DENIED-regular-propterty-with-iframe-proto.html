@@ -15,6 +15,7 @@ targetWindow = frames[0];
 window.onload = function() {
   originalInnerHeight = innerHeight;
 
+  shouldThrowErrorName("this.__proto__ = targetWindow", "TypeError");
   shouldThrowErrorName("__proto__ = targetWindow", "TypeError");
 
   shouldBeTrue('innerHeight === originalInnerHeight');

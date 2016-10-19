@@ -110,5 +110,7 @@ shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 'x'(value){}}, 'x').set");
 shouldBeTrue("!!Object.getOwnPropertyDescriptor({set 42(value){}}, '42').set");
 
 // __proto__ shorthand should not modify the prototype.
-shouldThrow("__proto__ = []");
-shouldBeFalse("({__proto__: __proto__}) instanceof Array");
+shouldThrow("this.__proto__ = []");
+shouldBeFalse("({__proto__: this.__proto__}) instanceof Array");
+shouldThrow("__proto__ = []", '"TypeError: Object.prototype.__proto__ called on null or undefined"');
+shouldThrow("({__proto__: __proto__}) instanceof Array", '"TypeError: Object.prototype.__proto__ called on null or undefined"');
