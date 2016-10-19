@@ -1,0 +1,40 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+shape-outside
+shape-margin
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-007.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-008.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-009.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-010.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-011.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-016.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/supported-shapes/polygon/shape-outside-polygon-017.html

@@ -1,0 +1,71 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the W3C CSS or WPT github:
+	https://github.com/w3c/csswg-test
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+shape-outside
+shape-image-threshold
+shape-margin
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-000-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-000.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-001-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-001.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-002-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-002.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-003-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-003.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-004-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-004.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-005-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-005.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-006-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-006.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-007-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-007.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-008-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-008.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-009-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-009.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-011-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-011.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-012-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-012.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-013-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-013.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-014-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-014.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-015-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-015.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-016-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-016.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-017-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-017.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-018-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-018.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-019-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-019.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-020-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-020.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-021-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-021.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-022-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-022.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-023-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-023.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-025-expected.html
+/LayoutTests/imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-025.html

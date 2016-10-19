@@ -27,6 +27,8 @@ media/mac [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 
+imported/w3c/csswg-test/css-shapes-1 [ Skip ]
+
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
