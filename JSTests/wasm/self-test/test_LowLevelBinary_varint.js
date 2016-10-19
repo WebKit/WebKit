@@ -20,11 +20,11 @@ for (let i = 0; i < LLB.varBitsMax + 1; ++i) {
     let b = new LowLevelBinary();
     for (let j = 0; j < i; ++j)
         b.uint8(0x80);
-    assert.throwsRangeError(() => b.getVarint(0));
+    assert.throws(() => b.getVarint(0), RangeError, `[${i}, ${i+1}) is out of buffer range [0, ${i})`);
 }
 
 let b = new LowLevelBinary();
 for (let i = 0; i < LLB.varBitsMax; ++i)
     b.uint8(0x80);
 b.uint8(0x00);
-assert.throwsRangeError(() => b.getVarint(0));
+assert.throws(() => b.getVarint(0), RangeError, `Shifting too much at 6`);

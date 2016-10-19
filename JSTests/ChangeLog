@@ -1,3 +1,46 @@
+2016-10-19  JF Bastien  <jfbastien@apple.com>
+
+        JavaScript WebAssembly API: baby steps
+
+         - Expand WebAssembly constructors into their own files. This requires a lot of
+           boilerplate, as well as adding the .lut.h files. All of the
+           JSWebAssembly*.{h,cpp}, as well as Constructor and Prototype files, are
+           currently the same between the 4 specified WebAssembly constructors. It'll be
+           easy to implement individual functions on constructed objects as per the
+           spec, and have each of these files diverge. The error constructors are also
+           similar, except that their instance derives from ErrorInstance.
+         - Use constructor macro when initializing the global object.
+         - Dramatically improve testing of the WebAssembly API by checking for
+           properties specified in the spec [*].
+         - Clean up assert.js' exception testing.
+         - Fix a copy-paste bug in wasm.json: floating-point const return values were
+           swapped.
+
+        [*] https://github.com/WebAssembly/design/blob/master/JS.md
+
+        Implement more of the JavaScript WebAssembly API
+        https://bugs.webkit.org/show_bug.cgi?id=163571
+
+        Reviewed by Keith Miller.
+
+        * wasm/assert.js:
+        (export.const.isUndef): add this useful helper
+        (export.const.throws): fold other throw checks into this one, and check message as well
+        * wasm/js-api/test_basic_api.js:
+        (const.checkOwnPropertyDescriptor): check own property descriptor follows the spec
+        * wasm/self-test/test_BuilderJSON.js:
+        (const.assertOpThrows): use new assert API
+        (CheckedOpcodeArgumentsTooMany): ditto
+        (CheckedOpcodeArgumentsNotEnough): ditto
+        (CallInvalid): ditto
+        (I32ConstInvalid): ditto
+        (F32ConstInvalid): ditto (and this caugth the JSON copy-paste bug)
+        (F64ConstInvalid): ditto
+        * wasm/self-test/test_LowLevelBinary_varint.js: use new assert API
+        * wasm/self-test/test_LowLevelBinary_varuint.js: use new assert API
+        * wasm/utilities.js: add "global" object, used in basic API test (to access global.WebAssembly).
+        * wasm/wasm.json: fix copy-paste
+
 2016-10-19  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] forbid "use strict" directive in generator functions with non-simple parameters

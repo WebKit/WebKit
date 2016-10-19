@@ -868,6 +868,25 @@ set(JavaScriptCore_SOURCES
     wasm/WASMPlan.cpp
     wasm/WebAssemblyObject.cpp
 
+    wasm/js/JSWebAssemblyCompileError.cpp
+    wasm/js/JSWebAssemblyInstance.cpp
+    wasm/js/JSWebAssemblyMemory.cpp
+    wasm/js/JSWebAssemblyModule.cpp
+    wasm/js/JSWebAssemblyRuntimeError.cpp
+    wasm/js/JSWebAssemblyTable.cpp
+    wasm/js/WebAssemblyCompileErrorConstructor.cpp
+    wasm/js/WebAssemblyCompileErrorPrototype.cpp
+    wasm/js/WebAssemblyInstanceConstructor.cpp
+    wasm/js/WebAssemblyInstancePrototype.cpp
+    wasm/js/WebAssemblyMemoryConstructor.cpp
+    wasm/js/WebAssemblyMemoryPrototype.cpp
+    wasm/js/WebAssemblyModuleConstructor.cpp
+    wasm/js/WebAssemblyModulePrototype.cpp
+    wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
+    wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
+    wasm/js/WebAssemblyTableConstructor.cpp
+    wasm/js/WebAssemblyTablePrototype.cpp
+
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp
     yarr/YarrInterpreter.cpp
@@ -918,6 +937,19 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/StringPrototype.cpp
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
+
+    wasm/js/WebAssemblyCompileErrorConstructor.cpp
+    wasm/js/WebAssemblyCompileErrorPrototype.cpp
+    wasm/js/WebAssemblyInstanceConstructor.cpp
+    wasm/js/WebAssemblyInstancePrototype.cpp
+    wasm/js/WebAssemblyMemoryConstructor.cpp
+    wasm/js/WebAssemblyMemoryPrototype.cpp
+    wasm/js/WebAssemblyModuleConstructor.cpp
+    wasm/js/WebAssemblyModulePrototype.cpp
+    wasm/js/WebAssemblyRuntimeErrorConstructor.cpp
+    wasm/js/WebAssemblyRuntimeErrorPrototype.cpp
+    wasm/js/WebAssemblyTableConstructor.cpp
+    wasm/js/WebAssemblyTablePrototype.cpp
 )
 
 set(JavaScriptCore_LIBRARIES

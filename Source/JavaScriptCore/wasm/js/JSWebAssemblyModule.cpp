@@ -23,35 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const notUndef = (v) => {
-    if (typeof v === "undefined")
-        throw new Error("Shouldn't be undefined");
-};
+#include "config.h"
+#include "JSWebAssemblyModule.h"
 
-export const isUndef = (v) => {
-    if (typeof v !== "undefined")
-        throw new Error("Should be undefined");
-};
+#include "JSCInlines.h"
 
-export const eq = (lhs, rhs) => {
-    if (lhs !== rhs)
-        throw new Error(`Not the same: "${lhs}" and "${rhs}"`);
-};
+namespace JSC {
 
-export const ge = (lhs, rhs) => {
-    notUndef(lhs);
-    notUndef(rhs);
-    if (!(lhs >= rhs))
-        throw new Error(`Expected: "${lhs}" < "${rhs}"`);
-};
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure)
+{
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure);
+    instance->finishCreation(vm);
+    return instance;
+}
 
-export const throws = (func, type, message, ...args) => {
-    try {
-        func(...args);
-    } catch (e) {
-        if (e instanceof type && e.message === message)
-            return;
-        throw new Error(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
-    }
-    throw new Error(`Expected to throw a ${type.name} with message "${message}"`);
-};
+Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure)
+    : Base(vm, structure)
+{
+}
+
+void JSWebAssemblyModule::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
+
+void JSWebAssemblyModule::destroy(JSCell* cell)
+{
+    static_cast<JSWebAssemblyModule*>(cell)->JSWebAssemblyModule::~JSWebAssemblyModule();
+}
+
+void JSWebAssemblyModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    auto* thisObject = jsCast<JSWebAssemblyModule*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
+    Base::visitChildren(thisObject, visitor);
+}
+
+const ClassInfo JSWebAssemblyModule::s_info = { "WebAssembly.Module", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyModule) };
+
+} // namespace JSC

@@ -28,9 +28,10 @@ VPATH = \
     $(JavaScriptCore) \
     $(JavaScriptCore)/parser \
     $(JavaScriptCore)/runtime \
-	$(JavaScriptCore)/interpreter \
-	$(JavaScriptCore)/jit \
-	$(JavaScriptCore)/builtins \
+    $(JavaScriptCore)/interpreter \
+    $(JavaScriptCore)/jit \
+    $(JavaScriptCore)/builtins \
+    $(JavaScriptCore)/wasm/js \
 #
 
 PYTHON = python
@@ -159,6 +160,18 @@ OBJECT_LUT_HEADERS = \
     StringPrototype.lut.h \
     SymbolConstructor.lut.h \
     SymbolPrototype.lut.h \
+    WebAssemblyCompileErrorConstructor.lut.h \
+    WebAssemblyCompileErrorPrototype.lut.h \
+    WebAssemblyInstanceConstructor.lut.h \
+    WebAssemblyInstancePrototype.lut.h \
+    WebAssemblyMemoryConstructor.lut.h \
+    WebAssemblyMemoryPrototype.lut.h \
+    WebAssemblyModuleConstructor.lut.h \
+    WebAssemblyModulePrototype.lut.h \
+    WebAssemblyRuntimeErrorConstructor.lut.h \
+    WebAssemblyRuntimeErrorPrototype.lut.h \
+    WebAssemblyTableConstructor.lut.h \
+    WebAssemblyTablePrototype.lut.h \
 #
 
 $(OBJECT_LUT_HEADERS): %.lut.h : %.cpp $(JavaScriptCore)/create_hash_table

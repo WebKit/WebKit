@@ -23,35 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const notUndef = (v) => {
-    if (typeof v === "undefined")
-        throw new Error("Shouldn't be undefined");
-};
+#include "config.h"
+#include "JSWebAssemblyRuntimeError.h"
 
-export const isUndef = (v) => {
-    if (typeof v !== "undefined")
-        throw new Error("Should be undefined");
-};
+#include "JSCInlines.h"
 
-export const eq = (lhs, rhs) => {
-    if (lhs !== rhs)
-        throw new Error(`Not the same: "${lhs}" and "${rhs}"`);
-};
+namespace JSC {
 
-export const ge = (lhs, rhs) => {
-    notUndef(lhs);
-    notUndef(rhs);
-    if (!(lhs >= rhs))
-        throw new Error(`Expected: "${lhs}" < "${rhs}"`);
-};
+JSWebAssemblyRuntimeError* JSWebAssemblyRuntimeError::create(ExecState* state, Structure* structure, const String& message, bool useCurrentFrame)
+{
+    auto& vm = state->vm();
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyRuntimeError>(vm.heap)) JSWebAssemblyRuntimeError(vm, structure);
+    instance->finishCreation(state, vm, message, useCurrentFrame);
+    return instance;
+}
 
-export const throws = (func, type, message, ...args) => {
-    try {
-        func(...args);
-    } catch (e) {
-        if (e instanceof type && e.message === message)
-            return;
-        throw new Error(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
-    }
-    throw new Error(`Expected to throw a ${type.name} with message "${message}"`);
-};
+JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structure)
+    : Base(vm, structure)
+{
+}
+
+const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
+
+} // namespace JSC

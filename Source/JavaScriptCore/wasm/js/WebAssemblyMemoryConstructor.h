@@ -23,35 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const notUndef = (v) => {
-    if (typeof v === "undefined")
-        throw new Error("Shouldn't be undefined");
+#pragma once
+
+#include "InternalFunction.h"
+#include "JSObject.h"
+
+namespace JSC {
+
+class WebAssemblyMemoryPrototype;
+
+class WebAssemblyMemoryConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    static WebAssemblyMemoryConstructor* create(VM&, Structure*, WebAssemblyMemoryPrototype*, Structure*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+
+    DECLARE_INFO;
+
+    Structure* MemoryStructure() const { return m_MemoryStructure.get(); }
+
+protected:
+    void finishCreation(VM&, WebAssemblyMemoryPrototype*, Structure*);
+
+private:
+    WebAssemblyMemoryConstructor(VM&, Structure*);
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
+    static void visitChildren(JSCell*, SlotVisitor&);
+
+    WriteBarrier<Structure> m_MemoryStructure;
 };
 
-export const isUndef = (v) => {
-    if (typeof v !== "undefined")
-        throw new Error("Should be undefined");
-};
-
-export const eq = (lhs, rhs) => {
-    if (lhs !== rhs)
-        throw new Error(`Not the same: "${lhs}" and "${rhs}"`);
-};
-
-export const ge = (lhs, rhs) => {
-    notUndef(lhs);
-    notUndef(rhs);
-    if (!(lhs >= rhs))
-        throw new Error(`Expected: "${lhs}" < "${rhs}"`);
-};
-
-export const throws = (func, type, message, ...args) => {
-    try {
-        func(...args);
-    } catch (e) {
-        if (e instanceof type && e.message === message)
-            return;
-        throw new Error(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
-    }
-    throw new Error(`Expected to throw a ${type.name} with message "${message}"`);
-};
+} // namespace JSC

@@ -30,6 +30,13 @@ const _environment =
         : (typeof importScripts === "function" ? "worker"
            : "shell")));
 
+let _global = (typeof global !== 'object' || !global || global.Math !== Math || global.Array !== Array)
+    ? ((typeof self !== 'undefined') ? self
+       : (typeof window !== 'undefined') ? window
+       : (typeof global !== 'undefined') ? global
+       : Function('return this')())
+    : global;
+
 const _eval = x => eval.call(null, x);
 
 const _read = filename => {
@@ -60,4 +67,4 @@ const _json = filename => {
 }
 
 // Use underscore names to avoid clashing with builtin names.
-export { _eval as eval, _read as read, _load as load, _json as json };
+export { _eval as eval, _read as read, _load as load, _json as json, _global as global };

@@ -23,35 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const notUndef = (v) => {
-    if (typeof v === "undefined")
-        throw new Error("Shouldn't be undefined");
-};
+#include "config.h"
+#include "WebAssemblyTablePrototype.h"
 
-export const isUndef = (v) => {
-    if (typeof v !== "undefined")
-        throw new Error("Should be undefined");
-};
+#include "FunctionPrototype.h"
+#include "JSCInlines.h"
 
-export const eq = (lhs, rhs) => {
-    if (lhs !== rhs)
-        throw new Error(`Not the same: "${lhs}" and "${rhs}"`);
-};
+#include "WebAssemblyTablePrototype.lut.h"
 
-export const ge = (lhs, rhs) => {
-    notUndef(lhs);
-    notUndef(rhs);
-    if (!(lhs >= rhs))
-        throw new Error(`Expected: "${lhs}" < "${rhs}"`);
-};
+namespace JSC {
 
-export const throws = (func, type, message, ...args) => {
-    try {
-        func(...args);
-    } catch (e) {
-        if (e instanceof type && e.message === message)
-            return;
-        throw new Error(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
-    }
-    throw new Error(`Expected to throw a ${type.name} with message "${message}"`);
-};
+const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table.prototype", &Base::s_info, &prototypeTableWebAssemblyTable, CREATE_METHOD_TABLE(WebAssemblyTablePrototype) };
+
+/* Source for WebAssemblyTablePrototype.lut.h
+ @begin prototypeTableWebAssemblyTable
+ @end
+ */
+
+WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+{
+    auto* object = new (NotNull, allocateCell<WebAssemblyTablePrototype>(vm.heap)) WebAssemblyTablePrototype(vm, structure);
+    object->finishCreation(vm);
+    return object;
+}
+
+Structure* WebAssemblyTablePrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
+void WebAssemblyTablePrototype::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+}
+
+WebAssemblyTablePrototype::WebAssemblyTablePrototype(VM& vm, Structure* structure)
+    : Base(vm, structure)
+{
+}
+
+} // namespace JSC

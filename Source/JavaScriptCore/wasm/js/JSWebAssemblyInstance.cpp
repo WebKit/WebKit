@@ -23,40 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSWebAssemblyInstance.h"
 
-#include "JSObject.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class WebAssemblyObject : public JSNonFinalObject {
-public:
-    typedef JSNonFinalObject Base;
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure)
+{
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, structure);
+    instance->finishCreation(vm);
+    return instance;
+}
 
-    static WebAssemblyObject* create(VM&, JSGlobalObject*, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
 
-    DECLARE_INFO;
+JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure)
+    : Base(vm, structure)
+{
+}
 
-protected:
-    void finishCreation(VM&, JSGlobalObject*);
+void JSWebAssemblyInstance::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
 
-private:
-    WebAssemblyObject(VM&, Structure*);
-};
+void JSWebAssemblyInstance::destroy(JSCell* cell)
+{
+    static_cast<JSWebAssemblyInstance*>(cell)->JSWebAssemblyInstance::~JSWebAssemblyInstance();
+}
 
-// Name, functionLength
-#define FOR_EACH_WASM_CONSTRUCTOR_PROPERTY(DO) \
-    DO(Module, 1) \
-    DO(Instance, 2) \
-    DO(Memory, 1) \
-    DO(Table, 1) \
-    DO(CompileError, 1) \
-    DO(RuntimeError, 1)
+void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    auto* thisObject = jsCast<JSWebAssemblyInstance*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-// Name, functionLength
-#define FOR_EACH_WASM_FUNCTION_PROPERTY(DO) \
-    DO(validate, 1) \
-    DO(compile, 1)
+    Base::visitChildren(thisObject, visitor);
+}
+
+const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };
 
 } // namespace JSC

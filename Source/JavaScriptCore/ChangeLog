@@ -1,3 +1,192 @@
+2016-10-19  JF Bastien  <jfbastien@apple.com>
+
+        JavaScript WebAssembly API: baby steps
+
+         - Expand WebAssembly constructors into their own files. This requires a lot of
+           boilerplate, as well as adding the .lut.h files. All of the
+           JSWebAssembly*.{h,cpp}, as well as Constructor and Prototype files, are
+           currently the same between the 4 specified WebAssembly constructors. It'll be
+           easy to implement individual functions on constructed objects as per the
+           spec, and have each of these files diverge. The error constructors are also
+           similar, except that their instance derives from ErrorInstance.
+         - Use constructor macro when initializing the global object.
+         - Dramatically improve testing of the WebAssembly API by checking for
+           properties specified in the spec [*].
+         - Clean up assert.js' exception testing.
+         - Fix a copy-paste bug in wasm.json: floating-point const return values were
+           swapped.
+
+        [*] https://github.com/WebAssembly/design/blob/master/JS.md
+
+        Implement more of the JavaScript WebAssembly API
+        https://bugs.webkit.org/show_bug.cgi?id=163571
+
+        Reviewed by Keith Miller.
+
+        * CMakeLists.txt: add .lut.h generation
+        * DerivedSources.make: ditto
+        * JavaScriptCore.xcodeproj/project.pbxproj: add .lut.h generation and all the new files
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): use macro to list all constructors
+        * wasm/WebAssemblyObject.cpp: unboilerplate, all constructors into their own files
+        * wasm/WebAssemblyObject.h: ditto
+        * wasm/js/JSWebAssemblyCompileError.cpp: Added.
+        (JSC::JSWebAssemblyCompileError::create):
+        (JSC::JSWebAssemblyCompileError::createStructure):
+        (JSC::JSWebAssemblyCompileError::JSWebAssemblyCompileError):
+        (JSC::JSWebAssemblyCompileError::finishCreation):
+        (JSC::JSWebAssemblyCompileError::destroy):
+        (JSC::JSWebAssemblyCompileError::visitChildren):
+        * wasm/js/JSWebAssemblyCompileError.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/JSWebAssemblyInstance.cpp: Added.
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::createStructure):
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::destroy):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        * wasm/js/JSWebAssemblyInstance.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/JSWebAssemblyMemory.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::JSWebAssemblyMemory::create):
+        (JSC::JSWebAssemblyMemory::createStructure):
+        (JSC::JSWebAssemblyMemory::JSWebAssemblyMemory):
+        (JSC::JSWebAssemblyMemory::finishCreation):
+        (JSC::JSWebAssemblyMemory::destroy):
+        (JSC::JSWebAssemblyMemory::visitChildren):
+        * wasm/js/JSWebAssemblyMemory.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/JSWebAssemblyModule.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::createStructure):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        (JSC::JSWebAssemblyModule::destroy):
+        (JSC::JSWebAssemblyModule::visitChildren):
+        * wasm/js/JSWebAssemblyModule.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/JSWebAssemblyRuntimeError.cpp: Added.
+        (JSC::JSWebAssemblyRuntimeError::create):
+        (JSC::JSWebAssemblyRuntimeError::createStructure):
+        (JSC::JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError):
+        (JSC::JSWebAssemblyRuntimeError::finishCreation):
+        (JSC::JSWebAssemblyRuntimeError::destroy):
+        (JSC::JSWebAssemblyRuntimeError::visitChildren):
+        * wasm/js/JSWebAssemblyRuntimeError.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/JSWebAssemblyTable.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::JSWebAssemblyTable::create):
+        (JSC::JSWebAssemblyTable::createStructure):
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::finishCreation):
+        (JSC::JSWebAssemblyTable::destroy):
+        (JSC::JSWebAssemblyTable::visitChildren):
+        * wasm/js/JSWebAssemblyTable.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyCompileError):
+        (JSC::callJSWebAssemblyCompileError):
+        (JSC::WebAssemblyCompileErrorConstructor::create):
+        (JSC::WebAssemblyCompileErrorConstructor::createStructure):
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):
+        (JSC::WebAssemblyCompileErrorConstructor::WebAssemblyCompileErrorConstructor):
+        (JSC::WebAssemblyCompileErrorConstructor::getConstructData):
+        (JSC::WebAssemblyCompileErrorConstructor::getCallData):
+        (JSC::WebAssemblyCompileErrorConstructor::visitChildren):
+        * wasm/js/WebAssemblyCompileErrorConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyCompileErrorConstructor::CompileErrorStructure):
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyCompileErrorPrototype::create):
+        (JSC::WebAssemblyCompileErrorPrototype::createStructure):
+        (JSC::WebAssemblyCompileErrorPrototype::finishCreation):
+        (JSC::WebAssemblyCompileErrorPrototype::WebAssemblyCompileErrorPrototype):
+        * wasm/js/WebAssemblyCompileErrorPrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyInstanceConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyInstance):
+        (JSC::callJSWebAssemblyInstance):
+        (JSC::WebAssemblyInstanceConstructor::create):
+        (JSC::WebAssemblyInstanceConstructor::createStructure):
+        (JSC::WebAssemblyInstanceConstructor::finishCreation):
+        (JSC::WebAssemblyInstanceConstructor::WebAssemblyInstanceConstructor):
+        (JSC::WebAssemblyInstanceConstructor::getConstructData):
+        (JSC::WebAssemblyInstanceConstructor::getCallData):
+        (JSC::WebAssemblyInstanceConstructor::visitChildren):
+        * wasm/js/WebAssemblyInstanceConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyInstanceConstructor::InstanceStructure):
+        * wasm/js/WebAssemblyInstancePrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyInstancePrototype::create):
+        (JSC::WebAssemblyInstancePrototype::createStructure):
+        (JSC::WebAssemblyInstancePrototype::finishCreation):
+        (JSC::WebAssemblyInstancePrototype::WebAssemblyInstancePrototype):
+        * wasm/js/WebAssemblyInstancePrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyMemoryConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyMemory):
+        (JSC::callJSWebAssemblyMemory):
+        (JSC::WebAssemblyMemoryConstructor::create):
+        (JSC::WebAssemblyMemoryConstructor::createStructure):
+        (JSC::WebAssemblyMemoryConstructor::finishCreation):
+        (JSC::WebAssemblyMemoryConstructor::WebAssemblyMemoryConstructor):
+        (JSC::WebAssemblyMemoryConstructor::getConstructData):
+        (JSC::WebAssemblyMemoryConstructor::getCallData):
+        (JSC::WebAssemblyMemoryConstructor::visitChildren):
+        * wasm/js/WebAssemblyMemoryConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyMemoryConstructor::MemoryStructure):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyMemoryPrototype::create):
+        (JSC::WebAssemblyMemoryPrototype::createStructure):
+        (JSC::WebAssemblyMemoryPrototype::finishCreation):
+        (JSC::WebAssemblyMemoryPrototype::WebAssemblyMemoryPrototype):
+        * wasm/js/WebAssemblyMemoryPrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyModuleConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyModule):
+        (JSC::callJSWebAssemblyModule):
+        (JSC::WebAssemblyModuleConstructor::create):
+        (JSC::WebAssemblyModuleConstructor::createStructure):
+        (JSC::WebAssemblyModuleConstructor::finishCreation):
+        (JSC::WebAssemblyModuleConstructor::WebAssemblyModuleConstructor):
+        (JSC::WebAssemblyModuleConstructor::getConstructData):
+        (JSC::WebAssemblyModuleConstructor::getCallData):
+        (JSC::WebAssemblyModuleConstructor::visitChildren):
+        * wasm/js/WebAssemblyModuleConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyModuleConstructor::ModuleStructure):
+        * wasm/js/WebAssemblyModulePrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyModulePrototype::create):
+        (JSC::WebAssemblyModulePrototype::createStructure):
+        (JSC::WebAssemblyModulePrototype::finishCreation):
+        (JSC::WebAssemblyModulePrototype::WebAssemblyModulePrototype):
+        * wasm/js/WebAssemblyModulePrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyRuntimeError):
+        (JSC::callJSWebAssemblyRuntimeError):
+        (JSC::WebAssemblyRuntimeErrorConstructor::create):
+        (JSC::WebAssemblyRuntimeErrorConstructor::createStructure):
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):
+        (JSC::WebAssemblyRuntimeErrorConstructor::WebAssemblyRuntimeErrorConstructor):
+        (JSC::WebAssemblyRuntimeErrorConstructor::getConstructData):
+        (JSC::WebAssemblyRuntimeErrorConstructor::getCallData):
+        (JSC::WebAssemblyRuntimeErrorConstructor::visitChildren):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyRuntimeErrorConstructor::RuntimeErrorStructure):
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyRuntimeErrorPrototype::create):
+        (JSC::WebAssemblyRuntimeErrorPrototype::createStructure):
+        (JSC::WebAssemblyRuntimeErrorPrototype::finishCreation):
+        (JSC::WebAssemblyRuntimeErrorPrototype::WebAssemblyRuntimeErrorPrototype):
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/js/WebAssemblyTableConstructor.cpp: Added.
+        (JSC::constructJSWebAssemblyTable):
+        (JSC::callJSWebAssemblyTable):
+        (JSC::WebAssemblyTableConstructor::create):
+        (JSC::WebAssemblyTableConstructor::createStructure):
+        (JSC::WebAssemblyTableConstructor::finishCreation):
+        (JSC::WebAssemblyTableConstructor::WebAssemblyTableConstructor):
+        (JSC::WebAssemblyTableConstructor::getConstructData):
+        (JSC::WebAssemblyTableConstructor::getCallData):
+        (JSC::WebAssemblyTableConstructor::visitChildren):
+        * wasm/js/WebAssemblyTableConstructor.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyTableConstructor::TableStructure):
+        * wasm/js/WebAssemblyTablePrototype.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::WebAssemblyTablePrototype::create):
+        (JSC::WebAssemblyTablePrototype::createStructure):
+        (JSC::WebAssemblyTablePrototype::finishCreation):
+        (JSC::WebAssemblyTablePrototype::WebAssemblyTablePrototype):
+        * wasm/js/WebAssemblyTablePrototype.h: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+
 2016-10-19  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] forbid "use strict" directive in generator functions with non-simple parameters

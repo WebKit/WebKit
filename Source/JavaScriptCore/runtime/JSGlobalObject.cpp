@@ -823,12 +823,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         auto* wasm = WebAssemblyObject::create(vm, this, WebAssemblyObject::createStructure(vm, this, m_objectPrototype.get()));
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), wasm, DontEnum);
         GlobalPropertyInfo extraStaticGlobals[] = {
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().ModulePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Module")), DontEnum | DontDelete | ReadOnly),
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().InstancePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Instance")), DontEnum | DontDelete | ReadOnly),
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().MemoryPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Memory")), DontEnum | DontDelete | ReadOnly),
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().TablePrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "Table")), DontEnum | DontDelete | ReadOnly),
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().CompileErrorPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "CompileError")), DontEnum | DontDelete | ReadOnly),
-            GlobalPropertyInfo(vm.propertyNames->builtinNames().RuntimeErrorPrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, "RuntimeError")), DontEnum | DontDelete | ReadOnly),
+#define REGISTER_WASM_CONSTRUCTOR_AS_GLOBAL_PROPERTY(NAME, ...) \
+            GlobalPropertyInfo(vm.propertyNames->builtinNames().NAME ## PrivateName(), wasm->getDirect(vm, Identifier::fromString(exec, #NAME)), DontEnum | DontDelete | ReadOnly),
+            FOR_EACH_WASM_CONSTRUCTOR_PROPERTY(REGISTER_WASM_CONSTRUCTOR_AS_GLOBAL_PROPERTY)
         };
         addStaticGlobals(extraStaticGlobals, WTF_ARRAY_LENGTH(extraStaticGlobals));
     }

@@ -1,9 +1,9 @@
 import * as assert from '../assert.js';
 import Builder from '../Builder.js';
 
-const assertOpThrows = (opFn, message = "") => {
+const assertOpThrows = (opFn, message) => {
     let f = (new Builder()).Code().Function();
-    assert.throwsError(opFn, message, f);
+    assert.throws(opFn, Error, message, f);
 };
 
 (function EmptyModule() {
@@ -193,7 +193,7 @@ const assertOpThrows = (opFn, message = "") => {
 })();
 
 (function CheckedOpcodeArgumentsTooMany() {
-    assertOpThrows(f => f.Nop("uh-oh!"));
+    assertOpThrows(f => f.Nop("uh-oh!"), `"nop" expects 0 immediates, got 1`);
 })();
 
 (function UncheckedOpcodeArgumentsTooMany() {
@@ -201,7 +201,7 @@ const assertOpThrows = (opFn, message = "") => {
 })();
 
 (function CheckedOpcodeArgumentsNotEnough() {
-    assertOpThrows(f => f.I32Const());
+    assertOpThrows(f => f.I32Const(), `"i32.const" expects 1 immediates, got 0`);
 })();
 
 (function UncheckedOpcodeArgumentsNotEnough() {
@@ -221,7 +221,7 @@ const assertOpThrows = (opFn, message = "") => {
 
 (function CallInvalid() {
     for (let c of [-1, 0x100000000, "0", {}, Infinity, -Infinity, NaN, -NaN, null])
-        assertOpThrows(f => f.Call(c), c);
+        assertOpThrows(f => f.Call(c), `Invalid value on call: got "${c}", expected i32`);
 })();
 
 (function I32ConstValid() {
@@ -237,7 +237,7 @@ const assertOpThrows = (opFn, message = "") => {
 
 (function I32ConstInvalid() {
     for (let c of [-1, 0x100000000, 0.1, -0.1, "0", {}, Infinity, null])
-        assertOpThrows(f => f.I32Const(c), c);
+        assertOpThrows(f => f.I32Const(c), `Invalid value on i32.const: got "${c}", expected i32`);
 })();
 
 // FIXME: test i64. https://bugs.webkit.org/show_bug.cgi?id=163420
@@ -255,7 +255,7 @@ const assertOpThrows = (opFn, message = "") => {
 
 (function F32ConstInvalid() {
     for (let c of ["0", {}, Infinity, -Infinity, NaN, -NaN, null])
-        assertOpThrows(f => f.F32Const(c), c);
+        assertOpThrows(f => f.F32Const(c), `Invalid value on f32.const: got "${c}", expected f32`);
 })();
 
 (function F64ConstValid() {
@@ -271,7 +271,7 @@ const assertOpThrows = (opFn, message = "") => {
 
 (function F64ConstInvalid() {
     for (let c of ["0", {}, Infinity, -Infinity, NaN, -NaN, null])
-        assertOpThrows(f => f.F64Const(c), c);
+        assertOpThrows(f => f.F64Const(c), `Invalid value on f64.const: got "${c}", expected f64`);
 })();
 
 (function CallOneFromStack() {
