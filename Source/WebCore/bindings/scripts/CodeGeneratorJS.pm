@@ -5253,8 +5253,10 @@ sub NativeToJSValue
     if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
         my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
         AddToImplIncludes("JS${innerType}.h", $conditional) if $codeGenerator->IsRefPtrType($innerType);
-        return "jsArray($statePointer, $globalObject, $value)" if $codeGenerator->IsSequenceType($type);
-        return "jsFrozenArray($statePointer, $globalObject, $value)" if $codeGenerator->IsFrozenArrayType($type);
+        my $isSequence = $codeGenerator->IsSequenceType($type);
+        return "toJSArray($stateReference, *$globalObject, throwScope, $value)" if $isSequence && $mayThrowException;
+        return "jsArray($statePointer, $globalObject, $value)" if $isSequence;
+        return "jsFrozenArray($statePointer, $globalObject, $value)";;
     }
 
     if ($type eq "any") {

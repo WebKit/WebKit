@@ -1,3 +1,201 @@
+2016-10-18  Darin Adler  <darin@apple.com>
+
+        Move internal testing classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163553
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/js/JSDOMBinding.h: Added toJSArray. Also exported a function that
+        is now needed in the testing library.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NativeToJSValue): Added code to handle the jsArray case with an exception.
+
+        * css/parser/CSSPropertyParser.cpp: Fix #if to make code compile when
+        CSS_SCROLL_SNAP is not enabled.
+
+        * dom/Element.cpp:
+        (WebCore::Element::createShadowRoot): Changed return type to a raw pointer.
+        There is no reason it needs to be a RefPtr.
+        * dom/Element.h: Updated for above change.
+
+        * svg/SVGPathStringBuilder.h: Exported class and made more public so it can
+        be used in test code.
+
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::pathIteratorForBuildingString): Deleted. Needed only for test code,
+        so moved into there.
+        (WebCore::buildStringFromPath): Deleted. Ditto.
+        * svg/SVGPathUtilities.h: Removed buildStringFromPath.
+
+        * testing/InternalSettings.cpp: Simplified the guard macro and used the all
+        capitals style that our style guide prescribes for non-function-like macros.
+        (WebCore::InternalSettings::create): Moved here, no longer inline Use m_page.
+        (WebCore::InternalSettings::resetToConsistentState): Updated since settings
+        returns a reference.
+        (WebCore::InternalSettings::settings): Changed to return a reference and
+        assert that m_page is not null; functions all check m_page for null first.
+        (WebCore::InternalSettings::setTouchEventEmulationEnabled): Updated to use
+        ExceptionOr, do an m_page check, and use settings that returns a reference.
+        (WebCore::InternalSettings::setStandardFontFamily): Ditto.
+        (WebCore::InternalSettings::setSerifFontFamily): Ditto.
+        (WebCore::InternalSettings::setSansSerifFontFamily): Ditto.
+        (WebCore::InternalSettings::setFixedFontFamily): Ditto.
+        (WebCore::InternalSettings::setCursiveFontFamily): Ditto.
+        (WebCore::InternalSettings::setFantasyFontFamily): Ditto.
+        (WebCore::InternalSettings::setPictographFontFamily): Ditto.
+        (WebCore::InternalSettings::setTextAutosizingEnabled): Ditto.
+        (WebCore::InternalSettings::setTextAutosizingWindowSizeOverride): Ditto.
+        (WebCore::InternalSettings::setMediaTypeOverride): Ditto.
+        (WebCore::InternalSettings::setCanStartMedia): Ditto.
+        (WebCore::InternalSettings::setAllowsAirPlayForMediaPlayback): Ditto.
+        (WebCore::InternalSettings::setEditingBehavior): Ditto.
+        (WebCore::InternalSettings::setShouldDisplayTrackKind): Ditto.
+        (WebCore::InternalSettings::shouldDisplayTrackKind): Ditto.
+        (WebCore::InternalSettings::setStorageBlockingPolicy): Ditto.
+        (WebCore::InternalSettings::setPreferMIMETypeForImages): Ditto.
+        (WebCore::InternalSettings::setImagesEnabled): Ditto.
+        (WebCore::InternalSettings::setPDFImageCachingPolicy): Ditto.
+        (WebCore::InternalSettings::setMinimumTimerInterval): Ditto.
+        (WebCore::InternalSettings::setDefaultVideoPosterURL): Ditto.
+        (WebCore::InternalSettings::setForcePendingWebGLPolicy): Ditto.
+        (WebCore::InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls): Ditto.
+        (WebCore::InternalSettings::setUseLegacyBackgroundSizeShorthandBehavior): Ditto.
+        (WebCore::InternalSettings::setAutoscrollForDragAndDropEnabled): Ditto.
+        (WebCore::InternalSettings::setFontFallbackPrefersPictographs): Ditto.
+        (WebCore::InternalSettings::setWebFontsAlwaysFallBack): Ditto.
+        (WebCore::InternalSettings::setQuickTimePluginReplacementEnabled): Ditto.
+        (WebCore::InternalSettings::setYouTubeFlashPluginReplacementEnabled): Ditto.
+        (WebCore::InternalSettings::setBackgroundShouldExtendBeyondPage): Ditto.
+        (WebCore::InternalSettings::setShouldConvertPositionStyleOnCopy): Ditto.
+        (WebCore::InternalSettings::setScrollingTreeIncludesFrames): Ditto.
+        (WebCore::InternalSettings::setAllowsInlineMediaPlayback): Ditto.
+        (WebCore::InternalSettings::setAllowsInlineMediaPlaybackAfterFullscreen): Ditto.
+        (WebCore::InternalSettings::setInlineMediaPlaybackRequiresPlaysInlineAttribute): Ditto.
+        (WebCore::InternalSettings::setIndexedDBWorkersEnabled): Ditto.
+        (WebCore::InternalSettings::userInterfaceDirectionPolicy): Ditto.
+        (WebCore::InternalSettings::setUserInterfaceDirectionPolicy): Ditto.
+        (WebCore::InternalSettings::systemLayoutDirection): Ditto.
+        (WebCore::InternalSettings::setSystemLayoutDirection): Ditto.
+        (WebCore::InternalSettings::variationFontsEnabled): Ditto.
+        (WebCore::InternalSettings::setVariationFontsEnabled): Ditto.
+        (WebCore::InternalSettings::forcedPrefersReducedMotionValue): Ditto.
+        (WebCore::InternalSettings::setForcedPrefersReducedMotionValue): Ditto.
+        * testing/InternalSettings.h: Updated for above changes. Also moved Backup to make
+        it private instead of public.
+        * testing/InternalSettings.idl: Use non-legacy execption. Also removed unneeded
+        exception for setIndexedDBWorkersEnabled.
+
+        * testing/Internals.cpp: Marked InspectorStubFrontend final and made everything private.
+        (WebCore::Internals::setCanShowModalDialogOverride): Use ExceptionOr.
+        (WebCore::Internals::lastSpatialNavigationCandidateCount): Ditto.
+        (WebCore::Internals::animationsAreSuspended): Ditto.
+        (WebCore::Internals::suspendAnimations): Ditto.
+        (WebCore::Internals::resumeAnimations): Ditto.
+        (WebCore::Internals::pauseAnimationAtTimeOnElement): Ditto.
+        (WebCore::Internals::pauseAnimationAtTimeOnPseudoElement): Ditto.
+        (WebCore::Internals::pauseTransitionAtTimeOnElement): Ditto.
+        (WebCore::Internals::pauseTransitionAtTimeOnPseudoElement): Ditto.
+        (WebCore::Internals::elementRenderTreeAsText): Ditto.
+        (WebCore::Internals::ensureShadowRoot): Ditto.
+        (WebCore::Internals::createShadowRoot): Ditto.
+        (WebCore::Internals::shadowRootType): Ditto.
+        (WebCore::Internals::isTimerThrottled): Ditto.
+        (WebCore::Internals::formControlStateOfPreviousHistoryItem): Ditto.
+        (WebCore::Internals::setFormControlStateOfPreviousHistoryItem): Ditto.
+        (WebCore::Internals::absoluteCaretBounds): Ditto.
+        (WebCore::Internals::inspectorHighlightRects): Ditto.
+        (WebCore::Internals::inspectorHighlightObject): Ditto.
+        (WebCore::Internals::markerCountForNode): Ditto.
+        (WebCore::Internals::markerAt): Ditto.
+        (WebCore::Internals::markerRangeForNode): Ditto.
+        (WebCore::Internals::markerDescriptionForNode): Ditto.
+        (WebCore::Internals::dumpMarkerRects): Ditto.
+        (WebCore::Internals::setMarkedTextMatchesAreHighlighted): Ditto.
+        (WebCore::Internals::setScrollViewPosition): Ditto.
+        (WebCore::Internals::setViewBaseBackgroundColor): Ditto.
+        (WebCore::Internals::setPagination): Ditto.
+        (WebCore::Internals::setPaginationLineGridEnabled): Ditto.
+        (WebCore::Internals::configurationForViewport): Ditto.
+        (WebCore::Internals::wasLastChangeUserEdit): Ditto.
+        (WebCore::Internals::scrollElementToRect): Ditto.
+        (WebCore::Internals::autofillFieldName): Ditto.
+        (WebCore::Internals::paintControlTints): Ditto.
+        (WebCore::Internals::rangeForDictionaryLookupAtLocation): Ditto.
+        (WebCore::Internals::setDelegatesScrolling): Ditto.
+        (WebCore::Internals::lastSpellCheckRequestSequence): Ditto.
+        (WebCore::Internals::lastSpellCheckProcessedSequence): Ditto.
+        (WebCore::Internals::wheelEventHandlerCount): Ditto.
+        (WebCore::Internals::touchEventHandlerCount): Ditto.
+        (WebCore::Internals::nodesFromRect): Ditto.
+        (WebCore::Internals::setBatteryStatus): Ditto.
+        (WebCore::Internals::setDeviceProximity): Ditto.
+        (WebCore::Internals::hasSpellingMarker): Ditto.
+        (WebCore::Internals::hasAutocorrectedMarker): Ditto.
+        (WebCore::Internals::handleAcceptedCandidate): Ditto.
+        (WebCore::Internals::isOverwriteModeEnabled): Ditto.
+        (WebCore::Internals::toggleOverwriteModeEnabled): Ditto.
+        (WebCore::Internals::countMatchesForText): Ditto.
+        (WebCore::Internals::countFindMatches): Ditto.
+        (WebCore::Internals::setInspectorIsUnderTest): Ditto.
+        (WebCore::Internals::hasGrammarMarker): Ditto.
+        (WebCore::Internals::numberOfScrollableAreas): Ditto.
+        (WebCore::Internals::isPageBoxVisible): Ditto.
+        (WebCore::Internals::layerTreeAsText): Ditto.
+        (WebCore::Internals::repaintRectsAsText): Ditto.
+        (WebCore::Internals::scrollingStateTreeAsText): Ditto.
+        (WebCore::Internals::mainThreadScrollingReasons): Ditto.
+        (WebCore::Internals::nonFastScrollableRects): Ditto.
+        (WebCore::Internals::setElementUsesDisplayListDrawing): Ditto.
+        (WebCore::Internals::setElementTracksDisplayListReplay): Ditto.
+        (WebCore::Internals::displayListForElement): Ditto.
+        (WebCore::Internals::replayDisplayListForElement): Ditto.
+        (WebCore::Internals::garbageCollectDocumentResources): Ditto.
+        (WebCore::Internals::insertAuthorCSS): Ditto.
+        (WebCore::Internals::insertUserCSS): Ditto.
+        (WebCore::Internals::pageProperty): Ditto.
+        (WebCore::Internals::pageSizeAndMarginsInPixels): Ditto.
+        (WebCore::Internals::setPageScaleFactor): Ditto.
+        (WebCore::Internals::setPageZoomFactor): Ditto.
+        (WebCore::Internals::setTextZoomFactor): Ditto.
+        (WebCore::Internals::setUseFixedLayout): Ditto.
+        (WebCore::Internals::setFixedLayoutSize): Ditto.
+        (WebCore::Internals::setViewExposedRect): Ditto.
+        (WebCore::Internals::setHeaderHeight): Ditto.
+        (WebCore::Internals::setFooterHeight): Ditto.
+        (WebCore::Internals::setTopContentInset): Ditto.
+        (WebCore::Internals::setApplicationCacheOriginQuota): Ditto.
+        (WebCore::Internals::startTrackingRepaints): Ditto.
+        (WebCore::Internals::stopTrackingRepaints): Ditto.
+        (WebCore::Internals::startTrackingLayerFlushes): Ditto.
+        (WebCore::Internals::layerFlushCount): Ditto.
+        (WebCore::Internals::startTrackingStyleRecalcs): Ditto.
+        (WebCore::Internals::styleRecalcCount): Ditto.
+        (WebCore::Internals::startTrackingCompositingUpdates): Ditto.
+        (WebCore::Internals::compositingUpdateCount): Ditto.
+        (WebCore::Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks): Ditto.
+        (WebCore::Internals::getCurrentCursorInfo): Ditto.
+        (WebCore::Internals::mediaElementHasCharacteristic): Ditto.
+        (WebCore::Internals::captionsStyleSheetOverride): Ditto.
+        (WebCore::Internals::setCaptionsStyleSheetOverride): Ditto.
+        (WebCore::Internals::setPrimaryAudioTrackLanguageOverride): Ditto.
+        (WebCore::Internals::setCaptionDisplayMode): Ditto.
+        (WebCore::Internals::selectionBounds): Ditto.
+        (WebCore::Internals::isVibrating): Ditto.
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured): Ditto.
+        (WebCore::Internals::beginMediaSessionInterruption): Ditto.
+        (WebCore::Internals::setMediaSessionRestrictions): Ditto.
+        (WebCore::Internals::postRemoteControlCommand): Ditto.
+        (WebCore::Internals::setMockMediaPlaybackTargetPickerState): Ditto.
+        (WebCore::Internals::installMockPageOverlay): Ditto.
+        (WebCore::Internals::pageOverlayLayerTreeAsText): Ditto.
+        (WebCore::Internals::scrollSnapOffsets): Ditto.
+        (WebCore::Internals::pathStringWithShrinkWrappedRects): Moved the code that builds
+        the path string in here for now since it's only used for this testing.
+        (WebCore::Internals::resourceLoadStatisticsForOrigin): Take a const String&.
+
+        * testing/Internals.h: Updated for above changes.
+        * testing/Internals.idl: Use non-legacy exceptions.
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Drop webkit-specific extended attributes that are no longer useful

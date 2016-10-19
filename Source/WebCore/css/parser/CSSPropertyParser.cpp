@@ -1891,6 +1891,8 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
     return nullptr;
 }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+
 static RefPtr<CSSValueList> consumePositionList(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     RefPtr<CSSValueList> positions = CSSValueList::createCommaSeparated();
@@ -1903,7 +1905,6 @@ static RefPtr<CSSValueList> consumePositionList(CSSParserTokenRange& range, CSSP
     return positions;
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
 static RefPtr<CSSValue> consumeScrollSnapCoordinate(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNone)
@@ -1926,6 +1927,7 @@ static RefPtr<CSSValue> consumeScrollSnapPoints(CSSParserTokenRange& range, CSSP
     }
     return nullptr;
 }
+
 #endif
 
 static RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange& range, CSSParserMode cssParserMode)

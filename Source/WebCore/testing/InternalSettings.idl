@@ -31,65 +31,65 @@ enum ForcedPrefersReducedMotionValue { "system", "on", "off" };
     JSGenerateToJSObject,
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
 ] interface InternalSettings : InternalSettingsGenerated {
-    [MayThrowLegacyException] void setTouchEventEmulationEnabled(boolean enabled);
+    [MayThrowException] void setTouchEventEmulationEnabled(boolean enabled);
 
     // Fonts, text
-    [MayThrowLegacyException] void setStandardFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setSansSerifFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setFixedFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setCursiveFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setFantasyFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setPictographFontFamily(DOMString family, DOMString script);
-    [MayThrowLegacyException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
-    [MayThrowLegacyException] void setWebFontsAlwaysFallBack(boolean enable);
+    [MayThrowException] void setStandardFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setSansSerifFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFixedFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setCursiveFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFantasyFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setPictographFontFamily(DOMString family, DOMString script);
+    [MayThrowException] void setFontFallbackPrefersPictographs(boolean preferPictographs);
+    [MayThrowException] void setWebFontsAlwaysFallBack(boolean enable);
 
-    [MayThrowLegacyException] void setTextAutosizingEnabled(boolean enabled);
-    [MayThrowLegacyException] void setTextAutosizingWindowSizeOverride(long width, long height);
+    [MayThrowException] void setTextAutosizingEnabled(boolean enabled);
+    [MayThrowException] void setTextAutosizingWindowSizeOverride(long width, long height);
 
     // Media
-    [MayThrowLegacyException] void setCanStartMedia(boolean enabled);
-    [Conditional=VIDEO_TRACK, MayThrowLegacyException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);
-    [Conditional=VIDEO_TRACK, MayThrowLegacyException] boolean shouldDisplayTrackKind(DOMString trackKind);
-    [MayThrowLegacyException] void setDefaultVideoPosterURL(DOMString poster);
-    [MayThrowLegacyException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
-    [MayThrowLegacyException] void setMediaTypeOverride(DOMString mediaTypeOverride);
+    [MayThrowException] void setCanStartMedia(boolean enabled);
+    [Conditional=VIDEO_TRACK, MayThrowException] void setShouldDisplayTrackKind(DOMString kind, boolean enabled);
+    [Conditional=VIDEO_TRACK, MayThrowException] boolean shouldDisplayTrackKind(DOMString trackKind);
+    [MayThrowException] void setDefaultVideoPosterURL(DOMString poster);
+    [MayThrowException] void setTimeWithoutMouseMovementBeforeHidingControls(unrestricted double time);
+    [MayThrowException] void setMediaTypeOverride(DOMString mediaTypeOverride);
     void setAllowsAirPlayForMediaPlayback(boolean available);
 
-    [MayThrowLegacyException] void setForcePendingWebGLPolicy(boolean forced);
+    [MayThrowException] void setForcePendingWebGLPolicy(boolean forced);
 
-    [MayThrowLegacyException] void setQuickTimePluginReplacementEnabled(boolean enabled);
-    [MayThrowLegacyException] void setYouTubeFlashPluginReplacementEnabled(boolean enabled);
+    [MayThrowException] void setQuickTimePluginReplacementEnabled(boolean enabled);
+    [MayThrowException] void setYouTubeFlashPluginReplacementEnabled(boolean enabled);
 
     // Editing, forms
-    [MayThrowLegacyException] void setEditingBehavior(DOMString behavior);
-    [MayThrowLegacyException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
+    [MayThrowException] void setEditingBehavior(DOMString behavior);
+    [MayThrowException] void setShouldConvertPositionStyleOnCopy(boolean convertPosition);
     void setLangAttributeAwareFormControlUIEnabled(boolean enabled);
-    [MayThrowLegacyException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
+    [MayThrowException] void setPreferMIMETypeForImages(boolean preferMimeTypeForImage);
 
     // Other switches
-    [MayThrowLegacyException] void setStorageBlockingPolicy(DOMString policy);
-    [MayThrowLegacyException] void setImagesEnabled(boolean enabled);
-    [MayThrowLegacyException] void setPDFImageCachingPolicy(DOMString policy);
-    [MayThrowLegacyException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
-    [MayThrowLegacyException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
-    [MayThrowLegacyException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
-    [MayThrowLegacyException] void setScrollingTreeIncludesFrames(boolean enabled);
+    [MayThrowException] void setStorageBlockingPolicy(DOMString policy);
+    [MayThrowException] void setImagesEnabled(boolean enabled);
+    [MayThrowException] void setPDFImageCachingPolicy(DOMString policy);
+    [MayThrowException] void setUseLegacyBackgroundSizeShorthandBehavior(boolean enabled);
+    [MayThrowException] void setAutoscrollForDragAndDropEnabled(boolean enabled);
+    [MayThrowException] void setBackgroundShouldExtendBeyondPage(boolean hasExtendedBackground);
+    [MayThrowException] void setScrollingTreeIncludesFrames(boolean enabled);
 
-    [MayThrowLegacyException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
-    [MayThrowLegacyException] void setAllowsInlineMediaPlayback(boolean allows);
-    [MayThrowLegacyException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
-    [MayThrowLegacyException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
+    [MayThrowException] void setMinimumTimerInterval(unrestricted double intervalInSeconds);
+    [MayThrowException] void setAllowsInlineMediaPlayback(boolean allows);
+    [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
+    [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
 
-    [MayThrowLegacyException] void setIndexedDBWorkersEnabled(boolean requires);
+    void setIndexedDBWorkersEnabled(boolean requires);
 
-    [MayThrowLegacyException] DOMString userInterfaceDirectionPolicy();
-    [MayThrowLegacyException] void setUserInterfaceDirectionPolicy(DOMString policy);
-    [MayThrowLegacyException] DOMString systemLayoutDirection();
-    [MayThrowLegacyException] void setSystemLayoutDirection(DOMString direction);
+    [MayThrowException] DOMString userInterfaceDirectionPolicy();
+    [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);
+    [MayThrowException] DOMString systemLayoutDirection();
+    [MayThrowException] void setSystemLayoutDirection(DOMString direction);
 
-    [MayThrowLegacyException] boolean variationFontsEnabled();
-    [MayThrowLegacyException] void setVariationFontsEnabled(boolean enabled);
+    [MayThrowException] boolean variationFontsEnabled();
+    [MayThrowException] void setVariationFontsEnabled(boolean enabled);
 
     attribute ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue;
 

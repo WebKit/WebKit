@@ -207,43 +207,4 @@ bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream& stream, float 
     return ok;
 }
 
-static void pathIteratorForBuildingString(SVGPathConsumer& consumer, const PathElement& pathElement)
-{
-    switch (pathElement.type) {
-    case PathElementMoveToPoint:
-        consumer.moveTo(pathElement.points[0], false, AbsoluteCoordinates);
-        break;
-    case PathElementAddLineToPoint:
-        consumer.lineTo(pathElement.points[0], AbsoluteCoordinates);
-        break;
-    case PathElementAddQuadCurveToPoint:
-        consumer.curveToQuadratic(pathElement.points[0], pathElement.points[1], AbsoluteCoordinates);
-        break;
-    case PathElementAddCurveToPoint:
-        consumer.curveToCubic(pathElement.points[0], pathElement.points[1], pathElement.points[2], AbsoluteCoordinates);
-        break;
-    case PathElementCloseSubpath:
-        consumer.closePath();
-        break;
-
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
-bool buildStringFromPath(const Path& path, String& string)
-{
-    // Ideally we would have a SVGPathPlatformPathSource, but it's not possible to manually iterate
-    // a path, only apply a function to all path elements at once.
-
-    SVGPathStringBuilder builder;
-    path.apply([&builder](const PathElement& pathElement) {
-        pathIteratorForBuildingString(builder, pathElement);
-    });
-    string = builder.result();
-
-    return true;
-}
-
 }

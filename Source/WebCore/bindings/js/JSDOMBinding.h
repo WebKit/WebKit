@@ -196,7 +196,7 @@ void propagateException(JSC::ExecState&, Exception&&);
 WEBCORE_EXPORT void setDOMException(JSC::ExecState*, ExceptionCode);
 
 // Implementation details of the above.
-void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
+WEBCORE_EXPORT void propagateExceptionSlowPath(JSC::ExecState&, JSC::ThrowScope&, Exception&&);
 WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, ExceptionCode);
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
@@ -412,6 +412,7 @@ struct BindingCaller {
 // ExceptionOr handling.
 void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
+template<typename T> JSC::JSValue toJSArray(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
 JSC::JSValue toJSBoolean(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<bool>&&);
 JSC::JSValue toJSDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<double>&&);
 JSC::JSValue toJSNullableDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<Optional<double>>&&);
@@ -927,6 +928,15 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobal
         return { };
     }
     return toJS(&state, &globalObject, value.releaseReturnValue());
+}
+
+template<typename T> inline JSC::JSValue toJSArray(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+    return jsArray(&state, &globalObject, value.releaseReturnValue());
 }
 
 inline JSC::JSValue toJSBoolean(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<bool>&& value)

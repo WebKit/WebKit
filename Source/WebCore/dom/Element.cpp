@@ -1800,10 +1800,10 @@ void Element::removeShadowRoot()
     notifyChildNodeRemoved(*this, *oldRoot);
 }
 
-RefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
+ShadowRoot* Element::createShadowRoot(ExceptionCode& ec)
 {
     if (alwaysCreateUserAgentShadowRoot())
-        ensureUserAgentShadowRoot();
+        return &ensureUserAgentShadowRoot();
 
     ec = HIERARCHY_REQUEST_ERR;
     return nullptr;

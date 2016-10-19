@@ -267,7 +267,7 @@ public:
     virtual bool rendererIsNeeded(const RenderStyle&);
 
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
-    WEBCORE_EXPORT RefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
+    WEBCORE_EXPORT ShadowRoot* createShadowRoot(ExceptionCode&);
 
     enum class ShadowRootMode { Open, Closed };
     struct ShadowRootInit {

@@ -30,6 +30,7 @@
 #include <wtf/text/AtomicStringHash.h>
 
 #include "EditingBehaviorTypes.h"
+#include "ExceptionOr.h"
 #include "FontGenericFamilies.h"
 #include "IntSize.h"
 #include "InternalSettingsGenerated.h"
@@ -39,15 +40,75 @@
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
-class Frame;
-class Document;
 class Page;
 class Settings;
 
 class InternalSettings : public InternalSettingsGenerated {
 public:
+    static Ref<InternalSettings> create(Page*);
+    static InternalSettings* from(Page*);
+    void hostDestroyed();
+    void resetToConsistentState();
+
+    ExceptionOr<void> setUsesOverlayScrollbars(bool);
+    ExceptionOr<void> setTouchEventEmulationEnabled(bool);
+    ExceptionOr<void> setStandardFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setSerifFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setSansSerifFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setFixedFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setCursiveFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setFantasyFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setPictographFontFamily(const String& family, const String& script);
+    ExceptionOr<void> setTextAutosizingEnabled(bool);
+    ExceptionOr<void> setTextAutosizingWindowSizeOverride(int width, int height);
+    ExceptionOr<void> setTextAutosizingFontScaleFactor(float);
+    ExceptionOr<void> setMediaTypeOverride(const String&);
+    ExceptionOr<void> setCanStartMedia(bool);
+    ExceptionOr<void> setAllowsAirPlayForMediaPlayback(bool);
+    ExceptionOr<void> setEditingBehavior(const String&);
+    ExceptionOr<void> setPreferMIMETypeForImages(bool);
+    ExceptionOr<void> setPDFImageCachingPolicy(const String&);
+    ExceptionOr<void> setShouldDisplayTrackKind(const String& kind, bool enabled);
+    ExceptionOr<bool> shouldDisplayTrackKind(const String& kind);
+    ExceptionOr<void> setStorageBlockingPolicy(const String&);
+    static void setLangAttributeAwareFormControlUIEnabled(bool);
+    ExceptionOr<void> setImagesEnabled(bool);
+    ExceptionOr<void> setMinimumTimerInterval(double intervalInSeconds);
+    ExceptionOr<void> setDefaultVideoPosterURL(const String&);
+    ExceptionOr<void> setForcePendingWebGLPolicy(bool);
+    ExceptionOr<void> setTimeWithoutMouseMovementBeforeHidingControls(double);
+    ExceptionOr<void> setUseLegacyBackgroundSizeShorthandBehavior(bool);
+    ExceptionOr<void> setAutoscrollForDragAndDropEnabled(bool);
+    ExceptionOr<void> setFontFallbackPrefersPictographs(bool);
+    ExceptionOr<void> setWebFontsAlwaysFallBack(bool);
+    ExceptionOr<void> setQuickTimePluginReplacementEnabled(bool);
+    ExceptionOr<void> setYouTubeFlashPluginReplacementEnabled(bool);
+    ExceptionOr<void> setBackgroundShouldExtendBeyondPage(bool);
+    ExceptionOr<void> setShouldConvertPositionStyleOnCopy(bool);
+    ExceptionOr<void> setScrollingTreeIncludesFrames(bool);
+    ExceptionOr<void> setAllowsInlineMediaPlayback(bool);
+    ExceptionOr<void> setAllowsInlineMediaPlaybackAfterFullscreen(bool);
+    ExceptionOr<void> setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool);
+    static void setIndexedDBWorkersEnabled(bool);
+    ExceptionOr<String> userInterfaceDirectionPolicy();
+    ExceptionOr<void> setUserInterfaceDirectionPolicy(const String&);
+    ExceptionOr<String> systemLayoutDirection();
+    ExceptionOr<void> setSystemLayoutDirection(const String&);
+    ExceptionOr<bool> variationFontsEnabled();
+    ExceptionOr<void> setVariationFontsEnabled(bool);
+
+    enum class ForcedPrefersReducedMotionValue { System, On, Off };
+    ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue() const;
+    void setForcedPrefersReducedMotionValue(ForcedPrefersReducedMotionValue);
+
+    static void setAllowsAnySSLCertificate(bool);
+
+private:
+    explicit InternalSettings(Page*);
+
+    Settings& settings() const;
+    static const char* supplementName();
+
     class Backup {
     public:
         explicit Backup(Settings&);
@@ -117,76 +178,6 @@ public:
         PDFImageCachingPolicy m_pdfImageCachingPolicy;
         Settings::ForcedPrefersReducedMotionValue m_forcedPrefersReducedMotionValue;
     };
-
-    static Ref<InternalSettings> create(Page* page)
-    {
-        return adoptRef(*new InternalSettings(page));
-    }
-    static InternalSettings* from(Page*);
-    void hostDestroyed() { m_page = 0; }
-
-    virtual ~InternalSettings();
-    void resetToConsistentState();
-
-    void setUsesOverlayScrollbars(bool, ExceptionCode&);
-    void setTouchEventEmulationEnabled(bool, ExceptionCode&);
-    void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setFixedFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setCursiveFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setFantasyFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
-    void setTextAutosizingEnabled(bool enabled, ExceptionCode&);
-    void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
-    void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
-    void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
-    void setCanStartMedia(bool, ExceptionCode&);
-    void setAllowsAirPlayForMediaPlayback(bool);
-    void setEditingBehavior(const String&, ExceptionCode&);
-    void setPreferMIMETypeForImages(bool, ExceptionCode&);
-    void setPDFImageCachingPolicy(const String&, ExceptionCode&);
-    void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
-    bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
-    void setStorageBlockingPolicy(const String&, ExceptionCode&);
-    void setLangAttributeAwareFormControlUIEnabled(bool);
-    void setImagesEnabled(bool, ExceptionCode&);
-    void setMinimumTimerInterval(double intervalInSeconds, ExceptionCode&);
-    void setDefaultVideoPosterURL(const String& url, ExceptionCode&);
-    void setForcePendingWebGLPolicy(bool, ExceptionCode&);
-    void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
-    void setUseLegacyBackgroundSizeShorthandBehavior(bool, ExceptionCode&);
-    void setAutoscrollForDragAndDropEnabled(bool, ExceptionCode&);
-    void setFontFallbackPrefersPictographs(bool, ExceptionCode&);
-    void setWebFontsAlwaysFallBack(bool, ExceptionCode&);
-    void setQuickTimePluginReplacementEnabled(bool, ExceptionCode&);
-    void setYouTubeFlashPluginReplacementEnabled(bool, ExceptionCode&);
-    void setBackgroundShouldExtendBeyondPage(bool, ExceptionCode&);
-    void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);
-    void setScrollingTreeIncludesFrames(bool, ExceptionCode&);
-    void setAllowsInlineMediaPlayback(bool, ExceptionCode&);
-    void setAllowsInlineMediaPlaybackAfterFullscreen(bool, ExceptionCode&);
-    void setInlineMediaPlaybackRequiresPlaysInlineAttribute(bool, ExceptionCode&);
-    void setIndexedDBWorkersEnabled(bool, ExceptionCode&);
-    String userInterfaceDirectionPolicy(ExceptionCode&);
-    void setUserInterfaceDirectionPolicy(const String& policy, ExceptionCode&);
-    String systemLayoutDirection(ExceptionCode&);
-    void setSystemLayoutDirection(const String& direction, ExceptionCode&);
-    bool variationFontsEnabled(ExceptionCode&);
-    void setVariationFontsEnabled(bool, ExceptionCode&);
-
-    enum class ForcedPrefersReducedMotionValue { System, On, Off };
-    ForcedPrefersReducedMotionValue forcedPrefersReducedMotionValue() const;
-    void setForcedPrefersReducedMotionValue(ForcedPrefersReducedMotionValue);
-
-    static void setAllowsAnySSLCertificate(bool);
-
-private:
-    explicit InternalSettings(Page*);
-
-    Settings* settings() const;
-    Page* page() const { return m_page; }
-    static const char* supplementName();
 
     Page* m_page;
     Backup m_backup;

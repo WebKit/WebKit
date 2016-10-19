@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathUtilities_h
-#define SVGPathUtilities_h
+#pragma once
 
 #include "SVGPathConsumer.h"
 #include "SVGPoint.h"
@@ -58,9 +57,4 @@ bool getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream&, float 
 bool getTotalLengthOfSVGPathByteStream(const SVGPathByteStream&, float& totalLength);
 bool getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length, SVGPoint&);
 
-// Path -> String
-WEBCORE_EXPORT bool buildStringFromPath(const Path&, String&);
-
 } // namespace WebCore
-
-#endif // SVGPathUtilities_h
