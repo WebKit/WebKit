@@ -577,3 +577,5 @@ webkit.org/b/163139 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 webkit.org/b/162975 [ Debug ] http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Pass Failure ]
 
 webkit.org/b/161653 [ Debug ] storage/indexeddb/key-generator.html [ Pass Timeout ]
+
+webkit.org/b/163453 [ Sierra Release ] http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html [ Pass Timeout ]

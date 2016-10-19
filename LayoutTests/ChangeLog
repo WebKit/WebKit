@@ -1,3 +1,12 @@
+2016-10-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html as flaky on Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=163453
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         Leverage new union type support for HTMLSelectElement.add() / HTMLOptionsCollection.add()
