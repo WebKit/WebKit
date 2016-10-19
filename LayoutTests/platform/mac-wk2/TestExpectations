@@ -579,3 +579,5 @@ webkit.org/b/162975 [ Debug ] http/tests/cache/disk-cache/memory-cache-revalidat
 webkit.org/b/161653 [ Debug ] storage/indexeddb/key-generator.html [ Pass Timeout ]
 
 webkit.org/b/163453 [ Sierra Release ] http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-cors.https.html [ Pass Timeout ]
+
+webkit.org/b/163702 platform/mac-wk2/plugins/muted-state.html [ Failure ]
