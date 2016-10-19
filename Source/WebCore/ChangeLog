@@ -1,3 +1,23 @@
+2016-10-19  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 163670: Refine assertions in WebCore::ImageData constructors
+        <https://webkit.org/b/163670>
+        <rdar://problem/27497338>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests because there is no change in nominal behavior.
+
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData(const IntSize&)): Change to use
+        ASSERT() since the worst-case scenario here is a nullptr deref.
+        Switch to IntSize::area() to compute the area.
+        (WebCore::ImageData::ImageData(const IntSize&, Ref<Uint8ClampedArray>&&)):
+        Add ASSERT() identical to the previous constructor, and change
+        ASSERT_WITH_SECURITY_IMPLICATION() to only fire when m_data is
+        not nullptr and the length check fails.  Switch to
+        IntSize::area() to compute the area.
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9
