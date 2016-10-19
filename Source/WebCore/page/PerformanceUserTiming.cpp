@@ -33,6 +33,7 @@
 #include "PerformanceEntry.h"
 #include "PerformanceMark.h"
 #include "PerformanceMeasure.h"
+#include "PerformanceTiming.h"
 #include <array>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/dtoa/utils.h>

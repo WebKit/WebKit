@@ -1,5 +1,11 @@
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix the build after r207522.
+
+        * page/PerformanceUserTiming.cpp: Include PerformanceTiming.h.
+
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix the build after r207519.
 
         The build error is:
