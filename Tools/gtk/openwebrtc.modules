@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
+  <repository type="git" name="gstreamer"
+      href="git://anongit.freedesktop.org/git/gstreamer/"/>
+  <repository type="tarball" name="nice.freedesktop.org"
+      href="http://nice.freedesktop.org"/>
+  <repository type="git" name="github.com"
+      href="https://github.com"/>
+
+  <autotools id="openh264" supports-non-srcdir-builds="no" autogen-sh="pseudo-configure">
+    <branch module="cisco/openh264/archive/v${version}.tar.gz" version="1.5.0"
+            checkoutdir="openh264-${version}" repo="github-tarball">
+      <patch file="openh264-configure.patch" strip="0"/>
+    </branch>
+  </autotools>
+
+  <autotools id="libvpx"
+    autogen-template="%(srcdir)s/configure --prefix=%(prefix)s --enable-pic --as=yasm --disable-unit-tests --size-limit=16384x16384 --enable-postproc --enable-multi-res-encoding --enable-temporal-denoising --enable-vp9-temporal-denoising --enable-vp9-postproc --enable-shared">
+    <branch repo="github.com" module="webmproject/libvpx.git" version="1.6.0" checkoutdir="libvpx-1.6.0">
+    </branch>
+  </autotools>
+
+  <autotools id="libnice" supports-non-srcdir-builds="no">
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="nice.freedesktop.org" module="releases/libnice-${version}.tar.gz" version="0.1.13" checkoutdir="libnice-${version}">
+      <patch file="libnice-0001-agent-Remove-unnecessary-NULL-check.patch" strip="1"/>
+      <patch file="libnice-0002-Do-not-update-a-remote-candidate-s-type.patch" strip="1"/>
+      <patch file="libnice-0003-Do-not-compare-scope-for-IPv6-address-when-scope-is-.patch" strip="1"/>
+      <patch file="libnice-0004-Removing-no-op-assignment.patch" strip="1"/>
+      <patch file="libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch" strip="1"/>
+      <patch file="libnice-0001-TURN-allow-REALM-to-be-empty.patch" strip="1"/>
+      <patch file="libnice-0002-TURN-handle-437-Allocation-Mismatch-responses.patch" strip="1"/>
+    </branch>
+  </autotools>
+
+  <autotools id="gstreamer" autogenargs="--disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+    </if>
+    <dependencies>
+      <dep package="orc"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer-b6e69ffdfb3bb21dbada8f01b488ae877f8d205c" tag="b6e69ffdfb3bb21dbada8f01b488ae877f8d205c"/>
+  </autotools>
+
+  <autotools id="gst-plugins-base"
+             autogen-sh="autogen.sh"
+             autogenargs="--disable-examples --disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+    </if>
+    <dependencies>
+      <dep package="gstreamer"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base-cf18fae9deb02f0867b67593f678b932f8eb931a" tag="cf18fae9deb02f0867b67593f678b932f8eb931a"/>
+  </autotools>
+
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+    </if>
+    <dependencies>
+     <dep package="libvpx"/>
+     <dep package="gst-plugins-base"/>
+    </dependencies>
+     <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good-567afdd4d3f2fa07fecf4c02a7eca70f7a7ef7f7" tag="567afdd4d3f2fa07fecf4c02a7eca70f7a7ef7f7"/>
+  </autotools>
+
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples --disable-gtk-doc --enable-openh264">
+    <if condition-set="macos">
+      <autogenargs value="--disable-introspection"/>
+    </if>
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+      <dep package="openh264"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad-a036b7ef9ffe9fe5dac4a7e46fbc3bac92921a54" tag="a036b7ef9ffe9fe5dac4a7e46fbc3bac92921a54"/>
+  </autotools>
+  
+</moduleset>

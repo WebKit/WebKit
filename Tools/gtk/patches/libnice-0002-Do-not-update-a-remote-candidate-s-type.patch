@@ -1,0 +1,31 @@
+From 93862c1e1940618e06143d4788f54bffd4d1c5da Mon Sep 17 00:00:00 2001
+From: Youness Alaoui <kakaroto@kakaroto.homelinux.net>
+Date: Tue, 5 May 2015 14:24:15 -0400
+Subject: [PATCH 2/4] Do not update a remote candidate's type
+
+When adding a remote candidate, if it's the same ip:port, we should
+also check its type, otherwise it's a new candidate. We can't allow
+a candidate type to be updated. This caused issues to ikonst_ on IRC
+where for some reason a host candidate appeared as both host and prflx
+and the update caused a remote host candidate to be updated to prflx
+causing a crash when the sockptr was being accessed.
+---
+ agent/agent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/agent/agent.c b/agent/agent.c
+index e733c82..38b679f 100644
+--- a/agent/agent.c
++++ b/agent/agent.c
+@@ -3041,7 +3041,7 @@ static gboolean priv_add_remote_candidate (
+ 
+   /* step: check whether the candidate already exists */
+   candidate = component_find_remote_candidate(component, addr, transport);
+-  if (candidate) {
++  if (candidate && candidate->type == type) {
+     if (nice_debug_is_enabled ()) {
+       gchar tmpbuf[INET6_ADDRSTRLEN];
+       nice_address_to_string (addr, tmpbuf);
+-- 
+2.3.2 (Apple Git-55)
+

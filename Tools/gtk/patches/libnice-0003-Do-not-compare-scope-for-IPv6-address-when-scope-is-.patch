@@ -1,0 +1,43 @@
+From 91a7b9324244844baf35d8fcef019a4ea3872d30 Mon Sep 17 00:00:00 2001
+From: Youness Alaoui <kakaroto@kakaroto.homelinux.net>
+Date: Tue, 5 May 2015 15:00:30 -0400
+Subject: [PATCH 3/4] Do not compare scope for IPv6 address when scope is 0
+
+This caused issues with thinking local host candidates were peer-reflexive
+candidates because the nice_address_equal would fail since the scope
+would be 6 (or some other value) but locally created NiceAddress from
+a stun response would have the scope set to 0.
+We ignore the scope when comparing ipv6 candidates when scope is 0
+to avoid these kinds of issues.
+Thanks to ikonst_ for finding these issues
+---
+ agent/address.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/agent/address.c b/agent/address.c
+index a8d9c76..01eebab 100644
+--- a/agent/address.c
++++ b/agent/address.c
+@@ -297,7 +297,8 @@ nice_address_equal (const NiceAddress *a, const NiceAddress *b)
+     case AF_INET6:
+       return IN6_ARE_ADDR_EQUAL (&a->s.ip6.sin6_addr, &b->s.ip6.sin6_addr)
+           && (a->s.ip6.sin6_port == b->s.ip6.sin6_port)
+-          && (a->s.ip6.sin6_scope_id == b->s.ip6.sin6_scope_id);
++          && (a->s.ip6.sin6_scope_id == 0 || b->s.ip6.sin6_scope_id == 0 ||
++              (a->s.ip6.sin6_scope_id == b->s.ip6.sin6_scope_id));
+ 
+     default:
+       g_return_val_if_reached (FALSE);
+@@ -412,7 +413,8 @@ nice_address_equal_no_port (const NiceAddress *a, const NiceAddress *b)
+ 
+     case AF_INET6:
+       return IN6_ARE_ADDR_EQUAL (&a->s.ip6.sin6_addr, &b->s.ip6.sin6_addr)
+-          && (a->s.ip6.sin6_scope_id == b->s.ip6.sin6_scope_id);
++          && (a->s.ip6.sin6_scope_id == 0 || b->s.ip6.sin6_scope_id == 0 ||
++              (a->s.ip6.sin6_scope_id == b->s.ip6.sin6_scope_id));
+ 
+     default:
+       g_return_val_if_reached (FALSE);
+-- 
+2.3.2 (Apple Git-55)
+

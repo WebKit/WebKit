@@ -1,0 +1,50 @@
+From 0c55166a817ec51096460f789234ef49237000cc Mon Sep 17 00:00:00 2001
+From: Alessandro Decina <alessandro.d@gmail.com>
+Date: Thu, 24 Mar 2016 10:48:27 +1100
+Subject: [PATCH 1/2] TURN: allow REALM to be empty
+
+---
+ agent/conncheck.c | 6 ++----
+ stun/stunhmac.c   | 6 ++++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/agent/conncheck.c b/agent/conncheck.c
+index 057fc81..97bf536 100644
+--- a/agent/conncheck.c
++++ b/agent/conncheck.c
+@@ -2768,13 +2768,11 @@ static gboolean priv_map_reply_to_relay_request (NiceAgent *agent, StunMessage *
+                agent->compatibility == NICE_COMPATIBILITY_OC2007R2) &&
+               stun_message_get_class (resp) == STUN_ERROR &&
+               stun_message_find_error (resp, &code) ==
+-              STUN_MESSAGE_RETURN_SUCCESS &&
+-              recv_realm != NULL && recv_realm_len > 0) {
+-
++              STUN_MESSAGE_RETURN_SUCCESS) {
+             if (code == 438 ||
+                 (code == 401 &&
+                     !(recv_realm_len == sent_realm_len &&
+-                        sent_realm != NULL &&
++                        recv_realm != NULL && sent_realm != NULL &&
+                         memcmp (sent_realm, recv_realm, sent_realm_len) == 0))) {
+               d->stun_resp_msg = *resp;
+               memcpy (d->stun_resp_buffer, resp->buffer,
+diff --git a/stun/stunhmac.c b/stun/stunhmac.c
+index df5deb6..f73943f 100644
+--- a/stun/stunhmac.c
++++ b/stun/stunhmac.c
+@@ -90,8 +90,10 @@ static const uint8_t *priv_trim_var (const uint8_t *var, size_t *var_len)
+     ptr++;
+     (*var_len)--;
+   }
+-  while(ptr[*var_len-1] == '"' ||
+-      ptr[*var_len-1] == 0) {
++
++  while(*var_len > 0 &&
++      (ptr[*var_len-1] == '"' ||
++      ptr[*var_len-1] == 0)) {
+     (*var_len)--;
+   }
+ 
+-- 
+2.3.4
+

@@ -1,3 +1,25 @@
+2016-10-18  Philippe Normand  <pnormand@igalia.com>
+
+        WebRTC: [GTK] Update jhbuild environment for OpenWebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=163330
+
+        Reviewed by Michael Catanzaro.
+
+        Bring back the openwebrtc JHBuild moduleset in the time being. It
+        should be removed after the bump to GStreamer 1.10 is complete and
+        the libnice patches have been upstreamed. The GStreamer git
+        snapshots used in this patch are the ones configured in Ericsson's
+        GStreamer Cerbero fork.
+
+        * gtk/openwebrtc.modules: Added.
+        * gtk/patches/libnice-0001-TURN-allow-REALM-to-be-empty.patch: Added.
+        * gtk/patches/libnice-0001-agent-Remove-unnecessary-NULL-check.patch: Added.
+        * gtk/patches/libnice-0001-nicesrc-spin-the-agent-mainloop-in-a-separate-thread.patch: Added.
+        * gtk/patches/libnice-0002-Do-not-update-a-remote-candidate-s-type.patch: Added.
+        * gtk/patches/libnice-0002-TURN-handle-437-Allocation-Mismatch-responses.patch: Added.
+        * gtk/patches/libnice-0003-Do-not-compare-scope-for-IPv6-address-when-scope-is-.patch: Added.
+        * gtk/patches/libnice-0004-Removing-no-op-assignment.patch: Added.
+
 2016-10-18  Sam Weinig  <sam@webkit.org>
 
         Replace std::experimental::variant with WTF::Variant (or similar)

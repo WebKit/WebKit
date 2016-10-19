@@ -512,6 +512,7 @@
   <autotools id="openwebrtc" autogenargs="--enable-bridge=no --enable-owr-gst=yes">
     <dependencies>
       <dep package="gst-plugins-openwebrtc"/>
+      <dep package="gst-plugins-bad"/>
       <dep package="libnice"/>
      </dependencies>
     <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="0b28b080d61af3adb1f779e693fc029f9c1ad499"/>

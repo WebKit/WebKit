@@ -1,0 +1,44 @@
+From 7b7d2d986876fc53a23af7b516d78f82f2a546e9 Mon Sep 17 00:00:00 2001
+From: Philip Withnall <philip@tecnocode.co.uk>
+Date: Sun, 3 May 2015 16:05:30 +0100
+Subject: [PATCH 1/4] agent: Remove unnecessary NULL check
+
+With the changes in commit 483bdcf8, @name is now guaranteed to be
+non-NULL. Spotted by Coverity.
+
+CID: #109878
+---
+ agent/agent.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/agent/agent.c b/agent/agent.c
+index 259fdc9..e733c82 100644
+--- a/agent/agent.c
++++ b/agent/agent.c
+@@ -5329,16 +5329,14 @@ nice_agent_set_stream_name (NiceAgent *agent, guint stream_id,
+ 
+   agent_lock();
+ 
+-  if (name != NULL) {
+-    for (i = agent->streams; i; i = i->next) {
+-      Stream *stream = i->data;
++  for (i = agent->streams; i; i = i->next) {
++    Stream *stream = i->data;
+ 
+-      if (stream->id != stream_id &&
+-          g_strcmp0 (stream->name, name) == 0)
+-        goto done;
+-      else if (stream->id == stream_id)
+-        stream_to_name = stream;
+-    }
++    if (stream->id != stream_id &&
++        g_strcmp0 (stream->name, name) == 0)
++      goto done;
++    else if (stream->id == stream_id)
++      stream_to_name = stream;
+   }
+ 
+   if (stream_to_name == NULL)
+-- 
+2.3.2 (Apple Git-55)
+

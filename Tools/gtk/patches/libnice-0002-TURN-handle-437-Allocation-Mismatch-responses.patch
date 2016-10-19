@@ -1,0 +1,131 @@
+From 9e2ced131ac0fc642ef5c861851c5988d8b96d16 Mon Sep 17 00:00:00 2001
+From: Alessandro Decina <alessandro.d@gmail.com>
+Date: Thu, 24 Mar 2016 10:54:20 +1100
+Subject: [PATCH 2/2] TURN: handle 437 Allocation Mismatch responses
+
+On Allocation Mismatch responses, the client is supposed to retry with a
+different host:port combination.
+---
+ agent/conncheck.c | 42 +++++++++++++++++++++++++++++++++---------
+ agent/discovery.h |  1 +
+ stun/stunagent.c  |  2 +-
+ 3 files changed, 35 insertions(+), 10 deletions(-)
+
+diff --git a/agent/conncheck.c b/agent/conncheck.c
+index 97bf536..d03e57a 100644
+--- a/agent/conncheck.c
++++ b/agent/conncheck.c
+@@ -2630,9 +2630,10 @@ static gboolean priv_map_reply_to_relay_request (NiceAgent *agent, StunMessage *
+   StunTransactionId discovery_id;
+   StunTransactionId response_id;
+   stun_message_id (resp, response_id);
++  CandidateDiscovery *d = NULL;
+ 
+   for (i = agent->discovery_list; i && trans_found != TRUE; i = i->next) {
+-    CandidateDiscovery *d = i->data;
++    d = i->data;
+ 
+     if (d->type == NICE_CANDIDATE_TYPE_RELAYED &&
+         d->stun_message.buffer) {
+@@ -2757,6 +2758,7 @@ static gboolean priv_map_reply_to_relay_request (NiceAgent *agent, StunMessage *
+           uint16_t sent_realm_len = 0;
+           uint16_t recv_realm_len = 0;
+ 
++          trans_found = TRUE;
+           sent_realm = (uint8_t *) stun_message_find (&d->stun_message,
+               STUN_ATTRIBUTE_REALM, &sent_realm_len);
+           recv_realm = (uint8_t *) stun_message_find (resp,
+@@ -2769,11 +2771,31 @@ static gboolean priv_map_reply_to_relay_request (NiceAgent *agent, StunMessage *
+               stun_message_get_class (resp) == STUN_ERROR &&
+               stun_message_find_error (resp, &code) ==
+               STUN_MESSAGE_RETURN_SUCCESS) {
+-            if (code == 438 ||
++            if (code == 437 ||
++                code == 438 ||
+                 (code == 401 &&
+                     !(recv_realm_len == sent_realm_len &&
+                         recv_realm != NULL && sent_realm != NULL &&
+                         memcmp (sent_realm, recv_realm, sent_realm_len) == 0))) {
++              if (code == 437) {
++                if (d->turn_retries++ == 3)
++                  goto error;
++
++                /* retry up to three times on Allocation Mismatch errors */
++                NiceAddress addr = d->nicesock->addr;
++                NiceSocket *new_socket;
++
++                /* FIXME: this ignores nice_agent_set_port_range */
++                nice_address_set_port (&addr, 0);
++
++                new_socket = nice_udp_bsd_socket_new (&addr);
++                if (new_socket) {
++                  _priv_set_socket_tos (agent, new_socket, d->stream->tos);
++                  component_attach_socket (d->component, new_socket);
++                  d->nicesock = new_socket;
++                }
++              }
++
+               d->stun_resp_msg = *resp;
+               memcpy (d->stun_resp_buffer, resp->buffer,
+                   stun_message_length (resp));
+@@ -2782,23 +2804,25 @@ static gboolean priv_map_reply_to_relay_request (NiceAgent *agent, StunMessage *
+               d->pending = FALSE;
+             } else {
+               /* case: a real unauthorized error */
+-              d->stun_message.buffer = NULL;
+-              d->stun_message.buffer_len = 0;
+-              d->done = TRUE;
++              goto error;
+             }
+           } else {
+             /* case: STUN error, the check STUN context was freed */
+-            d->stun_message.buffer = NULL;
+-            d->stun_message.buffer_len = 0;
+-            d->done = TRUE;
++            goto error;
+           }
+-          trans_found = TRUE;
+         }
+       }
+     }
+   }
+ 
+   return trans_found;
++
++error:
++  d->stun_message.buffer = NULL;
++  d->stun_message.buffer_len = 0;
++  d->done = TRUE;
++
++  return trans_found;
+ }
+ 
+ 
+diff --git a/agent/discovery.h b/agent/discovery.h
+index c22ea6a..148b8c2 100644
+--- a/agent/discovery.h
++++ b/agent/discovery.h
+@@ -56,6 +56,7 @@ typedef struct
+   Stream *stream;
+   Component *component;
+   TurnServer *turn;
++  gint turn_retries;
+   StunAgent stun_agent;
+   StunTimer timer;
+   uint8_t stun_buffer[STUN_MAX_MESSAGE_SIZE_IPV6];
+diff --git a/stun/stunagent.c b/stun/stunagent.c
+index 2abcc29..0abae3d 100644
+--- a/stun/stunagent.c
++++ b/stun/stunagent.c
+@@ -301,7 +301,7 @@ StunValidationStatus stun_agent_validate (StunAgent *agent, StunMessage *msg,
+     } else if (!(stun_message_get_class (msg) == STUN_ERROR &&
+         stun_message_find_error (msg, &error_code) ==
+             STUN_MESSAGE_RETURN_SUCCESS &&
+-        (error_code == 400 || error_code == 401))) {
++        (error_code == 400 || error_code == 401 || error_code == 437))) {
+       stun_debug ("STUN auth error: No message integrity attribute!");
+       return STUN_VALIDATION_UNAUTHORIZED;
+     }
+-- 
+2.3.4
+

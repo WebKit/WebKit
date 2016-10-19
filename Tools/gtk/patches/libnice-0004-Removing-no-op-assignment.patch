@@ -1,0 +1,24 @@
+From 6a8c63219c632c27707267b6510dca096c6fd511 Mon Sep 17 00:00:00 2001
+From: Youness Alaoui <kakaroto@kakaroto.homelinux.net>
+Date: Tue, 5 May 2015 15:07:10 -0400
+Subject: [PATCH 4/4] Removing no-op assignment
+
+---
+ agent/agent.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/agent/agent.c b/agent/agent.c
+index 38b679f..84d4093 100644
+--- a/agent/agent.c
++++ b/agent/agent.c
+@@ -3051,7 +3051,6 @@ static gboolean priv_add_remote_candidate (
+           username, password, priority);
+     }
+     /* case 1: an existing candidate, update the attributes */
+-    candidate->type = type;
+     if (base_addr)
+       candidate->base_addr = *base_addr;
+     candidate->priority = priority;
+-- 
+2.3.2 (Apple Git-55)
+
