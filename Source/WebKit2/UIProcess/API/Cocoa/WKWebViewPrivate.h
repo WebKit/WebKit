@@ -288,6 +288,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
+- (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (CGFloat)_pageScale WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 - (void)_disableBackForwardSnapshotVolatilityForTesting WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

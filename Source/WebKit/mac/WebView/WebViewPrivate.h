@@ -813,7 +813,7 @@ Could be worth adding to the API.
 + (void)_registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing:(NSString *)scheme;
 
 - (void)_scaleWebView:(float)scale atOrigin:(NSPoint)origin;
-- (float)_viewScaleFactor;
+- (float)_viewScaleFactor; // This is actually pageScaleFactor.
 
 - (void)_setUseFixedLayout:(BOOL)fixed;
 - (void)_setFixedLayoutSize:(NSSize)size;

@@ -133,7 +133,13 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     }
 }
 
-static CGFloat viewScaleForMenuItemTag(NSInteger tag)
+- (IBAction)setPageScale:(id)sender
+{
+    CGFloat scale = [self pageScaleForMenuItemTag:[sender tag]];
+    [_webView _setPageScale:scale withOrigin:CGPointZero];
+}
+
+- (CGFloat)viewScaleForMenuItemTag:(NSInteger)tag
 {
     if (tag == 1)
         return 1;
@@ -147,9 +153,9 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     return 1;
 }
 
-- (IBAction)setScale:(id)sender
+- (IBAction)setViewScale:(id)sender
 {
-    CGFloat scale = viewScaleForMenuItemTag([sender tag]);
+    CGFloat scale = [self viewScaleForMenuItemTag:[sender tag]];
     CGFloat oldScale = [_webView _viewScale];
 
     if (scale == oldScale)
@@ -162,6 +168,12 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     [self.window setFrame:NSMakeRect(oldFrame.origin.x, oldFrame.origin.y - (newFrameSize.height - oldFrame.size.height), newFrameSize.width, newFrameSize.height) display:NO animate:NO];
 
     [_webView _setViewScale:scale];
+}
+
+static BOOL areEssentiallyEqual(double a, double b)
+{
+    double tolerance = 0.001;
+    return (fabs(a - b) <= tolerance);
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
@@ -188,8 +200,11 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     else if (action == @selector(toggleZoomMode:))
         [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
 
-    if (action == @selector(setScale:))
-        [menuItem setState:[_webView _viewScale] == viewScaleForMenuItemTag([menuItem tag])];
+    if (action == @selector(setPageScale:))
+        [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];
+
+    if (action == @selector(setViewScale:))
+        [menuItem setState:areEssentiallyEqual([_webView _viewScale], [self viewScaleForMenuItemTag:[menuItem tag]])];
 
     return YES;
 }

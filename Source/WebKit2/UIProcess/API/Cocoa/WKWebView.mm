@@ -4620,6 +4620,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 #endif // PLATFORM(MAC)
 
+- (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin
+{
+    _page->scalePage(scale, WebCore::roundedIntPoint(origin));
+}
+
+- (CGFloat)_pageScale
+{
+    return _page->pageScaleFactor();
+}
+
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {

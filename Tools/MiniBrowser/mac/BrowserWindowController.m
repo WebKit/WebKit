@@ -157,7 +157,26 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
-- (IBAction)setScale:(id)sender
+- (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag
+{
+    if (tag == 1)
+        return 1;
+    if (tag == 2)
+        return 1.25;
+    if (tag == 3)
+        return 1.5;
+    if (tag == 4)
+        return 2.0;
+
+    return 1;
+}
+
+- (IBAction)setPageScale:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)setViewScale:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];
 }

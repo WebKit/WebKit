@@ -67,7 +67,8 @@
 
 - (IBAction)toggleZoomMode:(id)sender;
 
-- (IBAction)setScale:(id)sender;
+- (IBAction)setPageScale:(id)sender;
+- (IBAction)setViewScale:(id)sender;
 
 - (IBAction)toggleShrinkToFit:(id)sender;
 
@@ -78,6 +79,8 @@
 
 - (NSURL *)currentURL;
 - (NSView *)mainContentView;
+
+- (CGFloat)pageScaleForMenuItemTag:(NSInteger)tag;
 
 @end
 
