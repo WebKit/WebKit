@@ -1,5 +1,12 @@
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ build after r207522.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_webkit_message_handlers_post_message): Use new exceptions.
+
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ build after r207497.
 
         * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:

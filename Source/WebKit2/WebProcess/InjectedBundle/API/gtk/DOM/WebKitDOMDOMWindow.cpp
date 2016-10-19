@@ -1053,10 +1053,8 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
     if (!handler)
         return FALSE;
 
-    WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    handler->postMessage(WebCore::SerializedScriptValue::create(String::fromUTF8(message)), ec);
-    if (ec)
+    auto result = handler->postMessage(WebCore::SerializedScriptValue::create(String::fromUTF8(message)));
+    if (result.hasException())
         return FALSE;
 
     return TRUE;
