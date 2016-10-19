@@ -1,3 +1,12 @@
+2016-10-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Marking WPT html/webappapis/animation-frames/callback-* tests as flaky on mac-wk1.
+        https://bugs.webkit.org/show_bug.cgi?id=163361
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2016-10-19  Javier Fernandez  <jfernandez@igalia.com>
 
         Web Inspector: Debugger buttons positioned incorrectly, align-content default value is unexpected
