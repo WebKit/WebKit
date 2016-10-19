@@ -1,3 +1,40 @@
+2016-10-18  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Enable basic parser testing.
+        https://bugs.webkit.org/show_bug.cgi?id=163639
+
+        Reviewed by Dean Jackson.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        Remove the ASSERT_NOT_REACHED on the new shadow selectors. We need to implement this
+        eventually, but it's better to not assert on that for now.
+
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::isHostPseudoSelector):
+        Make sure to check that we're a pseudoclass selector first, since otherwise we'll assert.
+
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::needsImplicitShadowCombinatorForMatching):
+        Make sure to check that we're a pseudoelement selector first, since otherwise we'll assert.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::addExpandedPropertyForValue):
+        copyRef is needed here, since a singleton value is being propagated to all the expanded shorthand properties.
+
+        (WebCore::parseSingleShadow):
+        (WebCore::CSSPropertyParser::consumeFont):
+        Remove the font properties that aren't part of our shorthand. We will need to revisit this eventually as it seems
+        some of the font properties should be reset as part of this shorthand but aren't.
+'
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        Just return a number for now instead of the parser_integer type.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Clean this up so that it doesn't assert by making sure to add qualifying checks for the appropriate match type.
+
 2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update the comment for HTML Imports as there is now a proposal to use ES6 Modules for this.

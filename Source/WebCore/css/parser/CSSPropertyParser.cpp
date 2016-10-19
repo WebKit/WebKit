@@ -228,7 +228,7 @@ void CSSPropertyParser::addExpandedPropertyForValue(CSSPropertyID property, Ref<
     ASSERT(shorthandLength);
     const CSSPropertyID* longhands = shorthand.properties();
     for (unsigned i = 0; i < shorthandLength; ++i)
-        addProperty(longhands[i], property, WTFMove(value), important);
+        addProperty(longhands[i], property, value.copyRef(), important);
 }
     
 bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important,
@@ -1292,8 +1292,9 @@ static RefPtr<CSSShadowValue> parseSingleShadow(CSSParserTokenRange& range, CSSP
             style = consumeIdent(range);
         }
     }
-    return CSSShadowValue::create(horizontalOffset.releaseNonNull(), verticalOffset.releaseNonNull(), blurRadius.releaseNonNull(),
-        spreadDistance.releaseNonNull(), style.releaseNonNull(), color.releaseNonNull());
+    
+    // We pass RefPtrs, since they can actually be null.
+    return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(blurRadius), WTFMove(spreadDistance), WTFMove(style), WTFMove(color));
 }
 
 static RefPtr<CSSValue> consumeShadow(CSSParserTokenRange& range, CSSParserMode cssParserMode, bool isBoxShadowProperty)
@@ -3471,7 +3472,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     RefPtr<CSSPrimitiveValue> fontStyle;
     RefPtr<CSSPrimitiveValue> fontVariantCaps;
     RefPtr<CSSPrimitiveValue> fontWeight;
-    RefPtr<CSSPrimitiveValue> fontStretch;
+    // FIXME-NEWPARSER: Implement. RefPtr<CSSPrimitiveValue> fontStretch;
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
         if (!fontStyle && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStyle, id, m_context.mode)) {
@@ -3490,10 +3491,11 @@ bool CSSPropertyParser::consumeFont(bool important)
             if (fontWeight)
                 continue;
         }
-        if (!fontStretch && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStretch, id, m_context.mode))
+        /* FIXME-NEWPARSER: Implement
+         if (!fontStretch && CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyFontStretch, id, m_context.mode))
             fontStretch = consumeIdent(m_range);
-        else
-            break;
+        else*/
+        break;
     }
 
     if (m_range.atEnd())
@@ -3501,11 +3503,16 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     addProperty(CSSPropertyFontStyle, CSSPropertyFont, fontStyle ? fontStyle.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
     addProperty(CSSPropertyFontVariantCaps, CSSPropertyFont, fontVariantCaps ? fontVariantCaps.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+/*  
+    // FIXME-NEWPARSER: What do we do with these? They aren't part of our fontShorthand().
     addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
     addProperty(CSSPropertyFontVariantNumeric, CSSPropertyFont, CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
-
+*/
+    
     addProperty(CSSPropertyFontWeight, CSSPropertyFont, fontWeight ? fontWeight.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    /* FIXME-NEWPARSER: Implement.
     addProperty(CSSPropertyFontStretch, CSSPropertyFont, fontStretch ? fontStretch.releaseNonNull() : CSSValuePool::singleton().createIdentifierValue(CSSValueNormal), important);
+    */
 
     // Now a font size _must_ come.
     RefPtr<CSSValue> fontSize = consumeFontSize(m_range, m_context.mode);

@@ -531,7 +531,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::releaseTagHistory()
 // FIXME-NEWPARSER: Add support for :host-context
 bool CSSParserSelector::isHostPseudoSelector() const
 {
-    return pseudoClassType() == CSSSelector::PseudoClassHost;
+    return match() == CSSSelector::PseudoClass && pseudoClassType() == CSSSelector::PseudoClassHost;
 }
 
 }

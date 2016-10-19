@@ -457,7 +457,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     case CSSSelector::ShadowDeep:
     case CSSSelector::ShadowSlot:
         // FIXME-NEWPARSER: Have to implement these.
-        ASSERT_NOT_REACHED();
+        // ASSERT_NOT_REACHED();
         return MatchResult::fails(Match::SelectorFailsCompletely);
     }
 
