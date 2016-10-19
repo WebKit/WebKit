@@ -131,9 +131,9 @@ String CSSSelectorList::selectorsText() const
 
 void CSSSelectorList::buildSelectorsText(StringBuilder& stringBuilder) const
 {
-    const CSSSelector* firstSubSelector = first();
-    for (const CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-        if (subSelector != firstSubSelector)
+    const CSSSelector* firstSubselector = first();
+    for (const CSSSelector* subSelector = firstSubselector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+        if (subSelector != firstSubselector)
             stringBuilder.appendLiteral(", ");
         stringBuilder.append(subSelector->selectorText());
     }

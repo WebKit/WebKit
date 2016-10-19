@@ -132,13 +132,12 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSS
     if (!selector)
         return nullptr;
 
-
     unsigned previousCompoundFlags = 0;
 
     for (CSSParserSelector* simple = selector.get(); simple && !previousCompoundFlags; simple = simple->tagHistory())
         previousCompoundFlags |= extractCompoundFlags(*simple, m_context.mode);
 
-    while (CSSSelector::Relation combinator = consumeCombinator(range)) {
+    while (auto combinator = consumeCombinator(range)) {
         std::unique_ptr<CSSParserSelector> nextSelector = consumeCompoundSelector(range);
         if (!nextSelector)
             return combinator == CSSSelector::Descendant ? WTFMove(selector) : nullptr;
@@ -533,9 +532,9 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     return nullptr;
 }
 
-CSSSelector::Relation CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
+CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRange& range)
 {
-    CSSSelector::Relation fallbackResult = CSSSelector::SubSelector;
+    auto fallbackResult = CSSSelector::Subselector;
     while (range.peek().type() == WhitespaceToken) {
         range.consume();
         fallbackResult = CSSSelector::Descendant;
@@ -732,7 +731,7 @@ void CSSSelectorParser::prependTypeSelectorIfNeeded(const AtomicString& namespac
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::addSimpleSelectorToCompound(std::unique_ptr<CSSParserSelector> compoundSelector, std::unique_ptr<CSSParserSelector> simpleSelector)
 {
-    compoundSelector->appendTagHistory(CSSSelector::SubSelector, WTFMove(simpleSelector));
+    compoundSelector->appendTagHistory(CSSSelector::Subselector, WTFMove(simpleSelector));
     return compoundSelector;
 }
 
@@ -743,7 +742,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
     // from left-to-right.
     //
     // ".a.b > div#id" is stored in a tagHistory as [div, #id, .a, .b], each element in the
-    // list stored with an associated relation (combinator or SubSelector).
+    // list stored with an associated relation (combinator or Subselector).
     //
     // ::cue, ::shadow, and custom pseudo elements have an implicit ShadowPseudo combinator
     // to their left, which really makes for a new compound selector, yet it's consumed by

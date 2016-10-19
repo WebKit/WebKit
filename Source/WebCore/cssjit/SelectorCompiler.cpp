@@ -398,7 +398,7 @@ SelectorCompilationStatus compileSelector(const CSSSelector* lastSelector, JSC::
     return codeGenerator.compile(vm, codeRef);
 }
 
-static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::Relation relation)
+static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
 {
     switch (relation) {
     case CSSSelector::Descendant:
@@ -409,7 +409,7 @@ static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::
         return FragmentRelation::DirectAdjacent;
     case CSSSelector::IndirectAdjacent:
         return FragmentRelation::IndirectAdjacent;
-    case CSSSelector::SubSelector:
+    case CSSSelector::Subselector:
     case CSSSelector::ShadowDescendant:
     case CSSSelector::ShadowPseudo:
     case CSSSelector::ShadowDeep:
@@ -998,8 +998,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             return FunctionType::CannotMatchAnything;
         }
 
-        CSSSelector::Relation relation = selector->relation();
-        if (relation == CSSSelector::SubSelector)
+        auto relation = selector->relation();
+        if (relation == CSSSelector::Subselector)
             continue;
 
         if (relation == CSSSelector::ShadowDescendant && !selector->isLastInTagHistory())

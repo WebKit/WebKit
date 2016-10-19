@@ -226,7 +226,7 @@ public:
     void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
     void setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive) { m_selector->setAttributeValueMatchingIsCaseInsensitive(isCaseInsensitive); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
-    void setRelation(CSSSelector::Relation value) { m_selector->setRelation(value); }
+    void setRelation(CSSSelector::RelationType value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
 
     CSSSelector::Match match() const { return m_selector->match(); }
@@ -261,8 +261,8 @@ public:
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
-    void insertTagHistory(CSSSelector::Relation before, std::unique_ptr<CSSParserSelector>, CSSSelector::Relation after);
-    void appendTagHistory(CSSSelector::Relation, std::unique_ptr<CSSParserSelector>);
+    void insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector>, CSSSelector::RelationType after);
+    void appendTagHistory(CSSSelector::RelationType, std::unique_ptr<CSSParserSelector>);
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
     std::unique_ptr<CSSParserSelector> releaseTagHistory();

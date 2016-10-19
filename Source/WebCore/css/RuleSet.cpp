@@ -122,7 +122,7 @@ static bool containsUncommonAttributeSelector(const CSSSelector& rootSelector, b
             }
         }
 
-        if (selector->relation() != CSSSelector::SubSelector)
+        if (selector->relation() != CSSSelector::Subselector)
             matchesRightmostElement = false;
 
         selector = selector->tagHistory();
@@ -268,7 +268,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             m_slottedPseudoElementRules.append(ruleData);
             return;
         }
-        if (selector->relation() != CSSSelector::SubSelector)
+        if (selector->relation() != CSSSelector::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);

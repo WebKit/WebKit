@@ -1,3 +1,36 @@
+2016-10-18  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix compound selector parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=163649
+
+        Reviewed by Darin Adler.
+
+        The new CSS parser is failing to handle compound selectors. The code has an assumption that the
+        first value in the RelationType enum is SubSelector. This patch changes the enum to have the same
+        name used in Blink, RelationType, and to make the ordering be exactly the same.
+
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::relation):
+        (WebCore::CSSSelector::setRelation):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        (WebCore::canMatchHoverOrActiveInQuirksMode):
+        (WebCore::SelectorChecker::determineLinkMatchType):
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::insertTagHistory):
+        (WebCore::CSSParserSelector::appendTagHistory):
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setRelation):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeComplexSelector):
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        * css/parser/CSSSelectorParser.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+        (WebCore::SelectorCompiler::constructFragmentsInternal):
+
 2016-10-19  Javier Fernandez  <jfernandez@igalia.com>
 
         Web Inspector: Debugger buttons positioned incorrectly, align-content default value is unexpected

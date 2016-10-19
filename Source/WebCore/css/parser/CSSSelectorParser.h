@@ -68,7 +68,7 @@ private:
     std::unique_ptr<CSSParserSelector> consumePseudo(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeAttribute(CSSParserTokenRange&);
 
-    CSSSelector::Relation consumeCombinator(CSSParserTokenRange&);
+    CSSSelector::RelationType consumeCombinator(CSSParserTokenRange&);
     CSSSelector::Match consumeAttributeMatch(CSSParserTokenRange&);
     CSSSelector::AttributeMatchType consumeAttributeFlags(CSSParserTokenRange&);
 

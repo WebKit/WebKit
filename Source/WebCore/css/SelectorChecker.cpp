@@ -311,7 +311,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     }
 
     // The rest of the selectors has to match
-    CSSSelector::Relation relation = context.selector->relation();
+    auto relation = context.selector->relation();
 
     // Prepare next selector
     const CSSSelector* leftSelector = context.selector->tagHistory();
@@ -321,7 +321,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     LocalContext nextContext(context);
     nextContext.selector = leftSelector;
 
-    if (relation != CSSSelector::SubSelector) {
+    if (relation != CSSSelector::Subselector) {
         // Bail-out if this selector is irrelevant for the pseudoId
         if (context.pseudoId != NOPSEUDO && !dynamicPseudoIdSet.has(context.pseudoId))
             return MatchResult::fails(Match::SelectorFailsCompletely);
@@ -416,7 +416,7 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
         };
         return MatchResult::fails(Match::SelectorFailsAllSiblings);
 
-    case CSSSelector::SubSelector:
+    case CSSSelector::Subselector:
         {
             // a selector is invalid if something follows a pseudo-element
             // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
@@ -634,11 +634,11 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
             break;
         }
 
-        CSSSelector::Relation relation = selector->relation();
+        auto relation = selector->relation();
         if (relation == CSSSelector::ShadowDescendant)
             return true;
 
-        if (relation != CSSSelector::SubSelector)
+        if (relation != CSSSelector::Subselector)
             return false;
     }
     return false;
@@ -1201,8 +1201,8 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
                 break;
             }
         }
-        CSSSelector::Relation relation = selector->relation();
-        if (relation == CSSSelector::SubSelector)
+        auto relation = selector->relation();
+        if (relation == CSSSelector::Subselector)
             continue;
         if (relation != CSSSelector::Descendant && relation != CSSSelector::Child)
             return linkMatchType;

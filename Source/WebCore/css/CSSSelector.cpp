@@ -46,6 +46,7 @@ struct SameSizeAsCSSSelector {
     void* unionPointer;
 };
 
+static_assert(CSSSelector::RelationType::Subselector == 0, "Subselector must be 0 for consumeCombinator.");
 static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector should remain small.");
 
 CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
@@ -720,7 +721,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             }
         }
 
-        if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory())
+        if (cs->relation() != CSSSelector::Subselector || !cs->tagHistory())
             break;
         cs = cs->tagHistory();
     }
@@ -741,7 +742,7 @@ String CSSSelector::selectorText(const String& rightSide) const
             return tagHistory->selectorText(" + " + str.toString() + rightSide);
         case CSSSelector::IndirectAdjacent:
             return tagHistory->selectorText(" ~ " + str.toString() + rightSide);
-        case CSSSelector::SubSelector:
+        case CSSSelector::Subselector:
             ASSERT_NOT_REACHED();
 #if ASSERT_DISABLED
             FALLTHROUGH;
