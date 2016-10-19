@@ -625,11 +625,10 @@
         "url": "http://w3c.github.io/webcomponents/spec/imports/",
         "specification": "Web Components",
         "description": "Includes resusable HTML documents in other HTML documents.",
-        "comment": "There are concerns about the disconnect between this specification and ES6 Modules. WebKit has no intent to support the current specification.",
+        "comment": "Multile browser vendors have raised concerns about how the HTML imports currently works. For example, its dependency model is not fully compatible with ES6 Modules. We are exploring other ways to package web components by integrating into ES6 Modules with other browser vendors.",
         "contact": {
-            "name": "Jon Davis",
-            "twitter": "@jonathandavis",
-            "email": "web-evangelist@apple.com"
+            "name": "Ryosuke Niwa",
+            "email": "rniwa@webkit.org"
         }
     },
     {

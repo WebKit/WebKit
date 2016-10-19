@@ -1,5 +1,12 @@
 2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Update the comment for HTML Imports as there is now a proposal to use ES6 Modules for this.
+        Also replace the contact by me since I'm most familiar with this feature.
+
+        * features.json:
+
+2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update the status of shadow DOM API to "Done" with a comment saying we're still fixing bugs.
 
         Also update my contact information since I'm no longer on Twitter.
