@@ -1599,6 +1599,9 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
     bool supportsPressed = false;
     bool supportsRequired = false;
     bool supportsFocused = false;
+    int headingLevel = 0;
+    unsigned hierarchicalLevel = 0;
+    unsigned level = 0;
 
     if (AXObjectCache* axObjectCache = node->document().axObjectCache()) {
         if (AccessibilityObject* axObject = axObjectCache->getOrCreate(node)) {
@@ -1772,6 +1775,11 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
                         selectedChildNodeIds->addItem(pushNodePathToFrontend(selectedChildNode));
                 }
             }
+            
+            headingLevel = axObject->headingLevel();
+            hierarchicalLevel = axObject->hierarchicalLevel();
+            
+            level = hierarchicalLevel ? hierarchicalLevel : headingLevel;
         }
     }
     
@@ -1833,6 +1841,15 @@ RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::bui
             value->setSelected(selected);
         if (selectedChildNodeIds)
             value->setSelectedChildNodeIds(selectedChildNodeIds);
+        
+        // H1 -- H6 always have a headingLevel property that can be complimented by a hierarchicalLevel
+        // property when aria-level is set on the element, in which case we want to remain calling
+        // this value the "Heading Level" in the inspector.
+        // Also, we do not want it to say Hierarchy Level: 0
+        if (headingLevel)
+            value->setHeadingLevel(level);
+        else if (level)
+            value->setHierarchyLevel(level);
     }
 
     return WTFMove(value);

@@ -4,10 +4,10 @@ Checking Web Inspector protocol for the Accessibility Node Inspector.
     exists: true
     label: 
     role: 
-    childNodeIds.length: 43
+    childNodeIds.length: 52
 
 
-Total elements to be tested: 65.
+Total elements to be tested: 81.
 
 <div onclick="void(0);">click</div>
     exists: true
@@ -17,12 +17,166 @@ Total elements to be tested: 65.
     mouseEventNodeId: exists
     parentNodeId: exists
 
+<li role="treeitem">Tree Item Level 2</li>
+    exists: true
+    label: 
+    role: treeitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 2
+
+<ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    exists: true
+    label: 
+    role: group
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li role="treeitem">
+        <span>Tree Item Level 1</span>
+        <ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    </li>
+    exists: true
+    label: 
+    role: treeitem
+    childNodeIds.length: 2
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul role="tree">
+    <li role="treeitem">
+        <span>Tree Item Level 1</span>
+        <ul>
+            <li role="treeitem">Tree Item Level 2</li>
+        </ul>
+    </li>
+</ul>
+    exists: true
+    label: 
+    role: tree
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li aria-level="1">List Item Level 1</li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<li aria-level="2">List Item Level 2</li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 1
+    parentNodeId: exists
+    hierarchyLevel: 2
+
+<ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    exists: true
+    label: 
+    role: list
+    childNodeIds.length: 1
+    parentNodeId: exists
+
+<li aria-level="1">
+        <span>List Item Level 1</span>
+        <ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    </li>
+    exists: true
+    label: 
+    role: listitem
+    childNodeIds.length: 2
+    parentNodeId: exists
+    hierarchyLevel: 1
+
+<ul>
+    <li aria-level="1">
+        <span>List Item Level 1</span>
+        <ol>
+            <li aria-level="2">List Item Level 2</li>
+        </ol>
+    </li>
+    <li aria-level="1">List Item Level 1</li>
+</ul>
+    exists: true
+    label: 
+    role: list
+    childNodeIds.length: 2
+    parentNodeId: exists
+
+<h1 style="color: red;" aria-level="8">H1</h1>
+    exists: true
+    label: H1
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 8
+
+<h6>H6</h6>
+    exists: true
+    label: H6
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 6
+
+<h5>H5</h5>
+    exists: true
+    label: H5
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 5
+
+<h4>H4</h4>
+    exists: true
+    label: H4
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 4
+
+<h3>H3</h3>
+    exists: true
+    label: H3
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 3
+
+<h2>H2</h2>
+    exists: true
+    label: H2
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 2
+
+<h1>H1</h1>
+    exists: true
+    label: H1
+    role: heading
+    childNodeIds.length: 1
+    parentNodeId: exists
+    headingLevel: 1
+
 <li role="treeitem" aria-expanded="undefined">expanded</li>
     exists: true
     label: 
     role: treeitem
     childNodeIds.length: 1
     parentNodeId: exists
+    hierarchyLevel: 1
 
 <li role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
     exists: true
@@ -32,6 +186,7 @@ Total elements to be tested: 65.
     expanded: false
     parentNodeId: exists
     selected: true
+    hierarchyLevel: 1
 
 <li role="treeitem" aria-expanded="true">expanded</li>
     exists: true
@@ -40,6 +195,7 @@ Total elements to be tested: 65.
     childNodeIds.length: 1
     expanded: true
     parentNodeId: exists
+    hierarchyLevel: 1
 
 <ul role="tree" id="flowedTo1" aria-activedescendant="activedescendant">
     <li role="treeitem" aria-expanded="true">expanded</li>

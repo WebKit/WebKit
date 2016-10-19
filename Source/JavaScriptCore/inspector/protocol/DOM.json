@@ -89,6 +89,8 @@
                 { "name": "controlledNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-controls." },
                 { "name": "current", "type": "string", "optional": true, "enum": ["true", "false", "page", "step", "location", "date", "time"], "description": "Current item within a container or set of related elements." },
                 { "name": "disabled", "type": "boolean", "optional": true, "description": "Disabled state of form controls." },
+                { "name": "headingLevel", "type": "number", "optional": true, "description": "Heading level of a heading element." },
+                { "name": "hierarchyLevel", "type": "number", "optional": true, "description": "The hierarchical level of an element." },
                 { "name": "exists", "type": "boolean", "description": "Indicates whether there is an existing AX object for the DOM node. If this is false, all the other properties will be default values." },
                 { "name": "expanded", "type": "boolean", "optional": true, "description": "Expanded state." },
                 { "name": "flowedNodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Array of <code>DOMNode</code> ids of any nodes referenced via @aria-flowto." },

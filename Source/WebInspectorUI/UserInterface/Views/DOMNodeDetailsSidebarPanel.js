@@ -73,6 +73,8 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
             this._accessibilityNodeExpandedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Expanded"));
             this._accessibilityNodeFlowsRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Flows"));
             this._accessibilityNodeFocusedRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Focused"));
+            this._accessibilityNodeHeadingLevelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Heading Level"));
+            this._accessibilityNodehierarchyLevelRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Hierarchy Level"));
             this._accessibilityNodeIgnoredRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Ignored"));
             this._accessibilityNodeInvalidRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Invalid"));
             this._accessibilityNodeLiveRegionStatusRow = new WebInspector.DetailsSectionSimpleRow(WebInspector.UIString("Live"));
@@ -501,6 +503,8 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 var selected = booleanValueToLocalizedStringIfTrue("selected");
                 var selectedChildNodeLinkList = linkListForNodeIds(accessibilityProperties.selectedChildNodeIds);
 
+                var headingLevel = accessibilityProperties.headingLevel;
+                var hierarchyLevel = accessibilityProperties.hierarchyLevel;
                 // Assign all the properties to their respective views.
                 this._accessibilityNodeActiveDescendantRow.value = activeDescendantLink || "";
                 this._accessibilityNodeBusyRow.value = busy;
@@ -512,6 +516,8 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 this._accessibilityNodeExpandedRow.value = expanded;
                 this._accessibilityNodeFlowsRow.value = flowedNodeLinkList || "";
                 this._accessibilityNodeFocusedRow.value = focused;
+                this._accessibilityNodeHeadingLevelRow.value = headingLevel || "";
+                this._accessibilityNodehierarchyLevelRow.value = hierarchyLevel || "";
                 this._accessibilityNodeIgnoredRow.value = ignored;
                 this._accessibilityNodeInvalidRow.value = invalid;
                 this._accessibilityNodeLabelRow.value = label;
@@ -549,6 +555,8 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                     this._accessibilityNodeFlowsRow,
                     this._accessibilityNodeMouseEventRow,
                     this._accessibilityNodeFocusedRow,
+                    this._accessibilityNodeHeadingLevelRow,
+                    this._accessibilityNodehierarchyLevelRow,
                     this._accessibilityNodeBusyRow,
                     this._accessibilityNodeLiveRegionStatusRow,
                     this._accessibilityNodeCurrentRow,

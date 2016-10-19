@@ -1,3 +1,18 @@
+2016-10-19  Aaron Chu  <aaron_chu@apple.com>
+
+        Web Inspector: AXI: expose computed tree node and heading level
+        https://bugs.webkit.org/show_bug.cgi?id=130825
+        <rdar://problem/16442349>
+
+        Reviewed by Joseph Pecoraro.
+
+        Exposing two new accessibility properties: Heading Level and Hierarchical Level.
+
+        Updated Test: LayoutTest/inspector/dom/getAccessibilityPropertiesForNode.html
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForAccessibilityProperties):
+
 2016-10-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Implement MediaEndpointPeerConnection::stop()

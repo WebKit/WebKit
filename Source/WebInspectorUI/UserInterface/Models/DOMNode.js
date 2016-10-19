@@ -517,6 +517,8 @@ WebInspector.DOMNode = class DOMNode extends WebInspector.Object
                     ignored: accessibilityProperties.ignored,
                     ignoredByDefault: accessibilityProperties.ignoredByDefault,
                     invalid: accessibilityProperties.invalid,
+                    headingLevel: accessibilityProperties.headingLevel,
+                    hierarchyLevel: accessibilityProperties.hierarchyLevel,
                     hidden: accessibilityProperties.hidden,
                     label: accessibilityProperties.label,
                     liveRegionAtomic: accessibilityProperties.liveRegionAtomic,
