@@ -1,3 +1,23 @@
+2016-10-19  Zalan Bujtas  <zalan@apple.com>
+
+        Use anonymous table row for new child at RenderTableRow::addChild() if available.
+        https://bugs.webkit.org/show_bug.cgi?id=163651
+        <rdar://problem/28705022>
+
+        Reviewed by David Hyatt.
+
+        We should try to prevent the continuation siblings from getting separated and inserted into
+        wrapper renderers. It makes finding these continuation siblings difficult.
+        This patch adds a checks for anonymous table rows so that we could find a closer common ancestor of
+        beforeChild/new child. 
+
+        Test: fast/table/crash-when-table-has-continuation-and-content-inserted.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::showRenderObject): Add continuation information.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+
 2016-10-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup WebCore/workers

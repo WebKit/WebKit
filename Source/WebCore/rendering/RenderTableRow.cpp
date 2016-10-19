@@ -128,12 +128,22 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
             }
         }
 
-        // If beforeChild is inside an anonymous cell, insert into the cell.
-        if (last && !is<RenderTableCell>(*last) && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
-            last->parent()->addChild(child, beforeChild);
-            return;
+        // Try to find an anonymous container for the child.
+        if (last && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
+            // If beforeChild is inside an anonymous cell, insert into the cell.
+            if (!is<RenderTableCell>(*last)) {
+                last->parent()->addChild(child, beforeChild);
+                return;
+            }
+            // If beforeChild is inside an anonymous row, insert into the row.
+            auto& parent = *last->parent();
+            if (is<RenderTableRow>(parent)) {
+                auto* cell = RenderTableCell::createAnonymousWithParentRenderer(*this).release();
+                parent.addChild(cell, beforeChild);
+                cell->addChild(child);
+                return;
+            }
         }
-
         auto* cell = RenderTableCell::createAnonymousWithParentRenderer(*this).release();
         addChild(cell, beforeChild);
         cell->addChild(child);
