@@ -1,3 +1,16 @@
+2016-10-19  Andy Estes  <aestes@apple.com>
+
+        Crash in ASCIICaseInsensitiveHash::hash() when a response has a null MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=163476
+        <rdar://problem/26941395>
+
+        Reviewed by Andreas Kling.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/LoadDataWithNilMIMEType.mm: Added.
+        (TEST): Added an API test that passes a nil MIMEType to
+        -[WKWebView loadData:MIMEType:characterEncodingName:baseURL:].
+
 2016-10-19  Jer Noble  <jer.noble@apple.com>
 
         Modify testrunner to mute audio during tests

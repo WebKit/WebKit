@@ -1,3 +1,25 @@
+2016-10-19  Andy Estes  <aestes@apple.com>
+
+        Crash in ASCIICaseInsensitiveHash::hash() when a response has a null MIME type
+        https://bugs.webkit.org/show_bug.cgi?id=163476
+        <rdar://problem/26941395>
+
+        Reviewed by Andreas Kling.
+
+        When custom content providers are registered and a response has a null MIME type, WebPage
+        will pass a null String to HashSet::contains(). This results in a null pointer dereference,
+        since the String hash functions do not support null Strings and unconditionally dereference
+        their StringImpls. Fixed by checking that Strings are non-null before calling
+        HashSet::contains() on m_mimeTypesWithCustomContentProviders.
+
+        New API test: WebKit2.LoadDataWithNilMIMEType.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::shouldUseCustomContentProviderForResponse): Checked if mimeType is null
+        before calling m_mimeTypesWithCustomContentProviders.contains().
+        (WebKit::WebPage::canShowMIMEType): Ditto.
+        * WebProcess/WebPage/WebPage.h: Made private the declaration of canPluginHandleResponse().
+
 2016-10-19  Chris Dumez  <cdumez@apple.com>
 
         Move HTML Interactive Form Validation behind an experimental flag
