@@ -1,0 +1,5 @@
+
+FAIL Fatal flag, non-streaming cases assert_throws: Unterminated utf-8 sequence should throw if fatal flag is set function "function () {
+            var decoder = new TextDecoder(t..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL Fatal flag, streaming cases Can't find variable: TextDecoder
+

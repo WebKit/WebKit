@@ -1,0 +1,8 @@
+
+FAIL Invalid surrogates encoded into UTF-8: Sanity check Can't find variable: TextEncoder
+FAIL Invalid surrogates encoded into UTF-8: Surrogate half (low) Can't find variable: TextEncoder
+FAIL Invalid surrogates encoded into UTF-8: Surrogate half (high) Can't find variable: TextEncoder
+FAIL Invalid surrogates encoded into UTF-8: Surrogate half (low), in a string Can't find variable: TextEncoder
+FAIL Invalid surrogates encoded into UTF-8: Surrogate half (high), in a string Can't find variable: TextEncoder
+FAIL Invalid surrogates encoded into UTF-8: Wrong order Can't find variable: TextEncoder
+

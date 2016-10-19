@@ -1,3 +1,61 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Import encoding web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=163684
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/encoding: Added.
+        * web-platform-tests/encoding/OWNERS: Added.
+        * web-platform-tests/encoding/api-basics-expected.txt: Added.
+        * web-platform-tests/encoding/api-basics.html: Added.
+        * web-platform-tests/encoding/api-invalid-label-expected.txt: Added.
+        * web-platform-tests/encoding/api-invalid-label.html: Added.
+        * web-platform-tests/encoding/api-replacement-encodings-expected.txt: Added.
+        * web-platform-tests/encoding/api-replacement-encodings.html: Added.
+        * web-platform-tests/encoding/api-surrogates-utf8-expected.txt: Added.
+        * web-platform-tests/encoding/api-surrogates-utf8.html: Added.
+        * web-platform-tests/encoding/big5-encoder-expected.txt: Added.
+        * web-platform-tests/encoding/big5-encoder.html: Added.
+        * web-platform-tests/encoding/gb18030-encoder-expected.txt: Added.
+        * web-platform-tests/encoding/gb18030-encoder.html: Added.
+        * web-platform-tests/encoding/gbk-encoder-expected.txt: Added.
+        * web-platform-tests/encoding/gbk-encoder.html: Added.
+        * web-platform-tests/encoding/idlharness-expected.txt: Added.
+        * web-platform-tests/encoding/idlharness.html: Added.
+        * web-platform-tests/encoding/iso-2022-jp-decoder-expected.txt: Added.
+        * web-platform-tests/encoding/iso-2022-jp-decoder.html: Added.
+        * web-platform-tests/encoding/iso-2022-jp-encoder-expected.txt: Added.
+        * web-platform-tests/encoding/iso-2022-jp-encoder.html: Added.
+        * web-platform-tests/encoding/resources: Added.
+        * web-platform-tests/encoding/resources/encodings.js: Added.
+        * web-platform-tests/encoding/resources/single-byte-raw.py: Added.
+        (main):
+        * web-platform-tests/encoding/resources/text-plain-charset.py: Added.
+        (main):
+        * web-platform-tests/encoding/single-byte-decoder-expected.txt: Added.
+        * web-platform-tests/encoding/single-byte-decoder.html: Added.
+        * web-platform-tests/encoding/textdecoder-byte-order-marks-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-byte-order-marks.html: Added.
+        * web-platform-tests/encoding/textdecoder-fatal-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-fatal-single-byte-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-fatal-single-byte.html: Added.
+        * web-platform-tests/encoding/textdecoder-fatal-streaming-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-fatal-streaming.html: Added.
+        * web-platform-tests/encoding/textdecoder-fatal.html: Added.
+        * web-platform-tests/encoding/textdecoder-ignorebom-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-ignorebom.html: Added.
+        * web-platform-tests/encoding/textdecoder-labels-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-labels.html: Added.
+        * web-platform-tests/encoding/textdecoder-streaming-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-streaming.html: Added.
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates-expected.txt: Added.
+        * web-platform-tests/encoding/textdecoder-utf16-surrogates.html: Added.
+        * web-platform-tests/encoding/textencoder-constructor-non-utf-expected.txt: Added.
+        * web-platform-tests/encoding/textencoder-constructor-non-utf.html: Added.
+        * web-platform-tests/encoding/textencoder-utf16-surrogates-expected.txt: Added.
+        * web-platform-tests/encoding/textencoder-utf16-surrogates.html: Added.
+
 2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import the latest custom elements tests from W3C

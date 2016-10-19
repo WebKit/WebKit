@@ -1,0 +1,8 @@
+
+FAIL The "replacement" label should not be a known encoding. assert_throws: function "function () { new TextDecoder('replacement'); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Label for "replacement" should be rejected by API: csiso2022kr assert_throws: function "function () { new TextDecoder(label); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Label for "replacement" should be rejected by API: hz-gb-2312 assert_throws: function "function () { new TextDecoder(label); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Label for "replacement" should be rejected by API: iso-2022-cn assert_throws: function "function () { new TextDecoder(label); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Label for "replacement" should be rejected by API: iso-2022-cn-ext assert_throws: function "function () { new TextDecoder(label); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+FAIL Label for "replacement" should be rejected by API: iso-2022-kr assert_throws: function "function () { new TextDecoder(label); }" threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "RangeError" ("RangeError")
+

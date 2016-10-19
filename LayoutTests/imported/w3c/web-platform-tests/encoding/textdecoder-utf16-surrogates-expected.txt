@@ -1,0 +1,17 @@
+
+FAIL utf-16le - lone surrogate lead Can't find variable: TextDecoder
+FAIL utf-16le - lone surrogate lead (fatal flag set) assert_throws: function "function () {
+            new TextDecoder(t.encoding, {fa..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL utf-16le - lone surrogate trail Can't find variable: TextDecoder
+FAIL utf-16le - lone surrogate trail (fatal flag set) assert_throws: function "function () {
+            new TextDecoder(t.encoding, {fa..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL utf-16le - unmatched surrogate lead Can't find variable: TextDecoder
+FAIL utf-16le - unmatched surrogate lead (fatal flag set) assert_throws: function "function () {
+            new TextDecoder(t.encoding, {fa..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL utf-16le - unmatched surrogate trail Can't find variable: TextDecoder
+FAIL utf-16le - unmatched surrogate trail (fatal flag set) assert_throws: function "function () {
+            new TextDecoder(t.encoding, {fa..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+FAIL utf-16le - swapped surrogate pair Can't find variable: TextDecoder
+FAIL utf-16le - swapped surrogate pair (fatal flag set) assert_throws: function "function () {
+            new TextDecoder(t.encoding, {fa..." threw object "ReferenceError: Can't find variable: TextDecoder" ("ReferenceError") expected object "TypeError" ("TypeError")
+

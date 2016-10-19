@@ -1,0 +1,36 @@
+
+FAIL iso-2022-jp decoder: Error ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Error ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: ASCII ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Double ASCII ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, ASCII ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: characters Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: SO / SI Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Roman ESC, characters Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Roman ESC, SO / SI Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Roman ESC, error ESC, Katakana ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, multibyte ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, error ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, error ESC #2, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, character, Katakana ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Katakana ESC, SO / SI Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC #2, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, error ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Double multibyte ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Double multibyte ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Double multibyte ESC #2, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, error ESC #2, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, single byte, multibyte ESC, character Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, lead error byte Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: Multibyte ESC, trail error byte Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, error ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, error ESC #2 Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, error ESC #3 Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, ASCII ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, Roman ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, Katakana ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, Multibyte ESC Can't find variable: TextDecoder
+FAIL iso-2022-jp decoder: character, Multibyte ESC #2 Can't find variable: TextDecoder
+

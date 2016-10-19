@@ -1,0 +1,81 @@
+
+FAIL Encoding argument supported for decode: utf-8 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: utf-8 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: ibm866 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: ibm866 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-2 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-2 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-3 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-3 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-4 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-4 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-5 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-5 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-6 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-6 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-7 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-7 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-8 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-8 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-8-i Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-8-i Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-10 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-10 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-13 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-13 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-14 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-14 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-15 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-15 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-8859-16 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-8859-16 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: koi8-r Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: koi8-r Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: koi8-u Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: koi8-u Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: macintosh Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: macintosh Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-874 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-874 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1250 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1250 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1251 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1251 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1252 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1252 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1253 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1253 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1254 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1254 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1255 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1255 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1256 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1256 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1257 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1257 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: windows-1258 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: windows-1258 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: x-mac-cyrillic Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: x-mac-cyrillic Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: gbk Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: gbk Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: gb18030 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: gb18030 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: big5 Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: big5 Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: euc-jp Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: euc-jp Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: iso-2022-jp Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: iso-2022-jp Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: shift_jis Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: shift_jis Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: euc-kr Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: euc-kr Can't find variable: TextEncoder
+FAIL Encoding argument not considered for encode: replacement Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: utf-16be Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: utf-16be Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: utf-16le Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: utf-16le Can't find variable: TextEncoder
+FAIL Encoding argument supported for decode: x-user-defined Can't find variable: TextDecoder
+FAIL Encoding argument not considered for encode: x-user-defined Can't find variable: TextEncoder
+
