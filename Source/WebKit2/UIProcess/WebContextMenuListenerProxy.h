@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,50 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuProxyGtk_h
-#define WebContextMenuProxyGtk_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "WebContextMenuItemGtk.h"
+#include "APIObject.h"
+#include "WKArray.h"
 #include "WebContextMenuProxy.h"
-#include <WebCore/IntPoint.h>
-#include <wtf/HashMap.h>
-#include <wtf/glib/GRefPtr.h>
-
-typedef struct _GMenu GMenu;
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
+class WebContextMenuProxyMac;
 
-class WebContextMenuItem;
-class WebContextMenuItemData;
-class WebPageProxy;
-
-class WebContextMenuProxyGtk : public WebContextMenuProxy {
+class WebContextMenuListenerProxy : public API::ObjectImpl<API::Object::Type::ContextMenuListener> {
 public:
-    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
-    ~WebContextMenuProxyGtk();
+    static PassRefPtr<WebContextMenuListenerProxy> create(WebContextMenuProxy* contextMenuMac)
+    {
+        return adoptRef(new WebContextMenuListenerProxy(contextMenuMac));
+    }
 
-    void populate(const Vector<WebContextMenuItemGtk>&);
-    GtkMenu* gtkMenu() const { return m_menu; }
+    virtual ~WebContextMenuListenerProxy();
 
+    void useContextMenuItems(WKArrayRef items);
+
+    void invalidate();
 private:
-    void show() override;
-    void showContextMenuWithItems(const Vector<WebContextMenuItemData>&) override;
-    void append(GMenu*, const WebContextMenuItemGtk&);
-    GRefPtr<GMenu> buildMenu(const Vector<WebContextMenuItemGtk>&);
-    void populate(const Vector<RefPtr<WebContextMenuItem>>&);
-    static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);
+    explicit WebContextMenuListenerProxy(WebContextMenuProxy*);
 
-    GtkWidget* m_webView;
-    WebPageProxy* m_page;
-    GtkMenu* m_menu;
-    WebCore::IntPoint m_popupPosition;
-    HashMap<unsigned long, void*> m_signalHandlers;
+    WebContextMenuProxy* m_contextMenuMac;
 };
-
-
+    
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // WebContextMenuProxyGtk_h

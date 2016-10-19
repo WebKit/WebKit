@@ -114,7 +114,7 @@ template<> struct ClientTraits<WKPageUIClientBase> {
 
 #if ENABLE(CONTEXT_MENUS)
 template<> struct ClientTraits<WKPageContextMenuClientBase> {
-    typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3> Versions;
+    typedef std::tuple<WKPageContextMenuClientV0, WKPageContextMenuClientV1, WKPageContextMenuClientV2, WKPageContextMenuClientV3, WKPageContextMenuClientV4> Versions;
 };
 #endif
 
@@ -848,6 +848,23 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
                 customMenu.append(item);
             }
+
+            return true;
+        }
+
+        bool getContextMenuFromProposedMenuAsync(WebPageProxy& page, const Vector<RefPtr<WebKit::WebContextMenuItem>>& proposedMenuVector, WebKit::WebContextMenuListenerProxy* contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
+        {
+            if (m_client.base.version < 4 || !m_client.getContextMenuFromProposedMenuAsync)
+                return false;
+
+            Vector<RefPtr<API::Object>> proposedMenuItems;
+            proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
+
+            for (const auto& menuItem : proposedMenuVector)
+                proposedMenuItems.uncheckedAppend(menuItem);
+
+            RefPtr<API::HitTestResult> webHitTestResult = API::HitTestResult::create(hitTestResultData);
+            m_client.getContextMenuFromProposedMenuAsync(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), toAPI(contextMenuListener), toAPI(webHitTestResult.get()), toAPI(userData), m_client.base.clientInfo);
 
             return true;
         }

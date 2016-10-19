@@ -105,6 +105,7 @@ public:
         BatteryStatus,
         CacheManager,
         ColorPickerResultListener,
+        ContextMenuListener,
         CookieManager,
         Download,
         ExperimentalFeature,

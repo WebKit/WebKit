@@ -28,7 +28,9 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebContextMenuListenerProxy.h"
 #include "WebHitTestResultData.h"
+#include <WebKit/WKBase.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -51,6 +53,7 @@ public:
     virtual ~ContextMenuClient() { }
 
     virtual bool getContextMenuFromProposedMenu(WebKit::WebPageProxy&, const Vector<RefPtr<WebKit::WebContextMenuItem>>& /* proposedMenu */, Vector<RefPtr<WebKit::WebContextMenuItem>>& /* customMenu */, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
+    virtual bool getContextMenuFromProposedMenuAsync(WebKit::WebPageProxy&, const Vector<RefPtr<WebKit::WebContextMenuItem>>& /* proposedMenu */, WebKit::WebContextMenuListenerProxy*, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
     virtual void customContextMenuItemSelected(WebKit::WebPageProxy&, const WebKit::WebContextMenuItemData&) { }
     virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<RefPtr<WebKit::WebContextMenuItem>>&) { return false; }
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }

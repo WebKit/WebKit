@@ -34,6 +34,7 @@ extern "C" {
 #endif
 
 typedef void (*WKPageGetContextMenuFromProposedContextMenuCallback)(WKPageRef page, WKArrayRef proposedMenu, WKArrayRef* newMenu, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo);
+typedef void (*WKPageGetContextMenuFromProposedContextMenuCallbackAsync)(WKPageRef page, WKArrayRef proposedMenu, WKContextMenuListenerRef listener, WKHitTestResultRef hitTestResult, WKTypeRef userData, const void* clientInfo);
 typedef void (*WKPageCustomContextMenuItemSelectedCallback)(WKPageRef page, WKContextMenuItemRef contextMenuItem, const void* clientInfo);
 typedef void (*WKPageContextMenuDismissedCallback)(WKPageRef page, const void* clientInfo);
 typedef void (*WKPageShowContextMenuCallback)(WKPageRef page, WKPoint menuLocation, WKArrayRef menuItems, const void* clientInfo);
@@ -97,6 +98,28 @@ typedef struct WKPageContextMenuClientV3 {
     WKPageShowContextMenuCallback                                                showContextMenu;
     WKPageHideContextMenuCallback                                                hideContextMenu;
 } WKPageContextMenuClientV3;
+
+typedef struct WKPageContextMenuClientV4 {
+    WKPageContextMenuClientBase                                                  base;
+
+    // Version 0.
+    WKPageGetContextMenuFromProposedContextMenuCallback_deprecatedForUseWithV0   getContextMenuFromProposedMenu_deprecatedForUseWithV0;
+    WKPageCustomContextMenuItemSelectedCallback                                  customContextMenuItemSelected;
+
+    // Version 1.
+    WKPageContextMenuDismissedCallback                                           contextMenuDismissed;
+
+    // Version 2.
+    WKPageGetContextMenuFromProposedContextMenuCallback                          getContextMenuFromProposedMenu;
+
+    // Version 3.
+    WKPageShowContextMenuCallback                                                showContextMenu;
+    WKPageHideContextMenuCallback                                                hideContextMenu;
+
+    // Version 4.
+    WKPageGetContextMenuFromProposedContextMenuCallbackAsync                     getContextMenuFromProposedMenuAsync;
+
+} WKPageContextMenuClientV4;
 
 #ifdef __cplusplus
 }

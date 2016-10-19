@@ -84,6 +84,7 @@ class WebBackForwardListItem;
 class WebBatteryManagerProxy;
 class WebBatteryStatus;
 class WebColorPickerResultListenerProxy;
+class WebContextMenuListenerProxy;
 class WebCookieManagerProxy;
 class WebCredential;
 class WebFormSubmissionListenerProxy;
@@ -122,6 +123,7 @@ WK_ADD_API_MAPPING(WKBundleHitTestResultMediaType, BundleHitTestResultMediaType)
 WK_ADD_API_MAPPING(WKColorPickerResultListenerRef, WebColorPickerResultListenerProxy)
 WK_ADD_API_MAPPING(WKContextRef, WebProcessPool)
 WK_ADD_API_MAPPING(WKContextConfigurationRef, API::ProcessPoolConfiguration)
+WK_ADD_API_MAPPING(WKContextMenuListenerRef, WebContextMenuListenerProxy)
 WK_ADD_API_MAPPING(WKCookieManagerRef, WebCookieManagerProxy)
 WK_ADD_API_MAPPING(WKCredentialRef, WebCredential)
 WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)

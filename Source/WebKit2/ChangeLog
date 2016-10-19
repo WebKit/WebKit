@@ -1,3 +1,36 @@
+2016-10-19  Damian Kaleta  <dkaleta@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=163292
+
+        Reviewed by Brady Eidson.
+        
+        Added ability to display context menu asynchronously.
+
+        * Shared/API/APIObject.h: Added ContextMenuListener.
+        * Shared/API/c/WKBase.h: Added WKContextMenuListenerRef struct.
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::getContextMenuFromProposedMenuAsync): New method that allows showing context menu asynchronously.
+        * UIProcess/API/C/WKAPICast.h: Added a new mapping for WebContextMenuListenerProxy.
+        * UIProcess/API/C/WKContextMenuListener.cpp: Added. New class that allow a client to return results asynchronously.
+        (WKContextMenuListenerGetTypeID):
+        (WKContextMenuListenerUseContextMenuItems):
+        * UIProcess/API/C/WKContextMenuListener.h: Added.
+        * UIProcess/API/C/WKPage.cpp: Added WKPageContextMenuClientV4.
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/API/C/WKPageContextMenuClient.h:
+        * UIProcess/WebContextMenuListenerProxy.cpp: Copied from Source/WebKit2/UIProcess/mac/WebContextMenuProxyMac.h.
+        (WebKit::WebContextMenuListenerProxy::WebContextMenuListenerProxy):
+        (WebKit::WebContextMenuListenerProxy::~WebContextMenuListenerProxy):
+        (WebKit::WebContextMenuListenerProxy::useContextMenuItems): Passes items to m_contextMenuMac.
+        (WebKit::WebContextMenuListenerProxy::invalidate):
+        * UIProcess/WebContextMenuListenerProxy.h: Copied from Source/WebKit2/UIProcess/mac/WebContextMenuProxyMac.h.
+        (WebKit::WebContextMenuListenerProxy::create):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems): Shows context menu.
+        (WebKit::WebContextMenuProxyMac::showContextMenu): Extracted some logic to showContextMenuWithItems().
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9

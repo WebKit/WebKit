@@ -39,6 +39,7 @@
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
+#import "WebContextMenuListenerProxy.h"
 #import "WebProcessProxy.h"
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/IntRect.h>
@@ -162,6 +163,11 @@ WebContextMenuProxyMac::WebContextMenuProxyMac(NSView* webView, WebPageProxy& pa
 WebContextMenuProxyMac::~WebContextMenuProxyMac()
 {
     [m_menu cancelTracking];
+
+    if (m_contextMenuListener) {
+        m_contextMenuListener->invalidate();
+        m_contextMenuListener = nullptr;
+    }
 }
 
 void WebContextMenuProxyMac::contextMenuItemSelected(const WebContextMenuItemData& item)
@@ -449,6 +455,26 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
     }
 }
 
+void WebContextMenuProxyMac::showContextMenuWithItems(const Vector<WebContextMenuItemData>& items)
+{
+    auto menu = createContextMenuFromItems(items);
+    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData(), m_userData.object());
+
+    [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
+
+    NSPoint menuLocation = [m_webView convertPoint:m_context.menuLocation() toView:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
+#pragma clang diagnostic pop
+    [NSMenu popUpContextMenu:m_menu.get() withEvent:event forView:m_webView];
+
+    if (m_contextMenuListener) {
+        m_contextMenuListener->invalidate();
+        m_contextMenuListener = nullptr;
+    }
+}
+
 void WebContextMenuProxyMac::showContextMenu()
 {
     Vector<RefPtr<WebContextMenuItem>> proposedAPIItems;
@@ -457,6 +483,16 @@ void WebContextMenuProxyMac::showContextMenu()
 
     Vector<RefPtr<WebContextMenuItem>> clientItems;
     bool useProposedItems = true;
+
+    if (m_contextMenuListener) {
+        m_contextMenuListener->invalidate();
+        m_contextMenuListener = nullptr;
+    }
+
+    m_contextMenuListener = WebContextMenuListenerProxy::create(this);
+
+    if (m_page.contextMenuClient().getContextMenuFromProposedMenuAsync(m_page, proposedAPIItems, m_contextMenuListener.get(), m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
+        return;
 
     // FIXME: Get rid of these two client calls once we don't need to support the C SPI.
     if (m_page.contextMenuClient().getContextMenuFromProposedMenu(m_page, proposedAPIItems, clientItems, m_context.webHitTestResultData(), m_page.process().transformHandlesToObjects(m_userData.object()).get()))
@@ -472,17 +508,7 @@ void WebContextMenuProxyMac::showContextMenu()
     if (items.isEmpty())
         return;
 
-    auto menu = createContextMenuFromItems(items);
-    m_menu = m_page.contextMenuClient().menuFromProposedMenu(m_page, menu.get(), m_context.webHitTestResultData(), m_userData.object());
-
-    [[WKMenuTarget sharedMenuTarget] setMenuProxy:this];
-
-    NSPoint menuLocation = [m_webView convertPoint:m_context.menuLocation() toView:nil];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSEvent *event = [NSEvent mouseEventWithType:NSRightMouseUp location:menuLocation modifierFlags:0 timestamp:0 windowNumber:m_webView.window.windowNumber context:nil eventNumber:0 clickCount:0 pressure:0];
-#pragma clang diagnostic pop
-    [NSMenu popUpContextMenu:m_menu.get() withEvent:event forView:m_webView];
+    showContextMenuWithItems(items);
 }
 
 NSWindow *WebContextMenuProxyMac::window() const

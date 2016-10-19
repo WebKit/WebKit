@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Samsung Electronics.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,42 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuProxyEfl_h
-#define WebContextMenuProxyEfl_h
-
 #if ENABLE(CONTEXT_MENUS)
 
-#include "WebContextMenuProxy.h"
-#include <WebCore/ContextMenu.h>
-#include <WebCore/IntPoint.h>
+#include "config.h"
+#include "WebContextMenuListenerProxy.h"
 
-class EwkView;
+#include "WKAPICast.h"
+#include "WKArray.h"
+#include "WebContextMenuItem.h"
+#include "WebContextMenuItemData.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebContextMenuItemData;
-class WebPageProxy;
+WebContextMenuListenerProxy::WebContextMenuListenerProxy(WebContextMenuProxy* contextMenuMac)
+    : m_contextMenuMac(contextMenuMac)
+{
+}
 
-class WebContextMenuProxyEfl : public WebContextMenuProxy {
-public:
-    WebContextMenuProxyEfl(EwkView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
-    ~WebContextMenuProxyEfl();
+WebContextMenuListenerProxy::~WebContextMenuListenerProxy()
+{
+}
 
-private:
-    void show() override;
-    void showContextMenuWithItems(const Vector<WebContextMenuItemData>&) override;
+void WebContextMenuListenerProxy::useContextMenuItems(WKArrayRef items)
+{
+    if (!m_contextMenuMac)
+        return;
 
-    void showContextMenu();
-    void hideContextMenu();
-    void cancelTracking();
+    RefPtr<API::Array> array = toImpl(items);
+    Vector<WebContextMenuItemData> dataItems;
 
+    size_t newSize = array ? array->size() : 0;
+    for (size_t i = 0; i < newSize; ++i) {
+        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
+        if (!item)
+            continue;
 
-    EwkView* m_ewkView;
-    WebPageProxy& m_page;
-};
+        dataItems.append(item->data());
+    }
 
+    m_contextMenuMac->showContextMenuWithItems(dataItems);
+}
+
+void WebContextMenuListenerProxy::invalidate()
+{
+    m_contextMenuMac = nullptr;
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // WebContextMenuProxyEfl_h

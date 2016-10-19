@@ -167,6 +167,10 @@ void WebContextMenuProxyGtk::show()
                    event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
 }
 
+void WebContextMenuProxyGtk::showContextMenuWithItems(const Vector<WebContextMenuItemData>& items)
+{
+}
+
 WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
     : WebContextMenuProxy(context, userData)
     , m_webView(webView)

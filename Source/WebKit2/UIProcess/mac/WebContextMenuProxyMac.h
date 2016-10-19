@@ -28,9 +28,12 @@
 
 #if PLATFORM(MAC)
 
+#include "WKArray.h"
 #include "WebContextMenuProxy.h"
 #include <wtf/RetainPtr.h>
 
+OBJC_CLASS NSMenu;
+OBJC_CLASS NSMenuItem;
 OBJC_CLASS NSPopUpButtonCell;
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
@@ -40,6 +43,7 @@ namespace WebKit {
 class ShareableBitmap;
 class UserData;
 class WebContextMenuItemData;
+class WebContextMenuListenerProxy;
 class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
@@ -48,6 +52,7 @@ public:
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
+    void showContextMenuWithItems(const Vector<WebContextMenuItemData>&) override;
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
@@ -59,6 +64,7 @@ public:
 private:
     void show() override;
 
+    RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;
     RetainPtr<NSMenuItem> createContextMenuItem(const WebContextMenuItemData&);
     RetainPtr<NSMenu> createContextMenuFromItems(const Vector<WebContextMenuItemData>&);
     void showContextMenu();

@@ -1297,8 +1297,12 @@
 		A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1C512C8190656E500448914 /* WebQuickLookHandleClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1C512C6190656E500448914 /* WebQuickLookHandleClient.cpp */; };
 		A1C512C9190656E500448914 /* WebQuickLookHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebQuickLookHandleClient.h */; };
+		A1D420471DB5578500BB6B0D /* WKContextMenuListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */; };
 		A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */; };
 		A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1DF631118E0B7C8003A3E2A /* DownloadClient.h */; };
+		A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1EA023F1DAC31DB0096021F /* WebContextMenuListenerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1EA023D1DAC31DB0096021F /* WebContextMenuListenerProxy.cpp */; };
+		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
 		A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */; };
 		A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */ = {isa = PBXBuildFile; fileRef = A54293A3195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm */; };
 		A55BA8101BA1317E007CD33D /* _WKRemoteWebInspectorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = A55BA80C1BA12BE1007CD33D /* _WKRemoteWebInspectorViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3393,6 +3397,10 @@
 		A1C512C7190656E500448914 /* WebQuickLookHandleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebQuickLookHandleClient.h; path = ios/WebQuickLookHandleClient.h; sourceTree = "<group>"; };
 		A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadClient.mm; sourceTree = "<group>"; };
 		A1DF631118E0B7C8003A3E2A /* DownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadClient.h; sourceTree = "<group>"; };
+		A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuListener.cpp; sourceTree = "<group>"; };
+		A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuListener.h; sourceTree = "<group>"; };
+		A1EA023D1DAC31DB0096021F /* WebContextMenuListenerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuListenerProxy.cpp; sourceTree = "<group>"; };
+		A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuListenerProxy.h; sourceTree = "<group>"; };
 		A1EDD2D91884ACE000BBFE98 /* All.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = All.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DB1884B96400BBFE98 /* PluginProcessShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginProcessShim.xcconfig; sourceTree = "<group>"; };
 		A1EDD2DC1884B9B500BBFE98 /* SecItemShim.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SecItemShim.xcconfig; sourceTree = "<group>"; };
@@ -6122,6 +6130,8 @@
 				BC09B8F7147460F7005F5625 /* WebContextConnectionClient.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
 				BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */,
+				A1EA023D1DAC31DB0096021F /* WebContextMenuListenerProxy.cpp */,
+				A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */,
 				51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */,
 				51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */,
 				BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */,
@@ -6289,6 +6299,8 @@
 				1A445BA2184D5FCF004B3414 /* WKContextDownloadClient.h */,
 				1A445BA0184D5FC1004B3414 /* WKContextHistoryClient.h */,
 				1A445B9E184D5FB5004B3414 /* WKContextInjectedBundleClient.h */,
+				A1EA02351DABFF7E0096021F /* WKContextMenuListener.cpp */,
+				A1EA02361DABFF7E0096021F /* WKContextMenuListener.h */,
 				BCC938E01180DE440085E5FE /* WKContextPrivate.h */,
 				330934581315B9980097A7BC /* WKCookieManager.cpp */,
 				330934591315B9980097A7BC /* WKCookieManager.h */,
@@ -7976,6 +7988,7 @@
 				BC7B625212A43C9600D174A4 /* WebPageGroupData.h in Headers */,
 				BC7B621512A4219A00D174A4 /* WebPageGroupProxy.h in Headers */,
 				2D9EA30F1A96CBFF002D2807 /* WebPageInjectedBundleClient.h in Headers */,
+				A1EA02381DABFF7E0096021F /* WKContextMenuListener.h in Headers */,
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
 				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */,
@@ -8227,6 +8240,7 @@
 				7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */,
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
 				1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */,
+				A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */,
 				1A67CD2E1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h in Headers */,
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParametersRef.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
@@ -9560,6 +9574,7 @@
 				1A53C2A91A32572B004E8C70 /* WebsiteDataStore.cpp in Sources */,
 				1A4832C31A965A3C008B4DFE /* WebsiteDataStoreCocoa.mm in Sources */,
 				5C7706741D1138380012700F /* WebSocketProvider.cpp in Sources */,
+				A1D420471DB5578500BB6B0D /* WKContextMenuListener.cpp in Sources */,
 				8360349F1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp in Sources */,
 				1A52C0F71A38CDC70016160A /* WebStorageNamespaceProvider.cpp in Sources */,
 				BCC5715C115ADAEF001CCAF9 /* WebSystemInterface.mm in Sources */,
@@ -9656,6 +9671,7 @@
 				E1AEA23014687BDB00804569 /* WKFullKeyboardAccessWatcher.mm in Sources */,
 				CDCA85C8132ABA4E00E961DF /* WKFullScreenWindowController.mm in Sources */,
 				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
+				A1EA023F1DAC31DB0096021F /* WebContextMenuListenerProxy.cpp in Sources */,
 				BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */,
 				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,
 				0FCB4E5018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm in Sources */,
