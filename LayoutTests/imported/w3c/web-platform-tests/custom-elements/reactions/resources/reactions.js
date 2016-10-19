@@ -39,11 +39,45 @@ function testNodeDisconnector(testFunction, name) {
         assert_array_equals(element.takeLog().types(), ['constructed']);
         container.appendChild(instance);
         assert_array_equals(element.takeLog().types(), ['connected']);
-        testFunction(instance);
+        testFunction(instance, window);
         assert_array_equals(element.takeLog().types(), ['disconnected']);
     }, name + ' must enqueue a disconnected reaction');
 
     container.parentNode.removeChild(container);
+}
+
+function testInsertingMarkup(testFunction, name) {
+    let container = document.createElement('div');
+    container.appendChild(document.createElement('div'));
+    document.body.appendChild(container);
+
+    test(function () {
+        var element = define_new_custom_element();
+        testFunction(container, `<${element.name}></${element.name}>`);
+        assert_array_equals(element.takeLog().types(), ['constructed', 'connected']);
+    }, name + ' must enqueue a connected reaction for a newly constructed custom element');
+
+    test(function () {
+        var element = define_new_custom_element(['title']);
+        testFunction(container, `<${element.name} id="hello" title="hi"></${element.name}>`);
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['constructed', 'attributeChanged', 'connected']);
+        assert_attribute_log_entry(logEntries[1], {name: 'title', oldValue: null, newValue: 'hi', namespace: null});
+    }, name + ' must enqueue a attributeChanged reaction for a newly constructed custom element');
+
+    container.parentNode.removeChild(container);
+}
+
+function testParsingMarkup(testFunction, name) {
+    test(function () {
+        var element = define_new_custom_element(['id']);
+        assert_array_equals(element.takeLog().types(), []);
+        var instance = testFunction(document, `<${element.name} id="hello" class="foo"></${element.name}>`);
+        assert_equals(Object.getPrototypeOf(instance.querySelector(element.name)), element.class);
+        var logEntries = element.takeLog();
+        assert_array_equals(logEntries.types(), ['constructed', 'attributeChanged']);
+        assert_attribute_log_entry(logEntries[1], {name: 'id', oldValue: null, newValue: 'hello', namespace: null});
+    }, name + ' must construct a custom element');
 }
 
 function testCloner(testFunction, name) {
@@ -92,7 +126,7 @@ function testCloner(testFunction, name) {
     }, name + ' must enqueue an attributeChanged reaction when cloning an element only for observed attributes');
 }
 
-function testReflectAttribute(jsAttributeName, contentAttributeName, validValue1, validValue2, name) {
+function testReflectAttributeWithContentValues(jsAttributeName, contentAttributeName, validValue1, contentValue1, validValue2, contentValue2, name) {
     test(function () {
         var element = define_new_custom_element([contentAttributeName]);
         var instance = document.createElement(element.name);
@@ -100,7 +134,8 @@ function testReflectAttribute(jsAttributeName, contentAttributeName, validValue1
         instance[jsAttributeName] = validValue1;
         var logEntries = element.takeLog();
         assert_array_equals(logEntries.types(), ['attributeChanged']);
-        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: null, newValue: validValue1, namespace: null});
+
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: null, newValue: contentValue1, namespace: null});
     }, name + ' must enqueue an attributeChanged reaction when adding ' + contentAttributeName + ' content attribute');
 
     test(function () {
@@ -111,8 +146,16 @@ function testReflectAttribute(jsAttributeName, contentAttributeName, validValue1
         instance[jsAttributeName] = validValue2;
         var logEntries = element.takeLog();
         assert_array_equals(logEntries.types(), ['attributeChanged']);
-        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: validValue1, newValue: validValue2, namespace: null});
+        assert_attribute_log_entry(logEntries.last(), {name: contentAttributeName, oldValue: contentValue1, newValue: contentValue2, namespace: null});
     }, name + ' must enqueue an attributeChanged reaction when replacing an existing attribute');
+}
+
+function testReflectAttribute(jsAttributeName, contentAttributeName, validValue1, validValue2, name) {
+    testReflectAttributeWithContentValues(jsAttributeName, contentAttributeName, validValue1, validValue1, validValue2, validValue2, name);
+}
+
+function testReflectBooleanAttribute(jsAttributeName, contentAttributeName, name) {
+    testReflectAttributeWithContentValues(jsAttributeName, contentAttributeName, true, '', false, null, name);
 }
 
 function testAttributeAdder(testFunction, name) {
@@ -177,14 +220,16 @@ function testAttributeMutator(testFunction, name) {
     }, name + ' must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute');
 }
 
-function testAttributeRemover(testFunction, name) {
-    test(function () {
-        var element = define_new_custom_element(['title']);
-        var instance = document.createElement(element.name);
-        assert_array_equals(element.takeLog().types(), ['constructed']);
-        testFunction(instance, 'title');
-        assert_array_equals(element.takeLog().types(), []);
-    }, name + ' must not enqueue an attributeChanged reaction when removing an attribute that does not exist');
+function testAttributeRemover(testFunction, name, options) {
+    if (options && !options.onlyExistingAttribute) {
+        test(function () {
+            var element = define_new_custom_element(['title']);
+            var instance = document.createElement(element.name);
+            assert_array_equals(element.takeLog().types(), ['constructed']);
+            testFunction(instance, 'title');
+            assert_array_equals(element.takeLog().types(), []);
+        }, name + ' must not enqueue an attributeChanged reaction when removing an attribute that does not exist');
+    }
 
     test(function () {
         var element = define_new_custom_element([]);

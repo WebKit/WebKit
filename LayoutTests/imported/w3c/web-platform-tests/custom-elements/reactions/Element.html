@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: CEReactions on Node interface</title>
+<title>Custom Elements: CEReactions on Element interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="id, className, slot, setAttribute, setAttributeNS, removeAttribute, removeAttributeNS, setAttributeNode, setAttributeNodeNS, removeAttributeNode, and insertAdjacentElement of Element interface must have CEReactions">
+<meta name="assert" content="id, className, slot, setAttribute, setAttributeNS, removeAttribute, removeAttributeNS, setAttributeNode, setAttributeNodeNS, removeAttributeNode, insertAdjacentElement, innerHTML, outerHTML, and insertAdjacentHTML of Element interface must have CEReactions">
 <meta name="help" content="https://dom.spec.whatwg.org/#element">
+<meta name="help" content="https://w3c.github.io/DOM-Parsing/">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="../resources/custom-elements-helpers.js"></script>
@@ -54,7 +55,27 @@ testAttributeRemover(function (element, name) {
 
 testNodeConnector(function (newContainer, element) {
     newContainer.insertAdjacentElement('afterBegin', element);
-});
+}, 'insertAdjacentElement on Element');
+
+testInsertingMarkup(function (newContainer, markup) {
+    newContainer.innerHTML = markup;
+}, 'innerHTML on Element');
+
+testNodeDisconnector(function (customElement) {
+    customElement.parentNode.innerHTML = '';
+}, 'innerHTML on Element');
+
+testInsertingMarkup(function (newContainer, markup) {
+    newContainer.firstChild.outerHTML = markup;
+}, 'outerHTML on Element');
+
+testNodeDisconnector(function (customElement) {
+    customElement.outerHTML = '';
+}, 'outerHTML on Element');
+
+testInsertingMarkup(function (newContainer, markup) {
+    newContainer.insertAdjacentHTML('afterBegin', markup);
+}, 'insertAdjacentHTML on Element');
 
 </script>
 </body>

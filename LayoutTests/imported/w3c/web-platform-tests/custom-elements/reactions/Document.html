@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: CEReactions on ParentNode interface</title>
+<title>Custom Elements: CEReactions on Document interface</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="importNode and adoptNode of Document interface must have CEReactions">
 <meta name="help" content="https://dom.spec.whatwg.org/#document">
+<meta name="help" content="https://html.spec.whatwg.org/#document">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="../resources/custom-elements-helpers.js"></script>
@@ -41,6 +42,23 @@ test(function () {
     assert_equals(logEntries.last().oldDocument, document);
     assert_equals(logEntries.last().newDocument, newDoc);
 }, 'adoptNode on Document must enqueue an adopted reaction when importing a custom element');
+
+test(function () {
+    var element = define_new_custom_element();
+    var instance = document.createElement(element.name);
+
+    var container = document.createElement('div');
+    container.contentEditable = true;
+    container.appendChild(instance);
+    document.body.appendChild(container);
+
+    assert_array_equals(element.takeLog().types(), ['constructed', 'connected']);
+
+    container.focus();
+    document.execCommand('delete', false, null);
+
+    assert_array_equals(element.takeLog().types(), ['disconnected']);
+}, 'execCommand on Document must enqueue a disconnected reaction when deleting a custom element from a contenteditable element');
 
 </script>
 </body>

@@ -17,10 +17,14 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Attr.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ChildNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/DOMStringMap.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/DOMTokenList.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Document.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Element.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ElementContentEditable.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/NamedNodeMap.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Node.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/ParentNode.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Range.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/reactions/Selection.html

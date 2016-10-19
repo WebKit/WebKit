@@ -1,0 +1,4 @@
+
+FAIL contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when adding contenteditable content attribute assert_array_equals: lengths differ, expected 1 got 0
+FAIL contentEditable on ElementContentEditable must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 2 got 1
+

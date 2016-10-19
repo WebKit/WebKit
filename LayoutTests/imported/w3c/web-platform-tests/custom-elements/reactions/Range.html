@@ -42,7 +42,12 @@ testNodeConnector(function (container, customElement) {
     var range = document.createRange();
     range.selectNodeContents(container);
     range.surroundContents(customElement);
-}, 'insertNode on Range');
+}, 'surroundContents on Range');
+
+testParsingMarkup(function (document, markup) {
+    var range = document.createRange();
+    return range.createContextualFragment(markup);
+}, 'createContextualFragment on Range');
 
 </script>
 </body>

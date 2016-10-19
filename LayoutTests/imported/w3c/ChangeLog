@@ -1,3 +1,35 @@
+2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import the latest custom elements tests from W3C
+        https://bugs.webkit.org/show_bug.cgi?id=163640
+
+        Reviewed by Chris Dumez.
+
+        Import more custom elements tests from web-platform-tests as of fbe5ac0fd8eecac67d1562032eeba5bd7ec2b735.
+        Most of these tests are written and fixed by me.
+
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget-expected.txt:
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget.html:
+        * web-platform-tests/custom-elements/reactions/DOMStringMap-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/DOMStringMap.html: Added.
+        * web-platform-tests/custom-elements/reactions/Document-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Document.html:
+        * web-platform-tests/custom-elements/reactions/Element-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Element.html:
+        * web-platform-tests/custom-elements/reactions/ElementContentEditable-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/ElementContentEditable.html: Added.
+        * web-platform-tests/custom-elements/reactions/HTMLElement-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/HTMLElement.html: Added.
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap-expected.txt:
+        * web-platform-tests/custom-elements/reactions/NamedNodeMap.html:
+        * web-platform-tests/custom-elements/reactions/Range-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Range.html:
+        * web-platform-tests/custom-elements/reactions/Selection-expected.txt: Added.
+        * web-platform-tests/custom-elements/reactions/Selection.html: Added.
+        * web-platform-tests/custom-elements/reactions/resources/reactions.js:
+        * web-platform-tests/custom-elements/reactions/w3c-import.log:
+        * web-platform-tests/custom-elements/resources/custom-elements-helpers.js:
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         Changing details.open should cause a toggle event to be fired asynchronously

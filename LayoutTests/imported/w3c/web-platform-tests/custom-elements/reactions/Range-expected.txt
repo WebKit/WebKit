@@ -6,6 +6,8 @@ PASS cloneContents on Range must not enqueue an attributeChanged reaction when c
 FAIL cloneContents on Range must enqueue an attributeChanged reaction when cloning an element only for observed attributes assert_array_equals: lengths differ, expected 3 got 1
 PASS insertNode on Range must enqueue a connected reaction 
 PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
-PASS insertNode on Range must enqueue a connected reaction 
-PASS insertNode on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+PASS surroundContents on Range must enqueue a connected reaction 
+PASS surroundContents on Range must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+FAIL createContextualFragment on Range must construct a custom element assert_equals: expected (function) function "class CustomElement extends HTMLElement {
+        constru..." but got (object) object "[object Object]"
 

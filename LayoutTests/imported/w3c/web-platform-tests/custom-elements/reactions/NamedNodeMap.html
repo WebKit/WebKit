@@ -28,11 +28,11 @@ testAttributeAdder(function (element, name, value) {
 
 testAttributeRemover(function (element, name) {
     element.attributes.removeNamedItem(name);
-}, 'removeNamedItem on NamedNodeMap');
+}, 'removeNamedItem on NamedNodeMap', {onlyExistingAttribute: true});
 
 testAttributeRemover(function (element, name) {
     element.attributes.removeNamedItemNS(null, name);
-}, 'removeNamedItemNS on NamedNodeMap');
+}, 'removeNamedItemNS on NamedNodeMap', {onlyExistingAttribute: true});
 
 </script>
 </body>

@@ -65,6 +65,7 @@ function define_new_custom_element(observedAttributes) {
 
     return {
         name: name,
+        class: CustomElement,
         takeLog: function () {
             let currentLog = log; log = [];
             currentLog.types = () => currentLog.map((entry) => entry.type);

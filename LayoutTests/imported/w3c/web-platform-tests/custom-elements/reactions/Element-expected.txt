@@ -13,11 +13,9 @@ PASS setAttributeNS on Element must enqueue an attributeChanged reaction when ad
 PASS setAttributeNS on Element must not enqueue an attributeChanged reaction when adding an unobserved attribute 
 PASS setAttributeNS on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
 PASS setAttributeNS on Element must enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS removeAttribute on Element must not enqueue an attributeChanged reaction when removing an attribute that does not exist 
 PASS removeAttribute on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
 PASS removeAttribute on Element must enqueue an attributeChanged reaction when removing an existing attribute 
 PASS removeAttribute on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
-PASS removeAttributeNS on Element must not enqueue an attributeChanged reaction when removing an attribute that does not exist 
 PASS removeAttributeNS on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
 PASS removeAttributeNS on Element must enqueue an attributeChanged reaction when removing an existing attribute 
 PASS removeAttributeNS on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
@@ -29,10 +27,17 @@ PASS setAttributeNodeNS on Element must enqueue an attributeChanged reaction whe
 PASS setAttributeNodeNS on Element must not enqueue an attributeChanged reaction when adding an unobserved attribute 
 PASS setAttributeNodeNS on Element must enqueue an attributeChanged reaction when replacing an existing attribute 
 PASS setAttributeNodeNS on Element must enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an attribute that does not exist 
 PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an unobserved attribute 
 PASS removeAttributeNode on Element must enqueue an attributeChanged reaction when removing an existing attribute 
 PASS removeAttributeNode on Element must not enqueue an attributeChanged reaction when removing an existing unobserved attribute 
-PASS undefined must enqueue a connected reaction 
-PASS undefined must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+PASS insertAdjacentElement on Element must enqueue a connected reaction 
+PASS insertAdjacentElement on Element must enqueue a disconnected reaction, an adopted reaction, and a connected reaction when the custom element was in another document 
+FAIL innerHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
+FAIL innerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
+FAIL innerHTML on Element must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL outerHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
+FAIL outerHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
+FAIL outerHTML on Element must enqueue a disconnected reaction assert_array_equals: lengths differ, expected 1 got 0
+FAIL insertAdjacentHTML on Element must enqueue a connected reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 2 got 1
+FAIL insertAdjacentHTML on Element must enqueue a attributeChanged reaction for a newly constructed custom element assert_array_equals: lengths differ, expected 3 got 1
 
