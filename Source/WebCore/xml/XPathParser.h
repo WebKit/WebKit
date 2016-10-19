@@ -24,64 +24,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathParser_h
-#define XPathParser_h
+#pragma once
 
-#include "XPathStep.h"
+#include "ExceptionOr.h"
 #include "XPathPredicate.h"
 
 union YYSTYPE;
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
+class XPathNSResolver;
 
-    class XPathNSResolver;
+namespace XPath {
 
-    namespace XPath {
+class Parser {
+    WTF_MAKE_NONCOPYABLE(Parser);
+public:
+    static ExceptionOr<std::unique_ptr<Expression>> parseStatement(const String& statement, RefPtr<XPathNSResolver>&&);
 
-        class Parser {
-            WTF_MAKE_NONCOPYABLE(Parser);
-        public:
-            static std::unique_ptr<Expression> parseStatement(const String& statement, RefPtr<XPathNSResolver>&&, ExceptionCode&);
+    int lex(YYSTYPE&);
+    bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
+    void setParseResult(std::unique_ptr<Expression>&& expression) { m_result = WTFMove(expression); }
 
-            int lex(YYSTYPE&);
-            bool expandQualifiedName(const String& qualifiedName, String& localName, String& namespaceURI);
-            void setParseResult(std::unique_ptr<Expression> expression) { m_result = WTFMove(expression); }
+private:
+    Parser(const String&, RefPtr<XPathNSResolver>&&);
 
-        private:
-            Parser(const String&, RefPtr<XPathNSResolver>&&);
+    struct Token;
 
-            struct Token;
+    bool isBinaryOperatorContext() const;
 
-            bool isBinaryOperatorContext() const;
+    void skipWS();
+    Token makeTokenAndAdvance(int type, int advance = 1);
+    Token makeTokenAndAdvance(int type, NumericOp::Opcode, int advance = 1);
+    Token makeTokenAndAdvance(int type, EqTestOp::Opcode, int advance = 1);
+    char peekAheadHelper();
+    char peekCurHelper();
 
-            void skipWS();
-            Token makeTokenAndAdvance(int type, int advance = 1);
-            Token makeTokenAndAdvance(int type, NumericOp::Opcode, int advance = 1);
-            Token makeTokenAndAdvance(int type, EqTestOp::Opcode, int advance = 1);
-            char peekAheadHelper();
-            char peekCurHelper();
+    Token lexString();
+    Token lexNumber();
+    bool lexNCName(String&);
+    bool lexQName(String&);
 
-            Token lexString();
-            Token lexNumber();
-            bool lexNCName(String&);
-            bool lexQName(String&);
+    Token nextToken();
+    Token nextTokenInternal();
 
-            Token nextToken();
-            Token nextTokenInternal();
+    const String& m_data;
+    RefPtr<XPathNSResolver> m_resolver;
 
-            const String& m_data;
-            RefPtr<XPathNSResolver> m_resolver;
+    unsigned m_nextPos { 0 };
+    int m_lastTokenType { 0 };
 
-            unsigned m_nextPos;
-            int m_lastTokenType;
+    std::unique_ptr<Expression> m_result;
+    bool m_sawNamespaceError { false };
+};
 
-            std::unique_ptr<Expression> m_result;
-            bool m_sawNamespaceError;
-        };
-
-    }
-}
-
-#endif
+} }

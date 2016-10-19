@@ -1,3 +1,63 @@
+2016-10-19  Darin Adler  <darin@apple.com>
+
+        Move XPath from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163656
+
+        Reviewed by Chris Dumez.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createExpression): Use ExceptionOr.
+        (WebCore::Document::createNSResolver): Return Ref.
+        (WebCore::Document::evaluate): Use ExceptionOr.
+        * dom/Document.h: Updated for above changes.
+        * dom/Document.idl: Use non-legacy exceptions for the functions above.
+
+        * inspector/InspectorNodeFinder.cpp:
+        (WebCore::InspectorNodeFinder::searchUsingXPath): Call XPath functions
+        with new interface.
+
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::DOMParser): Marked inline.
+        (WebCore::DOMParser::create): Moved here from header.
+        (WebCore::DOMParser::parseFromString): Use ExceptionOr.
+        * xml/DOMParser.h: Updated for above changes.
+        * xml/DOMParser.idl: Use non-legacy exception.
+
+        * xml/XPathEvaluator.cpp:
+        (WebCore::XPathEvaluator::createExpression): Use ExceptionOr.
+        (WebCore::XPathEvaluator::evaluate): Ditto.
+        * xml/XPathEvaluator.h: Updated for above changes.
+        * xml/XPathEvaluator.idl: Use non-legacy exceptions.
+
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::createExpression): Use ExceptionOr.
+        (WebCore::XPathExpression::evaluate): Ditto.
+        * xml/XPathExpression.h: Updated for above changes.
+        * xml/XPathExpression.idl: Use non-legacy exceptions.
+
+        * xml/XPathGrammar.y: Added include of XPathStep.h.
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::Parser): Initialize three scalar data members
+        in the class definition rather than here.
+        (WebCore::XPath::Parser::parseStatement): Use ExceptionOr.
+        * xml/XPathParser.h: Updated for above changes.
+
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::XPathResult): Use a reference rather than a
+        pointer for the document. Alao initialize two scalar data members
+        in the class definition rather than here.
+        (WebCore::XPathResult::convertTo): Use ExceptionOr.
+        (WebCore::XPathResult::numberValue): Ditto.
+        (WebCore::XPathResult::stringValue): Ditto.
+        (WebCore::XPathResult::booleanValue): Ditto.
+        (WebCore::XPathResult::singleNodeValue): Ditto.
+        (WebCore::XPathResult::snapshotLength): Ditto.
+        (WebCore::XPathResult::iterateNext): Ditto.
+        (WebCore::XPathResult::snapshotItem): Ditto.
+        * xml/XPathResult.h: Updated for the changes above.
+        * xml/XPathResult.idl: Use non-legacy exceptions.
+
 2016-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] Meter element should use AXValueDescription to descrbe the status of the value

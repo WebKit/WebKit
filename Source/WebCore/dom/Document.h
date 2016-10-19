@@ -32,6 +32,7 @@
 #include "ContainerNode.h"
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
+#include "ExceptionOr.h"
 #include "FocusDirection.h"
 #include "FontSelectorClient.h"
 #include "MediaProducer.h"
@@ -943,9 +944,9 @@ public:
     uint64_t domTreeVersion() const { return m_domTreeVersion; }
 
     // XPathEvaluator methods
-    WEBCORE_EXPORT RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
-    WEBCORE_EXPORT RefPtr<XPathNSResolver> createNSResolver(Node* nodeResolver);
-    WEBCORE_EXPORT RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
+    WEBCORE_EXPORT Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
+    WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
 
     enum PendingSheetLayout { NoLayoutWithPendingSheets, DidLayoutWithPendingSheets, IgnoreLayoutWithPendingSheets };
 

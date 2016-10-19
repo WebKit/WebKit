@@ -32,6 +32,7 @@
 #include "XPathFunctions.h"
 #include "XPathParser.h"
 #include "XPathPath.h"
+#include "XPathStep.h"
 #include "XPathVariableReference.h"
 
 #if COMPILER(MSVC)

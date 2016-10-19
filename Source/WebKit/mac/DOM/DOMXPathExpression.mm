@@ -55,10 +55,7 @@
 - (DOMXPathResult *)evaluate:(DOMNode *)contextNode type:(unsigned short)type inResult:(DOMXPathResult *)inResult
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMXPathResult *result = kit(WTF::getPtr(IMPL->evaluate(core(contextNode), type, core(inResult), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->evaluate(core(contextNode), type, core(inResult))).ptr());
 }
 
 @end

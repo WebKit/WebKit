@@ -34,7 +34,6 @@
 #include "XPathParser.h"
 #include "XPathResult.h"
 #include "XPathUtil.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -45,49 +44,46 @@ inline XPathExpression::XPathExpression(std::unique_ptr<XPath::Expression> expre
 {
 }
 
-RefPtr<XPathExpression> XPathExpression::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver, ExceptionCode& ec)
+ExceptionOr<Ref<XPathExpression>> XPathExpression::createExpression(const String& expression, RefPtr<XPathNSResolver>&& resolver)
 {
-    auto parsedExpression = Parser::parseStatement(expression, WTFMove(resolver), ec);
-    if (!parsedExpression)
-        return nullptr;
+    auto parseResult = Parser::parseStatement(expression, WTFMove(resolver));
+    if (parseResult.hasException())
+        return parseResult.releaseException();
 
-    return adoptRef(*new XPathExpression(WTFMove(parsedExpression)));
+    return adoptRef(*new XPathExpression(parseResult.releaseReturnValue()));
 }
 
 XPathExpression::~XPathExpression()
 {
 }
 
-RefPtr<XPathResult> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode& ec)
+// FIXME: Why does this take an XPathResult that it ignores?
+ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node* contextNode, unsigned short type, XPathResult*)
 {
-    if (!isValidContextNode(contextNode)) {
-        ec = NOT_SUPPORTED_ERR;
-        return nullptr;
-    }
+    if (!isValidContextNode(contextNode))
+        return Exception { NOT_SUPPORTED_ERR };
 
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     evaluationContext.node = contextNode;
     evaluationContext.size = 1;
     evaluationContext.position = 1;
     evaluationContext.hadTypeConversionError = false;
-    RefPtr<XPathResult> result = XPathResult::create(&contextNode->document(), m_topExpression->evaluate());
+    auto result = XPathResult::create(contextNode->document(), m_topExpression->evaluate());
     evaluationContext.node = nullptr; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
     if (evaluationContext.hadTypeConversionError) {
         // It is not specified what to do if type conversion fails while evaluating an expression, and INVALID_EXPRESSION_ERR is not exactly right
         // when the failure happens in an otherwise valid expression because of a variable. But XPathEvaluator does not support variables, so it's close enough.
-        ec = XPathException::INVALID_EXPRESSION_ERR;
-        return nullptr;
+        return Exception { XPathException::INVALID_EXPRESSION_ERR };
     }
 
     if (type != XPathResult::ANY_TYPE) {
-        ec = 0;
-        result->convertTo(type, ec);
-        if (ec)
-            return nullptr;
+        auto convertToResult = result->convertTo(type);
+        if (convertToResult.hasException())
+            return convertToResult.releaseException();
     }
 
-    return result;
+    return WTFMove(result);
 }
 
 }

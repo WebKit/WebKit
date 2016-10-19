@@ -1,3 +1,25 @@
+2016-10-19  Darin Adler  <darin@apple.com>
+
+        Move XPath from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163656
+
+        Reviewed by Chris Dumez.
+
+        * DOM/DOMDocument.mm:
+        (wrap): Added. Helper function for wrapping a resolver.
+        (-[DOMDocument createExpression:resolver:]): Use raiseOnDOMError.
+        (-[DOMDocument evaluate:contextNode:resolver:type:inResult:]): Ditto.
+        * DOM/DOMXPathExpression.mm:
+        (-[DOMXPathExpression evaluate:type:inResult:]): Ditto.
+        * DOM/DOMXPathResult.mm:
+        (-[DOMXPathResult numberValue]): Ditto.
+        (-[DOMXPathResult stringValue]): Ditto.
+        (-[DOMXPathResult booleanValue]): Ditto.
+        (-[DOMXPathResult singleNodeValue]): Ditto.
+        (-[DOMXPathResult snapshotLength]): Ditto.
+        (-[DOMXPathResult iterateNext]): Ditto.
+        (-[DOMXPathResult snapshotItem:]): Ditto.
+
 2016-10-18  Sam Weinig  <sam@webkit.org>
 
         Replace std::experimental::variant with WTF::Variant (or similar)

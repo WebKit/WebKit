@@ -1,3 +1,24 @@
+2016-10-19  Darin Adler  <darin@apple.com>
+
+        Move XPath from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163656
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_create_expression): Use ExceptionOr.
+        (webkit_dom_document_evaluate): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.cpp:
+        (webkit_dom_xpath_expression_evaluate): Ditto.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp:
+        (webkit_dom_xpath_result_iterate_next): Ditto.
+        (webkit_dom_xpath_result_snapshot_item): Ditto.
+        (webkit_dom_xpath_result_get_number_value): Ditto.
+        (webkit_dom_xpath_result_get_string_value): Ditto.
+        (webkit_dom_xpath_result_get_boolean_value): Ditto.
+        (webkit_dom_xpath_result_get_single_node_value): Ditto.
+        (webkit_dom_xpath_result_get_snapshot_length): Ditto.
+
 2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: updatedRequest parameter of NetworkProcess::findPendingDownloadLocation is unused since r206988

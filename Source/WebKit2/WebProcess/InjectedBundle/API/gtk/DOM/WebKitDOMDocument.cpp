@@ -1169,13 +1169,13 @@ WebKitDOMXPathExpression* webkit_dom_document_create_expression(WebKitDOMDocumen
     WebCore::Document* item = WebKit::core(self);
     WTF::String convertedExpression = WTF::String::fromUTF8(expression);
     RefPtr<WebCore::XPathNSResolver> convertedResolver = WebKit::core(resolver);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::XPathExpression> gobjectResult = WTF::getPtr(item->createExpression(convertedExpression, WTF::getPtr(convertedResolver), ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->createExpression(convertedExpression, WTFMove(convertedResolver));
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 WebKitDOMXPathNSResolver* webkit_dom_document_create_ns_resolver(WebKitDOMDocument* self, WebKitDOMNode* nodeResolver)
@@ -1203,13 +1203,13 @@ WebKitDOMXPathResult* webkit_dom_document_evaluate(WebKitDOMDocument* self, cons
     WebCore::Node* convertedContextNode = WebKit::core(contextNode);
     RefPtr<WebCore::XPathNSResolver> convertedResolver = WebKit::core(resolver);
     WebCore::XPathResult* convertedInResult = WebKit::core(inResult);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::XPathResult> gobjectResult = WTF::getPtr(item->evaluate(convertedExpression, convertedContextNode, WTF::getPtr(convertedResolver), type, convertedInResult, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->evaluate(convertedExpression, convertedContextNode, WTFMove(convertedResolver), type, convertedInResult);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 
 gboolean webkit_dom_document_exec_command(WebKitDOMDocument* self, const gchar* command, gboolean userInterface, const gchar* value)

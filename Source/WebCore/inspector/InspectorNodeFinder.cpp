@@ -132,19 +132,21 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
 
 void InspectorNodeFinder::searchUsingXPath(Node* parentNode)
 {
-    ExceptionCode ec = 0;
-    RefPtr<XPathResult> result = parentNode->document().evaluate(m_whitespaceTrimmedQuery, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr, ec);
-    if (ec || !result)
+    auto evaluateResult = parentNode->document().evaluate(m_whitespaceTrimmedQuery, parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
+    if (evaluateResult.hasException())
         return;
+    auto result = evaluateResult.releaseReturnValue();
 
-    unsigned long size = result->snapshotLength(ec);
-    if (ec)
+    auto snapshotLengthResult = result->snapshotLength();
+    if (snapshotLengthResult.hasException())
         return;
+    unsigned size = snapshotLengthResult.releaseReturnValue();
 
-    for (unsigned long i = 0; i < size; ++i) {
-        Node* node = result->snapshotItem(i, ec);
-        if (ec)
+    for (unsigned i = 0; i < size; ++i) {
+        auto snapshotItemResult = result->snapshotItem(i);
+        if (snapshotItemResult.hasException())
             return;
+        Node* node = snapshotItemResult.releaseReturnValue();
 
         if (is<Attr>(*node))
             node = downcast<Attr>(*node).ownerElement();

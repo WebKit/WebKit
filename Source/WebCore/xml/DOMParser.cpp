@@ -21,27 +21,24 @@
 
 #include "DOMImplementation.h"
 #include "ExceptionCode.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-DOMParser::DOMParser(Document& contextDocument)
+inline DOMParser::DOMParser(Document& contextDocument)
     : m_contextDocument(contextDocument.createWeakPtr())
 {
 }
 
-RefPtr<Document> DOMParser::parseFromString(const String& string, const String& contentType, ExceptionCode& ec)
+Ref<DOMParser> DOMParser::create(Document& contextDocument)
 {
-    if (contentType != "text/html"
-        && contentType != "text/xml"
-        && contentType != "application/xml"
-        && contentType != "application/xhtml+xml"
-        && contentType != "image/svg+xml") {
-        ec = TypeError;
-        return nullptr;
-    }
+    return adoptRef(*new DOMParser(contextDocument));
+}
 
-    Ref<Document> document = DOMImplementation::createDocument(contentType, nullptr, URL());
+ExceptionOr<Ref<Document>> DOMParser::parseFromString(const String& string, const String& contentType)
+{
+    if (contentType != "text/html" && contentType != "text/xml" && contentType != "application/xml" && contentType != "application/xhtml+xml" && contentType != "image/svg+xml")
+        return Exception { TypeError };
+    auto document = DOMImplementation::createDocument(contentType, nullptr, URL { });
     if (m_contextDocument)
         document->setContextDocument(*m_contextDocument.get());
     document->setContent(string);

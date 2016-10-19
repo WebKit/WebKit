@@ -26,8 +26,7 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
@@ -36,17 +35,15 @@ class XPathNSResolver;
 class XPathResult;
 
 namespace XPath {
-    class Expression;
+class Expression;
 }
-
-using ExceptionCode = int;
 
 class XPathExpression : public RefCounted<XPathExpression> {
 public:
-    static RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
+    static ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
     WEBCORE_EXPORT ~XPathExpression();
 
-    WEBCORE_EXPORT RefPtr<XPathResult> evaluate(Node* contextNode, unsigned short type, XPathResult*, ExceptionCode&);
+    WEBCORE_EXPORT ExceptionOr<Ref<XPathResult>> evaluate(Node* contextNode, unsigned short type, XPathResult*);
 
 private:
     explicit XPathExpression(std::unique_ptr<XPath::Expression>);

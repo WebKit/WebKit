@@ -224,13 +224,13 @@ WebKitDOMNode* webkit_dom_xpath_result_iterate_next(WebKitDOMXPathResult* self, 
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->iterateNext(ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->iterateNext();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue());
 }
 
 WebKitDOMNode* webkit_dom_xpath_result_snapshot_item(WebKitDOMXPathResult* self, gulong index, GError** error)
@@ -239,13 +239,13 @@ WebKitDOMNode* webkit_dom_xpath_result_snapshot_item(WebKitDOMXPathResult* self,
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->snapshotItem(index, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->snapshotItem(index);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue());
 }
 
 gushort webkit_dom_xpath_result_get_result_type(WebKitDOMXPathResult* self)
@@ -263,13 +263,13 @@ gdouble webkit_dom_xpath_result_get_number_value(WebKitDOMXPathResult* self, GEr
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    gdouble result = item->numberValue(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->numberValue();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return 0;
     }
-    return result;
+    return result.releaseReturnValue();
 }
 
 gchar* webkit_dom_xpath_result_get_string_value(WebKitDOMXPathResult* self, GError** error)
@@ -278,9 +278,10 @@ gchar* webkit_dom_xpath_result_get_string_value(WebKitDOMXPathResult* self, GErr
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    gchar* result = convertToUTF8String(item->stringValue(ec));
-    return result;
+    auto result = item->stringValue();
+    if (result.hasException())
+        return nullptr;
+    return convertToUTF8String(result.releaseReturnValue());
 }
 
 gboolean webkit_dom_xpath_result_get_boolean_value(WebKitDOMXPathResult* self, GError** error)
@@ -289,13 +290,13 @@ gboolean webkit_dom_xpath_result_get_boolean_value(WebKitDOMXPathResult* self, G
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), FALSE);
     g_return_val_if_fail(!error || !*error, FALSE);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    gboolean result = item->booleanValue(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->booleanValue();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return false;
     }
-    return result;
+    return result.releaseReturnValue();
 }
 
 WebKitDOMNode* webkit_dom_xpath_result_get_single_node_value(WebKitDOMXPathResult* self, GError** error)
@@ -304,13 +305,13 @@ WebKitDOMNode* webkit_dom_xpath_result_get_single_node_value(WebKitDOMXPathResul
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->singleNodeValue(ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->singleNodeValue();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue());
 }
 
 gboolean webkit_dom_xpath_result_get_invalid_iterator_state(WebKitDOMXPathResult* self)
@@ -328,12 +329,11 @@ gulong webkit_dom_xpath_result_get_snapshot_length(WebKitDOMXPathResult* self, G
     g_return_val_if_fail(WEBKIT_DOM_IS_XPATH_RESULT(self), 0);
     g_return_val_if_fail(!error || !*error, 0);
     WebCore::XPathResult* item = WebKit::core(self);
-    WebCore::ExceptionCode ec = 0;
-    gulong result = item->snapshotLength(ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->snapshotLength();
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-    return result;
+    return result.releaseReturnValue();
 }
 

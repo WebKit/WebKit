@@ -612,23 +612,19 @@
     return kit(WTF::getPtr(IMPL->getOverrideStyle(core(element), pseudoElement)));
 }
 
+static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
+{
+    if (!resolver)
+        return nullptr;
+    if ([resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
+        return core(static_cast<DOMNativeXPathNSResolver *>(resolver));
+    return DOMCustomXPathNSResolver::create(resolver);
+}
+
 - (DOMXPathExpression *)createExpression:(NSString *)expression resolver:(id <DOMXPathNSResolver>)resolver
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::XPathNSResolver* nativeResolver = 0;
-    RefPtr<WebCore::XPathNSResolver> customResolver;
-    if (resolver) {
-        if ([resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
-            nativeResolver = core(static_cast<DOMNativeXPathNSResolver *>(resolver));
-        else {
-            customResolver = DOMCustomXPathNSResolver::create(resolver);
-            nativeResolver = WTF::getPtr(customResolver);
-        }
-    }
-    WebCore::ExceptionCode ec = 0;
-    DOMXPathExpression *result = kit(WTF::getPtr(IMPL->createExpression(expression, WTF::getPtr(nativeResolver), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->createExpression(expression, wrap(resolver))).ptr());
 }
 
 - (id <DOMXPathNSResolver>)createNSResolver:(DOMNode *)nodeResolver
@@ -640,20 +636,7 @@
 - (DOMXPathResult *)evaluate:(NSString *)expression contextNode:(DOMNode *)contextNode resolver:(id <DOMXPathNSResolver>)resolver type:(unsigned short)type inResult:(DOMXPathResult *)inResult
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::XPathNSResolver* nativeResolver = 0;
-    RefPtr<WebCore::XPathNSResolver> customResolver;
-    if (resolver) {
-        if ([resolver isMemberOfClass:[DOMNativeXPathNSResolver class]])
-            nativeResolver = core(static_cast<DOMNativeXPathNSResolver *>(resolver));
-        else {
-            customResolver = DOMCustomXPathNSResolver::create(resolver);
-            nativeResolver = WTF::getPtr(customResolver);
-        }
-    }
-    WebCore::ExceptionCode ec = 0;
-    DOMXPathResult *result = kit(WTF::getPtr(IMPL->evaluate(expression, core(contextNode), WTF::getPtr(nativeResolver), type, core(inResult), ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->evaluate(expression, core(contextNode), wrap(resolver), type, core(inResult))).ptr());
 }
 
 - (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface value:(NSString *)value

@@ -1,6 +1,6 @@
 /*
  * Copyright 2005 Frerich Raabe <raabe@kde.org>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +24,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPathEvaluator_h
-#define XPathEvaluator_h
+#pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
+class Node;
+class XPathExpression;
+class XPathNSResolver;
+class XPathResult;
 
-    class Node;
-    class XPathExpression;
-    class XPathNSResolver;
-    class XPathResult;
+class XPathEvaluator : public RefCounted<XPathEvaluator> {
+public:
+    static Ref<XPathEvaluator> create() { return adoptRef(*new XPathEvaluator); }
 
-    class XPathEvaluator : public RefCounted<XPathEvaluator> {
-    public:
-        static Ref<XPathEvaluator> create() { return adoptRef(*new XPathEvaluator); }
-        
-        RefPtr<XPathExpression> createExpression(const String& expression, RefPtr<XPathNSResolver>&&, ExceptionCode&);
-        Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
-        RefPtr<XPathResult> evaluate(const String& expression, Node* contextNode,
-            RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*, ExceptionCode&);
+    ExceptionOr<Ref<XPathExpression>> createExpression(const String& expression, RefPtr<XPathNSResolver>&&);
+    Ref<XPathNSResolver> createNSResolver(Node* nodeResolver);
+    ExceptionOr<Ref<XPathResult>> evaluate(const String& expression, Node* contextNode, RefPtr<XPathNSResolver>&&, unsigned short type, XPathResult*);
 
-    private:
-        XPathEvaluator() { }
-    };
+private:
+    XPathEvaluator() = default;
+};
 
 }
-
-#endif // XPathEvaluator_h

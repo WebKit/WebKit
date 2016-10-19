@@ -114,12 +114,12 @@ WebKitDOMXPathResult* webkit_dom_xpath_expression_evaluate(WebKitDOMXPathExpress
     WebCore::XPathExpression* item = WebKit::core(self);
     WebCore::Node* convertedContextNode = WebKit::core(contextNode);
     WebCore::XPathResult* convertedInResult = WebKit::core(inResult);
-    WebCore::ExceptionCode ec = 0;
-    RefPtr<WebCore::XPathResult> gobjectResult = WTF::getPtr(item->evaluate(convertedContextNode, type, convertedInResult, ec));
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    auto result = item->evaluate(convertedContextNode, type, convertedInResult);
+    if (result.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return nullptr;
     }
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(result.releaseReturnValue().ptr());
 }
 

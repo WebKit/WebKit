@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,5 +22,5 @@
     ConstructorCallWith=Document,
     ImplementationLacksVTable,
 ] interface DOMParser {
-    [MayThrowLegacyException, NewObject] Document parseFromString(DOMString str, DOMString contentType);
+    [MayThrowException, NewObject] Document parseFromString(DOMString string, DOMString contentType);
 };

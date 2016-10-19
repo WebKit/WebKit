@@ -33,6 +33,7 @@
 #include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathPath.h"
+#include "XPathStep.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
@@ -402,9 +403,6 @@ inline Parser::Token Parser::nextToken()
 Parser::Parser(const String& statement, RefPtr<XPathNSResolver>&& resolver)
     : m_data(statement)
     , m_resolver(WTFMove(resolver))
-    , m_nextPos(0)
-    , m_lastTokenType(0)
-    , m_sawNamespaceError(false)
 {
 }
 
@@ -452,25 +450,20 @@ bool Parser::expandQualifiedName(const String& qualifiedName, String& localName,
         localName = qualifiedName.substring(colon + 1);
     } else
         localName = qualifiedName;
-
     return true;
 }
 
-std::unique_ptr<Expression> Parser::parseStatement(const String& statement, RefPtr<XPathNSResolver>&& resolver, ExceptionCode& ec)
+ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(const String& statement, RefPtr<XPathNSResolver>&& resolver)
 {
-    Parser parser(statement, WTFMove(resolver));
+    Parser parser { statement, WTFMove(resolver) };
 
     int parseError = xpathyyparse(parser);
 
-    if (parser.m_sawNamespaceError) {
-        ec = NAMESPACE_ERR;
-        return nullptr;
-    }
+    if (parser.m_sawNamespaceError)
+        return Exception { NAMESPACE_ERR };
 
-    if (parseError) {
-        ec = XPathException::INVALID_EXPRESSION_ERR;
-        return nullptr;
-    }
+    if (parseError)
+        return Exception { XPathException::INVALID_EXPRESSION_ERR };
 
     return WTFMove(parser.m_result);
 }

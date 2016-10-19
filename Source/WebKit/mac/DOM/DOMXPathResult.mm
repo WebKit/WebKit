@@ -60,37 +60,25 @@
 - (double)numberValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    double result = IMPL->numberValue(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->numberValue());
 }
 
 - (NSString *)stringValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    NSString *result = IMPL->stringValue(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->stringValue());
 }
 
 - (BOOL)booleanValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    BOOL result = IMPL->booleanValue(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->booleanValue());
 }
 
 - (DOMNode *)singleNodeValue
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->singleNodeValue(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->singleNodeValue()));
 }
 
 - (BOOL)invalidIteratorState
@@ -102,35 +90,26 @@
 - (unsigned)snapshotLength
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    unsigned result = IMPL->snapshotLength(ec);
-    raiseOnDOMError(ec);
-    return result;
+    return raiseOnDOMError(IMPL->snapshotLength());
 }
 
 - (DOMNode *)iterateNext
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->iterateNext(ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->iterateNext()));
 }
 
 - (DOMNode *)snapshotItem:(unsigned)index
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::ExceptionCode ec = 0;
-    DOMNode *result = kit(WTF::getPtr(IMPL->snapshotItem(index, ec)));
-    raiseOnDOMError(ec);
-    return result;
+    return kit(raiseOnDOMError(IMPL->snapshotItem(index)));
 }
 
 @end
 
 WebCore::XPathResult* core(DOMXPathResult *wrapper)
 {
-    return wrapper ? reinterpret_cast<WebCore::XPathResult*>(wrapper->_internal) : 0;
+    return wrapper ? reinterpret_cast<WebCore::XPathResult*>(wrapper->_internal) : nullptr;
 }
 
 DOMXPathResult *kit(WebCore::XPathResult* value)
