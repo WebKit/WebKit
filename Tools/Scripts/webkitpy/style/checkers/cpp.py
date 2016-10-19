@@ -899,8 +899,8 @@ def check_for_copyright(lines, error):
 def check_for_header_guard(lines, error):
     """Checks that the file contains a header guard.
 
-    Logs an error if no #pragma once header guard is present
-    of if there was an #ifndef guard that was modified.
+    Logs an error if there was an #ifndef guard in a header
+    that should be a #pragma once guard.
 
     Args:
       lines: An array of strings, each representing a line of the file.
@@ -920,9 +920,6 @@ def check_for_header_guard(lines, error):
                 error(line_number, 'build/header_guard', 5,
                     'Use #pragma once instead of #ifndef for header guard.')
                 return
-
-    error(0, 'build/header_guard', 5,
-        'Use #pragma once header guard.')
 
 
 def check_for_unicode_replacement_characters(lines, error):

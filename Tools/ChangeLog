@@ -1,3 +1,23 @@
+2016-10-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        check-webkit-style: fix false-positive warnings about using #pragma once header guard
+        https://bugs.webkit.org/show_bug.cgi?id=163575
+
+        Reviewed by Brady Eidson.
+
+        There were some false positive warnings about header guards
+        for ObjC headers that don't need guards. This changes the
+        style checker to no longer warn if there is no #pragma once.
+        It only warns if there are #ifndef that should be #pragma once.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_for_header_guard):
+        Change when we output an error.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_build_header_guard):
+        Update tests.
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9

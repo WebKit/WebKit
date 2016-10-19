@@ -2427,15 +2427,13 @@ class CppStyleTest(CppStyleTestBase):
     def test_build_header_guard(self):
         rules = ('-', '+build/header_guard')
 
-        # No header guard.
-        self.assert_header_guard('',
-            'Use #pragma once header guard.'
-            '  [build/header_guard] [5]')
-
         # Old header guard.
         self.assert_header_guard('#ifndef Foo_h',
             'Use #pragma once instead of #ifndef for header guard.'
             '  [build/header_guard] [5]')
+
+        # No header guard. Okay, since this could be an ObjC header.
+        self.assert_header_guard('', '')
 
         # Valid header guard.
         self.assert_header_guard('#pragma once', '')
