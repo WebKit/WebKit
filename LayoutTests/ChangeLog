@@ -1,3 +1,25 @@
+2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9
+        https://bugs.webkit.org/show_bug.cgi?id=163374
+
+        Reviewed by Darin Adler.
+
+        Moving animations/font-variation-settings* tests to animations/font-variations
+        in order to make them easier to mark as failing.
+
+        Mark the relevant tests as failing on El Capitan and iOS 9.
+
+        * animations/font-variations/font-variation-settings-expected.html: Renamed from LayoutTests/animations/font-variation-settings-expected.html.
+        * animations/font-variations/font-variation-settings-order-expected.html: Renamed from LayoutTests/animations/font-variation-settings-order-expected.html.
+        * animations/font-variations/font-variation-settings-order.html: Renamed from LayoutTests/animations/font-variation-settings-order.html.
+        * animations/font-variations/font-variation-settings-unlike-expected.html: Renamed from LayoutTests/animations/font-variation-settings-unlike-expected.html.
+        * animations/font-variations/font-variation-settings-unlike.html: Renamed from LayoutTests/animations/font-variation-settings-unlike.html.
+        * animations/font-variations/font-variation-settings.html: Renamed from LayoutTests/animations/font-variation-settings.html.
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2016-10-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: click-to-start support
