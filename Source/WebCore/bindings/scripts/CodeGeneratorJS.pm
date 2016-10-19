@@ -1008,7 +1008,12 @@ sub GenerateDefaultValue
         return $className . "::" . $enumerationValueName;
     }
     if ($defaultValue eq "null") {
-        return "Nullopt" if $signature->idlType->isUnion;
+        if ($signature->idlType->isUnion) {
+            return "Nullopt" if $signature->idlType->isNullable;
+
+            my $IDLType = GetIDLType($interface, $signature->idlType);
+            return "convert<${IDLType}>(state, jsNull());";
+        }
         return "jsNull()" if $signature->type eq "any";
         return "nullptr" if $codeGenerator->IsWrapperType($signature->type) || $codeGenerator->IsTypedArrayType($signature->type);
         return "String()" if $codeGenerator->IsStringType($signature->type);
@@ -4364,7 +4369,7 @@ sub GenerateParametersCheck
             if ($codeGenerator->IsTypedArrayType($type) and $parameter->type ne "ArrayBuffer") {
                $value = $shouldPassByReference ? "$name.releaseNonNull()" : "WTFMove($name)";
             } elsif ($codeGenerator->IsDictionaryType($type)) {
-                $value = "${name}.value()";
+                $value = "${name}";
             }
         }
 
@@ -5763,7 +5768,7 @@ sub GenerateConstructorDefinition
                 if (ShouldPassWrapperByReference($parameter, $interface)) {
                     push(@constructorArgList, "*" . $parameter->name);
                 } elsif ($codeGenerator->IsDictionaryType($parameter->type)) {
-                    push(@constructorArgList, $parameter->name . ".value()");
+                    push(@constructorArgList, $parameter->name);
                 } else {
                     push(@constructorArgList, "WTFMove(" . $parameter->name . ")");
                 }

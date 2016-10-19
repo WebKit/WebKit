@@ -586,5 +586,25 @@ shouldBeEqualToString("converter.testString", "\u0100");
     shouldBeEqualToString("converter.testString", value);
 });
 
+evalAndLog("converter.setTypeConversionsDictionary({ longValue: 1 })");
+shouldBe("converter.typeConversionsDictionaryLongValue", "1");
+evalAndLog("converter.setTypeConversionsDictionary({ stringValue: 'hello' })");
+shouldBe("converter.typeConversionsDictionaryStringValue", "'hello'");
+evalAndLog("converter.setTypeConversionsDictionary({ sequenceValue: ['hi', 'there'] })");
+shouldBe("converter.typeConversionsDictionarySequenceValue", "['hi', 'there']");
+
+evalAndLog("converter.setTypeConversionsDictionary({ unionValue: document })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'node'");
+evalAndLog("converter.setTypeConversionsDictionary({ unionValue: ['a', 'sequence'] })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'sequence'");
+evalAndLog("converter.setTypeConversionsDictionary({ unionValue: { longValue: 1 } })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
+evalAndLog("converter.setTypeConversionsDictionary({ unionValue: null })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
+evalAndLog("converter.setTypeConversionsDictionary({ unionValue: undefined })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
+evalAndLog("converter.setTypeConversionsDictionary({ })");
+shouldBe("converter.typeConversionsDictionaryUnionType", "'dictionary'");
+
 </script>
 <script src="../../resources/js-test-post.js"></script>

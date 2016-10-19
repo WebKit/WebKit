@@ -23,6 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum UnionType { "node", "sequence", "dictionary" };
+
 [
     NoInterfaceObject,
     ImplementationLacksVTable,
@@ -50,4 +52,22 @@
 
     attribute DOMString testString;
     attribute USVString testUSVString;
+    
+    void setTypeConversionsDictionary(TypeConversionsDictionary d);
+    readonly attribute long typeConversionsDictionaryLongValue;
+    readonly attribute DOMString typeConversionsDictionaryStringValue;
+    readonly attribute sequence<DOMString> typeConversionsDictionarySequenceValue;
+    readonly attribute UnionType typeConversionsDictionaryUnionType; 
+};
+
+dictionary TypeConversionsOtherDictionary {
+    long longValue = 0;
+    DOMString stringValue = "";
+};
+
+dictionary TypeConversionsDictionary {
+    long longValue = 0;
+    DOMString stringValue = "";
+    sequence<DOMString> sequenceValue = [];
+    (Node or sequence<DOMString> or TypeConversionsOtherDictionary) unionValue = null;
 };

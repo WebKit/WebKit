@@ -1059,6 +1059,24 @@ converter.testUSVString = undefined
 converter.testString = undefined
 PASS converter.testUSVString is "undefined"
 PASS converter.testString is "undefined"
+converter.setTypeConversionsDictionary({ longValue: 1 })
+PASS converter.typeConversionsDictionaryLongValue is 1
+converter.setTypeConversionsDictionary({ stringValue: 'hello' })
+PASS converter.typeConversionsDictionaryStringValue is 'hello'
+converter.setTypeConversionsDictionary({ sequenceValue: ['hi', 'there'] })
+PASS converter.typeConversionsDictionarySequenceValue is ['hi', 'there']
+converter.setTypeConversionsDictionary({ unionValue: document })
+PASS converter.typeConversionsDictionaryUnionType is 'node'
+converter.setTypeConversionsDictionary({ unionValue: ['a', 'sequence'] })
+PASS converter.typeConversionsDictionaryUnionType is 'sequence'
+converter.setTypeConversionsDictionary({ unionValue: { longValue: 1 } })
+PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
+converter.setTypeConversionsDictionary({ unionValue: null })
+PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
+converter.setTypeConversionsDictionary({ unionValue: undefined })
+PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
+converter.setTypeConversionsDictionary({ })
+PASS converter.typeConversionsDictionaryUnionType is 'dictionary'
 PASS successfullyParsed is true
 
 TEST COMPLETE

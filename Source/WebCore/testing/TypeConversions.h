@@ -26,8 +26,11 @@
 #ifndef TypeConversions_h
 #define TypeConversions_h
 
+#include "Node.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +38,24 @@ namespace WebCore {
 class TypeConversions : public RefCounted<TypeConversions> {
 public:
     static Ref<TypeConversions> create() { return adoptRef(*new TypeConversions()); }
+
+    enum class UnionType {
+        Node,
+        Sequence,
+        Dictionary
+    };
+
+    struct OtherDictionary {
+        int longValue;
+        String stringValue;
+    };
+
+    struct Dictionary {
+        int longValue;
+        String stringValue;
+        Vector<String> sequenceValue;
+        Variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
+    };
 
     long testLong() { return m_long; }
     void setTestLong(long value) { m_long = value; }
@@ -77,21 +98,46 @@ public:
     const String& testUSVString() const { return m_usvstring; }
     void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
 
+    void setTypeConversionsDictionary(Dictionary& dictionary)
+    {
+        m_typeConversionsDictionaryLongValue = dictionary.longValue;
+        m_typeConversionsDictionaryStringValue = dictionary.stringValue;
+        m_typeConversionsDictionarySequenceValue = dictionary.sequenceValue;
+        m_typeConversionsDictionaryUnionValue = dictionary.unionValue;
+    }
+
+    int typeConversionsDictionaryLongValue() { return m_typeConversionsDictionaryLongValue; }
+    String typeConversionsDictionaryStringValue() { return m_typeConversionsDictionaryStringValue; }
+    Vector<String> typeConversionsDictionarySequenceValue() { return m_typeConversionsDictionarySequenceValue; }
+    UnionType typeConversionsDictionaryUnionType()
+    {
+        return WTF::visit(WTF::makeVisitor(
+            [](const RefPtr<Node>&) -> UnionType { return UnionType::Node; },
+            [](const Vector<String>&) -> UnionType { return UnionType::Sequence; },
+            [](const OtherDictionary&) -> UnionType { return UnionType::Dictionary; }
+        ), m_typeConversionsDictionaryUnionValue);
+    }
+
 private:
     TypeConversions()
     {
     }
 
-    long m_long;
-    unsigned long m_unsignedLong;
-    long long m_longLong;
-    unsigned long long m_unsignedLongLong;
-    int8_t m_byte;
-    uint8_t m_octet;
-    int16_t m_short;
-    uint16_t m_UnsignedShort;
+    long m_long { 0 };
+    unsigned long m_unsignedLong { 0 };
+    long long m_longLong { 0 };
+    unsigned long long m_unsignedLongLong { 0 };
+    int8_t m_byte { 0 };
+    uint8_t m_octet { 0 };
+    int16_t m_short { 0 };
+    uint16_t m_UnsignedShort { 0 };
     String m_string;
     String m_usvstring;
+    
+    int m_typeConversionsDictionaryLongValue { 0 };
+    String m_typeConversionsDictionaryStringValue;
+    Vector<String> m_typeConversionsDictionarySequenceValue;
+    Variant<RefPtr<Node>, Vector<String>, OtherDictionary> m_typeConversionsDictionaryUnionValue;
 };
 
 } // namespace WebCore
