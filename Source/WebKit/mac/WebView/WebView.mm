@@ -2410,6 +2410,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setAllowDisplayOfInsecureContent(shouldAllowDisplayAndRunningOfInsecureContent());
     settings.setAllowRunningOfInsecureContent(shouldAllowDisplayAndRunningOfInsecureContent());
 
+    settings.setVisualViewportEnabled([preferences visualViewportEnabled]);
+
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:
         settings.setStorageBlockingPolicy(SecurityOrigin::AllowAllStorage);
