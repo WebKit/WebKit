@@ -41,7 +41,6 @@
     [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByType(DOMString entryType);
     [EnabledAtRuntime=ResourceTiming] PerformanceEntryList getEntriesByName(DOMString name, optional DOMString entryType);
 
-
     [EnabledAtRuntime=ResourceTiming] void clearResourceTimings();
     [EnabledAtRuntime=ResourceTiming] void setResourceTimingBufferSize(unsigned long maxSize);
 
@@ -49,10 +48,10 @@
 
     // See http://www.w3.org/TR/2012/CR-user-timing-20120726/
 #if defined(ENABLE_USER_TIMING) && ENABLE_USER_TIMING
-    [MayThrowLegacyException] void webkitMark(DOMString markName);
-    void webkitClearMarks(optional  DOMString markName);
+    [MayThrowException] void webkitMark(DOMString markName);
+    void webkitClearMarks(optional DOMString markName);
 
-    [MayThrowLegacyException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
+    [MayThrowException] void webkitMeasure(DOMString measureName, optional DOMString startMark, optional DOMString endMark);
     void webkitClearMeasures(optional DOMString measureName);
 #endif
 

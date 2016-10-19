@@ -57,13 +57,10 @@ Storage::~Storage()
     m_storageArea->decrementAccessCount();
 }
 
-unsigned Storage::length(ExceptionCode& ec) const
+ExceptionOr<unsigned> Storage::length() const
 {
-    ec = 0;
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return 0;
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
         return 0;
@@ -71,12 +68,10 @@ unsigned Storage::length(ExceptionCode& ec) const
     return m_storageArea->length();
 }
 
-String Storage::key(unsigned index, ExceptionCode& ec) const
+ExceptionOr<String> Storage::key(unsigned index) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return String();
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
         return String();
@@ -84,12 +79,10 @@ String Storage::key(unsigned index, ExceptionCode& ec) const
     return m_storageArea->key(index);
 }
 
-String Storage::getItem(const String& key, ExceptionCode& ec) const
+ExceptionOr<String> Storage::getItem(const String& key) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return String();
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
         return String();
@@ -97,57 +90,49 @@ String Storage::getItem(const String& key, ExceptionCode& ec) const
     return m_storageArea->item(key);
 }
 
-void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
+ExceptionOr<void> Storage::setItem(const String& key, const String& value)
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return;
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
-    if (isDisabledByPrivateBrowsing()) {
-        ec = QUOTA_EXCEEDED_ERR;
-        return;
-    }
+    if (isDisabledByPrivateBrowsing())
+        return Exception { QUOTA_EXCEEDED_ERR };
 
     bool quotaException = false;
     m_storageArea->setItem(m_frame, key, value, quotaException);
-
     if (quotaException)
-        ec = QUOTA_EXCEEDED_ERR;
+        return Exception { QUOTA_EXCEEDED_ERR };
+    return { };
 }
 
-void Storage::removeItem(const String& key, ExceptionCode& ec)
+ExceptionOr<void> Storage::removeItem(const String& key)
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return;
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
-        return;
+        return { };
 
     m_storageArea->removeItem(m_frame, key);
+    return { };
 }
 
-void Storage::clear(ExceptionCode& ec)
+ExceptionOr<void> Storage::clear()
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return;
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
-        return;
+        return { };
 
     m_storageArea->clear(m_frame);
+    return { };
 }
 
-bool Storage::contains(const String& key, ExceptionCode& ec) const
+ExceptionOr<bool> Storage::contains(const String& key) const
 {
-    if (!m_storageArea->canAccessStorage(m_frame)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
+    if (!m_storageArea->canAccessStorage(m_frame))
+        return Exception { SECURITY_ERR };
 
     if (isDisabledByPrivateBrowsing())
         return false;

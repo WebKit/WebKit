@@ -23,34 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Storage_h
-#define Storage_h
+#pragma once
 
 #include "DOMWindowProperty.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Frame;
 class StorageArea;
 
-typedef int ExceptionCode;
-
 class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
 public:
     static Ref<Storage> create(Frame*, RefPtr<StorageArea>&&);
     ~Storage();
 
-    unsigned length(ExceptionCode&) const;
-    String key(unsigned index, ExceptionCode&) const;
-    String getItem(const String& key, ExceptionCode&) const;
-    void setItem(const String& key, const String& value, ExceptionCode&);
-    void removeItem(const String& key, ExceptionCode&);
-    void clear(ExceptionCode&);
-    bool contains(const String& key, ExceptionCode&) const;
+    ExceptionOr<unsigned> length() const;
+    ExceptionOr<String> key(unsigned index) const;
+    ExceptionOr<String> getItem(const String& key) const;
+    ExceptionOr<void> setItem(const String& key, const String& value);
+    ExceptionOr<void> removeItem(const String& key);
+    ExceptionOr<void> clear();
+    ExceptionOr<bool> contains(const String& key) const;
 
     StorageArea& area() const { return *m_storageArea; }
 
@@ -63,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // Storage_h

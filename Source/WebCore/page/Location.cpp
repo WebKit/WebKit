@@ -158,16 +158,15 @@ void Location::setHref(DOMWindow& activeWindow, DOMWindow& firstWindow, const St
     setLocation(activeWindow, firstWindow, url);
 }
 
-void Location::setProtocol(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& protocol, ExceptionCode& ec)
+ExceptionOr<void> Location::setProtocol(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& protocol)
 {
     if (!m_frame)
-        return;
+        return { };
     URL url = m_frame->document()->url();
-    if (!url.setProtocol(protocol)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    if (!url.setProtocol(protocol))
+        return Exception { SYNTAX_ERR };
     setLocation(activeWindow, firstWindow, url.string());
+    return { };
 }
 
 void Location::setHost(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& host)

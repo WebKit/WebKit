@@ -82,18 +82,20 @@ unsigned short DOMApplicationCache::status() const
     return cacheHost->status();
 }
 
-void DOMApplicationCache::update(ExceptionCode& ec)
+ExceptionOr<void> DOMApplicationCache::update()
 {
-    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    auto* cacheHost = applicationCacheHost();
     if (!cacheHost || !cacheHost->update())
-        ec = INVALID_STATE_ERR;
+        return Exception { INVALID_STATE_ERR };
+    return { };
 }
 
-void DOMApplicationCache::swapCache(ExceptionCode& ec)
+ExceptionOr<void> DOMApplicationCache::swapCache()
 {
-    ApplicationCacheHost* cacheHost = applicationCacheHost();
+    auto* cacheHost = applicationCacheHost();
     if (!cacheHost || !cacheHost->swapCache())
-        ec = INVALID_STATE_ERR;
+        return Exception { INVALID_STATE_ERR };
+    return { };
 }
 
 void DOMApplicationCache::abort()

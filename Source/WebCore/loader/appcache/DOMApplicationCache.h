@@ -23,16 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DOMApplicationCache_h
-#define DOMApplicationCache_h
+#pragma once
 
 #include "ApplicationCacheHost.h"
 #include "DOMWindowProperty.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -50,8 +48,8 @@ public:
     void willDestroyGlobalObjectInFrame() override;
 
     unsigned short status() const;
-    void update(ExceptionCode&);
-    void swapCache(ExceptionCode&);
+    ExceptionOr<void> update();
+    ExceptionOr<void> swapCache();
     void abort();
 
     using RefCounted<DOMApplicationCache>::ref;
@@ -72,5 +70,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // DOMApplicationCache_h

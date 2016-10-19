@@ -79,10 +79,9 @@ void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, co
     InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, &page);
 
     for (auto& frame : frames) {
-        ExceptionCode ec = 0;
-        Storage* storage = frame->document()->domWindow()->sessionStorage(ec);
-        if (!ec)
-            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
+        auto result = frame->document()->domWindow()->sessionStorage();
+        if (!result.hasException())
+            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
 }
 
@@ -92,10 +91,9 @@ void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageG
         InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, page);
 
     for (auto& frame : frames) {
-        ExceptionCode ec = 0;
-        Storage* storage = frame->document()->domWindow()->localStorage(ec);
-        if (!ec)
-            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
+        auto result = frame->document()->domWindow()->localStorage();
+        if (!result.hasException())
+            frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, result.releaseReturnValue()));
     }
 }
 

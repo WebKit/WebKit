@@ -803,7 +803,7 @@ HRESULT DOMDocument::getComputedStyle(_In_opt_ IDOMElement* elt, _In_ BSTR pseud
     if (!dv)
         return E_FAIL;
     
-    *result = DOMCSSStyleDeclaration::createInstance(dv->getComputedStyle(*element, pseudoEltString.impl()).get());
+    *result = DOMCSSStyleDeclaration::createInstance(dv->getComputedStyle(*element, pseudoEltString.impl()).ptr());
     return *result ? S_OK : E_FAIL;
 }
 

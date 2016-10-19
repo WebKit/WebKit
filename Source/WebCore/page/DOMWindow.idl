@@ -133,7 +133,7 @@
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional DOMString? pseudoElement = null);
 
     // FIXME: Drop the following overload of getComputedStyle once <rdar://problem/28020681> has been fixed.
-    [NewObject, MayThrowLegacyException] CSSStyleDeclaration getComputedStyle(Document document, optional DOMString? pseudoElement = null);
+    [NewObject, MayThrowException] CSSStyleDeclaration? getComputedStyle(Document document, optional DOMString? pseudoElement = null);
 
     CSSRuleList getMatchedCSSRules(optional Element? element = null, optional DOMString? pseudoElement = null);
 
@@ -144,14 +144,14 @@
 
     readonly attribute DOMApplicationCache applicationCache;
 
-    [GetterMayThrowLegacyException] readonly attribute Storage sessionStorage;
-    [GetterMayThrowLegacyException] readonly attribute Storage localStorage;
+    [GetterMayThrowException] readonly attribute Storage sessionStorage;
+    [GetterMayThrowException] readonly attribute Storage localStorage;
 
     // This is the interface orientation in degrees. Some examples:
     // 0 when straight up; -90 when rotated 90 degrees clockwise; 90 counter clockwise.
     [Conditional=ORIENTATION_EVENTS] readonly attribute long orientation;
 
-    [DoNotCheckSecurity, Custom, MayThrowLegacyException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, USVString targetOrigin, optional Array messagePorts);
+    [DoNotCheckSecurity, Custom, MayThrowException, ForwardDeclareInHeader] void postMessage(SerializedScriptValue message, USVString targetOrigin, optional Array messagePorts);
 
     [Conditional=WEB_TIMING, Replaceable] readonly attribute Performance performance;
 

@@ -45,17 +45,11 @@ JSValue JSCrypto::getRandomValues(ExecState& state)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
     JSValue buffer = state.argument(0);
-    RefPtr<ArrayBufferView> arrayBufferView = toArrayBufferView(buffer);
+    auto arrayBufferView = toArrayBufferView(buffer);
     if (!arrayBufferView)
         return throwTypeError(&state, scope);
 
-    ExceptionCode ec = 0;
-    wrapped().getRandomValues(arrayBufferView.get(), ec);
-
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
+    propagateException(state, scope, wrapped().getRandomValues(*arrayBufferView));
 
     return buffer;
 }

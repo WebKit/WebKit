@@ -526,15 +526,12 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     auto message = SerializedScriptValue::create(state, state.uncheckedArgument(0), messagePorts, WTFMove(arrayBuffers));
-
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     String targetOrigin = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ExceptionCode ec = 0;
-    impl.postMessage(WTFMove(message), WTFMove(messagePorts), targetOrigin, callerDOMWindow(&state), ec);
-    setDOMException(&state, ec);
+    propagateException(state, scope, impl.postMessage(message.releaseNonNull(), WTFMove(messagePorts), targetOrigin, callerDOMWindow(&state)));
 
     return jsUndefined();
 }
@@ -552,20 +549,14 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
+    auto* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
+    auto action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
     RETURN_IF_EXCEPTION(scope, JSValue());
-
     if (!action)
         return jsNumber(0);
 
     int delay = state.argument(1).toInt32(&state);
-
-    ExceptionCode ec = 0;
-    int result = wrapped().setTimeout(WTFMove(action), delay, ec);
-    setDOMException(&state, ec);
-
-    return jsNumber(result);
+    return toJSNumber(state, scope, wrapped().setTimeout(WTFMove(action), delay));
 }
 
 JSValue JSDOMWindow::setInterval(ExecState& state)
@@ -576,19 +567,14 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    ContentSecurityPolicy* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
+    auto* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
+    auto action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    int delay = state.argument(1).toInt32(&state);
-
     if (!action)
         return jsNumber(0);
 
-    ExceptionCode ec = 0;
-    int result = wrapped().setInterval(WTFMove(action), delay, ec);
-    setDOMException(&state, ec);
-
-    return jsNumber(result);
+    int delay = state.argument(1).toInt32(&state);
+    return toJSNumber(state, scope, wrapped().setInterval(WTFMove(action), delay));
 }
 
 DOMWindow* JSDOMWindow::toWrapped(JSValue value)

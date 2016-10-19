@@ -26,5 +26,5 @@
 [
     Conditional=USER_MESSAGE_HANDLERS
 ] interface UserMessageHandler {
-    [MayThrowLegacyException] void postMessage(SerializedScriptValue message);
+    [MayThrowException] void postMessage(SerializedScriptValue message);
 };

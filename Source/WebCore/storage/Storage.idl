@@ -30,11 +30,11 @@
     CustomNamedSetter,
     SkipVTableValidation,
 ] interface Storage {
-    [GetterMayThrowLegacyException] readonly attribute unsigned long length;
-    [MayThrowLegacyException] DOMString? key(unsigned long index);
-    [MayThrowLegacyException] getter DOMString? getItem(DOMString key);
-    [MayThrowLegacyException] void setItem(DOMString key, DOMString data);
-    [MayThrowLegacyException] void removeItem(DOMString key);
-    [MayThrowLegacyException] void clear();
+    [GetterMayThrowException] readonly attribute unsigned long length;
+    [MayThrowException] DOMString? key(unsigned long index);
+    [MayThrowException] getter DOMString? getItem(DOMString key);
+    [MayThrowException] void setItem(DOMString key, DOMString data);
+    [MayThrowException] void removeItem(DOMString key);
+    [MayThrowException] void clear();
 };
 

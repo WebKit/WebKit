@@ -48,7 +48,7 @@
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowLegacyException] attribute USVString protocol;
+    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString protocol;
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString host;
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString hostname;
     [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString port;

@@ -29,6 +29,7 @@
 #include "Base64Utilities.h"
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "FrameDestructionObserver.h"
 #include "ScrollToOptions.h"
 #include "Supplementable.h"
@@ -45,397 +46,391 @@ class ScriptCallStack;
 
 namespace WebCore {
 
-    class BarProp;
-    class CSSRuleList;
-    class CSSStyleDeclaration;
-    class Crypto;
-    class CustomElementRegistry;
-    class DOMApplicationCache;
-    class DOMSelection;
-    class DOMURL;
-    class DOMWindowProperty;
-    class DOMWrapperWorld;
-    class Database;
-    class DatabaseCallback;
-    class Document;
-    class Element;
-    class EventListener;
-    class FloatRect;
-    class Frame;
-    class History;
-    class IDBFactory;
-    class Location;
-    class MediaQueryList;
-    class MessageEvent;
-    class Navigator;
-    class Node;
-    class Page;
-    class PageConsoleClient;
-    class Performance;
-    class PostMessageTimer;
-    class ScheduledAction;
-    class Screen;
-    class SecurityOrigin;
-    class SerializedScriptValue;
-    class Storage;
-    class StyleMedia;
-    class WebKitNamespace;
-    class WebKitPoint;
+class BarProp;
+class CSSRuleList;
+class CSSStyleDeclaration;
+class Crypto;
+class CustomElementRegistry;
+class DOMApplicationCache;
+class DOMSelection;
+class DOMURL;
+class DOMWindowProperty;
+class DOMWrapperWorld;
+class Database;
+class DatabaseCallback;
+class Document;
+class Element;
+class EventListener;
+class FloatRect;
+class Frame;
+class History;
+class IDBFactory;
+class Location;
+class MediaQueryList;
+class MessageEvent;
+class Navigator;
+class Node;
+class Page;
+class PageConsoleClient;
+class Performance;
+class PostMessageTimer;
+class RequestAnimationFrameCallback;
+class ScheduledAction;
+class Screen;
+class SecurityOrigin;
+class SerializedScriptValue;
+class Storage;
+class StyleMedia;
+class WebKitNamespace;
+class WebKitPoint;
 
+struct WindowFeatures;
+
+enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
+
+// FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
+class DOMWindow final
+    : public RefCounted<DOMWindow>
+    , public EventTargetWithInlineData
+    , public ContextDestructionObserver
+    , public FrameDestructionObserver
+    , public Base64Utilities
+    , public Supplementable<DOMWindow> {
+public:
+    static Ref<DOMWindow> create(Document* document) { return adoptRef(*new DOMWindow(document)); }
+    WEBCORE_EXPORT virtual ~DOMWindow();
+
+    // In some rare cases, we'll reuse a DOMWindow for a new Document. For example,
+    // when a script calls window.open("..."), the browser gives JavaScript a window
+    // synchronously but kicks off the load in the window asynchronously. Web sites
+    // expect that modifications that they make to the window object synchronously
+    // won't be blown away when the network load commits. To make that happen, we
+    // "securely transition" the existing DOMWindow to the Document that results from
+    // the network load. See also SecurityContext::isSecureTransitionTo.
+    void didSecureTransitionTo(Document*);
+
+    EventTargetInterface eventTargetInterface() const override { return DOMWindowEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+
+    DOMWindow* toDOMWindow() override;
+
+    void registerProperty(DOMWindowProperty*);
+    void unregisterProperty(DOMWindowProperty*);
+
+    void resetUnlessSuspendedForDocumentSuspension();
+    void suspendForDocumentSuspension();
+    void resumeFromDocumentSuspension();
+
+    RefPtr<MediaQueryList> matchMedia(const String&);
+
+    WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
+
+    WEBCORE_EXPORT static bool dispatchAllPendingBeforeUnloadEvents();
+    WEBCORE_EXPORT static void dispatchAllPendingUnloadEvents();
+
+    static FloatRect adjustWindowRect(Page*, const FloatRect& pendingChanges);
+
+    bool allowPopUp(); // Call on first window, not target window.
+    static bool allowPopUp(Frame* firstFrame);
+    static bool canShowModalDialog(const Frame*);
+    WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
+
+    Screen* screen() const;
+    History* history() const;
+    Crypto* crypto() const;
+    BarProp* locationbar() const;
+    BarProp* menubar() const;
+    BarProp* personalbar() const;
+    BarProp* scrollbars() const;
+    BarProp* statusbar() const;
+    BarProp* toolbar() const;
+    Navigator* navigator() const;
+    Navigator* clientInformation() const { return navigator(); }
+
+    Location* location() const;
+    void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location, SetLocationLocking = LockHistoryBasedOnGestureState);
+
+    DOMSelection* getSelection();
+
+    Element* frameElement() const;
+
+    WEBCORE_EXPORT void focus(bool allowFocus = false);
+    void focus(DOMWindow& callerWindow);
+    void blur();
+    WEBCORE_EXPORT void close();
+    void close(Document&);
+    void print();
+    void stop();
+
+    WEBCORE_EXPORT RefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow);
+
+    void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void(DOMWindow&)> prepareDialogFunction);
+
+    void alert(const String& message = emptyString());
+    bool confirm(const String& message);
+    String prompt(const String& message, const String& defaultValue);
+
+    bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
+
+    bool offscreenBuffering() const;
+
+    int outerHeight() const;
+    int outerWidth() const;
+    int innerHeight() const;
+    int innerWidth() const;
+    int screenX() const;
+    int screenY() const;
+    int screenLeft() const { return screenX(); }
+    int screenTop() const { return screenY(); }
+    int scrollX() const;
+    int scrollY() const;
+
+    bool closed() const;
+
+    unsigned length() const;
+
+    String name() const;
+    void setName(const String&);
+
+    String status() const;
+    void setStatus(const String&);
+    String defaultStatus() const;
+    void setDefaultStatus(const String&);
+
+    // Self-referential attributes
+
+    DOMWindow* self() const;
+    DOMWindow* window() const { return self(); }
+    DOMWindow* frames() const { return self(); }
+
+    DOMWindow* opener() const;
+    DOMWindow* parent() const;
+    DOMWindow* top() const;
+
+    // DOM Level 2 AbstractView Interface
+
+    WEBCORE_EXPORT Document* document() const;
+
+    // CSSOM View Module
+
+    RefPtr<StyleMedia> styleMedia() const;
+
+    // DOM Level 2 Style Interface
+
+    WEBCORE_EXPORT Ref<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
+    ExceptionOr<RefPtr<CSSStyleDeclaration>> getComputedStyle(Document&, const String& pseudoElt);
+
+    // WebKit extensions
+
+    WEBCORE_EXPORT RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
+    double devicePixelRatio() const;
+
+    RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
+    RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
+
+    PageConsoleClient* console() const;
+
+    void printErrorMessage(const String&);
+    String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
+
+    ExceptionOr<void> postMessage(Ref<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&, const String& targetOrigin, DOMWindow& source);
+    void postMessageTimerFired(PostMessageTimer&);
+    void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
+
+    void languagesChanged();
+
+    void scrollBy(const ScrollToOptions&) const;
+    void scrollBy(double x, double y) const;
+    void scrollTo(const ScrollToOptions&) const;
+    void scrollTo(double x, double y) const;
+
+    void moveBy(float x, float y) const;
+    void moveTo(float x, float y) const;
+
+    void resizeBy(float x, float y) const;
+    void resizeTo(float width, float height) const;
+
+    // Timers
+    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout);
+    void clearTimeout(int timeoutId);
+    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout);
+    void clearInterval(int timeoutId);
+
+    // WebKit animation extensions
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    class RequestAnimationFrameCallback;
+    int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
+    int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
+    void cancelAnimationFrame(int id);
 #endif
 
-    struct WindowFeatures;
+    // Events
+    // EventTarget API
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
+    void removeAllEventListeners() override;
 
-    typedef int ExceptionCode;
+    using EventTarget::dispatchEvent;
+    bool dispatchEvent(Event&, EventTarget*);
 
-    enum SetLocationLocking { LockHistoryBasedOnGestureState, LockHistoryAndBackForwardList };
+    void dispatchLoadEvent();
 
-    // FIXME: DOMWindow shouldn't subclass FrameDestructionObserver and instead should get to Frame via its Document.
-    class DOMWindow final
-        : public RefCounted<DOMWindow>
-        , public EventTargetWithInlineData
-        , public ContextDestructionObserver
-        , public FrameDestructionObserver
-        , public Base64Utilities
-        , public Supplementable<DOMWindow> {
-    public:
-        static Ref<DOMWindow> create(Document* document) { return adoptRef(*new DOMWindow(document)); }
-        WEBCORE_EXPORT virtual ~DOMWindow();
+    void captureEvents();
+    void releaseEvents();
 
-        // In some rare cases, we'll re-used a DOMWindow for a new Document. For example,
-        // when a script calls window.open("..."), the browser gives JavaScript a window
-        // synchronously but kicks off the load in the window asynchronously. Web sites
-        // expect that modifications that they make to the window object synchronously
-        // won't be blown away when the network load commits. To make that happen, we
-        // "securely transition" the existing DOMWindow to the Document that results from
-        // the network load. See also SecurityContext::isSecureTransitionTo.
-        void didSecureTransitionTo(Document*);
+    void finishedLoading();
 
-        EventTargetInterface eventTargetInterface() const override { return DOMWindowEventTargetInterfaceType; }
-        ScriptExecutionContext* scriptExecutionContext() const override { return ContextDestructionObserver::scriptExecutionContext(); }
+    using RefCounted<DOMWindow>::ref;
+    using RefCounted<DOMWindow>::deref;
 
-        DOMWindow* toDOMWindow() override;
+    // HTML 5 key/value storage
+    ExceptionOr<Storage*> sessionStorage() const;
+    ExceptionOr<Storage*> localStorage() const;
+    Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
+    Storage* optionalLocalStorage() const { return m_localStorage.get(); }
 
-        void registerProperty(DOMWindowProperty*);
-        void unregisterProperty(DOMWindowProperty*);
-
-        void resetUnlessSuspendedForDocumentSuspension();
-        void suspendForDocumentSuspension();
-        void resumeFromDocumentSuspension();
-
-        RefPtr<MediaQueryList> matchMedia(const String&);
-
-        WEBCORE_EXPORT unsigned pendingUnloadEventListeners() const;
-
-        WEBCORE_EXPORT static bool dispatchAllPendingBeforeUnloadEvents();
-        WEBCORE_EXPORT static void dispatchAllPendingUnloadEvents();
-
-        static FloatRect adjustWindowRect(Page*, const FloatRect& pendingChanges);
-
-        bool allowPopUp(); // Call on first window, not target window.
-        static bool allowPopUp(Frame* firstFrame);
-        static bool canShowModalDialog(const Frame*);
-        WEBCORE_EXPORT void setCanShowModalDialogOverride(bool);
-
-        Screen* screen() const;
-        History* history() const;
-        Crypto* crypto() const;
-        BarProp* locationbar() const;
-        BarProp* menubar() const;
-        BarProp* personalbar() const;
-        BarProp* scrollbars() const;
-        BarProp* statusbar() const;
-        BarProp* toolbar() const;
-        Navigator* navigator() const;
-        Navigator* clientInformation() const { return navigator(); }
-
-        Location* location() const;
-        void setLocation(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& location,
-            SetLocationLocking = LockHistoryBasedOnGestureState);
-
-        DOMSelection* getSelection();
-
-        Element* frameElement() const;
-
-        WEBCORE_EXPORT void focus(bool allowFocus = false);
-        void focus(DOMWindow& callerWindow);
-        void blur();
-        WEBCORE_EXPORT void close();
-        void close(Document&);
-        void print();
-        void stop();
-
-        WEBCORE_EXPORT RefPtr<DOMWindow> open(const String& urlString, const AtomicString& frameName, const String& windowFeaturesString,
-            DOMWindow& activeWindow, DOMWindow& firstWindow);
-
-        void showModalDialog(const String& urlString, const String& dialogFeaturesString, DOMWindow& activeWindow, DOMWindow& firstWindow, std::function<void (DOMWindow&)> prepareDialogFunction);
-
-        void alert(const String& message = emptyString());
-        bool confirm(const String& message);
-        String prompt(const String& message, const String& defaultValue);
-
-        bool find(const String&, bool caseSensitive, bool backwards, bool wrap, bool wholeWord, bool searchInFrames, bool showDialog) const;
-
-        bool offscreenBuffering() const;
-
-        int outerHeight() const;
-        int outerWidth() const;
-        int innerHeight() const;
-        int innerWidth() const;
-        int screenX() const;
-        int screenY() const;
-        int screenLeft() const { return screenX(); }
-        int screenTop() const { return screenY(); }
-        int scrollX() const;
-        int scrollY() const;
-
-        bool closed() const;
-
-        unsigned length() const;
-
-        String name() const;
-        void setName(const String&);
-
-        String status() const;
-        void setStatus(const String&);
-        String defaultStatus() const;
-        void setDefaultStatus(const String&);
-
-        // Self-referential attributes
-
-        DOMWindow* self() const;
-        DOMWindow* window() const { return self(); }
-        DOMWindow* frames() const { return self(); }
-
-        DOMWindow* opener() const;
-        DOMWindow* parent() const;
-        DOMWindow* top() const;
-
-        // DOM Level 2 AbstractView Interface
-
-        WEBCORE_EXPORT Document* document() const;
-
-        // CSSOM View Module
-
-        RefPtr<StyleMedia> styleMedia() const;
-
-        // DOM Level 2 Style Interface
-
-        WEBCORE_EXPORT RefPtr<CSSStyleDeclaration> getComputedStyle(Element&, const String& pseudoElt) const;
-        RefPtr<CSSStyleDeclaration> getComputedStyle(Document&, const String& pseudoElt, ExceptionCode&);
-
-        // WebKit extensions
-
-        WEBCORE_EXPORT RefPtr<CSSRuleList> getMatchedCSSRules(Element*, const String& pseudoElt, bool authorOnly = true) const;
-        double devicePixelRatio() const;
-
-        RefPtr<WebKitPoint> webkitConvertPointFromPageToNode(Node*, const WebKitPoint*) const;
-        RefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;
-
-        PageConsoleClient* console() const;
-
-        void printErrorMessage(const String&);
-        String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
-
-        void postMessage(PassRefPtr<SerializedScriptValue> message, Vector<RefPtr<MessagePort>>&&, const String& targetOrigin, DOMWindow& source, ExceptionCode&);
-        void postMessageTimerFired(PostMessageTimer&);
-        void dispatchMessageEventWithOriginCheck(SecurityOrigin* intendedTargetOrigin, Event&, PassRefPtr<Inspector::ScriptCallStack>);
-
-        void languagesChanged();
-
-        void scrollBy(const ScrollToOptions&) const;
-        void scrollBy(double x, double y) const;
-        void scrollTo(const ScrollToOptions&) const;
-        void scrollTo(double x, double y) const;
-
-        void moveBy(float x, float y) const;
-        void moveTo(float x, float y) const;
-
-        void resizeBy(float x, float y) const;
-        void resizeTo(float width, float height) const;
-
-        // Timers
-        int setTimeout(std::unique_ptr<ScheduledAction>, int timeout, ExceptionCode&);
-        void clearTimeout(int timeoutId);
-        int setInterval(std::unique_ptr<ScheduledAction>, int timeout, ExceptionCode&);
-        void clearInterval(int timeoutId);
-
-        // WebKit animation extensions
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-        int requestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
-        int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>);
-        void cancelAnimationFrame(int id);
-#endif
-
-        // Events
-        // EventTarget API
-        bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
-        bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
-        void removeAllEventListeners() override;
-
-        using EventTarget::dispatchEvent;
-        bool dispatchEvent(Event&, EventTarget*);
-
-        void dispatchLoadEvent();
-
-        void captureEvents();
-        void releaseEvents();
-
-        void finishedLoading();
-
-        using RefCounted<DOMWindow>::ref;
-        using RefCounted<DOMWindow>::deref;
-
-        // HTML 5 key/value storage
-        Storage* sessionStorage(ExceptionCode&) const;
-        Storage* localStorage(ExceptionCode&) const;
-        Storage* optionalSessionStorage() const { return m_sessionStorage.get(); }
-        Storage* optionalLocalStorage() const { return m_localStorage.get(); }
-
-        DOMApplicationCache* applicationCache() const;
-        DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
+    DOMApplicationCache* applicationCache() const;
+    DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
-        CustomElementRegistry& ensureCustomElementRegistry();
+    CustomElementRegistry* customElementRegistry() { return m_customElementRegistry.get(); }
+    CustomElementRegistry& ensureCustomElementRegistry();
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-        // This is the interface orientation in degrees. Some examples are:
-        //  0 is straight up; -90 is when the device is rotated 90 clockwise;
-        //  90 is when rotated counter clockwise.
-        int orientation() const;
+    // This is the interface orientation in degrees. Some examples are:
+    //  0 is straight up; -90 is when the device is rotated 90 clockwise;
+    //  90 is when rotated counter clockwise.
+    int orientation() const;
 #endif
 
 #if ENABLE(WEB_TIMING)
-        Performance* performance() const;
+    Performance* performance() const;
 #endif
-        double nowTimestamp() const;
+    double nowTimestamp() const;
 
 #if PLATFORM(IOS)
-        void incrementScrollEventListenersCount();
-        void decrementScrollEventListenersCount();
-        unsigned scrollEventListenerCount() const { return m_scrollEventListenerCount; }
+    void incrementScrollEventListenersCount();
+    void decrementScrollEventListenersCount();
+    unsigned scrollEventListenerCount() const { return m_scrollEventListenerCount; }
 #endif
 
-        void resetAllGeolocationPermission();
+    void resetAllGeolocationPermission();
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
-        bool hasTouchEventListeners() const { return m_touchEventListenerCount > 0; }
+    bool hasTouchEventListeners() const { return m_touchEventListenerCount > 0; }
 #endif
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-        bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
-        WebKitNamespace* webkitNamespace() const;
+    bool shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld&);
+    WebKitNamespace* webkitNamespace() const;
 #endif
 
-        // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
-        // when its document is no longer the document that is displayed in its
-        // frame), we would like to zero out m_frame to avoid being confused
-        // by the document that is currently active in m_frame.
-        bool isCurrentlyDisplayedInFrame() const;
+    // FIXME: When this DOMWindow is no longer the active DOMWindow (i.e.,
+    // when its document is no longer the document that is displayed in its
+    // frame), we would like to zero out m_frame to avoid being confused
+    // by the document that is currently active in m_frame.
+    bool isCurrentlyDisplayedInFrame() const;
 
-        void willDetachDocumentFromFrame();
-        void willDestroyCachedFrame();
+    void willDetachDocumentFromFrame();
+    void willDestroyCachedFrame();
 
-        void enableSuddenTermination();
-        void disableSuddenTermination();
+    void enableSuddenTermination();
+    void disableSuddenTermination();
 
-        WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    private:
-        explicit DOMWindow(Document*);
+private:
+    explicit DOMWindow(Document*);
 
-        Page* page();
-        bool allowedToChangeWindowGeometry() const;
+    Page* page();
+    bool allowedToChangeWindowGeometry() const;
 
-        void frameDestroyed() override;
-        void willDetachPage() override;
+    void frameDestroyed() override;
+    void willDetachPage() override;
 
-        void refEventTarget() override { ref(); }
-        void derefEventTarget() override { deref(); }
+    void refEventTarget() override { ref(); }
+    void derefEventTarget() override { deref(); }
 
-        static RefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, std::function<void (DOMWindow&)> prepareDialogFunction = nullptr);
-        bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
+    static RefPtr<Frame> createWindow(const String& urlString, const AtomicString& frameName, const WindowFeatures&, DOMWindow& activeWindow, Frame& firstFrame, Frame& openerFrame, std::function<void(DOMWindow&)> prepareDialogFunction = nullptr);
+    bool isInsecureScriptAccess(DOMWindow& activeWindow, const String& urlString);
 
-        void resetDOMWindowProperties();
-        void disconnectDOMWindowProperties();
-        void reconnectDOMWindowProperties();
-        void willDestroyDocumentInFrame();
+    void resetDOMWindowProperties();
+    void disconnectDOMWindowProperties();
+    void reconnectDOMWindowProperties();
+    void willDestroyDocumentInFrame();
 
-        bool isSameSecurityOriginAsMainFrame() const;
+    bool isSameSecurityOriginAsMainFrame() const;
 
 #if ENABLE(GAMEPAD)
-        void incrementGamepadEventListenerCount();
-        void decrementGamepadEventListenerCount();
+    void incrementGamepadEventListenerCount();
+    void decrementGamepadEventListenerCount();
 #endif
 
-        bool m_shouldPrintWhenFinishedLoading;
-        bool m_suspendedForDocumentSuspension;
-        Optional<bool> m_canShowModalDialogOverride;
+    bool m_shouldPrintWhenFinishedLoading { false };
+    bool m_suspendedForDocumentSuspension { false };
+    Optional<bool> m_canShowModalDialogOverride;
 
-        HashSet<DOMWindowProperty*> m_properties;
+    HashSet<DOMWindowProperty*> m_properties;
 
-        mutable RefPtr<Crypto> m_crypto;
-        mutable RefPtr<History> m_history;
-        mutable RefPtr<BarProp> m_locationbar;
-        mutable RefPtr<StyleMedia> m_media;
-        mutable RefPtr<BarProp> m_menubar;
-        mutable RefPtr<Navigator> m_navigator;
-        mutable RefPtr<BarProp> m_personalbar;
-        mutable RefPtr<Screen> m_screen;
-        mutable RefPtr<BarProp> m_scrollbars;
-        mutable RefPtr<DOMSelection> m_selection;
-        mutable RefPtr<BarProp> m_statusbar;
-        mutable RefPtr<BarProp> m_toolbar;
-        mutable RefPtr<Location> m_location;
+    mutable RefPtr<Crypto> m_crypto;
+    mutable RefPtr<History> m_history;
+    mutable RefPtr<BarProp> m_locationbar;
+    mutable RefPtr<StyleMedia> m_media;
+    mutable RefPtr<BarProp> m_menubar;
+    mutable RefPtr<Navigator> m_navigator;
+    mutable RefPtr<BarProp> m_personalbar;
+    mutable RefPtr<Screen> m_screen;
+    mutable RefPtr<BarProp> m_scrollbars;
+    mutable RefPtr<DOMSelection> m_selection;
+    mutable RefPtr<BarProp> m_statusbar;
+    mutable RefPtr<BarProp> m_toolbar;
+    mutable RefPtr<Location> m_location;
 
-        String m_status;
-        String m_defaultStatus;
+    String m_status;
+    String m_defaultStatus;
 
-        enum PageStatus { PageStatusNone, PageStatusShown, PageStatusHidden };
-        PageStatus m_lastPageStatus;
+    enum class PageStatus { None, Shown, Hidden };
+    PageStatus m_lastPageStatus { PageStatus::None };
 
-        WeakPtrFactory<DOMWindow> m_weakPtrFactory;
+    WeakPtrFactory<DOMWindow> m_weakPtrFactory;
 
 #if PLATFORM(IOS)
-        unsigned m_scrollEventListenerCount;
+    unsigned m_scrollEventListenerCount { 0 };
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS)
-        unsigned m_touchEventListenerCount;
+    unsigned m_touchEventListenerCount { 0 };
 #endif
 
 #if ENABLE(GAMEPAD)
-        unsigned m_gamepadEventListenerCount;
+    unsigned m_gamepadEventListenerCount { 0 };
 #endif
-        mutable RefPtr<Storage> m_sessionStorage;
-        mutable RefPtr<Storage> m_localStorage;
-        mutable RefPtr<DOMApplicationCache> m_applicationCache;
+
+    mutable RefPtr<Storage> m_sessionStorage;
+    mutable RefPtr<Storage> m_localStorage;
+    mutable RefPtr<DOMApplicationCache> m_applicationCache;
 
 #if ENABLE(CUSTOM_ELEMENTS)
-        RefPtr<CustomElementRegistry> m_customElementRegistry;
+    RefPtr<CustomElementRegistry> m_customElementRegistry;
 #endif
 
 #if ENABLE(WEB_TIMING)
-        mutable RefPtr<Performance> m_performance;
+    mutable RefPtr<Performance> m_performance;
 #endif
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-        mutable RefPtr<WebKitNamespace> m_webkitNamespace;
+    mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
-    };
+};
 
-    inline String DOMWindow::status() const
-    {
-        return m_status;
-    }
+inline String DOMWindow::status() const
+{
+    return m_status;
+}
 
-    inline String DOMWindow::defaultStatus() const
-    {
-        return m_defaultStatus;
-    }
+inline String DOMWindow::defaultStatus() const
+{
+    return m_defaultStatus;
+}
 
 } // namespace WebCore

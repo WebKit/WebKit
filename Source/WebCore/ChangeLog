@@ -1,5 +1,125 @@
 2016-10-18  Darin Adler  <darin@apple.com>
 
+        Move many miscellaneous classes from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163645
+
+        Reviewed by Ryosuke Niwa.
+
+        * bindings/js/JSCryptoCustom.cpp:
+        (WebCore::JSCrypto::getRandomValues): Use propagateException.
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage): Ditto.
+        (WebCore::JSDOMWindow::setTimeout): Use toJSNumber.
+        (WebCore::JSDOMWindow::setInterval): Ditto.
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter): Use propagateException.
+        (WebCore::JSStorage::deleteProperty): Ditto.
+        (WebCore::JSStorage::getOwnPropertyNames): Ditto.
+        (WebCore::JSStorage::putDelegate): Ditto.
+
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::update): Use ExceptionOr.
+        (WebCore::DOMApplicationCache::swapCache): Ditto.
+        * loader/appcache/DOMApplicationCache.h: Update for above changes.
+        * loader/appcache/DOMApplicationCache.idl: Use non-legacy exceptions.
+
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues): Use ExceptionOr.
+        (WebCore::Crypto::webkitSubtle): Ditto.
+        * page/Crypto.h: Updated for above changes.
+        * page/Crypto.idl: Use non-legacy exceptions.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow): Initialize many data members in
+        the class definition instead of here.
+        (WebCore::DOMWindow::page): Use nullptr.
+        (WebCore::DOMWindow::screen): Ditto.
+        (WebCore::DOMWindow::crypto): Ditto.
+        (WebCore::DOMWindow::locationbar): Ditto.
+        (WebCore::DOMWindow::menubar): Ditto.
+        (WebCore::DOMWindow::personalbar): Ditto.
+        (WebCore::DOMWindow::scrollbars): Ditto.
+        (WebCore::DOMWindow::statusbar): Ditto.
+        (WebCore::DOMWindow::toolbar): Ditto.
+        (WebCore::DOMWindow::applicationCache): Ditto.
+        (WebCore::DOMWindow::sessionStorage): Use ExceptionOr.
+        (WebCore::DOMWindow::localStorage): Ditto.
+        (WebCore::DOMWindow::postMessage): Ditto.
+        (WebCore::DOMWindow::frameElement): Use nullptr.
+        (WebCore::DOMWindow::self): Ditto.
+        (WebCore::DOMWindow::opener): Ditto.
+        (WebCore::DOMWindow::parent): Ditto.
+        (WebCore::DOMWindow::top): Ditto.
+        (WebCore::DOMWindow::getComputedStyle): Use Ref.
+        (WebCore::DOMWindow::setTimeout): Use ExceptionOr.
+        (WebCore::DOMWindow::setInterval): Ditto.
+        (WebCore::didAddStorageEventListener): Use a reference instead of a
+        pointer, and ignore return value instead of using IGNORE_EXCEPTION.
+        (WebCore::DOMWindow::addEventListener): Pass reference to function above.
+        (WebCore::DOMWindow::dispatchEvent): Use enum class version of PageStatus.
+        * page/DOMWindow.h: Updated for changes above. Also changed indentatation.
+        * page/DOMWindow.idl: Use non-legacy exceptions.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create): Use ExceptionOr.
+        * page/EventSource.h: Updated for change above.
+        * page/EventSource.idl: Use non-legacy exception.
+
+        * page/Location.cpp:
+        (WebCore::Location::setProtocol): Use ExceptionOr.
+        * page/Location.h: Updated for change above.
+        * page/Location.idl: Use non-legacy exception.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance): Remove unnecessary initialization of
+        smart pointer to null, and moved initialization of m_resourceTimingBufferSize
+        to the header.
+        (WebCore::Performance::navigation): Made non-const and return a reference.
+        (WebCore::Performance::timing): Ditto.
+        (WebCore::Performance::addResourceTiming): Change LoadTiming argument to use
+        a const& instead of passing in a copy.
+        (WebCore::Performance::webkitMark): Use ExceptionOr and make_unique.
+        (WebCore::Performance::webkitClearMarks): Ditto.
+        (WebCore::Performance::webkitMeasure): Ditto.
+        (WebCore::Performance::webkitClearMeasures): Ditto.
+        (WebCore::Performance::reduceTimeResolution): Use std::floor.
+        * page/Performance.h: Updated for above changes. Removed unneeded includes.
+        Made more things private. Removed unneeded reference counting of UserTiming.
+        * page/Performance.idl: Use non-legacy exceptions.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::restrictedMarkFunction): Removed unneeded class name.
+        (WebCore::UserTiming::UserTiming): Take a reference instead of a pointer.
+        (WebCore::UserTiming::mark): Use ExceptionOr.
+        (WebCore::UserTiming::findExistingMarkStartTime): Ditto.
+        (WebCore::UserTiming::measure): Ditto.
+        (WebCore::getEntrySequenceByName): Simplified code using HashMap::get.
+        * page/PerformanceUserTiming.h: Updated for above changes. Removed reference
+        counting since this is a single-owner object.
+
+        * page/UserMessageHandler.cpp:
+        (WebCore::UserMessageHandler::postMessage): Use ExceptionOr.
+        * page/UserMessageHandler.h: Updated for above change.
+        * page/UserMessageHandler.idl: Use non-legacy exception.
+
+        * storage/Storage.cpp:
+        (WebCore::Storage::length): Use ExceptionOr.
+        (WebCore::Storage::key): Ditto.
+        (WebCore::Storage::getItem): Ditto.
+        (WebCore::Storage::setItem): Ditto.
+        (WebCore::Storage::removeItem): Ditto.
+        (WebCore::Storage::clear): Ditto.
+        (WebCore::Storage::contains): Ditto.
+        * storage/Storage.h: Updated for above change.
+        * storage/Storage.idl: Use non-legacy exceptions.
+
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatchSessionStorageEventsToFrames):
+        Updated for ExceptionOr.
+        (WebCore::StorageEventDispatcher::dispatchLocalStorageEventsToFrames): Ditto.
+
+2016-10-18  Darin Adler  <darin@apple.com>
+
         Move internal testing classes from ExceptionCode to Exception
         https://bugs.webkit.org/show_bug.cgi?id=163553
 
