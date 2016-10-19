@@ -33,12 +33,12 @@ namespace WebCore {
 class Element;
 class Event;
 
-enum class SimulatedClickCreationOptions {
-    FromBindings,
-    FromUserAgent
+enum class SimulatedClickSource {
+    Bindings,
+    UserAgent
 };
 
-void simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickCreationOptions);
+void simulateClick(Element&, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions, SimulatedClickSource);
 
 } // namespace WebCore
 

@@ -335,7 +335,7 @@ bool Element::dispatchKeyEvent(const PlatformKeyboardEvent& platformEvent)
 
 void Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions eventOptions, SimulatedClickVisualOptions visualOptions)
 {
-    simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickCreationOptions::FromUserAgent);
+    simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickSource::UserAgent);
 }
 
 Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)
