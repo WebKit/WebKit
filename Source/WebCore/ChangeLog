@@ -1,3 +1,22 @@
+2016-10-19  Joone Hur  <joone.hur@intel.com>
+
+        Add a plain space instead of &nbsp; between text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=123163
+
+        Reviewed by Ryosuke Niwa.
+
+        When we rebalance white spaces, &nbsp; can be added as space
+        under some conditions. This patch adds a condition that the next
+        sibling text node should not exist.
+
+        No new tests, updated existing test.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        * editing/htmlediting.cpp:
+        (WebCore::stringWithRebalancedWhitespace):
+        * editing/htmlediting.h:
+
 2016-10-19  Sam Weinig  <sam@webkit.org>
 
         Add support for sequences and dictionaries in unions

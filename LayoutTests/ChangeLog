@@ -1,3 +1,29 @@
+2016-10-19  Joone Hur  <joone.hur@intel.com>
+
+        Add a plain space instead of &nbsp; between text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=123163
+
+        Reviewed by Ryosuke Niwa.
+
+        When we rebalance white spaces, &nbsp; can be added as space
+        under some conditions. This patch adds a condition that the next
+        sibling text node should not exist.
+
+        * accessibility/mac/find-and-replace-match-capitalization-expected.txt:
+        * accessibility/mac/find-and-replace-match-capitalization.html:
+        * accessibility/mac/select-text/select-text-135575-expected.txt:
+        * accessibility/mac/select-text/select-text-7-expected.txt:
+        * accessibility/mac/select-text/select-text-8-expected.txt:
+        * accessibility/mac/select-text/select-text-9-expected.txt:
+        * editing/mac/spelling/autocorrection-blockquote-crash-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * platform/gtk/editing/execCommand/paste-1-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-2-expected.txt:
+        * platform/gtk/editing/pasteboard/unrendered-br-expected.txt:
+        * platform/mac/editing/execCommand/paste-1-expected.txt:
+        * platform/mac/editing/pasteboard/paste-2-expected.txt:
+        * platform/mac/editing/pasteboard/unrendered-br-expected.txt:
+
 2016-10-19  Sam Weinig  <sam@webkit.org>
 
         Add support for sequences and dictionaries in unions
