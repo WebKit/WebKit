@@ -149,7 +149,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceValueGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.value() ? impl.value()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    JSValue result = impl.value() ? impl.value()->deserialize(state, thisObject.globalObject()) : jsNull();
     return result;
 }
 
@@ -165,7 +165,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceReadonlyValueGetter(Ex
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    JSValue result = impl.readonlyValue() ? impl.readonlyValue()->deserialize(state, thisObject.globalObject()) : jsNull();
     return result;
 }
 
@@ -183,7 +183,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedValueGetter(Exec
     if (JSValue cachedValue = thisObject.m_cachedValue.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    JSValue result = impl.cachedValue() ? impl.cachedValue()->deserialize(state, thisObject.globalObject()) : jsNull();
     thisObject.m_cachedValue.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -218,7 +218,7 @@ static inline JSValue jsTestSerializedScriptValueInterfaceCachedReadonlyValueGet
     if (JSValue cachedValue = thisObject.m_cachedReadonlyValue.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    JSValue result = impl.cachedReadonlyValue() ? impl.cachedReadonlyValue()->deserialize(state, thisObject.globalObject()) : jsNull();
     thisObject.m_cachedReadonlyValue.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -259,7 +259,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceValueFunction(ExecStat
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
+    auto nativeValue = SerializedScriptValue::create(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;
@@ -278,7 +278,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceCachedValueFunction(Ex
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
+    auto nativeValue = SerializedScriptValue::create(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setCachedValue(WTFMove(nativeValue));
     return true;

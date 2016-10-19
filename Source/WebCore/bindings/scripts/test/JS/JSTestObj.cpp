@@ -5243,7 +5243,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionSerializedValueCalle
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto serializedArg = SerializedScriptValue::create(state, state->uncheckedArgument(0), 0, 0);
+    auto serializedArg = SerializedScriptValue::create(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.serializedValue(WTFMove(serializedArg));
     return JSValue::encode(jsUndefined());

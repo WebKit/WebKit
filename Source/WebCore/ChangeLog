@@ -1,5 +1,26 @@
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline bindings tests after Sam's r207505.
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithSerializedScriptValueParam):
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        (WebCore::JSTestCallbackFunction::callbackWithSerializedScriptValueParam):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionSerializedValueCaller):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceValueGetter):
+        (WebCore::jsTestSerializedScriptValueInterfaceReadonlyValueGetter):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedValueGetter):
+        (WebCore::jsTestSerializedScriptValueInterfaceCachedReadonlyValueGetter):
+        (WebCore::setJSTestSerializedScriptValueInterfaceValueFunction):
+        (WebCore::setJSTestSerializedScriptValueInterfaceCachedValueFunction):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::jsTestTypedefsImmutableSerializedScriptValueGetter):
+        (WebCore::setJSTestTypedefsImmutableSerializedScriptValueFunction):
+
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
         [Web IDL] Kill support for [LegacyConstructorTemplate=Event] / [LegacyInitializedByEventConstructor]
         https://bugs.webkit.org/show_bug.cgi?id=163630
 

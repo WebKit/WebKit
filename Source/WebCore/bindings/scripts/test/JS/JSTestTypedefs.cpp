@@ -254,7 +254,7 @@ static inline JSValue jsTestTypedefsImmutableSerializedScriptValueGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(&state, thisObject.globalObject(), 0) : jsNull();
+    JSValue result = impl.immutableSerializedScriptValue() ? impl.immutableSerializedScriptValue()->deserialize(state, thisObject.globalObject()) : jsNull();
     return result;
 }
 
@@ -395,7 +395,7 @@ static inline bool setJSTestTypedefsImmutableSerializedScriptValueFunction(ExecS
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
-    auto nativeValue = SerializedScriptValue::create(&state, value, 0, 0);
+    auto nativeValue = SerializedScriptValue::create(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setImmutableSerializedScriptValue(WTFMove(nativeValue));
     return true;
