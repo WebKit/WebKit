@@ -65,12 +65,12 @@ public:
     void consumeAsStream(FetchBodyOwner&, FetchResponseSource&);
 #endif
 
-    bool isBlob() const { return std::experimental::holds_alternative<Ref<const Blob>>(m_data); }
-    bool isFormData() const { return std::experimental::holds_alternative<Ref<FormData>>(m_data); }
-    bool isArrayBuffer() const { return std::experimental::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
-    bool isArrayBufferView() const { return std::experimental::holds_alternative<Ref<const ArrayBufferView>>(m_data); }
-    bool isURLSearchParams() const { return std::experimental::holds_alternative<Ref<const URLSearchParams>>(m_data); }
-    bool isText() const { return std::experimental::holds_alternative<String>(m_data); }
+    bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
+    bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }
+    bool isArrayBuffer() const { return WTF::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
+    bool isArrayBufferView() const { return WTF::holds_alternative<Ref<const ArrayBufferView>>(m_data); }
+    bool isURLSearchParams() const { return WTF::holds_alternative<Ref<const URLSearchParams>>(m_data); }
+    bool isText() const { return WTF::holds_alternative<String>(m_data); }
 
     static Optional<FetchBody> extract(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue, String&);
     static FetchBody loadingBody() { return { }; }
@@ -104,16 +104,16 @@ private:
     void consumeText(Ref<DeferredPromise>&&, const String&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
-    const Blob& blobBody() const { return std::experimental::get<Ref<const Blob>>(m_data).get(); }
-    FormData& formDataBody() { return std::experimental::get<Ref<FormData>>(m_data).get(); }
-    const FormData& formDataBody() const { return std::experimental::get<Ref<FormData>>(m_data).get(); }
-    const ArrayBuffer& arrayBufferBody() const { return std::experimental::get<Ref<const ArrayBuffer>>(m_data).get(); }
-    const ArrayBufferView& arrayBufferViewBody() const { return std::experimental::get<Ref<const ArrayBufferView>>(m_data).get(); }
-    String& textBody() { return std::experimental::get<String>(m_data); }
-    const String& textBody() const { return std::experimental::get<String>(m_data); }
-    const URLSearchParams& urlSearchParamsBody() const { return std::experimental::get<Ref<const URLSearchParams>>(m_data).get(); }
+    const Blob& blobBody() const { return WTF::get<Ref<const Blob>>(m_data).get(); }
+    FormData& formDataBody() { return WTF::get<Ref<FormData>>(m_data).get(); }
+    const FormData& formDataBody() const { return WTF::get<Ref<FormData>>(m_data).get(); }
+    const ArrayBuffer& arrayBufferBody() const { return WTF::get<Ref<const ArrayBuffer>>(m_data).get(); }
+    const ArrayBufferView& arrayBufferViewBody() const { return WTF::get<Ref<const ArrayBufferView>>(m_data).get(); }
+    String& textBody() { return WTF::get<String>(m_data); }
+    const String& textBody() const { return WTF::get<String>(m_data); }
+    const URLSearchParams& urlSearchParamsBody() const { return WTF::get<Ref<const URLSearchParams>>(m_data).get(); }
 
-    std::experimental::variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String> m_data { nullptr };
+    Variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String> m_data { nullptr };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
     RefPtr<DeferredPromise> m_consumePromise;

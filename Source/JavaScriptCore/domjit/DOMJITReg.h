@@ -71,21 +71,21 @@ public:
     GPRReg gpr() const
     {
         ASSERT(isGPR());
-        return std::experimental::get<GPRReg>(m_variant);
+        return WTF::get<GPRReg>(m_variant);
     }
     FPRReg fpr() const
     {
         ASSERT(isFPR());
-        return std::experimental::get<FPRReg>(m_variant);
+        return WTF::get<FPRReg>(m_variant);
     }
     JSValueRegs jsValueRegs() const
     {
         ASSERT(isJSValueRegs());
-        return std::experimental::get<JSValueRegs>(m_variant);
+        return WTF::get<JSValueRegs>(m_variant);
     }
 
 private:
-    std::experimental::variant<GPRReg, FPRReg, JSValueRegs> m_variant;
+    Variant<GPRReg, FPRReg, JSValueRegs> m_variant;
 };
 
 } }

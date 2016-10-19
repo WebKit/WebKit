@@ -1,3 +1,16 @@
+2016-10-18  Sam Weinig  <sam@webkit.org>
+
+        Replace std::experimental::variant with WTF::Variant (or similar)
+        https://bugs.webkit.org/show_bug.cgi?id=163626
+
+        Reviewed by Chris Dumez.
+
+        Rename std::experimental::variant, Variant. Move helpers get/holds_alternative/etc.
+        into the WTF namespace.
+
+        * DOM/DOMHTMLSelectElement.mm:
+        (-[DOMHTMLSelectElement add:before:]):
+
 2016-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add a MiniBrowser menu item to apply page scale in WK1 and WK2

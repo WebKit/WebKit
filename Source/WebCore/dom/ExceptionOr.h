@@ -43,7 +43,7 @@ public:
     ReturnType&& releaseReturnValue();
 
 private:
-    std::experimental::variant<Exception, ReturnType> m_value;
+    Variant<Exception, ReturnType> m_value;
 };
 
 template<> class ExceptionOr<void> {
@@ -75,17 +75,17 @@ template<typename ReturnType> template<typename OtherType> inline ExceptionOr<Re
 
 template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException() const
 {
-    return std::experimental::holds_alternative<Exception>(m_value);
+    return WTF::holds_alternative<Exception>(m_value);
 }
 
 template<typename ReturnType> inline Exception&& ExceptionOr<ReturnType>::releaseException()
 {
-    return std::experimental::get<Exception>(WTFMove(m_value));
+    return WTF::get<Exception>(WTFMove(m_value));
 }
 
 template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::releaseReturnValue()
 {
-    return std::experimental::get<ReturnType>(WTFMove(m_value));
+    return WTF::get<ReturnType>(WTFMove(m_value));
 }
 
 inline ExceptionOr<void>::ExceptionOr(Exception&& exception)

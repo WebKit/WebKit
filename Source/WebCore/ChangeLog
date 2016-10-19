@@ -1,3 +1,46 @@
+2016-10-18  Sam Weinig  <sam@webkit.org>
+
+        Replace std::experimental::variant with WTF::Variant (or similar)
+        https://bugs.webkit.org/show_bug.cgi?id=163626
+
+        Reviewed by Chris Dumez.
+
+        Rename std::experimental::variant, Variant. Move helpers get/holds_alternative/etc.
+        into the WTF namespace.
+
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::isBlob):
+        (WebCore::FetchBody::isFormData):
+        (WebCore::FetchBody::isArrayBuffer):
+        (WebCore::FetchBody::isArrayBufferView):
+        (WebCore::FetchBody::isURLSearchParams):
+        (WebCore::FetchBody::isText):
+        (WebCore::FetchBody::blobBody):
+        (WebCore::FetchBody::formDataBody):
+        (WebCore::FetchBody::arrayBufferBody):
+        (WebCore::FetchBody::arrayBufferViewBody):
+        (WebCore::FetchBody::textBody):
+        (WebCore::FetchBody::urlSearchParamsBody):
+        * bindings/generic/IDLTypes.h:
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::hasException):
+        (WebCore::ExceptionOr<ReturnType>::releaseException):
+        (WebCore::ExceptionOr<ReturnType>::releaseReturnValue):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::source):
+        * dom/MessageEvent.h:
+        * dom/Node.cpp:
+        (WebCore::nodeSetPreTransformedFromNodeOrStringVector):
+        (WebCore::Node::convertNodesOrStringsIntoNode):
+        * dom/Node.h:
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add):
+        * html/HTMLSelectElement.h:
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        * html/track/TrackEvent.h:
+
 2016-10-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline bindings tests after Sam's r207505.

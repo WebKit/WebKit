@@ -185,7 +185,7 @@
         raiseTypeErrorException();
 
     auto& coreElement = *core(element);
-    std::experimental::variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
+    Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
     if (is<WebCore::HTMLOptionElement>(coreElement))
         variantElement = &downcast<WebCore::HTMLOptionElement>(coreElement);
     else if (is<WebCore::HTMLOptGroupElement>(coreElement))

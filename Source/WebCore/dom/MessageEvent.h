@@ -38,7 +38,7 @@ namespace WebCore {
 
 class Blob;
 
-using MessageEventSource = std::experimental::variant<RefPtr<DOMWindow>, RefPtr<MessagePort>>;
+using MessageEventSource = Variant<RefPtr<DOMWindow>, RefPtr<MessagePort>>;
 
 class MessageEvent final : public Event {
 public:

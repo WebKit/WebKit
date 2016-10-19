@@ -59,8 +59,7 @@
 
 #if !COMPILER(CLANG) || WTF_CPP_STD_VER >= 14
 
-namespace std {
-namespace experimental {
+namespace WTF {
 
 #if COMPILER_SUPPORTS(EXCEPTIONS)
 #define __THROW_EXCEPTION(__exception) throw __exception;
@@ -165,7 +164,7 @@ struct __next_index{
 };
 
 template<typename ... _Types>
-class variant;
+class Variant;
 
 template<typename>
 struct variant_size;
@@ -180,7 +179,7 @@ template <typename _Type>
 struct variant_size<const volatile _Type> : variant_size<_Type> {};
 
 template <typename... _Types>
-struct variant_size<variant<_Types...>>
+struct variant_size<Variant<_Types...>>
     : std::integral_constant<size_t, sizeof...(_Types)> {};
 
 template<size_t _Index,typename _Type>
@@ -205,50 +204,50 @@ struct variant_alternative<_Index, volatile const _Type>{
 };
 
 template<size_t _Index,typename ... _Types>
-struct variant_alternative<_Index,variant<_Types...>>{
+struct variant_alternative<_Index,Variant<_Types...>>{
     using type=typename __indexed_type<_Index,_Types...>::__type;
 };
 
 constexpr size_t variant_npos=-1;
 
 template<typename _Type,typename ... _Types>
-constexpr _Type& get(variant<_Types...>&);
+constexpr _Type& get(Variant<_Types...>&);
 
 template<typename _Type,typename ... _Types>
-constexpr _Type const& get(variant<_Types...> const&);
+constexpr _Type const& get(Variant<_Types...> const&);
 
 template<typename _Type,typename ... _Types>
-constexpr _Type&& get(variant<_Types...>&&);
+constexpr _Type&& get(Variant<_Types...>&&);
 
 template<typename _Type,typename ... _Types>
-constexpr const _Type&& get(variant<_Types...> const&&);
+constexpr const _Type&& get(Variant<_Types...> const&&);
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename __indexed_type<_Index,_Types...>::__type& get(variant<_Types...>&);
+constexpr typename __indexed_type<_Index,_Types...>::__type& get(Variant<_Types...>&);
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename __indexed_type<_Index,_Types...>::__type&& get(variant<_Types...>&&);
+constexpr typename __indexed_type<_Index,_Types...>::__type&& get(Variant<_Types...>&&);
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr typename __indexed_type<_Index,_Types...>::__type const& get(
-    variant<_Types...> const&);
+    Variant<_Types...> const&);
 
 template <ptrdiff_t _Index, typename... _Types>
 constexpr const typename __indexed_type<_Index, _Types...>::__type &&
-get(variant<_Types...> const &&);
+get(Variant<_Types...> const &&);
 
 template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type> get_if(variant<_Types...>&);
+constexpr std::add_pointer_t<_Type> get_if(Variant<_Types...>&);
 
 template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type const> get_if(variant<_Types...> const&);
+constexpr std::add_pointer_t<_Type const> get_if(Variant<_Types...> const&);
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type> get_if(variant<_Types...>&);
+constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type> get_if(Variant<_Types...>&);
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type const> get_if(
-    variant<_Types...> const&);
+    Variant<_Types...> const&);
 
 template<ptrdiff_t _Index,typename ... _Types>
 struct __variant_accessor;
@@ -379,7 +378,7 @@ template<typename _Variant>
 struct __any_backup_storage_required;
 
 template<typename ... _Types>
-struct __any_backup_storage_required<variant<_Types...> >{
+struct __any_backup_storage_required<Variant<_Types...> >{
     static const bool __value=
         __any_backup_storage_required_impl<0,sizeof...(_Types),_Types...>::__value;
 };
@@ -704,7 +703,7 @@ template<typename _Variant>
 struct __variant_indices;
 
 template<typename ... _Types>
-struct __variant_indices<variant<_Types...>>{
+struct __variant_indices<Variant<_Types...>>{
     typedef typename __type_indices<_Types...>::__type __type;
 };
 
@@ -1436,17 +1435,17 @@ __noexcept_variant_swap_impl<__all_swappable<_Types...>::value,_Types...>
 {};
 
 template<typename ... _Types>
-class variant:
+class Variant:
         private __variant_base<
-    variant<_Types...>,__all_trivially_destructible<_Types...>::__value>
+    Variant<_Types...>,__all_trivially_destructible<_Types...>::__value>
 {
-    typedef __variant_base<variant<_Types...>,__all_trivially_destructible<_Types...>::__value> __base_type;
+    typedef __variant_base<Variant<_Types...>,__all_trivially_destructible<_Types...>::__value> __base_type;
     friend __base_type;
-    friend struct __copy_construct_op_table<variant>;
-    friend struct __copy_assign_op_table<variant>;
-    friend struct __move_construct_op_table<variant>;
-    friend struct __move_assign_op_table<variant>;
-    friend struct __destroy_op_table<variant>;
+    friend struct __copy_construct_op_table<Variant>;
+    friend struct __copy_assign_op_table<Variant>;
+    friend struct __move_construct_op_table<Variant>;
+    friend struct __move_assign_op_table<Variant>;
+    friend struct __destroy_op_table<Variant>;
     
     template<ptrdiff_t _Index,typename ... _Types2>
     friend struct __variant_accessor;
@@ -1467,24 +1466,24 @@ class variant:
     void __destroy_self(){
         if(valueless_by_exception())
             return;
-        __destroy_op_table<variant>::__apply[index()](this);
+        __destroy_op_table<Variant>::__apply[index()](this);
         __index=-1;
     }
     
-    ptrdiff_t __move_construct(variant& __other){
+    ptrdiff_t __move_construct(Variant& __other){
         ptrdiff_t const __other_index=__other.index();
         if(__other_index==-1)
             return -1;
-        __move_construct_op_table<variant>::__apply[__other_index](this,__other);
+        __move_construct_op_table<Variant>::__apply[__other_index](this,__other);
         __other.__destroy_self();
         return __other_index;
     }
 
-    ptrdiff_t __copy_construct(variant const& __other){
+    ptrdiff_t __copy_construct(Variant const& __other){
         ptrdiff_t const __other_index=__other.index();
         if(__other_index==-1)
             return -1;
-        __copy_construct_op_table<variant>::__apply[__other_index](this,__other);
+        __copy_construct_op_table<Variant>::__apply[__other_index](this,__other);
         return __other_index;
     }
 
@@ -1531,35 +1530,35 @@ class variant:
     struct __private_type{};
 
 public:
-    constexpr variant()
+    constexpr Variant()
         __NOEXCEPT_(noexcept(typename __indexed_type<0,_Types...>::__type())):
         __storage(in_place<0>),
         __index(0)
     {}
 
-    constexpr variant(typename std::conditional<__all_move_constructible<_Types...>::value,variant,__private_type>::type&& __other)
+    constexpr Variant(typename std::conditional<__all_move_constructible<_Types...>::value,Variant,__private_type>::type&& __other)
     __NOEXCEPT_(__noexcept_variant_move_construct<_Types...>::value):
         __index(__move_construct(__other))
     {}
 
-    constexpr variant(typename std::conditional<!__all_move_constructible<_Types...>::value,variant,__private_type>::type&& __other)=delete;
+    constexpr Variant(typename std::conditional<!__all_move_constructible<_Types...>::value,Variant,__private_type>::type&& __other)=delete;
     
-    constexpr variant(typename std::conditional<__all_copy_constructible<_Types...>::value,variant,__private_type>::type& __other)
+    constexpr Variant(typename std::conditional<__all_copy_constructible<_Types...>::value,Variant,__private_type>::type& __other)
     __NOEXCEPT_(__noexcept_variant_non_const_copy_construct<_Types...>::value):
         __index(__copy_construct(__other))
     {}
 
-    constexpr variant(typename std::conditional<!__all_copy_constructible<_Types...>::value,variant,__private_type>::type& __other)=delete;
+    constexpr Variant(typename std::conditional<!__all_copy_constructible<_Types...>::value,Variant,__private_type>::type& __other)=delete;
 
-    constexpr variant(typename std::conditional<__all_copy_constructible<_Types...>::value,variant,__private_type>::type const& __other)
+    constexpr Variant(typename std::conditional<__all_copy_constructible<_Types...>::value,Variant,__private_type>::type const& __other)
     __NOEXCEPT_(__noexcept_variant_const_copy_construct<_Types...>::value):
         __index(__copy_construct(__other))
     {}
 
-    constexpr variant(typename std::conditional<!__all_copy_constructible<_Types...>::value,variant,__private_type>::type const& __other)=delete;
+    constexpr Variant(typename std::conditional<!__all_copy_constructible<_Types...>::value,Variant,__private_type>::type const& __other)=delete;
     
     template<typename _Type,typename ... _Args>
-    explicit constexpr variant(in_place_type_t<_Type>,_Args&& ... __args):
+    explicit constexpr Variant(in_place_type_t<_Type>,_Args&& ... __args):
         __storage(
             in_place<__type_index<_Type,_Types...>::__value>,
             std::forward<_Args>(__args)...),
@@ -1569,7 +1568,7 @@ public:
     }
 
     template<size_t _Index,typename ... _Args>
-    explicit constexpr variant(in_place_index_t<_Index>,_Args&& ... __args):
+    explicit constexpr Variant(in_place_index_t<_Index>,_Args&& ... __args):
         __storage(in_place<_Index>,std::forward<_Args>(__args)...),
         __index(_Index)
     {
@@ -1577,7 +1576,7 @@ public:
     }
     
     template<typename _Type>
-    constexpr variant(_Type&& __x):
+    constexpr Variant(_Type&& __x):
         __storage(
             in_place<
             __type_index_to_construct<_Type,_Types...>::__value>,
@@ -1590,7 +1589,7 @@ public:
              typename std::enable_if<
                  (__constructible_matches<std::initializer_list<_Type>,_Types...>::__type::__length>0)
              >::type>
-    constexpr variant(std::initializer_list<_Type> __x):
+    constexpr Variant(std::initializer_list<_Type> __x):
         __storage(
             in_place<
             __type_index_to_construct<std::initializer_list<_Type>,_Types...>::__value>,
@@ -1599,7 +1598,7 @@ public:
     {}
     
     template<typename _Type>
-    variant& operator=(_Type&& __x){
+    Variant& operator=(_Type&& __x){
         constexpr size_t _Index=
             __type_index_to_construct<_Type,_Types...>::__value;
         if(_Index==__index){
@@ -1611,76 +1610,76 @@ public:
         return *this;
     }
 
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<
             !(__all_copy_constructible<_Types...>::value &&
               __all_move_constructible<_Types...>::value &&
               __all_copy_assignable<_Types...>::value),
-            variant, __private_type>::type const &__other) = delete;
+            Variant, __private_type>::type const &__other) = delete;
 
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<
             __all_copy_constructible<_Types...>::value &&
                 __all_move_constructible<_Types...>::value &&
                 __all_copy_assignable<_Types...>::value,
-            variant, __private_type>::type const &__other) {
+            Variant, __private_type>::type const &__other) {
         if (__other.valueless_by_exception()) {
             __destroy_self();
         }
         else if(__other.index()==index()){
-            __copy_assign_op_table<variant>::__apply[index()](this,__other);
+            __copy_assign_op_table<Variant>::__apply[index()](this,__other);
         }
         else{
-            __replace_construct_helper::__op_table<variant>::__copy_assign[
+            __replace_construct_helper::__op_table<Variant>::__copy_assign[
                 __other.index()](this,__other);
         }
         return *this;
     }
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<
             !(__all_copy_constructible<_Types...>::value &&
               __all_move_constructible<_Types...>::value &&
               __all_copy_assignable<_Types...>::value),
-            variant, __private_type>::type &__other) = delete;
+            Variant, __private_type>::type &__other) = delete;
 
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<
             __all_copy_constructible<_Types...>::value &&
                 __all_move_constructible<_Types...>::value &&
                 __all_copy_assignable<_Types...>::value,
-            variant, __private_type>::type &__other) {
+            Variant, __private_type>::type &__other) {
         if(__other.valueless_by_exception()){
             __destroy_self();
         }
         else if(__other.index()==index()){
-            __copy_assign_op_table<variant>::__apply[index()](this,__other);
+            __copy_assign_op_table<Variant>::__apply[index()](this,__other);
         }
         else{
-            __replace_construct_helper::__op_table<variant>::__copy_assign[
+            __replace_construct_helper::__op_table<Variant>::__copy_assign[
                 __other.index()](this,__other);
         }
         return *this;
     }
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<
             !(__all_move_constructible<_Types...>::value &&
               __all_move_assignable<_Types...>::value),
-            variant, __private_type>::type &&__other) = delete;
+            Variant, __private_type>::type &&__other) = delete;
 
-    variant &operator=(
+    Variant &operator=(
         typename std::conditional<__all_move_constructible<_Types...>::value &&
                                       __all_move_assignable<_Types...>::value,
-                                  variant, __private_type>::type &&
+                                  Variant, __private_type>::type &&
             __other) __NOEXCEPT_(__noexcept_variant_move_assign<_Types...>::value) {
         if (__other.valueless_by_exception()) {
             __destroy_self();
         }
         else if(__other.index()==index()){
-            __move_assign_op_table<variant>::__apply[index()](this,__other);
+            __move_assign_op_table<Variant>::__apply[index()](this,__other);
             __other.__destroy_self();
         }
         else{
-            __replace_construct_helper::__op_table<variant>::__move_assign[
+            __replace_construct_helper::__op_table<Variant>::__move_assign[
                 __other.index()](this,__other);
         }
         return *this;
@@ -1708,14 +1707,14 @@ public:
         typename std::conditional<
             __all_swappable<_Types...>::value &&
                 __all_move_constructible<_Types...>::value,
-            variant, __private_type>::type
+            Variant, __private_type>::type
             &__other) __NOEXCEPT_(__noexcept_variant_swap<_Types...>::value) {
         if (__other.index() == index()) {
             if(!valueless_by_exception())
-                __swap_op_table<variant>::__apply[index()](*this,__other);
+                __swap_op_table<Variant>::__apply[index()](*this,__other);
         }
         else{
-            variant __temp(std::move(__other));
+            Variant __temp(std::move(__other));
             __other.__index=__other.__move_construct(*this);
             __index=__move_construct(__temp);
         }
@@ -1723,9 +1722,9 @@ public:
 };
 
 template<>
-class variant<>{
+class Variant<>{
 public:
-    variant()=delete;
+    Variant()=delete;
     
     constexpr bool valueless_by_exception() const __NOEXCEPT{
         return true;
@@ -1734,14 +1733,14 @@ public:
         return -1;
     }
 
-    void swap(variant&){}
+    void swap(Variant&){}
 };
 
 template <typename... _Types>
 typename std::enable_if<__all_swappable<_Types...>::value &&
                             __all_move_constructible<_Types...>::value,
                         void>::type
-swap(variant<_Types...> &__lhs, variant<_Types...> &__rhs) __NOEXCEPT_(
+swap(Variant<_Types...> &__lhs, Variant<_Types...> &__rhs) __NOEXCEPT_(
     __noexcept_variant_swap<_Types...>::value) {
     __lhs.swap(__rhs);
 }
@@ -1749,98 +1748,98 @@ swap(variant<_Types...> &__lhs, variant<_Types...> &__rhs) __NOEXCEPT_(
 template<ptrdiff_t _Index,typename ... _Types>
 struct __variant_accessor{
     typedef typename __indexed_type<_Index,_Types...>::__type __type;
-    static constexpr __type& get(variant<_Types...>& __v){
+    static constexpr __type& get(Variant<_Types...>& __v){
         return __v.__storage.__get(in_place<_Index>);
     }
-    static constexpr __type const& get(variant<_Types...> const& __v){
+    static constexpr __type const& get(Variant<_Types...> const& __v){
         return __v.__storage.__get(in_place<_Index>);
     }
-    static constexpr __type&& get(variant<_Types...>&& __v){
+    static constexpr __type&& get(Variant<_Types...>&& __v){
         return __v.__storage.__get_rref(in_place<_Index>);
     }
-    static constexpr const __type&& get(variant<_Types...> const&& __v){
+    static constexpr const __type&& get(Variant<_Types...> const&& __v){
         return __v.__storage.__get_rref(in_place<_Index>);
     }
 };
 
 template<typename _Type,typename ... _Types>
-constexpr _Type& get(variant<_Types...>& __v){
+constexpr _Type& get(Variant<_Types...>& __v){
     return get<__type_index<_Type,_Types...>::__value>(__v);
 }
 
 template<typename _Type,typename ... _Types>
-constexpr _Type&& get(variant<_Types...>&& __v){
+constexpr _Type&& get(Variant<_Types...>&& __v){
     return get<__type_index<_Type,_Types...>::__value>(std::move(__v));
 }
 
 template<typename _Type,typename ... _Types>
-constexpr _Type const& get(variant<_Types...> const& __v){
+constexpr _Type const& get(Variant<_Types...> const& __v){
     return get<__type_index<_Type,_Types...>::__value>(__v);
 }
 
 template<typename _Type,typename ... _Types>
-constexpr const _Type&& get(variant<_Types...> const&& __v){
+constexpr const _Type&& get(Variant<_Types...> const&& __v){
     return get<__type_index<_Type,_Types...>::__value>(std::move(__v));
 }
 
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename __indexed_type<_Index,_Types...>::__type const& get(variant<_Types...> const& __v){
+constexpr typename __indexed_type<_Index,_Types...>::__type const& get(Variant<_Types...> const& __v){
     return *(
         (_Index!=__v.index())
-            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type const&>("Bad variant index in get")
+            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type const&>("Bad Variant index in get")
             : &__variant_accessor<_Index,_Types...>::get(__v)
     );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename __indexed_type<_Index,_Types...>::__type& get(variant<_Types...>& __v){
+constexpr typename __indexed_type<_Index,_Types...>::__type& get(Variant<_Types...>& __v){
     return *(
         (_Index!=__v.index())
-            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type&>("Bad variant index in get")
+            ? &__throw_bad_variant_access<typename __indexed_type<_Index,_Types...>::__type&>("Bad Variant index in get")
             : &__variant_accessor<_Index,_Types...>::get(__v)
     );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr typename __indexed_type<_Index,_Types...>::__type&& get(variant<_Types...>&& __v){
+constexpr typename __indexed_type<_Index,_Types...>::__type&& get(Variant<_Types...>&& __v){
     return __variant_accessor<_Index,_Types...>::get(
-        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad variant index in get") : 0), std::move(__v))
+        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad Variant index in get") : 0), std::move(__v))
     );
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr const typename __indexed_type<_Index,_Types...>::__type&& get(variant<_Types...> const&& __v){
+constexpr const typename __indexed_type<_Index,_Types...>::__type&& get(Variant<_Types...> const&& __v){
     return __variant_accessor<_Index,_Types...>::get(
-        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad variant index in get") : 0), std::move(__v))
+        (((_Index!=__v.index()) ? __throw_bad_variant_access<int>("Bad Variant index in get") : 0), std::move(__v))
     );
 }
 
 template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type> get_if(variant<_Types...>& __v){
+constexpr std::add_pointer_t<_Type> get_if(Variant<_Types...>& __v){
     return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:&get<_Type>(__v);
 }
 
 template<typename _Type,typename ... _Types>
-constexpr std::add_pointer_t<_Type const> get_if(variant<_Types...> const& __v){
+constexpr std::add_pointer_t<_Type const> get_if(Variant<_Types...> const& __v){
     return (__type_index<_Type,_Types...>::__value!=__v.index())?nullptr:&get<_Type>(__v);
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
-constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type> get_if(variant<_Types...>& __v){
+constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type> get_if(Variant<_Types...>& __v){
     return ((_Index!=__v.index())?nullptr:
         &__variant_accessor<_Index,_Types...>::get(__v));
 }
 
 template<ptrdiff_t _Index,typename ... _Types>
 constexpr std::add_pointer_t<typename __indexed_type<_Index,_Types...>::__type const> get_if(
-    variant<_Types...> const& __v){
+    Variant<_Types...> const& __v){
     return ((_Index!=__v.index())?nullptr:
         &__variant_accessor<_Index,_Types...>::get(__v));
 }
 
 template<typename _Type,typename ... _Types>
-constexpr bool holds_alternative(variant<_Types...> const& __v) __NOEXCEPT{
+constexpr bool holds_alternative(Variant<_Types...> const& __v) __NOEXCEPT{
     return __v.index()==__type_index<_Type,_Types...>::__value;
 }
 
@@ -1859,7 +1858,7 @@ struct __visitor_return_type<_Visitor,_Head,_Rest...>{
 
 template<typename _Visitor,typename ... _Types>
 struct __visitor_table{
-    typedef variant<_Types...> __variant_type;
+    typedef Variant<_Types...> __variant_type;
     typedef typename __visitor_return_type<_Visitor,_Types...>::__type __return_type;
     typedef __return_type (*__func_type)(_Visitor&,__variant_type&);
 
@@ -1878,9 +1877,9 @@ const typename __visitor_table<_Visitor,_Types...>::__func_type __visitor_table<
 
 template<typename _Visitor,typename ... _Types>
 constexpr typename __visitor_return_type<_Visitor,_Types...>::__type
-visit(_Visitor&& __visitor,variant<_Types...>& __v){
+visit(_Visitor&& __visitor,Variant<_Types...>& __v){
     return (__v.valueless_by_exception())
-        ? __throw_bad_variant_access<typename __visitor_return_type<_Visitor,_Types...>::__type>("Visiting of empty variant")
+        ? __throw_bad_variant_access<typename __visitor_return_type<_Visitor,_Types...>::__type>("Visiting of empty Variant")
         : __visitor_table<_Visitor,_Types...>::__trampoline[__v.index()](__visitor,__v);
 }
 
@@ -1944,7 +1943,7 @@ struct __visit_helper2<-1,_VariantIndex,_Indices...>{
     template<typename _Visitor,typename ... _Variants>
     static constexpr typename __multi_visitor_return_type<_Visitor,_Variants...>::__type
     __visit(_Visitor&,_Variants&& ...){
-        return __throw_bad_variant_access<typename __multi_visitor_return_type<_Visitor,_Variants...>::__type>("Visiting of empty variant");
+        return __throw_bad_variant_access<typename __multi_visitor_return_type<_Visitor,_Variants...>::__type>("Visiting of empty Variant");
     }
 };
 
@@ -1952,7 +1951,7 @@ template<typename _Variant>
 struct __variant_type_count;
 
 template<typename ... _Types>
-struct __variant_type_count<variant<_Types...>>{
+struct __variant_type_count<Variant<_Types...>>{
     static constexpr size_t __value=sizeof...(_Types);
 };
 
@@ -1989,50 +1988,50 @@ visit(_Visitor&& __visitor,_Variants&& ... __v){
 }
 
 template<typename ... _Types>
-constexpr bool operator==(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator==(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return (__lhs.index()==__rhs.index()) &&
         ((__lhs.index()==-1) ||
-         __equality_op_table<variant<_Types...>>::__equality_compare[__lhs.index()](
+         __equality_op_table<Variant<_Types...>>::__equality_compare[__lhs.index()](
              __lhs,__rhs));
 }
 
 template<typename ... _Types>
-constexpr bool operator!=(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator!=(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return !(__lhs==__rhs);
 }
 
 template<typename ... _Types>
-constexpr bool operator<(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator<(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return (__lhs.index()<__rhs.index()) ||
         ((__lhs.index()==__rhs.index()) &&
          ((__lhs.index()!=-1) &&
-          __less_than_op_table<variant<_Types...>>::
+          __less_than_op_table<Variant<_Types...>>::
           __less_than_compare[__lhs.index()](__lhs,__rhs)));
 }
 
 template<typename ... _Types>
-constexpr bool operator>(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator>(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return __rhs<__lhs;
 }
 
 template<typename ... _Types>
-constexpr bool operator>=(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator>=(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return !(__lhs<__rhs);
 }
 
 template<typename ... _Types>
-constexpr bool operator<=(variant<_Types...> const& __lhs,variant<_Types...> const& __rhs){
+constexpr bool operator<=(Variant<_Types...> const& __lhs,Variant<_Types...> const& __rhs){
     return !(__lhs>__rhs);
 }
 
-struct monostate{};
+struct Monostate{};
 
-constexpr inline bool operator==(monostate const&,monostate const&){ return true;}
-constexpr inline bool operator!=(monostate const&,monostate const&){ return false;}
-constexpr inline bool operator>=(monostate const&,monostate const&){ return true;}
-constexpr inline bool operator<=(monostate const&,monostate const&){ return true;}
-constexpr inline bool operator>(monostate const&,monostate const&){ return false;}
-constexpr inline bool operator<(monostate const&,monostate const&){ return false;}
+constexpr inline bool operator==(Monostate const&,Monostate const&){ return true;}
+constexpr inline bool operator!=(Monostate const&,Monostate const&){ return false;}
+constexpr inline bool operator>=(Monostate const&,Monostate const&){ return true;}
+constexpr inline bool operator<=(Monostate const&,Monostate const&){ return true;}
+constexpr inline bool operator>(Monostate const&,Monostate const&){ return false;}
+constexpr inline bool operator<(Monostate const&,Monostate const&){ return false;}
 
 struct __hash_visitor{
     template<typename _Type>
@@ -2041,24 +2040,28 @@ struct __hash_visitor{
     }
 };
 
-} // namespace experimental
+} // namespace WTF
+
+namespace std {
 
 template<>
-struct hash<experimental::monostate>{
-    size_t operator()(experimental::monostate) __NOEXCEPT{
+struct hash<WTF::Monostate>{
+    size_t operator()(WTF::Monostate) __NOEXCEPT{
         return 42;
     }
 };
 
 template<typename ... _Types>
-struct hash<experimental::variant<_Types...>>{
-    size_t operator()(experimental::variant<_Types...> const &v) __NOEXCEPT {
-        return std::hash<ptrdiff_t>()(v.index()) ^
-               experimental::visit(experimental::__hash_visitor(), v);
+struct hash<WTF::Variant<_Types...>>{
+    size_t operator()(WTF::Variant<_Types...> const &v) __NOEXCEPT {
+        return std::hash<ptrdiff_t>()(v.index()) ^ WTF::visit(WTF::__hash_visitor(), v);
     }
 };
 
 } // namespace std
+
+using WTF::Monostate;
+using WTF::Variant;
 
 #endif // !COMPILER(CLANG) || WTF_CPP_STD_VER >= 14
 
