@@ -1,3 +1,15 @@
+2016-10-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][EFL] Build fix after r207543.
+        https://bugs.webkit.org/show_bug.cgi?id=163671
+
+        Unreviewed.
+
+        Fix typo on the filename of the included header:
+        Mac filesystem is case insensitive, but Linux filesystems are case sensitive.
+
+        * css/parser/CSSPropertyParser.cpp:
+
 2016-10-19  Zalan Bujtas  <zalan@apple.com>
 
         Use anonymous table row for new child at RenderTableRow::addChild() if available.
