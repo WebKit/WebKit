@@ -270,19 +270,31 @@ sub output() {
     print "\n";
     print "namespace JSC {\n";
     print "\n";
-    print "static const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
-    for (my $i = 0; $i < $compactSize; $i++) {
-        my $T = -1;
-        if (defined($table[$i])) { $T = $table[$i]; }
-        my $L = -1;
-        if (defined($links[$i])) { $L = $links[$i]; }
-        print "    { $T, $L },\n";
+    if ($compactSize != 0) {
+        print "static const struct CompactHashIndex ${nameIndex}\[$compactSize\] = {\n";
+        for (my $i = 0; $i < $compactSize; $i++) {
+            my $T = -1;
+            if (defined($table[$i])) { $T = $table[$i]; }
+            my $L = -1;
+            if (defined($links[$i])) { $L = $links[$i]; }
+            print "    { $T, $L },\n";
+        }
+    } else {
+        # MSVC dislikes empty arrays.
+        print "static const struct CompactHashIndex ${nameIndex}\[1\] = {\n";
+        print "    { 0, 0 }\n";
     }
     print "};\n";
     print "\n";
 
     my $packedSize = scalar @keys;
-    print "static const struct HashTableValue ${nameEntries}\[$packedSize\] = {\n";
+    if ($packedSize != 0) {
+        print "static const struct HashTableValue ${nameEntries}\[$packedSize\] = {\n";
+    } else {
+        # MSVC dislikes empty arrays.
+        print "static const struct HashTableValue ${nameEntries}\[1\] = {\n";
+        print "    { nullptr, 0, NoIntrinsic, { 0, 0 } }\n";
+    }
     my $i = 0;
     foreach my $key (@keys) {
         my $firstValue = "";

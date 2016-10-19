@@ -1,5 +1,18 @@
 2016-10-19  JF Bastien  <jfbastien@apple.com>
 
+        create_hash_table: allow empty tables
+
+        The Windows build was broken by because I added empty tables and Windows insists that empty tables are horrible. Put in dummy entries in that case.
+
+        create_hash_table: allow empty tables
+        https://bugs.webkit.org/show_bug.cgi?id=163701
+
+        Reviewed by Keith Miller.
+
+        * create_hash_table:
+
+2016-10-19  JF Bastien  <jfbastien@apple.com>
+
         JavaScript WebAssembly API: baby steps
 
          - Expand WebAssembly constructors into their own files. This requires a lot of
