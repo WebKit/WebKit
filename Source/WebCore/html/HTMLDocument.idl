@@ -30,7 +30,7 @@
     [Custom] void write(optional DOMString text);
     [Custom] void writeln(optional DOMString text);
 
-    [Custom, Replaceable, Deletable] readonly attribute HTMLAllCollection all;
+    [Custom, Replaceable] readonly attribute HTMLAllCollection all;
 
     void clear();
 

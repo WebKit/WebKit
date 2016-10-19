@@ -1,3 +1,38 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Drop webkit-specific extended attributes that are no longer useful
+        https://bugs.webkit.org/show_bug.cgi?id=163643
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop webkit-specific IDL extended attributes that are no longer useful:
+        - [CustomReturn]: I believe this used to be for ObjC bindings. It has
+          no impact in JS bindings.
+        - [Deletable]: It only had an impact on static attributes and was only
+          used on HTMLAllCollection.all, which is not static. I updated the
+          bindings generator to so that static attributes are now configurable
+          by default (unless marked as [Unforgeable], as per Web IDL [1]. This
+          causes Notification.permission (This only static attribute we have)
+          to become deletable. This behavior is consistent with the specification
+          and with Chrome. I added test coverage for this.
+        - [ImplementationNamespace]: Implemented but unused.
+        - [PassContext]: Not implemented and unused.
+        - [TypedArray=*]: Not implemented and unused.
+
+        [1] https://heycam.github.io/webidl/#es-attributes
+
+        Test: fast/notifications/notification-permisssion-deletable.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetNamespaceForInterface):
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * dom/Node.idl:
+        * html/HTMLDocument.idl:
+
 2016-10-18  Sam Weinig  <sam@webkit.org>
 
         Replace std::experimental::variant with WTF::Variant (or similar)

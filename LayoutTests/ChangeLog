@@ -1,3 +1,15 @@
+2016-10-18  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Drop webkit-specific extended attributes that are no longer useful
+        https://bugs.webkit.org/show_bug.cgi?id=163643
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test to check that Notification.permission is now deletable.
+
+        * fast/notifications/notification-permisssion-deletable-expected.txt: Added.
+        * fast/notifications/notification-permisssion-deletable.html: Added.
+
 2016-10-18  Mark Lam  <mark.lam@apple.com>
 
         Invoking Object.prototype.__proto__ accessors directly should throw a TypeError.

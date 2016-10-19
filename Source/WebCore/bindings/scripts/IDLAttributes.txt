@@ -49,12 +49,10 @@ CustomNamedSetter
 CustomPreventExtensions
 CustomProxyToJSObject
 CustomPutFunction
-CustomReturn
 CustomSetPrototype
 CustomSetter
 CustomToJSObject
 DOMJIT
-Deletable
 DoNotCheckConstants
 DoNotCheckSecurity
 DoNotCheckSecurityOnGetter
@@ -73,7 +71,6 @@ GetterMayThrowLegacyException
 Immutable
 ImplementedAs=*
 ImplementationLacksVTable
-ImplementationNamespace=*
 ImplementationReturnType=*
 ImplicitThis
 InterfaceName=*
@@ -103,7 +100,6 @@ NoInterfaceObject
 Nondeterministic
 NotEnumerable
 OverrideBuiltins
-PassContext
 PrivateIdentifier
 PublicIdentifier
 PutForwards=*
@@ -118,7 +114,6 @@ SetterMayThrowLegacyException
 SkipVTableValidation
 SuppressToJSObject
 TreatNullAs=EmptyString
-TypedArray=*
 URL
 Unforgeable
 Unscopable

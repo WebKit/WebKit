@@ -55,10 +55,10 @@
     [DOMJIT] readonly attribute Node? nextSibling;
     readonly attribute Document? ownerDocument;
 
-    [CEReactions, Custom, MayThrowLegacyException] Node insertBefore([CustomReturn] Node newChild, Node? refChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node replaceChild(Node newChild, [CustomReturn] Node oldChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node removeChild([CustomReturn] Node oldChild);
-    [CEReactions, Custom, MayThrowLegacyException] Node appendChild([CustomReturn] Node newChild);
+    [CEReactions, Custom, MayThrowLegacyException] Node insertBefore(Node newChild, Node? refChild);
+    [CEReactions, Custom, MayThrowLegacyException] Node replaceChild(Node newChild, Node oldChild);
+    [CEReactions, Custom, MayThrowLegacyException] Node removeChild(Node oldChild);
+    [CEReactions, Custom, MayThrowLegacyException] Node appendChild(Node newChild);
 
     boolean hasChildNodes();
 

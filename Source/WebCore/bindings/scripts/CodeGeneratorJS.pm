@@ -2343,7 +2343,7 @@ sub GetWinMangledNameForInterface
 sub GetNamespaceForInterface
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{ImplementationNamespace} || "WebCore";
+    return "WebCore";
 }
 
 sub GetImplementationLacksVTableForInterface
@@ -2592,7 +2592,7 @@ sub GenerateImplementation
             push(@hashKeys, $name);
 
             my @specials = ();
-            push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{Deletable};
+            push(@specials, "DontDelete") if IsUnforgeable($interface, $attribute);
             push(@specials, "ReadOnly") if IsReadonly($attribute);
             push(@specials, "DOMJITAttribute") if $attribute->signature->extendedAttributes->{"DOMJIT"};
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
