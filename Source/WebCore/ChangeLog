@@ -1,3 +1,28 @@
+2016-10-19  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix transform parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163671
+
+        Reviewed by Dean Jackson.
+
+        The new parser turned function names into CSSValueIDs and made CSSFunctionValue store them. This
+        meant it could be used to handle transform values, with the function name representing the
+        transform operation efficiently as a CSSValueID.
+
+        The old parser, however, creates WebKitCSSTransformValues. This value does not exist in the new
+        parser. Rather than forcing the old and new parser over to CSSFunctionValues, I opted to
+        just make the new parser build WebkitCSSTransformValues too.
+
+        The main reason I did this is that WebkitCSSTransformValue is actually exposed to the Web via
+        IDL. To be safe, I am not eliminating it (even though Blink has).
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeTranslate3d):
+        (WebCore::consumeNumbers):
+        (WebCore::consumePerspective):
+        (WebCore::transformOperationForCSSValueID):
+        (WebCore::consumeTransformValue):
+
 2016-10-19  Darin Adler  <darin@apple.com>
 
         Move XPath from ExceptionCode to Exception
