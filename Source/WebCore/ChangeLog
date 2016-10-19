@@ -1,3 +1,17 @@
+2016-10-19  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix -webkit-mask-box-image parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163676
+
+        Reviewed by Dean Jackson.
+
+        -webkit-mask-box-image is not a shorthand in our current code, so treat it the same as the legacy
+        -webkit-border-image.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+
 2016-10-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][EFL] Build fix after r207543.

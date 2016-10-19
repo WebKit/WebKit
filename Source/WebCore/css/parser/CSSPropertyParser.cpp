@@ -3317,6 +3317,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitMaskBoxImageWidth:
         return consumeBorderImageWidth(m_range);
     case CSSPropertyWebkitBorderImage:
+    case CSSPropertyWebkitMaskBoxImage:
         return consumeWebkitBorderImage(property, m_range, m_context);
     case CSSPropertyWebkitBoxReflect:
         return consumeReflect(m_range, m_context);
@@ -4526,7 +4527,6 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyBorder:
         return consumeBorder(important);
     case CSSPropertyBorderImage:
-    case CSSPropertyWebkitMaskBoxImage:
         return consumeBorderImage(property, important);
     case CSSPropertyPageBreakAfter:
     case CSSPropertyPageBreakBefore:
