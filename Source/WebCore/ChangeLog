@@ -1,3 +1,17 @@
+2016-10-19  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] class and id parsing need to be case-insensitive in HTML quirks mode
+        https://bugs.webkit.org/show_bug.cgi?id=163685
+
+        Reviewed by Zalan Bujtas.
+
+        Class and ID parsing should be case-insensitive in quirks mode. Apply the same hack
+        that the old parser did and lowercase the class and ids in place.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeId):
+        (WebCore::CSSSelectorParser::consumeClass):
+
 2016-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: crash: com.apple.WebCore: WebCore::AccessibilityObject::findMatchingObjects + 600

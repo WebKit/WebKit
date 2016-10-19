@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSSelectorParser.h"
 
+#include "CSSParserIdioms.h"
 #include "CSSParserMode.h"
 #include "CSSSelectorList.h"
 #include "StyleSheetContents.h"
@@ -356,8 +357,14 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeId(CSSParserTokenRa
         return nullptr;
     std::unique_ptr<CSSParserSelector> selector = std::unique_ptr<CSSParserSelector>(new CSSParserSelector());
     selector->setMatch(CSSSelector::Id);
-    AtomicString value = range.consume().value().toAtomicString();
-    selector->setValue(value);
+    
+    // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
+    // to be compatible for now.
+    StringView stringView = range.consume().value();
+    if (m_context.mode == HTMLQuirksMode)
+        convertToASCIILowercaseInPlace(stringView);
+    selector->setValue(stringView.toAtomicString());
+
     return selector;
 }
 
@@ -370,8 +377,14 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeClass(CSSParserToke
         return nullptr;
     std::unique_ptr<CSSParserSelector> selector = std::unique_ptr<CSSParserSelector>(new CSSParserSelector());
     selector->setMatch(CSSSelector::Class);
-    AtomicString value = range.consume().value().toAtomicString();
-    selector->setValue(value);
+    
+    // FIXME-NEWPARSER: Avoid having to do this, but the old parser does and we need
+    // to be compatible for now.
+    StringView stringView = range.consume().value();
+    if (m_context.mode == HTMLQuirksMode)
+        convertToASCIILowercaseInPlace(stringView);
+    selector->setValue(stringView.toAtomicString());
+
     return selector;
 }
 
