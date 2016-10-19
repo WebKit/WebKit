@@ -45,7 +45,6 @@ CSSSelectorList::CSSSelectorList(const CSSSelectorList& other)
 CSSSelectorList::CSSSelectorList(CSSSelectorList&& other)
     : m_selectorArray(other.m_selectorArray)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(componentCount());
     other.m_selectorArray = nullptr;
 }
 
@@ -102,7 +101,6 @@ CSSSelectorList& CSSSelectorList::operator=(CSSSelectorList&& other)
     m_selectorArray = other.m_selectorArray;
     other.m_selectorArray = nullptr;
 
-    ASSERT_WITH_SECURITY_IMPLICATION(componentCount());
     return *this;
 }
 

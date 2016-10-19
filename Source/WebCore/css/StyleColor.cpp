@@ -48,7 +48,9 @@ Color StyleColor::colorFromKeyword(CSSValueID keyword)
 
 bool StyleColor::isColorKeyword(CSSValueID id)
 {
-    return (id >= CSSValueAlpha && id <= CSSValueWebkitText) || id == CSSValueMenu;
+    return (id >= CSSValueAlpha && id <= CSSValueWebkitText)
+        || (id >= CSSValueAliceblue && id <= CSSValueYellowgreen)
+        || id == CSSValueMenu;
 }
 
 bool StyleColor::isSystemColor(CSSValueID id)
