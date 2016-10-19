@@ -1,3 +1,32 @@
+2016-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG worklist should use AutomaticThread
+        https://bugs.webkit.org/show_bug.cgi?id=163615
+
+        Reviewed by Mark Lam.
+        
+        This adds new functionality to AutomaticThread to support DFG::Worklist:
+        
+        - AutomaticThread::threadDidStart/threadWillStop virtual methods called at the start and end
+          of a thread's lifetime. This allows Worklist to tie some resources to the life of the
+          thread, and also means that now those resources will naturally free up when the Worklist is
+          not in use.
+        
+        - AutomaticThreadCondition::notifyOne(). This required changes to Condition::notifyOne(). We
+          need to know if the Condition woke up anyone. If it didn't, then we need to launch one of
+          our threads.
+
+        * wtf/AutomaticThread.cpp:
+        (WTF::AutomaticThreadCondition::notifyOne):
+        (WTF::AutomaticThread::ThreadScope::ThreadScope):
+        (WTF::AutomaticThread::ThreadScope::~ThreadScope):
+        (WTF::AutomaticThread::start):
+        (WTF::AutomaticThread::threadDidStart):
+        (WTF::AutomaticThread::threadWillStop):
+        * wtf/AutomaticThread.h:
+        * wtf/Condition.h:
+        (WTF::ConditionBase::notifyOne):
+
 2016-10-18  Sam Weinig  <sam@webkit.org>
 
         Replace std::experimental::variant with WTF::Variant (or similar)

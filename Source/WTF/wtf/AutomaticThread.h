@@ -75,6 +75,7 @@ public:
     
     WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
     
+    WTF_EXPORT_PRIVATE void notifyOne(const LockHolder&);
     WTF_EXPORT_PRIVATE void notifyAll(const LockHolder&);
     
 private:
@@ -108,7 +109,7 @@ public:
     
 protected:
     // This logically creates the thread, but in reality the thread won't be created until someone
-    // calls AutomaticThreadCondition::notifyAll().
+    // calls AutomaticThreadCondition::notifyOne() or notifyAll().
     AutomaticThread(const LockHolder&, Box<Lock>, RefPtr<AutomaticThreadCondition>);
     
     // To understand PollResult and WorkResult, imagine that poll() and work() are being called like
@@ -143,6 +144,15 @@ protected:
     enum class WorkResult { Continue, Stop };
     virtual WorkResult work() = 0;
     
+    class ThreadScope;
+    friend class ThreadScope;
+    
+    // It's sometimes useful to allocate resources while the thread is running, and to destroy them
+    // when the thread dies. These methods let you do this. You can override these methods, and you
+    // can be sure that the default ones don't do anything (so you don't need a super call).
+    virtual void threadDidStart();
+    virtual void threadWillStop();
+    
 private:
     friend class AutomaticThreadCondition;
     
@@ -157,6 +167,7 @@ private:
 } // namespace WTF
 
 using WTF::AutomaticThread;
+using WTF::AutomaticThreadCondition;
 
 #endif // WTF_AutomaticThread_h
 

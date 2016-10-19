@@ -45,6 +45,17 @@ AutomaticThreadCondition::~AutomaticThreadCondition()
 {
 }
 
+void AutomaticThreadCondition::notifyOne(const LockHolder& locker)
+{
+    if (m_condition.notifyOne())
+        return;
+    
+    if (m_threads.isEmpty())
+        return;
+    
+    m_threads.takeLast()->start(locker);
+}
+
 void AutomaticThreadCondition::notifyAll(const LockHolder& locker)
 {
     m_condition.notifyAll();
@@ -95,6 +106,23 @@ void AutomaticThread::join()
         m_isRunningCondition.wait(*m_lock);
 }
 
+class AutomaticThread::ThreadScope {
+public:
+    ThreadScope(AutomaticThread& thread)
+        : m_thread(thread)
+    {
+        m_thread.threadDidStart();
+    }
+    
+    ~ThreadScope()
+    {
+        m_thread.threadWillStop();
+    }
+
+private:
+    AutomaticThread& m_thread;
+};
+
 void AutomaticThread::start(const LockHolder&)
 {
     RefPtr<AutomaticThread> preserveThisForThread = this;
@@ -110,6 +138,8 @@ void AutomaticThread::start(const LockHolder&)
                 LockHolder locker(*m_lock);
                 ASSERT(!m_condition->contains(locker, this));
             }
+            
+            ThreadScope threadScope(*this);
             
             auto stop = [&] (const LockHolder&) {
                 m_isRunning = false;
@@ -148,6 +178,14 @@ void AutomaticThread::start(const LockHolder&)
             }
         });
     detachThread(thread);
+}
+
+void AutomaticThread::threadDidStart()
+{
+}
+
+void AutomaticThread::threadWillStop()
+{
 }
 
 } // namespace WTF

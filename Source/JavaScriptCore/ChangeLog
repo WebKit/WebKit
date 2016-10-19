@@ -1,3 +1,45 @@
+2016-10-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG worklist should use AutomaticThread
+        https://bugs.webkit.org/show_bug.cgi?id=163615
+
+        Reviewed by Mark Lam.
+        
+        AutomaticThread is a new feature in WTF that allows you to easily create worker threads that
+        shut down automatically. This changes DFG::Worklist to use AutomaticThread, so that its
+        threads shut down automatically, too. This has the potential to save a lot of memory.
+        
+        This required some improvements to AutomaticThread: Worklist likes to be able to keep state
+        around for the whole lifetime of a thread, and so it likes knowing when threads are born and
+        when they die. I added virtual methods for that. Also, Worklist uses notifyOne() so I added
+        that, too.
+        
+        This looks to be perf-neutral.
+
+        * dfg/DFGThreadData.cpp:
+        (JSC::DFG::ThreadData::ThreadData):
+        * dfg/DFGThreadData.h:
+        * dfg/DFGWorklist.cpp:
+        (JSC::DFG::Worklist::ThreadBody::ThreadBody):
+        (JSC::DFG::Worklist::Worklist):
+        (JSC::DFG::Worklist::~Worklist):
+        (JSC::DFG::Worklist::finishCreation):
+        (JSC::DFG::Worklist::isActiveForVM):
+        (JSC::DFG::Worklist::enqueue):
+        (JSC::DFG::Worklist::compilationState):
+        (JSC::DFG::Worklist::waitUntilAllPlansForVMAreReady):
+        (JSC::DFG::Worklist::removeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::completeAllReadyPlansForVM):
+        (JSC::DFG::Worklist::rememberCodeBlocks):
+        (JSC::DFG::Worklist::visitWeakReferences):
+        (JSC::DFG::Worklist::removeDeadPlans):
+        (JSC::DFG::Worklist::removeNonCompilingPlansForVM):
+        (JSC::DFG::Worklist::queueLength):
+        (JSC::DFG::Worklist::dump):
+        (JSC::DFG::Worklist::runThread): Deleted.
+        (JSC::DFG::Worklist::threadFunction): Deleted.
+        * dfg/DFGWorklist.h:
+
 2016-10-19  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] JavaScriptCore fails to build when CLANG_WARN_DOCUMENTATION_COMMENTS is enabled

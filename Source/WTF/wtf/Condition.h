@@ -168,23 +168,26 @@ struct ConditionBase {
     }
 
     // Note that this method is extremely fast when nobody is waiting. It is not necessary to try to
-    // avoid calling this method.
-    void notifyOne()
+    // avoid calling this method. This returns true if someone was actually woken up.
+    bool notifyOne()
     {
         if (!m_hasWaiters.load()) {
             // At this exact instant, there is nobody waiting on this condition. The way to visualize
             // this is that if unparkOne() ran to completion without obstructions at this moment, it
             // wouldn't wake anyone up. Hence, we have nothing to do!
-            return;
+            return false;
         }
         
+        bool didNotifyThread = false;
         ParkingLot::unparkOne(
             &m_hasWaiters,
-            [this] (ParkingLot::UnparkResult result) -> intptr_t {
+            [&] (ParkingLot::UnparkResult result) -> intptr_t {
                 if (!result.mayHaveMoreThreads)
                     m_hasWaiters.store(false);
+                didNotifyThread = result.didUnparkThread;
                 return 0;
             });
+        return didNotifyThread;
     }
     
     void notifyAll()

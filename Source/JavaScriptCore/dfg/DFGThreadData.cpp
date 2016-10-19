@@ -34,7 +34,6 @@ namespace JSC { namespace DFG {
 
 ThreadData::ThreadData(Worklist* worklist)
     : m_worklist(worklist)
-    , m_identifier(0)
     , m_safepoint(nullptr)
 {
 }

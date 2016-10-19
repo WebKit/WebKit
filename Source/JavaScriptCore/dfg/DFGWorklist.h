@@ -29,6 +29,7 @@
 
 #include "DFGPlan.h"
 #include "DFGThreadData.h"
+#include <wtf/AutomaticThread.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -83,6 +84,9 @@ private:
     Worklist(CString worklistName);
     void finishCreation(unsigned numberOfThreads, int);
     
+    class ThreadBody;
+    friend class ThreadBody;
+    
     void runThread(ThreadData*);
     static void threadFunction(void* argument);
     
@@ -108,8 +112,8 @@ private:
 
     Lock m_suspensionLock;
     
-    mutable Lock m_lock;
-    Condition m_planEnqueued;
+    Box<Lock> m_lock;
+    RefPtr<AutomaticThreadCondition> m_planEnqueued;
     Condition m_planCompiled;
     
     Vector<std::unique_ptr<ThreadData>> m_threads;

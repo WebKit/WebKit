@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include <wtf/AutomaticThread.h>
 #include <wtf/Lock.h>
-#include <wtf/Threading.h>
 
 namespace JSC { namespace DFG {
 
@@ -46,7 +46,7 @@ private:
     friend class Worklist;
     
     Worklist* m_worklist;
-    ThreadIdentifier m_identifier;
+    RefPtr<AutomaticThread> m_thread;
     Lock m_rightToRun;
     Safepoint* m_safepoint;
 };
