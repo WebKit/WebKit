@@ -207,6 +207,9 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setCustomElementsEnabled(enabled);
 #endif
 
+    if (preference == "WebKitInteractiveFormValidationEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(enabled);
+
 #if ENABLE(WEBGL2)
     if (preference == "WebKitWebGL2Enabled")
         RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
