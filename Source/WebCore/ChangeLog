@@ -1,3 +1,21 @@
+2016-10-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Implement MediaEndpointPeerConnection::stop()
+        https://bugs.webkit.org/show_bug.cgi?id=163660
+
+        Reviewed by Philippe Normand.
+
+        Make MediaEndpointPeerConnection::stop() stop its MediaEndpoint.
+
+        Testing: This fix deals with cleanup and tearing down resources down in the platform layer
+        and is not covered by automated tests. It is however observable in the manual test added
+        in [1] where the remote videos should stop when the connections are closed.
+
+        [1] http://webkit.org/b/163327
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::stop):
+
 2016-10-19  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix -webkit-mask-box-image parsing

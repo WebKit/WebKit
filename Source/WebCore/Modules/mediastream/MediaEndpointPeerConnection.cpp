@@ -745,7 +745,7 @@ void MediaEndpointPeerConnection::replaceTrackTask(RTCRtpSender& sender, const S
 
 void MediaEndpointPeerConnection::stop()
 {
-    notImplemented();
+    m_mediaEndpoint->stop();
 }
 
 void MediaEndpointPeerConnection::markAsNeedingNegotiation()
