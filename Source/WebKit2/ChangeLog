@@ -1,3 +1,10 @@
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r207497.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_add): Update implementation since add() now takes a Variant.
+
 2016-10-18  Simon Fraser  <simon.fraser@apple.com>
 
         Add a MiniBrowser menu item to apply page scale in WK1 and WK2

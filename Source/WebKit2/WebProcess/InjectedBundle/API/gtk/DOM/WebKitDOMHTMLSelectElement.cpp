@@ -28,6 +28,7 @@
 #include <WebCore/ExceptionCodeDescription.h>
 #include "GObjectEventListener.h"
 #include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLOptGroupElement.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
@@ -360,10 +361,20 @@ void webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKit
     WebCore::HTMLSelectElement* item = WebKit::core(self);
     WebCore::HTMLElement* convertedElement = WebKit::core(element);
     WebCore::HTMLElement* convertedBefore = WebKit::core(before);
-    WebCore::ExceptionCode ec = 0;
-    item->add(*convertedElement, convertedBefore, ec);
-    if (ec) {
-        WebCore::ExceptionCodeDescription ecdesc(ec);
+    Variant<RefPtr<WebCore::HTMLOptionElement>, RefPtr<WebCore::HTMLOptGroupElement>> variantElement;
+    if (is<WebCore::HTMLOptionElement>(convertedElement))
+        variantElement = &downcast<WebCore::HTMLOptionElement>(*convertedElement);
+    else if (is<WebCore::HTMLOptGroupElement>(convertedElement))
+        variantElement = &downcast<WebCore::HTMLOptGroupElement>(*convertedElement);
+    else {
+        WebCore::ExceptionCodeDescription ecdesc(WebCore::TypeError);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        return;
+    }
+
+    auto exception = item->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(convertedBefore));
+    if (exception.hasException()) {
+        WebCore::ExceptionCodeDescription ecdesc(exception.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
 }
