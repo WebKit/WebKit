@@ -1,3 +1,20 @@
+2016-10-20  Matthew Hanson  <matthew_hanson>
+
+        Merge r207385. rdar://problem/28811872
+
+    2016-10-15  Dan Bernstein  <mitz@apple.com>
+
+            REGRESSION (r191699): Contextual menu in Mail compose view doesn’t include any of the standard submenus
+            https://bugs.webkit.org/show_bug.cgi?id=163492
+            <rdar://problem/28654799>
+
+            Reviewed by Darin Adler.
+
+            Test: TestWebKitAPI/Tests/mac/ContextMenuDefaultItemsHaveTags.mm
+
+            * WebView/WebHTMLView.mm:
+            (createMenuItem): Set the tag for items that have submenus as well.
+
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207246. rdar://problem/28732731
