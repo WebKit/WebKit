@@ -1,3 +1,45 @@
+2016-10-20  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix font family parsing and add CSS region property parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163741
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isKeywordPropertyID):
+        (WebCore::parseKeywordValue):
+        (WebCore::CSSParser::parseValue):
+        Modify the old CSSParser to have its own keyword check, since keywords were
+        incorrectly added to the new parser when this check was consolidated. Column
+        and region breaks are considered keyword properties by the old parser, but
+        not by the new parser, since the new parser special cases them and maps them
+        into the generic break property.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        Update for regions to make sure all the region properties are there. Remove the
+        column and region break properties, since they're not supposed to be here in the
+        new parser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFamilyName):
+        Fix font parsing to make font family values so that fonts work.
+
+        (WebCore::consumeFlowProperty):
+        Add a function for handling -webkit-flow-from and -webkit-flow-into.
+
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        Add support for the region properties.
+
+        (WebCore::mapFromRegionBreakBetween):
+        (WebCore::mapFromColumnRegionOrPageBreakInside):
+        (WebCore::mapFromLegacyBreakProperty):
+        (WebCore::CSSPropertyParser::consumeLegacyBreakProperty):
+        (WebCore::mapFromColumnOrPageBreakInside): Deleted.
+        Update to handle the region break properties in the same way that column break
+        properties are handled.
+
 2016-10-20  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::MediaSource::seekToTime + 185

@@ -706,13 +706,13 @@ static String concatenateFamilyName(CSSParserTokenRange& range)
 static RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)
 {
     if (range.peek().type() == StringToken)
-        return CSSPrimitiveValue::create(range.consumeIncludingWhitespace().value().toString(), CSSPrimitiveValue::UnitTypes::CSS_STRING);
+        return CSSValuePool::singleton().createFontFamilyValue(range.consumeIncludingWhitespace().value().toString());
     if (range.peek().type() != IdentToken)
         return nullptr;
     String familyName = concatenateFamilyName(range);
     if (familyName.isNull())
         return nullptr;
-    return CSSPrimitiveValue::create(familyName, CSSPrimitiveValue::UnitTypes::CSS_STRING);
+    return CSSValuePool::singleton().createFontFamilyValue(familyName);
 }
 
 static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range)
@@ -3007,6 +3007,18 @@ static RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     return CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
 }
 
+#if ENABLE(CSS_REGIONS)
+static RefPtr<CSSValue> consumeFlowProperty(CSSParserTokenRange& range)
+{
+    RefPtr<CSSValue> result;
+    if (range.peek().id() == CSSValueNone)
+        result = consumeIdent(range);
+    else
+        result = consumeCustomIdent(range);
+    return result;
+}
+#endif
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3368,6 +3380,11 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeGridTemplateAreas(m_range);
     case CSSPropertyGridAutoFlow:
         return consumeGridAutoFlow(m_range);
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitFlowInto:
+    case CSSPropertyWebkitFlowFrom:
+        return consumeFlowProperty(m_range);
+#endif
     default:
         return nullptr;
     }
@@ -4000,7 +4017,18 @@ static inline CSSValueID mapFromColumnBreakBetween(CSSValueID value)
     return CSSValueInvalid;
 }
 
-static inline CSSValueID mapFromColumnOrPageBreakInside(CSSValueID value)
+#if ENABLE(CSS_REGIONS)
+static inline CSSValueID mapFromRegionBreakBetween(CSSValueID value)
+{
+    if (value == CSSValueAlways)
+        return CSSValueRegion;
+    if (value == CSSValueAuto || value == CSSValueAvoid)
+        return value;
+    return CSSValueInvalid;
+}
+#endif
+
+static inline CSSValueID mapFromColumnRegionOrPageBreakInside(CSSValueID value)
 {
     if (value == CSSValueAuto || value == CSSValueAvoid)
         return value;
@@ -4013,7 +4041,15 @@ static inline CSSPropertyID mapFromLegacyBreakProperty(CSSPropertyID property)
         return CSSPropertyBreakAfter;
     if (property == CSSPropertyPageBreakBefore || property == CSSPropertyWebkitColumnBreakBefore)
         return CSSPropertyBreakBefore;
+#if ENABLE(CSS_REGIONS)
+    if (property == CSSPropertyWebkitRegionBreakAfter)
+        return CSSPropertyBreakAfter;
+    if (property == CSSPropertyWebkitRegionBreakBefore)
+        return CSSPropertyBreakBefore;
+    ASSERT(property == CSSPropertyPageBreakInside || property == CSSPropertyWebkitColumnBreakInside || property == CSSPropertyWebkitRegionBreakInside);
+#else
     ASSERT(property == CSSPropertyPageBreakInside || property == CSSPropertyWebkitColumnBreakInside);
+#endif
     return CSSPropertyBreakInside;
 }
 
@@ -4037,9 +4073,16 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
     case CSSPropertyWebkitColumnBreakBefore:
         value = mapFromColumnBreakBetween(value);
         break;
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
+        value = mapFromRegionBreakBetween(value);
+        break;
+    case CSSPropertyWebkitRegionBreakInside:
+#endif
     case CSSPropertyPageBreakInside:
     case CSSPropertyWebkitColumnBreakInside:
-        value = mapFromColumnOrPageBreakInside(value);
+        value = mapFromColumnRegionOrPageBreakInside(value);
         break;
     default:
         ASSERT_NOT_REACHED();

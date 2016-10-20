@@ -745,6 +745,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
     case CSSPropertyWebkitBorderFit:
         return valueID == CSSValueBorder || valueID == CSSValueLines;
+#if ENABLE(CSS_REGIONS)
+    case CSSPropertyWebkitRegionFragment:
+        return valueID == CSSValueAuto || valueID == CSSValueBreak;
+#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     case CSSPropertyWebkitScrollSnapType: // none | mandatory | proximity
         return valueID == CSSValueNone || valueID == CSSValueMandatory || valueID == CSSValueProximity;
@@ -839,9 +843,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBoxOrient:
     case CSSPropertyWebkitBoxPack:
     case CSSPropertyWebkitColumnAxis:
-    case CSSPropertyWebkitColumnBreakAfter:
-    case CSSPropertyWebkitColumnBreakBefore:
-    case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitFontKerning:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyWebkitHyphens:
@@ -930,9 +931,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitOverflowScrolling:
 #endif
 #if ENABLE(CSS_REGIONS)
-    case CSSPropertyWebkitRegionBreakAfter:
-    case CSSPropertyWebkitRegionBreakBefore:
-    case CSSPropertyWebkitRegionBreakInside:
     case CSSPropertyWebkitRegionFragment:
 #endif
 #if ENABLE(CSS3_TEXT)
