@@ -52,18 +52,18 @@ TEST_F(YouTubePluginReplacementTest, YouTubeURLFromAbsoluteURL)
     EXPECT_TRUE(test("https://www.youtube.com", "https://www.youtube.com"));
 
     // Basic YouTube video links, expected to be transformed.
-    EXPECT_TRUE(test("https://www.youtube.com/v/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ?showinfo=0"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ", "http://www.youtube.com/embed/dQw4w9WgXcQ?showinfo=0"));
-    EXPECT_TRUE(test("https://youtube.com/v/dQw4w9WgXcQ", "https://youtube.com/embed/dQw4w9WgXcQ?showinfo=0"));
-    EXPECT_TRUE(test("http://youtube.com/v/dQw4w9WgXcQ", "http://youtube.com/embed/dQw4w9WgXcQ?showinfo=0"));
+    EXPECT_TRUE(test("https://www.youtube.com/v/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ", "http://www.youtube.com/embed/dQw4w9WgXcQ"));
+    EXPECT_TRUE(test("https://youtube.com/v/dQw4w9WgXcQ", "https://youtube.com/embed/dQw4w9WgXcQ"));
+    EXPECT_TRUE(test("http://youtube.com/v/dQw4w9WgXcQ", "http://youtube.com/embed/dQw4w9WgXcQ"));
 
     // With start time, preserved.
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&showinfo=0"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1&showinfo=0"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"));
 
     // With an invalid query (see & instead of ?), we preserve and fix the query.
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&showinfo=0"));
-    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1&showinfo=0"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1"));
 
     // Non-Flash URL is untouched.
     EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ"));
