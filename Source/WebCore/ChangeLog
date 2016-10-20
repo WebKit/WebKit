@@ -1,3 +1,15 @@
+2016-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Remove m_redirectURLs from HistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=163704
+
+        Reviewed by Dan Bernstein.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::reset):
+        * history/HistoryItem.h:
+
 2016-10-19  Joone Hur  <joone.hur@intel.com>
 
         Add a plain space instead of &nbsp; between text nodes

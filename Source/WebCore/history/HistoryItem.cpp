@@ -129,9 +129,6 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     m_children.reserveInitialCapacity(size);
     for (unsigned i = 0; i < size; ++i)
         m_children.uncheckedAppend(item.m_children[i]->copy());
-
-    if (item.m_redirectURLs)
-        m_redirectURLs = std::make_unique<Vector<String>>(*item.m_redirectURLs);
 }
 
 Ref<HistoryItem> HistoryItem::copy() const
@@ -152,8 +149,6 @@ void HistoryItem::reset()
 
     m_lastVisitWasFailure = false;
     m_isTargetItem = false;
-
-    m_redirectURLs = nullptr;
 
     m_itemSequenceNumber = generateSequenceNumber();
 

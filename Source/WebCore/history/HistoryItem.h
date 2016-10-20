@@ -227,8 +227,6 @@ private:
     bool m_isTargetItem;
     bool m_wasRestoredFromSession { false };
 
-    std::unique_ptr<Vector<String>> m_redirectURLs;
-
     // If two HistoryItems have the same item sequence number, then they are
     // clones of one another.  Traversing history from one such HistoryItem to
     // another is a no-op.  HistoryItem clones are created for parent and
