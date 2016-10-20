@@ -2711,3 +2711,5 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size-iframe.html [ S
 webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
+
+webkit.org/b/163755 imported/w3c/csswg-test/css-shapes-1 [ Skip ]

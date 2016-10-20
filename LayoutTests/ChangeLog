@@ -1,3 +1,13 @@
+2016-10-20  Dean Jackson  <dino@apple.com>
+
+        Shapes tests failing on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=163755
+        <rdar://problem/28875780>
+
+        Skip these temporarily on iOS.
+
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Marking compositing/iframes/page-cache-layer-tree.html as flaky on mac-wk1.
