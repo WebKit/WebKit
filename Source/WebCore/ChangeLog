@@ -1,3 +1,17 @@
+2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSS font-variation-settings does not handle uppercase axis names in variable fonts
+        https://bugs.webkit.org/show_bug.cgi?id=163546
+
+        Reviewed by Dean Jackson.
+
+        Remove the extra toASCIILower() call.
+
+        Test: fast/text/variations/case-axis-names.html
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseFontVariationTag):
+
 2016-10-19  Anders Carlsson  <andersca@apple.com>
 
         Remove m_redirectURLs from HistoryItem

@@ -10593,7 +10593,7 @@ bool CSSParser::parseFontVariationTag(CSSValueList& settings)
         UChar character = value->string[i];
         if (character < 0x20 || character > 0x7E)
             return false;
-        tag[i] = toASCIILower(character);
+        tag[i] = character;
     }
 
     value = m_valueList->next();
