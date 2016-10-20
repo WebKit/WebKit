@@ -1,3 +1,25 @@
+2016-10-19  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r205859. rdar://problem/28635084
+
+    2016-09-12  Filip Pizlo  <fpizlo@apple.com>
+
+            ParkingLot is going to have a bad time with threads dying
+            https://bugs.webkit.org/show_bug.cgi?id=161893
+
+            Reviewed by Michael Saboff.
+
+            If a thread dies right as it falls out of parkConditionally, then unparkOne() and friends
+            might die because they will dereference a deallocated ThreadData.
+
+            The solution is to ref-count ThreadData's. When unparkOne() and friends want to hold onto a
+            ThreadData past the queue lock, they can use RefPtr<>.
+
+            * wtf/ParkingLot.cpp:
+            (WTF::ParkingLot::unparkOne):
+            (WTF::ParkingLot::unparkOneImpl):
+            (WTF::ParkingLot::unparkAll):
+
 2016-10-02  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r205657. rdar://problem/28216268
