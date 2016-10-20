@@ -1,5 +1,46 @@
 2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Avoid including egl.h headers in internal headers
+        https://bugs.webkit.org/show_bug.cgi?id=163722
+
+        Reviewed by Žan Doberšek.
+
+        egl.h includes eglplatform.h that decides the native types for the platform at compile time. However, we support
+        to build with X11 and Wayland at the same time and decide what to use at runtime. Currently GLContext.h includes
+        eglplatform.h after wayland-egl.h if Wayland is enabled. That means that the wayland native types are used by
+        default from all cpp files including GLContext.h. It currently works in X11 because we cast the value anyway and
+        for example EGLNativeWindowType is a pointer in Wayland that can be casted to unsigned long in X11 to represent
+        the X Window. This is very fragile in any case, we should avoid adding egl headers in our headers and only
+        include it in cpp files. But we also need to ensure we don't use X11 and Wayland in the same cpp file.
+
+        * PlatformGTK.cmake:
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::createContextForWindow):
+        * platform/graphics/GLContext.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createContext):
+        (WebCore::GLContextEGL::~GLContextEGL):
+        * platform/graphics/egl/GLContextEGL.h:
+        * platform/graphics/egl/GLContextEGLWayland.cpp: Added.
+        (WebCore::GLContextEGL::GLContextEGL):
+        (WebCore::GLContextEGL::createWindowSurfaceWayland):
+        (WebCore::GLContextEGL::createWaylandContext):
+        (WebCore::GLContextEGL::destroyWaylandWindow):
+        * platform/graphics/egl/GLContextEGLX11.cpp: Added.
+        (WebCore::GLContextEGL::GLContextEGL):
+        (WebCore::GLContextEGL::createWindowSurfaceX11):
+        (WebCore::GLContextEGL::createPixmapContext):
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::GLContextGLX::createWindowContext):
+        (WebCore::GLContextGLX::createContext):
+        (WebCore::GLContextGLX::GLContextGLX):
+        * platform/graphics/glx/GLContextGLX.h:
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Avoid strstr() when checking (E)GL extensions
         https://bugs.webkit.org/show_bug.cgi?id=161958
 

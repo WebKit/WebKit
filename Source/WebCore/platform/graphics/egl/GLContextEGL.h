@@ -17,13 +17,11 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GLContextEGL_h
-#define GLContextEGL_h
+#pragma once
 
 #if USE(EGL)
 
 #include "GLContext.h"
-#include <EGL/egl.h>
 
 #if PLATFORM(X11)
 #include "XUniqueResource.h"
@@ -31,18 +29,25 @@
 
 #if PLATFORM(WAYLAND)
 #include "WlUniquePtr.h"
+struct wl_egl_window;
 #endif
+
+typedef void *EGLConfig;
+typedef void *EGLContext;
+typedef void *EGLDisplay;
+typedef void *EGLSurface;
 
 namespace WebCore {
 
 class GLContextEGL final : public GLContext {
     WTF_MAKE_NONCOPYABLE(GLContextEGL);
 public:
-    static std::unique_ptr<GLContextEGL> createContext(EGLNativeWindowType, PlatformDisplay&);
+    static std::unique_ptr<GLContextEGL> createContext(GLNativeWindowType, PlatformDisplay&);
     static std::unique_ptr<GLContextEGL> createSharingContext(PlatformDisplay&);
 
     virtual ~GLContextEGL();
 
+private:
     bool makeContextCurrent() override;
     void swapBuffers() override;
     void waitNative() override;
@@ -58,7 +63,6 @@ public:
     PlatformGraphicsContext3D platformContext() override;
 #endif
 
-private:
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
 
     GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, EGLSurfaceType);
@@ -66,23 +70,26 @@ private:
     GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, XUniquePixmap&&);
 #endif
 #if PLATFORM(WAYLAND)
-    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, WlUniquePtr<struct wl_surface>&&, EGLNativeWindowType);
+    GLContextEGL(PlatformDisplay&, EGLContext, EGLSurface, WlUniquePtr<struct wl_surface>&&, struct wl_egl_window*);
+    void destroyWaylandWindow();
 #endif
 
-    static std::unique_ptr<GLContextEGL> createWindowContext(EGLNativeWindowType, PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
-    static std::unique_ptr<GLContextEGL> createPbufferContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
-    static std::unique_ptr<GLContextEGL> createSurfacelessContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+    static std::unique_ptr<GLContextEGL> createWindowContext(GLNativeWindowType, PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static std::unique_ptr<GLContextEGL> createPbufferContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static std::unique_ptr<GLContextEGL> createSurfacelessContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
 #if PLATFORM(X11)
-    static std::unique_ptr<GLContextEGL> createPixmapContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+    static std::unique_ptr<GLContextEGL> createPixmapContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static EGLSurface createWindowSurfaceX11(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
 #if PLATFORM(WAYLAND)
-    static std::unique_ptr<GLContextEGL> createWaylandContext(PlatformDisplay&, EGLContext sharingContext = EGL_NO_CONTEXT);
+    static std::unique_ptr<GLContextEGL> createWaylandContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
+    static EGLSurface createWindowSurfaceWayland(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
 
     static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
 
-    EGLContext m_context { EGL_NO_CONTEXT };
-    EGLSurface m_surface { EGL_NO_SURFACE };
+    EGLContext m_context { nullptr };
+    EGLSurface m_surface { nullptr };
     EGLSurfaceType m_type;
 #if PLATFORM(X11)
     XUniquePixmap m_pixmap;
@@ -99,5 +106,3 @@ private:
 } // namespace WebCore
 
 #endif // USE(EGL)
-
-#endif // GLContextEGL_h
