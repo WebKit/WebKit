@@ -225,16 +225,14 @@ ExceptionOr<void> HTMLSelectElement::add(const OptionOrOptGroupElement& element,
 {
     HTMLElement* beforeElement = nullptr;
     if (before) {
-        auto visitor = WTF::makeVisitor(
+        beforeElement = WTF::switchOn(before.value(),
             [](const RefPtr<HTMLElement>& element) -> HTMLElement* { return element.get(); },
             [this](int index) -> HTMLElement* { return item(index); }
         );
-
-        beforeElement = WTF::visit(visitor, before.value());
     }
-    HTMLElement& toInsert = WTF::visit([](const auto& htmlElement) -> HTMLElement& {
-        return *htmlElement;
-    }, element);
+    HTMLElement& toInsert = WTF::switchOn(element,
+        [](const auto& htmlElement) -> HTMLElement& { return *htmlElement; }
+    );
 
 
     ExceptionCode ec = 0;

@@ -48,6 +48,7 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/Compiler.h>
+#include <wtf/StdLibExtras.h>
 
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -2039,6 +2040,14 @@ struct __hash_visitor{
         return std::hash<_Type>()(__x);
     }
 };
+
+// -- WebKit Additions --
+
+template<class V, class... F>
+auto switchOn(V&& v, F&&... f) -> decltype(visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v)))
+{
+    return visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
+}
 
 } // namespace WTF
 

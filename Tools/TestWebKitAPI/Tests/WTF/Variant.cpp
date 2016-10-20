@@ -141,6 +141,44 @@ TEST(WTF_Variant, VisitorUsingMakeVisitor)
     EXPECT_TRUE(Type::String == type);
 }
 
+TEST(WTF_Variant, VisitorUsingSwitchOn)
+{
+    enum class Type {
+        None,
+        Int,
+        Float,
+        String,
+    };
+
+    Type type = Type::None;
+
+    Variant<int, float, String> variant = 8;
+    type = WTF::switchOn(variant,
+        [](int) { return Type::Int; },
+        [](float) { return Type::Float; },
+        [](String) { return Type::String; }
+    );
+    EXPECT_TRUE(Type::Int == type);
+
+
+    variant = 1.0f;
+    type = WTF::switchOn(variant,
+        [](int) { return Type::Int; },
+        [](float) { return Type::Float; },
+        [](String) { return Type::String; }
+    );
+    EXPECT_TRUE(Type::Float == type);
+
+
+    variant = "hello";
+    type = WTF::switchOn(variant,
+        [](int) { return Type::Int; },
+        [](float) { return Type::Float; },
+        [](String) { return Type::String; }
+    );
+    EXPECT_TRUE(Type::String == type);
+}
+
 TEST(WTF_Variant, ConstructorDestructor)
 {
     ConstructorDestructorCounter::TestingScope scope;

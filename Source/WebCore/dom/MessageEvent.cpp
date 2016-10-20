@@ -172,12 +172,10 @@ EventTarget* MessageEvent::source() const
     if (!m_source)
         return nullptr;
 
-    auto visitor = WTF::makeVisitor(
+    return WTF::switchOn(m_source.value(),
         [](const RefPtr<DOMWindow>& window) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(window.get())); },
         [](const RefPtr<MessagePort>& messagePort) -> EventTarget* { return const_cast<EventTarget*>(static_cast<const EventTarget*>(messagePort.get())); }
     );
-
-    return WTF::visit(visitor, m_source.value());
 }
 
 RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(ExecState* exec)

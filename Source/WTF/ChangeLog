@@ -1,3 +1,17 @@
+2016-10-19  Sam Weinig  <sam@webkit.org>
+
+        Add convenience function that combines WTF::visit(...) with WTF::makeVisitor(...)
+        https://bugs.webkit.org/show_bug.cgi?id=163713
+
+        Reviewed by Dan Bernstein.
+
+        - Add WTF::switchOn which merges WTF::visit with WTF::makeVisitor in the following
+          way:
+                WTF::visit(WTF::makeVisitor(...), variant)
+
+        * wtf/Variant.h:
+        (WTF::switchOn):
+
 2016-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Revert r207151

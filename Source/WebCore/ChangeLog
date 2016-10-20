@@ -1,3 +1,24 @@
+2016-10-20  Sam Weinig  <sam@webkit.org>
+
+        Add convenience function that combines WTF::visit(...) with WTF::makeVisitor(...)
+        https://bugs.webkit.org/show_bug.cgi?id=163713
+
+        Reviewed by Dan Bernstein.
+
+        Switch uses of WTF::visit to use WTF::switchOn.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::source):
+        * dom/Node.cpp:
+        (WebCore::nodeSetPreTransformedFromNodeOrStringVector):
+        (WebCore::Node::convertNodesOrStringsIntoNode):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::add):
+        * html/track/TrackEvent.cpp:
+        (WebCore::TrackEvent::TrackEvent):
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::typeConversionsDictionaryUnionType):
+
 2016-10-20  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix font family parsing and add CSS region property parsing

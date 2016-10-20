@@ -111,11 +111,11 @@ public:
     Vector<String> typeConversionsDictionarySequenceValue() { return m_typeConversionsDictionarySequenceValue; }
     UnionType typeConversionsDictionaryUnionType()
     {
-        return WTF::visit(WTF::makeVisitor(
+        return WTF::switchOn(m_typeConversionsDictionaryUnionValue,
             [](const RefPtr<Node>&) -> UnionType { return UnionType::Node; },
             [](const Vector<String>&) -> UnionType { return UnionType::Sequence; },
             [](const OtherDictionary&) -> UnionType { return UnionType::Dictionary; }
-        ), m_typeConversionsDictionaryUnionValue);
+        );
     }
 
 private:

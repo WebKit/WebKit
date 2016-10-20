@@ -43,9 +43,9 @@ TrackEvent::TrackEvent(const AtomicString& type, const Init& initializer, IsTrus
     : Event(type, initializer, isTrusted)
 {
     if (initializer.track) {
-        m_track = WTF::visit([](const auto& trackbase) -> TrackBase* {
-            return trackbase.get();
-        }, *initializer.track);
+        m_track = WTF::switchOn(*initializer.track,
+            [](const auto& trackbase) -> TrackBase* { return trackbase.get(); }
+        );
     }
 }
 

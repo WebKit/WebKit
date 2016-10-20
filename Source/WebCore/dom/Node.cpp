@@ -438,14 +438,12 @@ bool Node::appendChild(Node& newChild, ExceptionCode& ec)
 static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<NodeOrString>& vector)
 {
     HashSet<RefPtr<Node>> nodeSet;
-
-    auto visitor = WTF::makeVisitor(
-        [&](const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
-        [](const String&) { }
-    );
-
-    for (const auto& variant : vector)
-        WTF::visit(visitor, variant);
+    for (const auto& variant : vector) {
+        WTF::switchOn(variant,
+            [&](const RefPtr<Node>& node) { nodeSet.add(const_cast<Node*>(node.get())); },
+            [](const String&) { }
+        );
+    }
 
     return nodeSet;
 }
@@ -475,14 +473,12 @@ RefPtr<Node> Node::convertNodesOrStringsIntoNode(Vector<NodeOrString>&& nodeOrSt
 
     Vector<Ref<Node>> nodes;
     nodes.reserveInitialCapacity(nodeOrStringVector.size());
-
-    auto visitor = WTF::makeVisitor(
-        [&](RefPtr<Node>& node) { nodes.uncheckedAppend(*node.get()); },
-        [&](String& string) { nodes.uncheckedAppend(Text::create(document(), string)); }
-    );
-
-    for (auto& variant : nodeOrStringVector)
-        WTF::visit(visitor, variant);
+    for (auto& variant : nodeOrStringVector) {
+        WTF::switchOn(variant,
+            [&](RefPtr<Node>& node) { nodes.uncheckedAppend(*node.get()); },
+            [&](String& string) { nodes.uncheckedAppend(Text::create(document(), string)); }
+        );
+    }
 
     if (nodes.size() == 1)
         return WTFMove(nodes.first());
