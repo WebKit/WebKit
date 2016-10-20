@@ -91,7 +91,8 @@ public:
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
         bool m_useLegacyBackgroundSizeShorthandBehavior;
         bool m_autoscrollForDragAndDropEnabled;
-        bool m_pluginReplacementEnabled;
+        bool m_quickTimePluginReplacementEnabled;
+        bool m_youTubeFlashPluginReplacementEnabled;
         bool m_shouldConvertPositionStyleOnCopy;
         bool m_fontFallbackPrefersPictographs;
         bool m_webFontsAlwaysFallBack;
@@ -156,7 +157,8 @@ public:
     void setAutoscrollForDragAndDropEnabled(bool, ExceptionCode&);
     void setFontFallbackPrefersPictographs(bool, ExceptionCode&);
     void setWebFontsAlwaysFallBack(bool, ExceptionCode&);
-    void setPluginReplacementEnabled(bool, ExceptionCode&);
+    void setQuickTimePluginReplacementEnabled(bool, ExceptionCode&);
+    void setYouTubeFlashPluginReplacementEnabled(bool, ExceptionCode&);
     void setBackgroundShouldExtendBeyondPage(bool, ExceptionCode&);
     void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);
     void setScrollingTreeIncludesFrames(bool, ExceptionCode&);

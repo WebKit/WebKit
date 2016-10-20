@@ -403,9 +403,6 @@ static ReplacementPlugin* pluginReplacementForType(const URL& url, const String&
 
 bool HTMLPlugInElement::requestObject(const String& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    if (!document().settings()->pluginReplacementEnabled())
-        return false;
-
     if (m_pluginReplacement)
         return true;
 
@@ -414,7 +411,7 @@ bool HTMLPlugInElement::requestObject(const String& url, const String& mimeType,
         completedURL = document().completeURL(url);
 
     ReplacementPlugin* replacement = pluginReplacementForType(completedURL, mimeType);
-    if (!replacement)
+    if (!replacement || !replacement->isEnabledBySettings(document().settings()))
         return false;
 
     LOG(Plugins, "%p - Found plug-in replacement for %s.", this, completedURL.string().utf8().data());

@@ -42,6 +42,7 @@
 #import "RenderElement.h"
 #import "ScriptController.h"
 #import "ScriptSourceCode.h"
+#import "Settings.h"
 #import "UserAgentScripts.h"
 #import <objc/runtime.h>
 #import <AVFoundation/AVFoundation.h>
@@ -72,7 +73,7 @@ static String quickTimePluginReplacementScript()
 
 void QuickTimePluginReplacement::registerPluginReplacement(PluginReplacementRegistrar registrar)
 {
-    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL));
+    registrar(ReplacementPlugin(create, supportsMimeType, supportsFileExtension, supportsURL, isEnabledBySettings));
 }
 
 Ref<PluginReplacement> QuickTimePluginReplacement::create(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)
@@ -112,6 +113,11 @@ bool QuickTimePluginReplacement::supportsFileExtension(const String& extension)
         return set;
     }();
     return extensionSet.get().contains(extension);
+}
+
+bool QuickTimePluginReplacement::isEnabledBySettings(const Settings* settings)
+{
+    return settings->quickTimePluginReplacementEnabled();
 }
 
 QuickTimePluginReplacement::QuickTimePluginReplacement(HTMLPlugInElement& plugin, const Vector<String>& paramNames, const Vector<String>& paramValues)

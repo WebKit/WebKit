@@ -38,6 +38,7 @@ class HTMLPlugInElement;
 class RenderElement;
 class RenderStyle;
 class RenderTreePosition;
+class Settings;
 class ShadowRoot;
 class URL;
 
@@ -56,14 +57,16 @@ typedef Ref<PluginReplacement> (*CreatePluginReplacement)(HTMLPlugInElement&, co
 typedef bool (*PluginReplacementSupportsType)(const String&);
 typedef bool (*PluginReplacementSupportsFileExtension)(const String&);
 typedef bool (*PluginReplacementSupportsURL)(const URL&);
-    
+typedef bool (*PluginReplacementEnabledForSettings)(const Settings*);
+
 class ReplacementPlugin {
 public:
-    ReplacementPlugin(CreatePluginReplacement constructor, PluginReplacementSupportsType supportsType, PluginReplacementSupportsFileExtension supportsFileExtension, PluginReplacementSupportsURL supportsURL)
+    ReplacementPlugin(CreatePluginReplacement constructor, PluginReplacementSupportsType supportsType, PluginReplacementSupportsFileExtension supportsFileExtension, PluginReplacementSupportsURL supportsURL, PluginReplacementEnabledForSettings isEnabledBySettings)
         : m_constructor(constructor)
         , m_supportsType(supportsType)
         , m_supportsFileExtension(supportsFileExtension)
         , m_supportsURL(supportsURL)
+        , m_isEnabledBySettings(isEnabledBySettings)
     {
     }
 
@@ -72,6 +75,7 @@ public:
         , m_supportsType(other.m_supportsType)
         , m_supportsFileExtension(other.m_supportsFileExtension)
         , m_supportsURL(other.m_supportsURL)
+        , m_isEnabledBySettings(other.m_isEnabledBySettings)
     {
     }
 
@@ -79,12 +83,14 @@ public:
     bool supportsType(const String& mimeType) const { return m_supportsType(mimeType); }
     bool supportsFileExtension(const String& extension) const { return m_supportsFileExtension(extension); }
     bool supportsURL(const URL& url) const { return m_supportsURL(url); }
-    
+    bool isEnabledBySettings(const Settings* settings) const { return m_isEnabledBySettings(settings); };
+
 private:
     CreatePluginReplacement m_constructor;
     PluginReplacementSupportsType m_supportsType;
     PluginReplacementSupportsFileExtension m_supportsFileExtension;
     PluginReplacementSupportsURL m_supportsURL;
+    PluginReplacementEnabledForSettings m_isEnabledBySettings;
 };
 
 typedef void (*PluginReplacementRegistrar)(const ReplacementPlugin&);
