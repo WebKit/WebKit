@@ -30,7 +30,7 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface IDBObjectStore {
-    readonly attribute DOMString? name;
+    [SetterMayThrowException] attribute DOMString name;
     [ImplementationReturnType=IDBKeyPath] readonly attribute any keyPath;
     readonly attribute DOMStringList indexNames;
     readonly attribute IDBTransaction transaction;

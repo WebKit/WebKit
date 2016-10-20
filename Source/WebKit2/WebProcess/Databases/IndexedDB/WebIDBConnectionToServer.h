@@ -53,6 +53,7 @@ public:
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier&) final;
     void createObjectStore(const WebCore::IDBRequestData&, const WebCore::IDBObjectStoreInfo&) final;
     void deleteObjectStore(const WebCore::IDBRequestData&, const String& objectStoreName) final;
+    void renameObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName) final;
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier) final;
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&) final;
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
@@ -81,6 +82,7 @@ public:
     void didCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&);
     void didCreateObjectStore(const WebCore::IDBResultData&);
     void didDeleteObjectStore(const WebCore::IDBResultData&);
+    void didRenameObjectStore(const WebCore::IDBResultData&);
     void didClearObjectStore(const WebCore::IDBResultData&);
     void didCreateIndex(const WebCore::IDBResultData&);
     void didDeleteIndex(const WebCore::IDBResultData&);

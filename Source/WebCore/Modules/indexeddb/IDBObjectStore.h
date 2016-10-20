@@ -60,6 +60,7 @@ public:
     ~IDBObjectStore();
 
     const String& name() const;
+    ExceptionOr<void> setName(const String&);
     const IDBKeyPath& keyPath() const;
     RefPtr<DOMStringList> indexNames() const;
     IDBTransaction& transaction();

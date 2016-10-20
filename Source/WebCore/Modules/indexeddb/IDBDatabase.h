@@ -62,6 +62,8 @@ public:
     ExceptionOr<void> deleteObjectStore(const String& name);
     void close();
 
+    void renameObjectStore(IDBObjectStore&, const String& newName);
+
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return IDBDatabaseEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }

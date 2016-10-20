@@ -139,6 +139,11 @@ IDBResultData IDBResultData::deleteObjectStoreSuccess(const IDBResourceIdentifie
     return { IDBResultType::DeleteObjectStoreSuccess, requestIdentifier };
 }
 
+IDBResultData IDBResultData::renameObjectStoreSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::RenameObjectStoreSuccess, requestIdentifier };
+}
+
 IDBResultData IDBResultData::clearObjectStoreSuccess(const IDBResourceIdentifier& requestIdentifier)
 {
     return { IDBResultType::ClearObjectStoreSuccess, requestIdentifier };

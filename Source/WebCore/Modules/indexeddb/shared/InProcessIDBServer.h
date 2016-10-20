@@ -64,6 +64,7 @@ public:
     void didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier&) final;
     void createObjectStore(const IDBRequestData&, const IDBObjectStoreInfo&) final;
     void deleteObjectStore(const IDBRequestData&, const String& objectStoreName) final;
+    void renameObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& newName) final;
     void clearObjectStore(const IDBRequestData&, uint64_t objectStoreIdentifier) final;
     void createIndex(const IDBRequestData&, const IDBIndexInfo&) final;
     void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName) final;
@@ -89,6 +90,7 @@ public:
     void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) final;
     void didCreateObjectStore(const IDBResultData&) final;
     void didDeleteObjectStore(const IDBResultData&) final;
+    void didRenameObjectStore(const IDBResultData&) final;
     void didClearObjectStore(const IDBResultData&) final;
     void didCreateIndex(const IDBResultData&) final;
     void didDeleteIndex(const IDBResultData&) final;

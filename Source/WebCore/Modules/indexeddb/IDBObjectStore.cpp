@@ -95,6 +95,31 @@ const String& IDBObjectStore::name() const
     return m_info.name();
 }
 
+ExceptionOr<void> IDBObjectStore::setName(const String& name)
+{
+    ASSERT(currentThread() == m_transaction->database().originThreadID());
+
+    if (m_deleted)
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store has been deleted.") };
+
+    if (!m_transaction->isVersionChange())
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not a version change transaction.") };
+
+    if (!m_transaction->isActive())
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed set property 'name' on 'IDBObjectStore': The object store's transaction is not active.") };
+
+    if (m_info.name() == name)
+        return { };
+
+    if (m_transaction->database().info().hasObjectStore(name))
+        return Exception { INVALID_STATE_ERR, makeString("Failed set property 'name' on 'IDBObjectStore': The database already has an object store named '", name, "'.") };
+
+    m_transaction->database().renameObjectStore(*this, name);
+    m_info.rename(name);
+
+    return { };
+}
+
 const IDBKeyPath& IDBObjectStore::keyPath() const
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());

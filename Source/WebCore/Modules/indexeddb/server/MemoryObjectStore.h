@@ -97,6 +97,8 @@ public:
 
     void maybeRestoreDeletedIndex(Ref<MemoryIndex>&&);
 
+    void rename(const String& newName) { m_info.rename(newName); }
+
 private:
     MemoryObjectStore(const IDBObjectStoreInfo&);
 

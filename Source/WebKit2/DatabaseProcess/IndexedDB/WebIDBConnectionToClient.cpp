@@ -107,6 +107,11 @@ void WebIDBConnectionToClient::didDeleteObjectStore(const WebCore::IDBResultData
     send(Messages::WebIDBConnectionToServer::DidDeleteObjectStore(resultData));
 }
 
+void WebIDBConnectionToClient::didRenameObjectStore(const WebCore::IDBResultData& resultData)
+{
+    send(Messages::WebIDBConnectionToServer::DidRenameObjectStore(resultData));
+}
+
 void WebIDBConnectionToClient::didClearObjectStore(const WebCore::IDBResultData& resultData)
 {
     send(Messages::WebIDBConnectionToServer::DidClearObjectStore(resultData));
@@ -233,6 +238,11 @@ void WebIDBConnectionToClient::createObjectStore(const IDBRequestData& request, 
 void WebIDBConnectionToClient::deleteObjectStore(const IDBRequestData& request, const String& name)
 {
     DatabaseProcess::singleton().idbServer().deleteObjectStore(request, name);
+}
+
+void WebIDBConnectionToClient::renameObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& newName)
+{
+    DatabaseProcess::singleton().idbServer().renameObjectStore(request, objectStoreIdentifier, newName);
 }
 
 void WebIDBConnectionToClient::clearObjectStore(const IDBRequestData& request, uint64_t objectStoreIdentifier)

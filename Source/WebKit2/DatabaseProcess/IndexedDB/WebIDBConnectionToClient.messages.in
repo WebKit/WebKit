@@ -30,6 +30,7 @@ messages -> WebIDBConnectionToClient {
     DidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBResourceIdentifier transactionIdentifier);
     CreateObjectStore(WebCore::IDBRequestData requestData, WebCore::IDBObjectStoreInfo info);
     DeleteObjectStore(WebCore::IDBRequestData requestData, String objectStoreName);
+    RenameObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String newName);
     ClearObjectStore(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier);
     CreateIndex(WebCore::IDBRequestData requestData, WebCore::IDBIndexInfo info);
     DeleteIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String indexName);

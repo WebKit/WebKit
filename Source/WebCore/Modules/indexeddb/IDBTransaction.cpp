@@ -601,6 +601,40 @@ void IDBTransaction::didCreateObjectStoreOnServer(const IDBResultData& resultDat
     ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::CreateObjectStoreSuccess || resultData.type() == IDBResultType::Error);
 }
 
+void IDBTransaction::renameObjectStore(IDBObjectStore& objectStore, const String& newName)
+{
+    LOG(IndexedDB, "IDBTransaction::renameObjectStore");
+    ASSERT(isVersionChange());
+    ASSERT(scriptExecutionContext());
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    ASSERT(m_referencedObjectStores.contains(objectStore.info().name()));
+    ASSERT(!m_referencedObjectStores.contains(newName));
+    ASSERT(m_referencedObjectStores.get(objectStore.info().name()) == &objectStore);
+
+    uint64_t objectStoreIdentifier = objectStore.info().identifier();
+    auto operation = IDBClient::createTransactionOperation(*this, &IDBTransaction::didRenameObjectStoreOnServer, &IDBTransaction::renameObjectStoreOnServer, objectStoreIdentifier, newName);
+    scheduleOperation(WTFMove(operation));
+
+    m_referencedObjectStores.set(newName, m_referencedObjectStores.take(objectStore.info().name()));
+}
+
+void IDBTransaction::renameObjectStoreOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "IDBTransaction::renameObjectStoreOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT(isVersionChange());
+
+    m_database->connectionProxy().renameObjectStore(operation, objectStoreIdentifier, newName);
+}
+
+void IDBTransaction::didRenameObjectStoreOnServer(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didRenameObjectStoreOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::RenameObjectStoreSuccess || resultData.type() == IDBResultType::Error);
+}
+
 std::unique_ptr<IDBIndex> IDBTransaction::createIndex(IDBObjectStore& objectStore, const IDBIndexInfo& info)
 {
     LOG(IndexedDB, "IDBTransaction::createIndex");

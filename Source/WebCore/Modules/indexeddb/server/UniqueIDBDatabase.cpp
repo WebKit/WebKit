@@ -660,6 +660,47 @@ void UniqueIDBDatabase::didPerformDeleteObjectStore(uint64_t callbackIdentifier,
     performErrorCallback(callbackIdentifier, error);
 }
 
+void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transaction, uint64_t objectStoreIdentifier, const String& newName, ErrorCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::renameObjectStore");
+
+    uint64_t callbackID = storeCallbackOrFireError(callback);
+    if (!callbackID)
+        return;
+
+    auto* info = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    if (!info) {
+        performErrorCallback(callbackID, { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename non-existant object store") });
+        return;
+    }
+
+    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performRenameObjectStore, callbackID, transaction.info().identifier(), objectStoreIdentifier, newName));
+}
+
+void UniqueIDBDatabase::performRenameObjectStore(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performRenameObjectStore");
+
+    ASSERT(m_backingStore);
+    m_backingStore->renameObjectStore(transactionIdentifier, objectStoreIdentifier, newName);
+
+    IDBError error;
+    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformRenameObjectStore, callbackIdentifier, error, objectStoreIdentifier, newName));
+}
+
+void UniqueIDBDatabase::didPerformRenameObjectStore(uint64_t callbackIdentifier, const IDBError& error, uint64_t objectStoreIdentifier, const String& newName)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformRenameObjectStore");
+
+    if (error.isNull())
+        m_databaseInfo->renameObjectStore(objectStoreIdentifier, newName);
+
+    performErrorCallback(callbackIdentifier, error);
+}
+
 void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transaction, uint64_t objectStoreIdentifier, ErrorCallback callback)
 {
     ASSERT(isMainThread());

@@ -57,6 +57,8 @@ public:
     const IDBObjectStoreInfo* infoForExistingObjectStore(uint64_t objectStoreIdentifier) const;
     const IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName) const;
 
+    void renameObjectStore(uint64_t objectStoreIdentifier, const String& newName);
+
     Vector<String> objectStoreNames() const;
 
     void deleteObjectStore(const String& objectStoreName);

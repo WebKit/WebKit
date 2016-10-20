@@ -48,6 +48,8 @@ public:
     bool autoIncrement() const { return m_autoIncrement; }
     uint64_t maxIndexID() const { return m_maxIndexID; }
 
+    void rename(const String& newName) { m_name = newName; }
+
     IDBObjectStoreInfo isolatedCopy() const;
 
     IDBIndexInfo createNewIndex(const String& name, const IDBKeyPath&, bool unique, bool multiEntry);

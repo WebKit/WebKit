@@ -16,9 +16,6 @@ transaction.db = this
 PASS transaction.db is still [object IDBDatabase]
 Deleted all object stores.
 objectStore = db.createObjectStore('foo');
-trying to set readonly property objectStore.name
-objectStore.name = 'bar'
-PASS objectStore.name is still foo
 trying to set readonly property objectStore.keyPath
 objectStore.keyPath = 'bar'
 PASS objectStore.keyPath is still null

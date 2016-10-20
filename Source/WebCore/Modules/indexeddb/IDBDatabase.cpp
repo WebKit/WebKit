@@ -106,6 +106,17 @@ RefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
     return objectStoreNames;
 }
 
+void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& newName)
+{
+    ASSERT(currentThread() == originThreadID());
+    ASSERT(m_versionChangeTransaction);
+    ASSERT(m_info.hasObjectStore(objectStore.info().name()));
+
+    m_info.renameObjectStore(objectStore.info().identifier(), newName);
+
+    m_versionChangeTransaction->renameObjectStore(objectStore, newName);
+}
+
 ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String&, const Dictionary&)
 {
     ASSERT_NOT_REACHED();

@@ -30,7 +30,6 @@ function prepareDatabase()
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
 
-    setReadonlyProperty("objectStore.name", "'bar'");
     setReadonlyProperty("objectStore.keyPath", "'bar'");
 /* fails, split into separate test
     setReadonlyProperty("objectStore.indexNames", "['bar']");

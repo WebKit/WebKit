@@ -53,6 +53,7 @@ public:
     virtual void didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError&) = 0;
     virtual void didCreateObjectStore(const IDBResultData&) = 0;
     virtual void didDeleteObjectStore(const IDBResultData&) = 0;
+    virtual void didRenameObjectStore(const IDBResultData&) = 0;
     virtual void didClearObjectStore(const IDBResultData&) = 0;
     virtual void didCreateIndex(const IDBResultData&) = 0;
     virtual void didDeleteIndex(const IDBResultData&) = 0;

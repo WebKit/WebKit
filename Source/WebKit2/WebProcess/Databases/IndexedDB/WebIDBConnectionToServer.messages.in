@@ -29,6 +29,7 @@ messages -> WebIDBConnectionToServer {
     DidCommitTransaction(WebCore::IDBResourceIdentifier transactionIdentifier, WebCore::IDBError error)
     DidCreateObjectStore(WebCore::IDBResultData result)
     DidDeleteObjectStore(WebCore::IDBResultData result)
+    DidRenameObjectStore(WebCore::IDBResultData result)
     DidClearObjectStore(WebCore::IDBResultData result)
     DidCreateIndex(WebCore::IDBResultData result)
     DidDeleteIndex(WebCore::IDBResultData result)

@@ -146,6 +146,13 @@ void InProcessIDBServer::didDeleteObjectStore(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didRenameObjectStore(const IDBResultData& resultData)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
+        m_connectionToServer->didRenameObjectStore(resultData);
+    });
+}
+
 void InProcessIDBServer::didClearObjectStore(const IDBResultData& resultData)
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
@@ -241,6 +248,13 @@ void InProcessIDBServer::deleteObjectStore(const IDBRequestData& requestData, co
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, objectStoreName] {
         m_server->deleteObjectStore(requestData, objectStoreName);
+    });
+}
+
+void InProcessIDBServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, objectStoreIdentifier, newName] {
+        m_server->renameObjectStore(requestData, objectStoreIdentifier, newName);
     });
 }
 

@@ -125,6 +125,14 @@ void IDBConnectionProxy::createObjectStore(TransactionOperation& operation, cons
     callConnectionOnMainThread(&IDBConnectionToServer::createObjectStore, requestData, info);
 }
 
+void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, uint64_t objectStoreIdentifier, const String& newName)
+{
+    const IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    callConnectionOnMainThread(&IDBConnectionToServer::renameObjectStore, requestData, objectStoreIdentifier, newName);
+}
+
 void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
 {
     const IDBRequestData requestData(operation);

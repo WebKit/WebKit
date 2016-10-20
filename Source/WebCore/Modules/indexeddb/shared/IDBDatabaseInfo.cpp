@@ -122,6 +122,15 @@ IDBObjectStoreInfo* IDBDatabaseInfo::infoForExistingObjectStore(const String& na
     return getInfoForExistingObjectStore(name);
 }
 
+void IDBDatabaseInfo::renameObjectStore(uint64_t objectStoreIdentifier, const String& newName)
+{
+    auto* info = infoForExistingObjectStore(objectStoreIdentifier);
+    if (!info)
+        return;
+
+    info->rename(newName);
+}
+
 Vector<String> IDBDatabaseInfo::objectStoreNames() const
 {
     Vector<String> names;

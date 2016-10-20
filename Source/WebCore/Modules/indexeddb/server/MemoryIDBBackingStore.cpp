@@ -171,6 +171,32 @@ IDBError MemoryIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
     return IDBError();
 }
 
+IDBError MemoryIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::renameObjectStore");
+
+    ASSERT(m_databaseInfo);
+    if (!m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier))
+        return IDBError(IDBDatabaseException::ConstraintError);
+
+    auto transaction = m_transactions.get(transactionIdentifier);
+    ASSERT(transaction);
+    ASSERT(transaction->isVersionChange());
+
+    auto objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
+    ASSERT(objectStore);
+    if (!objectStore)
+        return IDBError(IDBDatabaseException::ConstraintError);
+
+    String oldName = objectStore->info().name();
+    objectStore->rename(newName);
+    transaction->objectStoreRenamed(*objectStore, oldName);
+
+    m_databaseInfo->renameObjectStore(objectStoreIdentifier, newName);
+
+    return IDBError();
+}
+
 IDBError MemoryIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::clearObjectStore");

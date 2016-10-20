@@ -1,10 +1,8 @@
 
-FAIL IndexedDB deleted object store rename throws assert_throws: function "() => store.name = 'renamed_books'" did not throw
-FAIL IndexedDB object store rename throws in a readonly transaction assert_throws: function "() => store.name = 'renamed_books'" did not throw
-FAIL IndexedDB object store rename throws in a readwrite transaction assert_throws: function "() => store.name = 'renamed_books'" did not throw
-FAIL IndexedDB object store rename throws in an inactive transaction assert_throws: function "() => { bookStore.name = 'renamed_books'; }" did not throw
-FAIL IndexedDB object store rename to the name of another store throws assert_throws: function "() => store.name = 'not_books'" did not throw
-FAIL IndexedDB object store rename handles exceptions when stringifying names assert_throws: IDBObjectStore rename should re-raise toString() exception function "() => {
-              store.name = {
-                toSt..." did not throw
+PASS IndexedDB deleted object store rename throws 
+PASS IndexedDB object store rename throws in a readonly transaction 
+PASS IndexedDB object store rename throws in a readwrite transaction 
+FAIL IndexedDB object store rename throws in an inactive transaction assert_throws: function "() => { bookStore.name = 'renamed_books'; }" threw object "InvalidStateError (DOM Exception 11): Failed set property..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
+FAIL IndexedDB object store rename to the name of another store throws assert_throws: function "() => store.name = 'not_books'" threw object "InvalidStateError (DOM Exception 11): Failed set property..." that is not a DOMException ConstraintError: property "code" is equal to 11, expected 0
+PASS IndexedDB object store rename handles exceptions when stringifying names 
 

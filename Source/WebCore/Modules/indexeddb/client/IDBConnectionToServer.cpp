@@ -116,6 +116,20 @@ void IDBConnectionToServer::didDeleteObjectStore(const IDBResultData& resultData
     m_proxy->completeOperation(resultData);
 }
 
+void IDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::renameObjectStore");
+    ASSERT(isMainThread());
+
+    m_delegate->renameObjectStore(requestData, objectStoreIdentifier, newName);
+}
+
+void IDBConnectionToServer::didRenameObjectStore(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didRenameObjectStore");
+    m_proxy->completeOperation(resultData);
+}
+
 void IDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
     LOG(IndexedDB, "IDBConnectionToServer::clearObjectStore");

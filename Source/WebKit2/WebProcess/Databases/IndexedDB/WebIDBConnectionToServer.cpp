@@ -118,6 +118,11 @@ void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestDa
     send(Messages::WebIDBConnectionToClient::DeleteObjectStore(requestData, objectStoreName));
 }
 
+void WebIDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+{
+    send(Messages::WebIDBConnectionToClient::RenameObjectStore(requestData, objectStoreIdentifier, newName));
+}
+
 void WebIDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
     send(Messages::WebIDBConnectionToClient::ClearObjectStore(requestData, objectStoreIdentifier));
@@ -226,6 +231,11 @@ void WebIDBConnectionToServer::didCreateObjectStore(const IDBResultData& result)
 void WebIDBConnectionToServer::didDeleteObjectStore(const IDBResultData& result)
 {
     m_connectionToServer->didDeleteObjectStore(result);
+}
+
+void WebIDBConnectionToServer::didRenameObjectStore(const IDBResultData& result)
+{
+    m_connectionToServer->didRenameObjectStore(result);
 }
 
 void WebIDBConnectionToServer::didClearObjectStore(const IDBResultData& result)
