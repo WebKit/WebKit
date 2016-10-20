@@ -200,13 +200,15 @@
 
   <autotools id="glib"
              autogen-sh="configure"
-             autogenargs="--disable-dtrace --disable-libmount">
+             autogenargs="--disable-dtrace">
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.50/glib-2.50.1.tar.xz" version="2.50.1"
+    <branch module="/pub/GNOME/sources/glib/2.44/glib-2.44.1.tar.xz" version="2.44.1"
             repo="ftp.gnome.org"
-            hash="sha256:2ef87a78f37c1eb5b95f4cc95efd5b66f69afad9c9c0899918d04659cf6df7dd">
+            hash="sha256:8811deacaf8a503d0a9b701777ea079ca6a4277be10e3d730d2112735d5eca07">
+      <patch file="glib-warning-fix.patch" strip="1"/>
+      <patch file="gdate-suppress-string-format-literal-warning.patch" strip="1"/>
     </branch>
   </autotools>
 
