@@ -107,7 +107,9 @@ ImageBuffer::ImageBuffer(const FloatSize& size, float resolutionScale, ColorSpac
     RELEASE_ASSERT(renderTarget);
 
     COMPtr<ID2D1BitmapRenderTarget> bitmapContext;
-    HRESULT hr = renderTarget->CreateCompatibleRenderTarget(FloatSize(m_logicalSize), &bitmapContext);
+    D2D1_SIZE_F desiredSize = FloatSize(m_logicalSize);
+    D2D1_SIZE_U pixelSize = IntSize(m_logicalSize);
+    HRESULT hr = renderTarget->CreateCompatibleRenderTarget(&desiredSize, &pixelSize, nullptr, D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_GDI_COMPATIBLE, &bitmapContext);
     if (!bitmapContext || !SUCCEEDED(hr))
         return;
 

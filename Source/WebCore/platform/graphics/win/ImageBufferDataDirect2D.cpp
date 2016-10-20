@@ -28,7 +28,9 @@
 
 #if USE(DIRECT2D)
 
+#include "BitmapInfo.h"
 #include "GraphicsContext.h"
+#include "HWndDC.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include <d2d1.h>
@@ -39,10 +41,52 @@
 
 namespace WebCore {
 
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect&, const IntSize&, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */) const
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */) const
 {
-    notImplemented();
-    return nullptr;
+    auto platformContext = context->platformContext();
+
+    Checked<unsigned, RecordOverflow> area = 4 * rect.area();
+    if (area.hasOverflowed())
+        return nullptr;
+
+    auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
+    unsigned char* resultData = result ? result->data() : nullptr;
+    if (!resultData)
+        return nullptr;
+
+    BitmapInfo bitmapInfo = BitmapInfo::createBottomUp(size);
+
+    void* pixels = nullptr;
+    auto bitmap = adoptGDIObject(::CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &pixels, 0, 0));
+
+    HWndDC windowDC(nullptr);
+    auto bitmapDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
+    HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), bitmap.get());
+
+    HRESULT hr;
+
+    COMPtr<ID2D1GdiInteropRenderTarget> gdiRenderTarget;
+    hr = platformContext->QueryInterface(__uuidof(ID2D1GdiInteropRenderTarget), (void**)&gdiRenderTarget);
+    if (FAILED(hr))
+        return nullptr;
+
+    platformContext->BeginDraw();
+
+    HDC hdc = nullptr;
+    hr = gdiRenderTarget->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hdc);
+
+    BOOL ok = ::BitBlt(bitmapDC.get(), 0, 0, rect.width(), rect.height(), hdc, rect.x(), rect.y(), SRCCOPY);
+
+    hr = gdiRenderTarget->ReleaseDC(nullptr);
+
+    hr = platformContext->EndDraw();
+
+    if (!ok)
+        return nullptr;
+
+    memcpy(result->data(), pixels, 4 * rect.area());
+
+    return result;
 }
 
 void ImageBufferData::putData(Uint8ClampedArray*& /* source */, const IntSize& /* sourceSize */, const IntRect& /* sourceRect */, const IntPoint& /* destPoint */, const IntSize& /* size */, bool /* accelerateRendering */, bool /* unmultiplied */, float /* resolutionScale */)
