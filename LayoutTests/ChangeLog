@@ -1,3 +1,29 @@
+2016-10-19  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: mute support
+        https://bugs.webkit.org/show_bug.cgi?id=163677
+        <rdar://problem/28851582>
+
+        Reviewed by Dean Jackson.
+
+        New tests for the MuteSupport class and adding the new resource to other MediaController tests.
+
+        * media/modern-media-controls/media-controller/media-controller-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/mute-support/mute-support-button-click-expected.txt: Added.
+        * media/modern-media-controls/mute-support/mute-support-button-click.html: Added.
+        * media/modern-media-controls/mute-support/mute-support-media-api-expected.txt: Added.
+        * media/modern-media-controls/mute-support/mute-support-media-api.html: Added.
+        * media/modern-media-controls/mute-support/mute-support-muted-expected.txt: Added.
+        * media/modern-media-controls/mute-support/mute-support-muted.html: Added.
+        * media/modern-media-controls/start-support/start-support-audio.html:
+        * media/modern-media-controls/start-support/start-support-autoplay.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/start-support/start-support-error.html:
+        * media/modern-media-controls/start-support/start-support-fullscreen.html:
+        * media/modern-media-controls/start-support/start-support-manual-play.html:
+        * media/modern-media-controls/start-support/start-support-no-source.html:
+
 2016-10-19  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r206025): All YouTube videos play with black bars on all four sides

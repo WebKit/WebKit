@@ -23,52 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class MuteSupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new StartSupport(this);
-        new MuteSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.muteButton;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        return ["volumechange"];
     }
 
-    handleEvent(event)
+    buttonWasClicked(control)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        const media = this.mediaController.media;
+        media.muted = !media.muted;
     }
 
-    // Private
-
-    _updateControlsSize()
+    syncControl()
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        this.control.muted = this.mediaController.media.muted;
     }
 
 }

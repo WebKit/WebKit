@@ -260,7 +260,9 @@ String RenderThemeMac::mediaControlsScript()
             NSArray *controlsPaths = @[@"scheduler", @"layout-node", @"layout-item", @"icon-service", @"time-control", @"time-label", @"slider", @"volume-slider", @"scrubber", @"button", @"start-button", @"icon-button", @"play-pause-button", @"skip-back-button", @"mute-button", @"airplay-button", @"pip-button", @"tracks-button", @"fullscreen-button", @"aspect-ratio-button", @"rewind-button", @"forward-button", @"media-controls", @"macos-media-controls", @"macos-inline-media-controls", @"buttons-container", @"placard", @"airplay-placard", @"pip-placard"];
             for (NSString *path in controlsPaths)
                 scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:path ofType:@"js" inDirectory:@"modern-media-controls/controls"] encoding:NSUTF8StringEncoding error:nil]);
-            scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"media-controller" ofType:@"js" inDirectory:@"modern-media-controls/media"] encoding:NSUTF8StringEncoding error:nil]);
+            NSArray *mediaPaths = @[@"media-controller-support", @"mute-support", @"start-support", @"media-controller"];
+            for (NSString *path in mediaPaths)
+                scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:path ofType:@"js" inDirectory:@"modern-media-controls/media"] encoding:NSUTF8StringEncoding error:nil]);
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"main" ofType:@"js" inDirectory:@"modern-media-controls"] encoding:NSUTF8StringEncoding error:nil]);
         } else {
             scriptBuilder.append([NSString stringWithContentsOfFile:[bundle pathForResource:@"mediaControlsLocalizedStrings" ofType:@"js"] encoding:NSUTF8StringEncoding error:nil]);
