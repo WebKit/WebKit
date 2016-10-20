@@ -91,7 +91,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         request.setHTTPReferrer(referrer);
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    startPingLoad(frame, request);
+    startPingLoad(frame, request, ShouldFollowRedirects::Yes);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
@@ -128,7 +128,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         }
     }
 
-    startPingLoad(frame, request);
+    startPingLoad(frame, request, ShouldFollowRedirects::Yes);
 }
 
 void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<FormData>&& report, ViolationReportType reportType)
@@ -170,10 +170,10 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, RefPtr<
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    startPingLoad(frame, request);
+    startPingLoad(frame, request, ShouldFollowRedirects::No);
 }
 
-void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request)
+void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, ShouldFollowRedirects shouldFollowRedirects)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
@@ -185,7 +185,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request)
 
     InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
-    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, shouldUseCredentialStorage);
+    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, shouldUseCredentialStorage, shouldFollowRedirects == ShouldFollowRedirects::Yes);
 }
 
 }
