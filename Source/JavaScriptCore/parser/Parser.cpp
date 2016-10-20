@@ -4247,6 +4247,11 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
         return context.createThisExpr(location);
     }
     case AWAIT:
+#if ENABLE(ES2017_ASYNCFUNCTION_SYNTAX)
+        if (m_parserState.functionParsePhase == FunctionParsePhase::Parameters)
+            failIfFalse(m_parserState.allowAwait, "Cannot use await expression within parameters");
+        FALLTHROUGH;
+#endif
     case IDENT: {
     identifierExpression:
         JSTextPosition start = tokenStartPosition();

@@ -1,3 +1,13 @@
+2016-10-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] disallow references to `await` in AsyncFunction formal parameters
+        https://bugs.webkit.org/show_bug.cgi?id=163694
+
+        Reviewed by Saam Barati.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+
 2016-10-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero to out of line type info flags

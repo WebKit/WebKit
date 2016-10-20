@@ -278,3 +278,80 @@ function testSyntaxError(script, message) {
 
     testSyntaxError(`"use strict"; var O = { async method(dupe, dupe) {} }`);
 })();
+
+(function testAwaitInFormalParameters() {
+    var testData = [
+        `async function f(await) {}`,
+        `async function f(...await) {}`,
+        `async function f(await = 1) {}`,
+        `async function f([await]) {}`,
+        `async function f([await = 1]) {}`,
+        `async function f({ await }) {}`,
+        `async function f({ await = 1 }) {}`,
+        `async function f({ } = await) {}`,
+
+        `(async function(await) {})`,
+        `(async function(...await) {})`,
+        `(async function(await = 1) {})`,
+        `(async function([await]) {})`,
+        `(async function([await = 1]) {})`,
+        `(async function({ await }) {})`,
+        `(async function({ await = 1 }) {})`,
+        `(async function({ } = await) {})`,
+
+        `var asyncArrow = async(await) => 1;`,
+        `var asyncArrow = async(await) => {};`,
+        `var asyncArrow = async(...await) => 1;`,
+        `var asyncArrow = async(...await) => {};`,
+        `var asyncArrow = async(await = 1) => 1;`,
+        `var asyncArrow = async(await = 1) => {};`,
+        `var asyncArrow = async([await]) => 1;`,
+        `var asyncArrow = async([await]) => {};`,
+        `var asyncArrow = async([await = 1]) => 1;`,
+        `var asyncArrow = async([await = 1]) => {};`,
+        `var asyncArrow = async([] = await) => 1;`,
+        `var asyncArrow = async([] = await) => {};`,
+        `var asyncArrow = async({ await }) => 1;`,
+        `var asyncArrow = async({ await } ) => {};`,
+        `var asyncArrow = async({ await = 1}) => 1;`,
+        `var asyncArrow = async({ await = 1}) => {};`,
+        `var asyncArrow = async({ } = await) => 1;`,
+        `var asyncArrow = async({ } = await) => {};`,
+
+        `({ async method(await) {} })`,
+        `({ async method(...await) {} })`,
+        `({ async method(await = 1) {} })`,
+        `({ async method([await]) {} })`,
+        `({ async method([await = 1]) {} })`,
+        `({ async method({ await }) {} })`,
+        `({ async method({ await = 1 }) {} })`,
+        `({ async method({ } = await) {} })`,
+
+        `(class { async method(await) {} })`,
+        `(class { async method(...await) {} })`,
+        `(class { async method(await = 1) {} })`,
+        `(class { async method([await]) {} })`,
+        `(class { async method([await = 1]) {} })`,
+        `(class { async method({ await }) {} })`,
+        `(class { async method({ await = 1 }) {} })`,
+        `(class { async method({ } = await) {} })`,
+
+        `(class { static async method(await) {} })`,
+        `(class { static async method(...await) {} })`,
+        `(class { static async method(await = 1) {} })`,
+        `(class { static async method([await]) {} })`,
+        `(class { static async method([await = 1]) {} })`,
+        `(class { static async method({ await }) {} })`,
+        `(class { static async method({ await = 1 }) {} })`,
+        `(class { static async method({ } = await) {} })`,
+    ];
+
+    for (let script of testData) {
+        testSyntaxError(script);
+        testSyntaxError(`"use strict"; ${script}`);
+
+        var nested = `var await; var f = (async function() { ${script} });`;
+        testSyntaxError(nested);
+        testSyntaxError(`"use strict"; ${nested}`);
+    }
+})();
