@@ -1,3 +1,19 @@
+2016-10-20  Adam Jackson  <ajax@redhat.com>
+
+        Prefer eglGetPlatformDisplay to eglGetDisplay
+        https://bugs.webkit.org/show_bug.cgi?id=163333
+
+        Reviewed by Carlos Garcia Campos.
+
+        eglGetDisplay forces the implementation to guess what kind of void* it's been handed. Different implementations
+        do different things, in particular glvnd and Mesa behave differently. Fortunately there exists API to tell EGL
+        what kind of display it is, so let's use it.
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::initialize):
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::initializeEGLDisplay):
+
 2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Avoid including egl.h headers in internal headers
