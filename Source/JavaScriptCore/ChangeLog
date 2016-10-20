@@ -1,3 +1,20 @@
+2016-10-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero to out of line type info flags
+        https://bugs.webkit.org/show_bug.cgi?id=163716
+
+        Reviewed by Saam Barati.
+
+        We found that all the accesses to the InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero flag is
+        done through the Structure. There is no user that accesses this flag in the cell inlined member. And JIT
+        code does not access it directly. That means that we can move this flag from inlined flags to out of line
+        flags. This patch moves it to the out of line flags. And make one bit empty in inlined flags. Later this
+        new empty flag will be used by megamorphic DOMJIT implementation.
+
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable):
+        (JSC::TypeInfo::interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero):
+
 2016-10-20  Keith Miller  <keith_miller@apple.com>
 
         Invalid assertion in arguments elimination
