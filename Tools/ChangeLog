@@ -1,3 +1,17 @@
+2016-10-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Bump glib to 2.50.1
+        https://bugs.webkit.org/show_bug.cgi?id=163689
+
+        Reviewed by Michael Catanzaro.
+
+        This is need in order to fix GTK+ build with CUPS 2.* (bug #163591).
+
+        * gtk/jhbuild.modules: Bump glib version. Pass --disable-libmount to build properly.
+        Also we don't need the patches anymore.
+        * gtk/patches/gdate-suppress-string-format-literal-warning.patch: Removed.
+        * gtk/patches/glib-warning-fix.patch: Removed.
+
 2016-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable URLParser for non-Safari Cocoa apps after r207321
