@@ -38,6 +38,8 @@ public:
 
     typedef HashMap<String, String> KeyValueMap;
 
+    WEBCORE_EXPORT static String youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString);
+
 private:
     YouTubePluginReplacement(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);
     static Ref<PluginReplacement> create(HTMLPlugInElement&, const Vector<String>& paramNames, const Vector<String>& paramValues);

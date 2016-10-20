@@ -283,7 +283,11 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
 String YouTubePluginReplacement::youTubeURL(const String& srcString)
 {
     URL srcURL = m_parentElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(srcString));
+    return youTubeURLFromAbsoluteURL(srcURL, srcString);
+}
 
+String YouTubePluginReplacement::youTubeURLFromAbsoluteURL(const URL& srcURL, const String& srcString)
+{
     bool isYouTubeShortenedURL = false;
     URL youTubeURL = processAndCreateYouTubeURL(srcURL, isYouTubeShortenedURL);
     if (srcURL.isEmpty() || youTubeURL.isEmpty())
