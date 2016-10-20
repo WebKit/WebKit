@@ -1175,7 +1175,7 @@ void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Di
         || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLVideoElement, target, level, GraphicsContext3D::NONE, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
         return;
     
-    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
+    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode());
     if (!image)
         return;
     texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);

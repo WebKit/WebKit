@@ -472,23 +472,23 @@ typedef unrestricted float GLclampf;
     readonly attribute GLsizei drawingBufferWidth;
     readonly attribute GLsizei drawingBufferHeight;
 
-    [MayThrowLegacyException] void activeTexture(GLenum texture);
-    [MayThrowLegacyException] void attachShader(WebGLProgram? program, WebGLShader? shader);
-    [MayThrowLegacyException] void bindAttribLocation(WebGLProgram? program, GLuint index, DOMString name);
-    [MayThrowLegacyException] void bindBuffer(GLenum target, WebGLBuffer? buffer);
-    [MayThrowLegacyException] void bindFramebuffer(GLenum target, WebGLFramebuffer? framebuffer);
-    [MayThrowLegacyException] void bindRenderbuffer(GLenum target, WebGLRenderbuffer? renderbuffer);
-    [MayThrowLegacyException] void bindTexture(GLenum target, WebGLTexture? texture);
+    void activeTexture(GLenum texture);
+    void attachShader(WebGLProgram? program, WebGLShader? shader);
+    void bindAttribLocation(WebGLProgram? program, GLuint index, DOMString name);
+    void bindBuffer(GLenum target, WebGLBuffer? buffer);
+    void bindFramebuffer(GLenum target, WebGLFramebuffer? framebuffer);
+    void bindRenderbuffer(GLenum target, WebGLRenderbuffer? renderbuffer);
+    void bindTexture(GLenum target, WebGLTexture? texture);
     void blendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
     void blendEquation(GLenum mode);
     void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
     void blendFunc(GLenum sfactor, GLenum dfactor);
     void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
-    [MayThrowLegacyException] void bufferData(GLenum target, ArrayBuffer? data, GLenum usage);
-    [MayThrowLegacyException] void bufferData(GLenum target, ArrayBufferView? data, GLenum usage);
-    [MayThrowLegacyException] void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    [MayThrowLegacyException] void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer? data);
-    [MayThrowLegacyException] void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView? data);
+    void bufferData(GLenum target, ArrayBuffer? data, GLenum usage);
+    void bufferData(GLenum target, ArrayBufferView? data, GLenum usage);
+    void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
+    void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer? data);
+    void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView? data);
 
     GLenum checkFramebufferStatus(GLenum target);
     void clear(GLbitfield mask);
@@ -496,12 +496,12 @@ typedef unrestricted float GLclampf;
     void clearDepth(GLclampf depth);
     void clearStencil(GLint s);
     void colorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-    [MayThrowLegacyException] void compileShader(WebGLShader? shader);
+    void compileShader(WebGLShader? shader);
 
     void compressedTexImage2D(GLenum target, GLint level, GLenum internalformat,
     GLsizei width, GLsizei height, GLint border, ArrayBufferView data);
     void compressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
-   GLsizei width, GLsizei height, GLenum format, ArrayBufferView data);
+        GLsizei width, GLsizei height, GLenum format, ArrayBufferView data);
     
     void copyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
     void copyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
@@ -510,7 +510,7 @@ typedef unrestricted float GLclampf;
     WebGLFramebuffer createFramebuffer();
     WebGLProgram createProgram();
     WebGLRenderbuffer createRenderbuffer();
-    [MayThrowLegacyException] WebGLShader createShader(GLenum type);
+    WebGLShader createShader(GLenum type);
     WebGLTexture createTexture();
 
     void cullFace(GLenum mode);
@@ -525,23 +525,23 @@ typedef unrestricted float GLclampf;
     void depthFunc(GLenum func);
     void depthMask(GLboolean flag);
     void depthRange(GLclampf zNear, GLclampf zFar);
-    [MayThrowLegacyException] void detachShader(WebGLProgram? program, WebGLShader? shader);
+    void detachShader(WebGLProgram? program, WebGLShader? shader);
     void disable(GLenum cap);
-    [MayThrowLegacyException] void disableVertexAttribArray(GLuint index);
-    [MayThrowLegacyException] void drawArrays(GLenum mode, GLint first, GLsizei count);
-    [MayThrowLegacyException] void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
+    void disableVertexAttribArray(GLuint index);
+    void drawArrays(GLenum mode, GLint first, GLsizei count);
+    void drawElements(GLenum mode, GLsizei count, GLenum type, GLintptr offset);
 
     void enable(GLenum cap);
-    [MayThrowLegacyException] void enableVertexAttribArray(GLuint index);
+    void enableVertexAttribArray(GLuint index);
     void finish();
     void flush();
-    [MayThrowLegacyException] void framebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, WebGLRenderbuffer? renderbuffer);
-    [MayThrowLegacyException] void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, WebGLTexture? texture, GLint level);
+    void framebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, WebGLRenderbuffer? renderbuffer);
+    void framebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, WebGLTexture? texture, GLint level);
     void frontFace(GLenum mode);
     void generateMipmap(GLenum target);
     
-    [MayThrowLegacyException] WebGLActiveInfo getActiveAttrib(WebGLProgram? program, GLuint index);
-    [MayThrowLegacyException] WebGLActiveInfo getActiveUniform(WebGLProgram? program, GLuint index);
+    WebGLActiveInfo getActiveAttrib(WebGLProgram? program, GLuint index);
+    WebGLActiveInfo getActiveUniform(WebGLProgram? program, GLuint index);
 
     [Custom, MayThrowLegacyException] void getAttachedShaders(WebGLProgram? program);
 
@@ -559,15 +559,15 @@ typedef unrestricted float GLclampf;
     [Custom, MayThrowLegacyException] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
     [Custom, MayThrowLegacyException] any getParameter(GLenum pname);
     [Custom, MayThrowLegacyException] any getProgramParameter(WebGLProgram? program, GLenum pname);
-    [MayThrowLegacyException] DOMString? getProgramInfoLog(WebGLProgram? program);
+    DOMString? getProgramInfoLog(WebGLProgram? program);
     [Custom, MayThrowLegacyException] any getRenderbufferParameter(GLenum target, GLenum pname);
     [Custom, MayThrowLegacyException] any getShaderParameter(WebGLShader? shader, GLenum pname);
 
-    [MayThrowLegacyException] DOMString? getShaderInfoLog(WebGLShader? shader);
+    DOMString? getShaderInfoLog(WebGLShader? shader);
 
-    [MayThrowLegacyException] WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
+    WebGLShaderPrecisionFormat getShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype);
 
-    [MayThrowLegacyException] DOMString? getShaderSource(WebGLShader? shader);
+    DOMString? getShaderSource(WebGLShader? shader);
 
     [Custom] sequence<DOMString> getSupportedExtensions();
 
@@ -575,7 +575,7 @@ typedef unrestricted float GLclampf;
 
     [Custom, MayThrowLegacyException] any getUniform(WebGLProgram? program, WebGLUniformLocation? location);
 
-    [MayThrowLegacyException] WebGLUniformLocation getUniformLocation(WebGLProgram? program, DOMString name);
+    WebGLUniformLocation getUniformLocation(WebGLProgram? program, DOMString name);
 
     [Custom, MayThrowLegacyException] any getVertexAttrib(GLuint index, GLenum pname);
 
@@ -591,17 +591,17 @@ typedef unrestricted float GLclampf;
     GLboolean isShader(WebGLShader? shader);
     GLboolean isTexture(WebGLTexture? texture);
     void lineWidth(GLfloat width);
-    [MayThrowLegacyException] void linkProgram(WebGLProgram? program);
+    void linkProgram(WebGLProgram? program);
     void pixelStorei(GLenum pname, GLint param);
     void polygonOffset(GLfloat factor, GLfloat units);
 
-    [MayThrowLegacyException] void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView pixels);
+    void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView pixels);
     
     void releaseShaderCompiler();
     void renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height);
     void sampleCoverage(GLclampf value, GLboolean invert);
     void scissor(GLint x, GLint y, GLsizei width, GLsizei height);
-    [MayThrowLegacyException] void shaderSource(WebGLShader? shader, DOMString string);
+    void shaderSource(WebGLShader? shader, DOMString string);
     void stencilFunc(GLenum func, GLint ref, GLuint mask);
     void stencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask);
     void stencilMask(GLuint mask);
@@ -640,29 +640,29 @@ typedef unrestricted float GLclampf;
  GLenum format, GLenum type, HTMLVideoElement? video);
 #endif
 
-    [MayThrowLegacyException] void uniform1f(WebGLUniformLocation? location, GLfloat x);
+    void uniform1f(WebGLUniformLocation? location, GLfloat x);
     [Custom, MayThrowLegacyException] void uniform1fv(WebGLUniformLocation? location, Float32Array v);
-    [MayThrowLegacyException] void uniform1i(WebGLUniformLocation? location, GLint x);
+    void uniform1i(WebGLUniformLocation? location, GLint x);
     [Custom, MayThrowLegacyException] void uniform1iv(WebGLUniformLocation? location, Int32Array v);
-    [MayThrowLegacyException] void uniform2f(WebGLUniformLocation? location, GLfloat x, GLfloat y);
+    void uniform2f(WebGLUniformLocation? location, GLfloat x, GLfloat y);
     [Custom, MayThrowLegacyException] void uniform2fv(WebGLUniformLocation? location, Float32Array v);
-    [MayThrowLegacyException] void uniform2i(WebGLUniformLocation? location, GLint x, GLint y);
+    void uniform2i(WebGLUniformLocation? location, GLint x, GLint y);
     [Custom, MayThrowLegacyException] void uniform2iv(WebGLUniformLocation? location, Int32Array v);
-    [MayThrowLegacyException] void uniform3f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z);
+    void uniform3f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z);
     [Custom, MayThrowLegacyException] void uniform3fv(WebGLUniformLocation? location, Float32Array v);
-    [MayThrowLegacyException] void uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
+    void uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
     [Custom, MayThrowLegacyException] void uniform3iv(WebGLUniformLocation? location, Int32Array v);
-    [MayThrowLegacyException] void uniform4f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+    void uniform4f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
     [Custom, MayThrowLegacyException] void uniform4fv(WebGLUniformLocation? location, Float32Array v);
-    [MayThrowLegacyException] void uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
+    void uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
     [Custom, MayThrowLegacyException] void uniform4iv(WebGLUniformLocation? location, Int32Array v);
 
     [Custom, MayThrowLegacyException] void uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
     [Custom, MayThrowLegacyException] void uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
     [Custom, MayThrowLegacyException] void uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
 
-    [MayThrowLegacyException] void useProgram(WebGLProgram? program);
-    [MayThrowLegacyException] void validateProgram(WebGLProgram? program);
+    void useProgram(WebGLProgram? program);
+    void validateProgram(WebGLProgram? program);
 
     void vertexAttrib1f(GLuint indx, GLfloat x);
     [Custom] void vertexAttrib1fv(GLuint indx, Float32Array values);
@@ -672,7 +672,7 @@ typedef unrestricted float GLclampf;
     [Custom] void vertexAttrib3fv(GLuint indx, Float32Array values);
     void vertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
     [Custom] void vertexAttrib4fv(GLuint indx, Float32Array values);
-    [MayThrowLegacyException] void vertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLintptr offset);
+    void vertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLintptr offset);
 
     void viewport(GLint x, GLint y, GLsizei width, GLsizei height);
 };

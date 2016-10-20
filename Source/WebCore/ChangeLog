@@ -1,3 +1,93 @@
+2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Many WebGL functions which don't throw are marked as possibly throwing
+        https://bugs.webkit.org/show_bug.cgi?id=163747
+
+        Reviewed by Dean Jackson.
+
+        Mechanically remove the exception code.
+
+        No new tests because there is no behavior change.
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::getObjectParameter):
+        (WebCore::JSWebGLRenderingContextBase::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContextBase::getProgramParameter):
+        (WebCore::JSWebGLRenderingContextBase::getShaderParameter):
+        (WebCore::JSWebGLRenderingContextBase::getUniform):
+        (WebCore::dataFunctionf):
+        (WebCore::dataFunctioni):
+        (WebCore::dataFunctionMatrix):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::activeTexture):
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::bindAttribLocation):
+        (WebCore::WebGLRenderingContextBase::bindBuffer):
+        (WebCore::WebGLRenderingContextBase::bindFramebuffer):
+        (WebCore::WebGLRenderingContextBase::bindRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::bindTexture):
+        (WebCore::WebGLRenderingContextBase::bufferData):
+        (WebCore::WebGLRenderingContextBase::bufferSubData):
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        (WebCore::WebGLRenderingContextBase::createShader):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        (WebCore::WebGLRenderingContextBase::disableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::drawArrays):
+        (WebCore::WebGLRenderingContextBase::drawElements):
+        (WebCore::WebGLRenderingContextBase::enableVertexAttribArray):
+        (WebCore::WebGLRenderingContextBase::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+        (WebCore::WebGLRenderingContextBase::getActiveAttrib):
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        (WebCore::WebGLRenderingContextBase::getAttachedShaders):
+        (WebCore::WebGLRenderingContextBase::getBufferParameter):
+        (WebCore::WebGLRenderingContextBase::getProgramParameter):
+        (WebCore::WebGLRenderingContextBase::getProgramInfoLog):
+        (WebCore::WebGLRenderingContextBase::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContextBase::getShaderParameter):
+        (WebCore::WebGLRenderingContextBase::getShaderInfoLog):
+        (WebCore::WebGLRenderingContextBase::getShaderPrecisionFormat):
+        (WebCore::WebGLRenderingContextBase::getShaderSource):
+        (WebCore::WebGLRenderingContextBase::getTexParameter):
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::getVertexAttrib):
+        (WebCore::WebGLRenderingContextBase::linkProgram):
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        (WebCore::WebGLRenderingContextBase::shaderSource):
+        (WebCore::WebGLRenderingContextBase::videoFrameToImage):
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        (WebCore::WebGLRenderingContextBase::uniform1f):
+        (WebCore::WebGLRenderingContextBase::uniform1fv):
+        (WebCore::WebGLRenderingContextBase::uniform1i):
+        (WebCore::WebGLRenderingContextBase::uniform1iv):
+        (WebCore::WebGLRenderingContextBase::uniform2f):
+        (WebCore::WebGLRenderingContextBase::uniform2fv):
+        (WebCore::WebGLRenderingContextBase::uniform2i):
+        (WebCore::WebGLRenderingContextBase::uniform2iv):
+        (WebCore::WebGLRenderingContextBase::uniform3f):
+        (WebCore::WebGLRenderingContextBase::uniform3fv):
+        (WebCore::WebGLRenderingContextBase::uniform3i):
+        (WebCore::WebGLRenderingContextBase::uniform3iv):
+        (WebCore::WebGLRenderingContextBase::uniform4f):
+        (WebCore::WebGLRenderingContextBase::uniform4fv):
+        (WebCore::WebGLRenderingContextBase::uniform4i):
+        (WebCore::WebGLRenderingContextBase::uniform4iv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix2fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix3fv):
+        (WebCore::WebGLRenderingContextBase::uniformMatrix4fv):
+        (WebCore::WebGLRenderingContextBase::useProgram):
+        (WebCore::WebGLRenderingContextBase::validateProgram):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+        (WebCore::WebGLRenderingContextBase::restoreCurrentFramebuffer):
+        (WebCore::WebGLRenderingContextBase::restoreCurrentTexture2D):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9
