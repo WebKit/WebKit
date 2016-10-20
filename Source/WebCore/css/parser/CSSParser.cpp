@@ -500,7 +500,7 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
 #endif
-    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyShapeMargin:
         acceptsNegativeNumbers = false;
         return true;
     case CSSPropertyBottom:
@@ -2995,13 +2995,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyWebkitClipPath:
         parsedValue = parseClipPath();
         break;
-    case CSSPropertyWebkitShapeOutside:
+    case CSSPropertyShapeOutside:
         parsedValue = parseShapeProperty(propId);
         break;
-    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyShapeMargin:
         validPrimitive = !id && validateUnit(valueWithCalculation, FLength | FPercent | FNonNeg);
         break;
-    case CSSPropertyWebkitShapeImageThreshold:
+    case CSSPropertyShapeImageThreshold:
         validPrimitive = !id && validateUnit(valueWithCalculation, FNumber);
         break;
 #if ENABLE(CSS_IMAGE_ORIENTATION)

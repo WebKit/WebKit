@@ -3176,9 +3176,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyGridColumnGap:
     case CSSPropertyGridRowGap:
         return consumeLength(m_range, m_context.mode, ValueRangeNonNegative);
-    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyShapeMargin:
         return consumeLengthOrPercent(m_range, m_context.mode, ValueRangeNonNegative);
-    case CSSPropertyWebkitShapeImageThreshold:
+    case CSSPropertyShapeImageThreshold:
         return consumeNumber(m_range, ValueRangeAll);
     case CSSPropertyWebkitBoxOrdinalGroup:
     case CSSPropertyOrphans:
@@ -3335,7 +3335,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeIdent<CSSValueAuto, CSSValueUnder>(m_range);
     case CSSPropertyVerticalAlign:
         return consumeVerticalAlign(m_range, m_context.mode);
-    case CSSPropertyWebkitShapeOutside:
+    case CSSPropertyShapeOutside:
         return consumeShapeOutside(m_range, m_context);
     case CSSPropertyWebkitClipPath:
         return consumeWebkitClipPath(m_range, m_context);

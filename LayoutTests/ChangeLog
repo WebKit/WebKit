@@ -1,3 +1,15 @@
+2016-10-19  Dean Jackson  <dino@apple.com>
+
+        Support CSS Shapes Level 1 without a prefix
+        https://bugs.webkit.org/show_bug.cgi?id=163709
+        <rdar://problem/28859369>
+
+        Reviewed by Myles Maxfield.
+
+        Unskip all but a couple of tests.
+
+        * TestExpectations:
+
 2016-10-20  Jer Noble  <jer.noble@apple.com>
 
         CRASH in WebCore::MediaSource::seekToTime + 185

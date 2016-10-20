@@ -27,8 +27,6 @@ media/mac [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 
-imported/w3c/csswg-test/css-shapes-1 [ Skip ]
-
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
@@ -988,3 +986,8 @@ webkit.org/b/162414 imported/w3c/web-platform-tests/resource-timing/idlharness.h
 # Only iOS has implemented lettepress.
 fast/text/letterpress-different.html [ ImageOnlyFailure ]
 
+# CSS Shapes tests
+webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-010.html [ Skip ]
+webkit.org/b/163706 imported/w3c/csswg-test/css-shapes-1/shape-outside/shape-image/shape-image-024.html [ Skip ]
+imported/blink/http/tests/security/shape-image-cors-disallow-origin.html [ ImageOnlyFailure ]
+imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]

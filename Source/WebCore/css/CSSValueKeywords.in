@@ -1077,7 +1077,7 @@ pixelated
 -webkit-crisp-edges
 -webkit-optimize-contrast
 
-// -webkit-shape-outside
+// shape-outside
 nonzero
 evenodd
 at

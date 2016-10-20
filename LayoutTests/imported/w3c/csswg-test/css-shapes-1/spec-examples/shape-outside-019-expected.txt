@@ -1,0 +1,6 @@
+The test passes if the short green horizontal bars are the right of the black edge of circle, the long green bar is beneath it, and no bars intersect the black. There should be no red.
+
+XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXXXXXXXXXXX
+
+PASS CSS Test: Shape from image - alpha channel, opacity > 0 + shape-margin 
+

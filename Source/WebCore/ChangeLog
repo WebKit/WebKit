@@ -1,3 +1,38 @@
+2016-10-19  Dean Jackson  <dino@apple.com>
+
+        Support CSS Shapes Level 1 without a prefix
+        https://bugs.webkit.org/show_bug.cgi?id=163709
+        <rdar://problem/28859369>
+
+        Reviewed by Myles Maxfield.
+
+        Support the unprefixed form of CSS Shapes, now that
+        it is in CR.
+
+        We have a few failing tests:
+
+        - Some image-based shaping failures, now skipped.
+          https://bugs.webkit.org/show_bug.cgi?id=163706
+
+        - Some false negatives, where my understanding
+          of the CSS OM seems to suggest that the W3C tests
+          are incorrect.
+          https://bugs.webkit.org/show_bug.cgi?id=163708
+
+        Tests: imported/w3c/csswg-test/css-shapes-1
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2016-10-20  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix region, column and page break parsing

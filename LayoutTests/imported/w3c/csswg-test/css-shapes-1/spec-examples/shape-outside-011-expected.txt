@@ -1,0 +1,6 @@
+The test passes if the green horizontal bars are to the right of the circle, and no bars intersect the circle's shadow. There should be no red.
+
+XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX XXXXXX
+
+PASS CSS Test: Shape from image - url(), alpha channel, opacity > 0 
+

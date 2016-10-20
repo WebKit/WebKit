@@ -1,3 +1,15 @@
+2016-10-19  Dean Jackson  <dino@apple.com>
+
+        Support CSS Shapes Level 1 without a prefix
+        https://bugs.webkit.org/show_bug.cgi?id=163709
+        <rdar://problem/28859369>
+
+        Reviewed by Myles Maxfield.
+
+        Replace -webkit-shape-outside with shape-outside.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2016-10-19  Aaron Chu  <aaron_chu@apple.com>
 
         Web Inspector: AXI: expose computed tree node and heading level

@@ -382,7 +382,7 @@ static const CSSPropertyID computedProperties[] = {
 #if PLATFORM(IOS)
     CSSPropertyWebkitTouchCallout,
 #endif
-    CSSPropertyWebkitShapeOutside,
+    CSSPropertyShapeOutside,
 #if ENABLE(TOUCH_EVENTS)
     CSSPropertyWebkitTapHighlightColor,
 #endif
@@ -413,8 +413,8 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
     CSSPropertyWebkitRegionFragment,
 #endif
-    CSSPropertyWebkitShapeMargin,
-    CSSPropertyWebkitShapeImageThreshold,
+    CSSPropertyShapeMargin,
+    CSSPropertyShapeImageThreshold,
     CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
@@ -3687,11 +3687,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyWebkitRegionFragment:
             return cssValuePool.createValue(style->regionFragment());
 #endif
-        case CSSPropertyWebkitShapeMargin:
+        case CSSPropertyShapeMargin:
             return cssValuePool.createValue(style->shapeMargin(), *style);
-        case CSSPropertyWebkitShapeImageThreshold:
+        case CSSPropertyShapeImageThreshold:
             return cssValuePool.createValue(style->shapeImageThreshold(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyWebkitShapeOutside:
+        case CSSPropertyShapeOutside:
             return shapePropertyValue(*style, style->shapeOutside());
         case CSSPropertyFilter:
             return valueForFilter(*style, style->filter());
