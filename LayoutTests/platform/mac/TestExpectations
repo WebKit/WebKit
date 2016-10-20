@@ -1465,7 +1465,10 @@ webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pa
 
 # rdar://problem/28586837
 fast/text/variations/order.html [ Crash ]
-animations/font-variation-settings-order.html [ Crash ]
+animations/font-variations/font-variation-settings-order.html [ Crash ]
+# Variation fonts are not implemented earlier than Sierra.
+[ ElCapitan Yosemite ] fast/text/variations [ Pass Failure ImageOnlyFailure ]
+[ ElCapitan Yosemite ] animations/font-variations [ Pass Failure ImageOnlyFailure ]
 
 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Skip ]
 

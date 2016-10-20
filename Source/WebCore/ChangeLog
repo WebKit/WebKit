@@ -1,3 +1,17 @@
+2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9
+        https://bugs.webkit.org/show_bug.cgi?id=163374
+
+        Reviewed by Darin Adler.
+
+        Because of platform lack of support for variations in in-memory fonts,
+        this feature should be disabled on the affected OSes.
+
+        No tests because there is no behavior change (on the relevant platforms).
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2016-10-20  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBObjectStore name assignment.

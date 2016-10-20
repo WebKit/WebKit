@@ -2713,3 +2713,10 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html 
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
 
 webkit.org/b/163755 imported/w3c/csswg-test/css-shapes-1 [ Skip ]
+
+# These font variation tests require a variation font which supports more than 2 axes.
+animations/font-variations/font-variation-settings-order.html [ Pass ImageOnlyFailure Failure ]
+animations/font-variations/font-variation-settings-unlike.html [ Pass ImageOnlyFailure Failure ]
+
+webkit.org/b/163632 animations/font-variations/font-variation-settings.html [ Skip ]
+webkit.org/b/163632 fast/text/variations/getComputedStyle.html [ Skip ]

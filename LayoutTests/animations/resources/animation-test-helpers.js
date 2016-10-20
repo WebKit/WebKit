@@ -260,6 +260,8 @@ function compareCSSImages(computedValue, expectedValue, tolerance)
 
 function compareFontVariationSettings(computedValue, expectedValue, tolerance)
 {
+    if (!computedValue)
+        return false;
     if (computedValue == "normal" || expectedValue == "normal")
         return computedValue == expectedValue;
     var computed = computedValue.split(", ");
