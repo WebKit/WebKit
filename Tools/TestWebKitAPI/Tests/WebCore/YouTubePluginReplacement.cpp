@@ -61,10 +61,23 @@ TEST_F(YouTubePluginReplacementTest, YouTubeURLFromAbsoluteURL)
     EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&showinfo=0"));
     EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ?start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1&showinfo=0"));
 
+    // With an invalid query (see & instead of ?), we preserve and fix the query.
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&showinfo=0"));
+    EXPECT_TRUE(test("http://www.youtube.com/v/dQw4w9WgXcQ&start=4&fs=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?start=4&fs=1&showinfo=0"));
+
     // Non-Flash URL is untouched.
     EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ", "https://www.youtube.com/embed/dQw4w9WgXcQ"));
-    // Even with an extra parameter.
+    EXPECT_TRUE(test("http://www.youtube.com/embed/dQw4w9WgXcQ", "http://www.youtube.com/embed/dQw4w9WgXcQ"));
+    EXPECT_TRUE(test("https://youtube.com/embed/dQw4w9WgXcQ", "https://youtube.com/embed/dQw4w9WgXcQ"));
+    EXPECT_TRUE(test("http://youtube.com/embed/dQw4w9WgXcQ", "http://youtube.com/embed/dQw4w9WgXcQ"));
+    // Even with extra parameters.
+    EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ?start=4", "https://www.youtube.com/embed/dQw4w9WgXcQ?start=4"));
     EXPECT_TRUE(test("http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1", "http://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"));
+    // Even with an invalid "query".
+    EXPECT_TRUE(test("https://www.youtube.com/embed/dQw4w9WgXcQ&start=4", "https://www.youtube.com/embed/dQw4w9WgXcQ&start=4"));
+
+    // Don't transform anything with a non "/v/" path component immediately following the domain.
+    EXPECT_TRUE(test("https://www.youtube.com/something/v/dQw4w9WgXcQ", "https://www.youtube.com/something/v/dQw4w9WgXcQ"));
 
     // Non-YouTube domain whose path looks like a Flash video shouldn't be transformed.
     EXPECT_TRUE(test("https://www.notyoutube.com/v/dQw4w9WgXcQ", "https://www.notyoutube.com/v/dQw4w9WgXcQ"));
