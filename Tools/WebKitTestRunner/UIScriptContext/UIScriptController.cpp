@@ -178,6 +178,11 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     return nullptr;
 }
 
+JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    return nullptr;
+}
+
 bool UIScriptController::forceIPadStyleZoomOnInputFocus() const
 {
     return false;

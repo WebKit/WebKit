@@ -63,5 +63,7 @@ interface UIScriptController {
     // Behavior
     attribute boolean forceIPadStyleZoomOnInputFocus;
 
+    readonly attribute object selectionRangeViewRects; // An array of objects with 'left', 'top', 'width', and 'height' properties.
+
     void uiScriptComplete(DOMString result);
 };

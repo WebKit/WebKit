@@ -1,3 +1,46 @@
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r206449. rdar://problem/28635085
+
+    2016-09-27  Dan Bernstein  <mitz@apple.com>
+
+            [iOS] REGRESSION (r182126): Selection highlight and handles aren’t visible with WKSelectionGranularityCharacter
+            https://bugs.webkit.org/show_bug.cgi?id=162577
+            <rdar://problem/28481984>
+
+            Reviewed by Simon Fraser.
+
+            * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+            (WTR::UIScriptController::selectionRangeViewRects): Returns null.
+
+            * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl: Declared new
+              selectionRangeViewRects attribute.
+
+            * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+            (WTR::UIScriptContext::jsContext): Added this public accessor.
+
+            * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+            (WTR::selectionRangeViewRects): Generic implementation that returns null.
+            * TestRunnerShared/UIScriptContext/UIScriptController.h:
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::updateTestOptionsFromTestHeader): Parse the new useCharacterSelectionGranularity
+              option.
+
+            * WebKitTestRunner/TestOptions.h: Added new useCharacterSelectionGranularity option.
+
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::platformCreateWebView): Set the configuration’s selectionGranularity
+              property based on the new option.
+
+            * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+            (WTR::PlatformWebView::viewSupportsOptions): Compare selection granularity option values.
+
+            * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+            (WTR::UIScriptController::selectionRangeViewRects): iOS-specific implementation that calls
+              the new -[WKWebView _uiTextSelectionRectViews] and returns an array of view frame
+              dictionaries.
+
 2016-10-20  Matthew Hanson  <matthew_hanson>
 
         Merge r207385. rdar://problem/28811872

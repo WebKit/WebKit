@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ useCharacterSelectionGranularity=true ] -->
+<meta name=viewport content="width=device-width">
+<style>
+    #target {
+        height: 100px;
+        width: 200px;
+        background-color: silver;
+    }
+</style>
+<div id="target">
+	<p style="font-family: ahem;">PressMe</p>
+    This test requires UIScriptController to run.
+</div>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function getUIScript()
+    {
+        return `
+        (function() {
+            uiController.longPressAtPoint(30, 20, function() {
+                uiController.uiScriptComplete(JSON.stringify(uiController.selectionRangeViewRects));
+            });
+        })();`
+    }
+
+    function runTest()
+    {
+        if (!testRunner.runUIScript)
+            return;
+
+        var target = document.getElementById('target');
+        if (testRunner.runUIScript) {
+            testRunner.runUIScript(getUIScript(), function(result) {
+                var selectionRangeViewRects = JSON.parse(result);
+                var output;
+                if (selectionRangeViewRects.length !== 1)
+                    output = 'FAIL: Unexpected number of selection range views: ' + result;
+                else {
+                    var rect = selectionRangeViewRects[0];
+                    if (rect.left != 8 || rect.top != 8 || rect.width != 112 || rect.height != 17 )
+                        output = 'FAIL: Unexpected selection range view frame: ' + result;
+                    else
+                        output = 'PASS';
+                }
+                document.getElementById('target').innerText = output;
+                testRunner.notifyDone();
+            });
+        }
+    }
+
+    runTest();
+</script>

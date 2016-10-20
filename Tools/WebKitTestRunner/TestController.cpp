@@ -949,6 +949,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.needsSiteSpecificQuirks = parseBooleanTestHeaderValue(value);
         if (key == "ignoresViewportScaleLimits")
             testOptions.ignoresViewportScaleLimits = parseBooleanTestHeaderValue(value);
+        if (key == "useCharacterSelectionGranularity")
+            testOptions.useCharacterSelectionGranularity = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

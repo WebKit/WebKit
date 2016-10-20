@@ -58,6 +58,10 @@ fast/harness/concurrent-ui-side-scripts.html [ Skip ]
 # This test only makes sense on Mac
 fast/attachment/attachment-subtitle-resize.html
 
+# Only iOS has selection UI drawn by UIKit
+editing/selection/character-granularity-rect.html [ Skip ]
+
+WKSelectionGranularityCharacter
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -264,6 +264,8 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 @property (nonatomic) BOOL forceIPadStyleZoomOnInputFocus WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+@property (nonatomic, readonly) NSArray<UIView *> *_uiTextSelectionRectViews WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #endif
 
 #if !TARGET_OS_IPHONE

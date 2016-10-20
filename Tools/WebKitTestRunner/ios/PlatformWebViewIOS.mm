@@ -243,7 +243,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 
 bool PlatformWebView::viewSupportsOptions(const TestOptions& options) const
 {
-    if (m_options.overrideLanguages != options.overrideLanguages || m_options.needsSiteSpecificQuirks != options.needsSiteSpecificQuirks)
+    if (m_options.overrideLanguages != options.overrideLanguages || m_options.needsSiteSpecificQuirks != options.needsSiteSpecificQuirks || m_options.useCharacterSelectionGranularity != options.useCharacterSelectionGranularity)
         return false;
 
     return true;

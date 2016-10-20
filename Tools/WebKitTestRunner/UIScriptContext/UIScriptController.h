@@ -84,6 +84,8 @@ public:
     bool forceIPadStyleZoomOnInputFocus() const;
     void setForceIPadStyleZoomOnInputFocus(bool);
 
+    JSObjectRef selectionRangeViewRects() const;
+
     void uiScriptComplete(JSStringRef result);
 
 private:

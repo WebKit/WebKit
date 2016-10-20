@@ -34,6 +34,7 @@
 #import "TestController.h"
 #import "TestRunnerWKWebView.h"
 #import "UIScriptContext.h"
+#import <JavaScriptCore/JavaScriptCore.h>
 #import <UIKit/UIKit.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -207,6 +208,24 @@ JSObjectRef UIScriptController::contentVisibleRect() const
     
     WKRect wkRect = WKRectMake(contentVisibleRect.origin.x, contentVisibleRect.origin.y, contentVisibleRect.size.width, contentVisibleRect.size.height);
     return m_context->objectFromRect(wkRect);
+}
+
+JSObjectRef UIScriptController::selectionRangeViewRects() const
+{
+    NSMutableArray *selectionRects = [[NSMutableArray alloc] init];
+    for (UIView *rectView in TestController::singleton().mainWebView()->platformView()._uiTextSelectionRectViews) {
+        if (rectView.hidden)
+            continue;
+
+        CGRect frame = rectView.frame;
+        [selectionRects addObject:@{
+            @"left": @(frame.origin.x),
+            @"top": @(frame.origin.y),
+            @"width": @(frame.size.width),
+            @"height": @(frame.size.height),
+        }];
+    }
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:selectionRects inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 bool UIScriptController::forceIPadStyleZoomOnInputFocus() const

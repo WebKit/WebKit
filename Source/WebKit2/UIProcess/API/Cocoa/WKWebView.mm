@@ -4517,6 +4517,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView setForceIPadStyleZoomOnInputFocus:forceIPadStyleZoom];
 }
 
+- (NSArray<UIView *> *)_uiTextSelectionRectViews
+{
+    return [_contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.m_rectViews"];
+}
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)

@@ -88,6 +88,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setDataDetectorTypes:WKDataDetectorTypeAll];
     if (options.ignoresViewportScaleLimits)
         [copiedConfiguration setIgnoresViewportScaleLimits:YES];
+    if (options.useCharacterSelectionGranularity)
+        [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
 #endif
 
     m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
