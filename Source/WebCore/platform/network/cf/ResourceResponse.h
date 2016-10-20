@@ -113,6 +113,10 @@ private:
 
     unsigned m_initLevel : 3;
 
+#if USE(QUICK_LOOK)
+    bool m_isQuickLook { false };
+#endif
+
 #if USE(CFNETWORK)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
 #endif
