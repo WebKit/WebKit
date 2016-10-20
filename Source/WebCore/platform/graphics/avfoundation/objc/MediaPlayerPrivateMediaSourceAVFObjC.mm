@@ -689,11 +689,22 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime&
     RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis, size] {
         if (!weakThis)
             return;
-        RetainPtr<id> observer = weakThis->m_sizeChangeObservers.takeFirst();
-        weakThis->m_naturalSize = size;
-        weakThis->m_player->sizeChanged();
+        weakThis->m_sizeChangeObservers.removeFirst();
+        weakThis->setNaturalSize(size);
     }];
     m_sizeChangeObservers.append(WTFMove(observer));
+
+    if (currentMediaTime() >= time)
+        setNaturalSize(size);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setNaturalSize(const FloatSize& size)
+{
+    if (size == m_naturalSize)
+        return;
+
+    m_naturalSize = size;
+    m_player->sizeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()

@@ -84,6 +84,7 @@ public:
 
     void effectiveRateChanged();
     void sizeWillChangeAtTime(const MediaTime&, const FloatSize&);
+    void setNaturalSize(const FloatSize&);
     void flushPendingSizeChanges();
     void characteristicsChanged();
 

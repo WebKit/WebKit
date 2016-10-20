@@ -1,3 +1,26 @@
+2016-10-19  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r206025): All YouTube videos play with black bars on all four sides
+        https://bugs.webkit.org/show_bug.cgi?id=163308
+
+        Reviewed by Darin Adler.
+
+        Test: media/media-source/media-source-resize.html
+
+        After r206025, we do not fire resize events when the size change notification happens equal-
+        to-or-before the current time, which can happen at the very beginning of a stream. Take care
+        of this case by checking that the target time isn't actually in the past inside of
+        sizeWillChangeAtTime(), and also always skip the boundary time observer when there was no
+        previous size (such as after a flush due to a seek).
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setNaturalSize):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+
 2016-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] Mark element AXAPI should comform to specs

@@ -1,3 +1,13 @@
+2016-10-19  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r206025): All YouTube videos play with black bars on all four sides
+        https://bugs.webkit.org/show_bug.cgi?id=163308
+
+        Reviewed by Darin Adler.
+
+        * media/media-source/media-source-resize-expected.txt: Added.
+        * media/media-source/media-source-resize.html: Added.
+
 2016-10-19  Nan Wang  <n_wang@apple.com>
 
         AX: [Mac] Mark element AXAPI should comform to specs
