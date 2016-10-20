@@ -230,7 +230,7 @@ public:
 
     bool checkIfFormActionAllowedByCSP(const URL&, bool didReceiveRedirectResponse) const;
 
-    Frame* opener();
+    WEBCORE_EXPORT Frame* opener();
     WEBCORE_EXPORT void setOpener(Frame*);
 
     void resetMultipleFormSubmissionProtection();
