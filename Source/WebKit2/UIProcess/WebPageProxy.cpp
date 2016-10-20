@@ -1183,15 +1183,18 @@ RefPtr<API::Navigation> WebPageProxy::reload(bool reloadFromOrigin, bool content
     return WTFMove(navigation);
 }
 
-void WebPageProxy::recordNavigationSnapshot()
+void WebPageProxy::recordAutomaticNavigationSnapshot()
 {
+    if (m_suppressAutomaticNavigationSnapshotting)
+        return;
+
     if (WebBackForwardListItem* item = m_backForwardList->currentItem())
         recordNavigationSnapshot(*item);
 }
 
 void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
 {
-    if (!m_shouldRecordNavigationSnapshots || m_suppressNavigationSnapshotting)
+    if (!m_shouldRecordNavigationSnapshots)
         return;
 
 #if PLATFORM(COCOA)
@@ -2388,11 +2391,9 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
 
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
 
-        if (navigate) {
-            // The back / forward list was restored from a sessionState so we don't want to snapshot the current
-            // page when navigating away. Suppress navigation snapshotting until the next load has committed
-            m_suppressNavigationSnapshotting = true;
-        }
+        // The back / forward list was restored from a sessionState so we don't want to snapshot the current
+        // page when navigating away. Suppress navigation snapshotting until the next load has committed
+        m_suppressAutomaticNavigationSnapshotting = true;
     }
 
     // FIXME: Navigating should be separate from state restoration.
@@ -3246,7 +3247,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     if (frame->isMainFrame()) {
         m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure);
-        m_suppressNavigationSnapshotting = false;
+        m_suppressAutomaticNavigationSnapshotting = false;
     } else if (markPageInsecure)
         m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 

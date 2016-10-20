@@ -1,5 +1,40 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206833. rdar://problem/28634858
+
+    2016-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            Avoid automatically re-taking snapshots for back-forward items that were never loaded into the view
+            https://bugs.webkit.org/show_bug.cgi?id=162955
+            <rdar://problem/27659173>
+
+            Reviewed by Simon Fraser.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/SnapshotStore.mm:
+            (-[SnapshotTestWKWebView init]):
+            (forceRepaintCallback):
+            (-[SnapshotTestWKWebView synchronouslyForceRepaint]):
+            (-[SnapshotTestWKWebView synchronouslyLoadTestPageAndForceRepaint:]):
+            (TEST):
+            (makeRedSquareView):
+            Add a test that restoring session state into a web view without navigating,
+            then explicitly snapshotting and navigating away, leaves the original snapshot alone.
+
+            Adjust the existing test, as well, to ensure that it will reliably fail
+            if the feature is broken. Use an explicitly added and removed red square
+            instead of scrolling, because we can't scroll in the restore-without-navigating case.
+
+            Stop trying to override the window scale, because it's not working (we're getting partial snapshots)
+            and isn't necessary; instead just multiply the expected value by the page scale.
+
+            (-[SnapshotTestWKWebView loadPageNamed:]): Deleted.
+            * TestWebKitAPI/mac/TestWKWebViewMac.h:
+            * TestWebKitAPI/mac/TestWKWebViewMac.mm:
+            (-[TestWKWebView synchronouslyLoadTestPageNamed:]):
+            Reorganize to reduce duplication.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206829. rdar://problem/28634858
 
     2016-10-05  Tim Horton  <timothy_horton@apple.com>

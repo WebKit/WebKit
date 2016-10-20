@@ -42,6 +42,7 @@
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)loadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
 - (void)typeCharacter:(char)character;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;

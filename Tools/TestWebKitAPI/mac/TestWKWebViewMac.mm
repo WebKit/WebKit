@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
+#import "TestNavigationDelegate.h"
 #import "Utilities.h"
 
 #import <AppKit/AppKit.h>
@@ -178,6 +179,12 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [self loadRequest:request];
+}
+
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName
+{
+    [self loadTestPageNamed:pageName];
+    [self _test_waitForDidFinishNavigation];
 }
 
 - (void)typeCharacter:(char)character {

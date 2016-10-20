@@ -1,5 +1,51 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206833. rdar://problem/28634858
+
+    2016-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            Avoid automatically re-taking snapshots for back-forward items that were never loaded into the view
+            https://bugs.webkit.org/show_bug.cgi?id=162955
+            <rdar://problem/27659173>
+
+            Reviewed by Simon Fraser.
+
+            Make it possible for clients to control the snapshot for back-forward
+            items that are restored from session state without navigating to them,
+            by ensuring that we won't stomp on the snapshot that they explicitly take,
+            until a load occurs.
+
+            * UIProcess/WebBackForwardList.cpp:
+            (WebKit::WebBackForwardList::addItem):
+            (WebKit::WebBackForwardList::goToItem):
+            * UIProcess/ios/ViewGestureControllerIOS.mm:
+            (WebKit::ViewGestureController::beginSwipeGesture):
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::trackSwipeGesture):
+            Disambiguate explicit API-driven snapshot recording from automatic,
+            navigation-driven snapshot recording.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::saveBackForwardSnapshotForCurrentItem):
+            Get rid of the version of recordNavigationSnapshot() that doesn't take a
+            back-forward list item, and grab the current item at the one remaining caller.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::recordAutomaticNavigationSnapshot):
+            (WebKit::WebPageProxy::recordNavigationSnapshot):
+            (WebKit::WebPageProxy::restoreFromSessionState):
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            * UIProcess/WebPageProxy.h:
+            Rename m_suppressNavigationSnapshotting to m_suppressAutomaticNavigationSnapshotting,
+            and make it be only about automatic (navigation-driven) snapshots; it won't have
+            any impact on explicit snapshots forced by clients.
+
+            Set m_suppressAutomaticNavigationSnapshotting unconditionally when restoring
+            from session state, so that we won't start automatically snapshotting until
+            something has loaded in the view.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206829. rdar://problem/28634858
 
     2016-10-05  Tim Horton  <timothy_horton@apple.com>

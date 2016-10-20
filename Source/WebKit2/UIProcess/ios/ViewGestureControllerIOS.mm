@@ -158,7 +158,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
-    m_webPageProxy.recordNavigationSnapshot();
+    m_webPageProxy.recordAutomaticNavigationSnapshot();
 
     m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();

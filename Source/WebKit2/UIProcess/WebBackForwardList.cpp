@@ -93,7 +93,7 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     Vector<RefPtr<WebBackForwardListItem>> removedItems;
     
     if (m_hasCurrentIndex) {
-        m_page->recordNavigationSnapshot();
+        m_page->recordAutomaticNavigationSnapshot();
 
         // Toss everything in the forward list.
         unsigned targetSize = m_currentIndex + 1;
@@ -187,7 +187,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem* item)
     WebBackForwardListItem* currentItem = m_entries[m_currentIndex].get();
     bool shouldKeepCurrentItem = true;
     if (currentItem != item) {
-        m_page->recordNavigationSnapshot();
+        m_page->recordAutomaticNavigationSnapshot();
         shouldKeepCurrentItem = m_page->shouldKeepCurrentBackForwardListItemInList(m_entries[m_currentIndex].get());
     }
 
