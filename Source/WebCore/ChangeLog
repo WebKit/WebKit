@@ -1,3 +1,30 @@
+2016-10-20  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix region, column and page break parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163743
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        Add the missing values for break support.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isLegacyBreakProperty):
+        (WebCore::CSSPropertyParser::parseValueStart):
+        Add a special case for handling legacy break properties. Blink treats them like
+        shorthands, but we can't do that without breaking the old parser, so for now
+        we add a special case.
+
+        (WebCore::mapFromPageBreakBetween):
+        (WebCore::mapFromColumnBreakBetween):
+        (WebCore::mapFromRegionBreakBetween):
+        Updated to have the AvoidXXX values (where XXX is Column/Page/Region).
+
+        (WebCore::CSSPropertyParser::parseShorthand):
+        Remove the consumeLegacyBreak from the shorthand function, since we can't treat
+        the legacy break properties as shorthands yet.
+
 2016-10-20  Sam Weinig  <sam@webkit.org>
 
         Add convenience function that combines WTF::visit(...) with WTF::makeVisitor(...)
