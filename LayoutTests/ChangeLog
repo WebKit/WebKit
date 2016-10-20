@@ -1,3 +1,13 @@
+2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve error message when passing a null ArrayBuffer to bufferData()
+        https://bugs.webkit.org/show_bug.cgi?id=163745
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/bufferData-nullable-array-buffer-view-expected.txt: Added.
+        * fast/canvas/webgl/bufferData-nullable-array-buffer-view.html: Added.
+
 2016-10-20  Zalan Bujtas  <zalan@apple.com>
 
         Stop searching for first-letter containers at multi-column boundary.

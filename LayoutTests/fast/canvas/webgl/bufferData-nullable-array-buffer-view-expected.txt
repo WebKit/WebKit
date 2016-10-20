@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 19: WebGL: INVALID_VALUE: bufferData: null data
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS context.getError() is context.NO_ERROR
+PASS undefined did not throw exception.
+PASS context.getError() is context.NO_ERROR
+PASS undefined did not throw exception.
+PASS context.getError() is context.INVALID_VALUE
+PASS context.getError() is context.NO_ERROR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

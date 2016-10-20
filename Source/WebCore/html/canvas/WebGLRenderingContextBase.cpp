@@ -1075,44 +1075,52 @@ void WebGLRenderingContextBase::bufferData(GC3Denum target, long long size, GC3D
     }
 }
 
-void WebGLRenderingContextBase::bufferData(GC3Denum target, ArrayBuffer& data, GC3Denum usage, ExceptionCode&)
+void WebGLRenderingContextBase::bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage, ExceptionCode&)
 {
     if (isContextLostOrPending())
         return;
+    if (!data) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "null data");
+        return;
+    }
     WebGLBuffer* buffer = validateBufferDataParameters("bufferData", target, usage);
     if (!buffer)
         return;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferData(&data)) {
+        if (!buffer->associateBufferData(data)) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
             return;
         }
     }
 
     m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferData(target, data.byteLength(), data.data(), usage);
+    m_context->bufferData(target, data->byteLength(), data->data(), usage);
     if (m_context->moveErrorsToSyntheticErrorList()) {
         // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
         buffer->disassociateBufferData();
     }
 }
 
-void WebGLRenderingContextBase::bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, ExceptionCode&)
+void WebGLRenderingContextBase::bufferData(GC3Denum target, RefPtr<ArrayBufferView>&& data, GC3Denum usage, ExceptionCode&)
 {
     if (isContextLostOrPending())
         return;
+    if (!data) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "null data");
+        return;
+    }
     WebGLBuffer* buffer = validateBufferDataParameters("bufferData", target, usage);
     if (!buffer)
         return;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferData(&data)) {
+        if (!buffer->associateBufferData(data.get())) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
             return;
         }
     }
 
     m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferData(target, data.byteLength(), data.baseAddress(), usage);
+    m_context->bufferData(target, data->byteLength(), data->baseAddress(), usage);
     if (m_context->moveErrorsToSyntheticErrorList()) {
         // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
         buffer->disassociateBufferData();

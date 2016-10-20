@@ -1,3 +1,20 @@
+2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Improve error message when passing a null ArrayBuffer to bufferData()
+        https://bugs.webkit.org/show_bug.cgi?id=163745
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/webgl/bufferData-nullable-array-buffer-view.html
+
+        Update the idl file to accept a nullable ArrayBuffer, and throw
+        the relevant error with a more helpful error string.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::bufferData):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+
 2016-10-20  Zalan Bujtas  <zalan@apple.com>
 
         Stop searching for first-letter containers at multi-column boundary.

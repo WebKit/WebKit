@@ -139,8 +139,8 @@ public:
     void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
     void bufferData(GC3Denum target, long long size, GC3Denum usage, ExceptionCode&);
-    void bufferData(GC3Denum target, ArrayBuffer& data, GC3Denum usage, ExceptionCode&);
-    void bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, ExceptionCode&);
+    void bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage, ExceptionCode&);
+    void bufferData(GC3Denum target, RefPtr<ArrayBufferView>&& data, GC3Denum usage, ExceptionCode&);
     void bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data, ExceptionCode&);
     void bufferSubData(GC3Denum target, long long offset, RefPtr<ArrayBufferView>&& data, ExceptionCode&);
 
