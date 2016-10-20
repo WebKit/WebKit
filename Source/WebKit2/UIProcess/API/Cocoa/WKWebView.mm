@@ -162,16 +162,6 @@ enum class DynamicViewportUpdateMode {
 static const uint32_t firstSDKVersionWithLinkPreviewEnabledByDefault = 0xA0000;
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewAdditionsBefore.mm>
-#else
-@implementation WKWebView (Additions)
-- (void)_setIsBlankBeforeFirstNonEmptyLayout:(BOOL)isBlank
-{
-}
-@end
-#endif
-
 #if PLATFORM(MAC)
 #import "WKTextFinderClient.h"
 #import "WKViewInternal.h"
@@ -491,8 +481,6 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
     [_scrollView setBouncesZoom:YES];
-
-    [self _setIsBlankBeforeFirstNonEmptyLayout:YES];
 
     [self addSubview:_scrollView.get()];
 
@@ -2088,11 +2076,6 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         inStableState:inStableState
         isChangingObscuredInsetsInteractively:_isChangingObscuredInsetsInteractively
         enclosedInScrollableAncestorView:scrollViewCanScroll([self _scroller])];
-}
-
-- (void)_didFirstVisuallyNonEmptyLayoutForMainFrame
-{
-    [self _setIsBlankBeforeFirstNonEmptyLayout:NO];
 }
 
 - (void)_didFinishLoadForMainFrame
