@@ -1427,6 +1427,11 @@ private:
 
     void checkViewportDependentPictures();
 
+#if USE(QUICK_LOOK)
+    bool shouldEnforceQuickLookSandbox() const;
+    void applyQuickLookSandbox();
+#endif
+
     unsigned m_referencingNodeCount;
 
     std::unique_ptr<StyleResolver> m_styleResolver;

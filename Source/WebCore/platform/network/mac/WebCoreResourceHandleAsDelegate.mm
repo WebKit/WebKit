@@ -123,39 +123,45 @@ using namespace WebCore;
 }
 #endif
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
+    LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, response, [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0, [[response MIMEType] UTF8String]);
 
     if (!m_handle || !m_handle->client())
         return;
 
     // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
-    int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
+    int statusCode = [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0;
     if (statusCode != 304) {
         bool isMainResourceLoad = m_handle->firstRequest().requester() == ResourceRequest::Requester::Main;
-        adjustMIMETypeIfNecessary([r _CFURLResponse], isMainResourceLoad);
+        adjustMIMETypeIfNecessary([response _CFURLResponse], isMainResourceLoad);
     }
 
 #if !PLATFORM(IOS)
     if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
-        [r _setMIMEType:@"text/html"];
+        [response _setMIMEType:@"text/html"];
 #endif
 
 #if USE(QUICK_LOOK)
-    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, connection, r, self));
-    if (m_handle->quickLookHandle())
-        r = m_handle->quickLookHandle()->nsResponse();
+    bool isQuickLookPreview = false;
+    m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, connection, response, self));
+    if (m_handle->quickLookHandle()) {
+        response = m_handle->quickLookHandle()->nsResponse();
+        isQuickLookPreview = true;
+    }
 #endif
-    
-    ResourceResponse resourceResponse(r);
+
+    ResourceResponse resourceResponse(response);
     resourceResponse.setSource(ResourceResponse::Source::Network);
+#if USE(QUICK_LOOK)
+    resourceResponse.setIsQuickLook(isQuickLookPreview);
+#endif
 #if ENABLE(WEB_TIMING)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
 #else
     UNUSED_PARAM(connection);
 #endif
-    
+
     m_handle->client()->didReceiveResponse(m_handle, WTFMove(resourceResponse));
 }
 

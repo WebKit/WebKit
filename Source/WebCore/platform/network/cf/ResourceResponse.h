@@ -91,6 +91,11 @@ public:
     WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
 #endif
 
+#if USE(QUICK_LOOK)
+    bool isQuickLook() const { return m_isQuickLook; }
+    void setIsQuickLook(bool isQuickLook) { m_isQuickLook = isQuickLook; }
+#endif
+
 private:
     friend class ResourceResponseBase;
 

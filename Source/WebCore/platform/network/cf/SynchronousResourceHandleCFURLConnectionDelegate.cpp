@@ -135,7 +135,7 @@ static void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
 }
 #endif // !PLATFORM(COCOA)
 
-void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)
+void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLConnectionRef, CFURLResponseRef cfResponse)
 {
     LOG(Network, "CFNet - SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
@@ -168,16 +168,21 @@ void SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse(CFURLC
 #endif
 
 #if USE(QUICK_LOOK)
+    bool isQuickLookPreview = false;
     m_handle->setQuickLookHandle(QuickLookHandle::create(m_handle, this, cfResponse));
-    if (m_handle->quickLookHandle())
+    if (m_handle->quickLookHandle()) {
         cfResponse = m_handle->quickLookHandle()->cfResponse();
+        isQuickLookPreview = true;
+    }
 #endif
-    
+
     ResourceResponse resourceResponse(cfResponse);
 #if PLATFORM(COCOA) && ENABLE(WEB_TIMING)
     ResourceHandle::getConnectionTimingData(connection, resourceResponse.resourceLoadTiming());
 #else
-    UNUSED_PARAM(connection);
+#if USE(QUICK_LOOK)
+    resourceResponse.setIsQuickLook(isQuickLookPreview);
+#endif
 #endif
     
     m_handle->client()->didReceiveResponse(m_handle, WTFMove(resourceResponse));

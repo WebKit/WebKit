@@ -1,5 +1,56 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207155. rdar://problem/28857500
+
+    2016-10-11  Daniel Bates  <dabates@apple.com>
+
+            [iOS] Sandbox QuickLook previews
+            https://bugs.webkit.org/show_bug.cgi?id=163240
+            <rdar://problem/25961633>
+
+            Reviewed by Brent Fulgham.
+
+            Add tests to ensure that we sandbox QuickLook previews.
+
+            * http/tests/quicklook/at-import-stylesheet-blocked-expected.txt: Added.
+            * http/tests/quicklook/at-import-stylesheet-blocked.html: Added.
+            * http/tests/quicklook/base-url-blocked-expected.txt: Added.
+            * http/tests/quicklook/base-url-blocked.html: Added.
+            * http/tests/quicklook/cross-origin-iframe-blocked-expected.txt: Added.
+            * http/tests/quicklook/cross-origin-iframe-blocked.html: Added.
+            * http/tests/quicklook/csp-header-ignored-expected.txt: Added.
+            * http/tests/quicklook/csp-header-ignored.html: Added.
+            * http/tests/quicklook/document-domain-is-empty-string-expected.txt: Added.
+            * http/tests/quicklook/document-domain-is-empty-string.html: Added.
+            * http/tests/quicklook/external-stylesheet-blocked-expected.txt: Added.
+            * http/tests/quicklook/external-stylesheet-blocked.html: Added.
+            * http/tests/quicklook/hide-referer-on-navigation-expected.txt: Added.
+            * http/tests/quicklook/hide-referer-on-navigation.html: Added.
+            * http/tests/quicklook/resources/at-import-stylesheet-blocked.docx: Added.
+            * http/tests/quicklook/resources/base-url-blocked.docx: Added.
+            * http/tests/quicklook/resources/cross-origin-iframe-blocked.docx: Added.
+            * http/tests/quicklook/resources/document-domain-is-empty-string.docx: Added.
+            * http/tests/quicklook/resources/external-stylesheet-blocked.docx: Added.
+            * http/tests/quicklook/resources/fail.html: Added.
+            * http/tests/quicklook/resources/hide-referer-on-navigation.docx: Added.
+            * http/tests/quicklook/resources/http-equiv-blocked.docx: Added.
+            * http/tests/quicklook/resources/pass.docx: Added.
+            * http/tests/quicklook/resources/submit-form-blocked.docx: Added.
+            * http/tests/quicklook/resources/tap-at-point-and-notify-done.js: Added.
+            (tapAtPointAndNotifyDone):
+            (uiScript):
+            (tapAtPoint):
+            * http/tests/quicklook/resources/top-navigation-blocked.docx: Added.
+            * http/tests/quicklook/resources/word-document-with-csp-block-frame-ancestors.php: Added.
+            * http/tests/quicklook/submit-form-blocked-expected.txt: Added.
+            * http/tests/quicklook/submit-form-blocked.html: Added.
+            * http/tests/quicklook/top-navigation-blocked-expected.txt: Added.
+            * http/tests/quicklook/top-navigation-blocked.html: Added.
+            * platform/ios-simulator-wk1/TestExpectations: Skip tests that cannot run in DumpRenderTree
+            because uiController.singleTapAtPoint() is not implemented.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r205326. rdar://problem/28476952
 
     2016-09-01  Ricky Mondello  <rmondello@apple.com>
