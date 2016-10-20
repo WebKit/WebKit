@@ -3444,7 +3444,7 @@ sub GenerateImplementation
                 my $shouldPassByReference = ShouldPassWrapperByReference($attribute->signature, $interface);
 
                 my ($nativeValue, $mayThrowException) = JSValueToNative($interface, $attribute->signature, "value", $attribute->signature->extendedAttributes->{Conditional}, "&state", "state", "thisObject");
-                if (!$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
+                if (!$shouldPassByReference && ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type))) {
                     $implIncludes{"<runtime/Error.h>"} = 1;
                     push(@implContent, "    " . GetNativeTypeFromSignature($interface, $attribute->signature) . " nativeValue = nullptr;\n");
                     push(@implContent, "    if (!value.isUndefinedOrNull()) {\n");
@@ -4312,7 +4312,7 @@ sub GenerateParametersCheck
             die "Variadic parameter is already handled here" if $parameter->isVariadic;
             my $argumentLookupMethod = $parameter->isOptional ? "argument" : "uncheckedArgument";
 
-            if (!$shouldPassByReference && $codeGenerator->IsWrapperType($type)) {
+            if (!$shouldPassByReference && ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type))) {
                 $implIncludes{"<runtime/Error.h>"} = 1;
                 my $checkedArgument = "state->$argumentLookupMethod($argumentIndex)";
                 my $uncheckedArgument = "state->uncheckedArgument($argumentIndex)";

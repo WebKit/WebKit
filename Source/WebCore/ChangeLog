@@ -1,3 +1,19 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Passing a number as the pixel parameter to texImage2D() doesn't thrown an exception
+        https://bugs.webkit.org/show_bug.cgi?id=163715
+
+        Reviewed by Darin Adler.
+
+        Enable strict type checking for typed arrays in the bindings, similarly
+        do what we do for other wrapper types, as per Web IDL.
+
+        No new tests, updated existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+
 2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Improve error message when passing a null ArrayBuffer to bufferData()
