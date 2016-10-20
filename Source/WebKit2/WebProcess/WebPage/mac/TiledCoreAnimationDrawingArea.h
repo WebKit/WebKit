@@ -86,6 +86,8 @@ private:
 
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
+    bool dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones) override;
+
     // WebCore::LayerFlushSchedulerClient
     bool flushLayers() override;
 
@@ -154,6 +156,8 @@ private:
     bool m_isScalingViewToFitDocument { false };
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
+
+    WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
 };
 
 } // namespace WebKit

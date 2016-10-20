@@ -167,7 +167,7 @@ private:
     uint64_t m_currentTransactionID;
     Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
 
-    WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones;
+    WebCore::LayoutMilestones m_pendingNewlyReachedLayoutMilestones { 0 };
 
     WebCore::GraphicsLayer* m_contentLayer;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;

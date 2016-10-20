@@ -1,5 +1,31 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206247. rdar://problem/28216256
+
+    2016-09-21  Dan Bernstein  <mitz@apple.com>
+
+            [macOS] Upon layout, _webView:renderingProgressDidChange: fires before the intrinsic content size is updated
+            https://bugs.webkit.org/show_bug.cgi?id=162359
+            <rdar://problem/27776454>
+
+            Reviewed by Tim Horton.
+
+            Test: added to TestWebKitAPI/Tests/WebKit2Cocoa/AutoLayoutIntegration.mm
+
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h: Fixed a bug where
+              m_pendingNewlyReachedLayoutMilestones was never initialized.
+
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h: Added
+              m_pendingNewlyReachedLayoutMilestones member variable to this derived class as well.
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::flushLayers): If we have pending milestones, notify
+              the WebPageProxy now, after any content size changes have been sent.
+            (WebKit::TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone): New override that
+              accumulates the milestones into m_pendingNewlyReachedLayoutMilestones and returns true,
+              so that the caller won’t notify the WebPageProxy immediately.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206132. rdar://problem/28634856
 
     2016-09-19  Anders Carlsson  <andersca@apple.com>
