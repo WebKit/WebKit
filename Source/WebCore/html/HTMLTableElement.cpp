@@ -250,18 +250,20 @@ RefPtr<HTMLElement> HTMLTableElement::insertRow(int index, ExceptionCode& ec)
 void HTMLTableElement::deleteRow(int index, ExceptionCode& ec)
 {
     HTMLTableRowElement* row = nullptr;
-    if (index == -1)
+    if (index == -1) {
         row = HTMLTableRowsCollection::lastRow(*this);
-    else {
+        if (!row)
+            return;
+    } else {
         for (int i = 0; i <= index; ++i) {
             row = HTMLTableRowsCollection::rowAfter(*this, row);
             if (!row)
                 break;
         }
-    }
-    if (!row) {
-        ec = INDEX_SIZE_ERR;
-        return;
+        if (!row) {
+            ec = INDEX_SIZE_ERR;
+            return;
+        }
     }
     row->remove(ec);
 }

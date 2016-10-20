@@ -1,3 +1,20 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Make table.deleteRow(-1) a no-op when there are no rows
+        https://bugs.webkit.org/show_bug.cgi?id=163746
+
+        Reviewed by Alex Christensen.
+
+        Import test coverage from:
+        - https://github.com/w3c/web-platform-tests/pull/4001
+
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/remove-row-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-table-element/remove-row.html:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/deleteRow-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tbody-element/deleteRow.html:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell-expected.txt:
+        * web-platform-tests/html/semantics/tabular-data/the-tr-element/deleteCell.html:
+
 2016-10-19  Dean Jackson  <dino@apple.com>
 
         Import W3C CSS Shapes tests

@@ -1,3 +1,23 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        Make table.deleteRow(-1) a no-op when there are no rows
+        https://bugs.webkit.org/show_bug.cgi?id=163746
+
+        Reviewed by Alex Christensen.
+
+        Make table.deleteRow(-1) a no-op when there are no rows, instead of throwing:
+        - https://github.com/whatwg/html/pull/1924
+
+        This is more consistent with the behavior of tbody.deleteRow(-1) and
+        tr.deleteCell(-1). This is also consistent with Gecko. Blink is doing the
+        same change via:
+        - https://codereview.chromium.org/2427963004/
+
+        No new tests, updated existing tests.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::deleteRow):
+
 2016-10-20  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure to handle prefixed transform-style
