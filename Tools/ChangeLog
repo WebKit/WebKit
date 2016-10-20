@@ -1,5 +1,24 @@
 2016-10-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [GTK] Cannot build GTK+ with CUPS 2.* versions
+        https://bugs.webkit.org/show_bug.cgi?id=163591
+
+        Reviewed by Michael Catanzaro.
+
+        GTK+ is wrongly checking about the available CUPS version,
+        so if you have CUPS 2.* the configure step fails.
+
+        This has been already fixed upstream and included in 2.30 series:
+        https://git.gnome.org/browse/gtk+/commit/?id=631f6b536485829a0bd00532f5826ad302b4951b
+
+        Added patch on JHBuild so we can now build GTK+ with CUPS 2.*.
+
+        * gtk/jhbuild.modules: Applied patch and avoid using "configure" script directly
+        as the patch modifies "configure.ac".
+        * gtk/patches/configure-fix-detecting-CUPS-2.x.patch: Added.
+
+2016-10-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [GTK] Bump glib to 2.50.1
         https://bugs.webkit.org/show_bug.cgi?id=163689
 

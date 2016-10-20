@@ -1,0 +1,26 @@
+From 631f6b536485829a0bd00532f5826ad302b4951b Mon Sep 17 00:00:00 2001
+From: Misty De Meo <mistydemeo@github.com>
+Date: Thu, 16 Jun 2016 15:59:27 -0700
+Subject: [PATCH] configure: fix detecting CUPS 2.x
+
+https://bugzilla.gnome.org/show_bug.cgi?id=767766
+---
+ configure.ac | 2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index a0b9c34..b2a6315 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1438,7 +1438,7 @@ else
+     CUPS_API_MAJOR=`echo $ECHO_N $CUPS_API_VERSION | awk -F. '{print $1}'`
+     CUPS_API_MINOR=`echo $ECHO_N $CUPS_API_VERSION | awk -F. '{print $2}'`
+ 
+-    if test $CUPS_API_MAJOR -gt 1 -o \
++    if test $CUPS_API_MAJOR -lt 1 -o \
+             $CUPS_API_MAJOR -eq 1 -a $CUPS_API_MINOR -lt 2; then
+       AC_MSG_ERROR([CUPS >= 1.2 not found])
+     fi
+-- 
+2.9.3
+
