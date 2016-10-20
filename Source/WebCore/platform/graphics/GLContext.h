@@ -48,6 +48,7 @@ public:
     static std::unique_ptr<GLContext> createOffscreenContext(PlatformDisplay* = nullptr);
     static std::unique_ptr<GLContext> createSharingContext(PlatformDisplay&);
     static GLContext* current();
+    static bool isExtensionSupported(const char* extensionList, const char* extension);
 
     PlatformDisplay& display() const { return m_display; }
 

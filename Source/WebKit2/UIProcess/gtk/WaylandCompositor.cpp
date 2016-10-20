@@ -335,7 +335,7 @@ bool WaylandCompositor::initializeEGL()
         eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImage"));
     } else {
         const char* extensions = eglQueryString(PlatformDisplay::sharedDisplay().eglDisplay(), EGL_EXTENSIONS);
-        if (strstr(extensions, "EGL_KHR_image_base")) {
+        if (GLContext::isExtensionSupported(extensions, "EGL_KHR_image_base")) {
             eglCreateImage = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
             eglDestroyImage = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
         }

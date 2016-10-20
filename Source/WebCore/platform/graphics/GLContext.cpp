@@ -149,6 +149,22 @@ GLContext* GLContext::current()
     return currentContext()->context();
 }
 
+bool GLContext::isExtensionSupported(const char* extensionList, const char* extension)
+{
+    if (!extensionList)
+        return false;
+
+    ASSERT(extension);
+    int extensionLen = strlen(extension);
+    const char* extensionListPtr = extensionList;
+    while ((extensionListPtr = strstr(extensionListPtr, extension))) {
+        if (extensionListPtr[extensionLen] == ' ' || extensionListPtr[extensionLen] == '\0')
+            return true;
+        extensionListPtr += extensionLen;
+    }
+    return false;
+}
+
 } // namespace WebCore
 
 #endif

@@ -1,3 +1,21 @@
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Avoid strstr() when checking (E)GL extensions
+        https://bugs.webkit.org/show_bug.cgi?id=161958
+
+        Reviewed by Žan Doberšek.
+
+        Add static method GLContext::isExtensionSupported() to properly search extenstions in the given extension
+        list, and use it instead of strstr().
+
+        * platform/graphics/GLContext.cpp:
+        (WebCore::GLContext::isExtensionSupported):
+        * platform/graphics/GLContext.h:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createSurfacelessContext):
+        * platform/graphics/glx/GLContextGLX.cpp:
+        (WebCore::hasSGISwapControlExtension):
+
 2016-10-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Direct2D] Implement ImageBufferData::getData.

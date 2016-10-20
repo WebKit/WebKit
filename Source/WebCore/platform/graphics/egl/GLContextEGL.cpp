@@ -151,7 +151,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createSurfacelessContext(PlatformDis
         return nullptr;
 
     const char* extensions = eglQueryString(display, EGL_EXTENSIONS);
-    if (!strstr(extensions, "EGL_KHR_surfaceless_context") && !strstr(extensions, "EGL_KHR_surfaceless_opengl"))
+    if (!GLContext::isExtensionSupported(extensions, "EGL_KHR_surfaceless_context") && !GLContext::isExtensionSupported(extensions, "EGL_KHR_surfaceless_opengl"))
         return nullptr;
 
     EGLConfig config;
