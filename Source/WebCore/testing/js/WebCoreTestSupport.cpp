@@ -121,11 +121,6 @@ void setAllowsAnySSLCertificate(bool allowAnySSLCertificate)
     InternalSettings::setAllowsAnySSLCertificate(allowAnySSLCertificate);
 }
 
-void setURLParserEnabled(bool enabled)
-{
-    URLParser::setEnabled(enabled);
-}
-
 void installMockGamepadProvider()
 {
 #if ENABLE(GAMEPAD)

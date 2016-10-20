@@ -2843,31 +2843,16 @@ bool URLParser::internalValuesConsistent(const URL& url)
     // It should be able to be deduced from m_isValid and m_string.length() to save memory.
 }
 
-enum class URLParserEnabled {
-    Undetermined,
-    Yes,
-    No
-};
-
-static URLParserEnabled urlParserEnabled = URLParserEnabled::Undetermined;
+static bool urlParserEnabled = true;
 
 void URLParser::setEnabled(bool enabled)
 {
-    urlParserEnabled = enabled ? URLParserEnabled::Yes : URLParserEnabled::No;
+    urlParserEnabled = enabled;
 }
 
 bool URLParser::enabled()
 {
-    if (urlParserEnabled == URLParserEnabled::Undetermined) {
-#if PLATFORM(MAC)
-        urlParserEnabled = MacApplication::isSafari() ? URLParserEnabled::Yes : URLParserEnabled::No;
-#elif PLATFORM(IOS)
-        urlParserEnabled = IOSApplication::isMobileSafari() ? URLParserEnabled::Yes : URLParserEnabled::No;
-#else
-        urlParserEnabled = URLParserEnabled::Yes;
-#endif
-    }
-    return urlParserEnabled == URLParserEnabled::Yes;
+    return urlParserEnabled;
 }
 
 } // namespace WebCore

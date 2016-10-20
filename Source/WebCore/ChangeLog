@@ -1,3 +1,23 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Re-enable URLParser for non-Safari Cocoa apps after r207321
+        https://bugs.webkit.org/show_bug.cgi?id=163690
+
+        Reviewed by Darin Adler.
+
+        I disabled the URLParser for non-Safari applications in r207305
+        to give me time to make URLParser more compatible, which I did in r207321
+
+        Updated some API tests which will be investigated in 
+        https://bugs.webkit.org/show_bug.cgi?id=163127
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::setEnabled):
+        (WebCore::URLParser::enabled):
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setURLParserEnabled): Deleted.
+        * testing/js/WebCoreTestSupport.h:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSS font-variation-settings does not handle uppercase axis names in variable fonts
