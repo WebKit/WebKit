@@ -1,3 +1,37 @@
+2016-10-20  Matthew Hanson  <matthew_hanson>
+
+        Merge r206217. rdar://problem/28811877
+
+    2016-09-21  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r201090): Setting style.webkitTextSizeAdjust does not change text change on iPad
+            https://bugs.webkit.org/show_bug.cgi?id=162227
+            <rdar://problem/27201529>
+
+            Reviewed by Simon Fraser.
+
+            Add tests to ensure setting the CSS property -webkit-text-size-adjust in a stylesheet or
+            programmatically is respected on iPhone and iPad. Also added a test to ensure that this
+            CSS property is ignored on macOS by default.
+
+            Note that we have existing tests that ensure that -webkit-text-size-adjust is respected
+            on macOS when the internal setting Settings::textAutosizingEnabled() is enabled.
+
+            * fast/text-autosizing/ios/ipad/programmatic-text-size-adjust-expected.txt: Added.
+            * fast/text-autosizing/ios/ipad/programmatic-text-size-adjust.html: Added.
+            * fast/text-autosizing/ios/ipad/text-size-adjust-inline-style-expected.html: Added.
+            * fast/text-autosizing/ios/ipad/text-size-adjust-inline-style.html: Added.
+            * fast/text-autosizing/ios/programmatic-text-size-adjust-expected.txt: Added.
+            * fast/text-autosizing/ios/programmatic-text-size-adjust.html: Added.
+            * fast/text-autosizing/ios/text-size-adjust-inline-style-expected.html: Added.
+            * fast/text-autosizing/ios/text-size-adjust-inline-style.html: Added.
+            * fast/text-autosizing/text-size-adjust-inline-style-expected.html: Added.
+            * fast/text-autosizing/text-size-adjust-inline-style.html: Added.
+            * platform/mac/TestExpectations: Skip the iOS and iPad tests on Mac. Otherwise, they will fail
+            because these tests intentionally do not call window.internal.settings.setTextAutosizingEnabled(true)
+            so as to test the default port behavior. And on Mac automatic text size adjustment is disabled
+            by default.
+
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207155. rdar://problem/28857500

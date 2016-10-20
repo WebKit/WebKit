@@ -1,0 +1,23 @@
+Tests programmatically setting and getting -webkit-text-size-adjust.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value of webkitTextSizeAdjust:
+PASS document.getElementById("test").style.webkitTextSizeAdjust is ""
+
+webkitTextSizeAdjust = "auto":
+PASS document.getElementById("test").style.webkitTextSizeAdjust is "auto"
+
+webkitTextSizeAdjust = "none":
+PASS document.getElementById("test").style.webkitTextSizeAdjust is "none"
+
+webkitTextSizeAdjust = "200%":
+PASS document.getElementById("test").style.webkitTextSizeAdjust is "200%"
+
+webkitTextSizeAdjust = "dummy" (invalid value):
+PASS document.getElementById("test").style.webkitTextSizeAdjust is "200%"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

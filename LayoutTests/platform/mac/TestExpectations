@@ -19,6 +19,11 @@ fast/url/user-visible [ Pass ]
 
 fast/text-autosizing/ios [ Pass ]
 fast/text-autosizing/mac [ Pass ]
+fast/text-autosizing/ios/ipad/programmatic-text-size-adjust.html [ Skip ]
+fast/text-autosizing/ios/ipad/text-size-adjust-inline-style.html [ Skip ]
+fast/text-autosizing/ios/programmatic-text-size-adjust.html [ Skip ]
+fast/text-autosizing/ios/text-size-adjust-inline-style.html [ Skip ]
+fast/text-autosizing [ Pass ]
 
 fast/attachment/attachment-subtitle-resize.html [ Pass ]
 
