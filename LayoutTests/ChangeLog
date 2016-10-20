@@ -1,3 +1,16 @@
+2016-10-20  Andreas Kling  <akling@apple.com>
+
+        Drop StyleResolver and SelectorQueryCache when entering PageCache.
+        <https://webkit.org/b/154238>
+
+        Reviewed by Antti Koivisto.
+
+        Progression in compositing/iframes/page-cache-layer-tree.html, when navigating back,
+        the two iframes' dimensions correctly exclude the horizontal scrollbar's height since
+        it's not present after a style recalc.
+
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+
 2016-10-20  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         WebRTC: The MediaStreamTrackEvent init dictionary needs a required track member

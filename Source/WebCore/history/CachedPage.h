@@ -50,8 +50,6 @@ public:
     
     CachedFrame* cachedMainFrame() { return m_cachedMainFrame.get(); }
 
-    void markForVisitedLinkStyleRecalc() { m_needStyleRecalcForVisitedLinks = true; }
-    void markForFullStyleRecalc() { m_needsFullStyleRecalc = true; }
 #if ENABLE(VIDEO_TRACK)
     void markForCaptionPreferencesChanged() { m_needsCaptionPreferencesChanged = true; }
 #endif
@@ -63,8 +61,6 @@ public:
 private:
     double m_expirationTime;
     std::unique_ptr<CachedFrame> m_cachedMainFrame;
-    bool m_needStyleRecalcForVisitedLinks { false };
-    bool m_needsFullStyleRecalc { false };
 #if ENABLE(VIDEO_TRACK)
     bool m_needsCaptionPreferencesChanged { false };
 #endif
