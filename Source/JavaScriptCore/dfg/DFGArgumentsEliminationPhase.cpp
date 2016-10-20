@@ -168,7 +168,6 @@ private:
             for (Node* node : *block) {
                 switch (node->op()) {
                 case GetFromArguments:
-                    DFG_ASSERT(m_graph, node, node->child1()->op() == CreateDirectArguments);
                     break;
                     
                 case GetByVal:
