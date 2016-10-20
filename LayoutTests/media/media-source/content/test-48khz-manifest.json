@@ -1,0 +1,19 @@
+{
+	"url": "content/test-48kHz.m4a",
+	"type": "audio/x-m4a",
+	"init": { "offset": 0, "size": 624 },
+	"duration": 10.0906,
+	"media": [ 
+		{ "offset": 624,   "size": 1308, "timestamp": 0, "duration": 1.0027},
+		{ "offset": 1932,  "size": 1491, "timestamp": 1.0027, "duration": 1.0027},
+		{ "offset": 3423,  "size": 1341, "timestamp": 2.0053, "duration": 1.0027},
+		{ "offset": 4764,  "size": 1563, "timestamp": 3.008, "duration": 0.9813},
+		{ "offset": 6327,  "size": 1425, "timestamp": 3.9893, "duration": 1.0027},
+		{ "offset": 7752,  "size": 1770, "timestamp": 4.992, "duration": 1.0027},
+		{ "offset": 9522,  "size": 1910, "timestamp": 5.9947, "duration": 1.0027},
+		{ "offset": 11432, "size": 1887, "timestamp": 6.9973, "duration": 1.0027},
+		{ "offset": 13319, "size": 1919, "timestamp": 8, "duration": 1.0027},
+		{ "offset": 15238, "size": 1892, "timestamp": 9.0027, "duration": 1.0027},
+		{ "offset": 17130, "size": 1231, "timestamp": 10.0053, "duration": 0.0853}
+	]
+}

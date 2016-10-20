@@ -1,3 +1,23 @@
+2016-10-20  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in WebCore::MediaSource::seekToTime + 185
+        https://bugs.webkit.org/show_bug.cgi?id=163652
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-seek-detach-crash.html
+
+        Add isClosed() checks (which are effectively m_private null-checks) everywhere m_private is
+        dereferenced. The one place where m_private is cleared without setting the state to closed
+        is stop(), so make stop() set the state to closed as well (without firing any events).
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::seekToTime):
+        (WebCore::MediaSource::completeSeek):
+        (WebCore::MediaSource::monitorSourceBuffers):
+        (WebCore::MediaSource::streamEndedWithError):
+        (WebCore::MediaSource::stop):
+
 2016-10-20  Andreas Kling  <akling@apple.com>
 
         Drop StyleResolver and SelectorQueryCache when entering PageCache.
