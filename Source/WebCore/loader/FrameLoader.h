@@ -190,7 +190,7 @@ public:
 
     CachePolicy subresourceCachePolicy() const;
 
-    void didLayout(LayoutMilestones);
+    void didReachLayoutMilestone(LayoutMilestones);
     void didFirstLayout();
 
     void loadedResourceFromMemoryCache(CachedResource*, ResourceRequest& newRequest);

@@ -511,7 +511,7 @@ void RemoteLayerTreeDrawingArea::addTransactionCallbackID(uint64_t callbackID)
     scheduleCompositingLayerFlush();
 }
 
-bool RemoteLayerTreeDrawingArea::dispatchDidLayout(WebCore::LayoutMilestones layoutMilestones)
+bool RemoteLayerTreeDrawingArea::dispatchDidReachLayoutMilestone(WebCore::LayoutMilestones layoutMilestones)
 {
     m_pendingNewlyReachedLayoutMilestones |= layoutMilestones;
     return true;

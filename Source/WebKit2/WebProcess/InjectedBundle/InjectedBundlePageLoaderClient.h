@@ -84,7 +84,7 @@ public:
     void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<API::Object>& userData);
     void didLayoutForFrame(WebPage*, WebFrame*);
-    void didLayout(WebPage*, WebCore::LayoutMilestones, RefPtr<API::Object>& userData);
+    void didReachLayoutMilestone(WebPage*, WebCore::LayoutMilestones, RefPtr<API::Object>& userData);
 
     void didClearWindowObjectForFrame(WebPage*, WebFrame*, WebCore::DOMWrapperWorld&);
     void didCancelClientRedirectForFrame(WebPage*, WebFrame*);

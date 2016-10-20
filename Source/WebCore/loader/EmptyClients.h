@@ -300,7 +300,7 @@ public:
     void dispatchDidFailLoad(const ResourceError&) override { }
     void dispatchDidFinishDocumentLoad() override { }
     void dispatchDidFinishLoad() override { }
-    void dispatchDidLayout(LayoutMilestones) override { }
+    void dispatchDidReachLayoutMilestone(LayoutMilestones) override { }
 
     Frame* dispatchCreatePage(const NavigationAction&) override { return nullptr; }
     void dispatchShow() override { }
