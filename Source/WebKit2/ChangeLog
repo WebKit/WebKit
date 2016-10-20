@@ -1,5 +1,15 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206834. rdar://problem/28634858
+
+    2016-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the build.
+
+            * UIProcess/Cocoa/WebViewImpl.mm:
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206833. rdar://problem/28634858
 
     2016-10-05  Tim Horton  <timothy_horton@apple.com>
