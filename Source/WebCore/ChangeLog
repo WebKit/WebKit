@@ -1,3 +1,18 @@
+2016-10-20  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Build fix after r207616
+        https://bugs.webkit.org/show_bug.cgi?id=163333
+
+        Reviewed by Carlos Garcia Campos.
+
+        EGL_PLATFORM_X11_KHR and EGL_PLATFORM_WAYLAND_KHR are not defined
+        on the EGL headers shipped by Mesa 10.3 (shipped by Debian 8)
+
+        * platform/graphics/wayland/PlatformDisplayWayland.cpp:
+        (WebCore::PlatformDisplayWayland::initialize):
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        (WebCore::PlatformDisplayX11::initializeEGLDisplay):
+
 2016-10-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] CMake does not support the dep files for implicit dependency
