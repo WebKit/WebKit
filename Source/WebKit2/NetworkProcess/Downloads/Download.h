@@ -35,17 +35,24 @@
 #include <WebCore/SessionID.h>
 #include <memory>
 #include <wtf/Noncopyable.h>
-
-#if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 
 #if USE(NETWORK_SESSION)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSURLSessionDownloadTask;
-#else
+typedef NSURLSessionDownloadTask* PlatformDownloadTaskRef;
+#elif USE(SOUP)
+namespace WebKit {
+class NetworkDataTask;
+}
+typedef WebKit::NetworkDataTask* PlatformDownloadTaskRef;
+#endif
+#else // USE(NETWORK_SESSION)
+#if PLATFORM(COCOA)
 OBJC_CLASS NSURLDownload;
 OBJC_CLASS WKDownloadAsDelegate;
 #endif
-#endif
+#endif // USE(NETWORK_SESSION)
 
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLDownloadPriv.h>
@@ -72,8 +79,8 @@ class WebPage;
 class Download : public IPC::MessageSender {
     WTF_MAKE_NONCOPYABLE(Download); WTF_MAKE_FAST_ALLOCATED;
 public:
-#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
+#if USE(NETWORK_SESSION)
+    Download(DownloadManager&, DownloadID, PlatformDownloadTaskRef, const WebCore::SessionID& sessionID, const String& suggestedFilename = { });
 #endif
     Download(DownloadManager&, DownloadID, const WebCore::ResourceRequest&, const String& suggestedFilename = { });
 
@@ -130,15 +137,19 @@ private:
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 
-#if PLATFORM(COCOA)
 #if USE(NETWORK_SESSION)
+#if PLATFORM(COCOA)
     RetainPtr<NSURLSessionDownloadTask> m_download;
+#elif USE(SOUP)
+    RefPtr<NetworkDataTask> m_download;
+#endif
     WebCore::SessionID m_sessionID;
-#else
+#else // USE(NETWORK_SESSION)
+#if PLATFORM(COCOA)
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
-#endif
+#endif // USE(NETWORK_SESSION)
 #if USE(CFURLCONNECTION)
     RetainPtr<CFURLDownloadRef> m_download;
 #endif

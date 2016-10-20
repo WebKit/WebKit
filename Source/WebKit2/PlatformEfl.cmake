@@ -14,7 +14,9 @@ list(APPEND WebKit2_SOURCES
 
     NetworkProcess/efl/NetworkProcessMainEfl.cpp
 
+    NetworkProcess/soup/NetworkDataTaskSoup.cpp
     NetworkProcess/soup/NetworkProcessSoup.cpp
+    NetworkProcess/soup/NetworkSessionSoup.cpp
     NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 
     Platform/IPC/unix/AttachmentUnix.cpp

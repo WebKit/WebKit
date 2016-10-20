@@ -39,6 +39,7 @@
 #include "NetworkProcessPlatformStrategies.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
+#include "NetworkSession.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
@@ -100,7 +101,7 @@ NetworkProcess::NetworkProcess()
     addSupplement<AuthenticationManager>();
     addSupplement<WebCookieManager>();
     addSupplement<CustomProtocolManager>();
-#if USE(NETWORK_SESSION)
+#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
     NetworkSession::setCustomProtocolManager(supplement<CustomProtocolManager>());
 #endif
 }

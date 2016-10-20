@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "AuthenticationManager.h"
 #import "Download.h"
 #import "DownloadProxyMessages.h"
 #import "Logging.h"

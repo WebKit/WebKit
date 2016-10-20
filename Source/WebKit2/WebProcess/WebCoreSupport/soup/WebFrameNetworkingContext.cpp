@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
+#include "NetworkSession.h"
 #include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -43,11 +44,13 @@ namespace WebKit {
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 {
     ASSERT(isMainThread());
+    ASSERT(sessionID.isEphemeral());
 
     if (NetworkStorageSession::storageSession(sessionID))
         return;
 
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
+    SessionTracker::setSession(sessionID, NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, nullptr));
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)

@@ -28,10 +28,10 @@
 
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
-#include "NetworkSession.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -47,6 +47,14 @@ class Download;
 class DownloadID;
 class PendingDownload;
 class WebFrame;
+
+enum class AuthenticationChallengeDisposition {
+    UseCredential,
+    PerformDefaultHandling,
+    Cancel,
+    RejectProtectionSpace
+};
+typedef Function<void(AuthenticationChallengeDisposition, const WebCore::Credential&)> ChallengeCompletionHandler;
 
 class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);

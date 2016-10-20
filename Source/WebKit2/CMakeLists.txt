@@ -217,6 +217,7 @@ set(WebKit2_SOURCES
     NetworkProcess/Downloads/BlobDownloadClient.cpp
     NetworkProcess/Downloads/Download.cpp
     NetworkProcess/Downloads/DownloadManager.cpp
+    NetworkProcess/Downloads/PendingDownload.cpp
 
     Platform/Logging.cpp
     Platform/Module.cpp

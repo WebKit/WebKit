@@ -33,6 +33,7 @@
 #include "DownloadManager.h"
 #include "DownloadProxyMessages.h"
 #include "Logging.h"
+#include "NetworkDataTask.h"
 #include "SandboxExtension.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/NotImplemented.h>
@@ -43,11 +44,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-#if USE(NETWORK_SESSION) && PLATFORM(COCOA)
-Download::Download(DownloadManager& downloadManager, DownloadID downloadID, NSURLSessionDownloadTask* download, const WebCore::SessionID& sessionID, const String& suggestedName)
+#if USE(NETWORK_SESSION)
+Download::Download(DownloadManager& downloadManager, DownloadID downloadID, PlatformDownloadTaskRef download, const WebCore::SessionID& sessionID, const String& suggestedName)
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_download(download)
+    , m_sessionID(sessionID)
     , m_suggestedName(suggestedName)
 {
     ASSERT(m_downloadID.downloadID());

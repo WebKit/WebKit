@@ -26,6 +26,7 @@
 #ifndef PingLoad_h
 #define PingLoad_h
 
+#include "AuthenticationManager.h"
 #include "NetworkDataTask.h"
 #include "SessionTracker.h"
 

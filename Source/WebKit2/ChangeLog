@@ -1,3 +1,117 @@
+2016-10-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add NetworkSession implementation and switch to use it
+        https://bugs.webkit.org/show_bug.cgi?id=163597
+
+        Reviewed by Alex Christensen.
+
+        Basically move the ResourceHandle implementation to the network process, but modernized, cleaned up, and adapted
+        to the NetworkSession model.
+
+        * CMakeLists.txt: Add new files to compilation.
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download): Use the same code for all ports using NetworkSession and add missing
+        initialization of m_sessionID.
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::Download): Define PlatformDownloadTaskRef on every platform to make the constructor common to
+        all ports using NetworkSession.
+        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::cancelNetworkLoad):
+        (WebKit::Download::platformDidFinish):
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTask::pendingDownloadID): Make const.
+        (WebKit::NetworkDataTask::pendingDownload): Ditto.
+        (WebKit::NetworkDataTask::pendingDownloadLocation): Ditto.
+        (WebKit::NetworkDataTask::isDownload): Helper to check if the task is a download.
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession): Use NetworkDataTask::isDownload().
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess): NetworkSession::setCustomProtocolManager() is Cocoa only.
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSession::networkStorageSession): Make const.
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp: Added.
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        (WebKit::NetworkDataTask::scheduleFailure):
+        (WebKit::NetworkDataTask::failureTimerFired):
+        (WebKit::NetworkDataTask::suggestedFilename):
+        (WebKit::NetworkDataTask::setSuggestedFilename):
+        (WebKit::NetworkDataTask::setPendingDownloadLocation):
+        (WebKit::NetworkDataTask::allowsSpecificHTTPSCertificateForHost):
+        (WebKit::NetworkDataTask::createRequest):
+        (WebKit::NetworkDataTask::clearRequest):
+        (WebKit::NetworkDataTask::resume):
+        (WebKit::NetworkDataTask::suspend):
+        (WebKit::NetworkDataTask::cancel):
+        (WebKit::NetworkDataTask::invalidateAndCancel):
+        (WebKit::NetworkDataTask::state):
+        (WebKit::NetworkDataTask::timeoutFired):
+        (WebKit::NetworkDataTask::startTimeout):
+        (WebKit::NetworkDataTask::stopTimeout):
+        (WebKit::NetworkDataTask::sendRequestCallback):
+        (WebKit::NetworkDataTask::didSendRequest):
+        (WebKit::NetworkDataTask::didReceiveResponse):
+        (WebKit::NetworkDataTask::tlsErrorsChangedCallback):
+        (WebKit::NetworkDataTask::tlsErrorsChanged):
+        (WebKit::NetworkDataTask::applyAuthenticationToRequest):
+        (WebKit::NetworkDataTask::authenticateCallback):
+        (WebKit::isAuthenticationFailureStatusCode):
+        (WebKit::NetworkDataTask::authenticate):
+        (WebKit::NetworkDataTask::continueAuthenticate):
+        (WebKit::NetworkDataTask::skipInputStreamForRedirectionCallback):
+        (WebKit::NetworkDataTask::skipInputStreamForRedirection):
+        (WebKit::NetworkDataTask::didFinishSkipInputStreamForRedirection):
+        (WebKit::shouldRedirectAsGET):
+        (WebKit::NetworkDataTask::shouldStartHTTPRedirection):
+        (WebKit::NetworkDataTask::continueHTTPRedirection):
+        (WebKit::NetworkDataTask::readCallback):
+        (WebKit::NetworkDataTask::read):
+        (WebKit::NetworkDataTask::didRead):
+        (WebKit::NetworkDataTask::didFinishRead):
+        (WebKit::NetworkDataTask::requestNextPartCallback):
+        (WebKit::NetworkDataTask::requestNextPart):
+        (WebKit::NetworkDataTask::didRequestNextPart):
+        (WebKit::NetworkDataTask::didFinishRequestNextPart):
+        (WebKit::NetworkDataTask::gotHeadersCallback):
+        (WebKit::NetworkDataTask::didGetHeaders):
+        (WebKit::NetworkDataTask::wroteBodyDataCallback):
+        (WebKit::NetworkDataTask::didWriteBodyData):
+        (WebKit::NetworkDataTask::download):
+        (WebKit::NetworkDataTask::writeDownloadCallback):
+        (WebKit::NetworkDataTask::writeDownload):
+        (WebKit::NetworkDataTask::didWriteDownload):
+        (WebKit::NetworkDataTask::didFinishDownload):
+        (WebKit::NetworkDataTask::didFailDownload):
+        (WebKit::NetworkDataTask::cleanDownloadFiles):
+        (WebKit::NetworkDataTask::didFail):
+        (WebKit::NetworkDataTask::networkEventCallback):
+        (WebKit::NetworkDataTask::networkEvent):
+        (WebKit::NetworkDataTask::startingCallback):
+        (WebKit::NetworkDataTask::requestStartedCallback):
+        (WebKit::NetworkDataTask::didStartRequest):
+        (WebKit::NetworkDataTask::restartedCallback):
+        (WebKit::NetworkDataTask::didRestart):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSession::create):
+        (WebKit::NetworkSession::defaultSession):
+        (WebKit::NetworkSession::networkStorageSession):
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::~NetworkSession):
+        (WebKit::NetworkSession::soupSession):
+        (WebKit::NetworkSession::invalidateAndCancel):
+        (WebKit::NetworkSession::clearCredentials):
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession): Add implementation matching
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession().
+        (WebKit::RemoteNetworkingContext::storageSession): Do not always return the default session if the given one is
+        in the global map.
+        * PlatformEfl.cmake: Ad new files to compilation.
+        * PlatformGTK.cmake: Ditto.
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession): Also create a NetworkSession.
+        * config.h: Enable NetworkSession unconditionally for Soup based ports.
+
 2016-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Revert r207151

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(NETWORK_SESSION)
+
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLSession;
 OBJC_CLASS NSOperationQueue;
@@ -35,8 +37,13 @@ OBJC_CLASS WKNetworkSessionDelegate;
 #include "NetworkDataTask.h"
 #include <WebCore/SessionID.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+
+#if USE(SOUP)
+typedef struct _SoupSession SoupSession;
+#endif
 
 namespace WebCore {
 class NetworkStorageSession;
@@ -62,9 +69,13 @@ public:
 
     WebCore::SessionID sessionID() const { return m_sessionID; }
 
+#if USE(SOUP)
+    SoupSession* soupSession() const;
+#endif
+
+#if PLATFORM(COCOA)
     // Must be called before any NetworkSession has been created.
     static void setCustomProtocolManager(CustomProtocolManager*);
-#if PLATFORM(COCOA)
     static void setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&&);
     static void setSourceApplicationBundleIdentifier(const String&);
     static void setSourceApplicationSecondaryIdentifier(const String&);
@@ -74,29 +85,34 @@ public:
 #endif
 
     void clearCredentials();
-
+#if PLATFORM(COCOA)
     NetworkDataTask* dataTaskForIdentifier(NetworkDataTask::TaskIdentifier, WebCore::StoredCredentials);
 
     void addDownloadID(NetworkDataTask::TaskIdentifier, DownloadID);
     DownloadID downloadID(NetworkDataTask::TaskIdentifier);
     DownloadID takeDownloadID(NetworkDataTask::TaskIdentifier);
-    
+#endif
+
 private:
     NetworkSession(Type, WebCore::SessionID, CustomProtocolManager*);
-    WebCore::NetworkStorageSession& networkStorageSession();
+    WebCore::NetworkStorageSession& networkStorageSession() const;
 
     WebCore::SessionID m_sessionID;
 
+#if PLATFORM(COCOA)
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTask::TaskIdentifier, NetworkDataTask*> m_dataTaskMapWithoutCredentials;
     HashMap<NetworkDataTask::TaskIdentifier, DownloadID> m_downloadMap;
 
-#if PLATFORM(COCOA)
     RetainPtr<NSURLSession> m_sessionWithCredentialStorage;
     RetainPtr<WKNetworkSessionDelegate> m_sessionWithCredentialStorageDelegate;
     RetainPtr<NSURLSession> m_sessionWithoutCredentialStorage;
     RetainPtr<WKNetworkSessionDelegate> m_sessionWithoutCredentialStorageDelegate;
+#elif USE(SOUP)
+    HashSet<NetworkDataTask*> m_dataTaskSet;
 #endif
 };
 
 } // namespace WebKit
+
+#endif // USE(NETWORK_SESSION)

@@ -28,6 +28,7 @@
 
 #if USE(NETWORK_SESSION)
 
+#import "AuthenticationManager.h"
 #import "CustomProtocolManager.h"
 #import "DataReference.h"
 #import "Download.h"
@@ -475,7 +476,7 @@ void NetworkSession::invalidateAndCancel()
 }
 
 
-WebCore::NetworkStorageSession& NetworkSession::networkStorageSession()
+WebCore::NetworkStorageSession& NetworkSession::networkStorageSession() const
 {
     auto* storageSession = WebCore::NetworkStorageSession::storageSession(m_sessionID);
     RELEASE_ASSERT(storageSession);

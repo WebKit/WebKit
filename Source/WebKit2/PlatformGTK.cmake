@@ -39,8 +39,10 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/cache/NetworkCacheDataSoup.cpp
     NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
 
+    NetworkProcess/soup/NetworkDataTaskSoup.cpp
     NetworkProcess/soup/NetworkProcessMainSoup.cpp
     NetworkProcess/soup/NetworkProcessSoup.cpp
+    NetworkProcess/soup/NetworkSessionSoup.cpp
     NetworkProcess/soup/RemoteNetworkingContextSoup.cpp
 
     Platform/IPC/glib/GSocketMonitor.cpp

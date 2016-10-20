@@ -271,7 +271,7 @@ void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& c
 void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(isMainThread());
-    if (m_task && m_task->pendingDownloadID().downloadID())
+    if (m_task && m_task->isDownload())
         NetworkProcess::singleton().findPendingDownloadLocation(*m_task.get(), WTFMove(completionHandler), response);
     else if (sharedDidReceiveResponse(WTFMove(response)) == NetworkLoadClient::ShouldContinueDidReceiveResponse::Yes)
         completionHandler(PolicyUse);

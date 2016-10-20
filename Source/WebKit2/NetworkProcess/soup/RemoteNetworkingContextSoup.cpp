@@ -28,6 +28,8 @@
 #include "config.h"
 #include "RemoteNetworkingContext.h"
 
+#include "NetworkSession.h"
+#include "SessionTracker.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceHandle.h>
@@ -45,13 +47,21 @@ bool RemoteNetworkingContext::isValid() const
     return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID)
+void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 {
-    notImplemented();
+    ASSERT(sessionID.isEphemeral());
+
+    if (NetworkStorageSession::storageSession(sessionID))
+        return;
+
+    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
+    SessionTracker::setSession(sessionID, NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, nullptr));
 }
 
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
+    if (auto session = NetworkStorageSession::storageSession(m_sessionID))
+        return *session;
     return NetworkStorageSession::defaultStorageSession();
 }
 

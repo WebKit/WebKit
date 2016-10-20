@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Brent Fulgham <bfulgham@webkit.org>
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +24,56 @@
  */
 
 #include "config.h"
-#include "Download.h"
+#include "NetworkSession.h"
 
-#include "DataReference.h"
-#include "NetworkDataTask.h"
-#include <WebCore/NotImplemented.h>
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/SoupNetworkSession.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void Download::resume(const IPC::DataReference&, const String&, const SandboxExtension::Handle&)
+Ref<NetworkSession> NetworkSession::create(Type type, SessionID sessionID, CustomProtocolManager*)
 {
-    notImplemented();
+    return adoptRef(*new NetworkSession(type, sessionID, nullptr));
 }
 
-void Download::cancelNetworkLoad()
+NetworkSession& NetworkSession::defaultSession()
 {
-    m_download->cancel();
-    didCancel({ });
+    ASSERT(isMainThread());
+    static NetworkSession* session = &NetworkSession::create(NetworkSession::Type::Normal, SessionID::defaultSessionID(), nullptr).leakRef();
+    return *session;
 }
 
-void Download::platformInvalidate()
+NetworkStorageSession& NetworkSession::networkStorageSession() const
+{
+    auto* storageSession = NetworkStorageSession::storageSession(m_sessionID);
+    RELEASE_ASSERT(storageSession);
+    return *storageSession;
+}
+
+NetworkSession::NetworkSession(Type type, SessionID sessionID, CustomProtocolManager*)
+    : m_sessionID(sessionID)
 {
 }
 
-void Download::platformDidFinish()
+NetworkSession::~NetworkSession()
+{
+}
+
+SoupSession* NetworkSession::soupSession() const
+{
+    return networkStorageSession().soupNetworkSession().soupSession();
+}
+
+void NetworkSession::invalidateAndCancel()
+{
+    for (auto* task : m_dataTaskSet)
+        task->invalidateAndCancel();
+}
+
+void NetworkSession::clearCredentials()
 {
 }
 
