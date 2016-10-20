@@ -57,7 +57,7 @@
 
     [RaisesException] void setForcePendingWebGLPolicy(boolean forced);
 
-    void setPluginReplacementEnabled(boolean enabled);
+    [RaisesException] void setPluginReplacementEnabled(boolean enabled);
 
     // Editing, forms
     [RaisesException] void setEditingBehavior(DOMString behavior);

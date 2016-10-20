@@ -156,7 +156,7 @@ public:
     void setAutoscrollForDragAndDropEnabled(bool, ExceptionCode&);
     void setFontFallbackPrefersPictographs(bool, ExceptionCode&);
     void setWebFontsAlwaysFallBack(bool, ExceptionCode&);
-    void setPluginReplacementEnabled(bool);
+    void setPluginReplacementEnabled(bool, ExceptionCode&);
     void setBackgroundShouldExtendBeyondPage(bool, ExceptionCode&);
     void setShouldConvertPositionStyleOnCopy(bool, ExceptionCode&);
     void setScrollingTreeIncludesFrames(bool, ExceptionCode&);

@@ -91,7 +91,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings.timeWithoutMouseMovementBeforeHidingControls())
     , m_useLegacyBackgroundSizeShorthandBehavior(settings.useLegacyBackgroundSizeShorthandBehavior())
     , m_autoscrollForDragAndDropEnabled(settings.autoscrollForDragAndDropEnabled())
-    , m_pluginReplacementEnabled(RuntimeEnabledFeatures::sharedFeatures().pluginReplacementEnabled())
+    , m_pluginReplacementEnabled(settings.pluginReplacementEnabled())
     , m_shouldConvertPositionStyleOnCopy(settings.shouldConvertPositionStyleOnCopy())
     , m_fontFallbackPrefersPictographs(settings.fontFallbackPrefersPictographs())
     , m_webFontsAlwaysFallBack(settings.webFontsAlwaysFallBack())
@@ -183,7 +183,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setAllowsInlineMediaPlayback(m_allowsInlineMediaPlayback);
     settings.setAllowsInlineMediaPlaybackAfterFullscreen(m_allowsInlineMediaPlaybackAfterFullscreen);
     settings.setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackRequiresPlaysInlineAttribute);
-    RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(m_pluginReplacementEnabled);
+    settings.setPluginReplacementEnabled(m_pluginReplacementEnabled);
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
 #endif
@@ -548,9 +548,10 @@ void InternalSettings::setWebFontsAlwaysFallBack(bool enable, ExceptionCode& ec)
     settings()->setWebFontsAlwaysFallBack(enable);
 }
 
-void InternalSettings::setPluginReplacementEnabled(bool enabled)
+void InternalSettings::setPluginReplacementEnabled(bool enabled, ExceptionCode& ec)
 {
-    RuntimeEnabledFeatures::sharedFeatures().setPluginReplacementEnabled(enabled);
+    InternalSettingsGuardForSettings();
+    settings()->setPluginReplacementEnabled(enabled);
 }
 
 void InternalSettings::setBackgroundShouldExtendBeyondPage(bool hasExtendedBackground, ExceptionCode& ec)

@@ -272,3 +272,5 @@ selectionPaintingWithoutSelectionGapsEnabled initial=false
 shouldConvertInvalidURLsToBlank initial=true
 
 springTimingFunctionEnabled initial=false
+
+pluginReplacementEnabled initial=defaultPluginReplacementEnabled

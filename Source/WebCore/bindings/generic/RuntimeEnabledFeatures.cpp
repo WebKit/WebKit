@@ -57,11 +57,6 @@ void RuntimeEnabledFeatures::reset()
     m_isDeviceOrientationEnabled = true;
     m_isLinkPreloadEnabled = false;
     m_isLangAttributeAwareFormControlUIEnabled = false;
-#if PLATFORM(IOS)
-    m_isPluginReplacementEnabled = true;
-#else
-    m_isPluginReplacementEnabled = false;
-#endif
     m_isResourceTimingEnabled = false;
 #if ENABLE(INDEXED_DATABASE)
     m_isIndexedDBEnabled = true;
