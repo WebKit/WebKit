@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CredentialStorage.h"
 
+#if !USE(CFURLCONNECTION)
+
 #include "AuthenticationMac.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
@@ -50,3 +52,5 @@ void CredentialStorage::saveToPersistentStorage(const ProtectionSpace& protectio
 #endif
 
 } // namespace WebCore
+
+#endif // !USE(CFURLCONNECTION)

@@ -32,11 +32,18 @@
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
 
+#if USE(CFURLCONNECTION)
+#import "CFNSURLConnectionSPI.h"
+#endif
+
 using namespace WebCore;
 
 @interface WebCoreAuthenticationClientAsChallengeSender : NSObject <NSURLAuthenticationChallengeSender>
 {
     AuthenticationClient* m_client;
+#if USE(CFURLCONNECTION)
+    CFURLAuthChallengeRef m_cfChallenge;
+#endif
 }
 - (id)initWithAuthenticationClient:(AuthenticationClient*)client;
 - (AuthenticationClient*)client;
@@ -94,9 +101,46 @@ using namespace WebCore;
         m_client->receivedCancellation(core(challenge));
 }
 
+#if USE(CFURLCONNECTION)
+- (void)setCFChallenge:(CFURLAuthChallengeRef)challenge
+{
+    m_cfChallenge = challenge;
+}
+
+- (CFURLAuthChallengeRef)cfChallenge
+{
+    return m_cfChallenge;
+}
+#endif
+
 @end
 
 namespace WebCore {
+
+#if USE(CFURLCONNECTION)
+
+AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
+{
+    WebCoreAuthenticationClientAsChallengeSender *challengeSender = (WebCoreAuthenticationClientAsChallengeSender*) [macChallenge sender];
+    return AuthenticationChallenge([challengeSender cfChallenge], [challengeSender client]);
+}
+
+NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
+{
+    AuthenticationClient* authClient = coreChallenge.authenticationClient();
+    RetainPtr<WebCoreAuthenticationClientAsChallengeSender> challengeSender = adoptNS([[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:authClient]);
+    RetainPtr<CFURLAuthChallengeRef> authChallenge = coreChallenge.cfURLAuthChallengeRef();
+    if (!authChallenge)
+        authChallenge = adoptCF(createCF(coreChallenge));
+    [challengeSender.get() setCFChallenge:authChallenge.get()];
+#if PLATFORM(IOS)
+    return [[NSURLAuthenticationChallenge _createAuthenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
+#else
+    return [[NSURLAuthenticationChallenge _authenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
+#endif
+}
+
+#else
 
 AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
                                                  const Credential& proposedCredential,
@@ -170,5 +214,7 @@ AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
 {
     return AuthenticationChallenge(macChallenge);
 }
+
+#endif // USE(CFURLCONNECTION)
 
 } // namespace WebCore

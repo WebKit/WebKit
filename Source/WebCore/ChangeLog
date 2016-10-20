@@ -1,3 +1,161 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r207151
+        https://bugs.webkit.org/show_bug.cgi?id=163675
+
+        Reviewed by Brent Fulgham.
+
+        This code is still useful for comparison with Windows.  I'll remove it again soon.
+
+        No new tests.  No change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCorePrefix.h:
+        * loader/DocumentLoader.h:
+        * loader/EmptyClients.h:
+        * loader/FrameLoaderClient.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/cf/ResourceLoaderCFNet.cpp:
+        * loader/cocoa/SubresourceLoaderCocoa.mm:
+        (WebCore::SubresourceLoader::willCacheResponse):
+        * loader/mac/DocumentLoaderMac.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+        (WebCore::ResourceLoader::willCacheResponse):
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        (WebCore::Page::addSchedulePair):
+        (WebCore::Page::removeSchedulePair):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::create):
+        (WebCore::WebCoreNSURLAuthenticationChallengeClient::WebCoreNSURLAuthenticationChallengeClient):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ProtectionSpace.h:
+        * platform/network/ProtectionSpaceBase.cpp:
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.cpp:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::setAuthenticationClient): Deleted.
+        (WebCore::AuthenticationChallenge::authenticationClient): Deleted.
+        (WebCore::AuthenticationChallenge::platformCompare): Deleted.
+        (WebCore::createCF): Deleted.
+        (WebCore::core): Deleted.
+        * platform/network/cf/AuthenticationCF.h:
+        * platform/network/cf/AuthenticationChallenge.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+        (WebCore::CredentialStorage::saveToPersistentStorage):
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        * platform/network/cf/LoaderRunLoopCF.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStorage):
+        * platform/network/cf/ProtectionSpaceCFNet.cpp:
+        * platform/network/cf/ProtectionSpaceCFNet.h:
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::shouldSniffConnectionProperty):
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::schedule):
+        (WebCore::ResourceHandle::unschedule):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::encodingRequiresPlatformData):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::findCFURLRequestCopyContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::cfURLResponse):
+        * platform/network/cf/SynchronousLoaderClientCFNet.cpp:
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp:
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupRequest):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::setupConnectionScheduling):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::didReceiveResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::willCacheResponse):
+        (WebCore::SynchronousResourceHandleCFURLConnectionDelegate::canRespondToProtectionSpace):
+        * platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.h:
+        * platform/network/cocoa/CredentialCocoa.h:
+        * platform/network/cocoa/CredentialCocoa.mm:
+        (WebCore::Credential::Credential):
+        (WebCore::Credential::cfCredential):
+        * platform/network/cocoa/ProtectionSpaceCocoa.h:
+        * platform/network/cocoa/ProtectionSpaceCocoa.mm:
+        (WebCore::ProtectionSpace::ProtectionSpace):
+        (WebCore::ProtectionSpace::cfSpace):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::nsURLRequest):
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo):
+        (WebCore::ResourceResponse::nsURLResponse):
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/ios/QuickLook.h:
+        * platform/network/ios/QuickLook.mm:
+        (-[WebQuickLookHandleAsDelegate initWithConnectionDelegate:]):
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveDataArray:]):
+        (-[WebQuickLookHandleAsDelegate connection:didReceiveData:lengthReceived:]):
+        (-[WebQuickLookHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebQuickLookHandleAsDelegate connection:didFailWithError:]):
+        (-[WebQuickLookHandleAsDelegate detachHandle]):
+        (WebCore::QuickLookHandle::create):
+        (WebCore::QuickLookHandle::cfResponse):
+        * platform/network/mac/AuthenticationMac.mm:
+        (-[WebCoreAuthenticationClientAsChallengeSender setCFChallenge:]):
+        (-[WebCoreAuthenticationClientAsChallengeSender cfChallenge]):
+        (WebCore::core):
+        (WebCore::mac):
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::addCookie):
+        (WebCore::cookieStorage):
+        * platform/network/mac/CredentialStorageMac.mm:
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        * platform/network/mac/ResourceErrorMac.mm:
+        (NSErrorFromCFError):
+        (WebCore::ResourceError::ResourceError):
+        (WebCore::ResourceError::nsError):
+        (WebCore::ResourceError::operator NSError *):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::getConnectionTimingData):
+        * platform/network/mac/ResourceRequestMac.mm: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::updateNSURLRequest):
+        * platform/network/mac/SynchronousLoaderClient.mm:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        * platform/network/mac/WebCoreURLResponse.mm:
+        * platform/win/TemporaryLinkStubs.cpp:
+        * testing/js/WebCoreTestSupportPrefix.h:
+
 2016-10-19  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r206025): All YouTube videos play with black bars on all four sides

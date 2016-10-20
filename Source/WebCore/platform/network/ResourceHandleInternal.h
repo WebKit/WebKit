@@ -136,7 +136,7 @@ namespace WebCore {
         ResourceRequest m_currentRequest;
         RefPtr<ResourceHandleCFURLConnectionDelegate> m_connectionDelegate;
 #endif
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
         RetainPtr<NSURLConnection> m_connection;
         RetainPtr<id> m_delegate;
 #endif

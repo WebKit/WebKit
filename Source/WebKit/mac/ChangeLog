@@ -1,3 +1,21 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r207151
+        https://bugs.webkit.org/show_bug.cgi?id=163675
+
+        Reviewed by Brent Fulgham.
+
+        * Misc/WebDownload.mm:
+        (-[WebDownload _initWithLoadingCFURLConnection:request:response:delegate:proxy:]):
+        * Misc/WebDownloadInternal.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::convertMainResourceLoadToDownload):
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]):
+        * WebView/WebView.mm:
+        (-[WebView scheduleInRunLoop:forMode:]):
+        (-[WebView unscheduleFromRunLoop:forMode:]):
+
 2016-10-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207557.

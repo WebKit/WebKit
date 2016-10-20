@@ -1,3 +1,30 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r207151
+        https://bugs.webkit.org/show_bug.cgi?id=163675
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/mac/NetworkLoadMac.mm:
+        (WebKit::NetworkLoad::willCacheResponseAsync):
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::receivedCredential):
+        (WebKit::AuthenticationManager::receivedRequestToContinueWithoutCredential):
+        (WebKit::AuthenticationManager::receivedCancellation):
+        (WebKit::AuthenticationManager::receivedRequestToPerformDefaultHandling):
+        (WebKit::AuthenticationManager::receivedChallengeRejection):
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-10-19  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Expose suggested filename via WKBundleHitTestResult API

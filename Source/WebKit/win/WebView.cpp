@@ -5261,7 +5261,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-#if USE(CFURLCONNECTION)
+#if PLATFORM(WIN) || USE(CFURLCONNECTION)
     if (enabled)
         WebFrameNetworkingContext::ensurePrivateBrowsingSession();
     else

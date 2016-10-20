@@ -1050,6 +1050,7 @@
 		5C1427051C23F84C00D41183 /* DownloadID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F71C23F84300D41183 /* DownloadID.h */; };
 		5C1427061C23F84C00D41183 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426F81C23F84300D41183 /* DownloadManager.cpp */; };
 		5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426F91C23F84300D41183 /* DownloadManager.h */; };
+		5C1427111C23F89E00D41183 /* DownloadIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14270D1C23F88500D41183 /* DownloadIOS.mm */; };
 		5C1427121C23F89E00D41183 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C14270F1C23F89900D41183 /* DownloadMac.mm */; };
 		5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C1427091C23F86900D41183 /* DownloadCocoa.mm */; };
 		5C1427181C23F8B700D41183 /* CustomProtocolManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1427141C23F8B000D41183 /* CustomProtocolManager.h */; };
@@ -3131,6 +3132,7 @@
 		5C1426F81C23F84300D41183 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DownloadManager.cpp; path = NetworkProcess/Downloads/DownloadManager.cpp; sourceTree = "<group>"; };
 		5C1426F91C23F84300D41183 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DownloadManager.h; path = NetworkProcess/Downloads/DownloadManager.h; sourceTree = "<group>"; };
 		5C1427091C23F86900D41183 /* DownloadCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadCocoa.mm; path = NetworkProcess/Downloads/cocoa/DownloadCocoa.mm; sourceTree = "<group>"; };
+		5C14270D1C23F88500D41183 /* DownloadIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadIOS.mm; path = NetworkProcess/Downloads/ios/DownloadIOS.mm; sourceTree = "<group>"; };
 		5C14270F1C23F89900D41183 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DownloadMac.mm; path = NetworkProcess/Downloads/mac/DownloadMac.mm; sourceTree = "<group>"; };
 		5C1427141C23F8B000D41183 /* CustomProtocolManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomProtocolManager.h; path = NetworkProcess/CustomProtocols/CustomProtocolManager.h; sourceTree = "<group>"; };
 		5C1427151C23F8B000D41183 /* CustomProtocolManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CustomProtocolManager.messages.in; path = NetworkProcess/CustomProtocols/CustomProtocolManager.messages.in; sourceTree = "<group>"; };
@@ -5741,6 +5743,7 @@
 			isa = PBXGroup;
 			children = (
 				5C1427081C23F85200D41183 /* cocoa */,
+				5C14270C1C23F87700D41183 /* ios */,
 				5C14270B1C23F87100D41183 /* mac */,
 				83BFAC411D96136000433490 /* BlobDownloadClient.cpp */,
 				83BFAC401D96136000433490 /* BlobDownloadClient.h */,
@@ -5779,6 +5782,14 @@
 				5C14270F1C23F89900D41183 /* DownloadMac.mm */,
 			);
 			name = mac;
+			sourceTree = "<group>";
+		};
+		5C14270C1C23F87700D41183 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				5C14270D1C23F88500D41183 /* DownloadIOS.mm */,
+			);
+			name = ios;
 			sourceTree = "<group>";
 		};
 		5C14271A1C23F8BF00D41183 /* Cocoa */ = {
@@ -9089,6 +9100,7 @@
 				5C1427011C23F84C00D41183 /* Download.cpp in Sources */,
 				A1DF631218E0B7C8003A3E2A /* DownloadClient.mm in Sources */,
 				5C1427131C23F89E00D41183 /* DownloadCocoa.mm in Sources */,
+				5C1427111C23F89E00D41183 /* DownloadIOS.mm in Sources */,
 				5C1427121C23F89E00D41183 /* DownloadMac.mm in Sources */,
 				5C1427061C23F84C00D41183 /* DownloadManager.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#import "config.h"
+#import "ResourceRequest.h"
 
-#if USE(CFURLCONNECTION)
+#if PLATFORM(MAC)
 
-#include <CFNetwork/CFURLCredentialPriv.h>
+#import <Foundation/Foundation.h>
 
-typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
+@interface NSURLRequest (WebNSURLRequestDetails)
+- (CFURLRequestRef)_CFURLRequest;
+- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
+@end
 
 namespace WebCore {
 
-class AuthenticationChallenge;
-class Credential;
-class ProtectionSpace;
+#if USE(CFURLCONNECTION)
 
-CFURLAuthChallengeRef createCF(const AuthenticationChallenge&);
-#if PLATFORM(WIN)
-CFURLCredentialRef createCF(const Credential&);
-CFURLProtectionSpaceRef createCF(const ProtectionSpace&);
-#endif
-
-#if PLATFORM(COCOA)
-AuthenticationChallenge core(CFURLAuthChallengeRef);
-#endif
-#if PLATFORM(WIN)
-Credential core(CFURLCredentialRef);
-ProtectionSpace core(CFURLProtectionSpaceRef);
-#endif
+ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
+    : ResourceRequestBase()
+    , m_cfRequest([nsRequest _CFURLRequest])
+    , m_nsRequest(nsRequest)
+{
 }
 
-#endif // USE(CFURLCONNECTION)
+void ResourceRequest::updateNSURLRequest()
+{
+    if (m_cfRequest)
+        m_nsRequest = adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:m_cfRequest.get()]);
+}
+
+#endif
+
+} // namespace WebCore
+
+#endif

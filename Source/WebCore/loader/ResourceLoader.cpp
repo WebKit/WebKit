@@ -741,7 +741,7 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
     cancel();
 }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
 
 void ResourceLoader::schedule(SchedulePair& pair)
 {

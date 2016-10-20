@@ -28,11 +28,10 @@
 #include "ResourceErrorBase.h"
 
 #include <wtf/RetainPtr.h>
-
-#if PLATFORM(WIN)
 #if USE(CFURLCONNECTION)
 #include <CoreFoundation/CFStream.h>
 #endif
+#if PLATFORM(WIN)
 #include <windows.h>
 #include <wincrypt.h> // windows.h must be included before wincrypt.h.
 #endif
@@ -63,9 +62,11 @@ public:
     WEBCORE_EXPORT operator CFErrorRef() const;
 
 #if USE(CFURLCONNECTION)
+#if PLATFORM(WIN)
     ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate);
     PCCERT_CONTEXT certificate() const;
     void setCertificate(CFDataRef);
+#endif
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
@@ -89,11 +90,12 @@ private:
     bool m_dataIsUpToDate;
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFErrorRef> m_platformError;
-#elif PLATFORM(COCOA)
+#if PLATFORM(COCOA)
     mutable RetainPtr<NSError> m_platformNSError;
 #endif
 #if PLATFORM(WIN)
     RetainPtr<CFDataRef> m_certificate;
+#endif
 #else
     mutable RetainPtr<NSError> m_platformError;
 #endif

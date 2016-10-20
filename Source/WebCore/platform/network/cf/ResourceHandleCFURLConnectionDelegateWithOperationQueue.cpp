@@ -75,6 +75,9 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::releaseHandle()
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::setupRequest(CFMutableURLRequestRef request)
 {
+#if PLATFORM(IOS)
+    CFURLRequestSetShouldStartSynchronously(request, 1);
+#endif
     CFURLRef requestURL = CFURLRequestGetURL(request);
     if (!requestURL)
         return;
@@ -146,8 +149,10 @@ void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse
             adjustMIMETypeIfNecessary(cfResponse, isMainResourceLoad);
         }
 
+#if !PLATFORM(IOS)
         if (_CFURLRequestCopyProtocolPropertyForKey(m_handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
             CFURLResponseSetMIMEType(cfResponse, CFSTR("text/html"));
+#endif // !PLATFORM(IOS)
         
         ResourceResponse resourceResponse(cfResponse);
 #if ENABLE(WEB_TIMING)
@@ -283,7 +288,15 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToPro
 
         LOG(Network, "CFNet - ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace(handle=%p) (%s)", m_handle, m_handle->firstRequest().url().string().utf8().data());
 
-        m_handle->canAuthenticateAgainstProtectionSpace(ProtectionSpace(protectionSpace));
+        ProtectionSpace coreProtectionSpace = ProtectionSpace(protectionSpace);
+#if PLATFORM(IOS)
+        if (coreProtectionSpace.authenticationScheme() == ProtectionSpaceAuthenticationSchemeUnknown) {
+            m_boolResult = false;
+            dispatch_semaphore_signal(m_semaphore);
+            return;
+        }
+#endif // PLATFORM(IOS)
+        m_handle->canAuthenticateAgainstProtectionSpace(coreProtectionSpace);
     });
     dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
     return m_boolResult;

@@ -26,8 +26,21 @@
 #import "config.h"
 #import "ProtectionSpaceCocoa.h"
 
+#if USE(CFURLCONNECTION)
+@interface NSURLProtectionSpace (WebDetails)
+- (CFURLProtectionSpaceRef) _CFURLProtectionSpace;
+- (id)_initWithCFURLProtectionSpace:(CFURLProtectionSpaceRef)cfProtSpace;
+@end
+#endif
 
 namespace WebCore {
+
+#if USE(CFURLCONNECTION)
+ProtectionSpace::ProtectionSpace(CFURLProtectionSpaceRef space)
+    : ProtectionSpace(adoptNS([[NSURLProtectionSpace alloc] _initWithCFURLProtectionSpace:space]).get())
+{
+}
+#endif
 
 static ProtectionSpaceServerType type(NSURLProtectionSpace *space)
 {
@@ -91,6 +104,13 @@ ProtectionSpace::ProtectionSpace(NSURLProtectionSpace *space)
 {
     m_nsSpace = space;
 }
+
+#if USE(CFURLCONNECTION)
+CFURLProtectionSpaceRef ProtectionSpace::cfSpace() const
+{
+    return [nsSpace() _CFURLProtectionSpace];
+}
+#endif
 
 NSURLProtectionSpace *ProtectionSpace::nsSpace() const
 {

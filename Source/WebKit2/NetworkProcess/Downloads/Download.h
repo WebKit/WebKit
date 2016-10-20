@@ -47,6 +47,10 @@ OBJC_CLASS WKDownloadAsDelegate;
 #endif
 #endif
 
+#if USE(CFURLCONNECTION)
+#include <CFNetwork/CFURLDownloadPriv.h>
+#endif
+
 namespace IPC {
 class DataReference;
 }
@@ -134,6 +138,9 @@ private:
     RetainPtr<NSURLDownload> m_nsURLDownload;
     RetainPtr<WKDownloadAsDelegate> m_delegate;
 #endif
+#endif
+#if USE(CFURLCONNECTION)
+    RetainPtr<CFURLDownloadRef> m_download;
 #endif
     std::unique_ptr<WebCore::ResourceHandleClient> m_downloadClient;
     RefPtr<WebCore::ResourceHandle> m_resourceHandle;

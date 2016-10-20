@@ -26,6 +26,13 @@
 #import "config.h"
 #import "CredentialCocoa.h"
 
+#if USE(CFURLCONNECTION)
+@interface NSURLCredential (WebDetails)
+- (id)_initWithCFURLCredential:(CFURLCredentialRef)credential;
+- (CFURLCredentialRef) _CFURLCredential;
+@end
+#endif
+
 namespace WebCore {
 
 static NSURLCredentialPersistence toNSURLCredentialPersistence(CredentialPersistence persistence)
@@ -77,11 +84,25 @@ Credential::Credential(const Credential& original, CredentialPersistence persist
     }
 }
 
+#if USE(CFURLCONNECTION)
+Credential::Credential(CFURLCredentialRef credential)
+    : Credential(adoptNS([[NSURLCredential alloc] _initWithCFURLCredential:credential]).get())
+{
+}
+#endif
+
 Credential::Credential(NSURLCredential *credential)
     : CredentialBase(credential.user, credential.password, toCredentialPersistence(credential.persistence))
     , m_nsCredential(credential)
 {
 }
+
+#if USE(CFURLCONNECTION)
+CFURLCredentialRef Credential::cfCredential() const
+{
+    return [nsCredential() _CFURLCredential];
+}
+#endif
 
 NSURLCredential *Credential::nsCredential() const
 {

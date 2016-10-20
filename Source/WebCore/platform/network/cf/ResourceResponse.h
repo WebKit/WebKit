@@ -50,6 +50,9 @@ public:
     {
         m_isNull = !cfResponse;
     }
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT ResourceResponse(NSURLResponse *);
+#endif
 #else
     ResourceResponse(NSURLResponse *nsResponse)
         : m_initLevel(Uninitialized)
@@ -116,7 +119,8 @@ private:
 
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFURLResponseRef> m_cfResponse;
-#elif PLATFORM(COCOA)
+#endif
+#if PLATFORM(COCOA)
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
 };

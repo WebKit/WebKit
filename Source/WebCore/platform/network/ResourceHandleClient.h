@@ -124,7 +124,10 @@ namespace WebCore {
 
 #if USE(CFURLCONNECTION)
         virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
+#if PLATFORM(WIN)
         virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
+#endif // PLATFORM(WIN)
+
 #elif PLATFORM(COCOA)
         virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
 #endif

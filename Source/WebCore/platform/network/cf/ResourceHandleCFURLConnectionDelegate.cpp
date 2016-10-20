@@ -32,7 +32,14 @@
 #include "FormDataStreamCFNet.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
+
+#if PLATFORM(COCOA)
+#include "WebCoreSystemInterface.h"
+#endif
+
+#if PLATFORM(WIN)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 namespace WebCore {
 

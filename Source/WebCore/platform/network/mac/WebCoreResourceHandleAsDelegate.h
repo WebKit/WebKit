@@ -33,8 +33,12 @@ class ResourceHandle;
 - (void)detachHandle;
 @end
 
+#if !USE(CFURLCONNECTION)
+
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate, WebCoreResourceLoaderDelegate> {
     WebCore::ResourceHandle* m_handle;
 }
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle;
 @end
+
+#endif // !USE(CFURLCONNECTION)

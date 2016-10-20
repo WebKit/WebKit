@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !USE(CFURLCONNECTION)
+
 #include "WebCoreResourceHandleAsDelegate.h"
 #include <dispatch/dispatch.h>
 #include <wtf/RetainPtr.h>
@@ -55,3 +57,5 @@ class ResourceHandle;
 @interface WebCoreResourceHandleWithCredentialStorageAsOperationQueueDelegate : WebCoreResourceHandleAsOperationQueueDelegate
 
 @end
+
+#endif // !USE(CFURLCONNECTION)

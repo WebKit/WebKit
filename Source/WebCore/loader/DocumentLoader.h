@@ -55,7 +55,7 @@
 #include "QuickLook.h"
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
 #include <wtf/SchedulePair.h>
 #endif
 
@@ -145,7 +145,7 @@ namespace WebCore {
         WEBCORE_EXPORT void setTitle(const StringWithDirection&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(CFURLCONNECTION)
         void schedule(SchedulePair&);
         void unschedule(SchedulePair&);
 #endif

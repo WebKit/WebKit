@@ -1,3 +1,14 @@
+2016-10-19  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r207151
+        https://bugs.webkit.org/show_bug.cgi?id=163675
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Platform.h:
+        * wtf/SchedulePair.h:
+        * wtf/SchedulePairMac.mm:
+
 2016-10-19  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r207480): 3 Dromaeo tests failing
