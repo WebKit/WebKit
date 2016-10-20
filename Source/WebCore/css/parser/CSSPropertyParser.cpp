@@ -4488,10 +4488,9 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         CSSValueID id = m_range.consumeIncludingWhitespace().id();
         if (!CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyWebkitMarginBeforeCollapse, id, m_context.mode))
             return false;
-        RefPtr<CSSValue> beforeCollapse = CSSValuePool::singleton().createIdentifierValue(id);
-        addProperty(CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginCollapse, beforeCollapse.releaseNonNull(), important);
+        addProperty(CSSPropertyWebkitMarginBeforeCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
         if (m_range.atEnd()) {
-            addProperty(CSSPropertyWebkitMarginAfterCollapse, CSSPropertyWebkitMarginCollapse, beforeCollapse.releaseNonNull(), important);
+            addProperty(CSSPropertyWebkitMarginAfterCollapse, CSSPropertyWebkitMarginCollapse, CSSValuePool::singleton().createIdentifierValue(id), important);
             return true;
         }
         id = m_range.consumeIncludingWhitespace().id();
