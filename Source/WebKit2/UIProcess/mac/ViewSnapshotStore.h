@@ -64,6 +64,7 @@ public:
     void clearImage();
     bool hasImage() const;
     id asLayerContents();
+    RetainPtr<CGImageRef> asImageForTesting();
 
     void setRenderTreeSize(uint64_t renderTreeSize) { m_renderTreeSize = renderTreeSize; }
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
@@ -81,6 +82,8 @@ public:
     WebCore::IntSize size() const { return m_surface ? m_surface->size() : WebCore::IntSize(); }
 
     void setSurface(std::unique_ptr<WebCore::IOSurface>);
+
+    WebCore::IOSurface::SurfaceState setVolatile(bool);
 #else
     WebCore::IntSize size() const { return m_size; }
     size_t imageSizeInBytes() const { return m_imageSizeInBytes; }
@@ -117,6 +120,9 @@ public:
 
     void discardSnapshotImages();
 
+    void setDisableSnapshotVolatilityForTesting(bool disable) { m_disableSnapshotVolatility = disable; }
+    bool disableSnapshotVolatilityForTesting() const { return m_disableSnapshotVolatility; }
+
 #if !USE(IOSURFACE)
     static CAContext *snapshottingContext();
 #endif
@@ -126,9 +132,10 @@ private:
     void willRemoveImageFromSnapshot(ViewSnapshot&);
     void pruneSnapshots(WebPageProxy&);
 
-    size_t m_snapshotCacheSize;
+    size_t m_snapshotCacheSize { 0 };
 
     ListHashSet<ViewSnapshot*> m_snapshotsWithImages;
+    bool m_disableSnapshotVolatility { false };
 };
 
 } // namespace WebKit

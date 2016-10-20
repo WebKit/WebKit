@@ -1,5 +1,62 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206829. rdar://problem/28634858
+
+    2016-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            Make it possible to test ViewSnapshotStore behaviors
+            https://bugs.webkit.org/show_bug.cgi?id=162983
+
+            Reviewed by Simon Fraser.
+
+            Add two pieces of SPI to make it easier to test ViewSnapshotStore:
+
+            - [WKWebView _disableBackForwardSnapshotVolatilityForTesting]
+                This makes it so that we don't make snapshots volatile after we
+                take them, so that they won't get purged while the test is running
+                and cause the test to be flaky.
+
+            - [WKBackForwardListItem _copySnapshotForTesting]
+                This returns a CGImage with the content of the given back-forward
+                item's current snapshot, if there is one.
+
+            * UIProcess/API/Cocoa/WKBackForwardListItem.mm:
+            (-[WKBackForwardListItem _copySnapshotForTesting]):
+            * UIProcess/API/Cocoa/WKBackForwardListItemInternal.h:
+            * UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h: Added.
+            Add WKBackForwardListItem SPI to retrieve the snapshot for a given back-forward list item.
+
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _disableBackForwardSnapshotVolatilityForTesting]):
+            Add WKWebView SPI to disable volatility of snapshots, for testing purposes.
+
+            * UIProcess/Cocoa/WebViewImpl.h:
+            * UIProcess/Cocoa/WebViewImpl.mm:
+            (WebKit::WebViewImpl::takeViewSnapshot):
+            Adopt ViewSnapshot::setVolatile instead of reaching into the surface.
+
+            * UIProcess/mac/ViewGestureControllerMac.mm:
+            (WebKit::ViewGestureController::removeSwipeSnapshot):
+            Adopt ViewSnapshot::setVolatile instead of reaching into the surface.
+
+            * UIProcess/mac/ViewSnapshotStore.h:
+            (WebKit::ViewSnapshotStore::setDisableSnapshotVolatilityForTesting):
+            (WebKit::ViewSnapshotStore::disableSnapshotVolatilityForTesting):
+            * UIProcess/mac/ViewSnapshotStore.mm:
+            (WebKit::ViewSnapshotStore::ViewSnapshotStore):
+            (WebKit::ViewSnapshot::setVolatile):
+            (WebKit::ViewSnapshot::asLayerContents):
+            Move all touching of snapshot volatility into the new setVolatile,
+            and short-circuit if the testing-only m_disableSnapshotVolatility bit is set
+
+            (WebKit::ViewSnapshot::asImageForTesting):
+            Make a CGImageRef for the aforementioned WKBackForwardListItem SPI.
+            This is currently not implemented for the iOS Simulator, because we
+            don't have access to the bits of the image in that case.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206247. rdar://problem/28216256
 
     2016-09-21  Dan Bernstein  <mitz@apple.com>

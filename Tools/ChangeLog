@@ -1,5 +1,32 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206829. rdar://problem/28634858
+
+    2016-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            Make it possible to test ViewSnapshotStore behaviors
+            https://bugs.webkit.org/show_bug.cgi?id=162983
+
+            Reviewed by Simon Fraser.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/SnapshotStore.mm: Added.
+            (-[SnapshotTestWKWebView init]):
+            (-[SnapshotTestWKWebView loadPageNamed:]):
+            (imagesAreEqual):
+            Add tests for existing basic snapshotting behavior:
+
+            - a back-forward item shouldn't have a snapshot
+              until it is navigated away from
+
+            - causing a back-forward item to fall out of the
+              back-forward list should remove the snapshot
+
+            - calling the explicit snapshotting SPI, then navigating away from the page,
+              should result in the snapshot being retaken
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r205329. rdar://problem/28634858
 
     2016-09-01  Tim Horton  <timothy_horton@apple.com>

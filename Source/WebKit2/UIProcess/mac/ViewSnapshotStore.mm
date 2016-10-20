@@ -46,7 +46,6 @@ static const size_t maximumSnapshotCacheSize = 400 * (1024 * 1024);
 namespace WebKit {
 
 ViewSnapshotStore::ViewSnapshotStore()
-    : m_snapshotCacheSize(0)
 {
 }
 
@@ -201,13 +200,26 @@ void ViewSnapshot::clearImage()
 #endif
 }
 
+#if USE(IOSURFACE)
+WebCore::IOSurface::SurfaceState ViewSnapshot::setVolatile(bool becomeVolatile)
+{
+    if (ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting())
+        return WebCore::IOSurface::SurfaceState::Valid;
+
+    if (!m_surface)
+        return WebCore::IOSurface::SurfaceState::Empty;
+
+    return m_surface->setIsVolatile(becomeVolatile);
+}
+#endif
+
 id ViewSnapshot::asLayerContents()
 {
 #if USE(IOSURFACE)
     if (!m_surface)
         return nullptr;
 
-    if (m_surface->setIsVolatile(false) != WebCore::IOSurface::SurfaceState::Valid) {
+    if (setVolatile(false) != WebCore::IOSurface::SurfaceState::Valid) {
         clearImage();
         return nullptr;
     }
@@ -215,6 +227,20 @@ id ViewSnapshot::asLayerContents()
     return m_surface->asLayerContents();
 #else
     return [CAContext objectForSlot:m_slotID];
+#endif
+}
+
+RetainPtr<CGImageRef> ViewSnapshot::asImageForTesting()
+{
+#if USE(IOSURFACE)
+    if (!m_surface)
+        return nullptr;
+
+    ASSERT(ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting());
+    return m_surface->createImage();
+#else
+    // FIXME: Implement this in the slot case.
+    return nullptr;
 #endif
 }
 

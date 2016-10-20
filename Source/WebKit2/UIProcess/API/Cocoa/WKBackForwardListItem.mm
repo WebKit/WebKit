@@ -66,6 +66,13 @@ using namespace WebKit;
     return *_item;
 }
 
+- (CGImageRef)_copySnapshotForTesting
+{
+    if (auto snapshot = _item->snapshot())
+        return snapshot->asImageForTesting().leakRef();
+    return nullptr;
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

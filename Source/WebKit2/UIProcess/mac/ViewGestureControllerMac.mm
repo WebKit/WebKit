@@ -814,8 +814,8 @@ void ViewGestureController::removeSwipeSnapshot()
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-    if (m_currentSwipeSnapshot && m_currentSwipeSnapshot->surface())
-        m_currentSwipeSnapshot->surface()->setIsVolatile(true);
+    if (m_currentSwipeSnapshot)
+        m_currentSwipeSnapshot->setVolatile(true);
     m_currentSwipeSnapshot = nullptr;
 
     for (const auto& layer : m_currentSwipeLiveLayers)
