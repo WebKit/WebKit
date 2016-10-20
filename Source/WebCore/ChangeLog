@@ -1,3 +1,22 @@
+2016-10-20  Zalan Bujtas  <zalan@apple.com>
+
+        Stop searching for first-letter containers at multi-column boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=163739
+        <rdar://problem/28810750>
+
+        We should not cross the multi-column boundary while searching for the first-letter container.
+        While moving first-letter renderers to a multi-column parent, it could result in finding the wrong
+        container and end up adding a new wrapper under the original container (from where we are moving the renderers).    
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css-generated-content/first-letter-move-to-multicolumn-crash.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::blockForAccompanyingFirstLetter):
+
 2016-10-19  Dean Jackson  <dino@apple.com>
 
         Support CSS Shapes Level 1 without a prefix
