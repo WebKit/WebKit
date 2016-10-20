@@ -1,3 +1,16 @@
+2016-10-19  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Mark element AXAPI should comform to specs
+        https://bugs.webkit.org/show_bug.cgi?id=163707
+
+        Reviewed by Chris Fleizach.
+
+        Added the modified roles-computedRoleString-expected.txt in mac platform so 
+        that the exposed mark element won't affect other platform.
+
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt: Added.
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSS font-variation-settings does not handle uppercase axis names in variable fonts

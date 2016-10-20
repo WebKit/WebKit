@@ -1,3 +1,30 @@
+2016-10-19  Nan Wang  <n_wang@apple.com>
+
+        AX: [Mac] Mark element AXAPI should comform to specs
+        https://bugs.webkit.org/show_bug.cgi?id=163707
+
+        Reviewed by Chris Fleizach.
+
+        Created a new role for mark elements on Mac and exposed the role
+        description.
+
+        Changes are covered in modified test expectaions.
+
+        * English.lproj/Localizable.strings:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXMarkText):
+        * platform/LocalizedStrings.h:
+
 2016-10-19  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable URLParser for non-Safari Cocoa apps after r207321

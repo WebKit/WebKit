@@ -913,6 +913,9 @@
 /* accessibility label for hide closed captions button */
 "hide closed captions" = "hide closed captions";
 
+/* accessibility role description for a mark element */
+"highlighted" = "highlighted";
+
 /* accessibility role description for image map */
 "image map" = "image map";
 

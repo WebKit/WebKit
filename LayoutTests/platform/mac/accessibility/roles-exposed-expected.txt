@@ -355,9 +355,9 @@ area
       AXRoleDescription: 
       
 mark
-      AXRole: 
+      AXRole: AXGroup
       AXSubrole: 
-      AXRoleDescription: 
+      AXRoleDescription: highlighted
       
 math
       AXRole: AXGroup

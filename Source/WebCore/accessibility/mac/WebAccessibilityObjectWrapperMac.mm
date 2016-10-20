@@ -2213,6 +2213,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { SVGTextRole, NSAccessibilityGroupRole },
         { SVGTSpanRole, NSAccessibilityGroupRole },
         { InlineRole, NSAccessibilityGroupRole },
+        { MarkRole, NSAccessibilityGroupRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2498,6 +2499,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return AXDetailsText();
         case FooterRole:
             return AXFooterRoleDescriptionText();
+        case MarkRole:
+            return AXMarkText();
         case VideoRole:
             return localizedMediaControlElementString("VideoElement");
         default:

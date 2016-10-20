@@ -160,6 +160,7 @@ enum AccessibilityRole {
     ListBoxOptionRole,
     ListItemRole,
     ListMarkerRole,
+    MarkRole,
     MathElementRole,
     MatteRole,
     MenuRole,

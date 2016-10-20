@@ -857,6 +857,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ListRole:
         case ListBoxRole:
         case ListItemRole:
+        case MarkRole:
         case MathElementRole:
         case MatteRole:
         case MenuRole:

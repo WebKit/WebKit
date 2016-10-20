@@ -781,6 +781,11 @@ String AXHorizontalRuleDescriptionText()
     return WEB_UI_STRING("separator", "accessibility role description for a horizontal rule [<hr>]");
 }
     
+String AXMarkText()
+{
+    return WEB_UI_STRING("highlighted", "accessibility role description for a mark element");
+}
+
 #if ENABLE(METER_ELEMENT)
 String AXMeterGaugeRegionOptimumText()
 {

@@ -196,6 +196,7 @@ namespace WebCore {
 #if PLATFORM(COCOA)
     String AXARIAContentGroupText(const String& ariaType);
     String AXHorizontalRuleDescriptionText();
+    String AXMarkText();
 #if ENABLE(METER_ELEMENT)
     String AXMeterGaugeRegionOptimumText();
     String AXMeterGaugeRegionSuboptimalText();
