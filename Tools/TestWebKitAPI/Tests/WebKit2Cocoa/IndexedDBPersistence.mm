@@ -37,20 +37,6 @@
 
 #if WK_API_ENABLED
 
-static bool isDoneWithNavigation;
-
-@interface IndexedDBNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation IndexedDBNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDoneWithNavigation = true;
-}
-
-@end
-
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
 

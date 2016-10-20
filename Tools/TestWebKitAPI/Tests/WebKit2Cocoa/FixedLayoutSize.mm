@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
@@ -36,28 +37,9 @@ static bool fixedLayoutSizeDone;
 static bool fixedLayoutSizeAfterNavigationDone;
 static bool fixedLayoutSizeDisabledDone;
 
-@interface FixedLayoutSizeNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation FixedLayoutSizeNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    // After navigating, fixed layout size should be persisted.
-    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
-        EXPECT_EQ(200, [result integerValue]);
-        fixedLayoutSizeAfterNavigationDone = true;
-    }];
-}
-
-@end
-
 TEST(WebKit2, FixedLayoutSize)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
-
-    FixedLayoutSizeNavigationDelegate *delegate = [[FixedLayoutSizeNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
 
     [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
         EXPECT_EQ(100, [result integerValue]);
@@ -76,6 +58,13 @@ TEST(WebKit2, FixedLayoutSize)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    // After navigating, fixed layout size should be persisted.
+    [webView evaluateJavaScript:@"document.body.clientWidth" completionHandler:^(id result, NSError *error) {
+        EXPECT_EQ(200, [result integerValue]);
+        fixedLayoutSizeAfterNavigationDone = true;
+    }];
 
     TestWebKitAPI::Util::run(&fixedLayoutSizeAfterNavigationDone);
 

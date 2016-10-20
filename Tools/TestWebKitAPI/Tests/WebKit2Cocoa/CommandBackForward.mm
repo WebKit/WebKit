@@ -29,6 +29,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <Carbon/Carbon.h> // for GetCurrentEventTime()
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKViewPrivate.h>
@@ -152,19 +153,6 @@ public:
 
 #if WK_API_ENABLED
 
-@interface CommandBackForwardNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation CommandBackForwardNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    didFinishNavigation = true;
-}
-
-@end
-
-
 class WebKit2_CommandBackForwardTestWKWebView : public WebKit2_CommandBackForwardTest {
 public:
     RetainPtr<WKWebView> webView;
@@ -175,24 +163,17 @@ public:
 
         webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
         [[window contentView] addSubview:webView.get()];
-
-        CommandBackForwardNavigationDelegate *delegate = [[CommandBackForwardNavigationDelegate alloc] init];
-        [webView setNavigationDelegate:delegate];
     }
     
     void loadFiles()
     {
         NSURL *file1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [webView loadFileURL:file1 allowingReadAccessToURL:file1];
-
-        TestWebKitAPI::Util::run(&didFinishNavigation);
-        didFinishNavigation = false;
+        [webView _test_waitForDidFinishNavigation];
 
         NSURL *file2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [webView loadFileURL:file2 allowingReadAccessToURL:file2];
-
-        TestWebKitAPI::Util::run(&didFinishNavigation);
-        didFinishNavigation = false;
+        [webView _test_waitForDidFinishNavigation];
     }
 };
 
@@ -206,15 +187,13 @@ TEST_F(WebKit2_CommandBackForwardTestWKWebView, LTR)
 
     // Attempt to go back (using command-left).
     simulateCommandArrow(webView.get(), Left);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ([webView URL].path.lastPathComponent, @"simple.html");
 
     // Attempt to go back (using command-right).
     simulateCommandArrow(webView.get(), Right);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ([webView URL].path.lastPathComponent, @"simple2.html");
 }
@@ -230,15 +209,13 @@ TEST_F(WebKit2_CommandBackForwardTestWKWebView, RTL)
 
     // Attempt to go back (using command-right)
     simulateCommandArrow(webView.get(), Right);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ([webView URL].path.lastPathComponent, @"simple.html");
 
     // Attempt to go back (using command-left).
     simulateCommandArrow(webView.get(), Left);
-    TestWebKitAPI::Util::run(&didFinishNavigation);
-    didFinishNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     EXPECT_WK_STREQ([webView URL].path.lastPathComponent, @"simple2.html");
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "TestNavigationDelegate.h"
-#import <WebKit/WKWebView.h>
-#import <wtf/RetainPtr.h>
+#pragma once
 
 #if WK_API_ENABLED
 
-static bool finishedDispatch;
+#import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WebKit.h>
 
-TEST(WebKit2, WKPDFViewResizeCrash)
-{
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+@interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
+@property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
+@property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
+@property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
 
-    [webView setFrame:NSMakeRect(0, 0, 100, 100)];
-    webView = nil;
+- (void)waitForDidFinishNavigation;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        finishedDispatch = true;
-    });
+@end
 
-    TestWebKitAPI::Util::run(&finishedDispatch);
-}
+@interface WKWebView (TestWebKitAPIExtras)
+- (void)_test_waitForDidFinishNavigation;
+@end
 
 #endif

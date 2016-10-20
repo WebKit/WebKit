@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -46,33 +47,16 @@ typedef enum : NSUInteger {
 
 @end
 
-static bool navigationDone;
 static bool findMatchesDone;
-
-@interface FindInPageNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation FindInPageNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    navigationDone = true;
-}
-
-@end
 
 TEST(WebKit2, FindInPage)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView _setOverrideDeviceScaleFactor:2];
 
-    RetainPtr<FindInPageNavigationDelegate> delegate = adoptNS([[FindInPageNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&navigationDone);
+    [webView _test_waitForDidFinishNavigation];
 
     NSTextFinderAsynchronousDocumentFindOptions noFindOptions = (NSTextFinderAsynchronousDocumentFindOptions)0;
 

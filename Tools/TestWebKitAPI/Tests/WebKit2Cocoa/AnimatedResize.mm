@@ -26,7 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
-#import <WebKit/WKNavigationDelegatePrivate.h>
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebView.h>
@@ -39,19 +39,6 @@
 
 static bool didLayout;
 static bool didEndAnimatedResize;
-
-@interface AnimatedResizeNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation AnimatedResizeNavigationDelegate
-
-- (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
-{
-    if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
-        didLayout = true;
-}
-
-@end
 
 @interface AnimatedResizeWebView : WKWebView
 
@@ -70,17 +57,21 @@ static bool didEndAnimatedResize;
 
 static RetainPtr<WKWebView> animatedResizeWebView()
 {
-    RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = [[_WKProcessPoolConfiguration alloc] init];
+    RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
-    RetainPtr<WKProcessPool> processPool = [[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()];
+    RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    RetainPtr<WKWebViewConfiguration> webViewConfiguration = [[WKWebViewConfiguration alloc] init];
+    RetainPtr<WKWebViewConfiguration> webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
 
     RetainPtr<WKWebView> webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
-    AnimatedResizeNavigationDelegate *navigationDelegate = [[AnimatedResizeNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:navigationDelegate];
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setRenderingProgressDidChange:^(WKWebView *, _WKRenderingProgressEvents progressEvents) {
+        if (progressEvents & _WKRenderingProgressEventFirstVisuallyNonEmptyLayout)
+            didLayout = true;
+    }];
+    [webView setNavigationDelegate:navigationDelegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];

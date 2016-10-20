@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -35,20 +36,6 @@
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
-
-static bool isDoneWithNavigation;
-
-@interface DatabaseProcessKillNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation DatabaseProcessKillNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDoneWithNavigation = true;
-}
-
-@end
 
 static bool receivedScriptMessage;
 static bool receivedAtLeastOneOpenError;
@@ -94,13 +81,9 @@ TEST(IndexedDB, DatabaseProcessKill)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    DatabaseProcessKillNavigationDelegate *delegate = [[DatabaseProcessKillNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
-
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBDatabaseProcessKill-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+    [webView _test_waitForDidFinishNavigation];
 
     bool killedDBProcess = false;
     while (true) {

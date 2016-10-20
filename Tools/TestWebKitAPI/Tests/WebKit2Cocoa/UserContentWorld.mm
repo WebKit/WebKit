@@ -30,6 +30,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import "UserContentWorldProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -43,19 +44,6 @@
 #import <WebKit/_WKUserContentWorld.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDoneWithNavigation;
-
-@interface SimpleDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation SimpleDelegate
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDoneWithNavigation = true;
-}
-@end
-
 
 TEST(UserContentWorld, NormalWorld)
 {
@@ -73,12 +61,8 @@ TEST(UserContentWorld, NormalWorldUserScript)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleDelegate> delegate = adoptNS([[SimpleDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     __block bool isDone = false;
     [webView evaluateJavaScript:@"window.setFromUserScript ? 'variable accessible' : 'variable inaccessible';" completionHandler:^(id result, NSError *error) {
@@ -112,12 +96,8 @@ TEST(UserContentWorld, IsolatedWorldUserScript)
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-    RetainPtr<SimpleDelegate> delegate = adoptNS([[SimpleDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
-    TestWebKitAPI::Util::run(&isDoneWithNavigation);
-    isDoneWithNavigation = false;
+    [webView _test_waitForDidFinishNavigation];
 
     __block bool isDone = false;
     [webView evaluateJavaScript:@"window.setFromUserScript ? 'variable accessible' : 'variable inaccessible';" completionHandler:^(id result, NSError *error) {

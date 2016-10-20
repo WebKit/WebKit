@@ -28,35 +28,19 @@
 #if WK_API_ENABLED
 #if PLATFORM(MAC)
 
-#import <WebKit/WKFoundation.h>
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import <WebKit/WKWebView.h>
+#import "TestNavigationDelegate.h"
+#import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-static bool isDone;
-
-@interface DummyNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation DummyNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDone = true;
-}
-
-@end
 
 TEST(WKWebView, ShouldHaveInputContextForEditableContent)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    RetainPtr<DummyNavigationDelegate> delegate = adoptNS([[DummyNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"editable-body" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-    TestWebKitAPI::Util::run(&isDone);
+    [webView _test_waitForDidFinishNavigation];
 
     EXPECT_NOT_NULL([webView inputContext]);
 }

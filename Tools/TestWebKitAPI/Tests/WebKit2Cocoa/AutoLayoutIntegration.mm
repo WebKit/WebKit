@@ -26,26 +26,14 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
-static bool didFinishNavigation;
 static bool didInvalidateIntrinsicContentSize;
 static bool didEvaluateJavaScript;
-
-@interface AutoLayoutNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation AutoLayoutNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    didFinishNavigation = true;
-}
-
-@end
 
 @interface AutoLayoutWKWebView : WKWebView
 @property (nonatomic) BOOL expectingIntrinsicContentSizeChange;
@@ -53,6 +41,15 @@ static bool didEvaluateJavaScript;
 @end
 
 @implementation AutoLayoutWKWebView
+
+- (instancetype)initWithFrame:(NSRect)frame configuration:(WKWebViewConfiguration *)configuration
+{
+    self = [super initWithFrame:frame configuration:configuration];
+    if (!self)
+        return nil;
+
+    return self;
+}
 
 - (void)load:(NSString *)HTMLString withWidth:(CGFloat)width expectingContentSize:(NSSize)size
 {
@@ -72,9 +69,8 @@ static bool didEvaluateJavaScript;
     ".inline { display: inline-block; }"
     "</style>";
 
-    didFinishNavigation = false;
     [self loadHTMLString:[baseHTML stringByAppendingString:HTMLString] baseURL:nil];
-    TestWebKitAPI::Util::run(&didFinishNavigation);
+    [self _test_waitForDidFinishNavigation];
 
     [self layoutAtMinimumWidth:width andExpectContentSizeChange:size resettingWidth:resetAfter];
 }
@@ -114,9 +110,6 @@ static bool didEvaluateJavaScript;
 TEST(WebKit2, AutoLayoutIntegration)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
-
-    AutoLayoutNavigationDelegate *delegate = [[AutoLayoutNavigationDelegate alloc] init];
-    [webView setNavigationDelegate:delegate];
 
     // 10x10 rect with the constraint (width >= 50) -> 50x10
     [webView load:@"<div class='small'></div>" withWidth:50 expectingContentSize:NSMakeSize(50, 10)];

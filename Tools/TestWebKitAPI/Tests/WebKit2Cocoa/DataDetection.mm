@@ -27,25 +27,13 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(IOS)
 
-static bool finishedLoading;
 static bool ranScript;
-
-@interface DataDetectionNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation DataDetectionNavigationDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    finishedLoading = true;
-}
-
-@end
 
 @interface DataDetectionUIDelegate : NSObject <WKUIDelegate>
 
@@ -70,9 +58,7 @@ static bool ranScript;
 void expectLinkCount(WKWebView *webView, NSString *HTMLString, unsigned linkCount)
 {
     [webView loadHTMLString:HTMLString baseURL:nil];
-
-    TestWebKitAPI::Util::run(&finishedLoading);
-    finishedLoading = false;
+    [webView _test_waitForDidFinishNavigation];
 
     [webView evaluateJavaScript:@"document.getElementsByTagName('a').length" completionHandler:^(id value, NSError *error) {
         EXPECT_EQ(linkCount, [value unsignedIntValue]);
@@ -89,9 +75,6 @@ TEST(WebKit2, DataDetectionReferenceDate)
     [configuration setDataDetectorTypes:WKDataDetectorTypeCalendarEvent];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
-    RetainPtr<DataDetectionNavigationDelegate> navigationDelegate = adoptNS([[DataDetectionNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:navigationDelegate.get()];
 
     RetainPtr<DataDetectionUIDelegate> UIDelegate = adoptNS([[DataDetectionUIDelegate alloc] init]);
     [webView setUIDelegate:UIDelegate.get()];

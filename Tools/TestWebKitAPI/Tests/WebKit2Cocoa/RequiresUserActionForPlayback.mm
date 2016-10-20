@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
@@ -38,18 +39,6 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIWindow)
 #endif
-
-static bool isDoneWithNavigation;
-
-@interface RequiresUserActionForPlaybackNavigationDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation RequiresUserActionForPlaybackNavigationDelegate
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    isDoneWithNavigation = true;
-}
-@end
 
 static bool receivedScriptMessage;
 static RetainPtr<WKScriptMessage> lastScriptMessage;
@@ -82,9 +71,7 @@ public:
 
     void createWebView()
     {
-        delegate = adoptNS([[RequiresUserActionForPlaybackNavigationDelegate alloc] init]);
         webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView setNavigationDelegate:delegate.get()];
 #if TARGET_OS_IPHONE
         window = adoptNS([[getUIWindowClass() alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
         [window addSubview:webView.get()];
@@ -98,8 +85,7 @@ public:
     {
         NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        TestWebKitAPI::Util::run(&isDoneWithNavigation);
-        isDoneWithNavigation = false;
+        [webView _test_waitForDidFinishNavigation];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -109,8 +95,7 @@ public:
     {
         NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"video-without-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        TestWebKitAPI::Util::run(&isDoneWithNavigation);
-        isDoneWithNavigation = false;
+        [webView _test_waitForDidFinishNavigation];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -120,8 +105,7 @@ public:
     {
         NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"audio-only" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
         [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
-        TestWebKitAPI::Util::run(&isDoneWithNavigation);
-        isDoneWithNavigation = false;
+        [webView _test_waitForDidFinishNavigation];
 
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         receivedScriptMessage = false;
@@ -129,7 +113,6 @@ public:
 
     RetainPtr<RequiresUserActionForPlaybackMessageHandler> handler;
     RetainPtr<WKWebViewConfiguration> configuration;
-    RetainPtr<RequiresUserActionForPlaybackNavigationDelegate> delegate;
     RetainPtr<WKWebView> webView;
 #if TARGET_OS_IPHONE
     RetainPtr<UIWindow> window;
