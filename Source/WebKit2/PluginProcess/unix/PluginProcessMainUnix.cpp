@@ -36,7 +36,6 @@
 #include "PluginProcess.h"
 #include <WebCore/FileSystem.h>
 #include <stdlib.h>
-#include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
@@ -44,28 +43,15 @@
 #include <Ecore_X.h>
 #endif
 
+#if defined(XP_UNIX)
+#include <WebCore/PlatformDisplayX11.h>
+#include <WebCore/XErrorTrapper.h>
+#endif
+
 namespace WebKit {
 
 #if defined(XP_UNIX)
-
-#if !LOG_DISABLED
-static const char xErrorString[] = "The program '%s' received an X Window System error.\n"
-    "This probably reflects a bug in a browser plugin.\n"
-    "The error was '%s'.\n"
-    "  (Details: serial %ld error_code %d request_code %d minor_code %d)\n";
-#endif // !LOG_DISABLED
-
-static CString programName;
-
-static int webkitXError(Display* xdisplay, XErrorEvent* error)
-{
-    char errorMessage[64];
-    XGetErrorText(xdisplay, error->error_code, errorMessage, 63);
-
-    LOG(Plugins, xErrorString, programName.data(), errorMessage, error->serial, error->error_code, error->request_code, error->minor_code);
-
-    return 0;
-}
+static std::unique_ptr<WebCore::XErrorTrapper> xErrorTrapper;
 #endif // XP_UNIX
 
 class PluginProcessMain final: public ChildProcessMainBase {
@@ -98,8 +84,10 @@ public:
 #endif
 
 #if defined(XP_UNIX)
-        programName = WebCore::pathGetFileName(argv[0]).utf8();
-        XSetErrorHandler(webkitXError);
+        if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
+            auto* display = downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay()).native();
+            xErrorTrapper = std::make_unique<WebCore::XErrorTrapper>(display, WebCore::XErrorTrapper::Policy::Warn);
+        }
 #endif
 
         m_parameters.extraInitializationData.add("plugin-path", argv[2]);

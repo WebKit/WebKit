@@ -1,3 +1,41 @@
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Wrong use of EGL_DEPTH_SIZE
+        https://bugs.webkit.org/show_bug.cgi?id=155536
+
+        Reviewed by Michael Catanzaro.
+
+        What happens here is that the driver doesn't implement EGL_DEPTH_SIZE and the default value, which is 0, is
+        returned. Then XCreatePixmap fails because 0 is not a valid depth. The thing is that even if EGL_DEPTH_SIZE or
+        EGL_BUFFER_SIZE returned a valid depth, it still might not be supported by the default screen and XCreatePixmap
+        can fail. What we need to ensure is that the depth we pass is compatible with the X display, not only with the
+        EGL config, to avoid failures when creating the pixmap. So, we can use EGL_NATIVE_VISUAL_ID instead, and
+        then ask X for the visual info for that id. If it isn't found then we just return before creating the pixmap,
+        but if the visual is found then we can be sure that the depth of the visual will not make the pixmap creation
+        fail. However, with the driver I'm using it doesn't matter how we create the pixmap that eglCreatePixmapSurface
+        always fails, again with X errors that are fatal by default. Since the driver is not free, I assume it doesn't
+        support eglCreatePixmapSurface or it's just buggy, so the only option we have here is trap the x errors and
+        ignore them. It turns out that the X errors are not fatal in this case, because eglCreatePixmapSurface ends up
+        returning a surface, and since these are offscreen contexts, it doesn't really matter if they contain an
+        invalid pixmap, because we never do swap buffer on them, so just ignoring the X errors fixes the crashes and
+        makes everythig work. This patch adds a helper class XErrorTrapper that allows to trap XErrors and decide what
+        to do with them (ignore, warn or crash) or even not consider a particular set of errors as errors.
+
+        * PlatformEfl.cmake: Add new file to compilation.
+        * PlatformGTK.cmake: Ditto.
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createPixmapContext): Use EGL_NATIVE_VISUAL_ID instead of EGL_DEPTH_SIZE to figure out
+        the depth to be passed to XCreatePixmap. Also use the XErrorTrapper class to ignore all BadDrawable errors
+        produced by eglCreatePixmapSurface() and only show a warning about all other X errors.
+        * platform/graphics/x11/XErrorTrapper.cpp: Added.
+        (WebCore::xErrorTrappersMap):
+        (WebCore::XErrorTrapper::XErrorTrapper):
+        (WebCore::XErrorTrapper::~XErrorTrapper):
+        (WebCore::XErrorTrapper::errorCode):
+        (WebCore::XErrorTrapper::errorEvent):
+        * platform/graphics/x11/XErrorTrapper.h: Added.
+        (WebCore::XErrorTrapper::XErrorTrapper):
+
 2016-10-20  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         WebRTC: The MediaStreamTrackEvent init dictionary needs a required track member
