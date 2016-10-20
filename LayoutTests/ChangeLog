@@ -1,3 +1,18 @@
+2016-10-20  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        WebRTC: The MediaStreamTrackEvent init dictionary needs a required track member
+        https://bugs.webkit.org/show_bug.cgi?id=146232
+
+        Update MediaStreamTrackEvent IDL as per specification.
+
+        No additional test required, rebase existings tests.
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/MediaStreamTrackEvent-constructor-expected.txt:
+        * fast/mediastream/MediaStreamTrackEvent-constructor.html: Remove
+        useless tests.
+
 2016-10-19  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: mute support
