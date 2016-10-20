@@ -202,7 +202,8 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     metadata->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ.
     VariableEnvironment emptyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, ConstructAbility::CanConstruct, JSParserScriptMode::Classic, emptyTDZVariables, DerivedContextType::None);
+    ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, emptyTDZVariables, DerivedContextType::None);
 
     functionExecutable->setSourceURLDirective(source.provider()->sourceURL());
     functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURL());

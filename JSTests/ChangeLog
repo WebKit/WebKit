@@ -1,3 +1,16 @@
+2016-10-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] throw TypeError when constructing dynamically created JSGeneratorFunction
+        https://bugs.webkit.org/show_bug.cgi?id=163714
+
+        Reviewed by Mark Lam.
+
+        Add missing test coverage that dynamically created
+        JSGeneratorFunctions can not be constructed.
+
+        * stress/generator-function-constructor.js:
+        (shouldThrow):
+
 2016-10-19  JF Bastien  <jfbastien@apple.com>
 
         JavaScript WebAssembly API: baby steps
