@@ -1,3 +1,25 @@
+2016-10-20  Dean Jackson  <dino@apple.com>
+
+        SVG should not paint selection within a mask
+        https://bugs.webkit.org/show_bug.cgi?id=163772
+        <rdar://problem/28705129>
+
+        Reviewed by Simon Fraser.
+
+        When masking content, we shouldn't paint the text
+        selection as we are rendering into the masking
+        offscreen buffer.
+
+        Test: svg/masking/mask-should-not-paint-selection.html
+
+        * rendering/PaintPhase.h: Add a new behavior - PaintBehaviorSkipSelectionHighlight.
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint): Don't update the selectionStyle if
+        PaintBehaviorSkipSelectionHighlight is true.
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::renderSubtreeToImageBuffer): Add PaintBehaviorSkipSelectionHighlight
+        to the PaintInfo.
+
 2016-10-21  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] MediaControlsHost has invalid operation overloads

@@ -53,9 +53,10 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     bool isPrinting = renderSVGText().document().printing();
     bool hasSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
+    bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior & PaintBehaviorSkipSelectionHighlight);
 
     PaintInfo childPaintInfo(paintInfo);
-    if (hasSelection) {
+    if (hasSelection && shouldPaintSelectionHighlight) {
         for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
             if (is<SVGInlineTextBox>(*child))
                 downcast<SVGInlineTextBox>(*child).paintSelectionBackground(childPaintInfo);
