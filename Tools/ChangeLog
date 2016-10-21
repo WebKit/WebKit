@@ -1,3 +1,12 @@
+2016-10-21  Jonathan Bedard  <jbedard@apple.com>
+
+        WebKitTestRunnerApp packages .idl file
+        https://bugs.webkit.org/show_bug.cgi?id=163788
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Removed .idl file from app package, removed bad reference to app icon.
+
 2016-10-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] REGRESSION(r207616): Build is broken due to missing libgeoclue-dev package
