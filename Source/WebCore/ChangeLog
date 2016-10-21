@@ -1,3 +1,21 @@
+2016-10-21  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: [OpenWebRTC] Move SDPProcessorScriptResource(Gtk) to openwebrtc directory
+        https://bugs.webkit.org/show_bug.cgi?id=163778
+
+        Reviewed by Philippe Normand.
+
+        Move SDPProcessorScriptResourceGtk from the platform gtk directory to the port generic
+        openwebrtc directory to make it usable by other ports. Also drop the Gtk-suffix.
+
+        No change of behavior.
+
+        * PlatformGTK.cmake:
+        * platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp:
+        (WebCore::SDPProcessorScriptResource::scriptString): Deleted.
+        * platform/mediastream/openwebrtc/SDPProcessorScriptResource.cpp: Renamed from Source/WebCore/platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp.
+        (WebCore::SDPProcessorScriptResource::scriptString):
+
 2016-10-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Several tests crashing on debug bot in (anonymous namespace)::MediaPlayerPrivateGStreamerBase::repaint

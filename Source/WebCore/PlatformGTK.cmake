@@ -165,7 +165,7 @@ list(APPEND WebCore_SOURCES
 
     platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
 
-    platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp
+    platform/mediastream/openwebrtc/SDPProcessorScriptResource.cpp
 
     platform/network/soup/AuthenticationChallengeSoup.cpp
     platform/network/soup/CertificateInfo.cpp
@@ -260,7 +260,7 @@ set(WebCore_USER_AGENT_SCRIPTS
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderThemeGtk.cpp)
 
 set(WebCore_SDP_PROCESSOR_SCRIPTS ${WEBCORE_DIR}/Modules/mediastream/sdp.js)
-set(WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/mediastream/gtk/SDPProcessorScriptResourceGtk.cpp)
+set(WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/mediastream/openwebrtc/SDPProcessorScriptResource.cpp)
 
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
