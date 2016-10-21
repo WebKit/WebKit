@@ -1,3 +1,17 @@
+2016-10-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r207609.
+        https://bugs.webkit.org/show_bug.cgi?id=163776
+
+        As glib bump was rollout, we need to rollout this too
+        (Requested by rego on #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Cannot build GTK+ with CUPS 2.* versions"
+        https://bugs.webkit.org/show_bug.cgi?id=163591
+        http://trac.webkit.org/changeset/207609
+
 2016-10-20  Chris Dumez  <cdumez@apple.com>
 
         "Download Linked File" context menu action should use 'download' attribute as suggested filename
