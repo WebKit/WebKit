@@ -103,9 +103,10 @@ protected:
         if (Options::verboseCompilationQueue())
             dataLog(m_worklist, ": Compiling ", m_plan->key(), " asynchronously\n");
         
-        RELEASE_ASSERT(!m_plan->vm->heap.isCollecting());
+        // There's no way for the GC to be safepointing since we own rightToRun.
+        RELEASE_ASSERT(m_plan->vm->heap.mutatorState() != MutatorState::HelpingGC);
         m_plan->compileInThread(*m_longLivedState, &m_data);
-        RELEASE_ASSERT(m_plan->stage == Plan::Cancelled || !m_plan->vm->heap.isCollecting());
+        RELEASE_ASSERT(m_plan->stage == Plan::Cancelled || m_plan->vm->heap.mutatorState() != MutatorState::HelpingGC);
         
         {
             LockHolder locker(*m_worklist.m_lock);
@@ -123,7 +124,7 @@ protected:
             
             m_worklist.m_planCompiled.notifyAll();
         }
-        RELEASE_ASSERT(!m_plan->vm->heap.isCollecting());
+        RELEASE_ASSERT(m_plan->vm->heap.mutatorState() != MutatorState::HelpingGC);
         
         return WorkResult::Continue;
     }

@@ -1,3 +1,185 @@
+2016-10-20  Filip Pizlo  <fpizlo@apple.com>
+
+        The tracking of the coarse-grain Heap state (allocating or not, collector or not, eden vs full) should respect the orthogonality between allocating and collecting
+        https://bugs.webkit.org/show_bug.cgi?id=163738
+
+        Reviewed by Geoffrey Garen.
+        
+        We need to know if we're currently in an allocation slow path, so that code can assert that
+        it's not being used from inside a destructor that runs during a sweep. We need to know if
+        we're currently collecting, because some code behaves differently during collection, and
+        other code wants to assert that it's not being used from inside a visitChildren method that
+        runs during marking. If we are collecting, we need to know if it's an eden collection or a
+        full collection. If we are requesting a collection, we need to know if we're requesting an
+        eden collection, a full collection, or any kind of collection.
+        
+        Prior to this change, you would reason about all of these things using the HeapOperation. It
+        had the following states: NoOperation, Allocation, FullCollection, EdenCollection, and
+        AnyCollection. NoOperation versus Allocation was primarily for asserting that sweep didn't
+        call arbitrary JS. FullCollection versus EdenCollection was about describing generations. We
+        would even use HeapOperation in places where we knew that it could only be either Full or
+        Eden, because we just needed a variable to tell us which generation we were talking about.
+        It was all very confusing.
+        
+        Where it completely breaks down is the fact that a concurrent GC has two logical threads, the
+        mutator and the collector, which can change state independently. The mutator can be
+        allocating. It can also be doing some work to help the GC. That's three states: running,
+        allocating, or helping GC. At the same time, the GC thread could either be running or not,
+        and if it's running, it could be a full collection or an eden collection. Because the mutator
+        and collector can run at the same time, it means that if we used one enum, we would need nine
+        states: every combination of mutator running, allocating, or helping GC, crossed with
+        collector not running, running eden, or running full. So, this change decouples mutator state
+        from collector state and uses two separate fields with two different types.
+        
+        Mutator state is described using MutatorState, which can be either MutatorState::Running,
+        MutatorState::Allocating, or MutatorState::HelpingGC.
+        
+        Collector state is described using Optional<CollectionScope>. CollectionScope describes how
+        big the scope of the collection is, and it can be either CollectionScope::Eden or
+        CollectionScope::Full. If the Optional is Nullopt, it means that we are not collecting. This
+        way, you can treat collectionScope as a boolean (an Optional is true iff it's engaged). You
+        can pass around just a CollectionScope if you know that you must be collecting and you just
+        want to know about the generation. Also, we can use Nullopt in methods that request
+        collection, which those methods take to mean that they can run any kind of collection (the
+        old AnyCollection).
+        
+        Another use of HeapOperation was to answer questions about whether the caller is running as
+        part of the GC or as part of the mutator. Optional<CollectionScope> does not answer this,
+        since code that runs in the mutator while the mutator is not HelpingGC at the same time as
+        the collector is running should run as if it was part of the mutator not as if it was part of
+        the GC. MutatorState is needed to answer this question, but it doesn't tell the whole story
+        since code that runs in the collector thread at the same time as the mutator is running
+        should run as if it was part of the GC not as if it was part of the mutator. So, we need to
+        know if we're on the collector thread or the mutator thread. We already have a WTF facility
+        for this, which answers if a thread is a GC thread. But we already use this to answer a
+        stronger question: are we part of the parallel GC helpers? Some functions in the GC, like
+        mark bit queries, will work fine in a concurrent collector thread so long as there is no
+        parallel marking. So, this change also changes WTF's mayBeGCThread to tell what kind of GC
+        thread we may be: either GCThreadType::Main or GCThreadType::Helper. The parallel GC safety
+        checks look for GCThreadType::Helper. The "should I run as mutator" query can now be answered
+        by checking with mayBeGCThread, which returns Optional<GCThreadType>; if engaged, then run as
+        GC, else run as GC if MutatorState is HelpingGC, else run as mutator.
+        
+        This doesn't change the way that the GC behaves, but it does change how the GC represents a
+        fundamental piece of state. So, it's a big change. It should be perf-neutral (still testing).
+
+        * API/JSBase.cpp:
+        (JSSynchronousEdenCollectForDebugging):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::jettison):
+        * dfg/DFGWorklist.cpp:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * heap/AllocatingScope.h: Added.
+        (JSC::AllocatingScope::AllocatingScope):
+        (JSC::AllocatingScope::~AllocatingScope):
+        * heap/AllocationScope.h: Removed.
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        * heap/CodeBlockSet.h:
+        * heap/CollectionScope.cpp: Added.
+        (JSC::collectionScopeName):
+        (WTF::printInternal):
+        * heap/CollectionScope.h: Added.
+        * heap/EdenGCActivityCallback.cpp:
+        (JSC::EdenGCActivityCallback::doCollection):
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/GCTypeMap.h:
+        (JSC::GCTypeMap::operator[]):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::visitSmallStrings):
+        (JSC::Heap::updateObjectCounts):
+        (JSC::Heap::deleteAllCodeBlocks):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::collect):
+        (JSC::Heap::collectWithoutAnySweep):
+        (JSC::Heap::collectImpl):
+        (JSC::Heap::willStartCollection):
+        (JSC::Heap::flushWriteBarrierBuffer):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps):
+        (JSC::Heap::notifyIncrementalSweeper):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::didFinishCollection):
+        (JSC::Heap::isValidAllocation):
+        (JSC::Heap::shouldDoFullCollection):
+        * heap/Heap.h:
+        (JSC::Heap::mutatorState):
+        (JSC::Heap::collectionScope):
+        (JSC::Heap::operationInProgress): Deleted.
+        * heap/HeapInlines.h:
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isCurrentThreadBusy):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        (JSC::Heap::collectAccordingToDeferGCProbability):
+        (JSC::Heap::isBusy): Deleted.
+        (JSC::Heap::isCollecting): Deleted.
+        * heap/HeapObserver.h:
+        * heap/HeapOperation.cpp: Removed.
+        * heap/HeapOperation.h: Removed.
+        * heap/HeapVerifier.cpp:
+        (JSC::HeapVerifier::initializeGCCycle):
+        (JSC::HeapVerifier::reportObject):
+        (JSC::HeapVerifier::collectionTypeName): Deleted.
+        * heap/HeapVerifier.h:
+        (JSC::HeapVerifier::GCCycle::collectionTypeName): Deleted.
+        * heap/HelpingGCScope.h: Added.
+        (JSC::HelpingGCScope::HelpingGCScope):
+        (JSC::HelpingGCScope::~HelpingGCScope):
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::flip):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::doTestCollectionsIfNeeded):
+        (JSC::MarkedAllocator::allocateSlowCaseImpl):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::prepareForAllocation):
+        (JSC::MarkedSpace::visitWeakSets):
+        (JSC::MarkedSpace::reapWeakSets):
+        (JSC::MarkedSpace::prepareForMarking):
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::snapshotUnswept):
+        * heap/MutatorState.cpp: Added.
+        (WTF::printInternal):
+        * heap/MutatorState.h: Added.
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::didStartMarking):
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::protocolTypeForHeapOperation):
+        (Inspector::InspectorHeapAgent::didGarbageCollect):
+        * inspector/agents/InspectorHeapAgent.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        * jsc.cpp:
+        (functionFullGC):
+        (functionEdenGC):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        (JSC::loadAndEvaluateModule):
+        (JSC::loadModule):
+        (JSC::linkAndEvaluateModule):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::DropAllLocks::DropAllLocks):
+        * runtime/SmallStrings.h:
+        (JSC::SmallStrings::needsToBeVisited):
+        * runtime/VM.h:
+        (JSC::VM::isCollectorBusyOnCurrentThread):
+        (JSC::VM::isCollectorBusy): Deleted.
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::edenGC):
+
 2016-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop isEnvironmentRecord type info flag and use JSType information instead

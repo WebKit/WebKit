@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2015 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2009, 2015-2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,9 +113,9 @@ public:
     JSString* nullObjectString() const { return m_nullObjectString; }
     JSString* undefinedObjectString() const { return m_undefinedObjectString; }
 
-    bool needsToBeVisited(HeapOperation collectionType) const
+    bool needsToBeVisited(CollectionScope scope) const
     {
-        if (collectionType == FullCollection)
+        if (scope == CollectionScope::Full)
             return true;
         return m_needsToBeVisited;
     }

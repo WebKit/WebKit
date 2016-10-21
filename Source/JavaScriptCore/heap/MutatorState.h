@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,16 @@
 
 namespace JSC {
 
-enum HeapOperation { NoOperation, Allocation, FullCollection, EdenCollection, AnyCollection };
+enum class MutatorState {
+    // The mutator is running when it's not inside a Heap slow path.
+    Running,
+    
+    // The mutator is in an allocation slow path.
+    Allocating,
+    
+    // The mutator was asked by the GC to do some work.
+    HelpingGC
+};
 
 } // namespace JSC
 
@@ -35,6 +44,7 @@ namespace WTF {
 
 class PrintStream;
 
-void printInternal(PrintStream& out, JSC::HeapOperation);
+void printInternal(PrintStream&, JSC::MutatorState);
 
 } // namespace WTF
+

@@ -54,7 +54,6 @@ public:
     // object was in any of those lists.
     JS_EXPORT_PRIVATE void checkIfRecorded(JSObject*);
 
-    static const char* collectionTypeName(HeapOperation);
     static const char* phaseName(Phase);
 
 private:
@@ -65,14 +64,9 @@ private:
         {
         }
 
-        HeapOperation collectionType;
+        CollectionScope scope;
         LiveObjectList before;
         LiveObjectList after;
-
-        const char* collectionTypeName() const
-        {
-            return HeapVerifier::collectionTypeName(collectionType);
-        }
     };
 
     void incrementCycle() { m_currentCycle = (m_currentCycle + 1) % m_numberOfCycles; }

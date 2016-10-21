@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,10 +77,10 @@ void CodeBlockSet::lastChanceToFinalize()
         codeBlock->classInfo()->methodTable.destroy(codeBlock);
 }
 
-void CodeBlockSet::deleteUnmarkedAndUnreferenced(HeapOperation collectionType)
+void CodeBlockSet::deleteUnmarkedAndUnreferenced(CollectionScope scope)
 {
     LockHolder locker(&m_lock);
-    HashSet<CodeBlock*>& set = collectionType == EdenCollection ? m_newCodeBlocks : m_oldCodeBlocks;
+    HashSet<CodeBlock*>& set = scope == CollectionScope::Eden ? m_newCodeBlocks : m_oldCodeBlocks;
     Vector<CodeBlock*> unmarked;
     for (CodeBlock* codeBlock : set) {
         if (Heap::isMarked(codeBlock))
@@ -94,7 +94,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(HeapOperation collectionType)
     }
 
     // Any remaining young CodeBlocks are live and need to be promoted to the set of old CodeBlocks.
-    if (collectionType == EdenCollection)
+    if (scope == CollectionScope::Eden)
         promoteYoungCodeBlocks(locker);
 }
 

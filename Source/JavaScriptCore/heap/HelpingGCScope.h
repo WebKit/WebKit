@@ -25,39 +25,27 @@
 
 #pragma once
 
-#include "CollectionScope.h"
-#include <wtf/Assertions.h>
+#include "Heap.h"
 
 namespace JSC {
 
-template<typename T>
-struct GCTypeMap {
-    T eden;
-    T full;
-    
-    T& operator[](CollectionScope scope)
+class HelpingGCScope {
+public:
+    HelpingGCScope(Heap& heap)
+        : m_heap(heap)
+        , m_oldState(m_heap.m_mutatorState)
     {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        ASSERT_NOT_REACHED();
-        return full;
+        m_heap.m_mutatorState = MutatorState::HelpingGC;
     }
     
-    const T& operator[](CollectionScope scope) const
+    ~HelpingGCScope()
     {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return full;
+        m_heap.m_mutatorState = m_oldState;
     }
+
+private:
+    Heap& m_heap;
+    MutatorState m_oldState;
 };
 
 } // namespace JSC

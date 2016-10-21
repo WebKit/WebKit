@@ -33,8 +33,11 @@
 #include <functional>
 #include <stdint.h>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 
 namespace WTF {
+
+class PrintStream;
 
 typedef uint32_t ThreadIdentifier;
 
@@ -67,8 +70,15 @@ inline bool isUIThread() { return isMainThread(); }
 
 void initializeGCThreads();
 
-WTF_EXPORT_PRIVATE void registerGCThread();
-WTF_EXPORT_PRIVATE bool mayBeGCThread();
+enum class GCThreadType {
+    Main,
+    Helper
+};
+
+void printInternal(PrintStream&, GCThreadType);
+
+WTF_EXPORT_PRIVATE void registerGCThread(GCThreadType);
+WTF_EXPORT_PRIVATE Optional<GCThreadType> mayBeGCThread();
 WTF_EXPORT_PRIVATE bool isMainThreadOrGCThread();
 
 // NOTE: these functions are internal to the callOnMainThread implementation.
@@ -88,6 +98,7 @@ void initializeMainThreadToProcessMainThreadPlatform();
 
 } // namespace WTF
 
+using WTF::GCThreadType;
 using WTF::callOnMainThread;
 using WTF::canAccessThreadLocalDataForThread;
 using WTF::isMainThread;

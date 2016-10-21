@@ -755,9 +755,9 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, J
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!throwScope.exception());
-    ASSERT(!vm.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
@@ -900,8 +900,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!throwScope.exception());
-    ASSERT(!vm.isCollectorBusy());
-    if (vm.isCollectorBusy())
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
+    if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
     bool isJSCall = (callType == CallType::JS);
@@ -962,10 +962,10 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ASSERT(!throwScope.exception());
-    ASSERT(!vm.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
     // We throw in this case because we have to return something "valid" but we're
     // already in an invalid state.
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return checkedReturn(throwStackOverflowError(callFrame, throwScope));
 
     bool isJSConstruct = (constructType == ConstructType::JS);
@@ -1028,7 +1028,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!throwScope.exception());
     
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return CallFrameClosure();
 
     // Compile the callee:
@@ -1053,9 +1053,9 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     VM& vm = *closure.vm;
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(!vm.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
     StackStats::CheckPoint stackCheckPoint;
@@ -1076,9 +1076,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 
     ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(!throwScope.exception());
-    ASSERT(!vm.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
     VMEntryScope entryScope(vm, scope->globalObject());
@@ -1182,9 +1182,9 @@ JSValue Interpreter::execute(ModuleProgramExecutable* executable, CallFrame* cal
 
     ASSERT(scope->vm() == &callFrame->vm());
     ASSERT(!throwScope.exception());
-    ASSERT(!vm.isCollectorBusy());
+    ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (vm.isCollectorBusy())
+    if (vm.isCollectorBusyOnCurrentThread())
         return jsNull();
 
     VMEntryScope entryScope(vm, scope->globalObject());

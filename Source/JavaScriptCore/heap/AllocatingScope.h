@@ -23,38 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HeapOperation.h"
+#pragma once
 
-#include <wtf/PrintStream.h>
+#include "Heap.h"
 
-namespace WTF {
+namespace JSC {
 
-using namespace JSC;
-
-void printInternal(PrintStream& out, HeapOperation operation)
-{
-    switch (operation) {
-    case NoOperation:
-        out.print("None");
-        return;
-    case Allocation:
-        out.print("Alloc");
-        return;
-    case FullCollection:
-        out.print("Full");
-        return;
-    case EdenCollection:
-        out.print("Eden");
-        return;
-    case AnyCollection:
-        out.print("Any");
-        return;
+class AllocatingScope {
+public:
+    AllocatingScope(Heap& heap)
+        : m_heap(heap)
+    {
+        RELEASE_ASSERT(m_heap.m_mutatorState == MutatorState::Running);
+        m_heap.m_mutatorState = MutatorState::Allocating;
     }
-    RELEASE_ASSERT_NOT_REACHED();
-}
+    
+    ~AllocatingScope()
+    {
+        RELEASE_ASSERT(m_heap.m_mutatorState == MutatorState::Allocating);
+        m_heap.m_mutatorState = MutatorState::Running;
+    }
 
-} // namespace WTF
+private:
+    Heap& m_heap;
+};
 
-
+} // namespace JSC
 

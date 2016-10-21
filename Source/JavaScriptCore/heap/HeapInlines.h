@@ -45,21 +45,16 @@ inline bool Heap::shouldCollect()
         return false;
     if (!m_isSafeToCollect)
         return false;
-    if (m_operationInProgress != NoOperation)
+    if (collectionScope() || mutatorState() == MutatorState::HelpingGC)
         return false;
     if (Options::gcMaxHeapSize())
         return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize();
     return m_bytesAllocatedThisCycle > m_maxEdenSize;
 }
 
-inline bool Heap::isBusy()
+inline bool Heap::isCurrentThreadBusy()
 {
-    return m_operationInProgress != NoOperation;
-}
-
-inline bool Heap::isCollecting()
-{
-    return m_operationInProgress == FullCollection || m_operationInProgress == EdenCollection;
+    return mayBeGCThread() || mutatorState() != MutatorState::Running;
 }
 
 ALWAYS_INLINE Heap* Heap::heap(const HeapCell* cell)
@@ -76,7 +71,7 @@ inline Heap* Heap::heap(const JSValue v)
 
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
-    ASSERT(!mayBeGCThread());
+    ASSERT(mayBeGCThread() != GCThreadType::Helper);
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
@@ -161,7 +156,7 @@ inline void Heap::reportExtraMemoryAllocated(size_t size)
 inline void Heap::reportExtraMemoryVisited(CellState oldState, size_t size)
 {
     // We don't want to double-count the extra memory that was reported in previous collections.
-    if (operationInProgress() == EdenCollection && oldState == CellState::OldGrey)
+    if (collectionScope() == CollectionScope::Eden && oldState == CellState::OldGrey)
         return;
 
     size_t* counter = &m_extraMemorySize;
@@ -177,7 +172,7 @@ inline void Heap::reportExtraMemoryVisited(CellState oldState, size_t size)
 inline void Heap::reportExternalMemoryVisited(CellState oldState, size_t size)
 {
     // We don't want to double-count the external memory that was reported in previous collections.
-    if (operationInProgress() == EdenCollection && oldState == CellState::OldGrey)
+    if (collectionScope() == CollectionScope::Eden && oldState == CellState::OldGrey)
         return;
 
     size_t* counter = &m_externalMemorySize;
@@ -372,7 +367,7 @@ inline bool Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
 
 inline void Heap::collectAccordingToDeferGCProbability()
 {
-    if (isDeferred() || !m_isSafeToCollect || m_operationInProgress != NoOperation)
+    if (isDeferred() || !m_isSafeToCollect || collectionScope() || mutatorState() == MutatorState::HelpingGC)
         return;
 
     if (randomNumber() < Options::deferGCProbability()) {

@@ -43,24 +43,6 @@ HeapVerifier::HeapVerifier(Heap* heap, unsigned numberOfGCCyclesToRecord)
     m_cycles = std::make_unique<GCCycle[]>(m_numberOfCycles);
 }
 
-const char* HeapVerifier::collectionTypeName(HeapOperation type)
-{
-    switch (type) {
-    case NoOperation:
-        return "NoOperation";
-    case AnyCollection:
-        return "AnyCollection";
-    case Allocation:
-        return "Allocation";
-    case EdenCollection:
-        return "EdenCollection";
-    case FullCollection:
-        return "FullCollection";
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr; // Silencing a compiler warning.
-}
-
 const char* HeapVerifier::phaseName(HeapVerifier::Phase phase)
 {
     switch (phase) {
@@ -81,7 +63,7 @@ void HeapVerifier::initializeGCCycle()
 {
     Heap* heap = m_heap;
     incrementCycle();
-    currentCycle().collectionType = heap->operationInProgress();
+    currentCycle().scope = *heap->collectionScope();
 }
 
 struct GatherLiveObjFunctor : MarkedBlock::CountFunctor {
@@ -195,7 +177,7 @@ void HeapVerifier::reportObject(LiveObjectData& objData, int cycleIndex, HeapVer
 
     if (objData.isConfirmedDead) {
         dataLogF("FOUND dead obj %p in GC[%d] %s list '%s'\n",
-            obj, cycleIndex, cycle.collectionTypeName(), list.name);
+            obj, cycleIndex, collectionScopeName(cycle.scope), list.name);
         return;
     }
 
@@ -206,7 +188,7 @@ void HeapVerifier::reportObject(LiveObjectData& objData, int cycleIndex, HeapVer
     dataLogF("FOUND obj %p type '%s' butterfly %p (base %p) in GC[%d] %s list '%s'\n",
         obj, structure->classInfo()->className,
         butterfly, butterflyBase,
-        cycleIndex, cycle.collectionTypeName(), list.name);
+        cycleIndex, collectionScopeName(cycle.scope), list.name);
 }
 
 void HeapVerifier::checkIfRecorded(JSObject* obj)

@@ -451,6 +451,7 @@ set(JavaScriptCore_SOURCES
 
     heap/AllocatorAttributes.cpp
     heap/CodeBlockSet.cpp
+    heap/CollectionScope.cpp
     heap/ConservativeRoots.cpp
     heap/DeferGC.cpp
     heap/DestructionMode.cpp
@@ -464,7 +465,6 @@ set(JavaScriptCore_SOURCES
     heap/Heap.cpp
     heap/HeapCell.cpp
     heap/HeapHelperPool.cpp
-    heap/HeapOperation.cpp
     heap/HeapProfiler.cpp
     heap/HeapSnapshot.cpp
     heap/HeapSnapshotBuilder.cpp
@@ -480,6 +480,7 @@ set(JavaScriptCore_SOURCES
     heap/MarkedAllocator.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
+    heap/MutatorState.cpp
     heap/SlotVisitor.cpp
     heap/Weak.cpp
     heap/WeakBlock.cpp

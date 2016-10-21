@@ -320,17 +320,16 @@ void InspectorHeapAgent::getRemoteObject(ErrorString& errorString, int heapObjec
     result = injectedScript.wrapObject(cell, objectGroup, true);
 }
 
-static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(HeapOperation operation)
+static Inspector::Protocol::Heap::GarbageCollection::Type protocolTypeForHeapOperation(CollectionScope scope)
 {
-    switch (operation) {
-    case FullCollection:
+    switch (scope) {
+    case CollectionScope::Full:
         return Inspector::Protocol::Heap::GarbageCollection::Type::Full;
-    case EdenCollection:
+    case CollectionScope::Eden:
         return Inspector::Protocol::Heap::GarbageCollection::Type::Partial;
-    default:
-        ASSERT_NOT_REACHED();
-        return Inspector::Protocol::Heap::GarbageCollection::Type::Full;
     }
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Heap::GarbageCollection::Type::Full;
 }
 
 void InspectorHeapAgent::willGarbageCollect()
@@ -341,7 +340,7 @@ void InspectorHeapAgent::willGarbageCollect()
     m_gcStartTime = m_environment.executionStopwatch()->elapsedTime();
 }
 
-void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
+void InspectorHeapAgent::didGarbageCollect(CollectionScope scope)
 {
     ASSERT(m_enabled);
     ASSERT(!std::isnan(m_gcStartTime));
@@ -356,7 +355,7 @@ void InspectorHeapAgent::didGarbageCollect(HeapOperation operation)
     // VM as the inspected page.
 
     GarbageCollectionData data;
-    data.type = protocolTypeForHeapOperation(operation);
+    data.type = protocolTypeForHeapOperation(scope);
     data.startTime = m_gcStartTime;
     data.endTime = m_environment.executionStopwatch()->elapsedTime();
 

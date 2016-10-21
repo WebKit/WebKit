@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HeapOperation.h"
+#include "CollectionScope.h"
 
 namespace JSC {
 
@@ -33,7 +33,7 @@ class HeapObserver {
 public:
     virtual ~HeapObserver() { }
     virtual void willGarbageCollect() = 0;
-    virtual void didGarbageCollect(HeapOperation) = 0;
+    virtual void didGarbageCollect(CollectionScope) = 0;
 };
 
 } // namespace JSC

@@ -338,7 +338,7 @@ void MarkedSpace::prepareForAllocation()
 
     m_activeWeakSets.takeFrom(m_newActiveWeakSets);
     
-    if (m_heap->operationInProgress() == EdenCollection)
+    if (m_heap->collectionScope() == CollectionScope::Eden)
         m_largeAllocationsNurseryOffsetForSweep = m_largeAllocationsNurseryOffset;
     else
         m_largeAllocationsNurseryOffsetForSweep = 0;
@@ -355,7 +355,7 @@ void MarkedSpace::visitWeakSets(HeapRootVisitor& heapRootVisitor)
     
     m_newActiveWeakSets.forEach(visit);
     
-    if (m_heap->operationInProgress() == FullCollection)
+    if (m_heap->collectionScope() == CollectionScope::Full)
         m_activeWeakSets.forEach(visit);
 }
 
@@ -367,7 +367,7 @@ void MarkedSpace::reapWeakSets()
     
     m_newActiveWeakSets.forEach(visit);
     
-    if (m_heap->operationInProgress() == FullCollection)
+    if (m_heap->collectionScope() == CollectionScope::Full)
         m_activeWeakSets.forEach(visit);
 }
 
@@ -383,7 +383,7 @@ void MarkedSpace::stopAllocating()
 
 void MarkedSpace::prepareForMarking()
 {
-    if (m_heap->operationInProgress() == EdenCollection)
+    if (m_heap->collectionScope() == CollectionScope::Eden)
         m_largeAllocationsOffsetForThisCollection = m_largeAllocationsNurseryOffset;
     else
         m_largeAllocationsOffsetForThisCollection = 0;
@@ -453,7 +453,7 @@ void MarkedSpace::shrink()
 
 void MarkedSpace::beginMarking()
 {
-    if (m_heap->operationInProgress() == FullCollection) {
+    if (m_heap->collectionScope() == CollectionScope::Full) {
         forEachAllocator(
             [&] (MarkedAllocator& allocator) -> IterationStatus {
                 allocator.beginMarkingForFullCollection();
@@ -597,7 +597,7 @@ MarkedBlock::Handle* MarkedSpace::findEmptyBlockToSteal()
 
 void MarkedSpace::snapshotUnswept()
 {
-    if (m_heap->operationInProgress() == EdenCollection) {
+    if (m_heap->collectionScope() == CollectionScope::Eden) {
         forEachAllocator(
             [&] (MarkedAllocator& allocator) -> IterationStatus {
                 allocator.snapshotUnsweptForEdenCollection();

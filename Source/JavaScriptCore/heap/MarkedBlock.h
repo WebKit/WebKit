@@ -25,7 +25,6 @@
 #include "DestructionMode.h"
 #include "FreeList.h"
 #include "HeapCell.h"
-#include "HeapOperation.h"
 #include "IterationStatus.h"
 #include "WeakSet.h"
 #include <wtf/Atomics.h>

@@ -96,7 +96,7 @@ SlotVisitor::~SlotVisitor()
 
 void SlotVisitor::didStartMarking()
 {
-    if (heap()->operationInProgress() == FullCollection)
+    if (heap()->collectionScope() == CollectionScope::Full)
         ASSERT(m_opaqueRoots.isEmpty()); // Should have merged by now.
     else
         reset();

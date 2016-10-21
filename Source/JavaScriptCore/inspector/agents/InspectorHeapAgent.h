@@ -60,7 +60,7 @@ public:
 
     // HeapObserver
     void willGarbageCollect() override;
-    void didGarbageCollect(JSC::HeapOperation) override;
+    void didGarbageCollect(JSC::CollectionScope) override;
 
 protected:
     void clearHeapSnapshots();

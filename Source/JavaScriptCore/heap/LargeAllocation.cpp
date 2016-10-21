@@ -77,7 +77,7 @@ void LargeAllocation::reapWeakSet()
 
 void LargeAllocation::flip()
 {
-    ASSERT(heap()->operationInProgress() == FullCollection);
+    ASSERT(heap()->collectionScope() == CollectionScope::Full);
     clearMarked();
 }
 

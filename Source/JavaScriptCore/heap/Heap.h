@@ -22,17 +22,18 @@
 #pragma once
 
 #include "ArrayBuffer.h"
+#include "CollectionScope.h"
 #include "GCIncomingRefCountedSet.h"
 #include "HandleSet.h"
 #include "HandleStack.h"
 #include "HeapObserver.h"
-#include "HeapOperation.h"
 #include "ListableHandler.h"
 #include "MachineStackMarker.h"
 #include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpace.h"
+#include "MutatorState.h"
 #include "Options.h"
 #include "SlotVisitor.h"
 #include "StructureIDTable.h"
@@ -48,7 +49,6 @@
 
 namespace JSC {
 
-class AllocationScope;
 class CodeBlock;
 class CodeBlockSet;
 class GCDeferralContext;
@@ -61,6 +61,7 @@ class Heap;
 class HeapProfiler;
 class HeapRootVisitor;
 class HeapVerifier;
+class HelpingGCScope;
 class IncrementalSweeper;
 class JITStubRoutine;
 class JITStubRoutineSet;
@@ -139,11 +140,13 @@ public:
     void addObserver(HeapObserver* observer) { m_observers.append(observer); }
     void removeObserver(HeapObserver* observer) { m_observers.removeFirst(observer); }
 
-    // true if collection is in progress
-    bool isCollecting();
-    HeapOperation operationInProgress() { return m_operationInProgress; }
-    // true if an allocation or collection is in progress
-    bool isBusy();
+    MutatorState mutatorState() const { return m_mutatorState; }
+    Optional<CollectionScope> collectionScope() const { return m_collectionScope; }
+
+    // We're always busy on the collection threads. On the main thread, this returns true if we're
+    // helping heap.
+    bool isCurrentThreadBusy();
+    
     MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
     MarkedSpace::Subspace& subspaceForObjectDestructor() { return m_objectSpace.subspaceForObjectsWithDestructor(); }
     MarkedSpace::Subspace& subspaceForAuxiliaryData() { return m_objectSpace.subspaceForAuxiliaryData(); }
@@ -171,7 +174,7 @@ public:
     JS_EXPORT_PRIVATE void collectAllGarbage();
 
     bool shouldCollect();
-    JS_EXPORT_PRIVATE void collect(HeapOperation collectionType = AnyCollection);
+    JS_EXPORT_PRIVATE void collect(Optional<CollectionScope> = Nullopt);
     bool collectIfNecessaryOrDefer(GCDeferralContext* = nullptr); // Returns true if it did collect.
     void collectAccordingToDeferGCProbability();
 
@@ -268,7 +271,7 @@ public:
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
 
 private:
-    friend class AllocationScope;
+    friend class AllocatingScope;
     friend class CodeBlock;
     friend class DeferGC;
     friend class DeferGCForAWhile;
@@ -278,6 +281,7 @@ private:
     friend class HandleSet;
     friend class HeapUtil;
     friend class HeapVerifier;
+    friend class HelpingGCScope;
     friend class JITStubRoutine;
     friend class LLIntOffsetsExtractor;
     friend class MarkedSpace;
@@ -293,7 +297,7 @@ private:
     template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*);
     template<typename T> friend void* allocateCell(Heap&, GCDeferralContext*, size_t);
 
-    void collectWithoutAnySweep(HeapOperation collectionType = AnyCollection);
+    void collectWithoutAnySweep(Optional<CollectionScope> = Nullopt);
 
     void* allocateWithDestructor(size_t); // For use with objects with destructors.
     void* allocateWithoutDestructor(size_t); // For use with objects without destructors.
@@ -312,10 +316,10 @@ private:
     JS_EXPORT_PRIVATE void reportExtraMemoryAllocatedSlowCase(size_t);
     JS_EXPORT_PRIVATE void deprecatedReportExtraMemorySlowCase(size_t);
 
-    void collectImpl(HeapOperation, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
+    void collectImpl(Optional<CollectionScope>, void* stackOrigin, void* stackTop, MachineThreads::RegisterState&);
 
     void suspendCompilerThreads();
-    void willStartCollection(HeapOperation collectionType);
+    void willStartCollection(Optional<CollectionScope>);
     void flushOldStructureIDTables();
     void flushWriteBarrierBuffer();
     void stopAllocation();
@@ -366,7 +370,7 @@ private:
     void sweepAllLogicallyEmptyWeakBlocks();
     bool sweepNextLogicallyEmptyWeakBlock();
 
-    bool shouldDoFullCollection(HeapOperation requestedCollectionType) const;
+    bool shouldDoFullCollection(Optional<CollectionScope> requestedCollectionScope) const;
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
@@ -394,7 +398,8 @@ private:
     size_t m_totalBytesVisited;
     size_t m_totalBytesVisitedThisCycle;
     
-    HeapOperation m_operationInProgress;
+    Optional<CollectionScope> m_collectionScope;
+    MutatorState m_mutatorState { MutatorState::Running };
     StructureIDTable m_structureIDTable;
     MarkedSpace m_objectSpace;
     GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;

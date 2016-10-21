@@ -1,3 +1,19 @@
+2016-10-20  Filip Pizlo  <fpizlo@apple.com>
+
+        The tracking of the coarse-grain Heap state (allocating or not, collector or not, eden vs full) should respect the orthogonality between allocating and collecting
+        https://bugs.webkit.org/show_bug.cgi?id=163738
+
+        Reviewed by Geoffrey Garen.
+        
+        There will soon be different kinds of GC threads, and WTF's "are you a GC thread" thing
+        should know about this.
+
+        * wtf/MainThread.cpp:
+        (WTF::initializeGCThreads):
+        (WTF::registerGCThread):
+        (WTF::mayBeGCThread):
+        * wtf/MainThread.h:
+
 2016-10-19  Sam Weinig  <sam@webkit.org>
 
         Add convenience function that combines WTF::visit(...) with WTF::makeVisitor(...)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MarkedAllocator.h"
 
-#include "AllocationScope.h"
+#include "AllocatingScope.h"
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
@@ -185,7 +185,6 @@ ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded(GCDeferralContext*
             else
                 m_heap->collectAllGarbage();
         }
-        ASSERT(m_heap->m_operationInProgress == NoOperation);
     }
     if (++allocationCount >= Options::slowPathAllocsBetweenGCs())
         allocationCount = 0;
@@ -214,10 +213,10 @@ void* MarkedAllocator::allocateSlowCaseImpl(GCDeferralContext* deferralContext, 
     
     didConsumeFreeList();
     
+    AllocatingScope healpingHeap(*m_heap);
+
     m_heap->collectIfNecessaryOrDefer(deferralContext);
     
-    AllocationScope allocationScope(*m_heap);
-
     void* result = tryAllocateWithoutCollecting();
     
     if (LIKELY(result != 0))

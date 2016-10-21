@@ -23,42 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MutatorState.h"
 
-#include "CollectionScope.h"
-#include <wtf/Assertions.h>
+#include <wtf/PrintStream.h>
 
-namespace JSC {
+using namespace JSC;
 
-template<typename T>
-struct GCTypeMap {
-    T eden;
-    T full;
-    
-    T& operator[](CollectionScope scope)
-    {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        ASSERT_NOT_REACHED();
-        return full;
+namespace WTF {
+
+void printInternal(PrintStream& out, MutatorState state)
+{
+    switch (state) {
+    case MutatorState::Running:
+        out.print("Running");
+        return;
+    case MutatorState::Allocating:
+        out.print("Allocating");
+        return;
+    case MutatorState::HelpingGC:
+        out.print("HelpingGC");
+        return;
     }
-    
-    const T& operator[](CollectionScope scope) const
-    {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return full;
-    }
-};
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
-} // namespace JSC
+} // namespace WTF
 

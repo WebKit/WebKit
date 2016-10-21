@@ -267,7 +267,7 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
 {
     if (!m_vm)
         return;
-    RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusy());
+    RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusyOnCurrentThread());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 

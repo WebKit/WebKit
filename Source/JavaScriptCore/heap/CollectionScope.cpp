@@ -23,42 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "CollectionScope.h"
-#include <wtf/Assertions.h>
+
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-template<typename T>
-struct GCTypeMap {
-    T eden;
-    T full;
-    
-    T& operator[](CollectionScope scope)
-    {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        ASSERT_NOT_REACHED();
-        return full;
+const char* collectionScopeName(CollectionScope scope)
+{
+    switch (scope) {
+    case CollectionScope::Eden:
+        return "Eden";
+    case CollectionScope::Full:
+        return "Full";
     }
-    
-    const T& operator[](CollectionScope scope) const
-    {
-        switch (scope) {
-        case CollectionScope::Full:
-            return full;
-        case CollectionScope::Eden:
-            return eden;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-        return full;
-    }
-};
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::CollectionScope scope)
+{
+    out.print(JSC::collectionScopeName(scope));
+}
+
+} // namespace WTF
 
