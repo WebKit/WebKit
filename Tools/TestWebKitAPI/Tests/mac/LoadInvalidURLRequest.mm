@@ -77,7 +77,7 @@ TEST(WebKit1, LoadInvalidURLRequest)
         didFailProvisionalLoad = false;
         Util::run(&didFinishTest);
 
-        EXPECT_FALSE(didFailProvisionalLoad);
+        EXPECT_TRUE(didFailProvisionalLoad);
     }
 }
 
