@@ -1945,6 +1945,17 @@ sub ComputeEffectiveOverloadSet
     return %allSets;
 }
 
+sub IsIDLTypeDistinguishableWithUnionForOverloadResolution
+{
+    my ($idlType, $unionSubtypes) = @_;
+
+    assert("First type should not be a union") if $idlType->isUnion;
+    for my $unionSubType (@$unionSubtypes) {
+        return 0 unless AreTypesDistinguishableForOverloadResolution($idlType, $unionSubType);
+    }
+    return 1;
+}
+
 # Determines if two types are distinguishable in the context of overload resolution,
 # according to the Web IDL specification:
 # http://heycam.github.io/webidl/#dfn-distinguishable
@@ -1960,16 +1971,25 @@ sub AreTypesDistinguishableForOverloadResolution
         my $type = shift;
         return $codeGenerator->IsFunctionOnlyCallbackInterface($type) || &$isDictionary($type);
     };
-    
-    # FIXME: Add support for union types.
-    # idlTypeA and idlTypeB  are distinguishable if:
-    # - One type is a union type or nullable union type, the other is neither a union type nor a nullable
-    #   union type, and each member type of the first is distinguishable with the second.
-    # - Both types are either a union type or nullable union type, and each member type of the one is
-    #   distinguishable with each member type of the other.
 
     # FIXME: The WebIDL mandates this but this currently does not work because some of our IDL is wrong.
     # return 0 if $idlTypeA->isNullable && $idlTypeB->isNullable;
+
+    # Union types: idlTypeA and idlTypeB  are distinguishable if:
+    # - Both types are either a union type or nullable union type, and each member type of the one is
+    #   distinguishable with each member type of the other.
+    # - One type is a union type or nullable union type, the other is neither a union type nor a nullable
+    #   union type, and each member type of the first is distinguishable with the second.
+    if ($idlTypeA->isUnion && $idlTypeB->isUnion) {
+        for my $unionASubType (@{$idlTypeA->subtypes}) {
+            return 0 unless IsIDLTypeDistinguishableWithUnionForOverloadResolution($unionASubType, $idlTypeB->subtypes);
+        }
+        return 1;
+    } elsif ($idlTypeA->isUnion) {
+        return IsIDLTypeDistinguishableWithUnionForOverloadResolution($idlTypeB, $idlTypeA->subtypes);
+    } elsif ($idlTypeB->isUnion) {
+        return IsIDLTypeDistinguishableWithUnionForOverloadResolution($idlTypeA, $idlTypeB->subtypes);
+    }
 
     return 0 if $idlTypeA->name eq $idlTypeB->name;
     return 0 if $idlTypeA->name eq "object" or $idlTypeB->name eq "object";
@@ -2007,7 +2027,13 @@ sub GetOverloadThatMatches
     for my $tuple (@{$S}) {
         my $idlType = @{@{$tuple}[1]}[$parameterIndex];
         my $optionality = @{@{$tuple}[2]}[$parameterIndex];
-        return @{$tuple}[0] if $matches->($idlType, $optionality);
+        if ($idlType->isUnion) {
+            for my $idlSubtype (GetFlattenedMemberTypes($idlType)) {
+                return @{$tuple}[0] if $matches->($idlSubtype, $optionality);
+            }
+        } else {
+            return @{$tuple}[0] if $matches->($idlType, $optionality);
+        }
     }
 }
 
@@ -2145,13 +2171,17 @@ END
             for my $tuple (@{$S}) {
                 my $overload = @{$tuple}[0];
                 my $idlType = @{@{$tuple}[1]}[$d];
-                my $type = $idlType->name;
-                if ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type)) {
-                    if ($type eq "DOMWindow") {
-                        AddToImplIncludes("JSDOMWindowShell.h");
-                        &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(JSDOMWindow::info()))");
-                    } else {
-                        &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JS${type}::info())");
+
+                my @idlSubtypes = $idlType->isUnion ? GetFlattenedMemberTypes($idlType) : ( $idlType );
+                for my $idlSubtype (@idlSubtypes) {
+                    my $type = $idlSubtype->name;
+                    if ($codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type)) {
+                        if ($type eq "DOMWindow") {
+                            AddToImplIncludes("JSDOMWindowShell.h");
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(JSDOMWindowShell::info()) || asObject(distinguishingArg)->inherits(JSDOMWindow::info()))");
+                        } else {
+                            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JS${type}::info())");
+                        }
                     }
                 }
             }

@@ -48,6 +48,7 @@
 #include "JSSVGPoint.h"
 #include "JSTestCallback.h"
 #include "JSTestCallbackFunction.h"
+#include "JSTestInterface.h"
 #include "JSTestNode.h"
 #include "JSTestObj.h"
 #include "JSTestStandaloneDictionary.h"
@@ -956,6 +957,9 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(J
 #endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(JSC::ExecState*);
@@ -1574,6 +1578,9 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 #endif
     { "overloadedMethod", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t) (0) } },
     { "overloadedMethodWithOptionalParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter), (intptr_t) (1) } },
+    { "overloadedMethodWithDistinguishingUnion", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion), (intptr_t) (1) } },
+    { "overloadedMethodWith2DistinguishingUnions", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions), (intptr_t) (1) } },
+    { "overloadedMethodWithNonDistinguishingUnion", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion), (intptr_t) (2) } },
     { "classMethodWithClamp", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t) (2) } },
     { "classMethodWithEnforceRange", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithEnforceRange), (intptr_t) (2) } },
     { "methodWithUnsignedLongSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t) (1) } },
@@ -6839,6 +6846,188 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptio
         return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(state);
     }
     return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Caller>(state, "overloadedMethodWithDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto objectOrNode = convert<IDLUnion<IDLInterface<TestObj>, IDLInterface<TestNode>>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethodWithDistinguishingUnion(WTFMove(objectOrNode));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Caller>(state, "overloadedMethodWithDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto value = convert<IDLLong>(*state, state->uncheckedArgument(0), NormalConversion);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethodWithDistinguishingUnion(WTFMove(value));
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion1(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(state);
+        return jsTestObjPrototypeFunctionOverloadedMethodWithDistinguishingUnion2(state);
+    }
+    return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Caller>(state, "overloadedMethodWith2DistinguishingUnions");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto objectOrNode = convert<IDLUnion<IDLInterface<TestObj>, IDLInterface<TestNode>>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethodWith2DistinguishingUnions(WTFMove(objectOrNode));
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Caller>(state, "overloadedMethodWith2DistinguishingUnions");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 1))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto value = convert<IDLUnion<IDLInterface<TestInterface>, IDLDOMString, IDLLong>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadedMethodWith2DistinguishingUnions(WTFMove(value));
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    size_t argsCount = std::min<size_t>(1, state->argumentCount());
+    if (argsCount == 1) {
+        JSValue distinguishingArg = state->uncheckedArgument(0);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions1(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestInterface::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
+        return jsTestObjPrototypeFunctionOverloadedMethodWith2DistinguishingUnions2(state);
+    }
+    return argsCount < 1 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Caller>(state, "overloadedMethodWithNonDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto objectOrNode = convert<IDLUnion<IDLInterface<TestObj>, IDLInterface<TestNode>>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto object = JSTestObj::toWrapped(state->uncheckedArgument(1));
+    if (UNLIKELY(!object))
+        return throwArgumentTypeError(*state, throwScope, 1, "object", "TestObject", "overloadedMethodWithNonDistinguishingUnion", "TestObj");
+    impl.overloadedMethodWithNonDistinguishingUnion(WTFMove(objectOrNode), *object);
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Caller>(state, "overloadedMethodWithNonDistinguishingUnion");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    auto objectOrNode = convert<IDLUnion<IDLInterface<TestObj>, IDLInterface<TestNode>>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    auto node = JSTestNode::toWrapped(state->uncheckedArgument(1));
+    if (UNLIKELY(!node))
+        return throwArgumentTypeError(*state, throwScope, 1, "node", "TestObject", "overloadedMethodWithNonDistinguishingUnion", "TestNode");
+    impl.overloadedMethodWithNonDistinguishingUnion(WTFMove(objectOrNode), *node);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    size_t argsCount = std::min<size_t>(2, state->argumentCount());
+    if (argsCount == 2) {
+        JSValue distinguishingArg = state->uncheckedArgument(1);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestObj::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion1(state);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+            return jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion2(state);
+    }
+    return argsCount < 2 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* state)
