@@ -161,7 +161,7 @@ void Data::performAssertions(VM& vm)
     STATIC_ASSERT(JSFunctionType == 23);
     STATIC_ASSERT(ArrayType == 31);
     STATIC_ASSERT(DerivedArrayType == 32);
-    STATIC_ASSERT(ProxyObjectType == 49);
+    STATIC_ASSERT(ProxyObjectType == 50);
     STATIC_ASSERT(Int8ArrayType == 33);
     STATIC_ASSERT(Int16ArrayType == 34);
     STATIC_ASSERT(Int32ArrayType == 35);

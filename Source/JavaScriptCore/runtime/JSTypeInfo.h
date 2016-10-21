@@ -48,7 +48,6 @@ static const unsigned OverridesGetPropertyNames = 1 << 9;
 static const unsigned ProhibitsPropertyCaching = 1 << 10;
 static const unsigned GetOwnPropertySlotIsImpure = 1 << 11;
 static const unsigned NewImpurePropertyFiresWatchpoints = 1 << 12;
-static const unsigned IsEnvironmentRecord = 1 << 13;
 static const unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 14;
 static const unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 15;
 
@@ -90,7 +89,6 @@ public:
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2(GetOwnPropertySlotIsImpure); }
     bool getOwnPropertySlotIsImpureForPropertyAbsence() const { return isSetOnFlags2(GetOwnPropertySlotIsImpureForPropertyAbsence); }
     bool newImpurePropertyFiresWatchpoints() const { return isSetOnFlags2(NewImpurePropertyFiresWatchpoints); }
-    bool isEnvironmentRecord() const { return isSetOnFlags2(IsEnvironmentRecord); }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags2(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
 
     static ptrdiff_t flagsOffset()

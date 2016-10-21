@@ -77,10 +77,15 @@ enum JSType : uint8_t {
     DataViewType,
 
     GetterSetterType,
+
+    // Start environment record types.
     GlobalObjectType,
     LexicalEnvironmentType,
     GlobalLexicalEnvironmentType,
     ModuleEnvironmentType,
+    StrictEvalActivationType,
+    // End environment record types.
+
     RegExpObjectType,
     ProxyObjectType,
     JSMapType,

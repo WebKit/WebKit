@@ -1,3 +1,33 @@
+2016-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop isEnvironmentRecord type info flag and use JSType information instead
+        https://bugs.webkit.org/show_bug.cgi?id=163761
+
+        Reviewed by Keith Miller.
+
+        * modules/string-prototype-module-scope.js: Added.
+        (shouldBe):
+        (catch):
+        (refer):
+        * stress/string-prototype-scopes-global-lexical-environment-strict.js: Added.
+        (shouldBe):
+        (catch):
+        * stress/string-prototype-scopes-global-lexical-environment.js: Added.
+        (shouldBe):
+        (catch):
+        * stress/string-prototype-scopes-strict.js: Added.
+        (shouldBe):
+        (catch):
+        (try.refer):
+        (refer):
+        * stress/string-prototype-scopes.js: Added.
+        (shouldBe):
+        (catch):
+        (try.refer):
+        (refer):
+        (object.toString):
+        (with):
+
 2016-10-20  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly API: implement exception constructors properly

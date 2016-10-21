@@ -746,7 +746,7 @@ static inline bool checkObjectCoercible(JSValue thisValue)
     if (thisValue.isUndefinedOrNull())
         return false;
 
-    if (thisValue.isCell() && thisValue.asCell()->structure()->typeInfo().isEnvironmentRecord())
+    if (thisValue.isObject() && asObject(thisValue)->isEnvironmentRecord())
         return false;
 
     return true;
