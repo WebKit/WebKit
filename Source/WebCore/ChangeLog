@@ -1,3 +1,22 @@
+2016-10-21  Zalan Bujtas  <zalan@apple.com>
+
+        Do not mutate the render tree while collecting selection repaint rects.
+        https://bugs.webkit.org/show_bug.cgi?id=163800
+        <rdar://problem/28806886>
+
+        Reviewed by David Hyatt.
+
+        RenderListItem not only mutates the tree while in layout but it also uses
+        the old descendant context to find the insertion point.
+        This patch strictly ensures that we only do it while in layout and never
+        in other cases such as collecting repaint rects.
+        This gets redundant when webkit.org/b/163789 is fixed.
+
+        Test: fast/lists/crash-when-list-marker-is-moved-during-selection.html
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded):
+
 2016-10-21  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support horizontal-bt writing mode

@@ -268,6 +268,11 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
     if (!m_marker)
         return;
 
+    // FIXME: Do not even try reposition the marker when we are not in layout
+    // until after we fixed webkit.org/b/163789.
+    if (!view().frameView().isInRenderTreeLayout())
+        return;
+
     RenderElement* currentParent = m_marker->parent();
     RenderBlock* newParent = getParentOfFirstLineBox(*this, *m_marker);
     if (!newParent) {
