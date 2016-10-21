@@ -314,8 +314,9 @@
       <dd>Returns a 64-bit integer such that the low 32 bits are the given Int32 value and the
         high 32 bits are zero.</dd>
 
-      <dt>Int32 Trunc(Int64)</dt>
-      <dd>Returns the low 32 bits of the 64-bit value.</dd>
+      <dt>U Trunc(T)</dt>
+      <dd>Returns the low 32 bits of the 64-bit value. If T is Int64 then U is Int32.
+        If T is Double then U is Float.</dd>
 
       <dt>Double IToD(T)</dt>
       <dd>Converts the given integer into a double.  Value for Int32 or Int64 inputs.</dd>

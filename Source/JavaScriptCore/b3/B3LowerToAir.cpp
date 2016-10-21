@@ -2378,7 +2378,7 @@ private:
             // We expect that the moveConstants() phase has run, and any doubles referenced from
             // stackmaps get fused.
             RELEASE_ASSERT(m_value->opcode() == ConstFloat || isIdentical(m_value->asDouble(), 0.0));
-            RELEASE_ASSERT(m_value->opcode() == ConstDouble || isIdentical(m_value->asFloat(), 0.0));
+            RELEASE_ASSERT(m_value->opcode() == ConstDouble || isIdentical(m_value->asFloat(), 0.0f));
             append(MoveZeroToDouble, tmp(m_value));
             return;
         }

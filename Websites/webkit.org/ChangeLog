@@ -1,3 +1,14 @@
+2016-10-21  Keith Miller  <keith_miller@apple.com>
+
+        Expand Trunc in B3 to support Double to Float
+        https://bugs.webkit.org/show_bug.cgi?id=163809
+
+        Update the docs to explain that Trunc now works with fleating point numbers.
+
+        Reviewed by Geoffrey Garen.
+
+        * docs/b3/intermediate-representation.html:
+
 2016-10-14  Keith Miller  <keith_miller@apple.com>
 
         B3 needs a special WasmAddress Opcode

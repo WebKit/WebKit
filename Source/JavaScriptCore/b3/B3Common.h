@@ -69,6 +69,11 @@ inline bool isIdentical(double left, double right)
     return isIdentical<int64_t>(left, right);
 }
 
+inline bool isIdentical(float left, float right)
+{
+    return isIdentical<int32_t>(left, right);
+}
+
 template<typename ResultType, typename InputType, typename BitsType>
 inline bool isRepresentableAsImpl(InputType originalValue)
 {

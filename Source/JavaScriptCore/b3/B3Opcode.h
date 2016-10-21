@@ -109,7 +109,7 @@ enum Opcode : int16_t {
     // Takes Int32 and returns Int64:
     SExt32,
     ZExt32,
-    // Takes Int64 and returns Int32:
+    // Does a bitwise truncation of Int64->Int32 and Double->Float:
     Trunc,
     // Takes ints and returns floating point value. Note that we don't currently provide the opposite operation,
     // because double-to-int conversions have weirdly different semantics on different platforms. Use

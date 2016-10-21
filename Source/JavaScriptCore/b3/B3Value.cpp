@@ -774,7 +774,6 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
         return pointerType();
     case SExt8:
     case SExt16:
-    case Trunc:
     case Equal:
     case NotEqual:
     case LessThan:
@@ -787,6 +786,8 @@ Type Value::typeFor(Kind kind, Value* firstChild, Value* secondChild)
     case BelowEqual:
     case EqualOrUnordered:
         return Int32;
+    case Trunc:
+        return firstChild->type() == Int64 ? Int32 : Float;
     case SExt32:
     case ZExt32:
         return Int64;

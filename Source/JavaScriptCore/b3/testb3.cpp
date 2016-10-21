@@ -714,6 +714,20 @@ void testAddArgsFloat(float a, float b)
     CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitwise_cast<int32_t>(a + b)));
 }
 
+void testAddFPRArgsFloat(float a, float b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument1 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0));
+    Value* argument2 = root->appendNew<Value>(proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR1));
+    Value* result = root->appendNew<Value>(proc, Add, Origin(), argument1, argument2);
+    root->appendNewControlValue(proc, Return, Origin(), result);
+
+    CHECK(isIdentical(compileAndRun<float>(proc, a, b), a + b));
+}
+
 void testAddArgImmFloat(float a, float b)
 {
     Procedure proc;
@@ -4010,7 +4024,7 @@ void testCeilArgWithEffectfulDoubleConversion(float a)
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
     CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(ceilf(a))));
-    CHECK(isIdentical(effect, ceilf(a)));
+    CHECK(isIdentical(effect, static_cast<double>(ceilf(a))));
 }
 
 void testFloorArg(double a)
@@ -4205,7 +4219,7 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
     CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(floorf(a))));
-    CHECK(isIdentical(effect, floorf(a)));
+    CHECK(isIdentical(effect, static_cast<double>(floorf(a))));
 }
 
 void testSqrtArg(double a)
@@ -4538,7 +4552,7 @@ void testDoubleProducerPhiToFloatConversionWithDoubleConsumer(float value)
 
     auto code = compile(proc);
     CHECK(isIdentical(invoke<double>(*code, 1, bitwise_cast<int32_t>(value)), (value + value) + static_cast<double>(value)));
-    CHECK(isIdentical(invoke<double>(*code, 0, bitwise_cast<int32_t>(value)), (42.5f + value) + 42.5f));
+    CHECK(isIdentical(invoke<double>(*code, 0, bitwise_cast<int32_t>(value)), static_cast<double>((42.5f + value) + 42.5f)));
 }
 
 void testDoubleProducerPhiWithNonFloatConst(float value, double constValue)
@@ -13935,6 +13949,7 @@ void run(const char* filter)
     RUN(testAddImmsDouble(negativeZero(), negativeZero()));
     RUN_UNARY(testAddArgFloat, floatingPointOperands<float>());
     RUN_BINARY(testAddArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
+    RUN_BINARY(testAddFPRArgsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testAddArgImmFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testAddImmArgFloat, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testAddImmsFloat, floatingPointOperands<float>(), floatingPointOperands<float>());

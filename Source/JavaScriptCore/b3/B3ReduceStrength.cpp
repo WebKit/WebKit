@@ -1326,7 +1326,7 @@ private:
         case Trunc:
             // Turn this: Trunc(constant)
             // Into this: static_cast<int32_t>(constant)
-            if (m_value->child(0)->hasInt64()) {
+            if (m_value->child(0)->hasInt64() || m_value->child(0)->hasDouble()) {
                 replaceWithNewValue(
                     m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
                 break;
