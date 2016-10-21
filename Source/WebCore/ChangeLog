@@ -1,3 +1,16 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix minor style issue in the signature of StaticRange::create
+        https://bugs.webkit.org/show_bug.cgi?id=163786
+        <rdar://problem/28853079>
+
+        Reviewed by Alex Christensen.
+
+        Change `Ref<WebCore::Node> &&` to `Ref<Node>&&`.
+
+        * dom/StaticRange.cpp:
+        (WebCore::StaticRange::create):
+
 2016-10-21  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Add support for -webkit-line-box-contain
