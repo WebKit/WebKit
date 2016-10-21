@@ -69,7 +69,7 @@ private:
     void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
     bool isDivisable() const override { return false; }
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&) override { return {nullptr, nullptr}; }
-
+    Ref<MediaSample> createNonDisplayingCopy() const override;
 
     unsigned generation() const { return m_box.generation(); }
 
@@ -80,8 +80,10 @@ private:
 MediaSample::SampleFlags MockMediaSample::flags() const
 {
     unsigned flags = None;
-    if (m_box.flags() & MockSampleBox::IsSync)
+    if (m_box.isSync())
         flags |= IsSync;
+    if (m_box.isNonDisplaying())
+        flags |= IsNonDisplaying;
     return SampleFlags(flags);
 }
 
@@ -94,6 +96,13 @@ PlatformSample MockMediaSample::platformSample()
 void MockMediaSample::dump(PrintStream& out) const
 {
     out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), generation(", generation(), ")}");
+}
+
+Ref<MediaSample> MockMediaSample::createNonDisplayingCopy() const
+{
+    auto copy = MockMediaSample::create(m_box);
+    copy->m_box.setFlag(MockSampleBox::IsNonDisplaying);
+    return WTFMove(copy);
 }
 
 class MockMediaDescription final : public MediaDescription {

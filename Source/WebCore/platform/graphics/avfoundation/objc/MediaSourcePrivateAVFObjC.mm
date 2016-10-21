@@ -185,6 +185,12 @@ bool MediaSourcePrivateAVFObjC::hasVideo() const
     return std::any_of(m_activeSourceBuffers.begin(), m_activeSourceBuffers.end(), MediaSourcePrivateAVFObjCHasVideo);
 }
 
+void MediaSourcePrivateAVFObjC::willSeek()
+{
+    for (auto* sourceBuffer : m_activeSourceBuffers)
+        sourceBuffer->willSeek();
+}
+
 void MediaSourcePrivateAVFObjC::seekToTime(const MediaTime& time)
 {
     m_client->seekToTime(time);

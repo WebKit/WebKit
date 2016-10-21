@@ -1802,6 +1802,9 @@ void SourceBuffer::sourceBufferPrivateDidBecomeReadyForMoreSamples(SourceBufferP
 
 void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString trackID)
 {
+    if (m_source->isSeeking())
+        return;
+
 #if !LOG_DISABLED
     unsigned enqueuedSamples = 0;
 #endif
@@ -1842,6 +1845,9 @@ void SourceBuffer::provideMediaData(TrackBuffer& trackBuffer, AtomicString track
 
 void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString trackID, const MediaTime& time)
 {
+    m_private->flush(trackID);
+    trackBuffer.decodeQueue.clear();
+
     // Find the sample which contains the current presentation time.
     auto currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleContainingPresentationTime(time);
 
@@ -1849,11 +1855,8 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
         currentSamplePTSIterator = trackBuffer.samples.presentationOrder().findSampleOnOrAfterPresentationTime(time);
 
     if (currentSamplePTSIterator == trackBuffer.samples.presentationOrder().end()
-        || (currentSamplePTSIterator->first - time) > MediaSource::currentTimeFudgeFactor()) {
-        trackBuffer.decodeQueue.clear();
-        m_private->flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>(), trackID);
+        || (currentSamplePTSIterator->first - time) > MediaSource::currentTimeFudgeFactor())
         return;
-    }
 
     // Seach backward for the previous sync sample.
     DecodeOrderSampleMap::KeyType decodeKey(currentSamplePTSIterator->second->decodeTime(), currentSamplePTSIterator->second->presentationTime());
@@ -1862,28 +1865,26 @@ void SourceBuffer::reenqueueMediaForTime(TrackBuffer& trackBuffer, AtomicString 
 
     auto reverseCurrentSampleIter = --DecodeOrderSampleMap::reverse_iterator(currentSampleDTSIterator);
     auto reverseLastSyncSampleIter = trackBuffer.samples.decodeOrder().findSyncSamplePriorToDecodeIterator(reverseCurrentSampleIter);
-    if (reverseLastSyncSampleIter == trackBuffer.samples.decodeOrder().rend()) {
-        trackBuffer.decodeQueue.clear();
-        m_private->flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>(), trackID);
+    if (reverseLastSyncSampleIter == trackBuffer.samples.decodeOrder().rend())
         return;
+
+    // Fill the decode queue with the non-displaying samples.
+    for (auto iter = reverseLastSyncSampleIter; iter != reverseCurrentSampleIter; --iter) {
+        auto copy = iter->second->createNonDisplayingCopy();
+        DecodeOrderSampleMap::KeyType decodeKey(copy->decodeTime(), copy->presentationTime());
+        trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, WTFMove(copy)));
     }
 
-    Vector<RefPtr<MediaSample>> nonDisplayingSamples;
-    for (auto iter = reverseLastSyncSampleIter; iter != reverseCurrentSampleIter; --iter)
-        nonDisplayingSamples.append(iter->second);
-
-    m_private->flushAndEnqueueNonDisplayingSamples(nonDisplayingSamples, trackID);
-
-    if (!nonDisplayingSamples.isEmpty()) {
-        trackBuffer.lastEnqueuedPresentationTime = nonDisplayingSamples.last()->presentationTime();
-        trackBuffer.lastEnqueuedDecodeEndTime = nonDisplayingSamples.last()->decodeTime();
+    if (!trackBuffer.decodeQueue.empty()) {
+        auto& lastSample = trackBuffer.decodeQueue.rbegin()->second;
+        trackBuffer.lastEnqueuedPresentationTime = lastSample->presentationTime();
+        trackBuffer.lastEnqueuedDecodeEndTime = lastSample->decodeTime();
     } else {
         trackBuffer.lastEnqueuedPresentationTime = MediaTime::invalidTime();
         trackBuffer.lastEnqueuedDecodeEndTime = MediaTime::invalidTime();
     }
 
     // Fill the decode queue with the remaining samples.
-    trackBuffer.decodeQueue.clear();
     for (auto iter = currentSampleDTSIterator; iter != trackBuffer.samples.decodeOrder().end(); ++iter)
         trackBuffer.decodeQueue.insert(*iter);
     provideMediaData(trackBuffer, trackID);

@@ -247,13 +247,14 @@ void MediaSource::completeSeek()
     // initialization segment.
     // 3. The media element feeds coded frames from the active track buffers into the decoders starting
     // with the closest random access point before the new playback position.
+    MediaTime pendingSeekTime = m_pendingSeekTime;
+    m_pendingSeekTime = MediaTime::invalidTime();
     for (auto& sourceBuffer : *m_activeSourceBuffers)
-        sourceBuffer->seekToTime(m_pendingSeekTime);
+        sourceBuffer->seekToTime(pendingSeekTime);
 
     // 4. Resume the seek algorithm at the "Await a stable state" step.
     m_private->seekCompleted();
 
-    m_pendingSeekTime = MediaTime::invalidTime();
     monitorSourceBuffers();
 }
 

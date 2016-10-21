@@ -70,6 +70,7 @@ private:
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     bool isDivisable() const override;
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) override;
+    Ref<MediaSample> createNonDisplayingCopy() const override;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;

@@ -30,8 +30,8 @@
 
 #include "MediaPlayerPrivate.h"
 #include "SourceBufferPrivateClient.h"
+#include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAsset;
@@ -79,7 +79,10 @@ public:
     void waitForSeekCompleted();
     void seekCompleted();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
-    void setHasAvailableVideoFrame(bool flag) { m_hasAvailableVideoFrame = flag; }
+    void setHasAvailableVideoFrame(bool);
+    void setHasAvailableAudioSample(AVSampleBufferAudioRenderer*, bool);
+    bool allRenderersHaveAvailableSamples() const { return m_allRenderersHaveAvailableSamples; }
+    void updateAllRenderersHaveAvailableSamples();
     void durationChanged();
 
     void effectiveRateChanged();
@@ -216,7 +219,11 @@ private:
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
-    Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
+
+    struct AudioRendererProperties {
+        bool hasAudibleSample { false };
+    };
+    HashMap<RetainPtr<AVSampleBufferAudioRenderer>, AudioRendererProperties> m_sampleBufferAudioRendererMap;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_timeJumpedObserver;
     RetainPtr<id> m_durationObserver;
@@ -234,6 +241,7 @@ private:
     bool m_seekCompleted;
     mutable bool m_loadingProgressed;
     bool m_hasAvailableVideoFrame;
+    bool m_allRenderersHaveAvailableSamples { false };
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     bool m_shouldPlayToTarget { false };

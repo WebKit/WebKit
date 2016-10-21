@@ -65,17 +65,18 @@ public:
     virtual bool isDivisable() const = 0;
     enum DivideFlags { BeforePresentationTime, AfterPresentationTime };
     virtual std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) = 0;
+    virtual Ref<MediaSample> createNonDisplayingCopy() const = 0;
 
     enum SampleFlags {
         None = 0,
         IsSync = 1 << 0,
-        NonDisplaying = 1 << 1,
+        IsNonDisplaying = 1 << 1,
     };
     virtual SampleFlags flags() const = 0;
     virtual PlatformSample platformSample() = 0;
 
     bool isSync() const { return flags() & IsSync; }
-    bool isNonDisplaying() const { return flags() & NonDisplaying; }
+    bool isNonDisplaying() const { return flags() & IsNonDisplaying; }
 
     virtual void dump(PrintStream&) const = 0;
 };

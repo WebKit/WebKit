@@ -94,6 +94,7 @@ public:
     void trackDidChangeEnabled(VideoTrackPrivateMediaSourceAVFObjC*);
     void trackDidChangeEnabled(AudioTrackPrivateMediaSourceAVFObjC*);
 
+    void willSeek();
     void seekToTime(MediaTime);
     MediaTime fastSeekTimeForMediaTime(MediaTime, MediaTime negativeThreshold, MediaTime positiveThreshold);
     FloatSize naturalSize();
@@ -120,19 +121,19 @@ private:
     void removedFromMediaSource() override;
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
-    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString trackID) override;
+    void flush(AtomicString trackID) override;
     void enqueueSample(PassRefPtr<MediaSample>, AtomicString trackID) override;
     bool isReadyForMoreSamples(AtomicString trackID) override;
     void setActive(bool) override;
     void notifyClientWhenReadyForMoreSamples(AtomicString trackID) override;
 
-    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferAudioRenderer*);
-    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AVSampleBufferDisplayLayer*);
-
     void didBecomeReadyForMoreSamples(int trackID);
     void appendCompleted();
     void destroyParser();
     void destroyRenderers();
+
+    void flush(AVSampleBufferDisplayLayer *);
+    void flush(AVSampleBufferAudioRenderer *);
 
     WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 

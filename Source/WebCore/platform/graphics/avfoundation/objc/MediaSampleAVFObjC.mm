@@ -72,12 +72,30 @@ static bool CMSampleBufferIsRandomAccess(CMSampleBufferRef sample)
     return true;
 }
 
+static bool CMSampleBufferIsNonDisplaying(CMSampleBufferRef sample)
+{
+    CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sample, false);
+    if (!attachments)
+        return false;
+    
+    for (CFIndex i = 0; i < CFArrayGetCount(attachments); ++i) {
+        CFDictionaryRef attachmentDict = (CFDictionaryRef)CFArrayGetValueAtIndex(attachments, i);
+        if (CFDictionaryContainsKey(attachmentDict, kCMSampleAttachmentKey_DoNotDisplay))
+            return true;
+    }
+
+    return false;
+}
+
 MediaSample::SampleFlags MediaSampleAVFObjC::flags() const
 {
     int returnValue = MediaSample::None;
     
     if (CMSampleBufferIsRandomAccess(m_sample.get()))
         returnValue |= MediaSample::IsSync;
+
+    if (CMSampleBufferIsNonDisplaying(m_sample.get()))
+        returnValue |= MediaSample::IsNonDisplaying;
     
     return SampleFlags(returnValue);
 }
@@ -187,6 +205,21 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
     RetainPtr<CMSampleBufferRef> sampleAfter = adoptCF(rawSampleAfter);
 
     return { MediaSampleAVFObjC::create(sampleBefore.get(), m_id), MediaSampleAVFObjC::create(sampleAfter.get(), m_id) };
+}
+
+Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
+{
+    CMSampleBufferRef newSampleBuffer = 0;
+    CMSampleBufferCreateCopy(kCFAllocatorDefault, m_sample.get(), &newSampleBuffer);
+    ASSERT(newSampleBuffer);
+
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(newSampleBuffer, true);
+    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+        CFMutableDictionaryRef attachments = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachmentsArray, i);
+        CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DoNotDisplay, kCFBooleanTrue);
+    }
+
+    return MediaSampleAVFObjC::create(newSampleBuffer, m_id);
 }
 
 }

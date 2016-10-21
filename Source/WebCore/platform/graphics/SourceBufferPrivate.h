@@ -58,7 +58,7 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
 
-    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) { }
+    virtual void flush(AtomicString) { }
     virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString) { }
     virtual bool isReadyForMoreSamples(AtomicString) { return false; }
     virtual void setActive(bool) { }

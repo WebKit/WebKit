@@ -1,3 +1,94 @@
+2016-10-21  Jer Noble  <jer.noble@apple.com>
+
+        YouTube stalls when seeking beyond buffered range
+        https://bugs.webkit.org/show_bug.cgi?id=162813
+
+        Reviewed by Eric Carlson.
+
+        When seeking a MediaPlayerPrivateMediaSourceAVFObjC, we will first seek the AVSampleBufferRenderSynchronizer,
+        flush and enqueue non-displaying frames, enqueue regular frames, then begin playback. The above stall will occur
+        when we enqueue so many non- displaying frames that the display layer is not ready for normal ones before
+        playback begins. Then, when the synchronizer attempts to synchronize the enqueued audio and video renderers, the
+        only available samples are back at the original media time, and so it "seeks" by updating the CMTimebase back to
+        the original media time, causing playback to appear "stalled".  The overall solution is to "flush" the contents
+        of the renderers before the seek, so that the synchronizer doesn't reset the currentTime, and to only restart
+        the synchronizer when there are visible (or audible) samples available for display.
+
+        Breaking the fix down into sections:
+
+        = Don't enqueue too many non-displaying samples at once:
+        - Rename SourceBufferPrivate::flushAndEnqueueNonDisplayingSamples() to SourceBufferPrivate::flush(), and no longer
+          pass in an array of non-displaying samples.
+        - Add a new virtual method to MediaSample, createNonDisplayingCopy(), used by SourceBuffer to enqueue non-displaying
+          samples.
+        - in SourceBuffer::reenqueueMediaForTime(), use that new createNonDisplayingCopy() method to enqueue non-displaying
+          samples in the same queue as regular samples.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::provideMediaData):
+        (WebCore::SourceBuffer::reenqueueMediaForTime):
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::isNonDisplaying):
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::flush):
+        (WebCore::SourceBufferPrivate::flushAndEnqueueNonDisplayingSamples): Renamed -> flush().
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::CMSampleBufferIsNonDisplaying):
+        (WebCore::MediaSampleAVFObjC::flags):
+        (WebCore::MediaSampleAVFObjC::createNonDisplayingCopy):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::willSeek):
+        (WebCore::createNonDisplayingCopy): Moved to MediaSampleAVFObjC.
+        (WebCore::SourceBufferPrivateAVFObjC::flushAndEnqueueNonDisplayingSamples): Renamed -> flush().
+        * platform/mock/mediasource/MockBox.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+        (WebCore::MockMediaSample::flags):
+        (WebCore::MockMediaSample::createNonDisplayingCopy):
+        * platform/mock/mediasource/MockSourceBufferPrivate.h:
+
+        = Don't start playing until all renderers have visible/audible samples:
+        - SourceBufferPrivateAVFObjC will notify its associated MediaPlayerPrivateMediaSourceAVFObjC when
+          it flushes and receives visible/audible samples.
+        - The MediaPlayer will store audio renderers as keys to a HashMap which allows it to track which
+          have available samples.
+        - This requires changing all the places where we loop over the available renderers.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::flush):
+        (WebCore::SourceBufferPrivateAVFObjC::willSeek):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::allRenderersHaveAvailableSamples):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setVolume):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setMuted):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableAudioSample):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSamples):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::addAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::removeAudioRenderer):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seeking):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::shouldBePlaying):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::willSeek):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+
+        = Don't display new samples mid-seek.
+        - MediaSource should clear its m_pendingSeekTime ivar, which is used whyn SourceBuffer queries whether or not a
+          seek is pending, when instructing its SourceBuffers to seekToTime().
+        - This allows SourceBuffer to decline to enqueue new samples during a MediaSource seek operation.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::completeSeek):
+
 2016-10-20  Dean Jackson  <dino@apple.com>
 
         SVG should not paint selection within a mask

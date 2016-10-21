@@ -68,7 +68,7 @@ private:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
 
-    void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString) override { m_enqueuedSamples.clear(); }
+    void flush(AtomicString) override { m_enqueuedSamples.clear(); }
     void enqueueSample(PassRefPtr<MediaSample>, AtomicString) override;
     bool isReadyForMoreSamples(AtomicString) override { return true; }
     void setActive(bool) override;

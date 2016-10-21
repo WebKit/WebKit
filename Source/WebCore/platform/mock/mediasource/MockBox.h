@@ -141,16 +141,21 @@ public:
         m_decodeTimestamp = decodeTimestamp;
     }
 
+    void clearFlag(uint8_t flag) { m_flags &= ~flag; }
+    void setFlag(uint8_t flag) { m_flags |= flag; }
+
     enum {
         IsSync = 1 << 0,
         IsCorrupted = 1 << 1,
         IsDropped = 1 << 2,
         IsDelayed = 1 << 3,
+        IsNonDisplaying = 1 << 4,
     };
     bool isSync() const { return m_flags & IsSync; }
     bool isCorrupted() const { return m_flags & IsCorrupted; }
     bool isDropped() const { return m_flags & IsDropped; }
     bool isDelayed() const { return m_flags & IsDelayed; }
+    bool isNonDisplaying() const { return m_flags & IsNonDisplaying; }
 
 protected:
     MediaTime m_presentationTimestamp;
