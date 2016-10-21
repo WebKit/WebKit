@@ -120,6 +120,8 @@ private:
     friend class Internals;
 
     void updateSessionState();
+    void forEachSession(std::function<void(PlatformMediaSession&, size_t)>) const;
+    bool anyOfSessions(std::function<bool(PlatformMediaSession&, size_t)>) const;
 
     // RemoteCommandListenerClient
     WEBCORE_EXPORT void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument*) override;
@@ -135,7 +137,7 @@ private:
     void systemDidWake() override;
 
     SessionRestrictions m_restrictions[PlatformMediaSession::WebAudio + 1];
-    Vector<PlatformMediaSession*> m_sessions;
+    mutable Vector<PlatformMediaSession*> m_sessions;
     std::unique_ptr<RemoteCommandListener> m_remoteCommandListener;
     std::unique_ptr<SystemSleepListener> m_systemSleepListener;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;
@@ -148,6 +150,7 @@ private:
     bool m_interrupted { false };
     mutable bool m_isApplicationInBackground { false };
     bool m_willIgnoreSystemInterruptions { false };
+    mutable int m_iteratingOverSessions { 0 };
 };
 
 }

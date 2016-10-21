@@ -1,3 +1,35 @@
+2016-10-21  Jer Noble  <jer.noble@apple.com>
+
+        WebCore::PlatformMediaSession::stopSession + 13
+        https://bugs.webkit.org/show_bug.cgi?id=163799
+
+        Reviewed by Eric Carlson.
+
+        Because m_sessions can be mutated by removeSession() while iterating over m_sessions, and because
+        PlatformMediaSessions are not refcounted, it is not enough to copy m_sessions into a copied Vector
+        before iterating. Instead, wrap iteration of m_sessions in a convenience function, which sets an
+        iteration counter which, when cleared, removes all null entries from m_session. In parallel, modify
+        removeSession() to check this iteration counter, and replace the session with a null value rather
+        than mutating the m_sessions vector itself.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::has):
+        (WebCore::PlatformMediaSessionManager::activeAudioSessionRequired):
+        (WebCore::PlatformMediaSessionManager::canProduceAudio):
+        (WebCore::PlatformMediaSessionManager::removeSession):
+        (WebCore::PlatformMediaSessionManager::sessionWillBeginPlayback):
+        (WebCore::PlatformMediaSessionManager::sessionWillEndPlayback):
+        (WebCore::PlatformMediaSessionManager::currentSessionsMatching):
+        (WebCore::PlatformMediaSessionManager::applicationWillEnterBackground):
+        (WebCore::PlatformMediaSessionManager::applicationDidEnterForeground):
+        (WebCore::PlatformMediaSessionManager::systemWillSleep):
+        (WebCore::PlatformMediaSessionManager::systemDidWake):
+        (WebCore::PlatformMediaSessionManager::stopAllMediaPlaybackForDocument):
+        (WebCore::PlatformMediaSessionManager::stopAllMediaPlaybackForProcess):
+        (WebCore::PlatformMediaSessionManager::forEachSession):
+        (WebCore::PlatformMediaSessionManager::anyOfSessions):
+        * platform/audio/PlatformMediaSessionManager.h:
+
 2016-10-21  Darin Adler  <darin@apple.com>
 
         Move some more assorted classes from ExceptionCode to Exception
