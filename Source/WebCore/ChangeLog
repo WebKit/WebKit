@@ -1,3 +1,20 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        [Bindings] Start using signature->idlType instead of signature->type in the overload resolution code
+        https://bugs.webkit.org/show_bug.cgi?id=163767
+
+        Reviewed by Darin Adler.
+
+        Start using signature->idlType instead of signature->type in the overload resolution code
+        to prepare for union type support.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (ComputeEffectiveOverloadSet):
+        (AreTypesDistinguishableForOverloadResolution):
+        (GetDistinguishingArgumentIndex):
+        (GetOverloadThatMatches):
+        (GenerateOverloadedFunctionOrConstructor):
+
 2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Implement WebGL2 bufferData() and bufferSubData() methods
