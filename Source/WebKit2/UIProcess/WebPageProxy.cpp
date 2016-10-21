@@ -1549,6 +1549,11 @@ void WebPageProxy::dispatchViewStateChange()
     if ((changed & ViewState::IsVisible) && !isViewVisible())
         m_process->responsivenessTimer().stop();
 
+#if ENABLE(POINTER_LOCK)
+    if ((changed & ViewState::IsVisible) && !isViewVisible())
+        requestPointerUnlock();
+#endif
+
     if (changed & ViewState::IsInWindow) {
         if (isInWindow())
             viewDidEnterWindow();
@@ -6620,5 +6625,37 @@ void WebPageProxy::setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutD
 
     m_process->send(Messages::WebPage::SetUserInterfaceLayoutDirection(static_cast<uint32_t>(userInterfaceLayoutDirection)), m_pageID);
 }
+    
+#if ENABLE(POINTER_LOCK)
+void WebPageProxy::requestPointerLock()
+{
+    if (!isViewVisible()) {
+        m_process->send(Messages::WebPage::DidNotAcquirePointerLock(), m_pageID);
+        return;
+    }
+
+    didAllowPointerLock();
+}
+    
+void WebPageProxy::didAllowPointerLock()
+{
+    CGDisplayHideCursor(CGMainDisplayID());
+    CGAssociateMouseAndMouseCursorPosition(false);
+    m_process->send(Messages::WebPage::DidAcquirePointerLock(), m_pageID);
+}
+    
+void WebPageProxy::didDenyPointerLock()
+{
+    m_process->send(Messages::WebPage::DidNotAcquirePointerLock(), m_pageID);
+}
+
+void WebPageProxy::requestPointerUnlock()
+{
+    CGDisplayShowCursor(CGMainDisplayID());
+    CGAssociateMouseAndMouseCursorPosition(true);
+    m_process->send(Messages::WebPage::DidLosePointerLock(), m_pageID);
+}
+#endif
+
 
 } // namespace WebKit

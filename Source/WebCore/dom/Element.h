@@ -477,7 +477,7 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    void requestPointerLock();
+    WEBCORE_EXPORT void requestPointerLock();
 #endif
 
 #if ENABLE(INDIE_UI)

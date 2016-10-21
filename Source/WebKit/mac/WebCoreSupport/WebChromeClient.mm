@@ -77,6 +77,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/PointerLockController.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/Widget.h>
@@ -706,6 +707,34 @@ std::unique_ptr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserCl
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+#endif
+
+#if ENABLE(POINTER_LOCK)
+bool WebChromeClient::requestPointerLock()
+{
+#if PLATFORM(MAC)
+    if (![m_webView page])
+        return false;
+
+    CGDisplayHideCursor(CGMainDisplayID());
+    CGAssociateMouseAndMouseCursorPosition(false);
+    [m_webView page]->pointerLockController().didAcquirePointerLock();
+    
+    return true;
+#else
+    return false;
+#endif
+}
+
+void WebChromeClient::requestPointerUnlock()
+{
+#if PLATFORM(MAC)
+    CGDisplayShowCursor(CGMainDisplayID());
+    CGAssociateMouseAndMouseCursorPosition(true);
+    if ([m_webView page])
+        [m_webView page]->pointerLockController().didLosePointerLock();
+#endif
 }
 #endif
 

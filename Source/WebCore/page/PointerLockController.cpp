@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "Element.h"
 #include "Event.h"
+#include "EventNames.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "VoidCallback.h"
@@ -63,13 +64,17 @@ void PointerLockController::requestPointerLock(Element* target)
             enqueueEvent(eventNames().pointerlockerrorEvent, target);
             return;
         }
-        enqueueEvent(eventNames().pointerlockchangeEvent, target);
         m_element = target;
-    } else if (m_page.chrome().client().requestPointerLock()) {
+        enqueueEvent(eventNames().pointerlockchangeEvent, target);
+    } else {
         m_lockPending = true;
         m_element = target;
-    } else
-        enqueueEvent(eventNames().pointerlockerrorEvent, target);
+        if (!m_page.chrome().client().requestPointerLock()) {
+            m_element = nullptr;
+            m_lockPending = false;
+            enqueueEvent(eventNames().pointerlockerrorEvent, target);
+        }
+    }
 }
 
 void PointerLockController::requestPointerUnlock()

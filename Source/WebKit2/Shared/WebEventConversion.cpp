@@ -100,6 +100,9 @@ public:
         }
 
         m_position = webEvent.position();
+#if ENABLE(POINTER_LOCK)
+        m_movementDelta = WebCore::IntPoint(webEvent.deltaX(), webEvent.deltaY());
+#endif
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
 #if PLATFORM(MAC)

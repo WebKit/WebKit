@@ -135,6 +135,11 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) override;
 #endif
+    
+#if ENABLE(POINTER_LOCK)
+    bool requestPointerLock() override;
+    void requestPointerUnlock() override;
+#endif
 
     WebCore::KeyboardUIMode keyboardUIMode() override;
 

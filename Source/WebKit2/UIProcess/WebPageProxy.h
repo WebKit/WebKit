@@ -946,6 +946,11 @@ public:
     void handleMediaEvent(WebCore::MediaEventType);
     void setVolumeOfMediaElement(double, uint64_t);
 #endif
+        
+#if ENABLE(POINTER_LOCK)
+    void didAllowPointerLock();
+    void didDenyPointerLock();
+#endif
 
     // WebPopupMenuProxy::Client
     NativeWebMouseEvent* currentlyProcessedMouseDownEvent() override;
@@ -1166,6 +1171,11 @@ private:
     void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) override;
 #if PLATFORM(GTK)
     void failedToShowPopupMenu() override;
+#endif
+
+#if ENABLE(POINTER_LOCK)
+    void requestPointerLock();
+    void requestPointerUnlock();
 #endif
 
     void didCreateMainFrame(uint64_t frameID);

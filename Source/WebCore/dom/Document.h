@@ -1123,8 +1123,8 @@ public:
 #endif
 
 #if ENABLE(POINTER_LOCK)
-    void exitPointerLock();
-    Element* pointerLockElement() const;
+    WEBCORE_EXPORT void exitPointerLock();
+    WEBCORE_EXPORT Element* pointerLockElement() const;
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.

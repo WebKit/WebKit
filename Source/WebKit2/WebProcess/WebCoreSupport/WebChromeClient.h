@@ -191,6 +191,11 @@ private:
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
     void scheduleAnimation() override;
 #endif
+    
+#if ENABLE(POINTER_LOCK)
+    bool requestPointerLock() override;
+    void requestPointerUnlock() override;
+#endif
 
     void didAssociateFormControls(const Vector<RefPtr<WebCore::Element>>&) override;
     bool shouldNotifyOnFormChanges() override;

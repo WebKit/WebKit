@@ -405,7 +405,6 @@ public:
 #if ENABLE(POINTER_LOCK)
     virtual bool requestPointerLock() { return false; }
     virtual void requestPointerUnlock() { }
-    virtual bool isPointerLocked() { return false; }
 #endif
 
     virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };

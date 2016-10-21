@@ -455,6 +455,19 @@ KeyboardUIMode WebChromeClient::keyboardUIMode()
     return m_page->keyboardUIMode();
 }
 
+#if ENABLE(POINTER_LOCK)
+bool WebChromeClient::requestPointerLock()
+{
+    m_page->send(Messages::WebPageProxy::RequestPointerLock());
+    return true;
+}
+
+void WebChromeClient::requestPointerUnlock()
+{
+    m_page->send(Messages::WebPageProxy::RequestPointerUnlock());
+}
+#endif
+
 void WebChromeClient::invalidateRootView(const IntRect&)
 {
     // Do nothing here, there's no concept of invalidating the window in the web process.

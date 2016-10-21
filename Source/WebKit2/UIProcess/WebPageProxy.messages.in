@@ -458,6 +458,11 @@ messages -> WebPageProxy {
     SetMockMediaPlaybackTargetPickerState(String name, unsigned pickerState)
 #endif
 
+#if ENABLE(POINTER_LOCK)
+    RequestPointerLock()
+    RequestPointerUnlock()
+#endif
+
     ImageOrMediaDocumentSizeChanged(WebCore::IntSize newSize)
 
     UseFixedLayoutDidChange(bool useFixedLayout)

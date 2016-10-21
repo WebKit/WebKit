@@ -1,3 +1,25 @@
+2016-10-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Implement basic pointer lock behavior for WebKit and WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=162745
+
+        Reviewed by Simon Fraser.
+
+        When ENABLE_POINTER_LOCK is enabled, these tests now pass with DumpRenderTree.
+        LayoutTests/pointer-lock/lock-already-locked.html
+        LayoutTests/pointer-lock/lock-element-not-in-dom.html
+        LayoutTests/pointer-lock/locked-element-iframe-removed-from-dom.html
+        LayoutTests/pointer-lock/mouse-event-api.html
+
+        Export pointer lock symbols and cancel pointer lock on "escape".
+
+        * dom/Document.h: Export symbols.
+        * dom/Element.h: Export symbols.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent): Cancel pointer lock on "escape".
+        * page/PointerLockController.cpp: Add missing include.
+        * page/PointerLockController.h: Export symbols.
+
 2016-10-21  Jer Noble  <jer.noble@apple.com>
 
         WebCore::PlatformMediaSession::stopSession + 13
