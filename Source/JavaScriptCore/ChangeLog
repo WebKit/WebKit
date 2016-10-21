@@ -1,3 +1,18 @@
+2016-10-21  Saam Barati  <sbarati@apple.com>
+
+        SpeculativeJIT::compileTryGetById needs to pass in NeedsToSpill along both the cell speculation and untyped speculation path
+        https://bugs.webkit.org/show_bug.cgi?id=163622
+
+        Reviewed by Yusuke Suzuki.
+
+        We were passing in DontSpill in the Untyped:child1() case, which caused us
+        not to spill the base register. This is obviously wrong because the
+        DFG's register allocator expected the base to still be in the register
+        that it allocated for it after the TryGetById node executed.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTryGetById):
+
 2016-10-21  Keith Miller  <keith_miller@apple.com>
 
         Expand Trunc in B3 to support Double to Float
