@@ -24,6 +24,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "Element.h"
 #include "RenderStyle.h"
 #include "SVGPaint.h"
 
@@ -100,17 +101,16 @@ RefPtr<SVGPaint> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(RefPtr<SV
     return WTFMove(paint);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
+RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout)
 {
-    Node* node = m_node.get();
-    if (!node)
+    if (!m_element)
         return nullptr;
 
     // Make sure our layout is up to date before we allow a query on these attributes.
     if (updateLayout)
-        node->document().updateLayout();
+        m_element->document().updateLayout();
 
-    auto* style = node->computedStyle();
+    auto* style = m_element->computedStyle();
     if (!style)
         return nullptr;
 

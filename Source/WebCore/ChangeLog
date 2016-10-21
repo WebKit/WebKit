@@ -1,3 +1,52 @@
+2016-10-21  Antti Koivisto  <antti@apple.com>
+
+        Tighten ComputedStyleExtractor to use Element instead of Node
+        https://bugs.webkit.org/show_bug.cgi?id=163798
+
+        Reviewed by Andreas Kling.
+
+        Also make its functions non-const as they may compute style.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::styleElementForNode):
+        (WebCore::ComputedStyleExtractor::ComputedStyleExtractor):
+
+            If we are called with a Node figure out the style Element in constructor.
+
+        (WebCore::ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword):
+        (WebCore::ComputedStyleExtractor::useFixedFontDefaultSize):
+        (WebCore::ComputedStyleExtractor::styledElement):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::copyProperties):
+        (WebCore::elementOrItsAncestorNeedsStyleRecalc):
+
+            Use composed tree iterator for increased correctness in shadow trees.
+
+        (WebCore::updateStyleIfNeededForElement):
+        (WebCore::computeRenderStyleForProperty):
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        (WebCore::ComputedStyleExtractor::customPropertyText):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::CSSComputedStyleDeclaration::length):
+        (WebCore::CSSComputedStyleDeclaration::item):
+        (WebCore::ComputedStyleExtractor::propertyMatches):
+        (WebCore::ComputedStyleExtractor::copyProperties):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand):
+        (WebCore::ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand):
+        (WebCore::ComputedStyleExtractor::copyPropertiesInSet):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyValue):
+        (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue):
+        (WebCore::ComputedStyleExtractor::styledNode): Deleted.
+        (WebCore::nodeOrItsAncestorNeedsStyleRecalc): Deleted.
+        (WebCore::updateStyleIfNeededForNode): Deleted.
+        * css/CSSComputedStyleDeclaration.h:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::removeEquivalentProperties):
+        * editing/EditingStyle.h:
+
 2016-10-21  Chris Dumez  <cdumez@apple.com>
 
         WebGL2RenderingContext.texSubImage3D() should use a union instead of overloading

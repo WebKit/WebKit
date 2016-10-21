@@ -47,40 +47,39 @@ enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValu
 
 class ComputedStyleExtractor {
 public:
-    ComputedStyleExtractor(RefPtr<Node>&&, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
+    ComputedStyleExtractor(Node*, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
+    ComputedStyleExtractor(Element*, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
 
-    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
-    String customPropertyText(const String& propertyName) const;
-    RefPtr<CSSValue> customPropertyValue(const String& propertyName) const;
+    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout);
+    String customPropertyText(const String& propertyName);
+    RefPtr<CSSValue> customPropertyValue(const String& propertyName);
 
     // Helper methods for HTML editing.
-    Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
-    Ref<MutableStyleProperties> copyProperties() const;
-    RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword() const;
-    bool useFixedFontDefaultSize() const;
-    bool propertyMatches(CSSPropertyID, const CSSValue*) const;
+    Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length);
+    Ref<MutableStyleProperties> copyProperties();
+    RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword();
+    bool useFixedFontDefaultSize();
+    bool propertyMatches(CSSPropertyID, const CSSValue*);
 
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
 
 private:
-    // The styled node is either the node passed into computedPropertyValue, or the
+    // The styled element is either the element passed into computedPropertyValue, or the
     // PseudoElement for :before and :after if they exist.
-    // FIXME: This should be styledElement since in JS getComputedStyle only works
-    // on Elements, but right now editing creates these for text nodes. We should fix that.
-    Node* styledNode() const;
+    Element* styledElement();
 
-    RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout) const;
+    RefPtr<CSSValue> svgPropertyValue(CSSPropertyID, EUpdateLayout);
     RefPtr<SVGPaint> adjustSVGPaintForCurrentColor(RefPtr<SVGPaint>&&, const RenderStyle*) const;
 
     static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
     RefPtr<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
 
-    RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&) const;
-    RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&) const;
-    Ref<CSSValueList> getBackgroundShorthandValue() const;
-    RefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&) const;
+    RefPtr<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
+    RefPtr<CSSValueList> getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand&);
+    Ref<CSSValueList> getBackgroundShorthandValue();
+    RefPtr<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
 
-    RefPtr<Node> m_node;
+    RefPtr<Element> m_element;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
 };
@@ -121,7 +120,7 @@ private:
 
     RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
 
-    Ref<Element> m_element;
+    mutable Ref<Element> m_element;
     PseudoId m_pseudoElementSpecifier;
     bool m_allowVisitedStyle;
     unsigned m_refCount;

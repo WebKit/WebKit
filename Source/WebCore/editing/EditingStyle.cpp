@@ -1364,7 +1364,7 @@ void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
 }
 
 template<typename T>
-void EditingStyle::removeEquivalentProperties(const T& style)
+void EditingStyle::removeEquivalentProperties(T& style)
 {
     Vector<CSSPropertyID> propertiesToRemove;
     for (auto& property : m_mutableStyle->m_propertyVector) {

@@ -49,6 +49,7 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ComposedTreeAncestorIterator.h"
 #include "ContentData.h"
 #include "CounterContent.h"
 #include "CursorList.h"
@@ -72,6 +73,7 @@
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "Text.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
@@ -1583,13 +1585,28 @@ static Ref<CSSValue> createLineBoxContainValue(unsigned lineBoxContain)
     return CSSLineBoxContainValue::create(lineBoxContain);
 }
 
-ComputedStyleExtractor::ComputedStyleExtractor(RefPtr<Node>&& node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
-    : m_node(WTFMove(node))
+static Element* styleElementForNode(Node* node)
+{
+    if (!node)
+        return nullptr;
+    if (is<Element>(*node))
+        return downcast<Element>(node);
+    return composedTreeAncestors(*node).first();
+}
+
+ComputedStyleExtractor::ComputedStyleExtractor(Node* node, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
+    : m_element(styleElementForNode(node))
     , m_pseudoElementSpecifier(pseudoElementSpecifier)
     , m_allowVisitedStyle(allowVisitedStyle)
 {
 }
 
+ComputedStyleExtractor::ComputedStyleExtractor(Element* element, bool allowVisitedStyle, PseudoId pseudoElementSpecifier)
+    : m_element(element)
+    , m_pseudoElementSpecifier(pseudoElementSpecifier)
+    , m_allowVisitedStyle(allowVisitedStyle)
+{
+}
 
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool allowVisitedStyle, const String& pseudoElementName)
     : m_element(element)
@@ -1638,14 +1655,14 @@ ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
     return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword() const
+RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringKeyword()
 {
-    if (!m_node)
+    if (!m_element)
         return nullptr;
 
-    m_node->document().updateLayoutIgnorePendingStylesheets();
+    m_element->document().updateLayoutIgnorePendingStylesheets();
 
-    auto* style = m_node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return nullptr;
 
@@ -1655,12 +1672,11 @@ RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::getFontSizeCSSValuePreferringK
     return zoomAdjustedPixelValue(style->fontDescription().computedSize(), *style);
 }
 
-bool ComputedStyleExtractor::useFixedFontDefaultSize() const
+bool ComputedStyleExtractor::useFixedFontDefaultSize()
 {
-    if (!m_node)
+    if (!m_element)
         return false;
-
-    auto* style = m_node->computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return false;
 
@@ -2264,19 +2280,16 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     }
 }
 
-Node* ComputedStyleExtractor::styledNode() const
+Element* ComputedStyleExtractor::styledElement()
 {
-    if (!m_node)
+    if (!m_element)
         return nullptr;
-    if (!is<Element>(*m_node))
-        return m_node.get();
-    Element& element = downcast<Element>(*m_node);
     PseudoElement* pseudoElement;
-    if (m_pseudoElementSpecifier == BEFORE && (pseudoElement = element.beforePseudoElement()))
+    if (m_pseudoElementSpecifier == BEFORE && (pseudoElement = m_element->beforePseudoElement()))
         return pseudoElement;
-    if (m_pseudoElementSpecifier == AFTER && (pseudoElement = element.afterPseudoElement()))
+    if (m_pseudoElementSpecifier == AFTER && (pseudoElement = m_element->afterPseudoElement()))
         return pseudoElement;
-    return &element;
+    return m_element.get();
 }
 
 #if ENABLE(CSS_GRID_LAYOUT)
@@ -2326,60 +2339,63 @@ static StyleSelfAlignmentData resolveAlignSelfAuto(const StyleSelfAlignmentData&
 
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
-    return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
+    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
 }
 
 Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
 {
-    return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
+    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
-static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
+static inline bool elementOrItsAncestorNeedsStyleRecalc(Element& element)
 {
-    if (node.needsStyleRecalc())
+    if (element.needsStyleRecalc())
         return true;
+    if (element.document().hasPendingForcedStyleRecalc())
+        return true;
+    if (!element.document().childNeedsStyleRecalc())
+        return false;
 
-    const Node* currentNode = &node;
-    const Element* ancestor = currentNode->parentOrShadowHostElement();
-    while (ancestor) {
-        if (ancestor->needsStyleRecalc())
+    const auto* currentElement = &element;
+    for (auto& ancestor : composedTreeAncestors(element)) {
+        if (ancestor.needsStyleRecalc())
             return true;
 
-        if (ancestor->directChildNeedsStyleRecalc() && currentNode->styleIsAffectedByPreviousSibling())
+        if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
             return true;
 
-        currentNode = ancestor;
-        ancestor = currentNode->parentOrShadowHostElement();
+        currentElement = &ancestor;
     }
     return false;
 }
 
-static bool updateStyleIfNeededForNode(const Node& node)
+static bool updateStyleIfNeededForElement(Element& element)
 {
-    Document& document = node.document();
+    auto& document = element.document();
 
     document.styleScope().flushPendingUpdate();
 
-    if (!document.hasPendingForcedStyleRecalc() && !(document.childNeedsStyleRecalc() && nodeOrItsAncestorNeedsStyleRecalc(node)))
+    if (!elementOrItsAncestorNeedsStyleRecalc(element))
         return false;
+
     document.updateStyleIfNeeded();
     return true;
 }
 
-static inline const RenderStyle* computeRenderStyleForProperty(Node* styledNode, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
+static inline const RenderStyle* computeRenderStyleForProperty(Element& element, PseudoId pseudoElementSpecifier, CSSPropertyID propertyID, std::unique_ptr<RenderStyle>& ownedStyle)
 {
-    RenderObject* renderer = styledNode->renderer();
+    auto* renderer = element.renderer();
 
     if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
-        ownedStyle = renderer->animation().getAnimatedStyleForRenderer(downcast<RenderElement>(*renderer));
-        if (pseudoElementSpecifier && !styledNode->isPseudoElement()) {
+        ownedStyle = renderer->animation().getAnimatedStyleForRenderer(*renderer);
+        if (pseudoElementSpecifier && !element.isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
             return ownedStyle->getCachedPseudoStyle(pseudoElementSpecifier);
         }
         return ownedStyle.get();
     }
 
-    return styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
+    return element.computedStyle(element.isPseudoElement() ? NOPSEUDO : pseudoElementSpecifier);
 }
 
 static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeValue* shapeValue)
@@ -2446,36 +2462,35 @@ inline static bool isFlexOrGrid(ContainerNode* element)
     return element && element->computedStyle() && element->computedStyle()->isDisplayFlexibleOrGridBox();
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& propertyName) const
+RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& propertyName)
 {
-    Node* styledNode = this->styledNode();
-    if (!styledNode)
+    Element* styledElement = this->styledElement();
+    if (!styledElement)
         return nullptr;
     
-    if (updateStyleIfNeededForNode(*styledNode)) {
-        // The style recalc could have caused the styled node to be discarded or replaced
-        // if it was a PseudoElement so we need to update it.
-        styledNode = this->styledNode();
+    if (updateStyleIfNeededForElement(*styledElement)) {
+        // Style update may change styledElement() to PseudoElement or back.
+        styledElement = this->styledElement();
     }
 
     std::unique_ptr<RenderStyle> ownedStyle;
-    auto* style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle);
+    auto* style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, CSSPropertyCustom, ownedStyle);
     if (!style || !style->hasCustomProperty(propertyName))
         return nullptr;
 
     return style->getCustomPropertyValue(propertyName);
 }
 
-String ComputedStyleExtractor::customPropertyText(const String& propertyName) const
+String ComputedStyleExtractor::customPropertyText(const String& propertyName)
 {
-    RefPtr<CSSValue> propertyValue = this->customPropertyValue(propertyName);
+    RefPtr<CSSValue> propertyValue = customPropertyValue(propertyName);
     return propertyValue ? propertyValue->cssText() : emptyString();
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
+RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID, EUpdateLayout updateLayout)
 {
-    Node* styledNode = this->styledNode();
-    if (!styledNode)
+    auto* styledElement = this->styledElement();
+    if (!styledElement)
         return nullptr;
 
     std::unique_ptr<RenderStyle> ownedStyle;
@@ -2483,35 +2498,33 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     RenderObject* renderer = nullptr;
     bool forceFullLayout = false;
     if (updateLayout) {
-        Document& document = styledNode->document();
+        Document& document = m_element->document();
 
-        if (updateStyleIfNeededForNode(*styledNode)) {
-            // The style recalc could have caused the styled node to be discarded or replaced
-            // if it was a PseudoElement so we need to update it.
-            styledNode = this->styledNode();
+        if (updateStyleIfNeededForElement(*styledElement)) {
+            // Style update may change styledElement() to PseudoElement or back.
+            styledElement = this->styledElement();
         }
+        renderer = styledElement->renderer();
 
-        renderer = styledNode->renderer();
-
-        if (propertyID == CSSPropertyDisplay && !renderer && is<SVGElement>(*styledNode) && !downcast<SVGElement>(*styledNode).isValid())
+        if (propertyID == CSSPropertyDisplay && !renderer && is<SVGElement>(*styledElement) && !downcast<SVGElement>(*styledElement).isValid())
             return nullptr;
 
-        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID, ownedStyle);
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle);
 
         // FIXME: Some of these cases could be narrowed down or optimized better.
         forceFullLayout = isLayoutDependent(propertyID, style, renderer)
-            || styledNode->isInShadowTree()
+            || styledElement->isInShadowTree()
             || (document.styleScope().resolverIfExists() && document.styleScope().resolverIfExists()->hasViewportDependentMediaQueries() && document.ownerElement());
 
         if (forceFullLayout) {
             document.updateLayoutIgnorePendingStylesheets();
-            styledNode = this->styledNode();
+            styledElement = this->styledElement();
         }
     }
 
     if (!updateLayout || forceFullLayout) {
-        style = computeRenderStyleForProperty(styledNode, m_pseudoElementSpecifier, propertyID, ownedStyle);
-        renderer = styledNode->renderer();
+        style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle);
+        renderer = styledElement->renderer();
     }
 
     if (!style)
@@ -2819,7 +2832,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyAlignItems:
             return valueForItemPositionWithOverflowAlignment(style->alignItems());
         case CSSPropertyAlignSelf:
-            return valueForItemPositionWithOverflowAlignment(resolveAlignSelfAuto(style->alignSelf(), styledNode->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(resolveAlignSelfAuto(style->alignSelf(), styledElement->parentNode()));
         case CSSPropertyFlex:
             return getCSSPropertyValuesForShorthandProperties(flexShorthand());
         case CSSPropertyFlexBasis:
@@ -2838,9 +2851,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return valueForContentPositionAndDistributionWithOverflowAlignment(style->justifyContent(), CSSValueFlexStart);
 #if ENABLE(CSS_GRID_LAYOUT)
         case CSSPropertyJustifyItems:
-            return valueForItemPositionWithOverflowAlignment(resolveJustifyItemsAuto(style->justifyItems(), styledNode->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(resolveJustifyItemsAuto(style->justifyItems(), styledElement->parentNode()));
         case CSSPropertyJustifySelf:
-            return valueForItemPositionWithOverflowAlignment(resolveJustifySelfAuto(style->justifySelf(), styledNode->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(resolveJustifySelfAuto(style->justifySelf(), styledElement->parentNode()));
 #endif
         case CSSPropertyOrder:
             return cssValuePool.createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
@@ -2890,7 +2903,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         }
 #if ENABLE(VARIATION_FONTS)
         case CSSPropertyFontVariationSettings: {
-            if (styledNode->document().settings() && styledNode->document().settings()->variationFontsEnabled()) {
+            if (styledElement->document().settings() && styledElement->document().settings()->variationFontsEnabled()) {
                 const FontVariationSettings& variationSettings = style->fontDescription().variationSettings();
                 if (variationSettings.isEmpty())
                     return cssValuePool.createIdentifierValue(CSSValueNormal);
@@ -3076,14 +3089,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         }
         case CSSPropertyMinHeight:
             if (style->minHeight().isAuto()) {
-                if (isFlexOrGrid(styledNode->parentNode()))
+                if (isFlexOrGrid(styledElement->parentNode()))
                     return cssValuePool.createIdentifierValue(CSSValueAuto);
                 return zoomAdjustedPixelValue(0, *style);
             }
             return zoomAdjustedPixelValueForLength(style->minHeight(), *style);
         case CSSPropertyMinWidth:
             if (style->minWidth().isAuto()) {
-                if (isFlexOrGrid(styledNode->parentNode()))
+                if (isFlexOrGrid(styledElement->parentNode()))
                     return cssValuePool.createIdentifierValue(CSSValueAuto);
                 return zoomAdjustedPixelValue(0, *style);
             }
@@ -3964,10 +3977,9 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
 
 unsigned CSSComputedStyleDeclaration::length() const
 {
-    auto& element = m_element.get();
-    updateStyleIfNeededForNode(element);
+    updateStyleIfNeededForElement(m_element.get());
 
-    auto* style = const_cast<Element&>(element).computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return 0;
 
@@ -3982,8 +3994,7 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     if (i < numComputedProperties)
         return getPropertyNameString(computedProperties[i]);
     
-    auto& element = m_element.get();
-    auto* style = const_cast<Element&>(element).computedStyle(m_pseudoElementSpecifier);
+    auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)
         return String();
     
@@ -3998,11 +4009,13 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     return results.at(index);
 }
 
-bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value) const
+bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSSValue* value)
 {
-    if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value) && m_node) {
-        m_node->document().updateLayoutIgnorePendingStylesheets();
-        if (auto* style = m_node->computedStyle(m_pseudoElementSpecifier)) {
+    if (!m_element)
+        return false;
+    if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value)) {
+        m_element->document().updateLayoutIgnorePendingStylesheets();
+        if (auto* style = m_element->computedStyle(m_pseudoElementSpecifier)) {
             if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
                 auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
                 if (primitiveValue.isValueID() && primitiveValue.valueID() == sizeIdentifier)
@@ -4014,12 +4027,12 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
     return computedValue && value && computedValue->equals(*value);
 }
 
-Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties() const
+Ref<MutableStyleProperties> ComputedStyleExtractor::copyProperties()
 {
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
-RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand) const
+RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand& shorthand)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (size_t i = 0; i < shorthand.length(); ++i) {
@@ -4029,7 +4042,7 @@ RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForShorthandPro
     return list;
 }
 
-RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand& shorthand) const
+RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForSidesShorthand(const StylePropertyShorthand& shorthand)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     // Assume the properties are in the usual order top, right, bottom, left.
@@ -4057,7 +4070,7 @@ RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForSidesShortha
     return list;
 }
 
-RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand& shorthand) const
+RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand& shorthand)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSlashSeparated();
     for (size_t i = 0; i < shorthand.length(); ++i) {
@@ -4067,7 +4080,7 @@ RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesForGridShorthan
     return list;
 }
 
-Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const
+Ref<MutableStyleProperties> ComputedStyleExtractor::copyPropertiesInSet(const CSSPropertyID* set, unsigned length)
 {
     Vector<CSSProperty, 256> list;
     list.reserveInitialCapacity(length);
@@ -4087,7 +4100,7 @@ CSSRule* CSSComputedStyleDeclaration::parentRule() const
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
+        return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
@@ -4099,7 +4112,7 @@ RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_element.copyRef(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyText(propertyName);
+        return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyText(propertyName);
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)
@@ -4148,7 +4161,7 @@ ExceptionOr<bool> CSSComputedStyleDeclaration::setPropertyInternal(CSSPropertyID
     return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-Ref<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue() const
+Ref<CSSValueList> ComputedStyleExtractor::getBackgroundShorthandValue()
 {
     static const CSSPropertyID propertiesBeforeSlashSeperator[5] = { CSSPropertyBackgroundColor, CSSPropertyBackgroundImage, CSSPropertyBackgroundRepeat, CSSPropertyBackgroundAttachment, CSSPropertyBackgroundPosition };
     static const CSSPropertyID propertiesAfterSlashSeperator[3] = { CSSPropertyBackgroundSize, CSSPropertyBackgroundOrigin, CSSPropertyBackgroundClip };
