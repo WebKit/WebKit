@@ -44,6 +44,7 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
+#include "CSSLineBoxContainValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
@@ -3045,6 +3046,54 @@ static RefPtr<CSSValue> consumeFlowProperty(CSSParserTokenRange& range)
 }
 #endif
 
+static RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+
+    LineBoxContain lineBoxContain = LineBoxContainNone;
+    
+    while (range.peek().type() == IdentToken) {
+        auto id = range.peek().id();
+        if (id == CSSValueBlock) {
+            if (lineBoxContain & LineBoxContainBlock)
+                return nullptr;
+            lineBoxContain |= LineBoxContainBlock;
+        } else if (id == CSSValueInline) {
+            if (lineBoxContain & LineBoxContainInline)
+                return nullptr;
+            lineBoxContain |= LineBoxContainInline;
+        } else if (id == CSSValueFont) {
+            if (lineBoxContain & LineBoxContainFont)
+                return nullptr;
+            lineBoxContain |= LineBoxContainFont;
+        } else if (id == CSSValueGlyphs) {
+            if (lineBoxContain & LineBoxContainGlyphs)
+                return nullptr;
+            lineBoxContain |= LineBoxContainGlyphs;
+        } else if (id == CSSValueReplaced) {
+            if (lineBoxContain & LineBoxContainReplaced)
+                return nullptr;
+            lineBoxContain |= LineBoxContainReplaced;
+        } else if (id == CSSValueInlineBox) {
+            if (lineBoxContain & LineBoxContainInlineBox)
+                return nullptr;
+            lineBoxContain |= LineBoxContainInlineBox;
+        } else if (id == CSSValueInitialLetter) {
+            if (lineBoxContain & LineBoxContainInitialLetter)
+                return nullptr;
+            lineBoxContain |= LineBoxContainInitialLetter;
+        } else
+            return nullptr;
+        range.consumeIncludingWhitespace();
+    }
+    
+    if (!lineBoxContain)
+        return nullptr;
+    
+    return CSSLineBoxContainValue::create(lineBoxContain);
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3359,6 +3408,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeWebkitBorderImage(property, m_range, m_context);
     case CSSPropertyWebkitBoxReflect:
         return consumeReflect(m_range, m_context);
+    case CSSPropertyWebkitLineBoxContain:
+        return consumeLineBoxContain(m_range);
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     case CSSPropertyImageOrientation:
         return consumeImageOrientation(m_range, m_context.mode);

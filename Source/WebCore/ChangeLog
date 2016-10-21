@@ -1,5 +1,16 @@
 2016-10-21  Dave Hyatt  <hyatt@apple.com>
 
+        [CSS Parser] Add support for -webkit-line-box-contain
+        https://bugs.webkit.org/show_bug.cgi?id=163794
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeLineBoxContain):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
+2016-10-21  Dave Hyatt  <hyatt@apple.com>
+
         [CSS Parser] Add support for @-webkit-region rules
         https://bugs.webkit.org/show_bug.cgi?id=163787
 
