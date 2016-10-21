@@ -251,6 +251,7 @@ webkit.org/b/99065 media/media-source/media-source-seek-complete.html [ Skip ]
 webkit.org/b/99065 media/media-source/media-source-track-enabled.html [ Skip ]
 webkit.org/b/99065 media/media-source/media-source-tracks.html [ Skip ]
 webkit.org/b/99065 media/media-source/media-source-video-playback-quality.html [ Skip ]
+webkit.org/b/99065 media/media-source/media-source-seek-detach-crash.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Skip ]
@@ -356,7 +357,6 @@ webkit.org/b/95959 css3/device-adapt [ Skip ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure ]
-webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
 webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/131546 media/track/track-in-band-style.html [ Timeout ]
 webkit.org/b/131546 media/track/track-in-band-legacy-api.html [ Failure ]
@@ -722,8 +722,8 @@ webkit.org/b/161960 fast/dom/HTMLLinkElement/prefetch-beforeload.html [ Failure 
 # Font variations build flag is turned off
 webkit.org/b/162815 fast/text/variations/ [ Skip ]
 webkit.org/b/162815 animations/font-variations/font-variation-settings-unlike.html [ ImageOnlyFailure ]
-webkit.org/b/162815 animations/font-variations/font-variation-settings-order.html [ Timeout ]
-webkit.org/b/162815 animations/font-variations/font-variation-settings.html [ Timeout ]
+webkit.org/b/162815 animations/font-variations/font-variation-settings-order.html [ ImageOnlyFailure ]
+webkit.org/b/162815 animations/font-variations/font-variation-settings.html [ ImageOnlyFailure ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
@@ -819,7 +819,9 @@ webkit.org/b/153937 http/tests/misc/detach-during-notifyDone.html [ Crash Pass ]
 
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Timeout ]
 
-webkit.org/b/163510 media/track/track-in-band.html [ Crash ]
+webkit.org/b/131546 media/track/track-in-band.html [ Crash Timeout Failure ]
+
+webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1673,6 +1675,13 @@ webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cookie.html [ Time
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin-from-https.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-cross-origin.html [ Timeout ]
 webkit.org/b/162017 http/tests/navigation/ping-attribute/area-same-origin.html [ Timeout ]
+webkit.org/b/162017 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Timeout ]
+
+webkit.org/b/163779 http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Timeout ]
+
+webkit.org/b/163780 media/media-controls-drag-timeline-set-controls-property.html [ Timeout ]
+
+webkit.org/b/163781 media/muted-video-is-playing-audio.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
