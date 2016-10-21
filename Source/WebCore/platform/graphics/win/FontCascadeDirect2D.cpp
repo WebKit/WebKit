@@ -129,13 +129,10 @@ void FontCascade::drawGlyphs(GraphicsContext& graphicsContext, const Font& font,
         // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
         float shadowTextY = point.y() + translation.height() + shadowOffset.height() * (graphicsContext.shadowsIgnoreTransforms() ? -1 : 1);
 
-        COMPtr<ID2D1SolidColorBrush> shadowBrush;
-        if (!SUCCEEDED(context->CreateSolidColorBrush(graphicsContext.colorWithGlobalAlpha(shadowFillColor), &shadowBrush)))
-            return;
-
-        context->DrawGlyphRun(D2D1::Point2F(shadowTextX, shadowTextY), &glyphRun, shadowBrush.get());
+        auto shadowBrush = graphicsContext.brushWithColor(shadowFillColor);
+        context->DrawGlyphRun(D2D1::Point2F(shadowTextX, shadowTextY), &glyphRun, shadowBrush);
         if (font.syntheticBoldOffset())
-            context->DrawGlyphRun(D2D1::Point2F(shadowTextX + font.syntheticBoldOffset(), shadowTextY), &glyphRun, shadowBrush.get());
+            context->DrawGlyphRun(D2D1::Point2F(shadowTextX + font.syntheticBoldOffset(), shadowTextY), &glyphRun, shadowBrush);
     }
 
     context->DrawGlyphRun(D2D1::Point2F(point.x() + translation.width(), point.y() + translation.height()), &glyphRun, graphicsContext.solidFillBrush());

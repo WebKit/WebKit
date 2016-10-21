@@ -33,10 +33,33 @@
 
 namespace WebCore {
 
-FloatRect::FloatRect(const D2D1_RECT_F& r)
-    : m_location(FloatPoint(r.left, r.top))
-    , m_size(FloatSize(r.right - r.left, r.bottom - r.top))
+static bool isInfiniteRect(const D2D1_RECT_F& rect)
 {
+    if (!std::isinf(rect.top) && rect.top != -std::numeric_limits<float>::max())
+        return false;
+
+    if (!std::isinf(rect.left) && rect.left != -std::numeric_limits<float>::max())
+        return false;
+
+    if (!std::isinf(rect.bottom) && rect.bottom != std::numeric_limits<float>::max())
+        return false;
+
+    if (!std::isinf(rect.right) && rect.right != std::numeric_limits<float>::max())
+        return false;
+
+    return true;
+}
+
+FloatRect::FloatRect(const D2D1_RECT_F& r)
+{
+    // Infinite Rect case:
+    if (isInfiniteRect(r)) {
+        *this = infiniteRect();
+        return;
+    }
+
+    m_location = FloatPoint(r.left, r.top);
+    m_size = FloatSize(r.right - r.left, r.bottom - r.top);
 }
 
 FloatRect::operator D2D1_RECT_F() const

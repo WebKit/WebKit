@@ -66,6 +66,11 @@ void Gradient::generateGradient(ID2D1RenderTarget* renderTarget)
     HRESULT hr = renderTarget->CreateGradientStopCollection(gradientStops.data(), gradientStops.size(), &gradientStopCollection);
     RELEASE_ASSERT(SUCCEEDED(hr));
 
+    if (m_gradient) {
+        m_gradient->Release();
+        m_gradient = nullptr;
+    }
+
     if (m_radial) {
         FloatSize offset = p1() - p0();
         ID2D1RadialGradientBrush* radialGradient = nullptr;

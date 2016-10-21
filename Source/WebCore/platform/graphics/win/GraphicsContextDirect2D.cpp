@@ -274,12 +274,17 @@ COMPtr<ID2D1SolidColorBrush> GraphicsContextPlatformPrivate::brushWithColor(cons
     }
 
     auto existingBrush = m_solidColoredBrushCache.ensure(colorKey, [this, color] {
-        ID2D1SolidColorBrush* colorBrush = nullptr;
+        COMPtr<ID2D1SolidColorBrush> colorBrush;
         m_renderTarget->CreateSolidColorBrush(color, &colorBrush);
         return colorBrush;
     });
 
     return existingBrush.iterator->value;
+}
+
+ID2D1SolidColorBrush* GraphicsContext::brushWithColor(const Color& color)
+{
+    return m_data->brushWithColor(colorWithGlobalAlpha(color)).get();
 }
 
 void GraphicsContextPlatformPrivate::clip(const FloatRect& rect)
@@ -320,7 +325,8 @@ void GraphicsContextPlatformPrivate::concatCTM(const AffineTransform& affineTran
     D2D1_MATRIX_3X2_F currentTransform;
     m_renderTarget->GetTransform(&currentTransform);
 
-    m_renderTarget->SetTransform(affineTransform * AffineTransform(currentTransform));
+    D2D1_MATRIX_3X2_F transformToConcat = affineTransform;
+    m_renderTarget->SetTransform(transformToConcat * currentTransform);
 }
 
 void GraphicsContextPlatformPrivate::flush()
@@ -882,7 +888,8 @@ void GraphicsContext::drawWithShadow(const FloatRect& boundingRect, const std::f
 
     deviceContext->BeginDraw();
     deviceContext->DrawImage(compositor.get(), D2D1_INTERPOLATION_MODE_LINEAR);
-    deviceContext->EndDraw();
+    hr = deviceContext->EndDraw();
+    ASSERT(SUCCEEDED(hr));
 }
 
 void GraphicsContext::fillPath(const Path& path)
@@ -1051,7 +1058,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
 
     drawWithoutShadow(rect, [this, rect, color](ID2D1RenderTarget* renderTarget) {
         const D2D1_RECT_F d2dRect = rect;
-        renderTarget->FillRectangle(&d2dRect, m_data->brushWithColor(colorWithGlobalAlpha(color)).get());
+        renderTarget->FillRectangle(&d2dRect, brushWithColor(color));
     });
 }
 
@@ -1085,8 +1092,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
     bool hasCustomFill = m_state.fillGradient || m_state.fillPattern;
     if (!hasCustomFill && equalWidths && equalHeights && radii.topLeft().width() * 2 == r.width() && radii.topLeft().height() * 2 == r.height()) {
         auto roundedRect = D2D1::RoundedRect(r, radii.topLeft().width(), radii.topLeft().height());
-        COMPtr<ID2D1SolidColorBrush> fillBrush = m_data->brushWithColor(colorWithGlobalAlpha(color));
-        context->FillRoundedRectangle(roundedRect, fillBrush.get());
+        context->FillRoundedRectangle(roundedRect, brushWithColor(color));
     } else {
         D2DContextStateSaver stateSaver(*m_data);
         setFillColor(color);
@@ -1345,7 +1351,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
 
         renderTarget->SetTags(1, __LINE__);
         rectToClear.intersect(renderTargetRect);
-        renderTarget->FillRectangle(rectToClear, m_data->brushWithColor(colorWithGlobalAlpha(fillColor())).get());
+        renderTarget->FillRectangle(rectToClear, solidFillBrush());
     });
 }
 
@@ -1668,7 +1674,7 @@ void GraphicsContext::setPlatformStrokeColor(const Color& color)
 
     m_data->m_solidStrokeBrush = nullptr;
 
-    m_data->m_solidStrokeBrush = m_data->brushWithColor(colorWithGlobalAlpha(strokeColor()));
+    m_data->m_solidStrokeBrush = brushWithColor(strokeColor());
 }
 
 void GraphicsContext::setPlatformStrokeThickness(float thickness)
@@ -1683,7 +1689,7 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
 
     m_data->m_solidFillBrush = nullptr;
 
-    m_data->m_solidFillBrush = m_data->brushWithColor(colorWithGlobalAlpha(fillColor()));
+    m_data->m_solidFillBrush = brushWithColor(fillColor());
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)

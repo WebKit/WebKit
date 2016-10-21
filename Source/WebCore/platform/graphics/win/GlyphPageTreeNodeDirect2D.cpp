@@ -67,7 +67,8 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     hr = analyzer->GetGlyphs(buffer, bufferLength, fontPlatformData.dwFontFace(), fontPlatformData.orientation() == Vertical, false,
         &helper.m_analysis, nullptr, nullptr, nullptr, nullptr, 0, GlyphPage::size, clusterMap, textProperties.data(),
         localGlyphBuffer, glyphProperties.data(), &returnedCount);
-    RELEASE_ASSERT(SUCCEEDED(hr));
+    if (!SUCCEEDED(hr))
+        return false;
 
     for (unsigned i = 0; i < GlyphPage::size; i++) {
         Glyph glyph = localGlyphBuffer[i];

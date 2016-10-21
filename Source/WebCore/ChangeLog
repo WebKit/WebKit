@@ -1,3 +1,51 @@
+2016-10-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Correct some memory leaks and other minor bugs
+        https://bugs.webkit.org/show_bug.cgi?id=163769
+
+        Reviewed by Alex Christensen.
+
+        Several D2D handles were being leaked.
+ 
+        Direct2D sometimes returns an infinite rect containing { -inf, -inf, FloatMax, FloatMax },
+        sometimes { -FloatMax, -FloatMax, inf, inf }, and various combinations thereof. This caused
+        most SVG drawing to decide no screen rect was contained in the "infinite rect" so nothing
+        would be drawn.
+        
+        Tested by existing layout tests. 
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/win/FloatRectDirect2D.cpp:
+        (WebCore::isInfiniteRect): Recognize various infinite rects in Windows.
+        (WebCore::FloatRect::FloatRect): Convert a Windows infinite rect to the style
+        we use inside WebKit.
+        * platform/graphics/win/FontCascadeDirect2D.cpp:
+        (WebCore::FontCascade::drawGlyphs): Use cached brushes if possible.
+        * platform/graphics/win/GlyphPageTreeNodeDirect2D.cpp:
+        (WebCore::GlyphPage::fill): Don't terminate on this error case.
+        * platform/graphics/win/GradientDirect2D.cpp:
+        (WebCore::Gradient::generateGradient): Don't leak gradients.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::brushWithColor): Added.
+        (WebCore::GraphicsContext::brushWithColor): Added.
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM): Perform transform multiplication
+        in the right order (hint: it's not distributive).
+        (WebCore::GraphicsContext::drawWithShadow): Use convenience method.
+        (WebCore::GraphicsContext::fillRect): Ditto.
+        (WebCore::GraphicsContext::platformFillRoundedRect): Ditto.
+        (WebCore::GraphicsContext::clearRect): Ditto.
+        (WebCore::GraphicsContext::setPlatformStrokeColor): Ditto.
+        (WebCore::GraphicsContext::setPlatformFillColor): Ditto.
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::Path::polygonPathFromPoints): No need to convert manually.
+        (WebCore::Path::~Path): Don't leak ID2D1Geometry entities.
+        (WebCore::Path::appendGeometry): Ditto.
+        (WebCore::Path::createGeometryWithFillMode): Ditto.
+        (WebCore::Path::Path): Ditto.
+        (WebCore::Path::operator=): Ditto.
+        (WebCore::Path::strokeBoundingRect): Provide an implementation.
+        (WebCore::Path::addRect): No need for manual casting here.
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix minor style issue in the signature of StaticRange::create
