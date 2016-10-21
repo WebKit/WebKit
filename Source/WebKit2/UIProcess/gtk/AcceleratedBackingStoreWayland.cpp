@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedBackingStoreWayland.h"
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(WAYLAND) && USE(EGL)
 
 #include "WaylandCompositor.h"
 #include "WebPageProxy.h"
@@ -162,4 +162,4 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
 
 } // namespace WebKit
 
-#endif // PLATFORM(WAYLAND)
+#endif // PLATFORM(WAYLAND) && USE(EGL)

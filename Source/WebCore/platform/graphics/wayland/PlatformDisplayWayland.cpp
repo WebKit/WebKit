@@ -66,6 +66,7 @@ void PlatformDisplayWayland::initialize(wl_display* display)
     wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
     wl_display_roundtrip(m_display);
 
+#if USE(EGL)
 #if defined(EGL_KHR_platform_wayland)
     const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
     if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
@@ -79,6 +80,7 @@ void PlatformDisplayWayland::initialize(wl_display* display)
         m_eglDisplay = eglGetDisplay(m_display);
 
     PlatformDisplay::initializeEGLDisplay();
+#endif
 }
 
 void PlatformDisplayWayland::registryGlobal(const char* interface, uint32_t name)
