@@ -104,6 +104,9 @@ private:
 
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
 
+    Node::InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint) override;
+    void removedFrom(ContainerNode& insertionPoint) override;
+
     bool m_resetStyleInheritance { false };
     Mode m_type { Mode::UserAgent };
 

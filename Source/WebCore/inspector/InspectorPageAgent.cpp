@@ -1002,7 +1002,7 @@ void InspectorPageAgent::setEmulatedMedia(ErrorString&, const String& media)
     m_emulatedMedia = media;
     Document* document = m_page.mainFrame().document();
     if (document) {
-        document->styleScope().didChangeContentsOrInterpretation();
+        document->styleScope().didChangeStyleSheetEnvironment();
         document->updateLayout();
     }
 }

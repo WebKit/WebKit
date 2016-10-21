@@ -55,7 +55,6 @@ using namespace HTMLNames;
 
 ExtensionStyleSheets::ExtensionStyleSheets(Document& document)
     : m_document(document)
-    , m_styleResolverChangedTimer(*this, &ExtensionStyleSheets::styleResolverChangedTimerFired)
 {
 }
 
@@ -92,7 +91,7 @@ void ExtensionStyleSheets::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
         m_pageUserSheet = nullptr;
-        m_document.styleScope().didChangeContentsOrInterpretation();
+        m_document.styleScope().didChangeStyleSheetEnvironment();
     }
 }
 
@@ -100,7 +99,7 @@ void ExtensionStyleSheets::updatePageUserSheet()
 {
     clearPageUserSheet();
     if (pageUserSheet())
-        m_document.styleScope().didChangeContentsOrInterpretation();
+        m_document.styleScope().didChangeStyleSheetEnvironment();
 }
 
 const Vector<RefPtr<CSSStyleSheet>>& ExtensionStyleSheets::injectedUserStyleSheets() const
@@ -154,26 +153,22 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
 
 void ExtensionStyleSheets::invalidateInjectedStyleSheetCache()
 {
-    if (!m_injectedStyleSheetCacheValid)
-        return;
     m_injectedStyleSheetCacheValid = false;
-    if (m_injectedUserStyleSheets.isEmpty() && m_injectedAuthorStyleSheets.isEmpty())
-        return;
-    m_document.styleScope().didChangeContentsOrInterpretation();
+    m_document.styleScope().didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::addUserStyleSheet(Ref<StyleSheetContents>&& userSheet)
 {
     ASSERT(userSheet.get().isUserStyleSheet());
     m_userStyleSheets.append(CSSStyleSheet::create(WTFMove(userSheet), m_document));
-    m_document.styleScope().didChangeContentsOrInterpretation();
+    m_document.styleScope().didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::addAuthorStyleSheetForTesting(Ref<StyleSheetContents>&& authorSheet)
 {
     ASSERT(!authorSheet.get().isUserStyleSheet());
     m_authorStyleSheetsForTesting.append(CSSStyleSheet::create(WTFMove(authorSheet), m_document));
-    m_document.styleScope().didChangeContentsOrInterpretation();
+    m_document.styleScope().didChangeStyleSheetEnvironment();
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -186,7 +181,7 @@ void ExtensionStyleSheets::addDisplayNoneSelector(const String& identifier, cons
     }
 
     if (result.iterator->value->addDisplayNoneSelector(selector, selectorID))
-        m_styleResolverChangedTimer.startOneShot(0);
+        m_document.styleScope().didChangeStyleSheetEnvironment();
 }
 
 void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifier, StyleSheetContents& sheet)
@@ -199,14 +194,10 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
     Ref<CSSStyleSheet> cssSheet = CSSStyleSheet::create(sheet, m_document);
     m_contentExtensionSheets.set(identifier, &cssSheet.get());
     m_userStyleSheets.append(adoptRef(cssSheet.leakRef()));
-    m_styleResolverChangedTimer.startOneShot(0);
+    m_document.styleScope().didChangeStyleSheetEnvironment();
+
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-void ExtensionStyleSheets::styleResolverChangedTimerFired()
-{
-    m_document.styleScope().didChangeContentsOrInterpretation();
-}
 
 void ExtensionStyleSheets::detachFromDocument()
 {

@@ -118,6 +118,7 @@
 #include "SourceBuffer.h"
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
+#include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
@@ -381,6 +382,7 @@ void Internals::resetToConsistentState(Page& page)
     WebCore::Settings::setUsesOverlayScrollbars(false);
     WebCore::Settings::setUsesMockScrollAnimator(false);
 #if ENABLE(VIDEO_TRACK)
+    page.group().captionPreferences().setTestingMode(true);
     page.group().captionPreferences().setCaptionsStyleSheetOverride(emptyString());
     page.group().captionPreferences().setTestingMode(false);
 #endif
@@ -501,6 +503,8 @@ static String styleValidityToToString(Style::Validity validity)
 
 String Internals::styleChangeType(Node& node)
 {
+    node.document().styleScope().flushPendingUpdate();
+
     return styleValidityToToString(node.styleValidity());
 }
 

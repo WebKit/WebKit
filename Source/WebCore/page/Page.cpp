@@ -424,7 +424,7 @@ void Page::setViewMode(ViewMode viewMode)
         m_mainFrame->view()->forceLayout();
 
     if (m_mainFrame->document())
-        m_mainFrame->document()->styleScope().didChangeContentsOrInterpretation();
+        m_mainFrame->document()->styleScope().didChangeStyleSheetEnvironment();
 }
 #endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
@@ -500,9 +500,10 @@ void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 
 void Page::setNeedsRecalcStyleInAllFrames()
 {
+    // FIXME: Figure out what this function is actually trying to add in different call sites.
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (Document* document = frame->document())
-            document->styleScope().didChangeContentsOrInterpretation();
+            document->styleScope().didChangeStyleSheetEnvironment();
     }
 }
 
@@ -1159,7 +1160,6 @@ void Page::invalidateInjectedStyleSheetCacheInAllFrames()
         if (!document)
             continue;
         document->extensionStyleSheets().invalidateInjectedStyleSheetCache();
-        document->styleScope().didChangeContentsOrInterpretation();
     }
 }
 

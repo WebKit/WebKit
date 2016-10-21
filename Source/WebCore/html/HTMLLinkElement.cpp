@@ -140,7 +140,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
         if (!m_sheet && m_disabledState == EnabledViaScript)
             process();
         else
-            document().styleScope().didChangeContentsOrInterpretation();
+            document().styleScope().didChangeActiveStyleSheetCandidates();
     }
 }
 
@@ -176,7 +176,7 @@ void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicStri
         m_media = value.string().convertToASCIILowercase();
         process();
         if (m_sheet && !isDisabled())
-            document().styleScope().didChangeContentsOrInterpretation();
+            document().styleScope().didChangeActiveStyleSheetCandidates();
         return;
     }
     if (name == disabledAttr) {
@@ -283,7 +283,7 @@ void HTMLLinkElement::process()
     } else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         clearSheet();
-        document().styleScope().didChangeContentsOrInterpretation();
+        document().styleScope().didChangeActiveStyleSheetCandidates();
     }
 }
 
@@ -557,7 +557,7 @@ void HTMLLinkElement::removePendingSheet(RemovePendingSheetNotificationType noti
 
     if (type == InactiveSheet) {
         // Document just needs to know about the sheet for exposure through document.styleSheets
-        document().styleScope().didChangeCandidatesForActiveSet();
+        document().styleScope().didChangeActiveStyleSheetCandidates();
         return;
     }
 

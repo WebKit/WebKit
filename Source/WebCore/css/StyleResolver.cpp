@@ -268,8 +268,14 @@ StyleResolver::StyleResolver(Document& document)
     else
         m_mediaQueryEvaluator = MediaQueryEvaluator { "all" };
 
-    if (root)
+    if (root) {
         m_rootDefaultStyle = styleForElement(*root, m_document.renderStyle(), MatchOnlyUserAgentRules).renderStyle;
+        // Turn off assertion against font lookups during style resolver initialization. We may need root style font for media queries.
+        m_document.fontSelector().setIsComputingRootStyleFont(true);
+        m_rootDefaultStyle->fontCascade().update(&m_document.fontSelector());
+        m_rootDefaultStyle->fontCascade().primaryFont();
+        m_document.fontSelector().setIsComputingRootStyleFont(false);
+    }
 
     if (m_rootDefaultStyle && view)
         m_mediaQueryEvaluator = MediaQueryEvaluator { view->mediaType(), m_document, m_rootDefaultStyle.get() };

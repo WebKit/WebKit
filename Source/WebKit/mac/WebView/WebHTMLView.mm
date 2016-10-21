@@ -3612,7 +3612,7 @@ WEBCORE_COMMAND(toggleUnderline)
 #endif
 
     if (Frame* coreFrame = core([self _frame])) {
-        coreFrame->document()->styleScope().didChangeContentsOrInterpretation();
+        coreFrame->document()->styleScope().didChangeStyleSheetEnvironment();
         coreFrame->document()->updateStyleIfNeeded();
     }
 
@@ -5024,7 +5024,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
             document->setPaginatedForScreen(_private->paginateScreenContent);
             document->setPrinting(_private->printing);
-            document->styleScope().didChangeContentsOrInterpretation();
+            document->styleScope().didChangeStyleSheetEnvironment();
         }
     }
 

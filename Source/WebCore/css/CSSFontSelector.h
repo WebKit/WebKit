@@ -83,6 +83,8 @@ public:
 
     FontFaceSet& fontFaceSet();
 
+    void setIsComputingRootStyleFont(bool value) { m_isComputingRootStyleFont = value; }
+
 private:
     explicit CSSFontSelector(Document&);
 
@@ -112,6 +114,7 @@ private:
     unsigned m_version;
     bool m_creatingFont { false };
     bool m_buildIsUnderway { false };
+    bool m_isComputingRootStyleFont { false };
 };
 
 } // namespace WebCore

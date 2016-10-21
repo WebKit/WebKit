@@ -180,11 +180,11 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, WhetherContent
                 resolver->addKeyframeStyle(*insertedKeyframesRule);
             return;
         }
-        scope->scheduleActiveSetUpdate();
+        scope->didChangeActiveStyleSheetCandidates();
         return;
     }
 
-    scope->didChangeContentsOrInterpretation();
+    scope->didChangeStyleSheetContents();
 
     m_mutatedRules = true;
 }
@@ -194,7 +194,7 @@ void CSSStyleSheet::didMutate()
     auto* scope = styleScope();
     if (!scope)
         return;
-    scope->didChangeContentsOrInterpretation();
+    scope->didChangeStyleSheetContents();
 }
 
 void CSSStyleSheet::clearOwnerNode()
@@ -217,7 +217,8 @@ void CSSStyleSheet::setDisabled(bool disabled)
         return;
     m_isDisabled = disabled;
 
-    didMutate();
+    if (auto* scope = styleScope())
+        scope->didChangeActiveStyleSheetCandidates();
 }
 
 void CSSStyleSheet::setMediaQueries(Ref<MediaQuerySet>&& mediaQueries)

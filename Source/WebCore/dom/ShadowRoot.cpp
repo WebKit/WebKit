@@ -52,6 +52,7 @@ ShadowRoot::ShadowRoot(Document& document, Mode type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_type(type)
+    , m_styleScope(std::make_unique<Style::Scope>(*this))
 {
 }
 
@@ -60,6 +61,7 @@ ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slo
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_type(Mode::UserAgent)
+    , m_styleScope(std::make_unique<Style::Scope>(*this))
     , m_slotAssignment(WTFMove(slotAssignment))
 {
 }
@@ -79,10 +81,23 @@ ShadowRoot::~ShadowRoot()
     removeDetachedChildren();
 }
 
+Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode& insertionPoint)
+{
+    auto result = DocumentFragment::insertedInto(insertionPoint);
+    if (inDocument())
+        document().didInsertInDocumentShadowRoot(*this);
+    return result;
+}
+
+void ShadowRoot::removedFrom(ContainerNode& insertionPoint)
+{
+    if (inDocument())
+        document().didRemoveInDocumentShadowRoot(*this);
+    DocumentFragment::removedFrom(insertionPoint);
+}
+
 Style::Scope& ShadowRoot::styleScope()
 {
-    if (!m_styleScope)
-        m_styleScope = std::make_unique<Style::Scope>(*this);
     return *m_styleScope;
 }
 

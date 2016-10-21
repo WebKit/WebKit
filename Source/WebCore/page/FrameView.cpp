@@ -1335,7 +1335,7 @@ void FrameView::layout(bool allowSubtree)
         auto* styleResolver = document.styleScope().resolverIfExists();
         if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
             LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
-            document.styleScope().didChangeContentsOrInterpretation();
+            document.styleScope().didChangeStyleSheetEnvironment();
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
         } else
@@ -3532,7 +3532,7 @@ void FrameView::setPagination(const Pagination& pagination)
 
     m_pagination = pagination;
 
-    frame().document()->styleScope().didChangeContentsOrInterpretation();
+    frame().document()->styleScope().didChangeStyleSheetEnvironment();
 }
 
 IntRect FrameView::windowClipRect() const
@@ -4998,11 +4998,8 @@ void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
     m_overrideViewportSize = size;
     m_hasOverrideViewportSize = true;
     
-    if (Document* document = frame().document()) {
-        // FIXME: this should probably be updateViewportUnitsOnResize(), but synchronously
-        // dirtying style here causes assertions on iOS (rdar://problem/19998166).
-        document->styleScope().didChangeContentsOrInterpretation();
-    }
+    if (Document* document = frame().document())
+        document->styleScope().didChangeStyleSheetEnvironment();
 }
     
 IntSize FrameView::viewportSizeForCSSViewportUnits() const

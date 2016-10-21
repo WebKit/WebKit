@@ -2702,15 +2702,15 @@ const RenderStyle& Element::resolveComputedStyle()
 
 const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
+    if (!inDocument())
+        return nullptr;
+
     if (PseudoElement* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoElementSpecifier))
         return pseudoElement->computedStyle();
 
     auto* style = existingComputedStyle();
-    if (!style) {
-        if (!inDocument())
-            return nullptr;
+    if (!style)
         style = &resolveComputedStyle();
-    }
 
     if (pseudoElementSpecifier) {
         if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))

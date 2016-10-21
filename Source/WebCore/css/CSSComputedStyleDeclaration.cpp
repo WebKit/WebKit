@@ -2354,9 +2354,12 @@ static inline bool nodeOrItsAncestorNeedsStyleRecalc(const Node& node)
     return false;
 }
 
-static inline bool updateStyleIfNeededForNode(const Node& node)
+static bool updateStyleIfNeededForNode(const Node& node)
 {
     Document& document = node.document();
+
+    document.styleScope().flushPendingUpdate();
+
     if (!document.hasPendingForcedStyleRecalc() && !(document.childNeedsStyleRecalc() && nodeOrItsAncestorNeedsStyleRecalc(node)))
         return false;
     document.updateStyleIfNeeded();

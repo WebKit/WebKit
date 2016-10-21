@@ -280,7 +280,8 @@ static const AtomicString& resolveGenericFamily(Document* document, const FontDe
 
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    ASSERT(!m_buildIsUnderway); // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
+    // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
+    ASSERT(!m_buildIsUnderway || m_isComputingRootStyleFont);
 
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == standardFamily;

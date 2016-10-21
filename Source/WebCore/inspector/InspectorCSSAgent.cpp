@@ -797,6 +797,7 @@ InspectorStyleSheet* InspectorCSSAgent::createInspectorStyleSheetForDocument(Doc
     InlineStyleOverrideScope overrideScope(document);
     ExceptionCode ec = 0;
     targetNode->appendChild(styleElement, ec);
+    document.styleScope().flushPendingUpdate();
     m_creatingViaInspectorStyleSheet = false;
     if (ec)
         return nullptr;
@@ -889,7 +890,7 @@ void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, c
         m_nodeIdToForcedPseudoState.set(nodeId, forcedPseudoState);
     else
         m_nodeIdToForcedPseudoState.remove(nodeId);
-    element->document().styleScope().didChangeContentsOrInterpretation();
+    element->document().styleScope().didChangeStyleSheetEnvironment();
 }
 
 void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int documentNodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>& result)
@@ -1189,7 +1190,7 @@ void InspectorCSSAgent::resetPseudoStates()
 
     m_nodeIdToForcedPseudoState.clear();
     for (auto& document : documentsToChange)
-        document->styleScope().didChangeContentsOrInterpretation();
+        document->styleScope().didChangeStyleSheetEnvironment();
 }
 
 } // namespace WebCore

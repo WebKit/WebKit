@@ -1296,6 +1296,10 @@ public:
 
     DOMSelection* getSelection();
 
+    void didInsertInDocumentShadowRoot(ShadowRoot&);
+    void didRemoveInDocumentShadowRoot(ShadowRoot&);
+    const HashSet<ShadowRoot*>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1736,6 +1740,8 @@ private:
 
     HashSet<MediaProducer*> m_audioProducers;
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+
+    HashSet<ShadowRoot*> m_inDocumentShadowRoots;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     typedef HashMap<uint64_t, WebCore::MediaPlaybackTargetClient*> TargetIdToClientMap;

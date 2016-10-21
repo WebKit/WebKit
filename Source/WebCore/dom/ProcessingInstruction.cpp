@@ -156,6 +156,10 @@ void ProcessingInstruction::checkStyleSheet()
                 // The request may have been denied if (for example) the stylesheet is local and the document is remote.
                 m_loading = false;
                 document().styleScope().removePendingSheet();
+#if ENABLE(XSLT)
+                if (m_isXSL)
+                    document().styleScope().flushPendingUpdate();
+#endif
             }
         }
     }
@@ -174,6 +178,10 @@ bool ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading()) {
         document().styleScope().removePendingSheet();
+#if ENABLE(XSLT)
+        if (m_isXSL)
+            document().styleScope().flushPendingUpdate();
+#endif
         return true;
     }
     return false;
@@ -272,9 +280,7 @@ void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
         document().styleScope().removePendingSheet();
     }
 
-    // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
-    if (document().hasLivingRenderTree())
-        document().styleScope().didChangeContentsOrInterpretation();
+    document().styleScope().didChangeActiveStyleSheetCandidates();
 }
 
 void ProcessingInstruction::finishParsingChildren()

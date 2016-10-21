@@ -1356,7 +1356,7 @@ void Document::setContentLanguage(const String& language)
     m_contentLanguage = language;
 
     // Recalculate style so language is used when selecting the initial font.
-    m_styleScope->didChangeContentsOrInterpretation();
+    m_styleScope->didChangeStyleSheetEnvironment();
 }
 
 void Document::setXMLVersion(const String& version, ExceptionCode& ec)
@@ -1965,7 +1965,7 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
         HTMLElement* bodyElement = bodyOrFrameset();
         if (bodyElement && !bodyElement->renderer() && m_pendingSheetLayout == NoLayoutWithPendingSheets) {
             m_pendingSheetLayout = DidLayoutWithPendingSheets;
-            styleScope().didChangeContentsOrInterpretation();
+            styleScope().didChangeActiveStyleSheetCandidates();
             recalcStyle(Style::Force);
         } else if (m_hasNodesWithPlaceholderStyle)
             // If new nodes have been added or style recalc has been done with style sheets still pending, some nodes 
@@ -2102,12 +2102,14 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
 
 bool Document::isPageBoxVisible(int pageIndex)
 {
+    updateStyleIfNeeded();
     std::unique_ptr<RenderStyle> pageStyle(styleScope().resolver().styleForPage(pageIndex));
     return pageStyle->visibility() != HIDDEN; // display property doesn't apply to @page.
 }
 
 void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int& marginTop, int& marginRight, int& marginBottom, int& marginLeft)
 {
+    updateStyleIfNeeded();
     std::unique_ptr<RenderStyle> style = styleScope().resolver().styleForPage(pageIndex);
 
     int width = pageSize.width();
@@ -3161,7 +3163,6 @@ void Document::processHttpEquiv(const String& equiv, const String& content, bool
         // -dwh
         styleScope().setSelectedStylesheetSetName(content);
         styleScope().setPreferredStylesheetSetName(content);
-        styleScope().didChangeContentsOrInterpretation();
         break;
 
     case HTTPHeaderName::Refresh: {
@@ -3471,7 +3472,6 @@ String Document::selectedStylesheetSet() const
 void Document::setSelectedStylesheetSet(const String& aString)
 {
     styleScope().setSelectedStylesheetSetName(aString);
-    styleScope().didChangeContentsOrInterpretation();
 }
 
 void Document::evaluateMediaQueryList()
@@ -7041,6 +7041,18 @@ void Document::setDir(const AtomicString& value)
 DOMSelection* Document::getSelection()
 {
     return m_domWindow ? m_domWindow->getSelection() : nullptr;
+}
+
+void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
+{
+    ASSERT(shadowRoot.inDocument());
+    m_inDocumentShadowRoots.add(&shadowRoot);
+}
+
+void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
+{
+    ASSERT(m_inDocumentShadowRoots.contains(&shadowRoot));
+    m_inDocumentShadowRoots.remove(&shadowRoot);
 }
 
 } // namespace WebCore

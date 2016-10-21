@@ -1,3 +1,143 @@
+2016-10-21  Antti Koivisto  <antti@apple.com>
+
+        Style resolver should be updated lazily
+        https://bugs.webkit.org/show_bug.cgi?id=163721
+
+        Reviewed by Andreas Kling.
+
+        Currently when stylesheets change in some way we generally update style resolvers and
+        invalidate style immediately. We should do this lazily to avoid unnecessary work.
+
+        Also improve naming of the stylesheet invalidation functions and use more optimal functions in some places.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::updateStyleIfNeededForNode):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::didMutateRules):
+        (WebCore::CSSStyleSheet::didMutate):
+        (WebCore::CSSStyleSheet::setDisabled):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+
+            Initialize root style font with null font selector.
+            This avoids hitting a CSSFontSelector assert in fast/media/mq-relative-constraints-08.html where
+            media query evaluation requires font information before it is ready.
+            Exposed by increased laziness in this patch.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setContentLanguage):
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+        (WebCore::Document::isPageBoxVisible):
+        (WebCore::Document::pageSizeAndMarginsInPixels):
+        (WebCore::Document::processHttpEquiv):
+        (WebCore::Document::setSelectedStylesheetSet):
+        (WebCore::Document::didInsertInDocumentShadowRoot):
+        (WebCore::Document::didRemoveInDocumentShadowRoot):
+        * dom/Document.h:
+        (WebCore::Document::inDocumentShadowRoots):
+
+            Track all shadow roots in the document. This allows us to find and flush style scopes cheaply.
+
+        * dom/Element.cpp:
+        (WebCore::Element::computedStyle):
+        * dom/ExtensionStyleSheets.cpp:
+        (WebCore::ExtensionStyleSheets::ExtensionStyleSheets):
+        (WebCore::ExtensionStyleSheets::clearPageUserSheet):
+        (WebCore::ExtensionStyleSheets::updatePageUserSheet):
+        (WebCore::ExtensionStyleSheets::invalidateInjectedStyleSheetCache):
+        (WebCore::ExtensionStyleSheets::addUserStyleSheet):
+        (WebCore::ExtensionStyleSheets::addAuthorStyleSheetForTesting):
+        (WebCore::ExtensionStyleSheets::addDisplayNoneSelector):
+        (WebCore::ExtensionStyleSheets::maybeAddContentExtensionSheet):
+        (WebCore::ExtensionStyleSheets::styleResolverChangedTimerFired): Deleted.
+
+            Since updates are now done lazily we don't need a special timer for extension stylesheets.
+
+        * dom/ExtensionStyleSheets.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::sheetLoaded):
+        (WebCore::ProcessingInstruction::removedFrom):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::insertedInto):
+        (WebCore::ShadowRoot::removedFrom):
+        (WebCore::ShadowRoot::styleScope):
+        * dom/ShadowRoot.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::parseAttribute):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::removePendingSheet):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::createInspectorStyleSheetForDocument):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore::InspectorCSSAgent::resetPseudoStates):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setEmulatedMedia):
+        * page/Frame.cpp:
+        (WebCore::Frame::setPrinting):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::setPagination):
+        (WebCore::FrameView::setViewportSizeForCSSViewportUnits):
+        * page/Page.cpp:
+        (WebCore::Page::setViewMode):
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames):
+        (WebCore::Page::invalidateInjectedStyleSheetCacheInAllFrames):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::setPreferredStylesheetSetName):
+        (WebCore::Style::Scope::setSelectedStylesheetSetName):
+        (WebCore::Style::Scope::removePendingSheet):
+        (WebCore::Style::Scope::removeStyleSheetCandidateNode):
+        (WebCore::Style::Scope::activeStyleSheetsForInspector):
+        (WebCore::Style::Scope::flushPendingUpdate):
+
+            Also flush descendant shadow roots.
+
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::didChangeActiveStyleSheetCandidates):
+
+            Make lazy.
+
+        (WebCore::Style::Scope::didChangeStyleSheetContents):
+
+            Make lazy.
+
+        (WebCore::Style::Scope::didChangeStyleSheetEnvironment):
+
+            Environment changes also affect author shadow roots.
+
+        (WebCore::Style::Scope::styleSheetsForStyleSheetList):
+        (WebCore::Style::Scope::scheduleActiveSetUpdate): Deleted.
+        (WebCore::Style::Scope::didChangeCandidatesForActiveSet): Deleted.
+        (WebCore::Style::Scope::didChangeContentsOrInterpretation): Deleted.
+
+            Improved naming of these and split didChangeContentsOrInterpretation into two separate functions.
+
+        * style/StyleScope.h:
+        (WebCore::Style::Scope::styleSheetsForStyleSheetList): Deleted.
+        (WebCore::Style::Scope::setPreferredStylesheetSetName): Deleted.
+        (WebCore::Style::Scope::setSelectedStylesheetSetName): Deleted.
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        (WebCore::SVGFontFaceElement::removedFrom):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
+            Ensure that cationsStyleSheetOverride really becomes empty. Some tests rely on not having suprise
+            inserted stylesheets. Previously this was racy and the patch affected order of things.
+
+        (WebCore::Internals::styleChangeType):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+
 2016-10-21  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: [OpenWebRTC] Move SDPProcessorScriptResource(Gtk) to openwebrtc directory
