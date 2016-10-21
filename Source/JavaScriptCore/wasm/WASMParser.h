@@ -46,7 +46,8 @@ protected:
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t& result);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t& result);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t& result);
-    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return decodeUInt32(m_source.data(), m_sourceLength, m_offset, result); }
+    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return WTF::LEBDecoder::decodeUInt32(m_source.data(), m_sourceLength, m_offset, result); }
+    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t& result) { return WTF::LEBDecoder::decodeUInt64(m_source.data(), m_sourceLength, m_offset, result); }
 
 
     bool WARN_UNUSED_RETURN parseValueType(Type& result);

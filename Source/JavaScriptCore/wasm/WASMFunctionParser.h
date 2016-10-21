@@ -44,7 +44,7 @@ public:
     typedef typename Context::ExpressionType ExpressionType;
     typedef typename Context::ControlType ControlType;
 
-    FunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const FunctionInformation&);
+    FunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const FunctionInformation&, const Vector<FunctionInformation>& functions);
 
     bool WARN_UNUSED_RETURN parse();
 
@@ -60,14 +60,16 @@ private:
     Vector<ExpressionType, 1> m_expressionStack;
     Vector<ControlType> m_controlStack;
     const Signature& m_signature;
+    const Vector<FunctionInformation>& m_functions;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const FunctionInformation& info)
+FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const FunctionInformation& info, const Vector<FunctionInformation>& functions)
     : Parser(sourceBuffer, info.start, info.end)
     , m_context(context)
     , m_signature(*info.signature)
+    , m_functions(functions)
 {
     if (verbose)
         dataLogLn("Parsing function starting at: ", info.start, " ending at: ", info.end);
@@ -101,8 +103,11 @@ bool FunctionParser<Context>::parseBlock()
 {
     while (true) {
         uint8_t op;
-        if (!parseUInt7(op) || !isValidOpType(op))
+        if (!parseUInt7(op) || !isValidOpType(op)) {
+            if (verbose)
+                WTF::dataLogLn("attempted to decode invalid op: ", RawPointer(reinterpret_cast<void*>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
             return false;
+        }
 
         if (verbose) {
             dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawPointer(reinterpret_cast<void*>(op)), " at offset: ", RawPointer(reinterpret_cast<void*>(m_offset)));
@@ -193,6 +198,14 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+    case OpType::I64Const: {
+        uint64_t constant;
+        if (!parseVarUInt64(constant))
+            return false;
+        m_expressionStack.append(m_context.addConstant(I64, constant));
+        return true;
+    }
+
     case OpType::GetLocal: {
         uint32_t index;
         if (!parseVarUInt32(index))
@@ -211,6 +224,30 @@ bool FunctionParser<Context>::parseExpression(OpType op)
             return false;
         ExpressionType value = m_expressionStack.takeLast();
         return m_context.setLocal(index, value);
+    }
+
+    case OpType::Call: {
+        uint32_t functionIndex;
+        if (!parseVarUInt32(functionIndex))
+            return false;
+
+        if (functionIndex >= m_functions.size())
+            return false;
+
+        const FunctionInformation& info = m_functions[functionIndex];
+
+        Vector<ExpressionType> args;
+        for (unsigned i = 0; i < info.signature->arguments.size(); ++i)
+            args.append(m_expressionStack.takeLast());
+
+        ExpressionType result = Context::emptyExpression;
+        if (!m_context.addCall(functionIndex, info, args, result))
+            return false;
+
+        if (result != Context::emptyExpression)
+            m_expressionStack.append(result);
+
+        return true;
     }
 
     case OpType::Block: {
@@ -281,12 +318,12 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     case OpType::BrTable:
     case OpType::Nop:
     case OpType::Drop:
-    case OpType::I64Const:
     case OpType::F32Const:
     case OpType::F64Const:
     case OpType::TeeLocal:
     case OpType::GetGlobal:
     case OpType::SetGlobal:
+    case OpType::CallIndirect:
         // FIXME: Not yet implemented.
         return false;
     }

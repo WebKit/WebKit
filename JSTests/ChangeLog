@@ -1,3 +1,14 @@
+2016-10-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM calls
+        https://bugs.webkit.org/show_bug.cgi?id=161727
+
+        Reviewed by Filip Pizlo and Michael Saboff.
+
+        Add members of the Call category to the WASMOps special group.
+
+        * wasm/generate-wasmops-header.js:
+
 2016-10-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop isEnvironmentRecord type info flag and use JSType information instead

@@ -29,7 +29,7 @@ function* opcodeMacroizer(filter) {
 
 const defines = [
     "#define FOR_EACH_WASM_SPECIAL_OP(macro)",
-    ...opcodeMacroizer(op => op.category === "special"),
+    ...opcodeMacroizer(op => op.category === "special" || op.category === "call"),
     "\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)",
     ...opcodeMacroizer(op => op.category === "control"),
     "\n\n#define FOR_EACH_WASM_UNARY_OP(macro)",

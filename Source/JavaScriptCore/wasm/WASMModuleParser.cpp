@@ -82,7 +82,7 @@ bool ModuleParser::parse()
                 return false;
 
             // Make sure we can read up to the section's size.
-            if (m_offset + sectionNameLength + maxLEBByteLength >= m_sourceLength)
+            if (m_offset + sectionNameLength + WTF::LEBDecoder::max32BitLEBByteLength >= m_sourceLength)
                 return false;
 
             // We don't support any custom sections yet.

@@ -54,8 +54,16 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     for (const FunctionInformation& info : moduleParser.functionInformation()) {
         if (verbose)
             dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
-        result.append(parseAndCompile(vm, source, moduleParser.memory().get(), info));
+        result.append(parseAndCompile(vm, source, moduleParser.memory().get(), info, moduleParser.functionInformation()));
     }
+
+    // Patch the call sites for each function.
+    for (std::unique_ptr<FunctionCompilation>& functionPtr : result) {
+        FunctionCompilation* function = functionPtr.get();
+        for (auto& call : function->unlinkedCalls)
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(result[call.functionIndex]->code->code()));
+    }
+
     memory = WTFMove(moduleParser.memory());
 }
 

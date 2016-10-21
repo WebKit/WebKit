@@ -37,10 +37,29 @@ const JSCCallingConvention& jscCallingConvention()
     static LazyNeverDestroyed<JSCCallingConvention> staticJSCCallingConvention;
     static std::once_flag staticJSCCallingConventionFlag;
     std::call_once(staticJSCCallingConventionFlag, [] () {
-        staticJSCCallingConvention.construct(Vector<GPRReg>(), RegisterSet::calleeSaveRegisters());
+        staticJSCCallingConvention.construct(Vector<Reg>(), Vector<Reg>(), RegisterSet::calleeSaveRegisters());
     });
 
     return staticJSCCallingConvention;
+}
+
+const WASMCallingConvention& wasmCallingConvention()
+{
+    static LazyNeverDestroyed<JSCCallingConvention> staticWASMCallingConvention;
+    static std::once_flag staticWASMCallingConventionFlag;
+    std::call_once(staticWASMCallingConventionFlag, [] () {
+        Vector<Reg> gprArgumentRegisters(GPRInfo::numberOfArgumentRegisters);
+        for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i)
+            gprArgumentRegisters[i] = GPRInfo::toArgumentRegister(i);
+
+        Vector<Reg> fprArgumentRegisters(FPRInfo::numberOfArgumentRegisters);
+        for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i)
+            fprArgumentRegisters[i] = FPRInfo::toArgumentRegister(i);
+
+        staticWASMCallingConvention.construct(WTFMove(gprArgumentRegisters), WTFMove(fprArgumentRegisters), RegisterSet::calleeSaveRegisters());
+    });
+
+    return staticWASMCallingConvention;
 }
 
 } } // namespace JSC::WASM

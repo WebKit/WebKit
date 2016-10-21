@@ -42,7 +42,9 @@ namespace JSC { namespace WASM {
     macro(SetLocal, 0x15, Oops) \
     macro(TeeLocal, 0x19, Oops) \
     macro(GetGlobal, 0xbb, Oops) \
-    macro(SetGlobal, 0xbc, Oops)
+    macro(SetGlobal, 0xbc, Oops) \
+    macro(Call, 0x16, Oops) \
+    macro(CallIndirect, 0x17, Oops)
 
 #define FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \
     macro(Unreachable, 0x0, Oops) \

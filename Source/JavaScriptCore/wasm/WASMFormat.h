@@ -46,6 +46,7 @@
 
 #include "B3Compilation.h"
 #include "B3Type.h"
+#include "CodeLocation.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -127,7 +128,13 @@ struct FunctionInformation {
     size_t end;
 };
 
+struct UnlinkedCall {
+    CodeLocationCall callLocation;
+    size_t functionIndex;
+};
+
 struct FunctionCompilation {
+    Vector<UnlinkedCall> unlinkedCalls;
     std::unique_ptr<B3::Compilation> code;
     std::unique_ptr<B3::Compilation> jsEntryPoint;
 };

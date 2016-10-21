@@ -1,3 +1,20 @@
+2016-10-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM calls
+        https://bugs.webkit.org/show_bug.cgi?id=161727
+
+        Reviewed by Filip Pizlo and Michael Saboff.
+
+        Added a new decodeUInt64. Also, added WTF::LEBDecoder namespace.
+
+        * wtf/LEBDecoder.h:
+        (WTF::LEBDecoder::decodeUInt):
+        (WTF::LEBDecoder::decodeUInt32):
+        (WTF::LEBDecoder::decodeUInt64):
+        (WTF::LEBDecoder::decodeInt32):
+        (decodeUInt32): Deleted.
+        (decodeInt32): Deleted.
+
 2016-10-20  Filip Pizlo  <fpizlo@apple.com>
 
         The tracking of the coarse-grain Heap state (allocating or not, collector or not, eden vs full) should respect the orthogonality between allocating and collecting

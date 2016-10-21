@@ -170,7 +170,7 @@ public:
     typedef Vector<Variable*, 1> ResultList;
     static constexpr ExpressionType emptyExpression = nullptr;
 
-    B3IRGenerator(Memory*, Procedure&);
+    B3IRGenerator(Memory*, Procedure&, Vector<UnlinkedCall>& unlinkedCalls);
 
     void addArguments(const Vector<Type>&);
     void addLocal(Type, uint32_t);
@@ -198,6 +198,8 @@ public:
     bool WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType condition, const ExpressionList& returnValues);
     bool WARN_UNUSED_RETURN endBlock(ControlData&, ExpressionList& expressionStack);
 
+    bool WARN_UNUSED_RETURN addCall(unsigned calleeIndex, const FunctionInformation&, Vector<ExpressionType>& args, ExpressionType& result);
+
     bool isContinuationReachable(ControlData&);
 
     void dump(const Vector<ControlType>& controlStack, const ExpressionList& expressionStack);
@@ -214,13 +216,16 @@ private:
     Procedure& m_proc;
     BasicBlock* m_currentBlock;
     Vector<Variable*> m_locals;
+    // m_unlikedCalls is list of each call site and the function index whose address it should be patched with.
+    Vector<UnlinkedCall>& m_unlinkedCalls;
     GPRReg m_memoryBaseGPR;
     GPRReg m_memorySizeGPR;
 };
 
-B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure)
+B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure, Vector<UnlinkedCall>& unlinkedCalls)
     : m_memory(memory)
     , m_proc(procedure)
+    , m_unlinkedCalls(unlinkedCalls)
 {
     m_currentBlock = m_proc.addBlock();
 
@@ -231,13 +236,13 @@ B3IRGenerator::B3IRGenerator(Memory* memory, Procedure& procedure)
         m_memorySizeGPR = m_memory->pinnedRegisters().sizeRegisters[0].sizeRegister;
         for (const PinnedSizeRegisterInfo& info : m_memory->pinnedRegisters().sizeRegisters)
             m_proc.pinRegister(info.sizeRegister);
-    }
 
-    m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
-        ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
-        // FIXME: This should unwind the stack and throw a JS exception. See: https://bugs.webkit.org/show_bug.cgi?id=163351
-        jit.breakpoint();
-    });
+        m_proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR, unsigned) {
+            ASSERT_UNUSED(pinnedGPR, m_memorySizeGPR == pinnedGPR);
+            // FIXME: This should unwind the stack and throw a JS exception. See: https://bugs.webkit.org/show_bug.cgi?id=163351
+            jit.breakpoint();
+        });
+    }
 }
 
 void B3IRGenerator::addLocal(Type type, uint32_t count)
@@ -251,7 +256,7 @@ void B3IRGenerator::addArguments(const Vector<Type>& types)
 {
     ASSERT(!m_locals.size());
     m_locals.grow(types.size());
-    jscCallingConvention().iterate(types, m_proc, m_currentBlock, Origin(),
+    wasmCallingConvention().loadArguments(types, m_proc, m_currentBlock, Origin(),
         [&] (ExpressionType argument, unsigned i) {
             Variable* argumentVariable = m_proc.addVariable(argument->type());
             m_locals[i] = argumentVariable;
@@ -561,6 +566,32 @@ bool B3IRGenerator::endBlock(ControlData& data, ExpressionList& expressionStack)
     return true;
 }
 
+bool B3IRGenerator::addCall(unsigned functionIndex, const FunctionInformation& info, Vector<ExpressionType>& args, ExpressionType& result)
+{
+    ASSERT(info.signature->arguments.size() == args.size());
+
+    Type returnType = info.signature->returnType;
+
+    size_t callIndex = m_unlinkedCalls.size();
+    m_unlinkedCalls.grow(callIndex + 1);
+    result = wasmCallingConvention().setupCall(m_proc, m_currentBlock, Origin(), args, toB3Type(returnType),
+        [&] (PatchpointValue* patchpoint) {
+            patchpoint->effects.writesPinned = true;
+            patchpoint->effects.readsPinned = true;
+
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CCallHelpers::Call call = jit.call();
+
+                jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                    m_unlinkedCalls[callIndex] = { linkBuffer.locationOf(call), functionIndex };
+                });
+            });
+        });
+    return true;
+}
+
 bool B3IRGenerator::isContinuationReachable(ControlData& data)
 {
     // If nothing targets the continuation of the current block then we don't want to create
@@ -642,18 +673,27 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
 
     // Get our arguments.
     Vector<Value*> arguments;
-    jscCallingConvention().iterate(signature->arguments, proc, block, Origin(), [&] (Value* argument, unsigned) {
+    jscCallingConvention().loadArguments(signature->arguments, proc, block, Origin(), [&] (Value* argument, unsigned) {
         arguments.append(argument);
     });
 
     // Move the arguments into place.
-    Value* result = jscCallingConvention().setupCall(proc, block, Origin(), mainFunction, arguments, toB3Type(signature->returnType), [&] (PatchpointValue* patchpoint) {
+    Value* result = wasmCallingConvention().setupCall(proc, block, Origin(), arguments, toB3Type(signature->returnType), [&] (PatchpointValue* patchpoint) {
         if (memory) {
             ASSERT(sizes.size() == memory->pinnedRegisters().sizeRegisters.size());
             patchpoint->append(ConstrainedValue(baseMemory, ValueRep::reg(memory->pinnedRegisters().baseMemoryPointer)));
             for (unsigned i = 0; i < sizes.size(); ++i)
                 patchpoint->append(ConstrainedValue(sizes[i], ValueRep::reg(memory->pinnedRegisters().sizeRegisters[i].sizeRegister)));
         }
+
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+
+            CCallHelpers::Call call = jit.call();
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(call, FunctionPtr(mainFunction.executableAddress()));
+            });
+        });
     });
 
     // Return the result, if needed.
@@ -665,11 +705,13 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
     return std::make_unique<Compilation>(vm, proc);
 }
 
-std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, Memory* memory, FunctionInformation info, unsigned optLevel)
+std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, Memory* memory, FunctionInformation info, const Vector<FunctionInformation>& functions, unsigned optLevel)
 {
+    auto result = std::make_unique<FunctionCompilation>();
+
     Procedure procedure;
-    B3IRGenerator context(memory, procedure);
-    FunctionParser<B3IRGenerator> parser(context, source, info);
+    B3IRGenerator context(memory, procedure, result->unlinkedCalls);
+    FunctionParser<B3IRGenerator> parser(context, source, info, functions);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -679,7 +721,6 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& so
     fixSSA(procedure);
     if (verbose)
         dataLog("Post SSA: ", procedure);
-    auto result = std::make_unique<FunctionCompilation>();
 
     result->code = std::make_unique<Compilation>(vm, procedure, optLevel);
     result->jsEntryPoint = createJSWrapper(vm, info.signature, result->code->code(), memory);

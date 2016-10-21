@@ -1,3 +1,48 @@
+2016-10-20  Keith Miller  <keith_miller@apple.com>
+
+        Add support for WASM calls
+        https://bugs.webkit.org/show_bug.cgi?id=161727
+
+        Reviewed by Filip Pizlo and Michael Saboff.
+
+        Add support for WASM calls. Since most of the work for this was already done when we added
+        WASM Memory, this is mostly just cleanup work.  The main interesting part of this patch is
+        how we link calls to other WASM functions in the same module. Since a WASM callee may not
+        have been compiled by the time the current function has started compilation we don't know
+        what address we need to call to.  For each callsite in the compiling function, WASM
+        remembers the CodeLocationCall and the target function index. Once all WASM functions are
+        compiled, each callsite is linked to the appropriate entrypoint.
+
+        * testWASM.cpp:
+        (runWASMTests):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::createJSWrapper):
+        (JSC::WASM::parseAndCompile):
+        * wasm/WASMB3IRGenerator.h:
+        * wasm/WASMCallingConvention.cpp:
+        (JSC::WASM::jscCallingConvention):
+        (JSC::WASM::wasmCallingConvention):
+        * wasm/WASMCallingConvention.h:
+        (JSC::WASM::CallingConvention::CallingConvention):
+        (JSC::WASM::CallingConvention::marshallArgumentImpl):
+        (JSC::WASM::CallingConvention::marshallArgument):
+        (JSC::WASM::CallingConvention::loadArguments):
+        (JSC::WASM::CallingConvention::setupCall):
+        (JSC::WASM::CallingConvention::iterate): Deleted.
+        * wasm/WASMFormat.h:
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::FunctionParser):
+        (JSC::WASM::FunctionParser<Context>::parseBlock):
+        (JSC::WASM::FunctionParser<Context>::parseExpression):
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parse):
+        * wasm/WASMOps.h:
+        * wasm/WASMParser.h:
+        (JSC::WASM::Parser::parseVarUInt32):
+        (JSC::WASM::Parser::parseVarUInt64):
+        * wasm/WASMPlan.cpp:
+        (JSC::WASM::Plan::Plan):
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement InputEvent.getTargetRanges() for the input events spec
