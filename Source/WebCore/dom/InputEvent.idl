@@ -25,9 +25,12 @@
 
 [
     Constructor(DOMString type, optional InputEventInit eventInitDict),
+    EnabledAtRuntime=InputEvents,
 ] interface InputEvent : UIEvent {
     readonly attribute DOMString inputType;
     readonly attribute DOMString? data;
+
+    sequence<StaticRange> getTargetRanges();
 };
 
 dictionary InputEventInit : UIEventInit {

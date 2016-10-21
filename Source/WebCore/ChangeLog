@@ -1,3 +1,103 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement InputEvent.getTargetRanges() for the input events spec
+        https://bugs.webkit.org/show_bug.cgi?id=162947
+        <rdar://problem/28853079>
+
+        Reviewed by Darin Adler.
+
+        Implements InputEvent.getTargetRanges(). See individual method changes below for more details. Adds a new hook
+        for subclasses of CompositeEditCommand to vend a list of target StaticRanges when retrieving target ranges for
+        an editing command on a contenteditable area.
+
+        Tests: fast/events/before-input-delete-empty-list-target-ranges.html
+               fast/events/before-input-delete-text-target-ranges.html
+               fast/events/before-input-replace-text-target-ranges.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        Add StaticRange.idl, StaticRange.cpp and StaticRange.h.
+
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setInputEventsEnabled):
+        (WebCore::RuntimeEnabledFeatures::inputEventsEnabled):
+
+        Add a new runtime bindings flag for InputEvents and guard both InputEvent and StaticRange behind it.
+
+        * dom/DOMAllInOne.cpp:
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::InputEvent):
+        * dom/InputEvent.h:
+        * dom/InputEvent.idl:
+        * dom/StaticRange.cpp: Copied from Source/WebCore/dom/InputEvent.cpp.
+        (WebCore::StaticRange::StaticRange):
+        (WebCore::StaticRange::create):
+        (WebCore::StaticRange::createFromRange):
+
+        Convenience method for creating a StaticRange from a Range's start/end container and offset.
+
+        (WebCore::StaticRange::startContainer):
+        (WebCore::StaticRange::endContainer):
+        (WebCore::StaticRange::collapsed):
+        * dom/StaticRange.h: Copied from Source/WebCore/dom/InputEvent.cpp.
+        (WebCore::StaticRange::startOffset):
+        (WebCore::StaticRange::endOffset):
+        * dom/StaticRange.idl: Copied from Source/WebCore/editing/ReplaceRangeWithTextCommand.h.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::willApplyCommand):
+        (WebCore::CompositeEditCommand::targetRanges):
+
+        Virtual method that returns a list of target ranges which are associated with this command.
+
+        (WebCore::CompositeEditCommand::targetRangesForBindings):
+
+        Non-virtual method that calls the above targetRanges(). Takes whether or not the CompositeEditCommand is editing
+        a textarea or plain text input into account.
+
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::frame):
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::document):
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+
+        Changed the `beforeinput` event dispatch to use the regular Node::dispatchEvent instead of dispatchScopedEvent.
+        This is because if the page prevents the `beforeinput` event, we need to know immediately in order to bail from
+        the default action.
+
+        (WebCore::dispatchInputEvents):
+        (WebCore::Editor::willApplyEditing):
+
+        Added a list of static ranges as a parameter when calling on the Editor to dispatch `beforeinput` events.
+        By default, this uses the composite edit command's targetRangesForBindings(), though it may be special cased
+        by subclasses of CompositeEditCommand (see ReplaceRangeWithTextCommand, SpellingCorrectionCommand, and
+        TypingCommand).
+
+        * editing/Editor.h:
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::targetRanges):
+        * editing/ReplaceRangeWithTextCommand.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::targetRanges):
+        * editing/SpellingCorrectionCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionIsDeleteByTyping):
+        (WebCore::TypingCommand::shouldDeferWillApplyCommandUntilAddingTypingCommand):
+        (WebCore::TypingCommand::willApplyCommand):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+
+        Moves the firing of the `beforeinput` until after the selection range to delete has been computed.
+
+        * editing/TypingCommand.h:
+
 2016-10-21  Antti Koivisto  <antti@apple.com>
 
         Style resolver should be updated lazily

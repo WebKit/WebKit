@@ -43,6 +43,7 @@ private:
     bool shouldRetainAutocorrectionIndicator() const override;
 
     String inputEventData() const final;
+    Vector<RefPtr<StaticRange>> targetRanges() const final;
 
     RefPtr<Range> m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;

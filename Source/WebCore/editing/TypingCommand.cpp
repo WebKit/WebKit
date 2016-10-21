@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "MathMLElement.h"
 #include "RenderElement.h"
+#include "StaticRange.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "htmlediting.h"
@@ -103,6 +104,22 @@ static inline EditAction editActionForTypingCommand(TypingCommand::ETypingComman
         return EditActionTypingInsertParagraph;
     default:
         return EditActionUnspecified;
+    }
+}
+
+static inline bool editActionIsDeleteByTyping(EditAction action)
+{
+    switch (action) {
+    case EditActionTypingDeleteSelection:
+    case EditActionTypingDeleteBackward:
+    case EditActionTypingDeleteWordBackward:
+    case EditActionTypingDeleteLineBackward:
+    case EditActionTypingDeleteForward:
+    case EditActionTypingDeleteWordForward:
+    case EditActionTypingDeleteLineForward:
+        return true;
+    default:
+        return false;
     }
 }
 
@@ -267,6 +284,11 @@ RefPtr<TypingCommand> TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame
     return static_cast<TypingCommand*>(lastEditCommand.get());
 }
 
+bool TypingCommand::shouldDeferWillApplyCommandUntilAddingTypingCommand() const
+{
+    return !m_isHandlingInitialTypingCommand || editActionIsDeleteByTyping(editingAction());
+}
+
 void TypingCommand::closeTyping(Frame* frame)
 {
     if (RefPtr<TypingCommand> lastTypingCommand = lastTypingCommandIfStillOpenForTyping(*frame))
@@ -296,7 +318,7 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
 
 bool TypingCommand::willApplyCommand()
 {
-    if (!m_isHandlingInitialTypingCommand) {
+    if (shouldDeferWillApplyCommandUntilAddingTypingCommand()) {
         // The TypingCommand will handle the willApplyCommand logic separately in TypingCommand::willAddTypingToOpenCommand.
         return true;
     }
@@ -413,14 +435,19 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     }
 }
 
-bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextGranularity granularity, const String& text)
+bool TypingCommand::willAddTypingToOpenCommand(ETypingCommand commandType, TextGranularity granularity, const String& text, RefPtr<Range>&& range)
 {
-    if (m_isHandlingInitialTypingCommand)
-        return true;
-
     m_currentTextToInsert = text;
     m_currentTypingEditAction = editActionForTypingCommand(commandType, granularity);
-    return frame().editor().willApplyEditing(*this);
+
+    if (!shouldDeferWillApplyCommandUntilAddingTypingCommand())
+        return true;
+
+    if (!range || isEditingTextAreaOrTextInput())
+        return frame().editor().willApplyEditing(*this, CompositeEditCommand::targetRangesForBindings());
+
+    RefPtr<StaticRange> staticRange = StaticRange::createFromRange(*range);
+    return frame().editor().willApplyEditing(*this, { 1, staticRange });
 }
 
 void TypingCommand::typingAddedToOpenCommand(ETypingCommand commandTypeForAddedTyping)
@@ -562,9 +589,6 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
-    if (!willAddTypingToOpenCommand(DeleteKey, granularity))
-        return;
-
     Frame& frame = this->frame();
 
     frame.editor().updateMarkersForWordsAffectedByEditing(false);
@@ -593,11 +617,15 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
         if (endingSelection().visibleStart().previous(CannotCrossEditingBoundary).isNull()) {
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
-            if (breakOutOfEmptyListItem()) {
-                typingAddedToOpenCommand(DeleteKey);
+            if (auto deleteListSelection = shouldBreakOutOfEmptyListItem()) {
+                if (willAddTypingToOpenCommand(DeleteKey, granularity, { }, Range::create(document(), deleteListSelection.value().start(), deleteListSelection.value().end()))) {
+                    breakOutOfEmptyListItem();
+                    typingAddedToOpenCommand(DeleteKey);
+                }
                 return;
             }
             // When there are no visible positions in the editing root, delete its entire contents.
+            // FIXME: Dispatch a `beforeinput` event here and bail if preventDefault() was invoked.
             if (endingSelection().visibleStart().next(CannotCrossEditingBoundary).isNull() && makeEditableRootEmpty()) {
                 typingAddedToOpenCommand(DeleteKey);
                 return;
@@ -660,6 +688,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
     
+    if (!willAddTypingToOpenCommand(DeleteKey, granularity, { }, selectionToDelete.firstRange()))
+        return;
+
     if (shouldAddToKillRing)
         frame.editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange().get(), Editor::KillRingInsertionMode::PrependText);
 
@@ -678,9 +709,6 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool shouldAddToKillRing)
 {
-    if (!willAddTypingToOpenCommand(ForwardDeleteKey, granularity))
-        return;
-
     Frame& frame = this->frame();
 
     frame.editor().updateMarkersForWordsAffectedByEditing(false);
@@ -764,7 +792,10 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     
     if (selectionToDelete.isCaret() || !frame.selection().shouldDeleteSelection(selectionToDelete))
         return;
-        
+
+    if (!willAddTypingToOpenCommand(ForwardDeleteKey, granularity, { }, selectionToDelete.firstRange()))
+        return;
+
     // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
     postTextStateChangeNotificationForDeletion(selectionToDelete);
 

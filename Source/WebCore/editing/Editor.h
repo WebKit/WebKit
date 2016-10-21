@@ -68,6 +68,7 @@ class SharedBuffer;
 class Font;
 class SpellCheckRequest;
 class SpellChecker;
+class StaticRange;
 class StyleProperties;
 class Text;
 class TextCheckerClient;
@@ -199,7 +200,7 @@ public:
     void applyParagraphStyleToSelection(StyleProperties*, EditAction);
 
     // Returns whether or not we should proceed with editing.
-    bool willApplyEditing(CompositeEditCommand&) const;
+    bool willApplyEditing(CompositeEditCommand&, Vector<RefPtr<StaticRange>>&&) const;
     bool willUnapplyEditing(const EditCommandComposition&) const;
     bool willReapplyEditing(const EditCommandComposition&) const;
 

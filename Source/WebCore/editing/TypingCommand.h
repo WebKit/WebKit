@@ -122,7 +122,7 @@ private:
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 
     void updatePreservesTypingStyle(ETypingCommand);
-    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString());
+    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString(), RefPtr<Range>&& = nullptr);
     void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();
@@ -135,6 +135,8 @@ private:
 
     bool willApplyCommand() final;
     void didApplyCommand() final;
+
+    bool shouldDeferWillApplyCommandUntilAddingTypingCommand() const;
 
     ETypingCommand m_commandType;
     EditAction m_currentTypingEditAction;

@@ -1,3 +1,16 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement InputEvent.getTargetRanges() for the input events spec
+        https://bugs.webkit.org/show_bug.cgi?id=162947
+        <rdar://problem/28853079>
+
+        Reviewed by Darin Adler.
+
+        Boilerplate change to add a runtime guard for InputEvents-related IDL interfaces. See WebCore ChangeLog entry
+        for more details.
+
+        * runtime/CommonIdentifiers.h:
+
 2016-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix JSC cast-align compiler warnings on ARMv7

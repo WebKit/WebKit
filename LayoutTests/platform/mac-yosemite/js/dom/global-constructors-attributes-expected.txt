@@ -2038,6 +2038,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisUtterance').hasOwnP
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisUtterance').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisUtterance').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SpeechSynthesisUtterance').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'StaticRange').value is StaticRange
+PASS Object.getOwnPropertyDescriptor(global, 'StaticRange').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'StaticRange').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'StaticRange').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'StaticRange').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'Storage').value is Storage
 PASS Object.getOwnPropertyDescriptor(global, 'Storage').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Storage').hasOwnProperty('set') is false

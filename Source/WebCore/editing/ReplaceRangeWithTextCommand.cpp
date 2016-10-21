@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
+#include "StaticRange.h"
 #include "TextIterator.h"
 #include "markup.h"
 
@@ -71,6 +72,12 @@ String ReplaceRangeWithTextCommand::inputEventData() const
         return m_text;
 
     return CompositeEditCommand::inputEventData();
+}
+
+Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
+{
+    RefPtr<StaticRange> range = StaticRange::createFromRange(*m_rangeToBeReplaced);
+    return { 1, range };
 }
 
 } // namespace WebCore

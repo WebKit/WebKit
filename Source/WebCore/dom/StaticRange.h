@@ -23,31 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InputEvent.h"
+#pragma once
 
-#include "DOMWindow.h"
-#include "EventNames.h"
-#include "Node.h"
-#include "NotImplemented.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Vector.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
-    : UIEvent(eventType, canBubble, cancelable, view, detail)
-    , m_inputType(inputType)
-    , m_data(data)
-    , m_targetRanges(targetRanges)
-{
-}
+class Node;
+class Range;
 
-InputEvent::InputEvent(const AtomicString& eventType, const Init& initializer, IsTrusted isTrusted)
-    : UIEvent(eventType, initializer, isTrusted)
-    , m_inputType(emptyString())
-    , m_data(initializer.data)
-{
-}
+class StaticRange : public RefCounted<StaticRange> {
+public:
+    static Ref<StaticRange> createFromRange(const Range&);
+    static Ref<StaticRange> create(Ref<Node>&& startContainer, unsigned startOffset, Ref<Node>&& endContainer, unsigned endOffset);
 
-} // namespace WebCore
+    unsigned startOffset() const { return m_startOffset; }
+    unsigned endOffset() const { return m_endOffset; }
+    Node* startContainer() const;
+    Node* endContainer() const;
+    bool collapsed() const;
+
+private:
+    StaticRange(Ref<Node>&& startContainer, unsigned startOffset, Ref<Node>&& endContainer, unsigned endOffset);
+
+    Ref<Node> m_startContainer;
+    unsigned m_startOffset;
+    Ref<Node> m_endContainer;
+    unsigned m_endOffset;
+};
+
+}

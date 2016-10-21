@@ -111,23 +111,20 @@
 
 namespace WebCore {
 
-static bool dispatchBeforeInputEvent(Element& element, const AtomicString& inputType, const String& data = { })
+static bool dispatchBeforeInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     auto* settings = element.document().settings();
     if (!settings || !settings->inputEventsEnabled())
         return true;
 
-    auto event = InputEvent::create(eventNames().beforeinputEvent, inputType, true, true, element.document().defaultView(), data, 0);
-    element.dispatchScopedEvent(event);
-
-    return !event->defaultPrevented();
+    return element.dispatchEvent(InputEvent::create(eventNames().beforeinputEvent, inputType, true, true, element.document().defaultView(), data, targetRanges, 0));
 }
 
-static void dispatchInputEvent(Element& element, const AtomicString& inputType, const String& data = { })
+static void dispatchInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     auto* settings = element.document().settings();
     if (settings && settings->inputEventsEnabled())
-        element.dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, element.document().defaultView(), data, 0));
+        element.dispatchScopedEvent(InputEvent::create(eventNames().inputEvent, inputType, true, false, element.document().defaultView(), data, targetRanges, 0));
     else
         element.dispatchInputEvent();
 }
@@ -1066,31 +1063,31 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
-static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { })
+static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { }, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     bool continueWithDefaultBehavior = true;
     if (startRoot)
-        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*startRoot, inputTypeName, data);
+        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*startRoot, inputTypeName, data, targetRanges);
     if (endRoot && endRoot != startRoot)
-        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*endRoot, inputTypeName, data);
+        continueWithDefaultBehavior &= dispatchBeforeInputEvent(*endRoot, inputTypeName, data, targetRanges);
     return continueWithDefaultBehavior;
 }
 
-static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { })
+static void dispatchInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomicString& inputTypeName, const String& data = { }, const Vector<RefPtr<StaticRange>>& targetRanges = { })
 {
     if (startRoot)
-        dispatchInputEvent(*startRoot, inputTypeName, data);
+        dispatchInputEvent(*startRoot, inputTypeName, data, targetRanges);
     if (endRoot && endRoot != startRoot)
-        dispatchInputEvent(*endRoot, inputTypeName, data);
+        dispatchInputEvent(*endRoot, inputTypeName, data, targetRanges);
 }
 
-bool Editor::willApplyEditing(CompositeEditCommand& command) const
+bool Editor::willApplyEditing(CompositeEditCommand& command, Vector<RefPtr<StaticRange>>&& targetRanges) const
 {
     auto* composition = command.composition();
     if (!composition)
         return true;
 
-    return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), command.inputEventTypeName(), command.inputEventData());
+    return dispatchBeforeInputEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement(), command.inputEventTypeName(), command.inputEventData(), targetRanges);
 }
 
 void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)

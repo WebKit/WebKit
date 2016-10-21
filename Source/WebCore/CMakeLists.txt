@@ -440,6 +440,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/SecurityPolicyViolationEvent.idl
     dom/ShadowRoot.idl
     dom/Slotable.idl
+    dom/StaticRange.idl
     dom/StringCallback.idl
     dom/Text.idl
     dom/TextEvent.idl
@@ -1507,6 +1508,7 @@ set(WebCore_SOURCES
     dom/SlotAssignment.cpp
     dom/SpaceSplitString.cpp
     dom/StaticNodeList.cpp
+    dom/StaticRange.cpp
     dom/StringCallback.cpp
     dom/StyledElement.cpp
     dom/TagCollection.cpp

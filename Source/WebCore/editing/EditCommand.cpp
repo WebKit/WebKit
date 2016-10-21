@@ -132,6 +132,12 @@ Frame& EditCommand::frame()
     return *document().frame();
 }
 
+const Frame& EditCommand::frame() const
+{
+    ASSERT(document().frame());
+    return *document().frame();
+}
+
 EditAction EditCommand::editingAction() const
 {
     return m_editingAction;

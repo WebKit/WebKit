@@ -36,7 +36,7 @@
             debug("Fired `oninput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
             shouldBeDefined("event.__lookupGetter__('data')");
-            shouldBe("Object.getPrototypeOf(event)", "InputEvent.prototype");
+            shouldBeDefined("event.getTargetRanges");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");
             shouldBe("event.cancelable", "false");
@@ -48,7 +48,7 @@
             debug("Fired `onbeforeinput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
             shouldBeDefined("event.__lookupGetter__('data')");
-            shouldBe("Object.getPrototypeOf(event)", "InputEvent.prototype");
+            shouldBeDefined("event.getTargetRanges");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");
             shouldBe("event.cancelable", "true");

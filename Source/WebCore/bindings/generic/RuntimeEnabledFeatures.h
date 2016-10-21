@@ -198,6 +198,9 @@ public:
     void setShadowDOMEnabled(bool isEnabled) { m_isShadowDOMEnabled = isEnabled; }
     bool shadowDOMEnabled() const { return m_isShadowDOMEnabled; }
 
+    void setInputEventsEnabled(bool isEnabled) { m_inputEventsEnabled = isEnabled; }
+    bool inputEventsEnabled() const { return m_inputEventsEnabled; }
+
     void setInteractiveFormValidationEnabled(bool isEnabled) { m_isInteractiveFormValidationEnabled = isEnabled; }
     bool interactiveFormValidationEnabled() const { return m_isInteractiveFormValidationEnabled; }
 
@@ -320,6 +323,8 @@ private:
 #endif
     
     bool m_isShadowDOMEnabled;
+
+    bool m_inputEventsEnabled;
 
     bool m_isInteractiveFormValidationEnabled { false };
 

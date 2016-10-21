@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "CompositeEditCommand.h"
-#include "Range.h"
-
-namespace WebCore {
-
-class ReplaceRangeWithTextCommand : public CompositeEditCommand {
-public:
-    static Ref<ReplaceRangeWithTextCommand> create(RefPtr<Range> rangeToBeReplaced, const String& text)
-    {
-        return adoptRef(*new ReplaceRangeWithTextCommand(rangeToBeReplaced, text));
-    }
-
-private:
-    ReplaceRangeWithTextCommand(RefPtr<Range> rangeToBeReplaced, const String& text);
-    void doApply() override;
-    String inputEventData() const final;
-    Vector<RefPtr<StaticRange>> targetRanges() const final;
-
-    RefPtr<Range> m_rangeToBeReplaced;
-    String m_text;
+[
+    EnabledAtRuntime=InputEvents,
+    ImplementationLacksVTable,
+] interface StaticRange {
+    readonly attribute unsigned long startOffset;
+    readonly attribute unsigned long endOffset;
+    readonly attribute Node startContainer;
+    readonly attribute Node endContainer;
+    readonly attribute boolean collapsed;
 };
-
-} // namespace WebCore

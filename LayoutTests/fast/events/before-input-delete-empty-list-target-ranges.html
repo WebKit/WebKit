@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="editable" contenteditable onbeforeinput=beforeinput(event)>foo<div><ul><li id="item"><br></li></ul></div></div>
+    <script type="text/javascript">
+        description("To manually test this, delete the empty list element and observe the output.");
+
+        editable.focus();
+        getSelection().setPosition(item);
+
+        if (window.internals)
+            internals.settings.setInputEventsEnabled(true);
+
+        if (window.testRunner)
+            testRunner.execCommand("deleteBackward");
+
+        function beforeinput(event)
+        {
+            shouldBe("event.getTargetRanges().length", "1");
+            for (let range of event.getTargetRanges()) {
+                window.range = range;
+                shouldBe("range.startContainer.nodeName", "'#text'");
+                shouldBe("range.startContainer.textContent", "'foo'");
+                shouldBe("range.endContainer", "item");
+                shouldBe("range.startOffset", "3");
+                shouldBe("range.endOffset", "0");
+            }
+            event.preventDefault();
+        }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

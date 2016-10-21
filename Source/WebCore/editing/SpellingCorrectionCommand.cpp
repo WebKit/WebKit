@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "ReplaceSelectionCommand.h"
 #include "SetSelectionCommand.h"
+#include "StaticRange.h"
 #include "TextIterator.h"
 #include "markup.h"
 
@@ -117,6 +118,12 @@ String SpellingCorrectionCommand::inputEventData() const
         return m_correction;
 
     return CompositeEditCommand::inputEventData();
+}
+
+Vector<RefPtr<StaticRange>> SpellingCorrectionCommand::targetRanges() const
+{
+    RefPtr<StaticRange> range = StaticRange::createFromRange(*m_rangeToBeCorrected);
+    return { 1, range };
 }
 
 bool SpellingCorrectionCommand::shouldRetainAutocorrectionIndicator() const

@@ -141,6 +141,7 @@
 #include "SlotAssignment.cpp"
 #include "SpaceSplitString.cpp"
 #include "StaticNodeList.cpp"
+#include "StaticRange.cpp"
 #include "StringCallback.cpp"
 #include "StyledElement.cpp"
 #include "TagCollection.cpp"
