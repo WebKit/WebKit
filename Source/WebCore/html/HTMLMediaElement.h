@@ -564,6 +564,7 @@ private:
     void mediaPlayerSizeChanged(MediaPlayer*) override;
     bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) override;
     void mediaPlayerRenderingModeChanged(MediaPlayer*) override;
+    bool mediaPlayerAcceleratedCompositingEnabled() override;
     void mediaPlayerEngineUpdated(MediaPlayer*) override;
     void mediaEngineWasUpdated();
 
