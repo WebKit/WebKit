@@ -1,3 +1,72 @@
+2016-10-21  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: [GTK] Add MediaEndpointOwr - an OpenWebRTC WebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=163327
+
+        Reviewed by Philippe Normand.
+
+        Add MediaEndpointOwr which is a MediaEndpoint implementation (WebRTC backend) based on
+        OpenWebRTC [1]. The WebRTC backend can be tested with a manual test. Automatic testing
+        is still done with MockMediaEndpoint.
+
+        [1] http://www.openwebrtc.org/
+
+        Testing: Added manual test (webrtc-one-tab-p2p.html)
+
+        * CMakeLists.txt:
+        * platform/GStreamer.cmake:
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp: Added.
+        (WebCore::createMediaEndpointOwr):
+        (WebCore::MediaEndpointOwr::MediaEndpointOwr):
+        (WebCore::MediaEndpointOwr::~MediaEndpointOwr):
+        (WebCore::MediaEndpointOwr::setConfiguration):
+        (WebCore::cryptoDataCallback):
+        (WebCore::MediaEndpointOwr::generateDtlsInfo):
+        (WebCore::MediaEndpointOwr::getDefaultAudioPayloads):
+        (WebCore::MediaEndpointOwr::getDefaultVideoPayloads):
+        (WebCore::payloadsContainType):
+        (WebCore::MediaEndpointOwr::filterPayloads):
+        (WebCore::MediaEndpointOwr::updateReceiveConfiguration):
+        (WebCore::findRtxPayload):
+        (WebCore::MediaEndpointOwr::updateSendConfiguration):
+        (WebCore::MediaEndpointOwr::addRemoteCandidate):
+        (WebCore::MediaEndpointOwr::replaceMutedRemoteSourceMid):
+        (WebCore::MediaEndpointOwr::createMutedRemoteSource):
+        (WebCore::MediaEndpointOwr::replaceSendSource):
+        (WebCore::MediaEndpointOwr::stop):
+        (WebCore::MediaEndpointOwr::transceiverIndexForSession):
+        (WebCore::MediaEndpointOwr::sessionMid):
+        (WebCore::MediaEndpointOwr::matchTransceiverByMid):
+        (WebCore::MediaEndpointOwr::dispatchNewIceCandidate):
+        (WebCore::MediaEndpointOwr::dispatchGatheringDone):
+        (WebCore::MediaEndpointOwr::processIceTransportStateChange):
+        (WebCore::MediaEndpointOwr::dispatchDtlsFingerprint):
+        (WebCore::MediaEndpointOwr::unmuteRemoteSource):
+        (WebCore::MediaEndpointOwr::prepareSession):
+        (WebCore::MediaEndpointOwr::prepareMediaSession):
+        (WebCore::parseHelperServerUrl):
+        (WebCore::MediaEndpointOwr::ensureTransportAgentAndTransceivers):
+        (WebCore::MediaEndpointOwr::internalAddRemoteCandidate):
+        (WebCore::gotCandidate):
+        (WebCore::candidateGatheringDone):
+        (WebCore::iceConnectionStateChange):
+        (WebCore::gotIncomingSource):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h: Added.
+        (WebCore::OwrTransceiver::create):
+        (WebCore::OwrTransceiver::~OwrTransceiver):
+        (WebCore::OwrTransceiver::mid):
+        (WebCore::OwrTransceiver::session):
+        (WebCore::OwrTransceiver::owrIceState):
+        (WebCore::OwrTransceiver::setOwrIceState):
+        (WebCore::OwrTransceiver::gotEndOfRemoteCandidates):
+        (WebCore::OwrTransceiver::markGotEndOfRemoteCandidates):
+        (WebCore::OwrTransceiver::OwrTransceiver):
+        * platform/mediastream/openwebrtc/RealtimeMediaSourceOwr.h:
+        (WebCore::RealtimeMediaSourceOwr::RealtimeMediaSourceOwr):
+        (WebCore::RealtimeMediaSourceOwr::swapOutShallowSource):
+        Add support for an initially muted source. This is used for early
+        creation of remote sources.
+
 2016-10-21  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-grid] Content Alignment broken with indefinite sized grid container

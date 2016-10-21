@@ -2310,7 +2310,6 @@ set(WebCore_SOURCES
     platform/graphics/transforms/TranslateTransformOperation.cpp
 
     platform/mediastream/MediaConstraints.cpp
-    platform/mediastream/MediaEndpoint.cpp
     platform/mediastream/MediaEndpointConfiguration.cpp
     platform/mediastream/MediaStreamPrivate.cpp
     platform/mediastream/MediaStreamTrackPrivate.cpp

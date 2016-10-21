@@ -54,6 +54,8 @@ RealtimeMediaSourceOwr(OwrMediaSource* mediaSource, const String& id, RealtimeMe
     : RealtimeMediaSource(id, type, name)
     , m_mediaSource(mediaSource)
     {
+        if (!mediaSource)
+            m_muted = true;
     }
 
 RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const String& name)
@@ -63,6 +65,12 @@ RealtimeMediaSourceOwr(const String& id, RealtimeMediaSource::Type type, const S
     }
 
     virtual ~RealtimeMediaSourceOwr() { }
+
+    void swapOutShallowSource(OwrMediaSource& realSource)
+    {
+        m_mediaSource = &realSource;
+        setMuted(false);
+    }
 
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() { return m_capabilities; }
     virtual const RealtimeMediaSourceSettings& settings() { return m_currentSettings; }
