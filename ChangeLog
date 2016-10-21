@@ -1,3 +1,12 @@
+2016-10-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] REGRESSION(r207616): Build is broken due to missing libgeoclue-dev package
+        https://bugs.webkit.org/show_bug.cgi?id=163733
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsEfl.cmake: Expose USE_GEOCLUE2 to the build properly.
+
 2016-10-21  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: [GTK] Add MediaEndpointOwr - an OpenWebRTC WebRTC backend

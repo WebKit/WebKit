@@ -66,6 +66,7 @@ function installDependenciesWithApt {
         doxygen \
         flex \
         g++ \
+        geoclue-2.0 \
         gperf \
         gtk-doc-tools \
         libatk1.0-dev \
