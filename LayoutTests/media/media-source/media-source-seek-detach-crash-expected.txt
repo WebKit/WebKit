@@ -12,6 +12,5 @@ RUN(video.currentTime = 1.5)
 Generate an error by appending an initialization segment with a different number of tracks, which will cause the MediaSource to detach.
 RUN(sourceBuffer.appendBuffer(loader.initSegment()))
 RUN(video.currentTime = 2)
-EVENT(error)
 END OF TEST
 

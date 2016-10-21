@@ -51,7 +51,7 @@
         consoleWrite('Generate an error by appending an initialization segment with a different number of tracks, which will cause the MediaSource to detach.');
         run('sourceBuffer.appendBuffer(loader.initSegment())');
         setTimeout(() => { run('video.currentTime = 2'); });
-        waitForEvent('error', endTestLater);
+        video.addEventListener('error', endTestLater);
     }
     </script>
 </head>

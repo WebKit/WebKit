@@ -1,5 +1,17 @@
 2016-10-21  Jer Noble  <jer.noble@apple.com>
 
+        [mac-wk2 release] LayoutTest media/media-source/media-source-seek-detach-crash.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=163751
+
+        Reviewed by Eric Carlson.
+
+        Don't log when we receive an "error" event; this makes the test non-deterministic.
+
+        * media/media-source/media-source-seek-detach-crash-expected.txt:
+        * media/media-source/media-source-seek-detach-crash.html:
+
+2016-10-21  Jer Noble  <jer.noble@apple.com>
+
         CRASH in SourceBuffer::sourceBufferPrivateDidReceiveSample + 2169
         https://bugs.webkit.org/show_bug.cgi?id=163735
 
