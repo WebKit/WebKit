@@ -1,3 +1,16 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents
+        https://bugs.webkit.org/show_bug.cgi?id=163460
+        <rdar://problem/28784142>
+
+        Reviewed by Darin Adler.
+
+        Handle new EditAction types for inserting/deleting pending/final compositions.
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::nameForEditAction):
+
 2016-10-21  Jeremy Jones  <jeremyj@apple.com>
 
         Implement basic pointer lock behavior for WebKit and WebKit2.

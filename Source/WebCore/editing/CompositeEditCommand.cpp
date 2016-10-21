@@ -334,9 +334,13 @@ void CompositeEditCommand::apply()
         case EditActionTypingDeleteWordForward:
         case EditActionTypingDeleteLineBackward:
         case EditActionTypingDeleteLineForward:
+        case EditActionTypingDeletePendingComposition:
+        case EditActionTypingDeleteFinalComposition:
         case EditActionTypingInsertText:
         case EditActionTypingInsertLineBreak:
         case EditActionTypingInsertParagraph:
+        case EditActionTypingInsertPendingComposition:
+        case EditActionTypingInsertFinalComposition:
         case EditActionPaste:
         case EditActionDrag:
         case EditActionSetWritingDirection:

@@ -151,9 +151,13 @@ String WebEditCommandProxy::nameForEditAction(EditAction editAction)
     case EditActionTypingDeleteWordForward:
     case EditActionTypingDeleteLineBackward:
     case EditActionTypingDeleteLineForward:
+    case EditActionTypingDeletePendingComposition:
+    case EditActionTypingDeleteFinalComposition:
     case EditActionTypingInsertText:
     case EditActionTypingInsertLineBreak:
     case EditActionTypingInsertParagraph:
+    case EditActionTypingInsertPendingComposition:
+    case EditActionTypingInsertFinalComposition:
         return WEB_UI_STRING_KEY("Typing", "Typing (Undo action name)", "Undo action name");
     case EditActionCreateLink:
         return WEB_UI_STRING_KEY("Create Link", "Create Link (Undo action name)", "Undo action name");

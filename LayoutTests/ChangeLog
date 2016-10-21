@@ -1,3 +1,26 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents
+        https://bugs.webkit.org/show_bug.cgi?id=163460
+        <rdar://problem/28784142>
+
+        Reviewed by Darin Adler.
+
+        Adds 4 new layout tests to verify that composition events are dispatched as expected when using IME, and that
+        input events of type "insertFromComposition" and "deleteByComposition" can be prevented.
+
+        Also rebaselines an existing WK1 editing test (text-input-controller.html) to account for how we now delete the
+        existing composition text before inserting the finalized composition text in Editor::setComposition. This means
+        that there are a few more delegate calls than there were before (as seen in the expected output), although the
+        resulting behavior is still the same.
+
+        * editing/mac/input/text-input-controller-expected.txt:
+        * fast/events/before-input-events-prevent-insert-composition.html: Added.
+        * fast/events/before-input-events-prevent-recomposition.html: Added.
+        * fast/events/input-events-ime-composition.html: Added.
+        * fast/events/input-events-ime-recomposition.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-20  Dean Jackson  <dino@apple.com>
 
         SVG should not paint selection within a mask

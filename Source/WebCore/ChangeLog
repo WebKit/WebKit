@@ -1,3 +1,72 @@
+2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents
+        https://bugs.webkit.org/show_bug.cgi?id=163460
+        <rdar://problem/28784142>
+
+        Reviewed by Darin Adler.
+
+        Adds basic support for the composition inputTypes in the InputEvent spec. See w3.org/TR/input-events,
+        github.com/w3c/input-events/issues/41 and github.com/w3c/input-events/issues/42 for more details. While input
+        events are fired in the correct order with respect to each other, additional work will be required to ensure
+        that input events are fired in the correct order with respect to composition(start|update|end) events and
+        textInput events. This is held off until the expected ordering of events is officially defined in the spec.
+
+        Tests: fast/events/before-input-events-prevent-insert-composition.html
+               fast/events/before-input-events-prevent-recomposition.html
+               fast/events/input-events-ime-composition.html
+               fast/events/input-events-ime-recomposition.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::apply):
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand::isBeforeInputEventCancelable):
+
+        Adds a new virtual method hook for subclasses to mark their `beforeinput` events as non-cancelable (see
+        TypingCommand::isBeforeInputEventCancelable). By default, `beforeinput` events are cancelable.
+
+        * editing/EditAction.h:
+
+        Adds 4 new EditActions corresponding to the 4 composition-related inputTypes. These are:
+        EditActionTypingDeletePendingComposition    => "deleteCompositionText"
+        EditActionTypingDeleteFinalComposition      => "deleteByComposition"
+        EditActionTypingInsertPendingComposition    => "insertCompositionText"
+        EditActionTypingInsertFinalComposition      => "insertFromComposition"
+
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::setComposition):
+
+        In setComposition(text, mode), tweak the logic for committing a composition to always delete the selection
+        before inserting the final composition text. In setComposition(text, underlines, start, end), catch the case
+        where we're beginning to recompose an existing range in the DOM and delete the recomposed text first.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::editActionForTypingCommand):
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteSelection):
+
+        Adds a TextCompositionType parameter so that call sites (see Editor::setComposition) can indicate what state the
+        edited composition is in. This allows us to differentiate between deletion of finalized composition text in
+        preparation of recomposing a range in the DOM, and deletion of composition text that has not yet been committed
+        in preparation for inserting a finalized composition into the DOM.
+
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::isBeforeInputEventCancelable):
+        (WebCore::TypingCommand::inputEventData):
+        (WebCore::TypingCommand::willAddTypingToOpenCommand):
+        * editing/TypingCommand.h:
+
 2016-10-21  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Make sure shadow user agent sheets parse in UASheetMode

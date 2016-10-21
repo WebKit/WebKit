@@ -116,6 +116,7 @@ public:
     virtual bool shouldStopCaretBlinking() const { return false; }
     virtual String inputEventTypeName() const;
     virtual String inputEventData() const { return { }; }
+    virtual bool isBeforeInputEventCancelable() const { return true; }
     Vector<RefPtr<StaticRange>> targetRangesForBindings() const;
 
 protected:

@@ -44,8 +44,8 @@ public:
 
     enum TextCompositionType {
         TextCompositionNone,
-        TextCompositionUpdate,
-        TextCompositionConfirm
+        TextCompositionPending,
+        TextCompositionFinal,
     };
 
     enum Option {
@@ -57,7 +57,7 @@ public:
     };
     typedef unsigned Options;
 
-    static void deleteSelection(Document&, Options = 0);
+    static void deleteSelection(Document&, Options = 0, TextCompositionType = TextCompositionNone);
     static void deleteKeyPressed(Document&, Options = 0, TextGranularity = CharacterGranularity);
     static void forwardDeleteKeyPressed(Document&, Options = 0, TextGranularity = CharacterGranularity);
     static void insertText(Document&, const String&, Options, TextCompositionType = TextCompositionNone);
@@ -85,9 +85,9 @@ public:
 #endif
 
 private:
-    static Ref<TypingCommand> create(Document& document, ETypingCommand command, const String& text = emptyString(), Options options = 0, TextGranularity granularity = CharacterGranularity)
+    static Ref<TypingCommand> create(Document& document, ETypingCommand command, const String& text = emptyString(), Options options = 0, TextGranularity granularity = CharacterGranularity, TextCompositionType compositionType = TextCompositionNone)
     {
-        return adoptRef(*new TypingCommand(document, command, text, options, granularity, TextCompositionNone));
+        return adoptRef(*new TypingCommand(document, command, text, options, granularity, compositionType));
     }
 
     static Ref<TypingCommand> create(Document& document, ETypingCommand command, const String& text, Options options, TextCompositionType compositionType)
@@ -118,6 +118,7 @@ private:
 
     String inputEventTypeName() const final;
     String inputEventData() const final;
+    bool isBeforeInputEventCancelable() const final;
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 

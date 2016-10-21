@@ -600,9 +600,13 @@ static NSString* undoNameForEditAction(EditAction editAction)
         case EditActionTypingDeleteWordForward:
         case EditActionTypingDeleteLineBackward:
         case EditActionTypingDeleteLineForward:
+        case EditActionTypingDeletePendingComposition:
+        case EditActionTypingDeleteFinalComposition:
         case EditActionTypingInsertText:
         case EditActionTypingInsertLineBreak:
         case EditActionTypingInsertParagraph:
+        case EditActionTypingInsertPendingComposition:
+        case EditActionTypingInsertFinalComposition:
             return UI_STRING_KEY_INTERNAL("Typing", "Typing (Undo action name)", "Undo action name");
         case EditActionCreateLink: return UI_STRING_KEY_INTERNAL("Create Link", "Create Link (Undo action name)", "Undo action name");
         case EditActionUnlink: return UI_STRING_KEY_INTERNAL("Unlink", "Unlink (Undo action name)", "Undo action name");
