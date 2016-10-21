@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-sample-wrong-track-id</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var mediaSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen, false, true);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', endTest);
+        consoleWrite('Append a set of invalid, overlapping samples. Should not crash.')
+        mediaSegment = concatenateSamples([
+            makeAInit(2, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]), 
+            makeASample(1, 1, 1, 2, SAMPLE_FLAG.SYNC, 0),
+            makeASample(1, 0, 2, 2, SAMPLE_FLAG.SYNC, 0),
+        ]);
+        run('sourceBuffer.appendBuffer(mediaSegment)');
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

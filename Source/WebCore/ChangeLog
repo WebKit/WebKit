@@ -1,3 +1,24 @@
+2016-10-21  Jer Noble  <jer.noble@apple.com>
+
+        CRASH in SourceBuffer::sourceBufferPrivateDidReceiveSample + 2169
+        https://bugs.webkit.org/show_bug.cgi?id=163735
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-sample-wrong-track-id.html
+
+        When SourceBuffer receives a sample in sourceBufferPrivateDidReceiveSample() containing
+        a trackID not previously seen in an initialization segment, it creates a default TrackBuffer
+        object to contain that track's samples. One of the fields in TrackBuffer, description, is
+        normally filled out when an initialization segment is received, but with this default
+        TrackBuffer, it's still null when it's checked later in sourceBufferPrivateDidReceiveSample().
+
+        Rather than adding a null-check on trackBuffer.description, drop any sample that has a 
+        trackID which was not present during a previous initialization segment.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Configures but fails to link with ENABLE_OPENGL=OFF
