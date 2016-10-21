@@ -1,3 +1,22 @@
+2016-10-21  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Add support for @-webkit-region rules
+        https://bugs.webkit.org/show_bug.cgi?id=163787
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        * css/parser/CSSAtRuleID.cpp:
+        (WebCore::cssAtRuleID):
+        * css/parser/CSSAtRuleID.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumePageRule):
+        (WebCore::CSSParserImpl::consumeRegionRule):
+        * css/parser/CSSParserImpl.h:
+
 2016-10-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 163757: Use IntSize::unclampedArea() in PDFDocumentImage::updateCachedImageIfNeeded()

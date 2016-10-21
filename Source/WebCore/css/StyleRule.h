@@ -236,13 +236,19 @@ public:
     {
         return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
     }
-
+    
+    static Ref<StyleRuleRegion> create(CSSSelectorList& selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    {
+        return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
+    }
+    
     const CSSSelectorList& selectorList() const { return m_selectorList; }
 
     Ref<StyleRuleRegion> copy() const { return adoptRef(*new StyleRuleRegion(*this)); }
 
 private:
     StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>*, Vector<RefPtr<StyleRuleBase>>& adoptRules);
+    StyleRuleRegion(CSSSelectorList&, Vector<RefPtr<StyleRuleBase>>&);
     StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;

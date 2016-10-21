@@ -371,6 +371,12 @@ StyleRuleRegion::StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>* sel
     m_selectorList.adoptSelectorVector(*selectors);
 }
 
+StyleRuleRegion::StyleRuleRegion(CSSSelectorList& selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
+    : StyleRuleGroup(Region, adoptRules)
+    , m_selectorList(WTFMove(selectors))
+{
+}
+    
 StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
     : StyleRuleGroup(o)
     , m_selectorList(o.m_selectorList)
