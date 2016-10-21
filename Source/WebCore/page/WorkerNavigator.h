@@ -23,22 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef WorkerNavigator_h
-#define WorkerNavigator_h
+#pragma once
 
 #include "NavigatorBase.h"
 #include "Supplementable.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class WorkerNavigator : public NavigatorBase, public RefCounted<WorkerNavigator>, public Supplementable<WorkerNavigator> {
+class WorkerNavigator final : public NavigatorBase, public Supplementable<WorkerNavigator> {
 public:
     static Ref<WorkerNavigator> create(const String& userAgent) { return adoptRef(*new WorkerNavigator(userAgent)); }
-    virtual ~WorkerNavigator();
 
-    virtual String userAgent() const;
+    String userAgent() const final;
 
 private:
     explicit WorkerNavigator(const String&);
@@ -47,5 +44,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // WorkerNavigator_h

@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-
 #include "JSWorker.h"
 
 #include "Document.h"
@@ -42,34 +41,29 @@ namespace WebCore {
 
 JSC::JSValue JSWorker::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(state, &wrapped());
+    return handlePostMessage(state, wrapped());
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& exec)
+EncodedJSValue JSC_HOST_CALL constructJSWorker(ExecState& state)
 {
-    VM& vm = exec.vm();
+    VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec.callee());
+    ASSERT(jsCast<DOMConstructorObject*>(state.callee()));
+    ASSERT(jsCast<DOMConstructorObject*>(state.callee())->globalObject());
+    auto& globalObject = *jsCast<DOMConstructorObject*>(state.callee())->globalObject();
 
-    if (!exec.argumentCount())
-        return throwVMError(&exec, scope, createNotEnoughArgumentsError(&exec));
+    if (!state.argumentCount())
+        return throwVMError(&state, scope, createNotEnoughArgumentsError(&state));
 
-    String scriptURL = exec.uncheckedArgument(0).toWTFString(&exec);
+    String scriptURL = state.uncheckedArgument(0).toWTFString(&state);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // See section 4.8.2 step 14 of WebWorkers for why this is the lexicalGlobalObject.
-    DOMWindow& window = asJSDOMWindow(exec.lexicalGlobalObject())->wrapped();
+    auto& window = asJSDOMWindow(state.lexicalGlobalObject())->wrapped();
 
-    ExceptionCode ec = 0;
     ASSERT(window.document());
-    RefPtr<Worker> worker = Worker::create(*window.document(), scriptURL, ec);
-    if (ec) {
-        setDOMException(&exec, ec);
-        return JSValue::encode(JSValue());
-    }
-
-    return JSValue::encode(toJSNewlyCreated(&exec, jsConstructor->globalObject(), WTFMove(worker)));
+    return JSValue::encode(toJSNewlyCreated(state, globalObject, scope, Worker::create(*window.document(), scriptURL)));
 }
 
 } // namespace WebCore

@@ -31,34 +31,32 @@
 
 #pragma once
 
-#include "MessagePort.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
-    class ContentSecurityPolicyResponseHeaders;
-    class DedicatedWorkerThread;
+class ContentSecurityPolicyResponseHeaders;
+class DedicatedWorkerThread;
+class MessagePort;
+class SerializedScriptValue;
 
-    class DedicatedWorkerGlobalScope : public WorkerGlobalScope {
-    public:
-        typedef WorkerGlobalScope Base;
-        static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
-        virtual ~DedicatedWorkerGlobalScope();
+class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
+public:
+    static Ref<DedicatedWorkerGlobalScope> create(const URL&, const String& userAgent, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    virtual ~DedicatedWorkerGlobalScope();
 
-        bool isDedicatedWorkerGlobalScope() const override { return true; }
+    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&&, Vector<RefPtr<MessagePort>>&&);
 
-        // Overridden to allow us to check our pending activity after executing imported script.
-        void importScripts(const Vector<String>& urls, ExceptionCode&) override;
+    DedicatedWorkerThread& thread();
 
-        // EventTarget
-        EventTargetInterface eventTargetInterface() const override;
+private:
+    using Base = WorkerGlobalScope;
 
-        void postMessage(RefPtr<SerializedScriptValue>&&, Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
+    DedicatedWorkerGlobalScope(const URL&, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
-        DedicatedWorkerThread& thread();
-
-    private:
-        DedicatedWorkerGlobalScope(const URL&, const String& userAgent, DedicatedWorkerThread&, bool shouldBypassMainWorldContentSecurityPolicy, PassRefPtr<SecurityOrigin> topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
-    };
+    bool isDedicatedWorkerGlobalScope() const final { return true; }
+    ExceptionOr<void> importScripts(const Vector<String>& urls) final;
+    EventTargetInterface eventTargetInterface() const final;
+};
 
 } // namespace WebCore

@@ -25,15 +25,14 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
-#include <wtf/text/WTFString.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
 class Base64Utilities {
 public:
-    static String btoa(const String& stringToEncode, ExceptionCode&);
-    static String atob(const String& encodedString, ExceptionCode&);
+    static ExceptionOr<String> btoa(const String&);
+    static ExceptionOr<String> atob(const String&);
 };
 
 }

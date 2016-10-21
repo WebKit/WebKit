@@ -17,52 +17,41 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef Navigator_h
-#define Navigator_h
+#pragma once
 
 #include "DOMWindowProperty.h"
 #include "NavigatorBase.h"
 #include "ScriptWrappable.h"
 #include "Supplementable.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class DOMMimeTypeArray;
 class DOMPluginArray;
-class Frame;
-class PluginData;
 
-typedef int ExceptionCode;
-
-class Navigator : public NavigatorBase, public ScriptWrappable, public RefCounted<Navigator>, public DOMWindowProperty, public Supplementable<Navigator> {
+class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
 public:
-    static Ref<Navigator> create(Frame* frame) { return adoptRef(*new Navigator(frame)); }
+    static Ref<Navigator> create(Frame& frame) { return adoptRef(*new Navigator(frame)); }
     virtual ~Navigator();
 
     String appVersion() const;
-    DOMPluginArray* plugins() const;
-    DOMMimeTypeArray* mimeTypes() const;
+    DOMPluginArray& plugins();
+    DOMMimeTypeArray& mimeTypes();
     bool cookieEnabled() const;
     bool javaEnabled() const;
-    virtual String userAgent() const;
+    String userAgent() const final;
 
 #if PLATFORM(IOS)
     bool standalone() const;
 #endif
 
-    // Relinquishes the storage lock, if one exists.
     void getStorageUpdates();
 
 private:
-    explicit Navigator(Frame*);
+    explicit Navigator(Frame&);
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
 };
 
 }
-
-#endif

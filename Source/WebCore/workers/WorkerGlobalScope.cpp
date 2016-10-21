@@ -30,8 +30,6 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
-#include "DOMTimer.h"
-#include "Event.h"
 #include "ExceptionCode.h"
 #include "IDBConnectionProxy.h"
 #include "InspectorConsoleInstrumentation.h"
@@ -40,16 +38,13 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "SocketProvider.h"
-#include "URL.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
 #include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
-#include "WorkerThreadableLoader.h"
 #include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptCallStack.h>
 
 using namespace Inspector;
 
@@ -60,7 +55,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
     , m_userAgent(userAgent)
     , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
-    , m_closing(false)
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
     , m_topOrigin(topOrigin)
@@ -89,9 +83,6 @@ WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, Wo
 WorkerGlobalScope::~WorkerGlobalScope()
 {
     ASSERT(currentThread() == thread().threadID());
-
-    // Make sure we have no observers.
-    notifyObserversOfStop();
 
     // Notify proxy that we are going away. This can free the WorkerThread object, so do not access it after this.
     thread().workerReportingProxy().workerGlobalScopeDestroyed();
@@ -123,13 +114,16 @@ void WorkerGlobalScope::disableEval(const String& errorMessage)
 }
 
 #if ENABLE(WEB_SOCKETS)
+
 SocketProvider* WorkerGlobalScope::socketProvider()
 {
     return m_socketProvider.get();
 }
+
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
+
 IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 {
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
@@ -146,6 +140,7 @@ void WorkerGlobalScope::stopIndexedDatabase()
     m_connectionProxy->forgetActivityForCurrentThread();
 #endif
 }
+
 #endif // ENABLE(INDEXED_DATABASE)
 
 WorkerLocation& WorkerGlobalScope::location() const
@@ -204,49 +199,43 @@ void WorkerGlobalScope::clearInterval(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-void WorkerGlobalScope::importScripts(const Vector<String>& urls, ExceptionCode& ec)
+ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
 {
-    ASSERT(scriptExecutionContext());
     ASSERT(contentSecurityPolicy());
 
-    auto& context = *scriptExecutionContext();
-    ec = 0;
     Vector<URL> completedURLs;
+    completedURLs.reserveInitialCapacity(urls.size());
     for (auto& entry : urls) {
-        URL url = context.completeURL(entry);
-        if (!url.isValid()) {
-            ec = SYNTAX_ERR;
-            return;
-        }
-        completedURLs.append(WTFMove(url));
+        URL url = completeURL(entry);
+        if (!url.isValid())
+            return Exception { SYNTAX_ERR };
+        completedURLs.uncheckedAppend(WTFMove(url));
     }
 
     for (auto& url : completedURLs) {
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
-        bool shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
-        if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowScriptFromSource(url)) {
-            ec = NETWORK_ERR;
-            return;
-        }
+        bool shouldBypassMainWorldContentSecurityPolicy = this->shouldBypassMainWorldContentSecurityPolicy();
+        if (!shouldBypassMainWorldContentSecurityPolicy && !contentSecurityPolicy()->allowScriptFromSource(url))
+            return Exception { NETWORK_ERR };
 
-        Ref<WorkerScriptLoader> scriptLoader = WorkerScriptLoader::create();
-        scriptLoader->loadSynchronously(&context, url, FetchOptions::Mode::NoCors, shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective);
+        auto scriptLoader = WorkerScriptLoader::create();
+        scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceScriptSrcDirective);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
-        if (scriptLoader->failed()) {
-            ec = NETWORK_ERR;
-            return;
-        }
+        if (scriptLoader->failed())
+            return Exception { NETWORK_ERR };
 
-        InspectorInstrumentation::scriptImported(&context, scriptLoader->identifier(), scriptLoader->script());
+        InspectorInstrumentation::scriptImported(this, scriptLoader->identifier(), scriptLoader->script());
 
         NakedPtr<JSC::Exception> exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader->script(), scriptLoader->responseURL()), exception);
         if (exception) {
             m_script->setException(exception);
-            return;
+            return { };
         }
     }
+
+    return { };
 }
 
 EventTarget* WorkerGlobalScope::errorEventTarget()
@@ -259,7 +248,7 @@ void WorkerGlobalScope::logExceptionToConsole(const String& errorMessage, const 
     thread().workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
-void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage> message)
+void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask(message->source(), message->level(), message->message()));
@@ -267,46 +256,28 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
     }
 
     thread().workerReportingProxy().postConsoleMessageToWorkerObject(message->source(), message->level(), message->message(), message->line(), message->column(), message->url());
-    addMessageToWorkerConsole(WTFMove(message));
+    InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
 }
 
 void WorkerGlobalScope::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)
 {
+    addMessage(source, level, message, { }, 0, 0, nullptr, nullptr, requestIdentifier);
+}
+
+void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& messageText, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
+{
     if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(source, level, message));
+        postTask(AddConsoleMessageTask(source, level, messageText));
         return;
     }
 
-    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, 0, 0, String());
-    addMessageToWorkerConsole(source, level, message, String(), 0, 0, nullptr, nullptr, requestIdentifier);
-}
+    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, messageText, lineNumber, columnNumber, sourceURL);
 
-void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
-{
-    if (!isContextThread()) {
-        postTask(AddConsoleMessageTask(source, level, message));
-        return;
-    }
-
-    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, message, lineNumber, columnNumber, sourceURL);
-    addMessageToWorkerConsole(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
-}
-
-void WorkerGlobalScope::addMessageToWorkerConsole(MessageSource source, MessageLevel level, const String& messageText, const String& suggestedURL, unsigned suggestedLineNumber, unsigned suggestedColumnNumber, RefPtr<ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
-{
     std::unique_ptr<Inspector::ConsoleMessage> message;
-
     if (callStack)
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, WTFMove(callStack), requestIdentifier);
     else
-        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
-
-    addMessageToWorkerConsole(WTFMove(message));
-}
-
-void WorkerGlobalScope::addMessageToWorkerConsole(std::unique_ptr<Inspector::ConsoleMessage> message)
-{
-    ASSERT(isContextThread());
+        message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, sourceURL, lineNumber, columnNumber, state, requestIdentifier);
     InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
 }
 
@@ -320,62 +291,17 @@ bool WorkerGlobalScope::isJSExecutionForbidden() const
     return m_script->isExecutionForbidden();
 }
 
-WorkerGlobalScope::Observer::Observer(WorkerGlobalScope* context)
-    : m_context(context)
-{
-    ASSERT(m_context && m_context->isContextThread());
-    m_context->registerObserver(this);
-}
-
-WorkerGlobalScope::Observer::~Observer()
-{
-    if (!m_context)
-        return;
-    ASSERT(m_context->isContextThread());
-    m_context->unregisterObserver(this);
-}
-
-void WorkerGlobalScope::Observer::stopObserving()
-{
-    if (!m_context)
-        return;
-    ASSERT(m_context->isContextThread());
-    m_context->unregisterObserver(this);
-    m_context = nullptr;
-}
-
-void WorkerGlobalScope::registerObserver(Observer* observer)
-{
-    ASSERT(observer);
-    m_workerObservers.add(observer);
-}
-
-void WorkerGlobalScope::unregisterObserver(Observer* observer)
-{
-    ASSERT(observer);
-    m_workerObservers.remove(observer);
-}
-
-void WorkerGlobalScope::notifyObserversOfStop()
-{
-    HashSet<Observer*>::iterator iter = m_workerObservers.begin();
-    while (iter != m_workerObservers.end()) {
-        WorkerGlobalScope::Observer* observer = *iter;
-        observer->stopObserving();
-        observer->notifyStop();
-        iter = m_workerObservers.begin();
-    }
-}
-
 WorkerEventQueue& WorkerGlobalScope::eventQueue() const
 {
     return m_eventQueue;
 }
 
 #if ENABLE(SUBTLE_CRYPTO)
+
 bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
-    bool result = false, done = false;
+    bool result = false;
+    bool done = false;
     m_thread.workerLoaderProxy().postTaskToLoader([&result, &key, &wrappedKey, &done, workerGlobalScope = this](ScriptExecutionContext& context) {
         result = context.wrapCryptoKey(key, wrappedKey);
         done = true;
@@ -384,7 +310,7 @@ bool WorkerGlobalScope::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t
         });
     });
 
-    MessageQueueWaitResult waitResult = MessageQueueMessageReceived;
+    auto waitResult = MessageQueueMessageReceived;
     while (!done && waitResult != MessageQueueTerminated)
         waitResult = m_thread.runLoop().runInMode(this, WorkerRunLoop::defaultMode());
 
@@ -402,18 +328,19 @@ bool WorkerGlobalScope::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vecto
         });
     });
 
-    MessageQueueWaitResult waitResult = MessageQueueMessageReceived;
+    auto waitResult = MessageQueueMessageReceived;
     while (!done && waitResult != MessageQueueTerminated)
         waitResult = m_thread.runLoop().runInMode(this, WorkerRunLoop::defaultMode());
 
     return result;
 }
+
 #endif // ENABLE(SUBTLE_CRYPTO)
 
-Crypto& WorkerGlobalScope::crypto() const
+Crypto& WorkerGlobalScope::crypto()
 {
     if (!m_crypto)
-        m_crypto = Crypto::create(*scriptExecutionContext());
+        m_crypto = Crypto::create(*this);
     return *m_crypto;
 }
 

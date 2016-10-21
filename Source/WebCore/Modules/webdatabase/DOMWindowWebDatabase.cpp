@@ -31,6 +31,7 @@
 #include "Database.h"
 #include "DatabaseManager.h"
 #include "Document.h"
+#include "ExceptionCode.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {

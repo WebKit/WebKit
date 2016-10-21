@@ -24,85 +24,75 @@
  *
  */
 
-#ifndef MessagePort_h
-#define MessagePort_h
+#pragma once
 
-#include "EventListener.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include "MessagePortChannel.h"
-#include <memory>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-    class Event;
-    class Frame;
-    class MessagePort;
-    class ScriptExecutionContext;
+class Frame;
 
-    class MessagePort final : public RefCounted<MessagePort>, public EventTargetWithInlineData {
-    public:
-        static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
-        virtual ~MessagePort();
+class MessagePort final : public RefCounted<MessagePort>, public EventTargetWithInlineData {
+public:
+    static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
+    virtual ~MessagePort();
 
-        void postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
+    ExceptionOr<void> postMessage(RefPtr<SerializedScriptValue>&& message, Vector<RefPtr<MessagePort>>&&);
 
-        void start();
-        void close();
+    void start();
+    void close();
 
-        void entangle(std::unique_ptr<MessagePortChannel>);
-        std::unique_ptr<MessagePortChannel> disentangle();
+    void entangle(std::unique_ptr<MessagePortChannel>&&);
 
-        // Returns 0 if there is an exception, or if the passed-in array is 0/empty.
-        static std::unique_ptr<MessagePortChannelArray> disentanglePorts(Vector<RefPtr<MessagePort>>&&, ExceptionCode&);
+    // Returns nullptr if the passed-in vector is empty.
+    static ExceptionOr<std::unique_ptr<MessagePortChannelArray>> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
 
-        static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>);
+    static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>&&);
 
-        void messageAvailable();
-        bool started() const { return m_started; }
+    void messageAvailable();
+    bool started() const { return m_started; }
 
-        void contextDestroyed();
+    void contextDestroyed();
 
-        EventTargetInterface eventTargetInterface() const override { return MessagePortEventTargetInterfaceType; }
-        ScriptExecutionContext* scriptExecutionContext() const override { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
 
-        void dispatchMessages();
+    void dispatchMessages();
 
-        using RefCounted<MessagePort>::ref;
-        using RefCounted<MessagePort>::deref;
+    bool hasPendingActivity();
 
-        bool hasPendingActivity();
+    // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
+    // This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership
+    // of the remote port (since it may live cross-process) - those platforms may always return null.
+    MessagePort* locallyEntangledPort();
 
-        // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
-        // This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership
-        // of the remote port (since it may live cross-process) - those platforms may always return null.
-        MessagePort* locallyEntangledPort();
+    using RefCounted::ref;
+    using RefCounted::deref;
 
-        // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
-        bool isEntangled() { return !m_closed && !isNeutered(); }
+private:
+    explicit MessagePort(ScriptExecutionContext&);
 
-        // A port gets neutered when it is transferred to a new owner via postMessage().
-        bool isNeutered() { return !m_entangledChannel; }
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
 
-        bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) override;
+    bool isMessagePort() const final { return true; }
+    EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
 
-    private:
-        explicit MessagePort(ScriptExecutionContext&);
+    bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
 
-        void refEventTarget() override { ref(); }
-        void derefEventTarget() override { deref(); }
-        bool isMessagePort() const override { return true; }
+    std::unique_ptr<MessagePortChannel> disentangle();
 
-        std::unique_ptr<MessagePortChannel> m_entangledChannel;
+    // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
+    bool isEntangled() const { return !m_closed && !isNeutered(); }
 
-        bool m_started;
-        bool m_closed;
+    // A port gets neutered when it is transferred to a new owner via postMessage().
+    bool isNeutered() const { return !m_entangledChannel; }
 
-        ScriptExecutionContext* m_scriptExecutionContext;
-    };
+    std::unique_ptr<MessagePortChannel> m_entangledChannel;
+    bool m_started { false };
+    bool m_closed { false };
+    ScriptExecutionContext* m_scriptExecutionContext;
+};
 
 } // namespace WebCore
-
-#endif // MessagePort_h

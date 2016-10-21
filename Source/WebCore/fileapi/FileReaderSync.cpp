@@ -44,41 +44,49 @@ FileReaderSync::FileReaderSync()
 {
 }
 
-RefPtr<ArrayBuffer> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext& scriptExecutionContext, Blob& blob, ExceptionCode& ec)
+ExceptionOr<RefPtr<ArrayBuffer>> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
     FileReaderLoader loader(FileReaderLoader::ReadAsArrayBuffer, 0);
-    startLoading(scriptExecutionContext, loader, blob, ec);
-
+    auto result = startLoading(scriptExecutionContext, loader, blob);
+    if (result.hasException())
+        return result.releaseException();
     return loader.arrayBufferResult();
 }
 
-String FileReaderSync::readAsBinaryString(ScriptExecutionContext& scriptExecutionContext, Blob& blob, ExceptionCode& ec)
+ExceptionOr<String> FileReaderSync::readAsBinaryString(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
     FileReaderLoader loader(FileReaderLoader::ReadAsBinaryString, 0);
-    startLoading(scriptExecutionContext, loader, blob, ec);
-    return loader.stringResult();
+    return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
-String FileReaderSync::readAsText(ScriptExecutionContext& scriptExecutionContext, Blob& blob, const String& encoding, ExceptionCode& ec)
+ExceptionOr<String> FileReaderSync::readAsText(ScriptExecutionContext& scriptExecutionContext, Blob& blob, const String& encoding)
 {
     FileReaderLoader loader(FileReaderLoader::ReadAsText, 0);
     loader.setEncoding(encoding);
-    startLoading(scriptExecutionContext, loader, blob, ec);
-    return loader.stringResult();
+    return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
-String FileReaderSync::readAsDataURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob, ExceptionCode& ec)
+ExceptionOr<String> FileReaderSync::readAsDataURL(ScriptExecutionContext& scriptExecutionContext, Blob& blob)
 {
     FileReaderLoader loader(FileReaderLoader::ReadAsDataURL, 0);
     loader.setDataType(blob.type());
-    startLoading(scriptExecutionContext, loader, blob, ec);
-    return loader.stringResult();
+    return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
-void FileReaderSync::startLoading(ScriptExecutionContext& scriptExecutionContext, FileReaderLoader& loader, Blob& blob, ExceptionCode& ec)
+ExceptionOr<void> FileReaderSync::startLoading(ScriptExecutionContext& scriptExecutionContext, FileReaderLoader& loader, Blob& blob)
 {
     loader.start(&scriptExecutionContext, blob);
-    ec = FileException::ErrorCodeToExceptionCode(loader.errorCode());
+    if (ExceptionCode code = FileException::ErrorCodeToExceptionCode(loader.errorCode()))
+        return Exception { code };
+    return { };
+}
+
+ExceptionOr<String> FileReaderSync::startLoadingString(ScriptExecutionContext& scriptExecutionContext, FileReaderLoader& loader, Blob& blob)
+{
+    auto result = startLoading(scriptExecutionContext, loader, blob);
+    if (result.hasException())
+        return result.releaseException();
+    return loader.stringResult();
 }
 
 } // namespace WebCore

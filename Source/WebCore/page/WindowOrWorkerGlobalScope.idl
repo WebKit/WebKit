@@ -35,7 +35,6 @@
     void clearInterval(optional long handle = 0);
 
     // Base64 utility methods.
-    [MayThrowLegacyException] DOMString atob(DOMString string);
-    [MayThrowLegacyException] DOMString btoa(DOMString string);
+    [MayThrowException] DOMString atob(DOMString string);
+    [MayThrowException] DOMString btoa(DOMString string);
 };
-

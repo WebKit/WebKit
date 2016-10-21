@@ -28,12 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileReaderSync_h
-#define FileReaderSync_h
+#pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "ExceptionOr.h"
 
 namespace JSC {
 class ArrayBuffer;
@@ -45,8 +42,6 @@ class Blob;
 class FileReaderLoader;
 class ScriptExecutionContext;
 
-typedef int ExceptionCode;
-
 class FileReaderSync : public RefCounted<FileReaderSync> {
 public:
     static Ref<FileReaderSync> create()
@@ -54,19 +49,16 @@ public:
         return adoptRef(*new FileReaderSync);
     }
 
-    virtual ~FileReaderSync() { }
-
-    RefPtr<JSC::ArrayBuffer> readAsArrayBuffer(ScriptExecutionContext&, Blob&, ExceptionCode&);
-    String readAsBinaryString(ScriptExecutionContext&, Blob&, ExceptionCode&);
-    String readAsText(ScriptExecutionContext&, Blob&, const String& encoding, ExceptionCode&);
-    String readAsDataURL(ScriptExecutionContext&, Blob&, ExceptionCode&);
+    ExceptionOr<RefPtr<JSC::ArrayBuffer>> readAsArrayBuffer(ScriptExecutionContext&, Blob&);
+    ExceptionOr<String> readAsBinaryString(ScriptExecutionContext&, Blob&);
+    ExceptionOr<String> readAsText(ScriptExecutionContext&, Blob&, const String& encoding);
+    ExceptionOr<String> readAsDataURL(ScriptExecutionContext&, Blob&);
 
 private:
     FileReaderSync();
 
-    void startLoading(ScriptExecutionContext&, FileReaderLoader&, Blob&, ExceptionCode&);
+    ExceptionOr<void> startLoading(ScriptExecutionContext&, FileReaderLoader&, Blob&);
+    ExceptionOr<String> startLoadingString(ScriptExecutionContext&, FileReaderLoader&, Blob&);
 };
 
 } // namespace WebCore
-
-#endif // FileReaderSync_h

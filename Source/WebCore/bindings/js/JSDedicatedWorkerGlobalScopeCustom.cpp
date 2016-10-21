@@ -41,7 +41,7 @@ namespace WebCore {
 
 JSC::JSValue JSDedicatedWorkerGlobalScope::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(state, &wrapped());
+    return handlePostMessage(state, wrapped());
 }
 
 } // namespace WebCore

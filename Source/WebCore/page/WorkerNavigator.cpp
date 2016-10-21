@@ -34,10 +34,6 @@ WorkerNavigator::WorkerNavigator(const String& userAgent)
 {
 }
 
-WorkerNavigator::~WorkerNavigator()
-{
-}
-
 String WorkerNavigator::userAgent() const
 {
     return m_userAgent;

@@ -23,16 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#ifndef NavigatorBase_h
-#define NavigatorBase_h
+#pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class NavigatorBase {
+class NavigatorBase : public RefCounted<NavigatorBase> {
 public:
+    virtual ~NavigatorBase();
+
     static String appName();
     String appVersion() const;
     virtual String userAgent() const = 0;
@@ -52,11 +54,6 @@ public:
 #if ENABLE(NAVIGATOR_HWCONCURRENCY)
     static int hardwareConcurrency();
 #endif
-
-protected:
-    virtual ~NavigatorBase();
 };
 
 } // namespace WebCore
-
-#endif // NavigatorBase_h

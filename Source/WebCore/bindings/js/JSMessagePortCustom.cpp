@@ -54,7 +54,7 @@ void JSMessagePort::visitAdditionalChildren(SlotVisitor& visitor)
 
 JSC::JSValue JSMessagePort::postMessage(JSC::ExecState& state)
 {
-    return handlePostMessage(state, &wrapped());
+    return handlePostMessage(state, wrapped());
 }
 
 void extractTransferables(JSC::ExecState& state, JSC::JSValue value, Vector<RefPtr<MessagePort>>& portArray, Vector<RefPtr<JSC::ArrayBuffer>>& arrayBuffers)

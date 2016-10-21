@@ -43,8 +43,8 @@ using namespace WTF;
 
 namespace WebCore {
 
-Navigator::Navigator(Frame* frame)
-    : DOMWindowProperty(frame)
+Navigator::Navigator(Frame& frame)
+    : DOMWindowProperty(&frame)
 {
 }
 
@@ -56,14 +56,14 @@ Navigator::~Navigator()
 // appear in the appVersion string. This is to avoid problems with old versions of a
 // library called OpenCube QuickMenu, which as of this writing is still being used on
 // sites such as nwa.com -- the library thinks Safari is Netscape 4 if we don't do this!
-static bool shouldHideFourDot(Frame* frame)
+static bool shouldHideFourDot(Frame& frame)
 {
-    const String* sourceURL = frame->script().sourceURL();
+    auto* sourceURL = frame.script().sourceURL();
     if (!sourceURL)
         return false;
     if (!(sourceURL->endsWith("/dqm_script.js") || sourceURL->endsWith("/dqm_loader.js") || sourceURL->endsWith("/tdqm_loader.js")))
         return false;
-    return frame->settings().needsSiteSpecificQuirks();
+    return frame.settings().needsSiteSpecificQuirks();
 }
 
 String Navigator::appVersion() const
@@ -71,7 +71,7 @@ String Navigator::appVersion() const
     if (!m_frame)
         return String();
     String appVersion = NavigatorBase::appVersion();
-    if (shouldHideFourDot(m_frame))
+    if (shouldHideFourDot(*m_frame))
         appVersion.replace("4.", "4_");
     return appVersion;
 }
@@ -80,27 +80,27 @@ String Navigator::userAgent() const
 {
     if (!m_frame)
         return String();
-        
+
     // If the frame is already detached, FrameLoader::userAgent may malfunction, because it calls a client method
     // that uses frame's WebView (at least, in Mac WebKit).
     if (!m_frame->page())
         return String();
-        
+
     return m_frame->loader().userAgent(m_frame->document()->url());
 }
 
-DOMPluginArray* Navigator::plugins() const
+DOMPluginArray& Navigator::plugins()
 {
     if (!m_plugins)
         m_plugins = DOMPluginArray::create(m_frame);
-    return m_plugins.get();
+    return *m_plugins;
 }
 
-DOMMimeTypeArray* Navigator::mimeTypes() const
+DOMMimeTypeArray& Navigator::mimeTypes()
 {
     if (!m_mimeTypes)
         m_mimeTypes = DOMMimeTypeArray::create(m_frame);
-    return m_mimeTypes.get();
+    return *m_mimeTypes;
 }
 
 bool Navigator::cookieEnabled() const
@@ -114,7 +114,7 @@ bool Navigator::cookieEnabled() const
     auto* document = m_frame->document();
     if (!document)
         return false;
-    
+
     return cookiesEnabled(*document);
 }
 
@@ -132,15 +132,16 @@ bool Navigator::javaEnabled() const
 }
 
 #if PLATFORM(IOS)
+
 bool Navigator::standalone() const
 {
     return m_frame && m_frame->settings().standalone();
 }
+
 #endif
 
 void Navigator::getStorageUpdates()
 {
-    // FIXME: Remove this method or rename to yieldForStorageUpdates.
 }
 
 } // namespace WebCore

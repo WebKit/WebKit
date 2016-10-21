@@ -30,33 +30,29 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "EventListener.h"
 #include "EventTarget.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicStringHash.h>
+#include "ExceptionOr.h"
 
 namespace WebCore {
 
-    class URL;
+class URL;
 
-    class AbstractWorker : public RefCounted<AbstractWorker>, public EventTargetWithInlineData {
-    public:
-        using RefCounted<AbstractWorker>::ref;
-        using RefCounted<AbstractWorker>::deref;
+class AbstractWorker : public RefCounted<AbstractWorker>, public EventTargetWithInlineData {
+public:
+    using RefCounted::ref;
+    using RefCounted::deref;
 
-        virtual ~AbstractWorker();
+protected:
+    AbstractWorker() = default;
 
-    protected:
-        AbstractWorker() = default;
+    // Helper function that converts a URL to an absolute URL and checks the result for validity.
+    ExceptionOr<URL> resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy);
 
-        // Helper function that converts a URL to an absolute URL and checks the result for validity.
-        URL resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy, ExceptionCode&);
-        intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
+    intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 
-    private:
-        void refEventTarget() final { ref(); }
-        void derefEventTarget() final { deref(); }
-    };
+private:
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+};
 
 } // namespace WebCore

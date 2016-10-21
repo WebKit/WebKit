@@ -30,7 +30,7 @@
 ] interface Worker : EventTarget {
     attribute EventHandler onmessage;
 
-    [Custom, MayThrowLegacyException] void postMessage(SerializedScriptValue message, optional Array messagePorts);
+    [Custom, MayThrowException] void postMessage(SerializedScriptValue message, optional Array messagePorts);
 
     void terminate();
 };
