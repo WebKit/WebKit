@@ -1,3 +1,16 @@
+2016-10-21  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Make sure shadow user agent sheets parse in UASheetMode
+        https://bugs.webkit.org/show_bug.cgi?id=163810
+
+        Reviewed by Dean Jackson.
+
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::parserContextForElement):
+        (WebCore::makeInlineStyleSheetCacheKey):
+        (WebCore::InlineStyleSheetOwner::createSheet):
+        (WebCore::parserContextForForElement): Deleted.
+
 2016-10-21  Jer Noble  <jer.noble@apple.com>
 
         YouTube stalls when seeking beyond buffered range

@@ -44,13 +44,16 @@ static InlineStyleSheetCache& inlineStyleSheetCache()
     return cache;
 }
 
-static CSSParserContext parserContextForForElement(const Element& element)
+static CSSParserContext parserContextForElement(const Element& element)
 {
     auto* shadowRoot = element.containingShadowRoot();
     // User agent shadow trees can't contain document-relative URLs. Use blank URL as base allowing cross-document sharing.
     auto& baseURL = shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent ? blankURL() : element.document().baseURL();
 
-    return CSSParserContext { element.document(), baseURL, element.document().encoding() };
+    CSSParserContext result = CSSParserContext { element.document(), baseURL, element.document().encoding() };
+    if (shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+        result.mode = UASheetMode;
+    return result;
 }
 
 static Optional<InlineStyleSheetCacheKey> makeInlineStyleSheetCacheKey(const String& text, const Element& element)
@@ -60,7 +63,7 @@ static Optional<InlineStyleSheetCacheKey> makeInlineStyleSheetCacheKey(const Str
     if (!element.isInShadowTree())
         return { };
 
-    return std::make_pair(text, parserContextForForElement(element));
+    return std::make_pair(text, parserContextForElement(element));
 }
 
 InlineStyleSheetOwner::InlineStyleSheetOwner(Document& document, bool createdByParser)
@@ -197,7 +200,7 @@ void InlineStyleSheetOwner::createSheet(Element& element, const String& text)
 
     m_loading = true;
 
-    auto contents = StyleSheetContents::create(String(), parserContextForForElement(element));
+    auto contents = StyleSheetContents::create(String(), parserContextForElement(element));
 
     m_sheet = CSSStyleSheet::createInline(contents.get(), element, m_startTextPosition);
     m_sheet->setMediaQueries(mediaQueries.releaseNonNull());
