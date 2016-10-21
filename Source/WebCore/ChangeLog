@@ -1,3 +1,30 @@
+2016-10-21  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] MediaControlsHost has invalid operation overloads
+        https://bugs.webkit.org/show_bug.cgi?id=163793
+
+        Reviewed by Darin Adler.
+
+        MediaControlsHost has invalid operation overloads:
+        - sortedTrackListForMenu()
+        - displayNameForTrack()
+
+        The parameter is nullable for both overloads which is not valid IDL.
+
+        - sortedTrackListForMenu(): The parameter is no longer nullable. This is a minor
+          behavior change and it should be safe since this is Apple-specific and only
+          called from mediaControlsApple.js which uses HTMLMediaElement.videoTracks and
+          HTMLMediaElement.audioTracks as input, both of which are not nullable.
+          Note that we could have also kept one of the parameters as nullable to not
+          change behavior but allowing null does not seem useful here.
+        - displayNameForTrack(): Use a union instead of overloading, no behavior change.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::sortedTrackListForMenu):
+        (WebCore::MediaControlsHost::displayNameForTrack):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+
 2016-10-21  Jeremy Jones  <jeremyj@apple.com>
 
         Implement basic pointer lock behavior for WebKit and WebKit2.

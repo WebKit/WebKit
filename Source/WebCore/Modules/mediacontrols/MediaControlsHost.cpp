@@ -84,31 +84,25 @@ MediaControlsHost::~MediaControlsHost()
 {
 }
 
-Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList* trackList)
+Vector<RefPtr<TextTrack>> MediaControlsHost::sortedTrackListForMenu(TextTrackList& trackList)
 {
-    if (!trackList)
-        return Vector<RefPtr<TextTrack>>();
-
     Page* page = m_mediaElement->document().page();
     if (!page)
-        return Vector<RefPtr<TextTrack>>();
+        return { };
 
-    return page->group().captionPreferences().sortedTrackListForMenu(trackList);
+    return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
 }
 
-Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList* trackList)
+Vector<RefPtr<AudioTrack>> MediaControlsHost::sortedTrackListForMenu(AudioTrackList& trackList)
 {
-    if (!trackList)
-        return Vector<RefPtr<AudioTrack>>();
-
     Page* page = m_mediaElement->document().page();
     if (!page)
-        return Vector<RefPtr<AudioTrack>>();
+        return { };
 
-    return page->group().captionPreferences().sortedTrackListForMenu(trackList);
+    return page->group().captionPreferences().sortedTrackListForMenu(&trackList);
 }
 
-String MediaControlsHost::displayNameForTrack(TextTrack* track)
+String MediaControlsHost::displayNameForTrack(const Optional<TextOrAudioTrack>& track)
 {
     if (!track)
         return emptyString();
@@ -117,19 +111,9 @@ String MediaControlsHost::displayNameForTrack(TextTrack* track)
     if (!page)
         return emptyString();
 
-    return page->group().captionPreferences().displayNameForTrack(track);
-}
-
-String MediaControlsHost::displayNameForTrack(AudioTrack* track)
-{
-    if (!track)
-        return emptyString();
-
-    Page* page = m_mediaElement->document().page();
-    if (!page)
-        return emptyString();
-
-    return page->group().captionPreferences().displayNameForTrack(track);
+    return WTF::visit([&page](auto& track) {
+        return page->group().captionPreferences().displayNameForTrack(track.get());
+    }, track.value());
 }
 
 TextTrack* MediaControlsHost::captionMenuOffItem()
