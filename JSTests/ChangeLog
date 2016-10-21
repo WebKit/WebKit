@@ -1,3 +1,15 @@
+2016-10-21  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] don't crash when arguments to `new Function()` produce unexpected AST
+        https://bugs.webkit.org/show_bug.cgi?id=163748
+
+        Reviewed by Mark Lam.
+
+        * stress/regress-163748.js: Added.
+        (assert):
+        (shouldThrowSyntaxError):
+        (GeneratorFunction):
+
 2016-10-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM calls

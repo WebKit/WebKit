@@ -1,3 +1,25 @@
+2016-10-21  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] don't crash when arguments to `new Function()` produce unexpected AST
+        https://bugs.webkit.org/show_bug.cgi?id=163748
+
+        Reviewed by Mark Lam.
+
+        The ASSERT(statement); and ASSERT(funcDecl); lines are removed, replaced with blocks
+        to report a generic Parser error message. These lines are only possible to be reached
+        if the input string produced an unexpected AST, which previously could be used to crash
+        the process via ASSERT failure.
+
+        The node type assertions are left in the tree, as it should be impossible for a top-level
+        `{` to produce anything other than a Block node. If the node turns out not to be a Block,
+        it indicates that the (C++) caller of this function (E.g in FunctionConstructor.cpp), is
+        doing something incorrect. Similarly, it should be impossible for the `funcDecl` node to
+        be anything other than a function declaration given the conventions of the caller of this
+        function.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+
 2016-10-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM calls

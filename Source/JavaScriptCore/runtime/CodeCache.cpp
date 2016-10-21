@@ -182,16 +182,20 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
 
     // This function assumes an input string that would result in a single function declaration.
     StatementNode* statement = program->singleStatement();
-    ASSERT(statement);
-    ASSERT(statement->isBlock());
-    if (!statement || !statement->isBlock())
+    if (UNLIKELY(!statement)) {
+        JSToken token;
+        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error", -1);
         return nullptr;
+    }
+    ASSERT(statement->isBlock());
 
     StatementNode* funcDecl = static_cast<BlockNode*>(statement)->singleStatement();
-    ASSERT(funcDecl);
-    ASSERT(funcDecl->isFuncDeclNode());
-    if (!funcDecl || !funcDecl->isFuncDeclNode())
+    if (UNLIKELY(!funcDecl)) {
+        JSToken token;
+        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error", -1);
         return nullptr;
+    }
+    ASSERT(funcDecl->isFuncDeclNode());
 
     FunctionMetadataNode* metadata = static_cast<FuncDeclNode*>(funcDecl)->metadata();
     ASSERT(metadata);
