@@ -494,10 +494,16 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         computeIntrinsicLogicalHeight(sizingData);
     else
         computeTrackSizesForDirection(ForRows, sizingData, availableLogicalHeight(ExcludeMarginBorderPadding));
-    setLogicalHeight(computeTrackBasedLogicalHeight(sizingData) + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+    LayoutUnit trackBasedLogicalHeight = computeTrackBasedLogicalHeight(sizingData) + borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+    setLogicalHeight(trackBasedLogicalHeight);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     updateLogicalHeight();
+
+    // Once grid's indefinite height is resolved, we can compute the
+    // available free space for Content Alignment.
+    if (!hasDefiniteLogicalHeight)
+        sizingData.setFreeSpace(ForRows, logicalHeight() - trackBasedLogicalHeight);
 
     // 3- If the min-content contribution of any grid items have changed based on the row
     // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content

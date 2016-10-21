@@ -1,3 +1,24 @@
+2016-10-21  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Content Alignment broken with indefinite sized grid container
+        https://bugs.webkit.org/show_bug.cgi?id=163724
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        The Grid Tracks sizing algorithm receives as parameter the
+        available space to be used as space for tracks. We hold a variable
+        to store the remaining free space for each dimension.
+
+        When the grid container size is indefinite we can't compute the
+        available free space after computing track sizes until such
+        indefinite size is resolved.
+
+        No new tests, just added some additional test cases.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock): Compute freeSpace for Rows
+        after doing layout and resolving the indefinite height.
+
 2016-10-21  Jer Noble  <jer.noble@apple.com>
 
         CRASH in SourceBuffer::sourceBufferPrivateDidReceiveSample + 2169

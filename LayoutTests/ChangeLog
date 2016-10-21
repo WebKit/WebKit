@@ -1,3 +1,16 @@
+2016-10-21  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-grid] Content Alignment broken with indefinite sized grid container
+        https://bugs.webkit.org/show_bug.cgi?id=163724
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Added additional test cases to verify we compute properly the
+        available free space for content-alignment, handling correctly the
+        overflow when needed.
+
+        * fast/css-grid-layout/grid-content-alignment-overflow.html:
+
 2016-10-21  Jer Noble  <jer.noble@apple.com>
 
         [mac-wk2 release] LayoutTest media/media-source/media-source-seek-detach-crash.html is a flaky failure
