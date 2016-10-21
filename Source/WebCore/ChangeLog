@@ -1,3 +1,17 @@
+2016-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 163757: Use IntSize::unclampedArea() in PDFDocumentImage::updateCachedImageIfNeeded()
+        <https://webkit.org/b/163757>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests since there is no change in nominal behavior.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded): Use
+        IntSize::unclampedArea() where manual calculations were used
+        previously.  Also gets rid of more safeCast<size_t>() use.
+
 2016-10-21  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Support unions in our overload resolution algorithm

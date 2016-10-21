@@ -236,7 +236,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     // Cache the PDF image only if the size of the new image won't exceed the cache threshold.
     if (m_pdfImageCachingPolicy == PDFImageCachingBelowMemoryLimit) {
         IntSize scaledSize = ImageBuffer::compatibleBufferSize(cachedImageSize, context);
-        if (s_allDecodedDataSize + safeCast<size_t>(scaledSize.width()) * scaledSize.height() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
+        if (s_allDecodedDataSize + scaledSize.unclampedArea() * 4 - m_cachedBytes > s_maxDecodedDataSize) {
             destroyDecodedData();
             return;
         }
@@ -260,7 +260,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     m_cachedSourceRect = srcRect;
 
     IntSize internalSize = m_cachedImageBuffer->internalSize();
-    decodedSizeChanged(safeCast<size_t>(internalSize.width()) * internalSize.height() * 4);
+    decodedSizeChanged(internalSize.unclampedArea() * 4);
 }
 
 void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, ImageOrientationDescription)
