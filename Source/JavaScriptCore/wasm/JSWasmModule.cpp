@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSWasmModule.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-namespace JSC { namespace WASM {
+#include "AuxiliaryBarrierInlines.h"
+#include "HeapInlines.h"
+#include "JSArrayBuffer.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSFunction.h"
+#include "SlotVisitorInlines.h"
+#include "StructureInlines.h"
 
-struct Sections {
-    enum Section : uint8_t {
-        FunctionTypes = 1,
-        Signatures = 3,
-        Memory = 5,
-        Definitions = 10,
-        Unknown
-    };
-    static bool validateOrder(Section previous, Section next)
-    {
-        if (previous == Unknown)
-            return true;
-        return previous < next;
-    }
-};
+namespace JSC {
 
-} } // namespace JSC::WASM
+const ClassInfo JSWasmModule::s_info = { "WasmModule", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWasmModule) };
+
+JSWasmModule::JSWasmModule(VM& vm, Structure* structure, JSArrayBuffer* arrayBuffer)
+    : Base(vm, structure)
+{
+    if (arrayBuffer)
+        m_arrayBuffer.set(vm, this, arrayBuffer);
+}
+
+void JSWasmModule::destroy(JSCell* cell)
+{
+    JSWasmModule* thisObject = jsCast<JSWasmModule*>(cell);
+    thisObject->JSWasmModule::~JSWasmModule();
+}
+
+void JSWasmModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSWasmModule* thisObject = jsCast<JSWasmModule*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_arrayBuffer);
+    for (auto function : thisObject->m_functions)
+        visitor.append(&function);
+    for (auto importedFunction : thisObject->m_importedFunctions)
+        visitor.append(&importedFunction);
+}
+
+} // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

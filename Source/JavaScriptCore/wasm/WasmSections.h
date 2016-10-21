@@ -27,24 +27,24 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "CompilationResult.h"
-#include "VM.h"
-#include "WASMFormat.h"
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Vector.h>
+namespace JSC { namespace Wasm {
 
-namespace JSC { namespace WASM {
-class Memory;
-
-// TODO: This should create a WASM Module not a list of functions.
-class Plan {
-public:
-    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t> source);
-
-    Vector<std::unique_ptr<FunctionCompilation>> result;
-    std::unique_ptr<Memory> memory;
+struct Sections {
+    enum Section : uint8_t {
+        FunctionTypes = 1,
+        Signatures = 3,
+        Memory = 5,
+        Definitions = 10,
+        Unknown
+    };
+    static bool validateOrder(Section previous, Section next)
+    {
+        if (previous == Unknown)
+            return true;
+        return previous < next;
+    }
 };
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

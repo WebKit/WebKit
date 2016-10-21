@@ -29,12 +29,12 @@
 
 #include "B3Compilation.h"
 #include "B3Procedure.h"
-#include "WASMFormat.h"
-#include "WASMOps.h"
-#include "WASMSections.h"
+#include "WasmFormat.h"
+#include "WasmOps.h"
+#include "WasmSections.h"
 #include <wtf/LEBDecoder.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 class Parser {
 protected:
@@ -128,6 +128,6 @@ ALWAYS_INLINE bool Parser::parseValueType(Type& result)
     return true;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

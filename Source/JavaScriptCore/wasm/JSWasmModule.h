@@ -28,11 +28,11 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSDestructibleObject.h"
-#include "WASMFormat.h"
+#include "WasmFormat.h"
 
 namespace JSC {
 
-class JSWASMModule : public JSDestructibleObject {
+class JSWasmModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
@@ -55,9 +55,9 @@ public:
         double doubleValue;
     };
 
-    static JSWASMModule* create(VM& vm, Structure* structure, JSArrayBuffer* arrayBuffer)
+    static JSWasmModule* create(VM& vm, Structure* structure, JSArrayBuffer* arrayBuffer)
     {
-        JSWASMModule* module = new (NotNull, allocateCell<JSWASMModule>(vm.heap)) JSWASMModule(vm, structure, arrayBuffer);
+        JSWasmModule* module = new (NotNull, allocateCell<JSWasmModule>(vm.heap)) JSWasmModule(vm, structure, arrayBuffer);
         module->finishCreation(vm);
         return module;
     }
@@ -75,12 +75,12 @@ public:
     Vector<uint32_t>& i32Constants() { return m_i32Constants; }
     Vector<float>& f32Constants() { return m_f32Constants; }
     Vector<double>& f64Constants() { return m_f64Constants; }
-    Vector<WASM::Signature>& signatures() { return m_signatures; }
-    Vector<WASM::FunctionImport>& functionImports() { return m_functionImports; }
-    Vector<WASM::FunctionImportSignature>& functionImportSignatures() { return m_functionImportSignatures; }
-    Vector<WASM::Type>& globalVariableTypes() { return m_globalVariableTypes; }
-    Vector<WASM::FunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
-    Vector<WASM::FunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
+    Vector<Wasm::Signature>& signatures() { return m_signatures; }
+    Vector<Wasm::FunctionImport>& functionImports() { return m_functionImports; }
+    Vector<Wasm::FunctionImportSignature>& functionImportSignatures() { return m_functionImportSignatures; }
+    Vector<Wasm::Type>& globalVariableTypes() { return m_globalVariableTypes; }
+    Vector<Wasm::FunctionDeclaration>& functionDeclarations() { return m_functionDeclarations; }
+    Vector<Wasm::FunctionPointerTable>& functionPointerTables() { return m_functionPointerTables; }
 
     const JSArrayBuffer* arrayBuffer() const { return m_arrayBuffer.get(); }
     Vector<WriteBarrier<JSFunction>>& functions() { return m_functions; }
@@ -90,17 +90,17 @@ public:
     Vector<WriteBarrier<JSFunction>>& importedFunctions() { return m_importedFunctions; }
 
 private:
-    JSWASMModule(VM&, Structure*, JSArrayBuffer*);
+    JSWasmModule(VM&, Structure*, JSArrayBuffer*);
 
     Vector<uint32_t> m_i32Constants;
     Vector<float> m_f32Constants;
     Vector<double> m_f64Constants;
-    Vector<WASM::Signature> m_signatures;
-    Vector<WASM::FunctionImport> m_functionImports;
-    Vector<WASM::FunctionImportSignature> m_functionImportSignatures;
-    Vector<WASM::Type> m_globalVariableTypes;
-    Vector<WASM::FunctionDeclaration> m_functionDeclarations;
-    Vector<WASM::FunctionPointerTable> m_functionPointerTables;
+    Vector<Wasm::Signature> m_signatures;
+    Vector<Wasm::FunctionImport> m_functionImports;
+    Vector<Wasm::FunctionImportSignature> m_functionImportSignatures;
+    Vector<Wasm::Type> m_globalVariableTypes;
+    Vector<Wasm::FunctionDeclaration> m_functionDeclarations;
+    Vector<Wasm::FunctionPointerTable> m_functionPointerTables;
 
     WriteBarrier<JSArrayBuffer> m_arrayBuffer;
     Vector<WriteBarrier<JSFunction>> m_functions;

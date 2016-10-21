@@ -39,9 +39,9 @@
 #include "CallFrame.h"
 #include "LinkBuffer.h"
 #include "RegisterSet.h"
-#include "WASMFormat.h"
+#include "WasmFormat.h"
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 typedef unsigned (*NextOffset)(unsigned currentOffset, B3::Type type);
 
@@ -155,11 +155,11 @@ inline unsigned nextJSCOffset(unsigned currentOffset, B3::Type)
 constexpr unsigned jscHeaderSize = ExecState::headerSizeInRegisters * sizeof(Register);
 typedef CallingConvention<jscHeaderSize, nextJSCOffset> JSCCallingConvention;
 
-typedef JSCCallingConvention WASMCallingConvention;
+typedef JSCCallingConvention WasmCallingConvention;
 
 const JSCCallingConvention& jscCallingConvention();
-const WASMCallingConvention& wasmCallingConvention();
+const WasmCallingConvention& wasmCallingConvention();
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

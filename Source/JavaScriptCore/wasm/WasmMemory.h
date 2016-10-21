@@ -27,11 +27,11 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WASMCallingConvention.h"
+#include "WasmCallingConvention.h"
 
 #include <wtf/Vector.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 struct PinnedSizeRegisterInfo {
     GPRReg sizeRegister;
@@ -94,6 +94,6 @@ private:
     uint64_t m_mappedCapacity { 0 };
 };
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMLY)

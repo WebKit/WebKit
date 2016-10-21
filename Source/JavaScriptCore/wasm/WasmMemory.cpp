@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "WASMMemory.h"
+#include "WasmMemory.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 Memory::Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>& pinnedSizeRegisters)
     : m_mode(Mode::BoundsChecking)
@@ -74,6 +74,6 @@ Memory::Memory(uint32_t startingSize, uint32_t capacity, const Vector<unsigned>&
 
 } // namespace JSC
 
-} // namespace WASM
+} // namespace Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

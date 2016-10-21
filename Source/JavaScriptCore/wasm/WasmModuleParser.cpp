@@ -24,18 +24,18 @@
  */
 
 #include "config.h"
-#include "WASMModuleParser.h"
+#include "WasmModuleParser.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWASMModule.h"
-#include "WASMFormat.h"
-#include "WASMOps.h"
-#include "WASMSections.h"
+#include "JSWasmModule.h"
+#include "WasmFormat.h"
+#include "WasmOps.h"
+#include "WasmSections.h"
 
 #include <sys/mman.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
@@ -286,6 +286,6 @@ bool ModuleParser::parseFunctionDefinitions()
     return true;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

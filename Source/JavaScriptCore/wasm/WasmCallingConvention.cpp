@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "WASMCallingConvention.h"
+#include "WasmCallingConvention.h"
 
 #if ENABLE(WEBASSEMBLY)
 
 #include <wtf/NeverDestroyed.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 const JSCCallingConvention& jscCallingConvention()
 {
@@ -43,11 +43,11 @@ const JSCCallingConvention& jscCallingConvention()
     return staticJSCCallingConvention;
 }
 
-const WASMCallingConvention& wasmCallingConvention()
+const WasmCallingConvention& wasmCallingConvention()
 {
-    static LazyNeverDestroyed<JSCCallingConvention> staticWASMCallingConvention;
-    static std::once_flag staticWASMCallingConventionFlag;
-    std::call_once(staticWASMCallingConventionFlag, [] () {
+    static LazyNeverDestroyed<JSCCallingConvention> staticWasmCallingConvention;
+    static std::once_flag staticWasmCallingConventionFlag;
+    std::call_once(staticWasmCallingConventionFlag, [] () {
         Vector<Reg> gprArgumentRegisters(GPRInfo::numberOfArgumentRegisters);
         for (unsigned i = 0; i < GPRInfo::numberOfArgumentRegisters; ++i)
             gprArgumentRegisters[i] = GPRInfo::toArgumentRegister(i);
@@ -56,12 +56,12 @@ const WASMCallingConvention& wasmCallingConvention()
         for (unsigned i = 0; i < FPRInfo::numberOfArgumentRegisters; ++i)
             fprArgumentRegisters[i] = FPRInfo::toArgumentRegister(i);
 
-        staticWASMCallingConvention.construct(WTFMove(gprArgumentRegisters), WTFMove(fprArgumentRegisters), RegisterSet::calleeSaveRegisters());
+        staticWasmCallingConvention.construct(WTFMove(gprArgumentRegisters), WTFMove(fprArgumentRegisters), RegisterSet::calleeSaveRegisters());
     });
 
-    return staticWASMCallingConvention;
+    return staticWasmCallingConvention;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(B3_JIT)

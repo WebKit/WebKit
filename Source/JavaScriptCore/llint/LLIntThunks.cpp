@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWASM(void* code, VM* vm, ProtoCallFrame* frame)
+EncodedJSValue JS_EXPORT_PRIVATE vmEntryToWasm(void* code, VM* vm, ProtoCallFrame* frame)
 {
     return vmEntryToJavaScript(code, vm, frame);
 }

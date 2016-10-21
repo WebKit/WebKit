@@ -27,12 +27,12 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WASMMemory.h"
-#include "WASMOps.h"
-#include "WASMParser.h"
+#include "WasmMemory.h"
+#include "WasmOps.h"
+#include "WasmParser.h"
 #include <wtf/Vector.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 class ModuleParser : public Parser {
 public:
@@ -61,6 +61,6 @@ private:
     std::unique_ptr<Memory> m_memory;
 };
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

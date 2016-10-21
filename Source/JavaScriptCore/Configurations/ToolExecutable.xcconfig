@@ -31,7 +31,7 @@ CODE_SIGN_ENTITLEMENTS_ios_minidom = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testair = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testapi = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testb3 = entitlements.plist;
-CODE_SIGN_ENTITLEMENTS_ios_testWASM = entitlements.plist;
+CODE_SIGN_ENTITLEMENTS_ios_testWasm = entitlements.plist;
 CODE_SIGN_ENTITLEMENTS_ios_testRegExp = entitlements.plist;
 
 SKIP_INSTALL = $(SKIP_INSTALL_$(FORCE_TOOL_INSTALL));

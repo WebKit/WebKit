@@ -32,8 +32,8 @@
 #include "LLIntThunks.h"
 #include "ProtoCallFrame.h"
 #include "VM.h"
-#include "WASMMemory.h"
-#include "WASMPlan.h"
+#include "WasmMemory.h"
+#include "WasmPlan.h"
 
 #include <wtf/DataLog.h>
 #include <wtf/LEBDecoder.h>
@@ -47,17 +47,17 @@ public:
 
     Vector<String> m_arguments;
     bool m_runLEBTests { false };
-    bool m_runWASMTests { false };
+    bool m_runWasmTests { false };
 
     void parseArguments(int, char**);
 };
 
 static NO_RETURN void printUsageStatement(bool help = false)
 {
-    fprintf(stderr, "Usage: testWASM [options]\n");
+    fprintf(stderr, "Usage: testWasm [options]\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
     fprintf(stderr, "  -l|--leb   Runs the LEB decoder tests\n");
-    fprintf(stderr, "  -w|--web   Run the WASM tests\n");
+    fprintf(stderr, "  -w|--web   Run the Wasm tests\n");
     fprintf(stderr, "\n");
 
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
@@ -76,7 +76,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_runLEBTests = true;
 
         if (!strcmp(arg, "-w") || !strcmp(arg, "--web"))
-            m_runWASMTests = true;
+            m_runWasmTests = true;
     }
 
     for (; i < argc; ++i)
@@ -204,7 +204,7 @@ static void runLEBTests()
 static JSC::VM* vm;
 
 using namespace JSC;
-using namespace WASM;
+using namespace Wasm;
 using namespace B3;
 
 template<typename T>
@@ -225,7 +225,7 @@ T invoke(MacroAssemblerCodePtr ptr, std::initializer_list<JSValue> args)
     protoCallFrame.init(nullptr, nullptr, firstArgument, argCount, remainingArguments);
 
     // This won't work for floating point values but we don't have those yet.
-    return static_cast<T>(vmEntryToWASM(ptr.executableAddress(), vm, &protoCallFrame));
+    return static_cast<T>(vmEntryToWasm(ptr.executableAddress(), vm, &protoCallFrame));
 }
 
 template<typename T>
@@ -240,7 +240,7 @@ inline JSValue box(uint64_t value)
 }
 
 // For now we inline the test files.
-static void runWASMTests()
+static void runWasmTests()
 {
     {
         // Generated from:
@@ -1189,13 +1189,13 @@ int main(int argc, char** argv)
     if (options.m_runLEBTests)
         runLEBTests();
 
-    if (options.m_runWASMTests) {
+    if (options.m_runWasmTests) {
 #if ENABLE(WEBASSEMBLY)
         JSC::initializeThreading();
         vm = &JSC::VM::create(JSC::LargeHeap).leakRef();
-        runWASMTests();
+        runWasmTests();
 #else
-        dataLogLn("WASM is not enabled!");
+        dataLogLn("Wasm is not enabled!");
         return EXIT_FAILURE;
 #endif // ENABLE(WEBASSEMBLY)
     }

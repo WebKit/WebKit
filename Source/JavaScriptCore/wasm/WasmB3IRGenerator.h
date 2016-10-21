@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSWASMModule.h"
+#pragma once
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "AuxiliaryBarrierInlines.h"
-#include "HeapInlines.h"
-#include "JSArrayBuffer.h"
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
-#include "JSFunction.h"
-#include "SlotVisitorInlines.h"
-#include "StructureInlines.h"
+#include "B3Compilation.h"
+#include "VM.h"
+#include "WasmFormat.h"
 
-namespace JSC {
+extern "C" void dumpProcedure(void*);
 
-const ClassInfo JSWASMModule::s_info = { "WASMModule", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWASMModule) };
+namespace JSC { namespace Wasm {
 
-JSWASMModule::JSWASMModule(VM& vm, Structure* structure, JSArrayBuffer* arrayBuffer)
-    : Base(vm, structure)
-{
-    if (arrayBuffer)
-        m_arrayBuffer.set(vm, this, arrayBuffer);
-}
+class Memory;
 
-void JSWASMModule::destroy(JSCell* cell)
-{
-    JSWASMModule* thisObject = jsCast<JSWASMModule*>(cell);
-    thisObject->JSWASMModule::~JSWASMModule();
-}
+std::unique_ptr<FunctionCompilation> parseAndCompile(VM&, Vector<uint8_t>&, Memory*, FunctionInformation, const Vector<FunctionInformation>&, unsigned optLevel = 1);
 
-void JSWASMModule::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSWASMModule* thisObject = jsCast<JSWASMModule*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_arrayBuffer);
-    for (auto function : thisObject->m_functions)
-        visitor.append(&function);
-    for (auto importedFunction : thisObject->m_importedFunctions)
-        visitor.append(&importedFunction);
-}
-
-} // namespace JSC
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

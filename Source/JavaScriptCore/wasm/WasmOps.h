@@ -31,7 +31,7 @@
 
 #include <cstdint>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 #define FOR_EACH_WASM_SPECIAL_OP(macro) \
     macro(I32Const, 0x10, Oops) \
@@ -243,7 +243,7 @@ inline bool isControlOp(OpType op)
     return false;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
 

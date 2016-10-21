@@ -27,18 +27,24 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "B3Compilation.h"
+#include "CompilationResult.h"
 #include "VM.h"
-#include "WASMFormat.h"
+#include "WasmFormat.h"
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
 
-extern "C" void dumpProcedure(void*);
-
-namespace JSC { namespace WASM {
-
+namespace JSC { namespace Wasm {
 class Memory;
 
-std::unique_ptr<FunctionCompilation> parseAndCompile(VM&, Vector<uint8_t>&, Memory*, FunctionInformation, const Vector<FunctionInformation>&, unsigned optLevel = 1);
+// TODO: This should create a Wasm Module not a list of functions.
+class Plan {
+public:
+    JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t> source);
 
-} } // namespace JSC::WASM
+    Vector<std::unique_ptr<FunctionCompilation>> result;
+    std::unique_ptr<Memory> memory;
+};
+
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

@@ -54,7 +54,7 @@ namespace JSC {
 
 class JSFunction;
 
-namespace WASM {
+namespace Wasm {
 
 enum Type : uint8_t {
     Void,
@@ -65,10 +65,10 @@ enum Type : uint8_t {
     LastValueType = F64,
 };
 
-static_assert(I32 == 1, "WASM needs I32 to have the value 1");
-static_assert(I64 == 2, "WASM needs I64 to have the value 2");
-static_assert(F32 == 3, "WASM needs F32 to have the value 3");
-static_assert(F64 == 4, "WASM needs F64 to have the value 4");
+static_assert(I32 == 1, "Wasm needs I32 to have the value 1");
+static_assert(I64 == 2, "Wasm needs I64 to have the value 2");
+static_assert(F32 == 3, "Wasm needs F32 to have the value 3");
+static_assert(F64 == 4, "Wasm needs F64 to have the value 4");
 
 inline B3::Type toB3Type(Type type)
 {
@@ -139,6 +139,6 @@ struct FunctionCompilation {
     std::unique_ptr<B3::Compilation> jsEntryPoint;
 };
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

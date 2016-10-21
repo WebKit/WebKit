@@ -31,7 +31,7 @@
 #include "Debugger.h"
 #include "JIT.h"
 #include "JSCInlines.h"
-#include "JSWASMModule.h"
+#include "JSWasmModule.h"
 #include "LLIntEntrypoint.h"
 #include "Parser.h"
 #include "TypeProfiler.h"
@@ -747,7 +747,7 @@ FunctionExecutable* FunctionExecutable::fromGlobalCode(
 #if ENABLE(WEBASSEMBLY)
 const ClassInfo WebAssemblyExecutable::s_info = { "WebAssemblyExecutable", &ExecutableBase::s_info, 0, CREATE_METHOD_TABLE(WebAssemblyExecutable) };
 
-WebAssemblyExecutable::WebAssemblyExecutable(VM& vm, const SourceCode& source, JSWASMModule* module, unsigned functionIndex)
+WebAssemblyExecutable::WebAssemblyExecutable(VM& vm, const SourceCode& source, JSWasmModule* module, unsigned functionIndex)
     : ExecutableBase(vm, vm.webAssemblyExecutableStructure.get(), NUM_PARAMETERS_NOT_COMPILED, NoIntrinsic)
     , m_source(source)
     , m_module(vm, this, module)

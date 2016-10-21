@@ -50,7 +50,7 @@ if (NOT WIN32)
     )
 
     set(TESTWASM_SOURCES
-        ../testWASM.cpp
+        ../testWasm.cpp
     )
 
     add_executable(testb3 ${TESTB3_SOURCES})

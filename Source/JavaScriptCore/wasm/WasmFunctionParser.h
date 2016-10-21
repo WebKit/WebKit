@@ -27,10 +27,10 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "WASMParser.h"
+#include "WasmParser.h"
 #include <wtf/DataLog.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 enum class BlockType {
     If,
@@ -389,6 +389,6 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
 
 #undef CREATE_CASE
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

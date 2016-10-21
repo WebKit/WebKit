@@ -1,3 +1,198 @@
+2016-10-21  Keith Miller  <keith_miller@apple.com>
+
+        Rename WASM to Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=163796
+
+        Rubber stamped by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * llint/LLIntThunks.cpp:
+        (JSC::vmEntryToWasm):
+        (JSC::vmEntryToWASM): Deleted.
+        * llint/LLIntThunks.h:
+        * runtime/Executable.cpp:
+        (JSC::WebAssemblyExecutable::WebAssemblyExecutable):
+        * runtime/Executable.h:
+        * shell/CMakeLists.txt:
+        * testWASM.cpp:
+        (runWASMTests): Deleted.
+        * testWasm.cpp: Renamed from Source/JavaScriptCore/testWASM.cpp.
+        (CommandLine::CommandLine):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (runLEBTests):
+        (invoke):
+        (box):
+        (runWasmTests):
+        (main):
+        * wasm/JSWASMModule.cpp:
+        (JSC::JSWASMModule::JSWASMModule): Deleted.
+        (JSC::JSWASMModule::destroy): Deleted.
+        (JSC::JSWASMModule::visitChildren): Deleted.
+        * wasm/JSWASMModule.h:
+        (JSC::JSWASMModule::create): Deleted.
+        (JSC::JSWASMModule::createStructure): Deleted.
+        (JSC::JSWASMModule::i32Constants): Deleted.
+        (JSC::JSWASMModule::f32Constants): Deleted.
+        (JSC::JSWASMModule::f64Constants): Deleted.
+        (JSC::JSWASMModule::signatures): Deleted.
+        (JSC::JSWASMModule::functionImports): Deleted.
+        (JSC::JSWASMModule::functionImportSignatures): Deleted.
+        (JSC::JSWASMModule::globalVariableTypes): Deleted.
+        (JSC::JSWASMModule::functionDeclarations): Deleted.
+        (JSC::JSWASMModule::functionPointerTables): Deleted.
+        (JSC::JSWASMModule::arrayBuffer): Deleted.
+        (JSC::JSWASMModule::functions): Deleted.
+        (JSC::JSWASMModule::functionStartOffsetsInSource): Deleted.
+        (JSC::JSWASMModule::functionStackHeights): Deleted.
+        (JSC::JSWASMModule::globalVariables): Deleted.
+        (JSC::JSWASMModule::importedFunctions): Deleted.
+        * wasm/JSWasmModule.cpp: Renamed from Source/JavaScriptCore/wasm/JSWASMModule.cpp.
+        (JSC::JSWasmModule::JSWasmModule):
+        (JSC::JSWasmModule::destroy):
+        (JSC::JSWasmModule::visitChildren):
+        * wasm/JSWasmModule.h: Renamed from Source/JavaScriptCore/wasm/JSWASMModule.h.
+        (JSC::JSWasmModule::create):
+        (JSC::JSWasmModule::createStructure):
+        (JSC::JSWasmModule::i32Constants):
+        (JSC::JSWasmModule::f32Constants):
+        (JSC::JSWasmModule::f64Constants):
+        (JSC::JSWasmModule::signatures):
+        (JSC::JSWasmModule::functionImports):
+        (JSC::JSWasmModule::functionImportSignatures):
+        (JSC::JSWasmModule::globalVariableTypes):
+        (JSC::JSWasmModule::functionDeclarations):
+        (JSC::JSWasmModule::functionPointerTables):
+        (JSC::JSWasmModule::arrayBuffer):
+        (JSC::JSWasmModule::functions):
+        (JSC::JSWasmModule::functionStartOffsetsInSource):
+        (JSC::JSWasmModule::functionStackHeights):
+        (JSC::JSWasmModule::globalVariables):
+        (JSC::JSWasmModule::importedFunctions):
+        * wasm/WASMB3IRGenerator.cpp:
+        (JSC::WASM::createJSWrapper): Deleted.
+        (JSC::WASM::parseAndCompile): Deleted.
+        * wasm/WASMCallingConvention.cpp:
+        (JSC::WASM::jscCallingConvention): Deleted.
+        (JSC::WASM::wasmCallingConvention): Deleted.
+        * wasm/WASMCallingConvention.h:
+        (JSC::WASM::CallingConvention::CallingConvention): Deleted.
+        (JSC::WASM::CallingConvention::marshallArgumentImpl): Deleted.
+        (JSC::WASM::CallingConvention::marshallArgument): Deleted.
+        (JSC::WASM::CallingConvention::loadArguments): Deleted.
+        (JSC::WASM::CallingConvention::setupCall): Deleted.
+        (JSC::WASM::nextJSCOffset): Deleted.
+        * wasm/WASMFormat.h:
+        (JSC::WASM::toB3Type): Deleted.
+        (JSC::WASM::isValueType): Deleted.
+        * wasm/WASMFunctionParser.h:
+        (JSC::WASM::FunctionParser<Context>::FunctionParser): Deleted.
+        (JSC::WASM::FunctionParser<Context>::parse): Deleted.
+        (JSC::WASM::FunctionParser<Context>::parseBlock): Deleted.
+        (JSC::WASM::FunctionParser<Context>::parseExpression): Deleted.
+        (JSC::WASM::FunctionParser<Context>::parseUnreachableExpression): Deleted.
+        * wasm/WASMMemory.cpp:
+        (JSC::WASM::Memory::Memory): Deleted.
+        * wasm/WASMMemory.h:
+        (JSC::WASM::Memory::~Memory): Deleted.
+        (JSC::WASM::Memory::memory): Deleted.
+        (JSC::WASM::Memory::size): Deleted.
+        (JSC::WASM::Memory::pinnedRegisters): Deleted.
+        (JSC::WASM::Memory::mode): Deleted.
+        (JSC::WASM::Memory::grow): Deleted.
+        (JSC::WASM::Memory::offsetOfSize): Deleted.
+        * wasm/WASMModuleParser.cpp:
+        (JSC::WASM::ModuleParser::parse): Deleted.
+        (JSC::WASM::ModuleParser::parseMemory): Deleted.
+        (JSC::WASM::ModuleParser::parseFunctionTypes): Deleted.
+        (JSC::WASM::ModuleParser::parseFunctionSignatures): Deleted.
+        (JSC::WASM::ModuleParser::parseFunctionDefinitions): Deleted.
+        * wasm/WASMModuleParser.h:
+        (JSC::WASM::ModuleParser::ModuleParser): Deleted.
+        (JSC::WASM::ModuleParser::functionInformation): Deleted.
+        (JSC::WASM::ModuleParser::memory): Deleted.
+        * wasm/WASMOps.h:
+        (JSC::WASM::isValidOpType): Deleted.
+        (JSC::WASM::isControlOp): Deleted.
+        * wasm/WASMParser.h:
+        (JSC::WASM::Parser::parseVarUInt32): Deleted.
+        (JSC::WASM::Parser::parseVarUInt64): Deleted.
+        (JSC::WASM::Parser::Parser): Deleted.
+        (JSC::WASM::Parser::consumeCharacter): Deleted.
+        (JSC::WASM::Parser::consumeString): Deleted.
+        (JSC::WASM::Parser::parseUInt32): Deleted.
+        (JSC::WASM::Parser::parseUInt7): Deleted.
+        (JSC::WASM::Parser::parseVarUInt1): Deleted.
+        (JSC::WASM::Parser::parseValueType): Deleted.
+        * wasm/WASMPlan.cpp:
+        (JSC::WASM::Plan::Plan): Deleted.
+        * wasm/WASMSections.h:
+        (JSC::WASM::Sections::validateOrder): Deleted.
+        * wasm/WasmB3IRGenerator.cpp: Renamed from Source/JavaScriptCore/wasm/WASMB3IRGenerator.cpp.
+        (dumpProcedure):
+        (JSC::Wasm::createJSWrapper):
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmB3IRGenerator.h: Renamed from Source/JavaScriptCore/wasm/WASMB3IRGenerator.h.
+        * wasm/WasmCallingConvention.cpp: Renamed from Source/JavaScriptCore/wasm/WASMCallingConvention.cpp.
+        (JSC::Wasm::jscCallingConvention):
+        (JSC::Wasm::wasmCallingConvention):
+        * wasm/WasmCallingConvention.h: Renamed from Source/JavaScriptCore/wasm/WASMCallingConvention.h.
+        (JSC::Wasm::CallingConvention::CallingConvention):
+        (JSC::Wasm::CallingConvention::marshallArgumentImpl):
+        (JSC::Wasm::CallingConvention::marshallArgument):
+        (JSC::Wasm::CallingConvention::loadArguments):
+        (JSC::Wasm::CallingConvention::setupCall):
+        (JSC::Wasm::nextJSCOffset):
+        * wasm/WasmFormat.h: Renamed from Source/JavaScriptCore/wasm/WASMFormat.h.
+        (JSC::Wasm::toB3Type):
+        (JSC::Wasm::isValueType):
+        * wasm/WasmFunctionParser.h: Renamed from Source/JavaScriptCore/wasm/WASMFunctionParser.h.
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser):
+        (JSC::Wasm::FunctionParser<Context>::parse):
+        (JSC::Wasm::FunctionParser<Context>::parseBlock):
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmMemory.cpp: Renamed from Source/JavaScriptCore/wasm/WASMMemory.cpp.
+        (JSC::Wasm::Memory::Memory):
+        * wasm/WasmMemory.h: Renamed from Source/JavaScriptCore/wasm/WASMMemory.h.
+        (JSC::Wasm::Memory::~Memory):
+        (JSC::Wasm::Memory::memory):
+        (JSC::Wasm::Memory::size):
+        (JSC::Wasm::Memory::pinnedRegisters):
+        (JSC::Wasm::Memory::mode):
+        (JSC::Wasm::Memory::grow):
+        (JSC::Wasm::Memory::offsetOfSize):
+        * wasm/WasmModuleParser.cpp: Renamed from Source/JavaScriptCore/wasm/WASMModuleParser.cpp.
+        (JSC::Wasm::ModuleParser::parse):
+        (JSC::Wasm::ModuleParser::parseMemory):
+        (JSC::Wasm::ModuleParser::parseFunctionTypes):
+        (JSC::Wasm::ModuleParser::parseFunctionSignatures):
+        (JSC::Wasm::ModuleParser::parseFunctionDefinitions):
+        * wasm/WasmModuleParser.h: Renamed from Source/JavaScriptCore/wasm/WASMModuleParser.h.
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        (JSC::Wasm::ModuleParser::functionInformation):
+        (JSC::Wasm::ModuleParser::memory):
+        * wasm/WasmOps.h: Renamed from Source/JavaScriptCore/wasm/WASMOps.h.
+        (JSC::Wasm::isValidOpType):
+        (JSC::Wasm::isControlOp):
+        * wasm/WasmParser.h: Renamed from Source/JavaScriptCore/wasm/WASMParser.h.
+        (JSC::Wasm::Parser::parseVarUInt32):
+        (JSC::Wasm::Parser::parseVarUInt64):
+        (JSC::Wasm::Parser::Parser):
+        (JSC::Wasm::Parser::consumeCharacter):
+        (JSC::Wasm::Parser::consumeString):
+        (JSC::Wasm::Parser::parseUInt32):
+        (JSC::Wasm::Parser::parseUInt7):
+        (JSC::Wasm::Parser::parseVarUInt1):
+        (JSC::Wasm::Parser::parseValueType):
+        * wasm/WasmPlan.cpp: Renamed from Source/JavaScriptCore/wasm/WASMPlan.cpp.
+        (JSC::Wasm::Plan::Plan):
+        * wasm/WasmPlan.h: Renamed from Source/JavaScriptCore/wasm/WASMPlan.h.
+        * wasm/WasmSections.h: Renamed from Source/JavaScriptCore/wasm/WASMSections.h.
+        (JSC::Wasm::Sections::validateOrder):
+
 2016-10-21  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] don't crash when arguments to `new Function()` produce unexpected AST

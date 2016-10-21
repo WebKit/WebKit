@@ -24,17 +24,17 @@
  */
 
 #include "config.h"
-#include "WASMPlan.h"
+#include "WasmPlan.h"
 
 #if ENABLE(WEBASSEMBLY)
 
 #include "B3Compilation.h"
-#include "WASMB3IRGenerator.h"
-#include "WASMCallingConvention.h"
-#include "WASMModuleParser.h"
+#include "WasmB3IRGenerator.h"
+#include "WasmCallingConvention.h"
+#include "WasmModuleParser.h"
 #include <wtf/DataLog.h>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
 
@@ -67,6 +67,6 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     memory = WTFMove(moduleParser.memory());
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

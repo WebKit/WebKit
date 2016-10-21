@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WASMB3IRGenerator.h"
+#include "WasmB3IRGenerator.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -39,9 +39,9 @@
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
 #include "VirtualRegister.h"
-#include "WASMCallingConvention.h"
-#include "WASMFunctionParser.h"
-#include "WASMMemory.h"
+#include "WasmCallingConvention.h"
+#include "WasmFunctionParser.h"
+#include "WasmMemory.h"
 #include <wtf/Optional.h>
 
 void dumpProcedure(void* ptr)
@@ -50,7 +50,7 @@ void dumpProcedure(void* ptr)
     proc->dump(WTF::dataFile());
 }
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 namespace {
 
@@ -727,6 +727,6 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& so
     return result;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
