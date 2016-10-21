@@ -45,6 +45,8 @@ public:
     bool isWebGL2() const override { return true; }
 
     /* Buffer objects */
+    void bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length);
+    void bufferSubData(GC3Denum target, long long offset, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length);
     void copyBufferSubData(GC3Denum readTarget, GC3Denum writeTarget, GC3Dint64 readOffset, GC3Dint64 writeOffset, GC3Dint64 size);
     void getBufferSubData(GC3Denum target, GC3Dint64 offset, RefPtr<ArrayBufferView>&& returnedData);
     void getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData);

@@ -1,3 +1,20 @@
+2016-10-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Implement WebGL2 bufferData() and bufferSubData() methods
+        https://bugs.webkit.org/show_bug.cgi?id=163759
+
+        Reviewed by Dean Jackson.
+
+        These new overloads simply clip the input array buffer.
+
+        Test: fast/canvas/webgl/bufferData-offset-length.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::bufferData):
+        (WebCore::WebGL2RenderingContext::bufferSubData):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2016-10-20  Chris Dumez  <cdumez@apple.com>
 
         "Download Linked File" context menu action should use 'download' attribute as suggested filename

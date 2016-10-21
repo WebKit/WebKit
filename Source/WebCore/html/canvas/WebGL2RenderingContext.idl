@@ -333,6 +333,8 @@ typedef unrestricted float GLclampf;
     const GLuint64 TIMEOUT_IGNORED                             = 0xFFFFFFFFFFFFFFFF;
 
     /* Buffer objects */
+    void bufferData(GLenum target, ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
+    void bufferSubData(GLenum target, GLintptr dstByteOffset, ArrayBufferView srcData, GLuint srcOffset, optional GLuint length = 0);
     void copyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
     // MapBufferRange, in particular its read-only and write-only modes,
     // can not be exposed safely to JavaScript. GetBufferSubData
