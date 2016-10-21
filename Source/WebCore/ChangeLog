@@ -1,3 +1,19 @@
+2016-10-21  Chris Dumez  <cdumez@apple.com>
+
+        WebGL2RenderingContext.texSubImage3D() should use a union instead of overloading
+        https://bugs.webkit.org/show_bug.cgi?id=163792
+
+        Reviewed by Darin Adler.
+
+        WebGL2RenderingContext.texSubImage3D() should use a union instead of overloading for 
+        - https://www.khronos.org/registry/webgl/specs/latest/2.0/#3.7 (for texSubImage3D)
+        - https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14 (for TexImageSource)
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::texSubImage3D):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2016-10-21  Zalan Bujtas  <zalan@apple.com>
 
         Do not mutate the render tree while collecting selection repaint rects.
