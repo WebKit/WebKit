@@ -1,3 +1,15 @@
+2016-10-21  Chris Dumez  <cdumez@apple.com>
+
+        AudioNode.connect(): First parameter should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=163773
+
+        Reviewed by Darin Adler.
+
+        Improve test coverage.
+
+        * webaudio/audionode-expected.txt:
+        * webaudio/audionode.html:
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement InputEvent.getTargetRanges() for the input events spec

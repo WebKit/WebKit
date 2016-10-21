@@ -123,25 +123,22 @@ AudioNodeOutput* AudioNode::output(unsigned i)
     return nullptr;
 }
 
-ExceptionOr<void> AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex)
+ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
 {
     ASSERT(isMainThread()); 
     AudioContext::AutoLocker locker(context());
-
-    if (!destination)
-        return Exception { SYNTAX_ERR };
 
     // Sanity check input and output indices.
     if (outputIndex >= numberOfOutputs())
         return Exception { INDEX_SIZE_ERR };
 
-    if (destination && inputIndex >= destination->numberOfInputs())
+    if (inputIndex >= destination.numberOfInputs())
         return Exception { INDEX_SIZE_ERR };
 
-    if (context() != destination->context())
+    if (context() != destination.context())
         return Exception { SYNTAX_ERR };
 
-    auto* input = destination->input(inputIndex);
+    auto* input = destination.input(inputIndex);
     auto* output = this->output(outputIndex);
     input->connect(output);
 
@@ -151,22 +148,19 @@ ExceptionOr<void> AudioNode::connect(AudioNode* destination, unsigned outputInde
     return { };
 }
 
-ExceptionOr<void> AudioNode::connect(AudioParam* param, unsigned outputIndex)
+ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 {
     ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
 
-    if (!param)
-        return Exception { SYNTAX_ERR };
-
     if (outputIndex >= numberOfOutputs())
         return Exception { INDEX_SIZE_ERR };
 
-    if (context() != param->context())
+    if (context() != param.context())
         return Exception { SYNTAX_ERR };
 
     auto* output = this->output(outputIndex);
-    param->connect(output);
+    param.connect(output);
 
     return { };
 }

@@ -51,12 +51,8 @@ function runTest() {
 
     // Try calling connect() method with illegal values.
 
-    try {
-        audioNode.connect(0, 0, 0);
-        testFailed("connect() exception should be thrown for illegal destination AudioNode.");
-    } catch(e) {
-        testPassed("connect() exception thrown for illegal destination AudioNode.");
-    }
+    shouldThrowErrorName("audioNode.connect(0, 0, 0)", "TypeError");
+    shouldThrowErrorName("audioNode.connect(null, 0, 0)", "TypeError");
 
     try {
         audioNode.connect(context.destination, 5, 0);

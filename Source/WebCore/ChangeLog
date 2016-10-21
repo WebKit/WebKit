@@ -1,3 +1,26 @@
+2016-10-21  Chris Dumez  <cdumez@apple.com>
+
+        AudioNode.connect(): First parameter should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=163773
+
+        Reviewed by Darin Adler.
+
+        AudioNode.connect()'s first parameter should not be nullable:
+        - https://webaudio.github.io/web-audio-api/#idl-def-AudioNode.
+
+        We were throwing a SYNTAX_ERR when passing null, we now throw
+        a TypeError instead.
+
+        No new tests, updated existing test.
+
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::connect):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioNode.idl:
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement InputEvent.getTargetRanges() for the input events spec
