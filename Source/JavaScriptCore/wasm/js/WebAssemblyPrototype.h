@@ -25,38 +25,30 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
+#include "JSDestructibleObject.h"
 #include "JSObject.h"
 
 namespace JSC {
 
-class WebAssemblyObject : public JSNonFinalObject {
+class WebAssemblyPrototype : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static WebAssemblyObject* create(VM&, JSGlobalObject*, Structure*);
+    static WebAssemblyPrototype* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, JSGlobalObject*);
+    void finishCreation(VM&);
 
 private:
-    WebAssemblyObject(VM&, Structure*);
+    WebAssemblyPrototype(VM&, Structure*);
 };
 
-// Name, functionLength
-#define FOR_EACH_WASM_CONSTRUCTOR_PROPERTY(DO) \
-    DO(Module, 1) \
-    DO(Instance, 2) \
-    DO(Memory, 1) \
-    DO(Table, 1) \
-    DO(CompileError, 1) \
-    DO(RuntimeError, 1)
-
-// Name, functionLength
-#define FOR_EACH_WASM_FUNCTION_PROPERTY(DO) \
-    DO(validate, 1) \
-    DO(compile, 1)
-
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

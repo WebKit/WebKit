@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAssemblyTablePrototype.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 
@@ -63,3 +65,5 @@ WebAssemblyTablePrototype::WebAssemblyTablePrototype(VM& vm, Structure* structur
 }
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

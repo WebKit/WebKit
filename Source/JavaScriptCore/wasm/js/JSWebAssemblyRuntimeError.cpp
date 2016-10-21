@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSWebAssemblyRuntimeError.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -46,3 +48,5 @@ JSWebAssemblyRuntimeError::JSWebAssemblyRuntimeError(VM& vm, Structure* structur
 const ClassInfo JSWebAssemblyRuntimeError::s_info = { "WebAssembly.RuntimeError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyRuntimeError) };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

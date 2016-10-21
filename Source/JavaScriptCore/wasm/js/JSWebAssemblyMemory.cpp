@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSWebAssemblyMemory.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -69,3 +71,5 @@ void JSWebAssemblyMemory::visitChildren(JSCell* cell, SlotVisitor& visitor)
 const ClassInfo JSWebAssemblyMemory::s_info = { "WebAssembly.Memory", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyMemory) };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

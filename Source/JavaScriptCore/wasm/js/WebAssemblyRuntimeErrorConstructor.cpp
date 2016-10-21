@@ -26,8 +26,11 @@
 #include "config.h"
 #include "WebAssemblyRuntimeErrorConstructor.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
+#include "JSWebAssemblyRuntimeError.h"
 #include "WebAssemblyRuntimeErrorPrototype.h"
 
 #include "WebAssemblyRuntimeErrorConstructor.lut.h"
@@ -43,9 +46,12 @@ const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function", &Base
 
 static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyRuntimeError(ExecState* state)
 {
-    VM& vm = state->vm();
+    auto& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the RuntimeError constructor property"))));
+    JSValue message = state->argumentCount() ? state->argument(0) : jsUndefined();
+    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyRuntimeErrorStructure());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return JSValue::encode(JSWebAssemblyRuntimeError::create(state, structure, message, false));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyRuntimeError(ExecState* state)
@@ -67,12 +73,11 @@ Structure* WebAssemblyRuntimeErrorConstructor::createStructure(VM& vm, JSGlobalO
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype, Structure* structure)
+void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype, Structure*)
 {
     Base::finishCreation(vm, ASCIILiteral("RuntimeError"));
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, ReadOnly | DontEnum | DontDelete);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    m_RuntimeErrorStructure.set(vm, this, structure);
 }
 
 WebAssemblyRuntimeErrorConstructor::WebAssemblyRuntimeErrorConstructor(VM& vm, Structure* structure)
@@ -92,12 +97,6 @@ CallType WebAssemblyRuntimeErrorConstructor::getCallData(JSCell*, CallData& call
     return CallType::Host;
 }
 
-void WebAssemblyRuntimeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    auto* thisObject = jsCast<WebAssemblyRuntimeErrorConstructor*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_RuntimeErrorStructure);
-}
-
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

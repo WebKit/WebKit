@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAssemblyMemoryConstructor.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "WebAssemblyMemoryPrototype.h"
@@ -101,3 +103,6 @@ void WebAssemblyMemoryConstructor::visitChildren(JSCell* cell, SlotVisitor& visi
 }
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)
+

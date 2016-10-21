@@ -27,25 +27,43 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
 #include "JSObject.h"
+#include "js/JSWebAssemblyCompileError.h"
+#include "js/JSWebAssemblyInstance.h"
+#include "js/JSWebAssemblyMemory.h"
+#include "js/JSWebAssemblyModule.h"
+#include "js/JSWebAssemblyRuntimeError.h"
+#include "js/JSWebAssemblyTable.h"
+#include "js/WebAssemblyCompileErrorConstructor.h"
+#include "js/WebAssemblyCompileErrorPrototype.h"
+#include "js/WebAssemblyInstanceConstructor.h"
+#include "js/WebAssemblyInstancePrototype.h"
+#include "js/WebAssemblyMemoryConstructor.h"
+#include "js/WebAssemblyMemoryPrototype.h"
+#include "js/WebAssemblyModuleConstructor.h"
+#include "js/WebAssemblyModulePrototype.h"
+#include "js/WebAssemblyPrototype.h"
+#include "js/WebAssemblyRuntimeErrorConstructor.h"
+#include "js/WebAssemblyRuntimeErrorPrototype.h"
+#include "js/WebAssemblyTableConstructor.h"
+#include "js/WebAssemblyTablePrototype.h"
 
 namespace JSC {
 
-class JSWebAssemblyTable : public JSDestructibleObject {
+class JSWebAssembly : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
-    static JSWebAssemblyTable* create(VM&, Structure*);
+    static JSWebAssembly* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
-    JSWebAssemblyTable(VM&, Structure*);
-    void finishCreation(VM&);
-    static void destroy(JSCell*);
-    static void visitChildren(JSCell*, SlotVisitor&);
+    void finishCreation(VM&, JSGlobalObject*);
+
+private:
+    JSWebAssembly(VM&, Structure*);
 };
 
 } // namespace JSC

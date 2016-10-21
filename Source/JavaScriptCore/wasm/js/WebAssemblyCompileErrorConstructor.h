@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "InternalFunction.h"
 #include "JSObject.h"
 
@@ -42,8 +44,6 @@ public:
 
     DECLARE_INFO;
 
-    Structure* CompileErrorStructure() const { return m_CompileErrorStructure.get(); }
-
 protected:
     void finishCreation(VM&, WebAssemblyCompileErrorPrototype*, Structure*);
 
@@ -51,9 +51,8 @@ private:
     WebAssemblyCompileErrorConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    WriteBarrier<Structure> m_CompileErrorStructure;
 };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

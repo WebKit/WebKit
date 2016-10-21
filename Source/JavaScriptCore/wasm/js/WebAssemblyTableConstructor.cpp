@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAssemblyTableConstructor.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "WebAssemblyTablePrototype.h"
@@ -101,3 +103,6 @@ void WebAssemblyTableConstructor::visitChildren(JSCell* cell, SlotVisitor& visit
 }
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)
+

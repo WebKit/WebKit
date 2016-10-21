@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAssemblyInstanceConstructor.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 #include "WebAssemblyInstancePrototype.h"
@@ -101,3 +103,6 @@ void WebAssemblyInstanceConstructor::visitChildren(JSCell* cell, SlotVisitor& vi
 }
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)
+

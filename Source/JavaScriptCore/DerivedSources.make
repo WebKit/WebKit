@@ -168,6 +168,7 @@ OBJECT_LUT_HEADERS = \
     WebAssemblyMemoryPrototype.lut.h \
     WebAssemblyModuleConstructor.lut.h \
     WebAssemblyModulePrototype.lut.h \
+    WebAssemblyPrototype.lut.h \
     WebAssemblyRuntimeErrorConstructor.lut.h \
     WebAssemblyRuntimeErrorPrototype.lut.h \
     WebAssemblyTableConstructor.lut.h \

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "InternalFunction.h"
 #include "JSObject.h"
 
@@ -57,3 +59,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

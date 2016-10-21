@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "ErrorInstance.h"
 
 namespace JSC {
@@ -34,6 +36,10 @@ public:
     typedef ErrorInstance Base;
 
     static JSWebAssemblyCompileError* create(ExecState*, Structure*, const String&, bool);
+    static JSWebAssemblyCompileError* create(ExecState* exec, Structure* structure, JSValue message, bool useCurrentFrame)
+    {
+        return create(exec, structure, message.isUndefined() ? String() : message.toString(exec)->value(exec), useCurrentFrame);
+    }
 
     DECLARE_INFO;
 
@@ -42,3 +48,5 @@ protected:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

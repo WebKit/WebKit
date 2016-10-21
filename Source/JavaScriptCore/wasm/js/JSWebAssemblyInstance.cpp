@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSWebAssemblyInstance.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "JSCInlines.h"
 
 namespace JSC {
@@ -69,3 +71,5 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
 const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

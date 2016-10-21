@@ -24,42 +24,62 @@
  */
 
 #include "config.h"
-#include "WebAssemblyCompileErrorPrototype.h"
+#include "WebAssemblyPrototype.h"
 
 #if ENABLE(WEBASSEMBLY)
 
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 
-#include "WebAssemblyCompileErrorPrototype.lut.h"
+namespace JSC {
+
+static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionValidate(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the validate function property"))));
+}
+
+static EncodedJSValue JSC_HOST_CALL webAssemblyFunctionCompile(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the compile function property"))));
+}
+
+}
+
+#include "WebAssemblyPrototype.lut.h"
 
 namespace JSC {
 
-const ClassInfo WebAssemblyCompileErrorPrototype::s_info = { "WebAssembly.CompileError.prototype", &Base::s_info, &prototypeTableWebAssemblyCompileError, CREATE_METHOD_TABLE(WebAssemblyCompileErrorPrototype) };
+const ClassInfo WebAssemblyPrototype::s_info = { "WebAssembly.prototype", &Base::s_info, &prototypeTableWebAssembly, CREATE_METHOD_TABLE(WebAssemblyPrototype) };
 
-/* Source for WebAssemblyCompileErrorPrototype.lut.h
- @begin prototypeTableWebAssemblyCompileError
+/* Source for WebAssemblyPrototype.lut.h
+ @begin prototypeTableWebAssembly
+ validate webAssemblyFunctionValidate  DontEnum|Function 1
+ compile  webAssemblyFunctionCompile   DontEnum|Function 1
  @end
  */
 
-WebAssemblyCompileErrorPrototype* WebAssemblyCompileErrorPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
+WebAssemblyPrototype* WebAssemblyPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {
-    auto* object = new (NotNull, allocateCell<WebAssemblyCompileErrorPrototype>(vm.heap)) WebAssemblyCompileErrorPrototype(vm, structure);
+    auto* object = new (NotNull, allocateCell<WebAssemblyPrototype>(vm.heap)) WebAssemblyPrototype(vm, structure);
     object->finishCreation(vm);
     return object;
 }
 
-Structure* WebAssemblyCompileErrorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+Structure* WebAssemblyPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyCompileErrorPrototype::finishCreation(VM& vm)
+void WebAssemblyPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
 }
 
-WebAssemblyCompileErrorPrototype::WebAssemblyCompileErrorPrototype(VM& vm, Structure* structure)
+WebAssemblyPrototype::WebAssemblyPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
 {
 }

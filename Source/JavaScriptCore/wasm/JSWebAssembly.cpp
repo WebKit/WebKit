@@ -23,30 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSWebAssembly.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSDestructibleObject.h"
-#include "JSObject.h"
+#include "FunctionPrototype.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class JSWebAssemblyTable : public JSDestructibleObject {
-public:
-    typedef JSDestructibleObject Base;
+STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 
-    static JSWebAssemblyTable* create(VM&, Structure*);
-    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
+const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssembly) };
 
-    DECLARE_INFO;
+JSWebAssembly* JSWebAssembly::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+{
+    auto* object = new (NotNull, allocateCell<JSWebAssembly>(vm.heap)) JSWebAssembly(vm, structure);
+    object->finishCreation(vm, globalObject);
+    return object;
+}
 
-protected:
-    JSWebAssemblyTable(VM&, Structure*);
-    void finishCreation(VM&);
-    static void destroy(JSCell*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-};
+Structure* JSWebAssembly::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
+void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject*)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+}
+
+JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)
+    : JSNonFinalObject(vm, structure)
+{
+}
 
 } // namespace JSC
 

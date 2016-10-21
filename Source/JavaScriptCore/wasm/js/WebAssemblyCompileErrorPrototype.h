@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 
@@ -48,3 +50,5 @@ private:
 };
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)

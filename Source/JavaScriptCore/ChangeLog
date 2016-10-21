@@ -1,3 +1,91 @@
+2016-10-20  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly API: implement exception constructors properly
+
+         - Rename WebAssemblyObject to JSWebAssembly for consistency.
+         - WebAssembly object now has its own prototype: add WebAssemblyPrototype, and
+           use it to register JSWebAssembly's function properties through auto-generated
+           .lut.h, instead of manually.
+         - The error constructors used to throw (e.g. `new WebAssembly.CompileError()`).
+         - Register WebAssembly's constructors from the global object, and hold a
+           reference to their structure and prototype so that invoking the constructor
+           can use the structure directly from the global object.
+         - Add a prototype base field to global object creation. Previous ones all had
+           Object's prototype as their base, but WebAssembly's error constructors have
+           Error as their base.
+         - Test for the error object's correctness.
+         - Add missing #if ENABLE(WEBASSEMBLY)
+
+        WebAssembly API: implement exception constructors properly
+        https://bugs.webkit.org/show_bug.cgi?id=163699
+
+        Reviewed by Keith Miller.
+
+        * CMakeLists.txt: rename WebAssemblyObject -> JSWebAssembly; add a .lut.h file
+        * DerivedSources.make: new .lut.h file
+        * JavaScriptCore.xcodeproj/project.pbxproj: ditto
+        * runtime/JSGlobalObject.cpp: new prototypeBase macro
+        (JSC::JSGlobalObject::init): register WebAssembly constructors here
+        (JSC::JSGlobalObject::visitChildren): use the macro to visit
+        * runtime/JSGlobalObject.h: declare the WebAssembly constructor macro
+        * wasm/JSWebAssembly.cpp: Copied from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        (JSC::JSWebAssembly::create):
+        (JSC::JSWebAssembly::createStructure):
+        (JSC::JSWebAssembly::finishCreation):
+        (JSC::JSWebAssembly::JSWebAssembly):
+        * wasm/JSWebAssembly.h: Renamed from Source/JavaScriptCore/wasm/WebAssemblyObject.h.
+        * wasm/WebAssemblyObject.cpp: Removed.
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        * wasm/js/JSWebAssemblyCompileError.h:
+        (JSC::JSWebAssemblyCompileError::create): string convenience
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyRuntimeError.cpp:
+        * wasm/js/JSWebAssemblyRuntimeError.h:
+        (JSC::JSWebAssemblyRuntimeError::create): string convenience
+        * wasm/js/JSWebAssemblyTable.cpp:
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):don't throw, create the object
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):no need for the structure, it's on the global object
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyCompileErrorPrototype.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.h:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyMemoryPrototype.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyModulePrototype.h:
+        * wasm/js/WebAssemblyPrototype.cpp: Copied from Source/JavaScriptCore/wasm/js/WebAssemblyCompileErrorPrototype.cpp.
+        (JSC::webAssemblyFunctionValidate):
+        (JSC::webAssemblyFunctionCompile):
+        (JSC::WebAssemblyPrototype::create):
+        (JSC::WebAssemblyPrototype::createStructure):
+        (JSC::WebAssemblyPrototype::finishCreation):
+        (JSC::WebAssemblyPrototype::WebAssemblyPrototype):
+        * wasm/js/WebAssemblyPrototype.h: Copied from Source/JavaScriptCore/wasm/js/WebAssemblyMemoryPrototype.h.
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):don't throw, create the object
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):no need for the structure, it's on the global object
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.h:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        * wasm/js/WebAssemblyTableConstructor.h:
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        * wasm/js/WebAssemblyTablePrototype.h:
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9

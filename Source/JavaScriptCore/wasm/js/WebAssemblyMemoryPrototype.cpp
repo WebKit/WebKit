@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebAssemblyMemoryPrototype.h"
 
+#if ENABLE(WEBASSEMBLY)
+
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"
 
@@ -63,3 +65,5 @@ WebAssemblyMemoryPrototype::WebAssemblyMemoryPrototype(VM& vm, Structure* struct
 }
 
 } // namespace JSC
+
+#endif // ENABLE(WEBASSEMBLY)
