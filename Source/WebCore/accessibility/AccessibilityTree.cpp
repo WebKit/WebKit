@@ -67,6 +67,15 @@ AccessibilityRole AccessibilityTree::determineAccessibilityRole()
     return isTreeValid() ? TreeRole : GroupRole;
 }
 
+bool AccessibilityTree::nodeHasTreeItemChild(Node& node) const
+{
+    for (auto* child = node.firstChild(); child; child = child->nextSibling()) {
+        if (nodeHasRole(child, "treeitem"))
+            return true;
+    }
+    return false;
+}
+
 bool AccessibilityTree::isTreeValid() const
 {
     // A valid tree can only have treeitem or group of treeitems as a child
@@ -87,6 +96,11 @@ bool AccessibilityTree::isTreeValid() const
             continue;
         if (nodeHasRole(child, "treeitem"))
             continue;
+        if (nodeHasRole(child, "presentation")) {
+            if (!nodeHasTreeItemChild(*child))
+                return false;
+            continue;
+        }
         if (!nodeHasRole(child, "group"))
             return false;
 

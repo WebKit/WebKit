@@ -1615,7 +1615,7 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     // We measure tree hierarchy by the number of groups that the item is within.
     unsigned level = 1;
     for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
-        AccessibilityRole parentRole = parent->roleValue();
+        AccessibilityRole parentRole = parent->ariaRoleAttribute();
         if (parentRole == GroupRole)
             level++;
         else if (parentRole == TreeRole)
