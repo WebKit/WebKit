@@ -725,6 +725,8 @@ webkit.org/b/162815 animations/font-variations/font-variation-settings-unlike.ht
 webkit.org/b/162815 animations/font-variations/font-variation-settings-order.html [ Timeout ]
 webkit.org/b/162815 animations/font-variations/font-variation-settings.html [ Timeout ]
 
+webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

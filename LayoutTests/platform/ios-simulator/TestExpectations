@@ -2720,3 +2720,5 @@ animations/font-variations/font-variation-settings-unlike.html [ Pass ImageOnlyF
 
 webkit.org/b/163632 animations/font-variations/font-variation-settings.html [ Skip ]
 webkit.org/b/163632 fast/text/variations/getComputedStyle.html [ Skip ]
+
+webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]

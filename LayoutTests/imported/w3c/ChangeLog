@@ -1,3 +1,20 @@
+2016-10-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Import W3C EME tests
+        https://bugs.webkit.org/show_bug.cgi?id=163214
+
+        Reviewed by Youenn Fablet.
+
+        Import the W3C EME tests from the web-platform-tests repository on GitHub.
+        The import was done via the import-w3c-tests script.
+
+        All the tests are still missing baselines, and they're skipped on all platforms.
+        The baselines will be added incrementally as the implementation grows. The idlharness.html
+        test will be unskipped first when the navigator.requestMediaKeySystemAccess() is added.
+
+        * resources/ImportExpectations: Skip Google EME tests.
+        * web-platform-tests/encrypted-media/: Added. The file list is omitted for clarity.
+
 2016-10-20  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBObjectStore name assignment.

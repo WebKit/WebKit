@@ -762,6 +762,7 @@ Bug(EFL) webaudio/decode-audio-data-basic.html [ Crash ]
 # End of old WebGL expectations before skipping all of them
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
 # Still failing/flakey tests, needs more investigation
 webkit.org/b/131729 http/tests/globalhistory/history-delegate-basic-302-redirect.html [ Failure ]

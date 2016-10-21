@@ -140,6 +140,39 @@
     "imported/w3c/web-platform-tests/dom/traversal/TreeWalker.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential-readyState.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-persistent-usage-record.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-destroy-persistent-license.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-retrieve-persistent-license.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-requestmediakeysystemaccess.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/api/request/request-cache.html": [
         "slow"
     ],
