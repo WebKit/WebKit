@@ -34,8 +34,6 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
-#include <WebCore/HTMLAnchorElement.h>
-#include <WebCore/HTMLNames.h>
 #include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -143,10 +141,7 @@ String InjectedBundleHitTestResult::linkTitle() const
 
 String InjectedBundleHitTestResult::linkSuggestedFilename() const
 {
-    auto* urlElement = m_hitTestResult.URLElement();
-    if (!is<HTMLAnchorElement>(urlElement))
-        return String();
-    return urlElement->attributeWithoutSynchronization(HTMLNames::downloadAttr);
+    return m_hitTestResult.URLElementDownloadAttribute();
 }
 
 IntRect InjectedBundleHitTestResult::imageRect() const

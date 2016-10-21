@@ -1,3 +1,21 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        "Download Linked File" context menu action should use 'download' attribute as suggested filename
+        https://bugs.webkit.org/show_bug.cgi?id=163742
+        <rdar://problem/28840734>
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/link-with-download-attribute.html: Added.
+        * TestWebKitAPI/Tests/WebKit2/mac/ContextMenuDownload.mm: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::getContextMenuFromProposedMenu):
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+        (TestWebKitAPI::TEST):
+
 2016-10-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207589.

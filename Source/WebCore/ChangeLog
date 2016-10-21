@@ -1,3 +1,18 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        "Download Linked File" context menu action should use 'download' attribute as suggested filename
+        https://bugs.webkit.org/show_bug.cgi?id=163742
+        <rdar://problem/28840734>
+
+        Reviewed by Darin Adler.
+
+        Add convenience method to HitTestResult to return the URL element's
+        download attribute.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::URLElementDownloadAttribute):
+        * rendering/HitTestResult.h:
+
 2016-10-20  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver is not detecting ARIA treeview if it contains role="presentation"

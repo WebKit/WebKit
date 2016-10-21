@@ -50,6 +50,7 @@ struct WebHitTestResultData {
     String absoluteMediaURL;
     String linkLabel;
     String linkTitle;
+    String linkSuggestedFilename;
     bool isContentEditable;
     WebCore::IntRect elementBoundingBox;
     bool isScrollbar;

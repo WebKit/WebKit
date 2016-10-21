@@ -46,6 +46,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , absoluteMediaURL(hitTestResult.absoluteMediaURL().string())
     , linkLabel(hitTestResult.textContent())
     , linkTitle(hitTestResult.titleDisplayString())
+    , linkSuggestedFilename(hitTestResult.URLElementDownloadAttribute())
     , isContentEditable(hitTestResult.isContentEditable())
     , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
     , isScrollbar(hitTestResult.scrollbar())
@@ -65,6 +66,7 @@ WebHitTestResultData::WebHitTestResultData(const WebCore::HitTestResult& hitTest
     , absoluteMediaURL(hitTestResult.absoluteMediaURL().string())
     , linkLabel(hitTestResult.textContent())
     , linkTitle(hitTestResult.titleDisplayString())
+    , linkSuggestedFilename(hitTestResult.URLElementDownloadAttribute())
     , isContentEditable(hitTestResult.isContentEditable())
     , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
     , isScrollbar(hitTestResult.scrollbar())
@@ -100,6 +102,7 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     encoder << absoluteMediaURL;
     encoder << linkLabel;
     encoder << linkTitle;
+    encoder << linkSuggestedFilename;
     encoder << isContentEditable;
     encoder << elementBoundingBox;
     encoder << isScrollbar;
@@ -133,6 +136,7 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         || !decoder.decode(hitTestResultData.absoluteMediaURL)
         || !decoder.decode(hitTestResultData.linkLabel)
         || !decoder.decode(hitTestResultData.linkTitle)
+        || !decoder.decode(hitTestResultData.linkSuggestedFilename)
         || !decoder.decode(hitTestResultData.isContentEditable)
         || !decoder.decode(hitTestResultData.elementBoundingBox)
         || !decoder.decode(hitTestResultData.isScrollbar)

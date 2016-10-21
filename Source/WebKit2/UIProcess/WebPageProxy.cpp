@@ -4587,7 +4587,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;    
     }
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
-        m_process->processPool().download(this, URL(URL(), m_activeContextMenuContextData.webHitTestResultData().absoluteLinkURL));
+        auto& hitTestResult = m_activeContextMenuContextData.webHitTestResultData();
+        m_process->processPool().download(this, URL(URL(), hitTestResult.absoluteLinkURL), hitTestResult.linkSuggestedFilename);
         return;
     }
     if (item.action() == ContextMenuItemTagDownloadMediaToDisk) {

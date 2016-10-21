@@ -1,3 +1,31 @@
+2016-10-20  Chris Dumez  <cdumez@apple.com>
+
+        "Download Linked File" context menu action should use 'download' attribute as suggested filename
+        https://bugs.webkit.org/show_bug.cgi?id=163742
+        <rdar://problem/28840734>
+
+        Reviewed by Darin Adler.
+
+        Update "Download Linked File" context menu action to use the anchor
+        element's 'download' attribute as suggested filename for the download.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::downloadRequest):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        (WebKit::WebHitTestResultData::encode):
+        (WebKit::WebHitTestResultData::decode):
+        * Shared/WebHitTestResultData.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::linkSuggestedFilename):
+
 2016-10-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [iOS] Disable variation fonts on macOS El Capitan and iOS 9
