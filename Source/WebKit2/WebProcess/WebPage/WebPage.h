@@ -971,6 +971,8 @@ public:
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
+    void updateUserActivity();
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override;
     uint64_t messageSenderDestinationID() override;
@@ -1486,6 +1488,7 @@ private:
     WebCore::ViewState::Flags m_viewState;
 
     UserActivity m_userActivity;
+    WebCore::HysteresisActivity m_userActivityHysteresis;
 
     uint64_t m_pendingNavigationID;
 

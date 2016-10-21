@@ -1,3 +1,27 @@
+2016-10-21  Gavin Barraclough  <barraclough@apple.com>
+
+        WebPage should take UserActivity directly for user input
+        https://bugs.webkit.org/show_bug.cgi?id=163813
+
+        Reviewed by Anders Carlsson.
+
+        When we receive mouse/keyboard events in a page, we want to prevent AppNap. We currently do so
+        via the PageThrottler. This patch is to just make the WebPage drive the UserActivity directly.
+
+        Two reasons to do so: (1) to cleanup & simplify for further refactoring. (2) The current code
+        isn't really achieving the desired effect. The page setting the flag in the throttler to get
+        the activity to be set is now a less effective way of achieving this goal, since the
+        PageActivityState bounces back across to the UI process & then messages back to the WebContent
+        process to take the UserActivity. These extra hops defeat the purpose of making sure the boost
+        from the initial message isn't lost.
+
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::PageThrottler):
+        (WebCore::m_userInputHysteresis): Deleted.
+        * page/PageThrottler.h:
+        (WebCore::PageThrottler::didReceiveUserInput): Deleted.
+            - removed PageActivityState::UserInputActivity, didReceiveUserInput, m_userInputHysteresis.
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents
