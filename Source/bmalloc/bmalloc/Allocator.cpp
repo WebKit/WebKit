@@ -80,8 +80,11 @@ void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure
 
     if (!m_isBmallocEnabled) {
         void* result = nullptr;
-        if (posix_memalign(&result, alignment, size))
+        if (posix_memalign(&result, alignment, size)) {
+            if (crashOnFailure)
+                BCRASH();
             return nullptr;
+        }
         return result;
     }
 
@@ -100,8 +103,12 @@ void* Allocator::allocateImpl(size_t alignment, size_t size, bool crashOnFailure
 
 void* Allocator::reallocate(void* object, size_t newSize)
 {
-    if (!m_isBmallocEnabled)
-        return realloc(object, newSize);
+    if (!m_isBmallocEnabled) {
+        void* result = realloc(object, newSize);
+        if (!result)
+            BCRASH();
+        return result;
+    }
 
     size_t oldSize = 0;
     switch (objectType(object)) {
@@ -186,8 +193,12 @@ NO_INLINE void* Allocator::allocateLogSizeClass(size_t size)
 
 void* Allocator::allocateSlowCase(size_t size)
 {
-    if (!m_isBmallocEnabled)
-        return malloc(size);
+    if (!m_isBmallocEnabled) {
+        void* result = malloc(size);
+        if (!result)
+            BCRASH();
+        return result;
+    }
 
     if (size <= maskSizeClassMax) {
         size_t sizeClass = bmalloc::maskSizeClass(size);
