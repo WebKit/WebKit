@@ -45,8 +45,8 @@ public:
     
     HeapCell() { }
     
-    void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
-    bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
+    void zap() { *reinterpret_cast_ptr<uintptr_t**>(this) = 0; }
+    bool isZapped() const { return !*reinterpret_cast_ptr<uintptr_t* const*>(this); }
     
     bool isLargeAllocation() const;
     CellContainer cellContainer() const;
