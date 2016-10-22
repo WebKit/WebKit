@@ -1161,7 +1161,7 @@ sub GenerateDictionaryImplementationContent
             } elsif (!$member->isOptional) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
-                $result .= "        throwTypeError(&state, throwScope);\n";
+                $result .= "        throwRequiredMemberTypeError(state, throwScope, \"".$member->name."\", \"$name\", \"".$idlType->name."\");\n";
                 $result .= "        return { };\n";
                 $result .= "    }\n";
             } else {

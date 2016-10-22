@@ -1,3 +1,14 @@
+2016-10-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Bindings error message for missing required dictionary member should be more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=163665
+
+        Reviewed by Darin Adler.
+
+        Update existing tests.
+
+        * fast/mediastream/MediaStreamTrackEvent-constructor-expected.txt:
+
 2016-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Upgrading custom element should enqueue attributeChanged and connected callbacks

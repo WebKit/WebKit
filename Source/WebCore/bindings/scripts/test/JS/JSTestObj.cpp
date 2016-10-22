@@ -713,7 +713,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         result.nonNullableNode = convert<IDLInterface<Node>>(state, nonNullableNodeValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwTypeError(&state, throwScope);
+        throwRequiredMemberTypeError(state, throwScope, "nonNullableNode", "TestDictionaryThatShouldNotTolerateNull", "Node");
         return { };
     }
     JSValue requiredDictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredDictionaryMember"));
@@ -721,7 +721,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         result.requiredDictionaryMember = convert<IDLDictionary<TestObj::Dictionary>>(state, requiredDictionaryMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwTypeError(&state, throwScope);
+        throwRequiredMemberTypeError(state, throwScope, "requiredDictionaryMember", "TestDictionaryThatShouldNotTolerateNull", "TestDictionary");
         return { };
     }
     JSValue requiredEnumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
@@ -729,7 +729,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         result.requiredEnumerationValue = convert<IDLEnumeration<TestObj::EnumType>>(state, requiredEnumerationValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else {
-        throwTypeError(&state, throwScope);
+        throwRequiredMemberTypeError(state, throwScope, "requiredEnumerationValue", "TestDictionaryThatShouldNotTolerateNull", "TestEnumType");
         return { };
     }
     return result;

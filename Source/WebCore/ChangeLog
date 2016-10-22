@@ -1,3 +1,23 @@
+2016-10-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Bindings error message for missing required dictionary member should be more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=163665
+
+        Reviewed by Darin Adler.
+
+        Add throwRequiredMemberTypeError function to throw a TypeError exception with an error
+        message indicating the missing required member.
+
+        No new test required, rebase existing tests.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::throwRequiredMemberTypeError):
+        * bindings/js/JSDOMBinding.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>):
+
 2016-10-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Upgrading custom element should enqueue attributeChanged and connected callbacks
