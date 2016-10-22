@@ -75,6 +75,8 @@ public:
 
     void invoke()
     {
+        if (m_element->isFailedCustomElement())
+            return;
         switch (m_type) {
         case Type::ElementUpgrade:
             m_interface->upgradeElement(m_element.get());
@@ -188,12 +190,34 @@ void CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded(Element
         queue->m_items.append({element, *elementInterface, attributeName, oldValue, newValue});
 }
 
+void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element, JSCustomElementInterface& elementInterface)
+{
+    if (!element.hasAttributes() && !element.inDocument())
+        return;
+
+    auto* queue = CustomElementReactionStack::ensureCurrentQueue();
+    if (!queue)
+        return;
+
+    if (element.hasAttributes()) {
+        for (auto& attribute : element.attributesIterator()) {
+            if (elementInterface.observesAttribute(attribute.localName()))
+                queue->m_items.append({element, elementInterface, attribute.name(), nullAtom, attribute.value()});
+        }
+    }
+
+    if (element.inDocument() && elementInterface.hasConnectedCallback())
+        queue->m_items.append({CustomElementReactionQueueItem::Type::Connected, element, elementInterface});
+}
+
 void CustomElementReactionQueue::invokeAll()
 {
-    Vector<CustomElementReactionQueueItem> items;
-    items.swap(m_items);
-    for (auto& item : items)
-        item.invoke();
+    // FIXME: This queue needs to be per element.
+    while (!m_items.isEmpty()) {
+        Vector<CustomElementReactionQueueItem> items = WTFMove(m_items);
+        for (auto& item : items)
+            item.invoke();
+    }
 }
 
 CustomElementReactionQueue* CustomElementReactionStack::ensureCurrentQueue()

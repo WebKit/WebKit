@@ -182,6 +182,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
+    CustomElementReactionQueue::enqueuePostUpgradeReactions(element, *this);
+
     m_constructionStack.append(&element);
 
     MarkedArgumentBuffer args;

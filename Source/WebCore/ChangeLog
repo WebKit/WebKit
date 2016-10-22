@@ -1,3 +1,26 @@
+2016-10-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Upgrading custom element should enqueue attributeChanged and connected callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=163840
+
+        Reviewed by Darin Adler.
+
+        When upgrading a custom element, enqueue attributeChanged and connectedCallbacks as needed as specified
+        in step 3 and 4 of: https://html.spec.whatwg.org/multipage/scripting.html#concept-upgrade-an-element
+
+        Test: fast/custom-elements/upgrading-enqueue-reactions.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement): Enqueue 
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueueItem::invoke): Don't invoke callbacks when the custom element had
+        failed to upgrade.
+        (WebCore::CustomElementReactionQueue::enqueuePostUpgradeReactions): Added.
+        (WebCore::CustomElementReactionQueue::invokeAll): Upgrading a custom element may enqueue more reactions.
+        Keep invoking reactions until the queue becomes empty.
+        * dom/CustomElementReactionQueue.h:
+        * dom/Range.idl: Added a forgotten CEReactions here.
+
 2016-10-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 163762: IntSize::area() should used checked arithmetic

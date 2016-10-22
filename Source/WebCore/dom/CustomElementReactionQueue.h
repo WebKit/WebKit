@@ -51,6 +51,7 @@ public:
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);
     static void enqueueAttributeChangedCallbackIfNeeded(Element&, const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    static void enqueuePostUpgradeReactions(Element&, JSCustomElementInterface&);
 
     void invokeAll();
 

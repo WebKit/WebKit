@@ -67,7 +67,7 @@
     ClientRectList getClientRects();
     ClientRect getBoundingClientRect();
 
-    [MayThrowLegacyException, NewObject] DocumentFragment createContextualFragment(DOMString html);
+    [CEReactions, MayThrowLegacyException, NewObject] DocumentFragment createContextualFragment(DOMString html);
 
     [MayThrowLegacyException] short compareNode(Node refNode);
 
