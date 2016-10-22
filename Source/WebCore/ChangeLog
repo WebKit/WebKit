@@ -1,3 +1,18 @@
+2016-10-22  Chris Dumez  <cdumez@apple.com>
+
+        WebGLRenderingContextBase.texImage2D() should use a union instead of overloading
+        https://bugs.webkit.org/show_bug.cgi?id=163856
+
+        Reviewed by Darin Adler.
+
+        WebGLRenderingContextBase.texImage2D() should use a union instead of overloading:
+        - https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImage2D):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+
 2016-10-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r207669): Dromaeo/jslib-style-jquery.html regressed >20%

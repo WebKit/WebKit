@@ -39,6 +39,9 @@ typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
 
+// FIXME: Should allow ImageBitmap too.
+typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
+
 [
     Conditional=WEBGL,
     CustomIsReachable,
@@ -612,18 +615,8 @@ typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
     void texParameteri(GLenum target, GLenum pname, GLint param);
 
     // Supported forms:
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height,
-  GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
-  GLenum format, GLenum type, ImageData? pixels);
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
-  GLenum format, GLenum type, HTMLImageElement? image);
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
-  GLenum format, GLenum type, HTMLCanvasElement? canvas);
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat,
-  GLenum format, GLenum type, HTMLVideoElement? video);
-#endif
+    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
+    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource? source);
 
     [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
  GLsizei width, GLsizei height,

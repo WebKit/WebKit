@@ -3108,29 +3108,108 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                                       GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode& ec)
+void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource> source, ExceptionCode& ec)
 {
-    ec = 0;
-    if (isContextLostOrPending() || !pixels || !validateTexFunc("texImage2D", TexImage, SourceImageData, target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, 0, 0))
+    if (!source) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "source is null");
         return;
-    Vector<uint8_t> data;
-    bool needConversion = true;
-    // The data from ImageData is always of format RGBA8.
-    // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
-    if (!m_unpackFlipY && !m_unpackPremultiplyAlpha && format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE)
-        needConversion = false;
-    else {
-        if (!m_context->extractImageData(pixels, format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
-            return;
-        }
     }
-    if (m_unpackAlignment != 1)
-        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
-    texImage2DBase(target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, needConversion ? data.data() : pixels->data()->data(), ec);
-    if (m_unpackAlignment != 1)
-        m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+
+    auto visitor = WTF::makeVisitor([&](const RefPtr<ImageData>& pixels) {
+        ec = 0;
+        if (isContextLostOrPending() || !validateTexFunc("texImage2D", TexImage, SourceImageData, target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, 0, 0))
+            return;
+        Vector<uint8_t> data;
+        bool needConversion = true;
+        // The data from ImageData is always of format RGBA8.
+        // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
+        if (!m_unpackFlipY && !m_unpackPremultiplyAlpha && format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE)
+            needConversion = false;
+        else {
+            if (!m_context->extractImageData(pixels.get(), format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
+                synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
+                return;
+            }
+        }
+        if (m_unpackAlignment != 1)
+            m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+        texImage2DBase(target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, needConversion ? data.data() : pixels->data()->data(), ec);
+        if (m_unpackAlignment != 1)
+            m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+    }, [&](const RefPtr<HTMLImageElement>& image) {
+        ec = 0;
+        if (isContextLostOrPending() || !validateHTMLImageElement("texImage2D", image.get(), ec))
+            return;
+
+        RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+        if (!imageForRender)
+            return;
+
+        if (imageForRender->isSVGImage())
+            imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
+
+        if (!imageForRender || !validateTexFunc("texImage2D", TexImage, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
+            return;
+
+        texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+
+    }, [&](const RefPtr<HTMLCanvasElement>& canvas) {
+        ec = 0;
+        if (isContextLostOrPending() || !validateHTMLCanvasElement("texImage2D", canvas.get(), ec) || !validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
+            return;
+
+        WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
+        // If possible, copy from the canvas element directly to the texture
+        // via the GPU, without a read-back to system memory.
+        //
+        // FIXME: restriction of (RGB || RGBA)/UNSIGNED_BYTE should be lifted when
+        // ImageBuffer::copyToPlatformTexture implementations are fully functional.
+        if (texture
+            && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
+            && type == GraphicsContext3D::UNSIGNED_BYTE
+            && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))) {
+            ImageBuffer* buffer = canvas->buffer();
+            if (buffer && buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+                texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
+                return;
+            }
+        }
+
+        RefPtr<ImageData> imageData = canvas->getImageData();
+        if (imageData)
+            texImage2D(target, level, internalformat, format, type, TexImageSource(imageData.get()), ec);
+        else
+            texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    }, [&](const RefPtr<HTMLVideoElement>& video) {
+        ec = 0;
+        if (isContextLostOrPending() || !validateHTMLVideoElement("texImage2D", video.get(), ec)
+            || !validateTexFunc("texImage2D", TexImage, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
+            return;
+
+        // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
+        // Otherwise, it will fall back to the normal SW path.
+        // FIXME: The current restrictions require that format shoud be RGB or RGBA,
+        // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
+        WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
+        if (GraphicsContext3D::TEXTURE_2D == target && texture
+            && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
+            && type == GraphicsContext3D::UNSIGNED_BYTE
+            && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))
+            && !level) {
+            if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+                texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
+                return;
+            }
+        }
+
+        // Normal pure SW path.
+        RefPtr<Image> image = videoFrameToImage(video.get(), ImageBuffer::fastCopyImageMode());
+        if (!image)
+            return;
+        texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    });
+
+    WTF::visit(visitor, source.value());
 }
 
 RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor)
@@ -3149,58 +3228,8 @@ RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int w
     return buf->copyImage(ImageBuffer::fastCopyImageMode());
 }
 
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                                       GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
-{
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLImageElement("texImage2D", image, ec))
-        return;
-
-    RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
-    if (!imageForRender)
-        return;
-
-    if (imageForRender->isSVGImage())
-        imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
-
-    if (!imageForRender || !validateTexFunc("texImage2D", TexImage, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
-        return;
-
-    texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
-}
-
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                                       GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode& ec)
-{
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLCanvasElement("texImage2D", canvas, ec) || !validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
-        return;
-
-    WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
-    // If possible, copy from the canvas element directly to the texture
-    // via the GPU, without a read-back to system memory.
-    //
-    // FIXME: restriction of (RGB || RGBA)/UNSIGNED_BYTE should be lifted when
-    // ImageBuffer::copyToPlatformTexture implementations are fully functional.
-    if (texture
-        && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
-        && type == GraphicsContext3D::UNSIGNED_BYTE
-        && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))) {
-        ImageBuffer* buffer = canvas->buffer();
-        if (buffer && buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
-            texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
-            return;
-        }
-    }
-
-    RefPtr<ImageData> imageData = canvas->getImageData();
-    if (imageData)
-        texImage2D(target, level, internalformat, format, type, imageData.get(), ec);
-    else
-        texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
-}
-
 #if ENABLE(VIDEO)
+
 RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* video, BackingStoreCopy backingStoreCopy)
 {
     IntSize size(video->videoWidth(), video->videoHeight());
@@ -3215,36 +3244,6 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement* vid
     return buf->copyImage(backingStoreCopy);
 }
 
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                                       GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode& ec)
-{
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLVideoElement("texImage2D", video, ec)
-        || !validateTexFunc("texImage2D", TexImage, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
-        return;
-
-    // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
-    // Otherwise, it will fall back to the normal SW path.
-    // FIXME: The current restrictions require that format shoud be RGB or RGBA,
-    // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
-    WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
-    if (GraphicsContext3D::TEXTURE_2D == target && texture
-        && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA)
-        && type == GraphicsContext3D::UNSIGNED_BYTE
-        && (texture->getType(target, level) == GraphicsContext3D::UNSIGNED_BYTE || !texture->isValid(target, level))
-        && !level) {
-        if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
-            texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
-            return;
-        }
-    }
-
-    // Normal pure SW path.
-    RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode());
-    if (!image)
-        return;
-    texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
-}
 #endif
 
 void WebGLRenderingContextBase::texParameter(GC3Denum target, GC3Denum pname, GC3Dfloat paramf, GC3Dint parami, bool isFloat)

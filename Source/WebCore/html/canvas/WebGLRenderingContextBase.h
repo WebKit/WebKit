@@ -243,19 +243,10 @@ public:
     void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
     void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
 
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                    GC3Dsizei width, GC3Dsizei height, GC3Dint border,
-                    GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&);
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                    GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&);
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                    GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&);
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                    GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&);
-#if ENABLE(VIDEO)
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                    GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&);
-#endif
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&);
+
+    using TexImageSource = WTF::Variant<RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource>, ExceptionCode&);
 
     void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
     void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
