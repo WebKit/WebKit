@@ -51,10 +51,14 @@ public:
 
     bool setSize(const IntSize& size)
     {
-        if (size.isEmpty() || !m_pixels.tryReserveCapacity(size.area()))
+        if (size.isEmpty())
             return false;
 
-        m_pixels.resize(size.area());
+        unsigned area = size.area().unsafeGet();
+        if (!m_pixels.tryReserveCapacity(area))
+            return false;
+
+        m_pixels.resize(area);
         m_pixelsPtr = m_pixels.data();
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
@@ -74,7 +78,7 @@ public:
 
     void clear()
     {
-        memset(m_pixelsPtr, 0, m_size.area() * sizeof(RGBA32));
+        memset(m_pixelsPtr, 0, (m_size.area() * sizeof(RGBA32)).unsafeGet());
     }
 
     void clearRect(const IntRect& rect)

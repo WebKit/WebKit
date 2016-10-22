@@ -539,7 +539,7 @@ void FEGaussianBlur::platformApplySoftware()
 
     IntSize paintSize = absolutePaintRect().size();
     paintSize.scale(filter().filterScale());
-    RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized(paintSize.width() * paintSize.height() * 4);
+    RefPtr<Uint8ClampedArray> tmpImageData = Uint8ClampedArray::createUninitialized((paintSize.area() * 4).unsafeGet());
     if (!tmpImageData) {
         WTFLogAlways("FEGaussianBlur::platformApplySoftware Unable to create buffer. Requested size was %d x %d\n", paintSize.width(), paintSize.height());
         return;

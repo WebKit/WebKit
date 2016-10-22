@@ -675,10 +675,10 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
 
     IntRect mainFrameRectAdjustedForScrollPosition = IntRect(-mainFrameView->documentScrollPositionRelativeToViewOrigin(), mainFrameView->contentsSize());
     IntRect elementRectInMainFrame = element.clientRect();
-    unsigned int totalElementArea = elementRectInMainFrame.area();
+    unsigned totalElementArea = elementRectInMainFrame.area().unsafeGet();
     elementRectInMainFrame.intersect(mainFrameRectAdjustedForScrollPosition);
 
-    return elementRectInMainFrame.area() > totalElementArea / 2;
+    return elementRectInMainFrame.area().unsafeGet() > totalElementArea / 2;
 }
 
 static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)

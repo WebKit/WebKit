@@ -45,11 +45,11 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
 {
     auto platformContext = context->platformContext();
 
-    Checked<unsigned, RecordOverflow> area = 4 * rect.area();
-    if (area.hasOverflowed())
+    auto numBytes = rect.area<RecordOverflow>() * 4;
+    if (numBytes.hasOverflowed())
         return nullptr;
 
-    auto result = Uint8ClampedArray::createUninitialized(area.unsafeGet());
+    auto result = Uint8ClampedArray::createUninitialized(numBytes.unsafeGet());
     unsigned char* resultData = result ? result->data() : nullptr;
     if (!resultData)
         return nullptr;
@@ -84,7 +84,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     if (!ok)
         return nullptr;
 
-    memcpy(result->data(), pixels, 4 * rect.area());
+    memcpy(result->data(), pixels, numBytes.unsafeGet());
 
     return result;
 }

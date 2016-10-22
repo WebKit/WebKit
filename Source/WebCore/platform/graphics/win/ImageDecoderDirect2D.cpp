@@ -172,7 +172,7 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
         return 0;
 
     auto frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return frameSize.area() * 4;
+    return (frameSize.area() * 4).unsafeGet();
 }
 
 void ImageDecoder::setTargetContext(ID2D1RenderTarget* renderTarget)

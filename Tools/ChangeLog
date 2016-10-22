@@ -1,3 +1,15 @@
+2016-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 163762: IntSize::area() should used checked arithmetic
+        <https://webkit.org/b/163762>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/IntRect.cpp:
+        (TestWebKitAPI::TEST): Call unsafeGet().
+        * TestWebKitAPI/Tests/WebCore/IntSize.cpp:
+        (TestWebKitAPI::TEST): Ditto.
+
 2016-10-21  James Craig  <jcraig@apple.com>
 
         Unreviewed: Added Aaron Chu <aaron_chu@apple.com> to contributors list.

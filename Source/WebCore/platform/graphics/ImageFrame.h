@@ -109,7 +109,7 @@ public:
 
     IntSize size() const;
     IntSize sizeRespectingOrientation() const { return !m_orientation.usesWidthAsHeight() ? size() : size().transposedSize(); }
-    unsigned frameBytes() const { return hasNativeImage() ? size().area() * sizeof(RGBA32) : 0; }
+    unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(RGBA32)).unsafeGet() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
 #if !USE(CG)

@@ -336,7 +336,7 @@ bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
 unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
     IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return frameSize.area() * 4;
+    return (frameSize.area() * 4).unsafeGet();
 }
 
 NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, DecodingMode decodingMode) const

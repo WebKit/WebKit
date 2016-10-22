@@ -1,3 +1,69 @@
+2016-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 163762: IntSize::area() should used checked arithmetic
+        <https://webkit.org/b/163762>
+
+        Reviewed by Darin Adler.
+
+        No new tests since no change in nominal behavior.
+
+        * platform/graphics/IntSize.h:
+        (WebCore::IntSize::area): Change to return a
+        Checked<unsigned, T> value. Use WTF:: namespace to avoid
+        including another header.
+
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::area): Ditto.
+
+        The remaining changes are to use the Checked<unsigned> return
+        value of IntSize::area() and IntRect::area() correctly in
+        context, in addition to items noted below.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::isTopLevelFullPagePlugin):
+        Declare contentWidth and contentHeight as float values to
+        prevent overflow when computing the area, and to make the
+        inequality comparison in the return statement uses the same type
+        for both sides.
+        * html/ImageData.cpp:
+        (WebCore::ImageData::ImageData):
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementRectMostlyInMainFrame):
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::setSize): Restructure logic to
+        compute area only once.
+        (WebCore::ImageBackingStore::clear):
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::frameBytes):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::maximumSubsamplingLevel):
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::backingStoreBytesForSize):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        (WebCore::FilterEffect::copyUnmultipliedImage):
+        (WebCore::FilterEffect::copyPremultipliedImage):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        * platform/graphics/win/ImageBufferDataDirect2D.cpp:
+        (WebCore::ImageBufferData::getData): Update overflow check,
+        rename local variable to numBytes, and compute numBytes once.
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameBytesAtIndex):
+        * platform/ios/LegacyTileLayerPool.mm:
+        (WebCore::LegacyTileLayerPool::bytesBackingLayerWithPixelSize):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+
 2016-10-21  Gavin Barraclough  <barraclough@apple.com>
 
         WebPageProxy should not need PageActivityState

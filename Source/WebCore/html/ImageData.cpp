@@ -113,7 +113,7 @@ RefPtr<ImageData> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned
 
 ImageData::ImageData(const IntSize& size)
     : m_size(size)
-    , m_data(Uint8ClampedArray::createUninitialized(size.area() * 4))
+    , m_data(Uint8ClampedArray::createUninitialized((size.area() * 4).unsafeGet()))
 {
     ASSERT(m_data);
 }
@@ -123,7 +123,7 @@ ImageData::ImageData(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray)
     , m_data(WTFMove(byteArray))
 {
     ASSERT(m_data);
-    ASSERT_WITH_SECURITY_IMPLICATION(!m_data || (size.area() * 4) <= m_data->length());
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_data || (size.area() * 4).unsafeGet() <= m_data->length());
 }
 
 }
