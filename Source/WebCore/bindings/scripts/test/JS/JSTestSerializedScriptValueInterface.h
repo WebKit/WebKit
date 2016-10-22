@@ -90,6 +90,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestSerializedScriptValueInterface> {
     using WrapperClass = JSTestSerializedScriptValueInterface;
+    using ToWrappedReturnType = TestSerializedScriptValueInterface*;
 };
 
 } // namespace WebCore

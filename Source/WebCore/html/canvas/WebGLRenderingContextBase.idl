@@ -37,6 +37,7 @@ typedef unsigned short GLushort;
 typedef unsigned long  GLuint;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
+typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
 
 [
     Conditional=WEBGL,
@@ -484,11 +485,9 @@ typedef unrestricted float GLclampf;
     void blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha);
     void blendFunc(GLenum sfactor, GLenum dfactor);
     void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
-    void bufferData(GLenum target, ArrayBuffer? data, GLenum usage);
-    void bufferData(GLenum target, ArrayBufferView? data, GLenum usage);
+    void bufferData(GLenum target, BufferDataSource? data, GLenum usage);
     void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    void bufferSubData(GLenum target, GLintptr offset, ArrayBuffer? data);
-    void bufferSubData(GLenum target, GLintptr offset, ArrayBufferView? data);
+    void bufferSubData(GLenum target, GLintptr offset, BufferDataSource? data);
 
     GLenum checkFramebufferStatus(GLenum target);
     void clear(GLbitfield mask);

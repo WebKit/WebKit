@@ -62,6 +62,8 @@ public:
         return m_baseAddress;
     }
 
+    void* data() const { return baseAddress(); }
+
     unsigned byteOffset() const
     {
         if (isNeutered())

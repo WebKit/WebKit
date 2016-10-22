@@ -104,6 +104,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestObj> {
     using WrapperClass = JSTestObj;
+    using ToWrappedReturnType = TestObj*;
 };
 JSC::JSString* jsStringWithCache(JSC::ExecState*, TestObj::EnumType);
 

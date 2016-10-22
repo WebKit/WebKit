@@ -1,3 +1,27 @@
+2016-10-22  Chris Dumez  <cdumez@apple.com>
+
+        WebGLRenderingContextBase.bufferData() should use a union instead of overloading
+        https://bugs.webkit.org/show_bug.cgi?id=163795
+
+        Reviewed by Darin Adler.
+
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::data):
+        Add a data() method which aliases baseAddress() to align the API with
+        ArrayBuffer and reduce special handling at call sites.
+
+        * runtime/JSArrayBuffer.h:
+        (JSC::toArrayBuffer):
+        (JSC::JSArrayBuffer::toWrapped):
+        Add toWrapped() method similarly with WebCore wrapper types to
+        reduce special handling of JSArrayBuffer type.
+
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::toWrapped):
+        * runtime/JSArrayBufferView.h:
+        Add toWrapped() method similarly with WebCore wrapper types to
+        reduce special handling of JSArrayBufferView type.
+
 2016-10-21  Filip Pizlo  <fpizlo@apple.com>
 
         Slow and big Heap methods should not be inline

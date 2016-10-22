@@ -84,6 +84,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestCEReactionsStringifier> {
     using WrapperClass = JSTestCEReactionsStringifier;
+    using ToWrappedReturnType = TestCEReactionsStringifier*;
 };
 
 } // namespace WebCore

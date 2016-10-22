@@ -174,6 +174,8 @@ public:
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
 
+    JS_EXPORT_PRIVATE static RefPtr<ArrayBufferView> toWrapped(JSValue);
+
 private:
     static void finalize(JSCell*);
 

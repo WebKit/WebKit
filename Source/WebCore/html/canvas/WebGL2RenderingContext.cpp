@@ -99,7 +99,7 @@ void WebGL2RenderingContext::bufferData(GC3Denum target, ArrayBufferView& data, 
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
         return;
     }
-    WebGLRenderingContextBase::bufferData(target, slice.get(), usage);
+    WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.get()), usage);
 }
 
 void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, ArrayBufferView& data, GC3Duint srcOffset, GC3Duint length)
@@ -113,7 +113,7 @@ void WebGL2RenderingContext::bufferSubData(GC3Denum target, long long offset, Ar
         synthesizeGLError(GraphicsContext3D::OUT_OF_MEMORY, "bufferData", "Could not create intermediate ArrayBufferView");
         return;
     }
-    WebGLRenderingContextBase::bufferSubData(target, offset, slice);
+    WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.get()));
 }
 
 void WebGL2RenderingContext::copyBufferSubData(GC3Denum, GC3Denum, GC3Dint64, GC3Dint64, GC3Dint64)

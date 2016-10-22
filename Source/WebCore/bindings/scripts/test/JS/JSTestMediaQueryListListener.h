@@ -84,6 +84,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestMediaQueryListListener> {
     using WrapperClass = JSTestMediaQueryListListener;
+    using ToWrappedReturnType = TestMediaQueryListListener*;
 };
 
 } // namespace WebCore

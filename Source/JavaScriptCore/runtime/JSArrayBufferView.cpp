@@ -186,6 +186,14 @@ void JSArrayBufferView::finalize(JSCell* cell)
         fastFree(thisObject->m_vector.get());
 }
 
+RefPtr<ArrayBufferView> JSArrayBufferView::toWrapped(JSValue value)
+{
+    auto* wrapper = jsDynamicCast<JSArrayBufferView*>(value);
+    if (!wrapper)
+        return nullptr;
+    return wrapper->impl();
+}
+
 } // namespace JSC
 
 namespace WTF {

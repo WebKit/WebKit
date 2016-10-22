@@ -87,6 +87,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<InterfaceName> {
     using WrapperClass = JSInterfaceName;
+    using ToWrappedReturnType = InterfaceName*;
 };
 
 } // namespace WebCore

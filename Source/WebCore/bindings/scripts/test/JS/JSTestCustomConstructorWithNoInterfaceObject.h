@@ -86,6 +86,7 @@ JSC::EncodedJSValue JSC_HOST_CALL constructJSTestCustomConstructorWithNoInterfac
 
 template<> struct JSDOMWrapperConverterTraits<TestCustomConstructorWithNoInterfaceObject> {
     using WrapperClass = JSTestCustomConstructorWithNoInterfaceObject;
+    using ToWrappedReturnType = TestCustomConstructorWithNoInterfaceObject*;
 };
 
 } // namespace WebCore

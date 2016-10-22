@@ -1075,7 +1075,7 @@ void WebGLRenderingContextBase::bufferData(GC3Denum target, long long size, GC3D
     }
 }
 
-void WebGLRenderingContextBase::bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage)
+void WebGLRenderingContextBase::bufferData(GC3Denum target, Optional<BufferDataSource>&& data, GC3Denum usage)
 {
     if (isContextLostOrPending())
         return;
@@ -1086,48 +1086,25 @@ void WebGLRenderingContextBase::bufferData(GC3Denum target, ArrayBuffer* data, G
     WebGLBuffer* buffer = validateBufferDataParameters("bufferData", target, usage);
     if (!buffer)
         return;
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferData(data)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
-            return;
-        }
-    }
 
-    m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferData(target, data->byteLength(), data->data(), usage);
-    if (m_context->moveErrorsToSyntheticErrorList()) {
-        // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
-        buffer->disassociateBufferData();
-    }
+    WTF::visit([&](auto& data) {
+        if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
+            if (!buffer->associateBufferData(data.get())) {
+                this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
+                return;
+            }
+        }
+
+        m_context->moveErrorsToSyntheticErrorList();
+        m_context->bufferData(target, data->byteLength(), data->data(), usage);
+        if (m_context->moveErrorsToSyntheticErrorList()) {
+            // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
+            buffer->disassociateBufferData();
+        }
+    }, data.value());
 }
 
-void WebGLRenderingContextBase::bufferData(GC3Denum target, RefPtr<ArrayBufferView>&& data, GC3Denum usage)
-{
-    if (isContextLostOrPending())
-        return;
-    if (!data) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "null data");
-        return;
-    }
-    WebGLBuffer* buffer = validateBufferDataParameters("bufferData", target, usage);
-    if (!buffer)
-        return;
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferData(data.get())) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
-            return;
-        }
-    }
-
-    m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferData(target, data->byteLength(), data->baseAddress(), usage);
-    if (m_context->moveErrorsToSyntheticErrorList()) {
-        // The bufferData function failed. Tell the buffer it doesn't have the data it thinks it does.
-        buffer->disassociateBufferData();
-    }
-}
-
-void WebGLRenderingContextBase::bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data)
+void WebGLRenderingContextBase::bufferSubData(GC3Denum target, long long offset, Optional<BufferDataSource>&& data)
 {
     if (isContextLostOrPending())
         return;
@@ -1140,47 +1117,22 @@ void WebGLRenderingContextBase::bufferSubData(GC3Denum target, long long offset,
     }
     if (!data)
         return;
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferSubData(static_cast<GC3Dintptr>(offset), data)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset out of range");
-            return;
+
+    WTF::visit([&](auto& data) {
+        if (!this->isErrorGeneratedOnOutOfBoundsAccesses()) {
+            if (!buffer->associateBufferSubData(static_cast<GC3Dintptr>(offset), data.get())) {
+                this->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset out of range");
+                return;
+            }
         }
-    }
 
-    m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferSubData(target, static_cast<GC3Dintptr>(offset), data->byteLength(), data->data());
-    if (m_context->moveErrorsToSyntheticErrorList()) {
-        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
-        buffer->disassociateBufferData();
-    }
-}
-
-void WebGLRenderingContextBase::bufferSubData(GC3Denum target, long long offset, RefPtr<ArrayBufferView>&& data)
-{
-    if (isContextLostOrPending())
-        return;
-    WebGLBuffer* buffer = validateBufferDataParameters("bufferSubData", target, GraphicsContext3D::STATIC_DRAW);
-    if (!buffer)
-        return;
-    if (offset < 0) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset < 0");
-        return;
-    }
-    if (!data)
-        return;
-    if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
-        if (!buffer->associateBufferSubData(static_cast<GC3Dintptr>(offset), data.get())) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferSubData", "offset out of range");
-            return;
+        m_context->moveErrorsToSyntheticErrorList();
+        m_context->bufferSubData(target, static_cast<GC3Dintptr>(offset), data->byteLength(), data->data());
+        if (m_context->moveErrorsToSyntheticErrorList()) {
+            // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
+            buffer->disassociateBufferData();
         }
-    }
-
-    m_context->moveErrorsToSyntheticErrorList();
-    m_context->bufferSubData(target, static_cast<GC3Dintptr>(offset), data->byteLength(), data->baseAddress());
-    if (m_context->moveErrorsToSyntheticErrorList()) {
-        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
-        buffer->disassociateBufferData();
-    }
+    }, data.value());
 }
 
 GC3Denum WebGLRenderingContextBase::checkFramebufferStatus(GC3Denum target)

@@ -114,6 +114,7 @@ public:
 
 template<> struct JSDOMWrapperConverterTraits<TestGlobalObject> {
     using WrapperClass = JSTestGlobalObject;
+    using ToWrappedReturnType = TestGlobalObject*;
 };
 
 } // namespace WebCore

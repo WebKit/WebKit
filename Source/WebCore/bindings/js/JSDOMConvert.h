@@ -104,24 +104,35 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
     }
 };
 
+// ArrayBuffer support.
+template<> struct JSDOMWrapperConverterTraits<JSC::ArrayBuffer> {
+    using WrapperClass = JSC::JSArrayBuffer;
+    using ToWrappedReturnType = JSC::ArrayBuffer*;
+};
+
+// ArrayBufferView support.
+template<> struct JSDOMWrapperConverterTraits<JSC::ArrayBufferView> {
+    using WrapperClass = JSC::JSArrayBufferView;
+    using ToWrappedReturnType = RefPtr<ArrayBufferView>;
+};
+
 // MARK: -
 // MARK: Interface type
 
 template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInterface<T>> {
-    using ReturnType = T*;
+    using ReturnType = typename JSDOMWrapperConverterTraits<T>::ToWrappedReturnType;
     using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
 
-    static T* convert(JSC::ExecState& state, JSC::JSValue value)
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
     {
         JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        T* object = WrapperType::toWrapped(value);
+        ReturnType object = WrapperType::toWrapped(value);
         if (!object)
             throwTypeError(&state, scope);
         return object;
     }
 };
-
 
 // Typed arrays support.
 
@@ -540,7 +551,7 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
                 using ImplementationType = typename WTF::RemoveCVAndReference<decltype(type)>::type::type::RawType;
                 using WrapperType = typename JSDOMWrapperConverterTraits<ImplementationType>::WrapperClass;
 
-                auto* castedValue = WrapperType::toWrapped(value);
+                auto castedValue = WrapperType::toWrapped(value);
                 if (!castedValue)
                     return;
                 

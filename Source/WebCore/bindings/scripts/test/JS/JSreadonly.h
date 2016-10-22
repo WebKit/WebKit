@@ -84,6 +84,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<readonly> {
     using WrapperClass = JSreadonly;
+    using ToWrappedReturnType = readonly*;
 };
 
 } // namespace WebCore

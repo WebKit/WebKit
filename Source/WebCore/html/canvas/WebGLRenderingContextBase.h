@@ -37,6 +37,7 @@
 #include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
+#include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -138,11 +139,10 @@ public:
     void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
     void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
+    using BufferDataSource = WTF::Variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
     void bufferData(GC3Denum target, long long size, GC3Denum usage);
-    void bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage);
-    void bufferData(GC3Denum target, RefPtr<ArrayBufferView>&& data, GC3Denum usage);
-    void bufferSubData(GC3Denum target, long long offset, ArrayBuffer* data);
-    void bufferSubData(GC3Denum target, long long offset, RefPtr<ArrayBufferView>&& data);
+    void bufferData(GC3Denum target, Optional<BufferDataSource>&&, GC3Denum usage);
+    void bufferSubData(GC3Denum target, long long offset, Optional<BufferDataSource>&&);
 
     GC3Denum checkFramebufferStatus(GC3Denum target);
     virtual void clear(GC3Dbitfield mask) = 0;

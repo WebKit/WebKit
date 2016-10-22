@@ -85,6 +85,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestNamedConstructor> {
     using WrapperClass = JSTestNamedConstructor;
+    using ToWrappedReturnType = TestNamedConstructor*;
 };
 
 } // namespace WebCore

@@ -80,6 +80,7 @@ inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* g
 
 template<> struct JSDOMWrapperConverterTraits<TestEventTarget> {
     using WrapperClass = JSTestEventTarget;
+    using ToWrappedReturnType = TestEventTarget*;
 };
 
 } // namespace WebCore
