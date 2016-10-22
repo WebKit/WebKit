@@ -229,7 +229,6 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         if (auto gestureController = gestureControllerForPage(pageID))
             gestureController->endSwipeGesture(targetItem.get(), context, !didComplete);
     }];
-    [m_swipeTransitionContext _setInteractiveUpdateHandler:^(BOOL, CGFloat, BOOL, _UIViewControllerTransitionContext *) { }];
 
     [transition setAnimationController:animationController.get()];
     [transition startInteractiveTransition:m_swipeTransitionContext.get()];
