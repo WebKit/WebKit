@@ -1,3 +1,24 @@
+2016-10-22  Dan Bernstein  <mitz@apple.com>
+
+        Improve MiniBrowser window titles for URLs without paths and with no title
+        <https://webkit.org/b/163843>
+
+        Reviewed by Darin Adler.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController fetch:]): While we’re here, deploy
+          +[NSURL _webkit_URLWithUserTypedString:] here to match the WK2BrowserWindowController
+          version of this method.
+        (-[WK1BrowserWindowController updateTitle:]): If the URL doesn’t have a lastPathComponent,
+          use the entire URL.
+        (-[WK1BrowserWindowController webView:didCommitLoadForFrame:]): Also while we’re here,
+          deploy +[NSURL _web_userVisibleString] here to match the WK2BrowserWindowController
+          behavior.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController updateTitle:]): If the URL doesn’t have a lastPathComponent,
+          use the entire URL.
+
 2016-10-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 163762: IntSize::area() should used checked arithmetic

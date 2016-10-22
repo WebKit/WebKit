@@ -28,6 +28,7 @@
 #import "AppDelegate.h"
 #import "SettingsController.h"
 #import <WebKit/WebKit.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPreferenceKeysPrivate.h>
@@ -81,7 +82,7 @@
 - (IBAction)fetch:(id)sender
 {
     [urlText setStringValue:[self addProtocolIfNecessary:[urlText stringValue]]];
-    NSURL *url = [NSURL URLWithString:[urlText stringValue]];
+    NSURL *url = [NSURL _webkit_URLWithUserTypedString:urlText.stringValue];
     [[_webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
@@ -335,7 +336,7 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     if (!title) {
         NSURL *url = _webView.mainFrame.dataSource.request.URL;
-        title = url.lastPathComponent;
+        title = url.lastPathComponent ?: url._web_userVisibleString;
     }
     
     [self.window setTitle:[title stringByAppendingString:@" [WK1]"]];
@@ -355,7 +356,7 @@ static BOOL areEssentiallyEqual(double a, double b)
         return;
 
     NSURL *committedURL = [[[frame dataSource] request] URL];
-    [urlText setStringValue:[committedURL absoluteString]];
+    urlText.stringValue = committedURL._web_userVisibleString;
 
     [self updateTitle:nil];
 }

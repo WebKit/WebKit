@@ -403,9 +403,11 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)updateTitle:(NSString *)title
 {
-    if (!title)
-        title = _webView.URL.lastPathComponent;
-    
+    if (!title) {
+        NSURL *url = _webView.URL;
+        title = url.lastPathComponent ?: url._web_userVisibleString;
+    }
+
     self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier];
 }
 
