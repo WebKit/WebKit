@@ -1068,11 +1068,6 @@ void WebChromeClient::focusedContentMediaElementDidChange(uint64_t elementID)
 }
 #endif
 
-void WebChromeClient::setPageActivityState(PageActivityState::Flags activityState)
-{
-    m_page->setPageActivityState(activityState);
-}
-
 #if ENABLE(SUBTLE_CRYPTO)
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {

@@ -79,7 +79,7 @@ void PageThrottler::setActivityFlag(PageActivityState::Flags flag, bool value)
         return;
     m_activityState = activityState;
 
-    m_page.setPageActivityState(m_activityState);
+    m_page.pageActivityStateChanged();
 }
 
 }

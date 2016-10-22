@@ -1138,6 +1138,8 @@ public:
         
     WeakPtr<WebPageProxy> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
 
+    void isLoadingChanged() { updateThrottleState(); }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1530,7 +1532,6 @@ private:
     void dispatchViewStateChange();
     void viewDidLeaveWindow();
     void viewDidEnterWindow();
-    void setPageActivityState(WebCore::PageActivityState::Flags);
 
 #if PLATFORM(MAC)
     void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, const UserData&);
@@ -1724,7 +1725,6 @@ private:
     WebCore::PolicyAction m_syncNavigationActionPolicyAction;
     DownloadID m_syncNavigationActionPolicyDownloadID;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
-    WebCore::PageActivityState::Flags m_activityState { WebCore::PageActivityState::NoFlags };
     bool m_pageSuppressed { false };
 
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;

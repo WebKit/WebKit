@@ -924,7 +924,6 @@ public:
     void setMainFrameProgressCompleted(bool completed) { m_mainFrameProgressCompleted = completed; }
     bool shouldDispatchFakeMouseMoveEvents() const { return m_shouldDispatchFakeMouseMoveEvents; }
 
-    void setPageActivityState(WebCore::PageActivityState::Flags);
     void setPageSuppressed(bool);
 
     void postMessage(const String& messageName, API::Object* messageBody);

@@ -1474,12 +1474,6 @@ bool Page::isVisibleAndActive() const
     return (m_viewState & ViewState::IsVisible) && (m_viewState & ViewState::WindowIsActive);
 }
 
-void Page::setPageActivityState(PageActivityState::Flags activityState)
-{
-    chrome().client().setPageActivityState(activityState);
-    updateTimerThrottlingState();
-}
-
 void Page::setIsVisible(bool isVisible)
 {
     if (isVisible)

@@ -581,11 +581,6 @@ void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
         setLayerHostingMode(parameters.layerHostingMode);
 }
 
-void WebPage::setPageActivityState(PageActivityState::Flags activityState)
-{
-    send(Messages::WebPageProxy::SetPageActivityState(activityState));
-}
-
 void WebPage::setPageSuppressed(bool pageSuppressed)
 {
     // The UserActivity keeps the processes runnable. So if the page should be suppressed, stop the activity.

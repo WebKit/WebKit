@@ -1571,12 +1571,6 @@ void WebPageProxy::dispatchViewStateChange()
     m_viewWasEverInWindow |= isNowInWindow;
 }
 
-void WebPageProxy::setPageActivityState(WebCore::PageActivityState::Flags activityState)
-{
-    m_activityState = activityState;
-    updateThrottleState();
-}
-
 bool WebPageProxy::isAlwaysOnLoggingAllowed() const
 {
     return sessionID().isAlwaysOnLoggingAllowed();
@@ -1593,7 +1587,9 @@ void WebPageProxy::updateThrottleState()
         m_preventProcessSuppressionCount = nullptr;
 
     // We should suppress if the page is not active, is visually idle, and supression is enabled.
-    bool pageShouldBeSuppressed = !m_activityState && processSuppressionEnabled && (m_viewState & ViewState::IsVisuallyIdle);
+    bool isLoading = m_pageLoadState.isLoading();
+    bool isPlayingAudio = m_mediaState & MediaProducer::IsPlayingAudio && !m_muted;
+    bool pageShouldBeSuppressed = !isLoading && !isPlayingAudio && processSuppressionEnabled && (m_viewState & ViewState::IsVisuallyIdle);
     if (m_pageSuppressed != pageShouldBeSuppressed) {
         m_pageSuppressed = pageShouldBeSuppressed;
         m_process->send(Messages::WebPage::SetPageSuppressed(m_pageSuppressed), m_pageID);
@@ -4167,6 +4163,8 @@ void WebPageProxy::setMuted(bool muted)
         return;
 
     m_process->send(Messages::WebPage::SetMuted(muted), m_pageID);
+
+    updateThrottleState();
 }
 
 #if ENABLE(MEDIA_SESSION)
@@ -6352,6 +6350,8 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state,
     MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
     MediaProducer::MediaStateFlags oldState = m_mediaState;
     m_mediaState = state;
+
+    updateThrottleState();
 
     playingMediaMask |= MediaProducer::HasActiveMediaCaptureDevice;
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))

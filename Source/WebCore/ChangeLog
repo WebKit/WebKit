@@ -1,3 +1,31 @@
+2016-10-21  Gavin Barraclough  <barraclough@apple.com>
+
+        WebPageProxy should not need PageActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=163821
+
+        Reviewed by Geoff Garen.
+
+        The PageActivityState is currently plumbed back from WebCore up to the UI process, to
+        determine whether to enabled process suppression. However the information it contains
+        (whether a page load is ongoing, whether audio is playing) is already available via
+        other means. Remove this use of PageActivityState.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaState):
+            - Fix a bug in how we compute IsPlayingAudio - if the volume of the MediaElement is
+              set to zero, then audio is not playing (we were already checking muted).
+        * page/ChromeClient.h:
+            - removed setPageActivityState
+        * page/Page.cpp:
+        (WebCore::Page::setPageActivityState): Deleted.
+            - setPageActivityState -> pageActivityStateChanged, remove call to ChromeClient
+        * page/Page.h:
+        (WebCore::Page::pageActivityStateChanged):
+            - setPageActivityState -> pageActivityStateChanged
+        * page/PageThrottler.cpp:
+        (WebCore::PageThrottler::setActivityFlag):
+            - setPageActivityState -> pageActivityStateChanged
+
 2016-10-21  Chris Dumez  <cdumez@apple.com>
 
         [Web ID] Overload resolution is wrong if one of the types is a nullable union

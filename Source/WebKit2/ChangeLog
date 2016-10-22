@@ -36,6 +36,45 @@
 
 2016-10-21  Gavin Barraclough  <barraclough@apple.com>
 
+        WebPageProxy should not need PageActivityState
+        https://bugs.webkit.org/show_bug.cgi?id=163821
+
+        Reviewed by Geoff Garen.
+
+        The PageActivityState is currently plumbed back from WebCore up to the UI process, to
+        determine whether to enabled process suppression. However the information it contains
+        (whether a page load is ongoing, whether audio is playing) is already available via
+        other means. Remove this use of PageActivityState.
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::commitChanges):
+            - PageLoadState notifies WebPageProxy when loading state changes.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateThrottleState):
+            - Now relies on info from PageLoadState, setMuted, isPlayingMediaDidChange.
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+            - If audio playback state changes we may need to update the throttle state.
+        (WebKit::WebPageProxy::setPageActivityState): Deleted.
+            - removed PageActivityState from WK2.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isLoadingChanged):
+            - PageLoadState notifies WebPageProxy when loading state changes.
+        * UIProcess/WebPageProxy.messages.in:
+            - removed PageActivityState from WK2.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setPageActivityState): Deleted.
+            - removed PageActivityState from WK2.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+            - removed PageActivityState from WK2.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setPageActivityState): Deleted.
+            - removed PageActivityState from WK2.
+        * WebProcess/WebPage/WebPage.h:
+            - removed PageActivityState from WK2.
+
+2016-10-21  Gavin Barraclough  <barraclough@apple.com>
+
         WebPage should take UserActivity directly for user input
         https://bugs.webkit.org/show_bug.cgi?id=163813
 

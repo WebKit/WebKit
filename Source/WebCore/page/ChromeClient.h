@@ -432,8 +432,6 @@ public:
     virtual void focusedContentMediaElementDidChange(uint64_t) { }
 #endif
 
-    virtual void setPageActivityState(PageActivityState::Flags) { }
-
 #if ENABLE(SUBTLE_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const { return false; }
