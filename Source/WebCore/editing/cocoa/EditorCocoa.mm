@@ -40,7 +40,13 @@
 #import "Text.h"
 #import "htmlediting.h"
 
-SOFT_LINK_FRAMEWORK(WebKitLegacy)
+#if PLATFORM(IOS)
+SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
+#endif
+
+#if PLATFORM(MAC)
+SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
+#endif
 
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
 

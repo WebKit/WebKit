@@ -1,3 +1,13 @@
+2016-10-22  Darin Adler  <darin@apple.com>
+
+        [Cocoa] REGRESSION (r204508): Crash in init_WebCreateFragment when pasting (seen in multiple apps using legacy WebKit)
+        https://bugs.webkit.org/show_bug.cgi?id=163839
+
+        Reviewed by Dan Bernstein.
+
+        * editing/cocoa/EditorCocoa.mm: Use the appropriate SOFT_LINK macros to find
+        the WebKitLegacy platform in the correct location for iOS and macOS.
+
 2016-10-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Bindings error message for missing required dictionary member should be more explicit
