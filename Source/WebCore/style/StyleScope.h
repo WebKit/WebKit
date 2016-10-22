@@ -92,8 +92,8 @@ public:
     // The change is assumed to potentially affect all author and user stylesheets including shadow roots.
     WEBCORE_EXPORT void didChangeStyleSheetEnvironment();
 
-    bool hasPendingUpdate() const { return !!m_pendingUpdate; }
-    WEBCORE_EXPORT void flushPendingUpdate();
+    bool hasPendingUpdate() const { return m_pendingUpdate || m_hasDescendantWithPendingUpdate; }
+    void flushPendingUpdate();
 
     StyleResolver& resolver();
     StyleResolver* resolverIfExists();
@@ -107,6 +107,9 @@ private:
     enum class UpdateType { ActiveSet, ContentsOrInterpretation };
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
+
+    WEBCORE_EXPORT void flushPendingSelfUpdate();
+    WEBCORE_EXPORT void flushPendingDescendantUpdates();
 
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>&);
 
@@ -141,6 +144,7 @@ private:
     bool m_didUpdateActiveStyleSheets { false };
 
     Optional<UpdateType> m_pendingUpdate;
+    bool m_hasDescendantWithPendingUpdate { false };
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 
@@ -149,6 +153,14 @@ private:
 
     bool m_usesStyleBasedEditability { false };
 };
+
+inline void Scope::flushPendingUpdate()
+{
+    if (m_hasDescendantWithPendingUpdate)
+        flushPendingDescendantUpdates();
+    if (m_pendingUpdate)
+        flushPendingSelfUpdate();
+}
 
 }
 }

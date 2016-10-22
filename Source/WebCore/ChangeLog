@@ -1,3 +1,23 @@
+2016-10-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r207669): Dromaeo/jslib-style-jquery.html regressed >20%
+        https://bugs.webkit.org/show_bug.cgi?id=163851
+
+        Reviewed by Darin Adler.
+
+        The test calls Scope::flushPendingUpdate a lot and nothing ever happens there.
+
+        Add a separate invalidity bit for descendant scopes and inline the fast path.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::flushPendingSelfUpdate):
+        (WebCore::Style::Scope::flushPendingDescendantUpdates):
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::flushPendingUpdate): Deleted.
+        * style/StyleScope.h:
+        (WebCore::Style::Scope::hasPendingUpdate):
+        (WebCore::Style::Scope::flushPendingUpdate):
+
 2016-10-22  Darin Adler  <darin@apple.com>
 
         Move SVG from ExceptionCode to Exception

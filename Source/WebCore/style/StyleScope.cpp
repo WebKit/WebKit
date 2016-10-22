@@ -467,19 +467,23 @@ bool Scope::activeStyleSheetsContains(const CSSStyleSheet* sheet) const
     return m_weakCopyOfActiveStyleSheetListForFastLookup->contains(sheet);
 }
 
-void Scope::flushPendingUpdate()
+void Scope::flushPendingSelfUpdate()
 {
-    if (!m_shadowRoot) {
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-            descendantShadowRoot->styleScope().flushPendingUpdate();
-    }
-    if (!m_pendingUpdate)
-        return;
+    ASSERT(m_pendingUpdate);
+
     auto updateType = *m_pendingUpdate;
 
     clearPendingUpdate();
-
     updateActiveStyleSheets(updateType);
+}
+
+void Scope::flushPendingDescendantUpdates()
+{
+    ASSERT(m_hasDescendantWithPendingUpdate);
+    ASSERT(!m_shadowRoot);
+    for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
+        descendantShadowRoot->styleScope().flushPendingUpdate();
+    m_hasDescendantWithPendingUpdate = false;
 }
 
 void Scope::clearPendingUpdate()
@@ -490,8 +494,11 @@ void Scope::clearPendingUpdate()
 
 void Scope::scheduleUpdate(UpdateType update)
 {
-    if (!m_pendingUpdate || *m_pendingUpdate < update)
+    if (!m_pendingUpdate || *m_pendingUpdate < update) {
         m_pendingUpdate = update;
+        if (m_shadowRoot)
+            m_document.styleScope().m_hasDescendantWithPendingUpdate = true;
+    }
 
     if (m_pendingUpdateTimer.isActive())
         return;
