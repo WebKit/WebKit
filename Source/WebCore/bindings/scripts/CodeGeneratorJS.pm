@@ -2037,6 +2037,17 @@ sub GetOverloadThatMatches
     }
 }
 
+sub GetOverloadThatMatchesIgnoringUnionSubtypes
+{
+    my ($S, $parameterIndex, $matches) = @_;
+
+    for my $tuple (@{$S}) {
+        my $idlType = @{@{$tuple}[1]}[$parameterIndex];
+        my $optionality = @{@{$tuple}[2]}[$parameterIndex];
+        return @{$tuple}[0] if $matches->($idlType, $optionality);
+    }
+}
+
 sub getConditionalForFunctionConsideringOverloads
 {
     my $function = shift;
@@ -2086,9 +2097,17 @@ sub GenerateOverloadedFunctionOrConstructor
         my ($idlType, $optionality) = @_;
         return $idlType->name eq "Dictionary" || $codeGenerator->IsDictionaryType($idlType->name);
     };
-    my $isNullableOrDictionaryParameter = sub {
+    my $isNullableOrDictionaryParameterOrUnionContainingOne = sub {
         my ($idlType, $optionality) = @_;
-        return $idlType->isNullable || &$isDictionaryParameter($idlType, $optionality);
+        return 1 if $idlType->isNullable;
+        if ($idlType->isUnion) {
+            for my $idlSubtype (GetFlattenedMemberTypes($idlType)) {
+                return 1 if $idlType->isNullable || &$isDictionaryParameter($idlSubtype, $optionality);
+            }
+            return 0;
+        } else {
+            return &$isDictionaryParameter($idlType, $optionality);
+        }
     };
     my $isRegExpOrObjectParameter = sub {
         my ($idlType, $optionality) = @_;
@@ -2162,10 +2181,10 @@ END
             my $d = GetDistinguishingArgumentIndex($function, $S);
             push(@implContent, "        JSValue distinguishingArg = state->uncheckedArgument($d);\n");
 
-            my $overload = GetOverloadThatMatches($S, $d, \&$isOptionalParameter);
+            my $overload = GetOverloadThatMatchesIgnoringUnionSubtypes($S, $d, \&$isOptionalParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isUndefined()");
 
-            $overload = GetOverloadThatMatches($S, $d, \&$isNullableOrDictionaryParameter);
+            $overload = GetOverloadThatMatchesIgnoringUnionSubtypes($S, $d, \&$isNullableOrDictionaryParameterOrUnionContainingOne);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isUndefinedOrNull()");
 
             for my $tuple (@{$S}) {

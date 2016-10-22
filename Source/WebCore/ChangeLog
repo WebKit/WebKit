@@ -1,3 +1,36 @@
+2016-10-21  Chris Dumez  <cdumez@apple.com>
+
+        [Web ID] Overload resolution is wrong if one of the types is a nullable union
+        https://bugs.webkit.org/show_bug.cgi?id=163816
+
+        Reviewed by Alex Christensen.
+
+        Overload resolution was wrong if one of the types was a nullable union. This
+        is because we never considered the union type itself, only its subtypes.
+        Therefore, we checked if any of the union's subtypes were nullable but we
+        failed to check if the union itself was nullable.
+
+        See:
+        - https://heycam.github.io/webidl/#es-overloads (Step 11.3.)
+
+        No new tests, extended bindings tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetOverloadThatMatchesIgnoringUnionSubtypes):
+        (GenerateOverloadedFunctionOrConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion1Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion2Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableUnion):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion1Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion2Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithOptionalUnion):
+        * bindings/scripts/test/TestObj.idl:
+
 2016-10-21  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Dynamically generate media capture sandbox extensions

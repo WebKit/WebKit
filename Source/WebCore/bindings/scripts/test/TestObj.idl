@@ -307,6 +307,12 @@ enum TestConfidence { "high", "kinda-low" };
 
     void overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestObj object);
     void overloadedMethodWithNonDistinguishingUnion((TestObj or TestNode) objectOrNode, TestNode node);
+
+    void overloadWithNullableUnion((TestObj or TestNode)? objectOrNode);
+    void overloadWithNullableUnion(long index);
+
+    void overloadWithOptionalUnion(optional (DOMString or boolean) objectOrNode = true);
+    void overloadWithOptionalUnion(long index);
 #endif
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).
