@@ -1,3 +1,44 @@
+2016-10-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Slow and big Heap methods should not be inline
+        https://bugs.webkit.org/show_bug.cgi?id=163802
+
+        Reviewed by Keith Miller.
+        
+        JSC often suffers from the inline cargo cult, and Heap is a prime example. This outlines a
+        bunch of Heap methods that are either already very big, or call out-of-line methods, or call
+        very big methods, or are not called often enough for inlining to matter.
+        
+        This simplifies concurrent GC work because I'm so tired of recompiling the world when I touch
+        one of these methods.
+        
+        This looks to be perf-neutral.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::shouldCollect):
+        (JSC::Heap::isCurrentThreadBusy):
+        (JSC::Heap::reportExtraMemoryVisited):
+        (JSC::Heap::reportExternalMemoryVisited):
+        (JSC::Heap::collectIfNecessaryOrDefer):
+        (JSC::Heap::collectAccordingToDeferGCProbability):
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded):
+        (JSC::Heap::registerWeakGCMap):
+        (JSC::Heap::unregisterWeakGCMap):
+        (JSC::Heap::didAllocateBlock):
+        (JSC::Heap::didFreeBlock):
+        * heap/HeapInlines.h:
+        (JSC::Heap::shouldCollect): Deleted.
+        (JSC::Heap::isCurrentThreadBusy): Deleted.
+        (JSC::Heap::reportExtraMemoryVisited): Deleted.
+        (JSC::Heap::reportExternalMemoryVisited): Deleted.
+        (JSC::Heap::collectIfNecessaryOrDefer): Deleted.
+        (JSC::Heap::collectAccordingToDeferGCProbability): Deleted.
+        (JSC::Heap::decrementDeferralDepthAndGCIfNeeded): Deleted.
+        (JSC::Heap::registerWeakGCMap): Deleted.
+        (JSC::Heap::unregisterWeakGCMap): Deleted.
+        (JSC::Heap::didAllocateBlock): Deleted.
+        (JSC::Heap::didFreeBlock): Deleted.
+
 2016-10-21  Saam Barati  <sbarati@apple.com>
 
         SpeculativeJIT::compileTryGetById needs to pass in NeedsToSpill along both the cell speculation and untyped speculation path

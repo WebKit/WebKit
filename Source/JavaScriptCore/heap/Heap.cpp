@@ -1547,4 +1547,118 @@ void Heap::writeBarrierSlowPath(const JSCell* from)
     addToRememberedSet(from);
 }
 
+bool Heap::shouldCollect()
+{
+    if (isDeferred())
+        return false;
+    if (!m_isSafeToCollect)
+        return false;
+    if (collectionScope() || mutatorState() == MutatorState::HelpingGC)
+        return false;
+    if (Options::gcMaxHeapSize())
+        return m_bytesAllocatedThisCycle > Options::gcMaxHeapSize();
+    return m_bytesAllocatedThisCycle > m_maxEdenSize;
+}
+
+bool Heap::isCurrentThreadBusy()
+{
+    return mayBeGCThread() || mutatorState() != MutatorState::Running;
+}
+
+void Heap::reportExtraMemoryVisited(CellState oldState, size_t size)
+{
+    // We don't want to double-count the extra memory that was reported in previous collections.
+    if (collectionScope() == CollectionScope::Eden && oldState == CellState::OldGrey)
+        return;
+
+    size_t* counter = &m_extraMemorySize;
+    
+    for (;;) {
+        size_t oldSize = *counter;
+        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
+            return;
+    }
+}
+
+#if ENABLE(RESOURCE_USAGE)
+void Heap::reportExternalMemoryVisited(CellState oldState, size_t size)
+{
+    // We don't want to double-count the external memory that was reported in previous collections.
+    if (collectionScope() == CollectionScope::Eden && oldState == CellState::OldGrey)
+        return;
+
+    size_t* counter = &m_externalMemorySize;
+
+    for (;;) {
+        size_t oldSize = *counter;
+        if (WTF::weakCompareAndSwap(counter, oldSize, oldSize + size))
+            return;
+    }
+}
+#endif
+
+bool Heap::collectIfNecessaryOrDefer(GCDeferralContext* deferralContext)
+{
+    if (!shouldCollect())
+        return false;
+
+    if (deferralContext)
+        deferralContext->m_shouldGC = true;
+    else
+        collect();
+    return true;
+}
+
+void Heap::collectAccordingToDeferGCProbability()
+{
+    if (isDeferred() || !m_isSafeToCollect || collectionScope() || mutatorState() == MutatorState::HelpingGC)
+        return;
+
+    if (randomNumber() < Options::deferGCProbability()) {
+        collect();
+        return;
+    }
+
+    // If our coin flip told us not to GC, we still might GC,
+    // but we GC according to our memory pressure markers.
+    collectIfNecessaryOrDefer();
+}
+
+void Heap::decrementDeferralDepthAndGCIfNeeded()
+{
+    decrementDeferralDepth();
+    if (UNLIKELY(Options::deferGCShouldCollectWithProbability()))
+        collectAccordingToDeferGCProbability();
+    else
+        collectIfNecessaryOrDefer();
+}
+
+void Heap::registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback)
+{
+    m_weakGCMaps.add(weakGCMap, WTFMove(pruningCallback));
+}
+
+void Heap::unregisterWeakGCMap(void* weakGCMap)
+{
+    m_weakGCMaps.remove(weakGCMap);
+}
+
+void Heap::didAllocateBlock(size_t capacity)
+{
+#if ENABLE(RESOURCE_USAGE)
+    m_blockBytesAllocated += capacity;
+#else
+    UNUSED_PARAM(capacity);
+#endif
+}
+
+void Heap::didFreeBlock(size_t capacity)
+{
+#if ENABLE(RESOURCE_USAGE)
+    m_blockBytesAllocated -= capacity;
+#else
+    UNUSED_PARAM(capacity);
+#endif
+}
+
 } // namespace JSC

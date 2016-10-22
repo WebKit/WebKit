@@ -145,7 +145,7 @@ public:
 
     // We're always busy on the collection threads. On the main thread, this returns true if we're
     // helping heap.
-    bool isCurrentThreadBusy();
+    JS_EXPORT_PRIVATE bool isCurrentThreadBusy();
     
     MarkedSpace::Subspace& subspaceForObjectWithoutDestructor() { return m_objectSpace.subspaceForObjectsWithoutDestructor(); }
     MarkedSpace::Subspace& subspaceForObjectDestructor() { return m_objectSpace.subspaceForObjectsWithDestructor(); }
@@ -184,11 +184,11 @@ public:
     // call both of these functions: Calling only one may trigger catastropic
     // memory growth.
     void reportExtraMemoryAllocated(size_t);
-    void reportExtraMemoryVisited(CellState oldState, size_t);
+    JS_EXPORT_PRIVATE void reportExtraMemoryVisited(CellState oldState, size_t);
 
 #if ENABLE(RESOURCE_USAGE)
     // Use this API to report the subset of extra memory that lives outside this process.
-    void reportExternalMemoryVisited(CellState oldState, size_t);
+    JS_EXPORT_PRIVATE void reportExternalMemoryVisited(CellState oldState, size_t);
     size_t externalMemorySize() { return m_externalMemorySize; }
 #endif
 
@@ -252,8 +252,8 @@ public:
 
     static bool isZombified(JSCell* cell) { return *(void**)cell == zombifiedBits; }
 
-    void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
-    void unregisterWeakGCMap(void* weakGCMap);
+    JS_EXPORT_PRIVATE void registerWeakGCMap(void* weakGCMap, std::function<void()> pruningCallback);
+    JS_EXPORT_PRIVATE void unregisterWeakGCMap(void* weakGCMap);
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
 
@@ -374,7 +374,7 @@ private:
 
     void incrementDeferralDepth();
     void decrementDeferralDepth();
-    void decrementDeferralDepthAndGCIfNeeded();
+    JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeeded();
 
     size_t threadVisitCount();
     size_t threadBytesVisited();
