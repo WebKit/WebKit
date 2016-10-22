@@ -1,3 +1,44 @@
+2016-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update custom elements tests
+        https://bugs.webkit.org/show_bug.cgi?id=163815
+
+        Reviewed by Joseph Pecoraro.
+
+        Re-import the custom elements as of 5078aa44879c87c38b6430670583951dbeae3025.
+
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt: Moved from from fast/custom-elements/Document-createElement.html.
+        * web-platform-tests/custom-elements/Document-createElement.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-element-in-document-write-expected.txt: Moved from from fast/custom-elements/parser/.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-element-in-document-write.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-element-synchronously-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-element-synchronously.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-elements-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-constructs-custom-elements.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-fallsback-to-unknown-element.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-sets-attributes-and-children.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-uses-constructed-element-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-uses-constructed-element.html: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/parser/parser-uses-registry-of-owner-document.html: Ditto.
+        * web-platform-tests/custom-elements/parser/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/reactions/DOMTokenList-expected.txt:
+        * web-platform-tests/custom-elements/reactions/DOMTokenList.html:
+        * web-platform-tests/custom-elements/reactions/Document-expected.txt:
+        * web-platform-tests/custom-elements/reactions/Document.html:
+        * web-platform-tests/custom-elements/reactions/Range-expected.txt:
+        * web-platform-tests/custom-elements/reactions/resources/reactions.js:
+        * web-platform-tests/custom-elements/upgrading-expected.txt: Added.
+        * web-platform-tests/custom-elements/upgrading.html: Moved from fast/custom-elements/enqueue-custom-element-upgrade-reaction.html.
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt: Moved from fast/custom-elements/upgrading/.
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode.html: Ditto.
+        * web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element-expected.txt: Ditto.
+        * web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element.html: Ditto.
+        * web-platform-tests/custom-elements/upgrading/w3c-import.log: Added.
+        * web-platform-tests/custom-elements/w3c-import.log:
+
 2016-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Import W3C EME tests

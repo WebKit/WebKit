@@ -16,6 +16,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/CustomElementRegistry.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/Document-createElement.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/HTMLElement-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/adopted-callback.html
@@ -23,3 +24,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/connected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/disconnected-callbacks.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/reaction-timing.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading.html

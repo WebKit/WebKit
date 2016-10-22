@@ -1,3 +1,17 @@
+2016-10-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update custom elements tests
+        https://bugs.webkit.org/show_bug.cgi?id=163815
+
+        Reviewed by Joseph Pecoraro.
+
+        Removed the tests that have been upstreamed and reimported from web-platform-tests.
+
+        * fast/custom-elements/Document-createElement-expected.txt: Removed.
+        * fast/custom-elements/enqueue-custom-element-upgrade-reaction-expected.txt: Removed.
+        * fast/custom-elements/parser/: Removed.
+        * fast/custom-elements/upgrading/: Removed.
+
 2016-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening

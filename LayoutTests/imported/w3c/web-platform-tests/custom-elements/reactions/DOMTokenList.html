@@ -89,8 +89,10 @@ test(function () {
     instance.setAttribute('class', 'hello world');
     assert_array_equals(element.takeLog().types(), ['constructed', 'attributeChanged']);
     instance.classList.remove('foo');
-    assert_array_equals(element.takeLog().types(), []);
-}, 'remove on DOMTokenList must not enqueue an attributeChanged reaction when removing a non-existent value from an attribute');
+    var logEntries = element.takeLog();
+    assert_array_equals(logEntries.types(), ['attributeChanged']);
+    assert_attribute_log_entry(logEntries.last(), {name: 'class', oldValue: 'hello world', newValue: 'hello world', namespace: null});
+}, 'remove on DOMTokenList must enqueue an attributeChanged reaction even when removing a non-existent value from an attribute');
 
 test(function () {
     var element = define_new_custom_element(['title']);

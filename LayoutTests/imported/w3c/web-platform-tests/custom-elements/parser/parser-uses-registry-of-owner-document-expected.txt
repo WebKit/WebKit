@@ -5,4 +5,6 @@ PASS HTML parser must use the registry of the content document inside an iframe
 PASS HTML parser must not instantiate a custom element defined inside an frame in frame element's owner document 
 PASS HTML parser must use the registry of window.document in a document created by document.implementation.createHTMLDocument() 
 PASS HTML parser must use the registry of window.document in a document created by document.implementation.createXHTMLDocument() 
+PASS HTML parser must use the registry of window.document in a document created by new Document 
+PASS HTML parser must use the registry of window.document in a document created by XMLHttpRequest 
 

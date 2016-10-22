@@ -4,9 +4,10 @@
 <title>Custom Elements: Changes to the HTML parser</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="HTML parser must set the attributes and append the children on a custom element">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../../resources/testharness.css'>
+<link rel="help" href="https://html.spec.whatwg.org/#create-an-element-for-the-token">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-create-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -37,11 +38,6 @@ test(function () {
     assert_equals(customElement.classList.length, 2, 'HTML parser must initialize classList on custom elements');
     assert_equals(customElement.classList[0], 'class1', 'HTML parser must initialize classList on custom elements');
     assert_equals(customElement.classList[1], 'class2', 'HTML parser must initialize classList on custom elements');
-
-    assert_equals(customElement.childNodes.length, 2, 'HTML parser must append child nodes');
-    assert_equals(customElement.classList[0], 'class1', 'HTML parser must initialize classList on custom elements');
-    assert_equals(customElement.classList[1], 'class2', 'HTML parser must initialize classList on custom elements');
-
 }, 'HTML parser must set the attributes');
 
 test(function () {

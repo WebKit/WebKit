@@ -73,7 +73,7 @@ function testParsingMarkup(testFunction, name) {
         var element = define_new_custom_element(['id']);
         assert_array_equals(element.takeLog().types(), []);
         var instance = testFunction(document, `<${element.name} id="hello" class="foo"></${element.name}>`);
-        assert_equals(Object.getPrototypeOf(instance.querySelector(element.name)), element.class);
+        assert_equals(Object.getPrototypeOf(instance.querySelector(element.name)), element.class.prototype);
         var logEntries = element.takeLog();
         assert_array_equals(logEntries.types(), ['constructed', 'attributeChanged']);
         assert_attribute_log_entry(logEntries[1], {name: 'id', oldValue: null, newValue: 'hello', namespace: null});

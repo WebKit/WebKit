@@ -6,7 +6,7 @@ PASS add on DOMTokenList must not enqueue an attributeChanged reaction when addi
 PASS add on DOMTokenList must enqueue exactly one attributeChanged reaction when adding multiple values to an attribute 
 PASS remove on DOMTokenList must enqueue an attributeChanged reaction when removing a value from an attribute 
 PASS remove on DOMTokenList must enqueue exactly one attributeChanged reaction when removing multiple values to an attribute 
-FAIL remove on DOMTokenList must not enqueue an attributeChanged reaction when removing a non-existent value from an attribute assert_array_equals: lengths differ, expected 0 got 1
+PASS remove on DOMTokenList must enqueue an attributeChanged reaction even when removing a non-existent value from an attribute 
 PASS remove on DOMTokenList must not enqueue an attributeChanged reaction when removing a value from an unobserved attribute 
 PASS toggle on DOMTokenList must enqueue an attributeChanged reaction when adding a value to an attribute 
 PASS toggle on DOMTokenList must enqueue an attributeChanged reaction when removing a value from an attribute 

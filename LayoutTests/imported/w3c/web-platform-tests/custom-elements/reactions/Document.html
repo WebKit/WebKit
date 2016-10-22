@@ -23,11 +23,17 @@ test(function () {
     var newDoc = document.implementation.createHTMLDocument();
     newDoc.importNode(instance);
 
-    var logEntries = element.takeLog();
-    assert_array_equals(logEntries.types(), ['constructed']);
-    assert_equals(logEntries.last().oldDocument, document);
-    assert_equals(logEntries.last().newDocument, newDoc);
-}, 'importNode on Document must construct a new custom element when importing a custom element');
+    assert_array_equals(element.takeLog().types(), []);
+}, 'importNode on Document must not construct a new custom element when importing a custom element into a window-less document');
+
+test(function () {
+    var element = define_new_custom_element();
+    var template = document.createElement('template');
+    template.innerHTML = `<${element.name}></${element.name}>`;
+    assert_array_equals(element.takeLog().types(), []);
+    document.importNode(template.content, true);
+    assert_array_equals(element.takeLog().types(), ['constructed']);
+}, 'importNode on Document must construct a new custom element when importing a custom element from a template');
 
 test(function () {
     var element = define_new_custom_element();

@@ -7,10 +7,9 @@
 <link rel="help" href="https://dom.spec.whatwg.org/#concept-create-element">
 <link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#concept-try-upgrade">
 <link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#enqueue-a-custom-element-upgrade-reaction">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
-<script src="resources/document-types.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/custom-elements-helpers.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -22,7 +21,8 @@ customElements.define('predefined-custom-element', PredefinedCustomElement);
 var customElementNumber = 1;
 function generateNextCustomElementName() { return 'custom-' + customElementNumber++; }
 
-DocumentTypes.filter(function (entry) { return !entry.isOwner && !entry.hasBrowsingContext; }).forEach(function (entry) {
+// Tests for documents without a browsing context.
+document_types().filter(function (entry) { return !entry.isOwner && !entry.hasBrowsingContext; }).forEach(function (entry) {
     var documentName = entry.name;
     var getDocument = entry.create;
 
@@ -85,7 +85,8 @@ DocumentTypes.filter(function (entry) { return !entry.isOwner && !entry.hasBrows
 
 });
 
-DocumentTypes.filter(function (entry) { return !entry.isOwner && entry.hasBrowsingContext; }).forEach(function (entry) {
+// Tests for documents with a browsing context.
+document_types().filter(function (entry) { return !entry.isOwner && entry.hasBrowsingContext; }).forEach(function (entry) {
     var documentName = entry.name;
     var getDocument = entry.create;
 

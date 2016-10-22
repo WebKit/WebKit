@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: Extensions to Document interface</title>
+<title>Custom Elements: document.createElement should create an element with synchronous custom elements flag set</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
-<meta name="assert" content="document.createElement should instantiate a custom element">
-<script src="../../resources/testharness.js"></script>
-<script src="../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../resources/testharness.css'>
-<script src="resources/document-types.js"></script>
+<meta name="assert" content="document.createElement should create an element with synchronous custom elements flag set">
+<link rel="help" content="https://dom.spec.whatwg.org/#dom-document-createelement">
+<link rel="help" content="https://dom.spec.whatwg.org/#concept-create-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/custom-elements-helper.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -221,7 +222,7 @@ test(function () {
     assert_true(instance instanceof ElementWithNoParent);
 }, 'document.createElement must not report a NotSupportedError when the element is inserted and removed from another element during construction');
 
-DocumentTypes.forEach(function (entry, testNumber) {
+document_types().forEach(function (entry, testNumber) {
     if (entry.isOwner)
         return;
 

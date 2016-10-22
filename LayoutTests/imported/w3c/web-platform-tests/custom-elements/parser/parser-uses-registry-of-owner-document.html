@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Custom Elements: Changes to the HTML parser</title>
+<title>Custom Elements: HTML parser must use the owner document's custom element registry</title>
 <meta name="author" title="Ryosuke Niwa" href="mailto:rniwa@webkit.org">
 <meta name="assert" content="HTML parser must use the owner document's custom element registry">
-<script src="../../../resources/testharness.js"></script>
-<script src="../../../resources/testharnessreport.js"></script>
-<link rel='stylesheet' href='../../../resources/testharness.css'>
+<link rel="help" href="https://html.spec.whatwg.org/#create-an-element-for-the-token">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-create-element">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
 <div id="log"></div>
@@ -69,12 +70,12 @@ test(function () {
 
 document.body.removeChild(iframe);
 
-var windowlessDocument = document.implementation.createHTMLDocument();
-windowlessDocument.open();
-windowlessDocument.write('<my-custom-element></my-custom-element>');
-windowlessDocument.close();
-
 test(function () {
+    var windowlessDocument = document.implementation.createHTMLDocument();
+    windowlessDocument.open();
+    windowlessDocument.write('<my-custom-element></my-custom-element>');
+    windowlessDocument.close();
+
     var instance = windowlessDocument.querySelector('my-custom-element');
 
     assert_true(instance instanceof HTMLElement);
@@ -82,16 +83,43 @@ test(function () {
 
 }, 'HTML parser must use the registry of window.document in a document created by document.implementation.createHTMLDocument()');
 
-windowlessDocument = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
-windowlessDocument.documentElement.innerHTML = '<my-custom-element></my-custom-element>';
-
 test(function () {
-    var instance = windowlessDocument.querySelector('my-custom-element');
+    var windowlessDocument = document.implementation.createDocument ('http://www.w3.org/1999/xhtml', 'html', null);
+    windowlessDocument.documentElement.innerHTML = '<my-custom-element></my-custom-element>';
 
+    var instance = windowlessDocument.querySelector('my-custom-element');
     assert_true(instance instanceof HTMLElement);
     assert_false(instance instanceof MyCustomElement);
 
 }, 'HTML parser must use the registry of window.document in a document created by document.implementation.createXHTMLDocument()');
+
+test(function () {
+    var windowlessDocument = new Document;
+    windowlessDocument.appendChild(windowlessDocument.createElement('html'));
+    windowlessDocument.documentElement.innerHTML = '<my-custom-element></my-custom-element>';
+
+    var instance = windowlessDocument.querySelector('my-custom-element');
+
+    assert_true(instance instanceof Element);
+    assert_false(instance instanceof MyCustomElement);
+
+}, 'HTML parser must use the registry of window.document in a document created by new Document');
+
+promise_test(function () {
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '../resources/empty-html-document.html');
+        xhr.overrideMimeType('text/xml');
+        xhr.onload = function () { resolve(xhr.responseXML); }
+        xhr.onerror = function () { reject('Failed to fetch the document'); }
+        xhr.send();
+    }).then(function (doc) {
+        doc.documentElement.innerHTML = '<my-custom-element></my-custom-element>';
+        var instance = doc.querySelector('my-custom-element');
+        assert_true(instance instanceof Element);
+        assert_false(instance instanceof MyCustomElement);        
+    });
+}, 'HTML parser must use the registry of window.document in a document created by XMLHttpRequest');
 
 </script>
 </body>

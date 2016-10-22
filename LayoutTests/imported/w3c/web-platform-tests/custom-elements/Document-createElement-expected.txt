@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 225: ReferenceError: Can't find variable: document_types
+
+PASS document.createElement must create an instance of custom elements 
+PASS document.createElement must report a TypeError when the result of Construct is not a DOM node 
+PASS document.createElement must report a TypeError when the result of Construct is a TextNode 
+PASS document.createElement must report a NotSupportedError when attribute is added by setAttribute during construction 
+PASS document.createElement must report a NotSupportedError when attribute is added by attributes.setNamedItem during construction 
+PASS document.createElement must not report a NotSupportedError when attribute is added and removed during construction 
+PASS document.createElement must report a NotSupportedError when a Text child is added during construction 
+PASS document.createElement must report a NotSupportedError when a Comment child is added during construction 
+PASS document.createElement must report a NotSupportedError when an element child is added during construction 
+PASS document.createElement must not report a NotSupportedError when an element child is added and removed during construction 
+PASS document.createElement must report a NotSupportedError when the element gets inserted into another element during construction 
+PASS document.createElement must not report a NotSupportedError when the element is inserted and removed from another element during construction 
+
