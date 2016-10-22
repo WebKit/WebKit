@@ -28,13 +28,13 @@
 
 namespace WebCore {
 
-SVGColor::SVGColor(const SVGColorType& colorType)
+SVGColor::SVGColor(SVGColorType colorType)
     : CSSValue(SVGColorClass)
     , m_colorType(colorType)
 {
 }
 
-SVGColor::SVGColor(ClassType classType, const SVGColorType& colorType)
+SVGColor::SVGColor(ClassType classType, SVGColorType colorType)
     : CSSValue(classType)
     , m_colorType(colorType)
 {
@@ -54,21 +54,21 @@ Color SVGColor::colorFromRGBColorString(const String& colorString)
     return CSSParser::parseColor(colorString.stripWhiteSpace());
 }
 
-void SVGColor::setRGBColor(const String&, ExceptionCode& ec)
+ExceptionOr<void> SVGColor::setRGBColor(const String&)
 {
     // The whole SVGColor interface is deprecated in SVG 1.1 (2nd edition).
     // Since the setters are the most problematic part, we removed the support for those first.
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-void SVGColor::setRGBColorICCColor(const String&, const String&, ExceptionCode& ec)
+ExceptionOr<void> SVGColor::setRGBColorICCColor(const String&, const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
-void SVGColor::setColor(unsigned short, const String&, const String&, ExceptionCode& ec)
+ExceptionOr<void> SVGColor::setColor(unsigned short, const String&, const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
 String SVGColor::customCSSText() const

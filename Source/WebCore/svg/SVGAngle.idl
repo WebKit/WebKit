@@ -32,10 +32,8 @@ interface SVGAngle {
     attribute unrestricted float value;
     attribute unrestricted float valueInSpecifiedUnits;
 
-    [SetterMayThrowLegacyException] attribute DOMString valueAsString;
+    [SetterMayThrowException] attribute DOMString valueAsString;
 
-    [MayThrowLegacyException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
-
-    [MayThrowLegacyException] void convertToSpecifiedUnits(unsigned short unitType);
+    [MayThrowException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    [MayThrowException] void convertToSpecifiedUnits(unsigned short unitType);
 };
-

@@ -1,3 +1,269 @@
+2016-10-22  Darin Adler  <darin@apple.com>
+
+        Move SVG from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163837
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj: Added SVGGraphicsElement.idl.
+
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::value): Use toJSNumber.
+        (WebCore::JSSVGLength::setValue): Use propagateException.
+        (WebCore::JSSVGLength::convertToSpecifiedUnits): Ditto.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Properly handle SetterMayThrowException
+        in the special case for SVG setters.
+
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialBaselineShiftValue): Removed
+        ASSERT_NO_EXCEPTION, no longer needed.
+        (WebCore::SVGRenderStyle::initialKerning): Ditto.
+
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::setGlyphRef): Use ExceptionOr.
+        (WebCore::SVGAltGlyphElement::setFormat): Ditto.
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements): Tweaked a bit.
+        * svg/SVGAltGlyphElement.h: Updated for above changes.
+        * svg/SVGAltGlyphElement.idl: Use non-legacy exceptions.
+
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::valueAsString): Removed unneeded String globals.
+        (WebCore::parseAngleType): Rewrote to be simpler and more direct.
+        (WebCore::SVGAngle::setValueAsString): Use ExceptionOr.
+        (WebCore::SVGAngle::newValueSpecifiedUnits): Ditto.
+        (WebCore::SVGAngle::convertToSpecifiedUnits): Ditto.
+        * svg/SVGAngle.h: Updated for above changes. Initialized data members
+        here in the class definite and removed constructor; default now works.
+        * svg/SVGAngle.idl: Use non-legacy exceptions.
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue): Update since
+        CalcMode is now an enum class.
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::SVGAnimateMotionElement): Ditto.
+
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType): Update
+        since AttributeType is now an enum class.
+
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::calculateDistance): Removed
+        ASSERT_NO_EXCEPTION, no longer needed.
+
+        * svg/SVGAnimatedBoolean.idl: Use non-legacy exception.
+        * svg/SVGAnimatedEnumeration.idl: Ditto.
+        * svg/SVGAnimatedInteger.idl: Ditto.
+
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::sharedSVGLength): Deleted.
+        (WebCore::SVGAnimatedLengthAnimator::addAnimatedTypes): Removed
+        ASSERT_NO_EXCEPTION, no longer needed.
+        (WebCore::parseLengthFromString): Ditto. Also rewrote to not use
+        a shared SVGLength; no benefit to doing that.
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue): Ditto.
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::addAnimatedTypes): Ditto.
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue): Ditto.
+
+        * svg/SVGAnimatedNumber.idl: Use non-legacy exception.
+        * svg/SVGAnimatedString.idl: Ditto.
+
+        * svg/SVGAnimatedType.cpp:
+        (WebCore::SVGAnimatedType::setValueAsString): Updated since
+        setValueAsString now uses ExceptionOr.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement): Initialized scalars
+        in the class definition instead of here.
+        (WebCore::SVGAnimationElement::getSimpleDuration): Removed uneeded ExceptionCode&.
+        (WebCore::SVGAnimationElement::setCalcMode): Updated since CalcMode is now an enum class.
+        (WebCore::SVGAnimationElement::setAttributeType): Updated since AttributeType
+        is now an enum class.
+        (WebCore::SVGAnimationElement::shouldApplyAnimation): Ditto.
+        (WebCore::SVGAnimationElement::calculateKeyTimesForCalcModePaced): Ditto.
+        (WebCore::SVGAnimationElement::calculatePercentForSpline): Ditto.
+        (WebCore::SVGAnimationElement::calculatePercentFromKeyPoints): Ditto.
+        (WebCore::SVGAnimationElement::calculatePercentForFromTo): Ditto.
+        (WebCore::SVGAnimationElement::currentValuesFromKeyPoints): Ditto.
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation): Ditto.
+        (WebCore::SVGAnimationElement::startedActiveInterval): Ditto.
+        (WebCore::SVGAnimationElement::updateAnimation): Ditto.
+        (WebCore::SVGAnimationElement::checkInvalidCSSAttributeType): Ditto.
+
+        * svg/SVGAnimationElement.h: Changed CalcMode into an enum class.
+        Updated for above changes.
+
+        * svg/SVGAnimationElement.idl: Removed MayThrowLegacyException from
+        getSimpleDuration.
+
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::SVGColor): Updated to take scalar in the straightforward
+        manner instead of constt SVGColorType&.
+        (WebCore::SVGColor::setRGBColor): Use ExceptionOr.
+        (WebCore::SVGColor::setRGBColorICCColor): Ditto.
+        (WebCore::SVGColor::setColor): Ditto.
+        * svg/SVGColor.h: Updated for above changes. Removed unneeded destructor.
+        * svg/SVGColor.idl: Use non-legacy exceptions.
+
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::SVGGlyphRefElement): Initialize data members
+        in class definition, not here.
+        (WebCore::parseFloat): Added helper. Used in parseAttribute.
+        (WebCore::SVGGlyphRefElement::parseAttribute): Updated to use parseFloat helper.
+        (WebCore::SVGGlyphRefElement::glyphRef): Deleted.
+        (WebCore::SVGGlyphRefElement::setGlyphRef): Deleted.
+        (WebCore::SVGGlyphRefElement::setX): Removed unused Exception& argument.
+        (WebCore::SVGGlyphRefElement::setY): Ditto.
+        (WebCore::SVGGlyphRefElement::setDx): Ditto.
+        (WebCore::SVGGlyphRefElement::setDy): Ditto.
+        * svg/SVGGlyphRefElement.h: Updated for above changes.
+        * svg/SVGGlyphRefElement.idl: Use Reflect on glyphRef. Removed incorrect
+        SetterMayThrowLegacyException attributes for x, y, dx, and dy. Longer term
+        it might be nice to use [Reflect] on these too.
+
+        * svg/SVGGraphicsElement.idl: Use non-legacy exception.
+
+        * svg/SVGLength.cpp:
+        (WebCore::parseLengthType): Changed argument type since caller does not
+        need to know how many characters are consumed.
+        (WebCore::SVGLength::SVGLength): Removed IGNORE_EXCEPTION and ASSERT_NO_EXCEPTION.
+        Also removed the copy constructor, letting the compiler generate the default.
+        (WebCore::SVGLength::setValueAsString): Use ExceptionOr.
+        (WebCore::SVGLength::construct): Updated since setValueAsString uses ExceptionOr.
+        (WebCore::SVGLength::value): Ditto.
+        (WebCore::SVGLength::valueForBindings): Use ExceptionOr. Also renamed to
+        disambiguate with the version used outside of bindings.
+        (WebCore::SVGLength::setValue): Use ExceptionOr.
+        (WebCore::SVGLength::newValueSpecifiedUnits): Ditto.
+        (WebCore::SVGLength::convertToSpecifiedUnits): Ditto.
+        (WebCore::SVGLength::fromCSSPrimitiveValue): Updated since newValueSpecifiedUnits
+        uses ExceptionOr.
+        (WebCore::SVGLength::lengthModeForAnimatedLengthAttribute): Rewrote map generation
+        code to be more efficient and not unrolled. Only do one hash table lookup.
+        * svg/SVGLength.h: Updated for above changes.
+        * svg/SVGLength.idl: Use non-legacy exceptions.
+
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::valueForLength): Update since function
+        uses ExceptionOr.
+        (WebCore::SVGLengthContext::convertValueToUserUnits): Use ExceptionOr.
+        (WebCore::SVGLengthContext::convertValueFromUserUnits): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToPercentage): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromPercentageToUserUnits): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToEMS): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromEMSToUserUnits): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToEXS): Ditto.
+        (WebCore::SVGLengthContext::convertValueFromEXSToUserUnits): Ditto.
+        * svg/SVGLengthContext.h: Updatedfor above changes.
+
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse): Updated since setValueAsString uses
+        ExceptionOr now.
+        * svg/SVGLengthList.h: Removed unneeded constructor.
+        * svg/SVGLengthList.idl: Use non-legacy exceptions.
+
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement): Use ExceptionOr.
+        * svg/SVGLocatable.h: Updated for above change.
+
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString):
+        Updated since setValueAsString uses ExceptionOr now.
+
+        * svg/SVGMatrix.h: Use ExceptionOr.
+        * svg/SVGMatrix.idl: Use non-legacy exceptions.
+
+        * svg/SVGNumberList.h: Removed unneeded constructor.
+        * svg/SVGNumberList.idl: Use non-legacy exceptions.
+
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::setPaint): Use ExceptionOr.
+        * svg/SVGPaint.h: Updated for above chagne.
+        * svg/SVGPaint.idl: Use non-legacy exception.
+
+        * svg/SVGPathSegList.h: Tweaked a bit.
+        * svg/SVGPathSegList.idl: Use non-legacy exceptions.
+
+        * svg/SVGPointList.h: Removed unneeded constructor.
+        * svg/SVGPointList.idl: Use non-legacy exceptions.
+
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::setAlign): Use ExceptionOr.
+        (WebCore::SVGPreserveAspectRatio::setMeetOrSlice): Ditto.
+        * svg/SVGPreserveAspectRatio.h: Updated for above changes.
+        * svg/SVGPreserveAspectRatio.idl: Use non-legacy exceptions.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentView): Pass a reference.
+
+        * svg/SVGStringList.h: Tweaked a bit.
+        * svg/SVGStringList.idl: Use non-legacy exceptions.
+
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::setType): Removed unneeded ExceptionCode&.
+        (WebCore::SVGStyleElement::setMedia): Ditto.
+        (WebCore::SVGStyleElement::setTitle): Deleted.
+        * svg/SVGStyleElement.h: Updated for above changes, and made the title
+        function override be private.
+        * svg/SVGStyleElement.idl: Use Reflect for title. Removed unneeded
+        SetterMayThrowLegacyException on all attributes.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::textLengthAnimated): Removed
+        ASSERT_NO_EXCEPTION, won't work any more.
+        (WebCore::SVGTextContentElement::getSubStringLength): Use ExceptionOr.
+        Also remove redundant call to updateLayoutIgnorePendingStylesheets,
+        called by getNumberOfChars.
+        (WebCore::SVGTextContentElement::getStartPositionOfChar): Ditto.
+        (WebCore::SVGTextContentElement::getEndPositionOfChar): Ditto.
+        (WebCore::SVGTextContentElement::getExtentOfChar): Ditto.
+        (WebCore::SVGTextContentElement::getRotationOfChar): Ditto.
+        (WebCore::SVGTextContentElement::selectSubString): Ditto.
+        * svg/SVGTextContentElement.h: Updated for above changes.
+        * svg/SVGTextContentElement.idl: Use non-legacy exceptions.
+
+        * svg/SVGTransformList.h: Removed unneeded constructor.
+        * svg/SVGTransformList.idl: Use non-legacy exceptions.
+
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec): Updated to take a reference.
+        (WebCore::SVGViewSpec::setZoomAndPan): Use ExceptionOr.
+        (WebCore::SVGViewSpec::setTransformString): Deleted.
+        (WebCore::SVGViewSpec::viewBoxString): Use m_viewBox directly.
+        (WebCore::SVGViewSpec::preserveAspectRatioString): Use
+        m_preserveAspectRatio directly.
+        (WebCore::SVGViewSpec::viewTarget): Use is<SVGElement>.
+        (WebCore::SVGViewSpec::lookupOrCreateViewBoxWrapper): Use
+        m_contextElement directly.
+        (WebCore::SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper):
+        Ditto.
+        (WebCore::SVGViewSpec::lookupOrCreateTransformWrapper): Ditto.
+        (WebCore::SVGViewSpec::parseViewSpec): Set m_viewTargetString directly.
+        * svg/SVGViewSpec.h: Updated for above changes. Removed unneeded virtual
+        destructor, unneeded using for ref/deref, unused functions including
+        setTransformString, setViewTargetString, non-exception setZoomAndPan,
+        contextElement, viewBoxBaseValue, and preserveAspectRatioBaseValue.
+        * svg/SVGViewSpec.idl: Use non-legacy exceptions. Also specify
+        ImplementationLacksVTable.
+
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        Use ExceptionOr.
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h: Ditto.
+        * svg/properties/SVGListProperty.h: Ditto.
+        * svg/properties/SVGListPropertyTearOff.h: Ditto.
+         * svg/properties/SVGPathSegListPropertyTearOff.cpp:
+        (WebCore::SVGPathSegListPropertyTearOff::clear): Ditto.
+        (WebCore::SVGPathSegListPropertyTearOff::getItem): Ditto.
+        (WebCore::SVGPathSegListPropertyTearOff::replaceItem): Ditto.
+        (WebCore::SVGPathSegListPropertyTearOff::removeItem): Ditto.
+        * svg/properties/SVGPathSegListPropertyTearOff.h: Ditto.
+        * svg/properties/SVGPropertyTearOff.h: Ditto. Also added an overload
+        of create that knows how to deal with exceptions.
+        * svg/properties/SVGStaticListPropertyTearOff.h: Ditto.
+        * svg/properties/SVGTransformListPropertyTearOff.h: Ditto.
+
 2016-10-22  Chris Dumez  <cdumez@apple.com>
 
         WebGLRenderingContextBase.bufferData() should use a union instead of overloading

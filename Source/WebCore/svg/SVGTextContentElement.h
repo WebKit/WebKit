@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextContentElement_h
-#define SVGTextContentElement_h
+#pragma once
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
@@ -35,8 +34,7 @@ enum SVGLengthAdjustType {
     SVGLengthAdjustSpacingAndGlyphs
 };
 
-template<>
-struct SVGPropertyTraits<SVGLengthAdjustType> {
+template<> struct SVGPropertyTraits<SVGLengthAdjustType> {
     static unsigned highestEnumValue() { return SVGLengthAdjustSpacingAndGlyphs; }
 
     static String toString(SVGLengthAdjustType type)
@@ -66,7 +64,6 @@ struct SVGPropertyTraits<SVGLengthAdjustType> {
 
 class SVGTextContentElement : public SVGGraphicsElement, public SVGExternalResourcesRequired {
 public:
-    // Forward declare enumerations in the W3C naming scheme, for IDL generation.
     enum {
         LENGTHADJUST_UNKNOWN = SVGLengthAdjustUnknown,
         LENGTHADJUST_SPACING = SVGLengthAdjustSpacing,
@@ -75,13 +72,13 @@ public:
 
     unsigned getNumberOfChars();
     float getComputedTextLength();
-    float getSubStringLength(unsigned charnum, unsigned nchars, ExceptionCode&);
-    SVGPoint getStartPositionOfChar(unsigned charnum, ExceptionCode&);
-    SVGPoint getEndPositionOfChar(unsigned charnum, ExceptionCode&);
-    FloatRect getExtentOfChar(unsigned charnum, ExceptionCode&);
-    float getRotationOfChar(unsigned charnum, ExceptionCode&);
+    ExceptionOr<float> getSubStringLength(unsigned charnum, unsigned nchars);
+    ExceptionOr<SVGPoint> getStartPositionOfChar(unsigned charnum);
+    ExceptionOr<SVGPoint> getEndPositionOfChar(unsigned charnum);
+    ExceptionOr<FloatRect> getExtentOfChar(unsigned charnum);
+    ExceptionOr<float> getRotationOfChar(unsigned charnum);
     int getCharNumAtPosition(const SVGPoint&);
-    void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&);
+    ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 
@@ -126,5 +123,3 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SVGTextContentElement)
     static bool isType(const WebCore::SVGElement& element) { return element.isTextContent(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::SVGElement>(node) && isType(downcast<WebCore::SVGElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

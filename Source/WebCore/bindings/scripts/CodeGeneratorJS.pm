@@ -3538,9 +3538,11 @@ sub GenerateImplementation
                     if ($svgPropertyOrListPropertyType eq "float") { # Special case for JSSVGNumber
                         push(@implContent, "    podImpl = nativeValue;\n");
                     } else {
-                        push(@implContent, "    podImpl.set$implSetterFunctionName(nativeValue");
-                        push(@implContent, ", ec") if $setterMayThrowLegacyException;
-                        push(@implContent, ");\n");
+                        my $functionString = "podImpl.set$implSetterFunctionName(nativeValue";
+                        $functionString .= ", ec" if $setterMayThrowLegacyException;
+                        $functionString .= ")";
+                        $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->signature->extendedAttributes->{SetterMayThrowException};
+                        push(@implContent, "    $functionString;\n");
                         push(@implContent, "    setDOMException(&state, throwScope, ec);\n") if $setterMayThrowLegacyException;
                     }
                     if ($svgPropertyType) {

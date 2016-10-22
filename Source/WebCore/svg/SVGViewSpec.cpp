@@ -75,11 +75,9 @@ const SVGPropertyInfo* SVGViewSpec::transformPropertyInfo()
     return s_propertyInfo;
 }
 
-SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
-    : m_contextElement(contextElement)
-    , m_zoomAndPan(SVGZoomAndPanMagnify)
+SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
+    : m_contextElement(&contextElement)
 {
-    ASSERT(m_contextElement);
 }
 
 const AtomicString& SVGViewSpec::viewBoxIdentifier()
@@ -100,24 +98,10 @@ const AtomicString& SVGViewSpec::transformIdentifier()
     return s_identifier;
 }
 
-void SVGViewSpec::setZoomAndPan(unsigned short, ExceptionCode& ec)
+ExceptionOr<void> SVGViewSpec::setZoomAndPan(unsigned short)
 {
     // SVGViewSpec and all of its content is read-only.
-    ec = NO_MODIFICATION_ALLOWED_ERR;
-}
-
-void SVGViewSpec::setTransformString(const String& transform)
-{
-    if (!m_contextElement)
-        return;
-
-    SVGTransformList newList;
-    newList.parse(transform);
-
-    if (auto wrapper = SVGAnimatedProperty::lookupWrapper<SVGElement, SVGAnimatedTransformList>(m_contextElement, transformPropertyInfo()))
-        static_pointer_cast<SVGAnimatedTransformList>(wrapper)->detachListWrappers(newList.size());
-
-    m_transform = newList;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
 String SVGViewSpec::transformString() const
@@ -127,20 +111,20 @@ String SVGViewSpec::transformString() const
 
 String SVGViewSpec::viewBoxString() const
 {
-    return SVGPropertyTraits<FloatRect>::toString(viewBoxBaseValue());
+    return SVGPropertyTraits<FloatRect>::toString(m_viewBox);
 }
 
 String SVGViewSpec::preserveAspectRatioString() const
 {
-    return SVGPropertyTraits<SVGPreserveAspectRatio>::toString(preserveAspectRatioBaseValue());
+    return SVGPropertyTraits<SVGPreserveAspectRatio>::toString(m_preserveAspectRatio);
 }
 
 SVGElement* SVGViewSpec::viewTarget() const
 {
     if (!m_contextElement)
         return nullptr;
-    Element* element = m_contextElement->treeScope().getElementById(m_viewTargetString);
-    if (!element || !element->isSVGElement())
+    auto* element = m_contextElement->treeScope().getElementById(m_viewTargetString);
+    if (!is<SVGElement>(element))
         return nullptr;
     return downcast<SVGElement>(element);
 }
@@ -170,22 +154,22 @@ RefPtr<SVGAnimatedPreserveAspectRatio> SVGViewSpec::preserveAspectRatioAnimated(
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateViewBoxWrapper(SVGViewSpec* ownerType)
 {
     ASSERT(ownerType);
-    ASSERT(ownerType->contextElement());
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedRect, FloatRect>(ownerType->contextElement(), viewBoxPropertyInfo(), ownerType->m_viewBox);
+    ASSERT(ownerType->m_contextElement);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedRect, FloatRect>(ownerType->m_contextElement, viewBoxPropertyInfo(), ownerType->m_viewBox);
 }
 
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* ownerType)
 {
     ASSERT(ownerType);
-    ASSERT(ownerType->contextElement());
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatio>(ownerType->contextElement(), preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
+    ASSERT(ownerType->m_contextElement);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedPreserveAspectRatio, SVGPreserveAspectRatio>(ownerType->m_contextElement, preserveAspectRatioPropertyInfo(), ownerType->m_preserveAspectRatio);
 }
 
 Ref<SVGAnimatedProperty> SVGViewSpec::lookupOrCreateTransformWrapper(SVGViewSpec* ownerType)
 {
     ASSERT(ownerType);
-    ASSERT(ownerType->contextElement());
-    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformList>(ownerType->contextElement(), transformPropertyInfo(), ownerType->m_transform);
+    ASSERT(ownerType->m_contextElement);
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGElement, SVGAnimatedTransformList, SVGTransformList>(ownerType->m_contextElement, transformPropertyInfo(), ownerType->m_transform);
 }
 
 void SVGViewSpec::reset()
@@ -241,7 +225,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
                     currViewSpec++;
                 if (currViewSpec >= end)
                     return false;
-                setViewTargetString(String(viewTargetStart, currViewSpec - viewTargetStart));
+                m_viewTargetString = String(viewTargetStart, currViewSpec - viewTargetStart);
                 currViewSpec++;
             } else
                 return false;

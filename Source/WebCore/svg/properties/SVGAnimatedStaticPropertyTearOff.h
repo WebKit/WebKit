@@ -18,10 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedStaticPropertyTearOff_h
-#define SVGAnimatedStaticPropertyTearOff_h
+#pragma once
 
-#include "ExceptionCode.h"
+#include "ExceptionOr.h"
 #include "SVGAnimatedProperty.h"
 
 namespace WebCore {
@@ -43,10 +42,11 @@ public:
         return m_property;
     }
 
-    virtual void setBaseVal(const PropertyType& property, ExceptionCode&)
+    virtual ExceptionOr<void> setBaseVal(const PropertyType& property)
     {
         m_property = property;
         commitChange();
+        return { };
     }
 
     bool isAnimating() const override { return m_animatedProperty; }
@@ -107,5 +107,3 @@ private:
 };
 
 }
-
-#endif // SVGAnimatedStaticPropertyTearOff_h

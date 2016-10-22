@@ -17,13 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegList_h
-#define SVGPathSegList_h
+#pragma once
 
 #include "SVGListProperty.h"
 #include "SVGPathSeg.h"
 #include "SVGPropertyTraits.h"
-
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -33,7 +31,7 @@ class SVGElement;
 
 class SVGPathSegList : public Vector<RefPtr<SVGPathSeg>> {
 public:
-    SVGPathSegList(SVGPathSegRole role)
+    explicit SVGPathSegList(SVGPathSegRole role)
         : m_role(role)
     {
     }
@@ -47,12 +45,9 @@ private:
     SVGPathSegRole m_role;
 };
 
-template<>
-struct SVGPropertyTraits<SVGPathSegList> {
+template<> struct SVGPropertyTraits<SVGPathSegList> {
     static SVGPathSegList initialValue() { return SVGPathSegList(PathSegUndefinedRole); }
     typedef RefPtr<SVGPathSeg> ListItemType;
 };
 
 } // namespace WebCore
-
-#endif

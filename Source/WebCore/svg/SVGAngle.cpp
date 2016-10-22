@@ -25,16 +25,9 @@
 #include "ExceptionCode.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
-
-SVGAngle::SVGAngle()
-    : m_unitType(SVG_ANGLETYPE_UNSPECIFIED)
-    , m_valueInSpecifiedUnits(0)
-{
-}
 
 float SVGAngle::value() const
 {
@@ -48,7 +41,6 @@ float SVGAngle::value() const
     case SVG_ANGLETYPE_DEG:
         return m_valueInSpecifiedUnits;
     }
-
     ASSERT_NOT_REACHED();
     return 0;
 }
@@ -58,72 +50,28 @@ void SVGAngle::setValue(float value)
     switch (m_unitType) {
     case SVG_ANGLETYPE_GRAD:
         m_valueInSpecifiedUnits = deg2grad(value);
-        break;
+        return;
     case SVG_ANGLETYPE_RAD:
         m_valueInSpecifiedUnits = deg2rad(value);
-        break;
+        return;
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
     case SVG_ANGLETYPE_DEG:
         m_valueInSpecifiedUnits = value;
-        break;
+        return;
     }
-}
-
-inline SVGAngle::SVGAngleType stringToAngleType(const UChar*& ptr, const UChar* end)
-{
-    // If there's no unit given, the angle type is unspecified.
-    if (ptr == end)
-        return SVGAngle::SVG_ANGLETYPE_UNSPECIFIED;
-
-    const UChar firstChar = *ptr;
-    
-    // If the unit contains only one character, the angle type is unknown.
-    ++ptr;
-    if (ptr == end)
-        return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
-
-    const UChar secondChar = *ptr;
- 
-    // If the unit contains only two characters, the angle type is unknown.
-    ++ptr;
-    if (ptr == end)
-        return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
-
-    const UChar thirdChar = *ptr;
-    if (firstChar == 'd' && secondChar == 'e' && thirdChar == 'g')
-        return SVGAngle::SVG_ANGLETYPE_DEG;
-    if (firstChar == 'r' && secondChar == 'a' && thirdChar == 'd')
-        return SVGAngle::SVG_ANGLETYPE_RAD;
-
-    // If the unit contains three characters, but is not deg or rad, then it's unknown.
-    ++ptr;
-    if (ptr == end)
-        return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
-
-    const UChar fourthChar = *ptr;
-
-    if (firstChar == 'g' && secondChar == 'r' && thirdChar == 'a' && fourthChar == 'd')
-        return SVGAngle::SVG_ANGLETYPE_GRAD;
-
-    return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
+    ASSERT_NOT_REACHED();
 }
 
 String SVGAngle::valueAsString() const
 {
     switch (m_unitType) {
-    case SVG_ANGLETYPE_DEG: {
-        static NeverDestroyed<String> degString(ASCIILiteral("deg"));
-        return String::number(m_valueInSpecifiedUnits) + degString.get();
-    }
-    case SVG_ANGLETYPE_RAD: {
-        static NeverDestroyed<String> radString(ASCIILiteral("rad"));
-        return String::number(m_valueInSpecifiedUnits) + radString.get();
-    }
-    case SVG_ANGLETYPE_GRAD: {
-        static NeverDestroyed<String> gradString(ASCIILiteral("grad"));
-        return String::number(m_valueInSpecifiedUnits) + gradString.get();
-    }
+    case SVG_ANGLETYPE_DEG:
+        return String::number(m_valueInSpecifiedUnits) + "deg";
+    case SVG_ANGLETYPE_RAD:
+        return String::number(m_valueInSpecifiedUnits) + "rad";
+    case SVG_ANGLETYPE_GRAD:
+        return String::number(m_valueInSpecifiedUnits) + "grad";
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
         return String::number(m_valueInSpecifiedUnits);
@@ -133,55 +81,66 @@ String SVGAngle::valueAsString() const
     return String();
 }
 
-void SVGAngle::setValueAsString(const String& value, ExceptionCode& ec)
+static inline SVGAngle::SVGAngleType parseAngleType(const UChar* ptr, const UChar* end)
+{
+    switch (end - ptr) {
+    case 0:
+        return SVGAngle::SVG_ANGLETYPE_UNSPECIFIED;
+    case 3:
+        if (ptr[0] == 'd' && ptr[1] == 'e' && ptr[2] == 'g')
+            return SVGAngle::SVG_ANGLETYPE_DEG;
+        if (ptr[0] == 'r' && ptr[1] == 'a' && ptr[2] == 'd')
+            return SVGAngle::SVG_ANGLETYPE_RAD;
+        break;
+    case 4:
+        if (ptr[0] == 'g' && ptr[1] == 'r' && ptr[2] == 'a' && ptr[3] == 'd')
+            return SVGAngle::SVG_ANGLETYPE_GRAD;
+        break;
+    }
+    return SVGAngle::SVG_ANGLETYPE_UNKNOWN;
+}
+
+ExceptionOr<void> SVGAngle::setValueAsString(const String& value)
 {
     if (value.isEmpty()) {
         m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
-        return;
+        return { };
     }
 
-    float valueInSpecifiedUnits = 0;
     auto upconvertedCharacters = StringView(value).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + value.length();
 
-    if (!parseNumber(ptr, end, valueInSpecifiedUnits, false)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    float valueInSpecifiedUnits = 0;
+    if (!parseNumber(ptr, end, valueInSpecifiedUnits, false))
+        return Exception { SYNTAX_ERR };
 
-    SVGAngleType unitType = stringToAngleType(ptr, end);
-    if (unitType == SVG_ANGLETYPE_UNKNOWN) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    auto unitType = parseAngleType(ptr, end);
+    if (unitType == SVG_ANGLETYPE_UNKNOWN)
+        return Exception { SYNTAX_ERR };
 
     m_unitType = unitType;
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
+    return { };
 }
 
-void SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits, ExceptionCode& ec)
+ExceptionOr<void> SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
-    if (unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
+        return Exception { NOT_SUPPORTED_ERR };
 
-    if (unitType != m_unitType)
-        m_unitType = static_cast<SVGAngleType>(unitType);
-
+    m_unitType = static_cast<SVGAngleType>(unitType);
     m_valueInSpecifiedUnits = valueInSpecifiedUnits;
+    return { };
 }
 
-void SVGAngle::convertToSpecifiedUnits(unsigned short unitType, ExceptionCode& ec)
+ExceptionOr<void> SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
 {
-    if (unitType == SVG_ANGLETYPE_UNKNOWN || m_unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (unitType == SVG_ANGLETYPE_UNKNOWN || m_unitType == SVG_ANGLETYPE_UNKNOWN || unitType > SVG_ANGLETYPE_GRAD)
+        return Exception { NOT_SUPPORTED_ERR };
 
     if (unitType == m_unitType)
-        return;
+        return { };
 
     switch (m_unitType) {
     case SVG_ANGLETYPE_RAD:
@@ -225,8 +184,8 @@ void SVGAngle::convertToSpecifiedUnits(unsigned short unitType, ExceptionCode& e
             m_valueInSpecifiedUnits = deg2grad(m_valueInSpecifiedUnits);
             break;
         case SVG_ANGLETYPE_UNSPECIFIED:
-            break;
         case SVG_ANGLETYPE_DEG:
+            break;
         case SVG_ANGLETYPE_UNKNOWN:
             ASSERT_NOT_REACHED();
             break;
@@ -238,6 +197,8 @@ void SVGAngle::convertToSpecifiedUnits(unsigned short unitType, ExceptionCode& e
     }
 
     m_unitType = static_cast<SVGAngleType>(unitType);
+
+    return { };
 }
 
 }

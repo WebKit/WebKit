@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGNumberList_h
-#define SVGNumberList_h
+#pragma once
 
 #include "SVGPropertyTraits.h"
 #include <wtf/Vector.h>
@@ -28,14 +27,11 @@ namespace WebCore {
 
 class SVGNumberList final : public Vector<float> {
 public:
-    SVGNumberList() { }
-
     void parse(const String&);
     String valueAsString() const;
 };
 
-template<>
-struct SVGPropertyTraits<SVGNumberList> {
+template<> struct SVGPropertyTraits<SVGNumberList> {
     typedef float ListItemType;
 
     static SVGNumberList initialValue() { return SVGNumberList(); }
@@ -43,5 +39,3 @@ struct SVGPropertyTraits<SVGNumberList> {
 };
 
 } // namespace WebCore
-
-#endif

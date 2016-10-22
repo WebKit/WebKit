@@ -97,7 +97,7 @@ AffineTransform SVGLocatable::computeCTM(SVGElement* element, CTMScope mode, Sty
     return ctm;
 }
 
-AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, ExceptionCode& ec, StyleUpdateStrategy styleUpdateStrategy)
+ExceptionOr<AffineTransform> SVGLocatable::getTransformToElement(SVGElement* target, StyleUpdateStrategy styleUpdateStrategy)
 {
     AffineTransform ctm = getCTM(styleUpdateStrategy);
 
@@ -105,13 +105,11 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
         AffineTransform targetCTM = downcast<SVGGraphicsElement>(*target).getCTM(styleUpdateStrategy);
         if (auto inverse = targetCTM.inverse())
             ctm = inverse.value() * ctm;
-        else {
-            ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
-            return ctm;
-        }
+        else
+            return Exception { SVGException::SVG_MATRIX_NOT_INVERTABLE };
     }
 
-    return ctm;
+    return WTFMove(ctm);
 }
 
 }

@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGListProperty_h
-#define SVGListProperty_h
+#pragma once
 
 #include "SVGException.h"
 #include "SVGPropertyTearOff.h"
@@ -42,18 +41,16 @@ class SVGListProperty : public SVGProperty {
 public:
     typedef SVGListProperty<PropertyType> Self;
 
-    typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
-    typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
-    typedef RefPtr<ListItemTearOff> PtrListItemTearOff;
-    typedef SVGAnimatedListPropertyTearOff<PropertyType> AnimatedListPropertyTearOff;
-    typedef typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache ListWrapperCache;
+    using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
+    using ListItemTearOff = SVGPropertyTearOff<ListItemType>;
+    using PtrListItemTearOff = RefPtr<ListItemTearOff>;
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<PropertyType>;
+    using ListWrapperCache = typename AnimatedListPropertyTearOff::ListWrapperCache;
 
-    bool canAlterList(ExceptionCode& ec) const
+    ExceptionOr<bool> canAlterList() const
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return false;
-        }
+        if (m_role == AnimValRole)
+            return Exception { NO_MODIFICATION_ALLOWED_ERR };
 
         return true;
     }
@@ -95,23 +92,31 @@ public:
     }
 
     // SVGList::clear()
-    void clearValues(ExceptionCode& ec)
+    ExceptionOr<void> clearValues()
     {
-        if (!canAlterList(ec))
-            return;
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return { };
 
         m_values->clear();
         commitChange();
+        return { };
     }
 
-    void clearValuesAndWrappers(ExceptionCode& ec)
+    ExceptionOr<void> clearValuesAndWrappers()
     {
-        if (!canAlterList(ec))
-            return;
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return { };
 
         detachListWrappers(0);
         m_values->clear();
         commitChange();
+        return { };
     }
 
     // SVGList::numberOfItems()
@@ -121,10 +126,13 @@ public:
     }
 
     // SVGList::initialize()
-    ListItemType initializeValues(const ListItemType& newItem, ExceptionCode& ec)
+    ExceptionOr<ListItemType> initializeValues(const ListItemType& newItem)
     {
-        if (!canAlterList(ec))
-            return ListItemType();
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         // Spec: If the inserted item is already in a list, it is removed from its previous list before it is inserted into this list.
         processIncomingListItemValue(newItem, 0);
@@ -134,20 +142,22 @@ public:
         m_values->append(newItem);
 
         commitChange();
-        return newItem;
+        return ListItemType { newItem };
     }
 
-    PtrListItemTearOff initializeValuesAndWrappers(PtrListItemTearOff newItem, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> initializeValuesAndWrappers(PtrListItemTearOff newItem)
     {
         ASSERT(m_wrappers);
-        if (!canAlterList(ec))
+
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
         ASSERT(m_values->size() == m_wrappers->size());
 
@@ -162,33 +172,38 @@ public:
         m_wrappers->append(newItem);
 
         commitChange();
-        return newItem;
+        return WTFMove(newItem);
     }
 
     // SVGList::getItem()
-    bool canGetItem(unsigned index, ExceptionCode& ec)
+    ExceptionOr<bool> canGetItem(unsigned index)
     {
-        if (index >= m_values->size()) {
-            ec = INDEX_SIZE_ERR;
-            return false;
-        }
+        if (index >= m_values->size())
+            return Exception { INDEX_SIZE_ERR };
 
         return true;
     }
 
-    ListItemType getItemValues(unsigned index, ExceptionCode& ec)
+    ExceptionOr<ListItemType> getItemValues(unsigned index)
     {
-        if (!canGetItem(index, ec))
-            return ListItemType();
+        auto result = canGetItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         // Spec: Returns the specified item from the list. The returned item is the item itself and not a copy.
-        return m_values->at(index);
+        return ListItemType { m_values->at(index) };
     }
 
-    PtrListItemTearOff getItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> getItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index)
     {
         ASSERT(m_wrappers);
-        if (!canGetItem(index, ec))
+
+        auto result = canGetItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         // Spec: Returns the specified item from the list. The returned item is the item itself and not a copy.
@@ -207,10 +222,13 @@ public:
     }
 
     // SVGList::insertItemBefore()
-    ListItemType insertItemBeforeValues(const ListItemType& newItem, unsigned index, ExceptionCode& ec)
+    ExceptionOr<ListItemType> insertItemBeforeValues(const ListItemType& newItem, unsigned index)
     {
-        if (!canAlterList(ec))
-            return ListItemType();
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         // Spec: If the index is greater than or equal to numberOfItems, then the new item is appended to the end of the list.
         if (index > m_values->size())
@@ -219,7 +237,7 @@ public:
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         if (!processIncomingListItemValue(newItem, &index)) {
             // Inserting the item before itself is a no-op.
-            return newItem;
+            return ListItemType { newItem };
         }
 
         // Spec: Inserts a new item into the list at the specified position. The index of the item before which the new item is to be
@@ -227,24 +245,26 @@ public:
         m_values->insert(index, newItem);
 
         commitChange();
-        return newItem;
+        return ListItemType { newItem };
     }
 
-    PtrListItemTearOff insertItemBeforeValuesAndWrappers(PtrListItemTearOff newItem, unsigned index, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> insertItemBeforeValuesAndWrappers(PtrListItemTearOff newItem, unsigned index)
     {
         ASSERT(m_wrappers);
-        if (!canAlterList(ec))
+
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
         // Spec: If the index is greater than or equal to numberOfItems, then the new item is appended to the end of the list.
         if (index > m_values->size())
-             index = m_values->size();
+            index = m_values->size();
 
         ASSERT(m_values->size() == m_wrappers->size());
 
@@ -264,68 +284,72 @@ public:
     }
 
     // SVGList::replaceItem()
-    bool canReplaceItem(unsigned index, ExceptionCode& ec)
+    ExceptionOr<bool> canReplaceItem(unsigned index)
     {
-        if (!canAlterList(ec))
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return false;
 
-        if (index >= m_values->size()) {
-            ec = INDEX_SIZE_ERR;
-            return false;
-        }
+        if (index >= m_values->size())
+            return Exception { INDEX_SIZE_ERR };
 
         return true;
     }
 
-    ListItemType replaceItemValues(const ListItemType& newItem, unsigned index, ExceptionCode& ec)
+    ExceptionOr<ListItemType> replaceItemValues(const ListItemType& newItem, unsigned index)
     {
-        if (!canReplaceItem(index, ec))
-            return ListItemType();
+        auto result = canReplaceItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // Spec: If the item is already in this list, note that the index of the item to replace is before the removal of the item.
         if (!processIncomingListItemValue(newItem, &index)) {
             // Replacing the item with itself is a no-op.
-            return newItem;
+            return ListItemType { newItem };
         }
 
         if (m_values->isEmpty()) {
             // 'newItem' already lived in our list, we removed it, and now we're empty, which means there's nothing to replace.
-            ec = INDEX_SIZE_ERR;
-            return ListItemType();
+            return Exception { INDEX_SIZE_ERR };
         }
 
         // Update the value at the desired position 'index'. 
         m_values->at(index) = newItem;
 
         commitChange();
-        return newItem;
+        return ListItemType { newItem };
     }
 
-    PtrListItemTearOff replaceItemValuesAndWrappers(PtrListItemTearOff newItem, unsigned index, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> replaceItemValuesAndWrappers(PtrListItemTearOff newItem, unsigned index)
     {
         ASSERT(m_wrappers);
-        if (!canReplaceItem(index, ec))
+
+        auto result = canReplaceItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
         ASSERT(m_values->size() == m_wrappers->size());
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // Spec: If the item is already in this list, note that the index of the item to replace is before the removal of the item.
         if (!processIncomingListItemWrapper(newItem, &index))
-            return newItem;
+            return WTFMove(newItem);
 
         if (m_values->isEmpty()) {
             ASSERT(m_wrappers->isEmpty());
             // 'newItem' already lived in our list, we removed it, and now we're empty, which means there's nothing to replace.
-            ec = INDEX_SIZE_ERR;
-            return nullptr;
+            return Exception { INDEX_SIZE_ERR };
         }
 
         // Detach the existing wrapper.
@@ -338,39 +362,47 @@ public:
         m_wrappers->at(index) = newItem;
 
         commitChange();
-        return newItem;
+        return WTFMove(newItem);
     }
 
     // SVGList::removeItem()
-    bool canRemoveItem(unsigned index, ExceptionCode& ec)
+    ExceptionOr<bool> canRemoveItem(unsigned index)
     {
-        if (!canAlterList(ec))
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return false;
 
-        if (index >= m_values->size()) {
-            ec = INDEX_SIZE_ERR;
-            return false;
-        }
+        if (index >= m_values->size())
+            return Exception { INDEX_SIZE_ERR };
 
         return true;
     }
 
-    ListItemType removeItemValues(unsigned index, ExceptionCode& ec)
+    ExceptionOr<ListItemType> removeItemValues(unsigned index)
     {
-        if (!canRemoveItem(index, ec))
-            return ListItemType();
+        auto result = canRemoveItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         ListItemType oldItem = m_values->at(index);
         m_values->remove(index);
 
         commitChange();
-        return oldItem;
+        return WTFMove(oldItem);
     }
 
-    PtrListItemTearOff removeItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> removeItemValuesAndWrappers(AnimatedListPropertyTearOff* animatedList, unsigned index)
     {
         ASSERT(m_wrappers);
-        if (!canRemoveItem(index, ec))
+
+        auto result = canRemoveItem(index);
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         ASSERT(m_values->size() == m_wrappers->size());
@@ -389,10 +421,13 @@ public:
     }
 
     // SVGList::appendItem()
-    ListItemType appendItemValues(const ListItemType& newItem, ExceptionCode& ec)
+    ExceptionOr<ListItemType> appendItemValues(const ListItemType& newItem)
     {
-        if (!canAlterList(ec))
-            return ListItemType();
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
+            return ListItemType { };
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         processIncomingListItemValue(newItem, 0);
@@ -401,20 +436,22 @@ public:
         m_values->append(newItem);
 
         commitChange(ListModificationAppend);
-        return newItem;
+        return ListItemType { newItem };
     }
 
-    PtrListItemTearOff appendItemValuesAndWrappers(PtrListItemTearOff newItem, ExceptionCode& ec)
+    ExceptionOr<PtrListItemTearOff> appendItemValuesAndWrappers(PtrListItemTearOff newItem)
     {
         ASSERT(m_wrappers);
-        if (!canAlterList(ec))
+
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
         ASSERT(m_values->size() == m_wrappers->size());
 
@@ -426,7 +463,7 @@ public:
         m_wrappers->append(newItem);
 
         commitChange(ListModificationAppend);
-        return newItem;
+        return WTFMove(newItem);
     }
 
     PropertyType& values()
@@ -472,5 +509,3 @@ protected:
 };
 
 }
-
-#endif // SVGListProperty_h

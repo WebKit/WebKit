@@ -26,17 +26,18 @@
 // SVGViewSpec intentionally doesn't inherit from SVGZoomAndPan & SVGFitToViewBox on the IDLs.
 // It would require that any of those classes would be RefCounted, and we want to avoid that.
 [
-    JSGenerateToJSObject
+    ImplementationLacksVTable,
+    JSGenerateToJSObject,
 ] interface SVGViewSpec {
-      readonly attribute SVGTransformList transform;
-      readonly attribute SVGElement viewTarget;
-      readonly attribute DOMString viewBoxString;
-      readonly attribute DOMString preserveAspectRatioString;
-      readonly attribute DOMString transformString;
-      readonly attribute DOMString viewTargetString;
+    readonly attribute SVGTransformList transform;
+    readonly attribute SVGElement viewTarget;
+    readonly attribute DOMString viewBoxString;
+    readonly attribute DOMString preserveAspectRatioString;
+    readonly attribute DOMString transformString;
+    readonly attribute DOMString viewTargetString;
 
-      // SVGZoomAndPan
-      [SetterMayThrowLegacyException] attribute unsigned short zoomAndPan;
+    // SVGZoomAndPan
+    [SetterMayThrowException] attribute unsigned short zoomAndPan;
 };
 
 SVGViewSpec implements SVGFitToViewBox;

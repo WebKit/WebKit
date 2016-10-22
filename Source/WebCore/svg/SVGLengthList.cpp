@@ -29,7 +29,6 @@ namespace WebCore {
 void SVGLengthList::parse(const String& value, SVGLengthMode mode)
 {
     clear();
-    ExceptionCode ec = 0;
 
     auto upconvertedCharacters = StringView(value).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
@@ -45,8 +44,7 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
         String valueString(start, ptr - start);
         if (valueString.isEmpty())
             return;
-        length.setValueAsString(valueString, ec);
-        if (ec)
+        if (length.setValueAsString(valueString).hasException())
             return;
         append(length);
         skipOptionalSVGSpacesOrDelimiter(ptr, end);

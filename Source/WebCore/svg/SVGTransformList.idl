@@ -27,15 +27,15 @@
 interface SVGTransformList {
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowLegacyException] void clear();
-    [MayThrowLegacyException] SVGTransform initialize(SVGTransform item);
-    [MayThrowLegacyException] SVGTransform getItem(unsigned long index);
-    [MayThrowLegacyException] SVGTransform insertItemBefore(SVGTransform item, unsigned long index);
-    [MayThrowLegacyException] SVGTransform replaceItem(SVGTransform item, unsigned long index);
-    [MayThrowLegacyException] SVGTransform removeItem(unsigned long index);
-    [MayThrowLegacyException] SVGTransform appendItem(SVGTransform item);
+    [MayThrowException] void clear();
+    [MayThrowException] SVGTransform initialize(SVGTransform item);
+    [MayThrowException] SVGTransform getItem(unsigned long index);
+    [MayThrowException] SVGTransform insertItemBefore(SVGTransform item, unsigned long index);
+    [MayThrowException] SVGTransform replaceItem(SVGTransform item, unsigned long index);
+    [MayThrowException] SVGTransform removeItem(unsigned long index);
+    [MayThrowException] SVGTransform appendItem(SVGTransform item);
 
-    [MayThrowLegacyException] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
+    [MayThrowException] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
 
-    [MayThrowLegacyException] SVGTransform consolidate();
+    [MayThrowException] SVGTransform consolidate();
 };

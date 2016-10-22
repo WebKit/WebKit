@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPropertyTearOff_h
-#define SVGPropertyTearOff_h
+#pragma once
 
 #include "SVGAnimatedProperty.h"
 #include "SVGElement.h"
@@ -55,6 +54,13 @@ public:
     static Ref<Self> create(const PropertyType* initialValue)
     {
         return adoptRef(*new Self(initialValue));
+    }
+
+    template<typename T> static ExceptionOr<Ref<Self>> create(ExceptionOr<T>&& initialValue)
+    {
+        if (initialValue.hasException())
+            return initialValue.releaseException();
+        return create(initialValue.releaseReturnValue());
     }
 
     virtual PropertyType& propertyReference() { return *m_value; }
@@ -172,5 +178,3 @@ protected:
 };
 
 }
-
-#endif // SVGPropertyTearOff_h

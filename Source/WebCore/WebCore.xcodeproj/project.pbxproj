@@ -10613,6 +10613,7 @@
 		933A14B60B7D1D5200A53FFD /* JSTextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextEvent.cpp; sourceTree = "<group>"; };
 		933A14B70B7D1D5200A53FFD /* JSTextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextEvent.h; sourceTree = "<group>"; };
 		933C7A741C0FBC440034FB97 /* NSSpellCheckerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSSpellCheckerSPI.h; sourceTree = "<group>"; };
+		934305961DB9FA0E00E712A7 /* SVGGraphicsElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = SVGGraphicsElement.idl; sourceTree = "<group>"; };
 		9343CB7F12F25E510033C5EE /* TextCodecUTF8.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCodecUTF8.cpp; sourceTree = "<group>"; };
 		9343CB8012F25E510033C5EE /* TextCodecUTF8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecUTF8.h; sourceTree = "<group>"; };
 		93442C9D0D2B335C00338FF9 /* HTMLTableRowsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTableRowsCollection.h; sourceTree = "<group>"; };
@@ -20713,6 +20714,7 @@
 				B22278950D00BF200071B782 /* SVGGradientElement.idl */,
 				B222791F0D00BF210071B782 /* SVGGraphicsElement.cpp */,
 				B22279200D00BF210071B782 /* SVGGraphicsElement.h */,
+				934305961DB9FA0E00E712A7 /* SVGGraphicsElement.idl */,
 				650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */,
 				650FBF280D9AF047008FC292 /* SVGHKernElement.h */,
 				650FBF290D9AF047008FC292 /* SVGHKernElement.idl */,

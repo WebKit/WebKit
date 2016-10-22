@@ -18,17 +18,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPreserveAspectRatio_h
-#define SVGPreserveAspectRatio_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
 class AffineTransform;
 class FloatRect;
-
-typedef int ExceptionCode;
 
 class SVGPreserveAspectRatio {
     WTF_MAKE_FAST_ALLOCATED;
@@ -55,17 +53,15 @@ public:
 
     SVGPreserveAspectRatio();
 
-    void setAlign(unsigned short align, ExceptionCode&);
+    ExceptionOr<void> setAlign(unsigned short);
     unsigned short align() const { return m_align; }
 
-    void setMeetOrSlice(unsigned short, ExceptionCode&);
+    ExceptionOr<void> setMeetOrSlice(unsigned short);
     unsigned short meetOrSlice() const { return m_meetOrSlice; }
 
     void transformRect(FloatRect& destRect, FloatRect& srcRect);
 
-    AffineTransform getCTM(float logicX, float logicY,
-                           float logicWidth, float logicHeight,
-                           float physWidth, float physHeight) const;
+    AffineTransform getCTM(float logicalX, float logicalY, float logicalWidth, float logicalHeight, float physicalWidth, float physicalHeight) const;
 
     void parse(const String&);
     bool parse(const UChar*& currParam, const UChar* end, bool validate);
@@ -79,12 +75,9 @@ private:
     bool parseInternal(const UChar*& currParam, const UChar* end, bool validate);
 };
 
-template<>
-struct SVGPropertyTraits<SVGPreserveAspectRatio> {
+template<> struct SVGPropertyTraits<SVGPreserveAspectRatio> {
     static SVGPreserveAspectRatio initialValue() { return SVGPreserveAspectRatio(); }
     static String toString(const SVGPreserveAspectRatio& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore
-
-#endif // SVGPreserveAspectRatio_h

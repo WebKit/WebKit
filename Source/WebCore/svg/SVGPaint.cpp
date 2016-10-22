@@ -64,9 +64,9 @@ void SVGPaint::setUri(const String&)
     // The setters are the most problematic part so we remove the support for those first.
 }
 
-void SVGPaint::setPaint(unsigned short, const String&, const String&, const String&, ExceptionCode& ec)
+ExceptionOr<void> SVGPaint::setPaint(unsigned short, const String&, const String&, const String&)
 {
-    ec = NO_MODIFICATION_ALLOWED_ERR;
+    return Exception { NO_MODIFICATION_ALLOWED_ERR };
 }
 
 String SVGPaint::customCSSText() const

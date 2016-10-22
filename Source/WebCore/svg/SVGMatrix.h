@@ -17,17 +17,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGMatrix_h
-#define SVGMatrix_h
+#pragma once
 
 #include "AffineTransform.h"
+#include "ExceptionOr.h"
 #include "SVGException.h"
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
-// Only used in the bindings.
 class SVGMatrix final : public AffineTransform {
 public:
     SVGMatrix() { }
@@ -43,88 +40,85 @@ public:
 
     SVGMatrix translate(double tx, double ty)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.translate(tx, ty);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix scale(double s)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.scale(s, s);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix scaleNonUniform(double sx, double sy)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.scale(sx, sy);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix rotate(double d)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.rotate(d);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix flipX()
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.flipX();
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix flipY()
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.flipY();
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix skewX(double angle)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.skewX(angle);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix skewY(double angle)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.skewY(angle);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
     SVGMatrix multiply(const SVGMatrix& other)
     {
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy *= static_cast<const AffineTransform&>(other);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
-    SVGMatrix inverse(ExceptionCode& ec) const
+    ExceptionOr<SVGMatrix> inverse() const
     {
         if (auto inverse = AffineTransform::inverse())
-            return inverse.value();
+            return SVGMatrix { inverse.value() };
         
-        ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
-        return AffineTransform();
+        return Exception { SVGException::SVG_MATRIX_NOT_INVERTABLE };
     }
 
-    SVGMatrix rotateFromVector(double x, double y, ExceptionCode& ec)
+    ExceptionOr<SVGMatrix> rotateFromVector(double x, double y)
     {
         if (!x || !y)
-            ec = SVGException::SVG_INVALID_VALUE_ERR;
+            return Exception { SVGException::SVG_INVALID_VALUE_ERR };
 
-        AffineTransform copy = *this;
+        AffineTransform copy { *this };
         copy.rotateFromVector(x, y);
-        return static_cast<SVGMatrix>(copy);
+        return SVGMatrix { copy };
     }
 
 };
 
 } // namespace WebCore
-
-#endif

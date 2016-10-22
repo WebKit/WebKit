@@ -41,6 +41,5 @@
     readonly attribute DOMString uri;
 
     void setUri(DOMString uri);
-    [MayThrowLegacyException] void setPaint(unsigned short paintType, DOMString uri, DOMString rgbColor, DOMString iccColor);
+    [MayThrowException] void setPaint(unsigned short paintType, DOMString uri, DOMString rgbColor, DOMString iccColor);
 };
-

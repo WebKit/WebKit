@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLength_h
-#define SVGLength_h
+#pragma once
 
 #include "AnimationUtilities.h"
 #include "SVGLengthContext.h"
@@ -30,8 +29,6 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 class QualifiedName;
-
-typedef int ExceptionCode;
 
 enum SVGLengthNegativeValuesMode {
     AllowNegativeLengths,
@@ -59,7 +56,6 @@ public:
     // FIXME: Once all SVGLength users use Length internally, we make this a wrapper for Length.
     SVGLength(SVGLengthMode = LengthModeOther, const String& valueAsString = String());
     SVGLength(const SVGLengthContext&, float, SVGLengthMode = LengthModeOther, SVGLengthType = LengthTypeNumber);
-    SVGLength(const SVGLength&);
 
     SVGLengthType unitType() const;
     SVGLengthMode unitMode() const;
@@ -70,9 +66,9 @@ public:
     static SVGLength construct(SVGLengthMode, const String&, SVGParsingError&, SVGLengthNegativeValuesMode = AllowNegativeLengths);
 
     float value(const SVGLengthContext&) const;
-    float value(const SVGLengthContext&, ExceptionCode&) const;
-    void setValue(float, const SVGLengthContext&, ExceptionCode&);
-    void setValue(const SVGLengthContext&, float, SVGLengthMode, SVGLengthType, ExceptionCode&);
+    ExceptionOr<float> valueForBindings(const SVGLengthContext&) const;
+    ExceptionOr<void> setValue(float, const SVGLengthContext&);
+    ExceptionOr<void> setValue(const SVGLengthContext&, float, SVGLengthMode, SVGLengthType);
 
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
     void setValueInSpecifiedUnits(float value) { m_valueInSpecifiedUnits = value; }
@@ -80,21 +76,21 @@ public:
     float valueAsPercentage() const;
 
     String valueAsString() const;
-    void setValueAsString(const String&, ExceptionCode&);
-    void setValueAsString(const String&, SVGLengthMode, ExceptionCode&);
+    ExceptionOr<void> setValueAsString(const String&);
+    ExceptionOr<void> setValueAsString(const String&, SVGLengthMode);
     
-    void newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits, ExceptionCode&);
-    void convertToSpecifiedUnits(unsigned short, const SVGLengthContext&, ExceptionCode&);
+    ExceptionOr<void> newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits);
+    ExceptionOr<void> convertToSpecifiedUnits(unsigned short, const SVGLengthContext&);
 
     // Helper functions
-    inline bool isRelative() const
+    bool isRelative() const
     {
         SVGLengthType type = unitType();
         return type == LengthTypePercentage || type == LengthTypeEMS || type == LengthTypeEXS;
     }
 
     bool isZero() const 
-    { 
+    {
         return !m_valueInSpecifiedUnits;
     }
 
@@ -115,13 +111,12 @@ public:
             return *this;
 
         SVGLength length;
-        ExceptionCode ec = 0;
 
         if (fromType == LengthTypePercentage || toType == LengthTypePercentage) {
             float fromPercent = from.valueAsPercentage() * 100;
             float toPercent = valueAsPercentage() * 100;
-            length.newValueSpecifiedUnits(LengthTypePercentage, WebCore::blend(fromPercent, toPercent, progress), ec);
-            if (ec)
+            auto result = length.newValueSpecifiedUnits(LengthTypePercentage, WebCore::blend(fromPercent, toPercent, progress));
+            if (result.hasException())
                 return SVGLength();
             return length;
         }
@@ -129,12 +124,15 @@ public:
         if (fromType == toType || from.isZero() || isZero() || fromType == LengthTypeEMS || fromType == LengthTypeEXS) {
             float fromValue = from.valueInSpecifiedUnits();
             float toValue = valueInSpecifiedUnits();
-            if (isZero())
-                length.newValueSpecifiedUnits(fromType, WebCore::blend(fromValue, toValue, progress), ec);
-            else
-                length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue, toValue, progress), ec);
-            if (ec)
-                return SVGLength();
+            if (isZero()) {
+                auto result = length.newValueSpecifiedUnits(fromType, WebCore::blend(fromValue, toValue, progress));
+                if (result.hasException())
+                    return SVGLength();
+            } else {
+                auto result = length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue, toValue, progress));
+                if (result.hasException())
+                    return SVGLength();
+            }
             return length;
         }
 
@@ -142,29 +140,27 @@ public:
         ASSERT(!from.isRelative());
 
         SVGLengthContext nonRelativeLengthContext(nullptr);
-        float fromValueInUserUnits = nonRelativeLengthContext.convertValueToUserUnits(from.valueInSpecifiedUnits(), from.unitMode(), fromType, ec);
-        if (ec)
+        auto fromValueInUserUnits = nonRelativeLengthContext.convertValueToUserUnits(from.valueInSpecifiedUnits(), from.unitMode(), fromType);
+        if (fromValueInUserUnits.hasException())
             return SVGLength();
 
-        float fromValue = nonRelativeLengthContext.convertValueFromUserUnits(fromValueInUserUnits, unitMode(), toType, ec);
-        if (ec)
+        auto fromValue = nonRelativeLengthContext.convertValueFromUserUnits(fromValueInUserUnits.releaseReturnValue(), unitMode(), toType);
+        if (fromValue.hasException())
             return SVGLength();
 
         float toValue = valueInSpecifiedUnits();
-        length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue, toValue, progress), ec);
-
-        if (ec)
+        auto result = length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue.releaseReturnValue(), toValue, progress));
+        if (result.hasException())
             return SVGLength();
         return length;
     }
 
 private:
     float m_valueInSpecifiedUnits;
-    unsigned int m_unit;
+    unsigned m_unit;
 };
 
-template<>
-struct SVGPropertyTraits<SVGLength> {
+template<> struct SVGPropertyTraits<SVGLength> {
     static SVGLength initialValue() { return SVGLength(); }
     static String toString(const SVGLength& type) { return type.valueAsString(); }
 };
@@ -172,5 +168,3 @@ struct SVGPropertyTraits<SVGLength> {
 TextStream& operator<<(TextStream&, const SVGLength&);
 
 } // namespace WebCore
-
-#endif // SVGLength_h

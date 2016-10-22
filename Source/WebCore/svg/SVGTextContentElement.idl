@@ -25,23 +25,22 @@
 
 interface SVGTextContentElement : SVGGraphicsElement {
     // lengthAdjust Types
-    const unsigned short LENGTHADJUST_UNKNOWN          = 0;
-    const unsigned short LENGTHADJUST_SPACING          = 1;
+    const unsigned short LENGTHADJUST_UNKNOWN = 0;
+    const unsigned short LENGTHADJUST_SPACING = 1;
     const unsigned short LENGTHADJUST_SPACINGANDGLYPHS = 2;
 
-    readonly attribute SVGAnimatedLength      textLength;
+    readonly attribute SVGAnimatedLength textLength;
     readonly attribute SVGAnimatedEnumeration lengthAdjust;
 
     long getNumberOfChars();
     unrestricted float getComputedTextLength();
-    [MayThrowLegacyException] unrestricted float getSubStringLength(optional unsigned long offset = 0,
-                             optional unsigned long length = 0);
-    [MayThrowLegacyException] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
-    [MayThrowLegacyException] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
-    [MayThrowLegacyException] SVGRect getExtentOfChar(optional unsigned long offset = 0);
-    [MayThrowLegacyException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
+    [MayThrowException] unrestricted float getSubStringLength(optional unsigned long offset = 0, optional unsigned long length = 0);
+    [MayThrowException] SVGPoint getStartPositionOfChar(optional unsigned long offset = 0);
+    [MayThrowException] SVGPoint getEndPositionOfChar(optional unsigned long offset = 0);
+    [MayThrowException] SVGRect getExtentOfChar(optional unsigned long offset = 0);
+    [MayThrowException] unrestricted float getRotationOfChar(optional unsigned long offset = 0);
     long getCharNumAtPosition(SVGPoint point);
-    [MayThrowLegacyException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
+    [MayThrowException] void selectSubString(optional unsigned long offset = 0, optional unsigned long length = 0);
 };
 
 // FIXME: SVGTextContentElement is not supposed to implement SVGExternalResourcesRequired.

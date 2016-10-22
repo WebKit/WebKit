@@ -17,9 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLengthContext_h
-#define SVGLengthContext_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "FloatRect.h"
 #include "SVGUnitTypes.h"
 
@@ -27,9 +27,8 @@ namespace WebCore {
 
 class SVGElement;
 class SVGLength;
-struct Length;
 
-typedef int ExceptionCode;
+struct Length;
 
 enum SVGLengthType {
     LengthTypeUnknown = 0,
@@ -66,27 +65,25 @@ public:
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLength&);
 
     float valueForLength(const Length&, SVGLengthMode = LengthModeOther);
-    float convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit, ExceptionCode&) const;
-    float convertValueFromUserUnits(float, SVGLengthMode, SVGLengthType toUnit, ExceptionCode&) const;
+    ExceptionOr<float> convertValueToUserUnits(float, SVGLengthMode, SVGLengthType fromUnit) const;
+    ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthMode, SVGLengthType toUnit) const;
 
     bool determineViewport(FloatSize&) const;
 
 private:
     SVGLengthContext(const SVGElement*, const FloatRect& viewport);
 
-    float convertValueFromUserUnitsToPercentage(float value, SVGLengthMode, ExceptionCode&) const;
-    float convertValueFromPercentageToUserUnits(float value, SVGLengthMode, ExceptionCode&) const;
+    ExceptionOr<float> convertValueFromUserUnitsToPercentage(float value, SVGLengthMode) const;
+    ExceptionOr<float> convertValueFromPercentageToUserUnits(float value, SVGLengthMode) const;
 
-    float convertValueFromUserUnitsToEMS(float value, ExceptionCode&) const;
-    float convertValueFromEMSToUserUnits(float value, ExceptionCode&) const;
+    ExceptionOr<float> convertValueFromUserUnitsToEMS(float value) const;
+    ExceptionOr<float> convertValueFromEMSToUserUnits(float value) const;
 
-    float convertValueFromUserUnitsToEXS(float value, ExceptionCode&) const;
-    float convertValueFromEXSToUserUnits(float value, ExceptionCode&) const;
+    ExceptionOr<float> convertValueFromUserUnitsToEXS(float value) const;
+    ExceptionOr<float> convertValueFromEXSToUserUnits(float value) const;
 
     const SVGElement* m_context;
     FloatRect m_overridenViewport;
 };
 
 } // namespace WebCore
-
-#endif // SVGLengthContext_h

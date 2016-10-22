@@ -81,8 +81,7 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
 template<>
 inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue() { return SVGMarkerOrientAngle; }
 
-template<>
-struct SVGPropertyTraits<SVGMarkerOrientType> {
+template<> struct SVGPropertyTraits<SVGMarkerOrientType> {
     static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
 
     // toString is not needed, synchronizeOrientType() handles this on its own.
@@ -93,12 +92,10 @@ struct SVGPropertyTraits<SVGMarkerOrientType> {
             return SVGMarkerOrientAuto;
         if (value == "auto-start-reverse")
             return SVGMarkerOrientAutoStartReverse;
-
-        ExceptionCode ec = 0;
-        angle.setValueAsString(value, ec);
-        if (!ec)
-            return SVGMarkerOrientAngle;
-        return SVGMarkerOrientUnknown;
+        auto setValueResult = angle.setValueAsString(value);
+        if (setValueResult.hasException())
+            return SVGMarkerOrientUnknown;
+        return SVGMarkerOrientAngle;
     }
 };
 

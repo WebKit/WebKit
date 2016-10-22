@@ -26,12 +26,11 @@
 interface SVGStringList {
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowLegacyException] void clear();
-    [MayThrowLegacyException] DOMString initialize(DOMString item);
-    [MayThrowLegacyException] DOMString getItem(unsigned long index);
-    [MayThrowLegacyException] DOMString insertItemBefore(DOMString item, unsigned long index);
-    [MayThrowLegacyException] DOMString replaceItem(DOMString item, unsigned long index);
-    [MayThrowLegacyException] DOMString removeItem(unsigned long index);
-    [MayThrowLegacyException] DOMString appendItem(DOMString item);
+    [MayThrowException] void clear();
+    [MayThrowException] DOMString initialize(DOMString item);
+    [MayThrowException] DOMString getItem(unsigned long index);
+    [MayThrowException] DOMString insertItemBefore(DOMString item, unsigned long index);
+    [MayThrowException] DOMString replaceItem(DOMString item, unsigned long index);
+    [MayThrowException] DOMString removeItem(unsigned long index);
+    [MayThrowException] DOMString appendItem(DOMString item);
 };
-

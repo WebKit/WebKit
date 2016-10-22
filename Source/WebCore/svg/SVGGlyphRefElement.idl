@@ -20,13 +20,12 @@
 [
     Conditional=SVG_FONTS
 ] interface SVGGlyphRefElement : SVGElement {
-    // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
-    [SetterMayThrowLegacyException] attribute DOMString glyphRef;
+    [Reflect=glyphRef] attribute DOMString glyphRef;
     [Reflect] attribute DOMString format;
-    [SetterMayThrowLegacyException] attribute unrestricted float x;
-    [SetterMayThrowLegacyException] attribute unrestricted float y;
-    [SetterMayThrowLegacyException] attribute unrestricted float dx;
-    [SetterMayThrowLegacyException] attribute unrestricted float dy;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
+    attribute unrestricted float dx;
+    attribute unrestricted float dy;
 };
 
 SVGGlyphRefElement implements SVGURIReference;

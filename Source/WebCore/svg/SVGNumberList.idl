@@ -27,11 +27,11 @@
 interface SVGNumberList {
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowLegacyException] void clear();
-    [MayThrowLegacyException] SVGNumber initialize(SVGNumber item);
-    [MayThrowLegacyException] SVGNumber getItem(unsigned long index);
-    [MayThrowLegacyException] SVGNumber insertItemBefore(SVGNumber item, unsigned long index);
-    [MayThrowLegacyException] SVGNumber replaceItem(SVGNumber item, unsigned long index);
-    [MayThrowLegacyException] SVGNumber removeItem(unsigned long index);
-    [MayThrowLegacyException] SVGNumber appendItem(SVGNumber item);
+    [MayThrowException] void clear();
+    [MayThrowException] SVGNumber initialize(SVGNumber item);
+    [MayThrowException] SVGNumber getItem(unsigned long index);
+    [MayThrowException] SVGNumber insertItemBefore(SVGNumber item, unsigned long index);
+    [MayThrowException] SVGNumber replaceItem(SVGNumber item, unsigned long index);
+    [MayThrowException] SVGNumber removeItem(unsigned long index);
+    [MayThrowException] SVGNumber appendItem(SVGNumber item);
 };

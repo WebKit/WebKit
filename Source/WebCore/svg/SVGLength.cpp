@@ -25,7 +25,6 @@
 #include "CSSHelper.h"
 #include "CSSPrimitiveValue.h"
 #include "ExceptionCode.h"
-#include "ExceptionCodePlaceholder.h"
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -85,7 +84,7 @@ static inline const char* lengthTypeToString(SVGLengthType type)
     return "";
 }
 
-inline SVGLengthType stringToLengthType(const UChar*& ptr, const UChar* end)
+inline SVGLengthType parseLengthType(const UChar* ptr, const UChar* end)
 {
     if (ptr == end)
         return LengthTypeNumber;
@@ -124,27 +123,21 @@ SVGLength::SVGLength(SVGLengthMode mode, const String& valueAsString)
     : m_valueInSpecifiedUnits(0)
     , m_unit(storeUnit(mode, LengthTypeNumber))
 {
-    setValueAsString(valueAsString, IGNORE_EXCEPTION);
+    setValueAsString(valueAsString);
 }
 
 SVGLength::SVGLength(const SVGLengthContext& context, float value, SVGLengthMode mode, SVGLengthType unitType)
     : m_valueInSpecifiedUnits(0)
     , m_unit(storeUnit(mode, unitType))
 {
-    setValue(value, context, ASSERT_NO_EXCEPTION);
+    setValue(value, context);
 }
 
-SVGLength::SVGLength(const SVGLength& other)
-    : m_valueInSpecifiedUnits(other.m_valueInSpecifiedUnits)
-    , m_unit(other.m_unit)
-{
-}
-
-void SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode)
 {
     m_valueInSpecifiedUnits = 0;
     m_unit = storeUnit(mode, LengthTypeNumber);
-    setValueAsString(valueAsString, ec);
+    return setValueAsString(valueAsString);
 }
 
 bool SVGLength::operator==(const SVGLength& other) const
@@ -160,12 +153,9 @@ bool SVGLength::operator!=(const SVGLength& other) const
 
 SVGLength SVGLength::construct(SVGLengthMode mode, const String& valueAsString, SVGParsingError& parseError, SVGLengthNegativeValuesMode negativeValuesMode)
 {
-    ExceptionCode ec = 0;
     SVGLength length(mode);
 
-    length.setValueAsString(valueAsString, ec);
-
-    if (ec)
+    if (length.setValueAsString(valueAsString).hasException())
         parseError = ParsingAttributeFailedError;
     else if (negativeValuesMode == ForbidNegativeLengths && length.valueInSpecifiedUnits() < 0)
         parseError = NegativeValueForbiddenError;
@@ -185,30 +175,35 @@ SVGLengthMode SVGLength::unitMode() const
 
 float SVGLength::value(const SVGLengthContext& context) const
 {
-    return value(context, IGNORE_EXCEPTION);
+    auto result = valueForBindings(context);
+    if (result.hasException())
+        return 0;
+    return result.releaseReturnValue();
 }
 
-float SVGLength::value(const SVGLengthContext& context, ExceptionCode& ec) const
+ExceptionOr<float> SVGLength::valueForBindings(const SVGLengthContext& context) const
 {
-    return context.convertValueToUserUnits(m_valueInSpecifiedUnits, extractMode(m_unit), extractType(m_unit), ec);
+    return context.convertValueToUserUnits(m_valueInSpecifiedUnits, extractMode(m_unit), extractType(m_unit));
 }
 
-void SVGLength::setValue(const SVGLengthContext& context, float value, SVGLengthMode mode, SVGLengthType unitType, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::setValue(const SVGLengthContext& context, float value, SVGLengthMode mode, SVGLengthType unitType)
 {
+    // FIXME: Seems like a bug that we change the value of m_unit even if setValue throws an exception.
     m_unit = storeUnit(mode, unitType);
-    setValue(value, context, ec);
+    return setValue(value, context);
 }
 
-void SVGLength::setValue(float value, const SVGLengthContext& context, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::setValue(float value, const SVGLengthContext& context)
 {
     // 100% = 100.0 instead of 1.0 for historical reasons, this could eventually be changed
     if (extractType(m_unit) == LengthTypePercentage)
         value = value / 100;
 
-    ec = 0;
-    float convertedValue = context.convertValueFromUserUnits(value, extractMode(m_unit), extractType(m_unit), ec);
-    if (!ec)
-        m_valueInSpecifiedUnits = convertedValue;
+    auto convertedValue = context.convertValueFromUserUnits(value, extractMode(m_unit), extractType(m_unit));
+    if (convertedValue.hasException())
+        return convertedValue.releaseException();
+    m_valueInSpecifiedUnits = convertedValue.releaseReturnValue();
+    return { };
 }
 float SVGLength::valueAsPercentage() const
 {
@@ -219,30 +214,26 @@ float SVGLength::valueAsPercentage() const
     return m_valueInSpecifiedUnits;
 }
 
-void SVGLength::setValueAsString(const String& string, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::setValueAsString(const String& string)
 {
     if (string.isEmpty())
-        return;
+        return { };
 
     float convertedNumber = 0;
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const UChar* ptr = upconvertedCharacters;
     const UChar* end = ptr + string.length();
 
-    if (!parseNumber(ptr, end, convertedNumber, false)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    if (!parseNumber(ptr, end, convertedNumber, false))
+        return Exception { SYNTAX_ERR };
 
-    SVGLengthType type = stringToLengthType(ptr, end);
-    ASSERT(ptr <= end);
-    if (type == LengthTypeUnknown) {
-        ec = SYNTAX_ERR;
-        return;
-    }
+    auto type = parseLengthType(ptr, end);
+    if (type == LengthTypeUnknown)
+        return Exception { SYNTAX_ERR };
 
     m_unit = storeUnit(extractMode(m_unit), type);
     m_valueInSpecifiedUnits = convertedNumber;
+    return { };
 }
 
 String SVGLength::valueAsString() const
@@ -250,36 +241,34 @@ String SVGLength::valueAsString() const
     return String::number(m_valueInSpecifiedUnits) + lengthTypeToString(extractType(m_unit));
 }
 
-void SVGLength::newValueSpecifiedUnits(unsigned short type, float value, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::newValueSpecifiedUnits(unsigned short type, float value)
 {
-    if (type == LengthTypeUnknown || type > LengthTypePC) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (type == LengthTypeUnknown || type > LengthTypePC)
+        return Exception { NOT_SUPPORTED_ERR };
 
     m_unit = storeUnit(extractMode(m_unit), static_cast<SVGLengthType>(type));
     m_valueInSpecifiedUnits = value;
+    return { };
 }
 
-void SVGLength::convertToSpecifiedUnits(unsigned short type, const SVGLengthContext& context, ExceptionCode& ec)
+ExceptionOr<void> SVGLength::convertToSpecifiedUnits(unsigned short type, const SVGLengthContext& context)
 {
-    if (type == LengthTypeUnknown || type > LengthTypePC) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
+    if (type == LengthTypeUnknown || type > LengthTypePC)
+        return Exception { NOT_SUPPORTED_ERR };
+
+    auto valueInUserUnits = valueForBindings(context);
+    if (valueInUserUnits.hasException())
+        return valueInUserUnits.releaseException();
+
+    auto originalUnitAndType = m_unit;
+    m_unit = storeUnit(extractMode(m_unit), static_cast<SVGLengthType>(type));
+    auto result = setValue(valueInUserUnits.releaseReturnValue(), context);
+    if (result.hasException()) {
+        m_unit = originalUnitAndType;
+        return result.releaseException();
     }
 
-    float valueInUserUnits = value(context, ec);
-    if (ec)
-        return;
-
-    unsigned int originalUnitAndType = m_unit;    
-    m_unit = storeUnit(extractMode(m_unit), static_cast<SVGLengthType>(type));
-    setValue(valueInUserUnits, context, ec);
-    if (!ec)
-        return;
-
-    // Eventually restore old unit and type
-    m_unit = originalUnitAndType;
+    return { };
 }
 
 SVGLength SVGLength::fromCSSPrimitiveValue(const CSSPrimitiveValue& value)
@@ -325,12 +314,8 @@ SVGLength SVGLength::fromCSSPrimitiveValue(const CSSPrimitiveValue& value)
     if (svgType == LengthTypeUnknown)
         return SVGLength();
 
-    ExceptionCode ec = 0;
     SVGLength length;
-    length.newValueSpecifiedUnits(svgType, value.floatValue(), ec);
-    if (ec)    
-        return SVGLength();
-
+    length.newValueSpecifiedUnits(svgType, value.floatValue());
     return length;
 }
 
@@ -377,37 +362,44 @@ Ref<CSSPrimitiveValue> SVGLength::toCSSPrimitiveValue(const SVGLength& length)
 
 SVGLengthMode SVGLength::lengthModeForAnimatedLengthAttribute(const QualifiedName& attrName)
 {
-    typedef HashMap<QualifiedName, SVGLengthMode> LengthModeForLengthAttributeMap;
-    static NeverDestroyed<LengthModeForLengthAttributeMap> s_lengthModeMap;
+    using Map = HashMap<QualifiedName, SVGLengthMode>;
+    static NeverDestroyed<Map> map = [] {
+        struct Mode {
+            const QualifiedName& name;
+            SVGLengthMode mode;
+        };
+        static const Mode modes[] = {
+            { SVGNames::xAttr, LengthModeWidth },
+            { SVGNames::yAttr, LengthModeHeight },
+            { SVGNames::cxAttr, LengthModeWidth },
+            { SVGNames::cyAttr, LengthModeHeight },
+            { SVGNames::dxAttr, LengthModeWidth },
+            { SVGNames::dyAttr, LengthModeHeight },
+            { SVGNames::fxAttr, LengthModeWidth },
+            { SVGNames::fyAttr, LengthModeHeight },
+            { SVGNames::widthAttr, LengthModeWidth },
+            { SVGNames::heightAttr, LengthModeHeight },
+            { SVGNames::x1Attr, LengthModeWidth },
+            { SVGNames::x2Attr, LengthModeWidth },
+            { SVGNames::y1Attr, LengthModeHeight },
+            { SVGNames::y2Attr, LengthModeHeight },
+            { SVGNames::refXAttr, LengthModeWidth },
+            { SVGNames::refYAttr, LengthModeHeight },
+            { SVGNames::markerWidthAttr, LengthModeWidth },
+            { SVGNames::markerHeightAttr, LengthModeHeight },
+            { SVGNames::textLengthAttr, LengthModeWidth },
+            { SVGNames::startOffsetAttr, LengthModeWidth },
+        };
+        Map map;
+        for (auto& mode : modes)
+            map.add(mode.name, mode.mode);
+        return map;
+    }();
     
-    if (s_lengthModeMap.get().isEmpty()) {
-        s_lengthModeMap.get().set(SVGNames::xAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::yAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::cxAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::cyAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::dxAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::dyAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::fxAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::fyAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::rAttr, LengthModeOther);
-        s_lengthModeMap.get().set(SVGNames::widthAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::heightAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::x1Attr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::x2Attr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::y1Attr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::y2Attr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::refXAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::refYAttr, LengthModeHeight);
-        s_lengthModeMap.get().set(SVGNames::markerWidthAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::markerHeightAttr, LengthModeHeight);        
-        s_lengthModeMap.get().set(SVGNames::textLengthAttr, LengthModeWidth);
-        s_lengthModeMap.get().set(SVGNames::startOffsetAttr, LengthModeWidth);
-    }
-    
-    if (s_lengthModeMap.get().contains(attrName))
-        return s_lengthModeMap.get().get(attrName);
-    
-    return LengthModeOther;
+    auto result = map.get().find(attrName);
+    if (result == map.get().end())
+        return LengthModeOther;
+    return result->value;
 }
 
 TextStream& operator<<(TextStream& ts, const SVGLength& length)

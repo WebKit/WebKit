@@ -19,8 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGColor_h
-#define SVGColor_h
+#pragma once
 
 #include "CSSValue.h"
 #include "Color.h"
@@ -63,14 +62,12 @@ public:
 
     static Color colorFromRGBColorString(const String&);
 
-    void setRGBColor(const String& rgbColor, ExceptionCode&);
-    void setRGBColorICCColor(const String& rgbColor, const String& iccColor, ExceptionCode&);
-    void setColor(unsigned short colorType, const String& rgbColor, const String& iccColor, ExceptionCode&);
+    ExceptionOr<void> setRGBColor(const String&);
+    ExceptionOr<void> setRGBColorICCColor(const String& rgbColor, const String& iccColor);
+    ExceptionOr<void> setColor(unsigned short colorType, const String& rgbColor, const String& iccColor);
 
     String customCSSText() const;
 
-    ~SVGColor() { }
-    
     Ref<SVGColor> cloneForCSSOM() const;
 
     bool equals(const SVGColor&) const;
@@ -78,14 +75,14 @@ public:
 protected:
     friend class CSSComputedStyleDeclaration;
 
-    SVGColor(ClassType, const SVGColorType&);
+    SVGColor(ClassType, SVGColorType);
     SVGColor(ClassType, const SVGColor& cloneFrom);
 
     void setColor(const Color& color) { m_color = color; }
     void setColorType(const SVGColorType& type) { m_colorType = type; }
 
 private:
-    SVGColor(const SVGColorType&);
+    explicit SVGColor(SVGColorType);
 
     Color m_color;
     SVGColorType m_colorType;
@@ -94,5 +91,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(SVGColor, isSVGColor())
-
-#endif // SVGColor_h

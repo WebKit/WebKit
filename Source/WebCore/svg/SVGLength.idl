@@ -22,28 +22,24 @@
 
 interface SVGLength { 
     // Length Unit Types
-    const unsigned short SVG_LENGTHTYPE_UNKNOWN    = 0;
-    const unsigned short SVG_LENGTHTYPE_NUMBER     = 1;
+    const unsigned short SVG_LENGTHTYPE_UNKNOWN = 0;
+    const unsigned short SVG_LENGTHTYPE_NUMBER = 1;
     const unsigned short SVG_LENGTHTYPE_PERCENTAGE = 2;
-    const unsigned short SVG_LENGTHTYPE_EMS        = 3;
-    const unsigned short SVG_LENGTHTYPE_EXS        = 4;
-    const unsigned short SVG_LENGTHTYPE_PX         = 5;
-    const unsigned short SVG_LENGTHTYPE_CM         = 6;
-    const unsigned short SVG_LENGTHTYPE_MM         = 7;
-    const unsigned short SVG_LENGTHTYPE_IN         = 8;
-    const unsigned short SVG_LENGTHTYPE_PT         = 9;
-    const unsigned short SVG_LENGTHTYPE_PC         = 10;
+    const unsigned short SVG_LENGTHTYPE_EMS = 3;
+    const unsigned short SVG_LENGTHTYPE_EXS = 4;
+    const unsigned short SVG_LENGTHTYPE_PX = 5;
+    const unsigned short SVG_LENGTHTYPE_CM = 6;
+    const unsigned short SVG_LENGTHTYPE_MM = 7;
+    const unsigned short SVG_LENGTHTYPE_IN = 8;
+    const unsigned short SVG_LENGTHTYPE_PT = 9;
+    const unsigned short SVG_LENGTHTYPE_PC = 10;
 
     readonly attribute unsigned short unitType;
-    [GetterMayThrowLegacyException, SetterMayThrowLegacyException, Custom] attribute unrestricted float value;
+    [Custom, GetterMayThrowException, SetterMayThrowException] attribute unrestricted float value;
 
     attribute unrestricted float valueInSpecifiedUnits;
+    [SetterMayThrowException] attribute DOMString valueAsString;
 
-    [SetterMayThrowLegacyException] attribute DOMString valueAsString;
-
-    [MayThrowLegacyException] void newValueSpecifiedUnits(unsigned short unitType,
-                                                     unrestricted float valueInSpecifiedUnits);
-
-    [Custom, MayThrowLegacyException] void convertToSpecifiedUnits(unsigned short unitType);
+    [MayThrowException] void newValueSpecifiedUnits(unsigned short unitType, unrestricted float valueInSpecifiedUnits);
+    [Custom, MayThrowException] void convertToSpecifiedUnits(unsigned short unitType);
 };
-

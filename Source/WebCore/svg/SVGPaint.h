@@ -20,11 +20,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPaint_h
-#define SVGPaint_h
+#pragma once
 
 #include "SVGColor.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -81,7 +79,7 @@ public:
     String uri() const { return m_uri; }
 
     void setUri(const String&);
-    void setPaint(unsigned short paintType, const String& uri, const String& rgbColor, const String& iccColor, ExceptionCode&);
+    ExceptionOr<void> setPaint(unsigned short paintType, const String& uri, const String& rgbColor, const String& iccColor);
 
     String customCSSText() const;
 
@@ -110,5 +108,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CSS_VALUE(SVGPaint, isSVGPaint())
-
-#endif // SVGPaint_h

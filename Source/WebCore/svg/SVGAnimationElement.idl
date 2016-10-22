@@ -29,7 +29,7 @@ interface SVGAnimationElement : SVGElement {
 
     unrestricted float getStartTime();
     unrestricted float getCurrentTime();
-    [MayThrowLegacyException] unrestricted float getSimpleDuration();
+    unrestricted float getSimpleDuration();
 
     void beginElement();
     void beginElementAt(optional unrestricted float offset = NaN);

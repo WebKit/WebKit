@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGPathSegListPropertyTearOff_h
-#define SVGPathSegListPropertyTearOff_h
+#pragma once
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGPathSegList.h"
@@ -29,10 +28,10 @@ class SVGPathElement;
 
 class SVGPathSegListPropertyTearOff final : public SVGListProperty<SVGPathSegList> {
 public:
-    typedef SVGListProperty<SVGPathSegList> Base;
-    typedef SVGAnimatedListPropertyTearOff<SVGPathSegList> AnimatedListPropertyTearOff;
-    typedef SVGPropertyTraits<SVGPathSegList>::ListItemType ListItemType;
-    typedef RefPtr<SVGPathSeg> PtrListItemType;
+    using Base = SVGListProperty<SVGPathSegList>;
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGPathSegList>;
+    using ListItemType = SVGPropertyTraits<SVGPathSegList>::ListItemType;
+    using PtrListItemType = RefPtr<SVGPathSeg>;
 
     static Ref<SVGPathSegListPropertyTearOff> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole, SVGPathSegList& values, ListWrapperCache& wrappers)
     {
@@ -65,46 +64,40 @@ public:
     }
 
     // SVGList API
-    void clear(ExceptionCode&);
+    ExceptionOr<void> clear();
 
-    PtrListItemType initialize(PtrListItemType newItem, ExceptionCode& ec)
+    ExceptionOr<PtrListItemType> initialize(PtrListItemType newItem)
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
         clearContextAndRoles();
-        return Base::initializeValues(newItem, ec);
+        return Base::initializeValues(newItem);
     }
 
-    PtrListItemType getItem(unsigned index, ExceptionCode&);
+    ExceptionOr<PtrListItemType> getItem(unsigned index);
 
-    PtrListItemType insertItemBefore(PtrListItemType newItem, unsigned index, ExceptionCode& ec)
+    ExceptionOr<PtrListItemType> insertItemBefore(PtrListItemType newItem, unsigned index)
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return 0;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
-        return Base::insertItemBeforeValues(newItem, index, ec);
+        return Base::insertItemBeforeValues(newItem, index);
     }
 
-    PtrListItemType replaceItem(PtrListItemType, unsigned index, ExceptionCode&);
+    ExceptionOr<PtrListItemType> replaceItem(PtrListItemType, unsigned index);
 
-    PtrListItemType removeItem(unsigned index, ExceptionCode&);
+    ExceptionOr<PtrListItemType> removeItem(unsigned index);
 
-    PtrListItemType appendItem(PtrListItemType newItem, ExceptionCode& ec)
+    ExceptionOr<PtrListItemType> appendItem(PtrListItemType newItem)
     {
         // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!newItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return nullptr;
-        }
+        if (!newItem)
+            return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
-        return Base::appendItemValues(newItem, ec);
+        return Base::appendItemValues(newItem);
     }
 
 private:
@@ -161,5 +154,3 @@ private:
 };
 
 }
-
-#endif // SVGListPropertyTearOff_h

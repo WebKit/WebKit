@@ -137,9 +137,9 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
 float SVGAnimatedAngleAnimator::calculateDistance(const String& fromString, const String& toString)
 {
     SVGAngle from = SVGAngle();
-    from.setValueAsString(fromString, ASSERT_NO_EXCEPTION);
+    from.setValueAsString(fromString);
     SVGAngle to = SVGAngle();
-    to.setValueAsString(toString, ASSERT_NO_EXCEPTION);
+    to.setValueAsString(toString);
     return fabsf(to.value() - from.value());
 }
 

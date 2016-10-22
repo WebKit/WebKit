@@ -276,29 +276,26 @@ bool SVGAnimatedType::setValueAsString(const QualifiedName& attrName, const Stri
     case AnimatedColor:
         ASSERT(m_data.color);
         *m_data.color = SVGColor::colorFromRGBColorString(value);
-        break;
-    case AnimatedLength: {
+        return true;
+    case AnimatedLength:
         ASSERT(m_data.length);
-        ExceptionCode ec = 0;
-        m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName), ec);
-        return !ec;
-    }
+        return !m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName)).hasException();
     case AnimatedLengthList:
         ASSERT(m_data.lengthList);
         m_data.lengthList->parse(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName));
-        break;
+        return true;
     case AnimatedNumber:
         ASSERT(m_data.number);
         parseNumberFromString(value, *m_data.number);
-        break;
+        return true;
     case AnimatedRect:
         ASSERT(m_data.rect);
         parseRect(value, *m_data.rect);
-        break;
+        return true;
     case AnimatedString:
         ASSERT(m_data.string);
         *m_data.string = value;
-        break;
+        return true;
 
     // These types don't appear in the table in SVGElement::cssPropertyToTypeMap() and thus don't need setValueAsString() support. 
     case AnimatedAngle:

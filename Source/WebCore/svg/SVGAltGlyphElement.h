@@ -19,28 +19,25 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAltGlyphElement_h
-#define SVGAltGlyphElement_h
+#pragma once
 
 #if ENABLE(SVG_FONTS)
 
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class SVGGlyphElement;
 
-class SVGAltGlyphElement final : public SVGTextPositioningElement,
-                                 public SVGURIReference {
+class SVGAltGlyphElement final : public SVGTextPositioningElement, public SVGURIReference {
 public:
     static Ref<SVGAltGlyphElement> create(const QualifiedName&, Document&);
 
     const AtomicString& glyphRef() const;
-    void setGlyphRef(const AtomicString&, ExceptionCode&);
+    ExceptionOr<void> setGlyphRef(const AtomicString&);
     const AtomicString& format() const;
-    void setFormat(const AtomicString&, ExceptionCode&);
+    ExceptionOr<void> setFormat(const AtomicString&);
 
     bool hasValidGlyphElements(Vector<String>& glyphNames) const;
 
@@ -57,5 +54,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

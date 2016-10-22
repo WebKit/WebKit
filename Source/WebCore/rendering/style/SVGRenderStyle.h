@@ -100,14 +100,14 @@ public:
     static SVGLength initialBaselineShiftValue()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
         return length;
     }
 
     static SVGLength initialKerning()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
         return length;
     }
 

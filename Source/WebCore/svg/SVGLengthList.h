@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGLengthList_h
-#define SVGLengthList_h
+#pragma once
 
 #include "SVGLength.h"
 #include <wtf/Vector.h>
@@ -28,14 +27,11 @@ namespace WebCore {
 
 class SVGLengthList final : public Vector<SVGLength> {
 public:
-    SVGLengthList() { }
-
-    void parse(const String& value, SVGLengthMode); 
+    void parse(const String& value, SVGLengthMode);
     String valueAsString() const;
 };
 
-template<>
-struct SVGPropertyTraits<SVGLengthList> {
+template<> struct SVGPropertyTraits<SVGLengthList> {
     typedef SVGLength ListItemType;
 
     static SVGLengthList initialValue() { return SVGLengthList(); }
@@ -43,5 +39,3 @@ struct SVGPropertyTraits<SVGLengthList> {
 };
 
 } // namespace WebCore
-
-#endif

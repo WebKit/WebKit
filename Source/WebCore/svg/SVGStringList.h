@@ -18,8 +18,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGStringList_h
-#define SVGStringList_h
+#pragma once
 
 #include "QualifiedName.h"
 #include "SVGPropertyTraits.h"
@@ -48,11 +47,8 @@ private:
     const QualifiedName& m_attributeName;
 };
 
-template<>
-struct SVGPropertyTraits<SVGStringList> {
+template<> struct SVGPropertyTraits<SVGStringList> {
     typedef String ListItemType;
 };
 
 } // namespace WebCore
-
-#endif

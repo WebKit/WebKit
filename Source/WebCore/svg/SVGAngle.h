@@ -19,20 +19,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAngle_h
-#define SVGAngle_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
-typedef int ExceptionCode;
-
 class SVGAngle {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SVGAngle();
-
     enum SVGAngleType {
         SVG_ANGLETYPE_UNKNOWN = 0,
         SVG_ANGLETYPE_UNSPECIFIED = 1,
@@ -49,23 +45,20 @@ public:
     void setValueInSpecifiedUnits(float valueInSpecifiedUnits) { m_valueInSpecifiedUnits = valueInSpecifiedUnits; }
     float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
 
-    void setValueAsString(const String&, ExceptionCode&);
+    ExceptionOr<void> setValueAsString(const String&);
     String valueAsString() const;
 
-    void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits, ExceptionCode&);
-    void convertToSpecifiedUnits(unsigned short unitType, ExceptionCode&);
+    ExceptionOr<void> newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+    ExceptionOr<void> convertToSpecifiedUnits(unsigned short unitType);
 
 private:
-    SVGAngleType m_unitType;
-    float m_valueInSpecifiedUnits;
+    SVGAngleType m_unitType { SVG_ANGLETYPE_UNSPECIFIED };
+    float m_valueInSpecifiedUnits { 0 };
 };
 
-template<>
-struct SVGPropertyTraits<SVGAngle> {
+template<> struct SVGPropertyTraits<SVGAngle> {
     static SVGAngle initialValue() { return SVGAngle(); }
     static String toString(const SVGAngle& type) { return type.valueAsString(); }
 };
 
 } // namespace WebCore
-
-#endif // SVGAngle_h

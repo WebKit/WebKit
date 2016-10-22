@@ -35,33 +35,26 @@ void SVGPathSegListPropertyTearOff::clearContextAndRoles()
     }
 }
 
-void SVGPathSegListPropertyTearOff::clear(ExceptionCode& ec)
+ExceptionOr<void> SVGPathSegListPropertyTearOff::clear()
 {
     ASSERT(m_values);
     if (m_values->isEmpty())
-        return;
+        return { };
 
     clearContextAndRoles();
-    SVGPathSegListPropertyTearOff::Base::clearValues(ec);
+    return SVGPathSegListPropertyTearOff::Base::clearValues();
 }
 
-SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::getItem(unsigned index, ExceptionCode& ec)
+ExceptionOr<SVGPathSegListPropertyTearOff::PtrListItemType> SVGPathSegListPropertyTearOff::getItem(unsigned index)
 {
-    ListItemType returnedItem = Base::getItemValues(index, ec);
-    if (returnedItem) {
-        ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->contextElement() == contextElement());
-        ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->role() == m_pathSegRole);
-    }
-    return returnedItem;
+    return Base::getItemValues(index);
 }
 
-SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::replaceItem(PtrListItemType newItem, unsigned index, ExceptionCode& ec)
+ExceptionOr<SVGPathSegListPropertyTearOff::PtrListItemType> SVGPathSegListPropertyTearOff::replaceItem(PtrListItemType newItem, unsigned index)
 {
     // Not specified, but FF/Opera do it this way, and it's just sane.
-    if (!newItem) {
-        ec = SVGException::SVG_WRONG_TYPE_ERR;
-        return 0;
-    }
+    if (!newItem)
+        return Exception { SVGException::SVG_WRONG_TYPE_ERR };
 
     if (index < m_values->size()) {
         ListItemType replacedItem = m_values->at(index);
@@ -69,15 +62,18 @@ SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::re
         static_cast<SVGPathSegWithContext*>(replacedItem.get())->setContextAndRole(nullptr, PathSegUndefinedRole);
     }
 
-    return Base::replaceItemValues(newItem, index, ec);
+    return Base::replaceItemValues(newItem, index);
 }
 
-SVGPathSegListPropertyTearOff::PtrListItemType SVGPathSegListPropertyTearOff::removeItem(unsigned index, ExceptionCode& ec)
+ExceptionOr<SVGPathSegListPropertyTearOff::PtrListItemType> SVGPathSegListPropertyTearOff::removeItem(unsigned index)
 {
-    SVGPathSegListPropertyTearOff::ListItemType removedItem = SVGPathSegListPropertyTearOff::Base::removeItemValues(index, ec);
+    auto result = SVGPathSegListPropertyTearOff::Base::removeItemValues(index);
+    if (result.hasException())
+        return result;
+    auto removedItem = result.releaseReturnValue();
     if (removedItem)
-        static_cast<SVGPathSegWithContext*>(removedItem.get())->setContextAndRole(nullptr, PathSegUndefinedRole);
-    return removedItem;
+        static_cast<SVGPathSegWithContext&>(*removedItem).setContextAndRole(nullptr, PathSegUndefinedRole);
+    return WTFMove(removedItem);
 }
 
 SVGPathElement* SVGPathSegListPropertyTearOff::contextElement() const

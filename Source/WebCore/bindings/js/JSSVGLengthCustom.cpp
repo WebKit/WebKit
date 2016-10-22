@@ -34,16 +34,9 @@ namespace WebCore {
 
 JSValue JSSVGLength::value(ExecState& state) const
 {
-    SVGLength& podImp = wrapped().propertyReference();
-    ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(wrapped().contextElement());
-    float value = podImp.value(lengthContext, ec);
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsUndefined();
-    }
-
-    return jsNumber(value);
+    VM& vm = state.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    return toJSNumber(state, scope, wrapped().propertyReference().valueForBindings(SVGLengthContext { wrapped().contextElement() }));
 }
 
 void JSSVGLength::setValue(ExecState& state, JSValue value)
@@ -61,13 +54,12 @@ void JSSVGLength::setValue(ExecState& state, JSValue value)
         return;
     }
 
-    SVGLength& podImp = wrapped().propertyReference();
+    auto floatValue = value.toFloat(&state);
+    RETURN_IF_EXCEPTION(scope, void());
 
-    ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(wrapped().contextElement());
-    podImp.setValue(value.toFloat(&state), lengthContext, ec);
-    if (ec) {
-        setDOMException(&state, ec);
+    auto result = wrapped().propertyReference().setValue(floatValue, SVGLengthContext { wrapped().contextElement() });
+    if (result.hasException()) {
+        propagateException(state, scope, result.releaseException());
         return;
     }
 
@@ -81,10 +73,8 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
 
     if (wrapped().isReadOnly()) {
         setDOMException(&state, NO_MODIFICATION_ALLOWED_ERR);
-        return jsUndefined();
+        return { };
     }
-
-    SVGLength& podImp = wrapped().propertyReference();
 
     if (state.argumentCount() < 1)
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
@@ -92,12 +82,10 @@ JSValue JSSVGLength::convertToSpecifiedUnits(ExecState& state)
     unsigned short unitType = state.uncheckedArgument(0).toUInt32(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    ExceptionCode ec = 0;
-    SVGLengthContext lengthContext(wrapped().contextElement());
-    podImp.convertToSpecifiedUnits(unitType, lengthContext, ec);
-    if (ec) {
-        setDOMException(&state, ec);
-        return jsUndefined();
+    auto result = wrapped().propertyReference().convertToSpecifiedUnits(unitType, SVGLengthContext { wrapped().contextElement() });
+    if (result.hasException()) {
+        propagateException(state, scope, result.releaseException());
+        return { };
     }
 
     wrapped().commitChange();

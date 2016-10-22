@@ -17,19 +17,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTransformListPropertyTearOff_h
-#define SVGTransformListPropertyTearOff_h
+#pragma once
 
 #include "SVGListPropertyTearOff.h"
 #include "SVGTransformList.h"
 
 namespace WebCore {
 
-// SVGTransformList contains two additional methods, that can be exposed to the bindings.
 class SVGTransformListPropertyTearOff final : public SVGListPropertyTearOff<SVGTransformList> {
 public:
-    typedef SVGAnimatedListPropertyTearOff<SVGTransformList> AnimatedListPropertyTearOff;
-    typedef SVGAnimatedListPropertyTearOff<SVGTransformList>::ListWrapperCache ListWrapperCache;
+    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGTransformList>;
+    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
 
     static Ref<SVGListPropertyTearOff<SVGTransformList>> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role, SVGTransformList& values, ListWrapperCache& wrappers)
     {
@@ -37,21 +35,23 @@ public:
         return adoptRef(*new SVGTransformListPropertyTearOff(animatedProperty, role, values, wrappers));
     }
 
-    RefPtr<SVGPropertyTearOff<SVGTransform>> createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix, ExceptionCode& ec)
+    ExceptionOr<Ref<SVGPropertyTearOff<SVGTransform>>> createSVGTransformFromMatrix(SVGPropertyTearOff<SVGMatrix>* matrix)
     {
         ASSERT(m_values);
-        if (!matrix) {
-            ec = TYPE_MISMATCH_ERR;
-            return nullptr;
-        }
+        if (!matrix)
+            return Exception { TYPE_MISMATCH_ERR };
         return SVGPropertyTearOff<SVGTransform>::create(m_values->createSVGTransformFromMatrix(matrix->propertyReference()));
     }
 
-    RefPtr<SVGPropertyTearOff<SVGTransform>> consolidate(ExceptionCode& ec)
+    ExceptionOr<RefPtr<SVGPropertyTearOff<SVGTransform>>> consolidate()
     {
         ASSERT(m_values);
         ASSERT(m_wrappers);
-        if (!canAlterList(ec))
+
+        auto result = canAlterList();
+        if (result.hasException())
+            return result.releaseException();
+        if (!result.releaseReturnValue())
             return nullptr;
 
         ASSERT(m_values->size() == m_wrappers->size());
@@ -65,7 +65,7 @@ public:
         m_wrappers->append(wrapper);
 
         ASSERT(m_values->size() == m_wrappers->size());
-        return wrapper;
+        return WTFMove(wrapper);
     }
 
 private:
@@ -76,5 +76,3 @@ private:
 };
 
 }
-
-#endif // SVGListPropertyTearOff_h

@@ -27,11 +27,11 @@
 interface SVGPathSegList {
     readonly attribute unsigned long numberOfItems;
 
-    [MayThrowLegacyException] void clear();
-    [MayThrowLegacyException] SVGPathSeg initialize(SVGPathSeg? newItem); // FIXME: Should not be nullable.
-    [MayThrowLegacyException] SVGPathSeg getItem(unsigned long index);
-    [MayThrowLegacyException] SVGPathSeg insertItemBefore(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
-    [MayThrowLegacyException] SVGPathSeg replaceItem(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
-    [MayThrowLegacyException] SVGPathSeg removeItem(unsigned long index);
-    [MayThrowLegacyException] SVGPathSeg appendItem(SVGPathSeg? newItem); // FIXME: Should not be nullable.
+    [MayThrowException] void clear();
+    [MayThrowException] SVGPathSeg initialize(SVGPathSeg? newItem); // FIXME: Should not be nullable.
+    [MayThrowException] SVGPathSeg getItem(unsigned long index);
+    [MayThrowException] SVGPathSeg insertItemBefore(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
+    [MayThrowException] SVGPathSeg replaceItem(SVGPathSeg? newItem, unsigned long index); // FIXME: Should not be nullable.
+    [MayThrowException] SVGPathSeg removeItem(unsigned long index);
+    [MayThrowException] SVGPathSeg appendItem(SVGPathSeg? newItem); // FIXME: Should not be nullable.
 };

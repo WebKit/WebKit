@@ -46,7 +46,7 @@ inline SVGAnimateMotionElement::SVGAnimateMotionElement(const QualifiedName& tag
     : SVGAnimationElement(tagName, document)
     , m_hasToPointAtEndOfDuration(false)
 {
-    setCalcMode(CalcModePaced);
+    setCalcMode(CalcMode::Paced);
     ASSERT(hasTagName(animateMotionTag));
 }
 

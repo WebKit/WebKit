@@ -109,7 +109,7 @@ void SVGAnimateElementBase::calculateAnimatedValue(float percentage, unsigned re
     if (hasTagName(SVGNames::setTag))
         percentage = 1;
 
-    if (calcMode() == CalcModeDiscrete)
+    if (calcMode() == CalcMode::Discrete)
         percentage = percentage < 0.5 ? 0 : 1;
 
     // Target element might have changed.

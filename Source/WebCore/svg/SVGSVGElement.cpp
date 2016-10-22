@@ -153,7 +153,7 @@ float SVGSVGElement::screenPixelToMillimeterY() const
 SVGViewSpec& SVGSVGElement::currentView()
 {
     if (!m_viewSpec)
-        m_viewSpec = SVGViewSpec::create(this);
+        m_viewSpec = SVGViewSpec::create(*this);
     return *m_viewSpec;
 }
 

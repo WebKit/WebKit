@@ -36,24 +36,22 @@ SVGPreserveAspectRatio::SVGPreserveAspectRatio()
 {
 }
 
-void SVGPreserveAspectRatio::setAlign(unsigned short align, ExceptionCode& ec)
+ExceptionOr<void> SVGPreserveAspectRatio::setAlign(unsigned short align)
 {
-    if (align == SVG_PRESERVEASPECTRATIO_UNKNOWN || align > SVG_PRESERVEASPECTRATIO_XMAXYMAX) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (align == SVG_PRESERVEASPECTRATIO_UNKNOWN || align > SVG_PRESERVEASPECTRATIO_XMAXYMAX)
+        return Exception { NOT_SUPPORTED_ERR };
 
     m_align = static_cast<SVGPreserveAspectRatioType>(align);
+    return { };
 }
 
-void SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice, ExceptionCode& ec)
+ExceptionOr<void> SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice)
 {
-    if (meetOrSlice == SVG_MEETORSLICE_UNKNOWN || meetOrSlice > SVG_MEETORSLICE_SLICE) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
+    if (meetOrSlice == SVG_MEETORSLICE_UNKNOWN || meetOrSlice > SVG_MEETORSLICE_SLICE)
+        return Exception { NOT_SUPPORTED_ERR };
 
     m_meetOrSlice = static_cast<SVGMeetOrSliceType>(meetOrSlice);
+    return { };
 }
 
 void SVGPreserveAspectRatio::parse(const String& value)
