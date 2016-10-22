@@ -1,3 +1,42 @@
+2016-10-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Dynamically generate media capture sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=154861
+        <rdar://problem/24909411>
+
+        Reviewed by Tim Horton.
+
+        No new tests, some of these changes are covered by existing tests and some can only be tested
+        with physical capture devices.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm: AVSampleBufferAudioRenderer
+          and AVSampleBufferRenderSynchronizer are now declared in AVFoundationSPI.h.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC): Initialize 
+          AVSampleBufferRenderSynchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable): Fail if AVSampleBufferRenderSynchronizer
+          isn't available.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSampleBufferFromTrack): Take a MediaSample&
+          instead of a PlatformSample&.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer): Add the sample buffer display 
+          later to the synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer): Remove the sample buffer display 
+          later from the synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play): Start the synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause): Stash the current clock time in 
+          m_pausedTime, but leave the clock running. Pause the synchronizer.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime): Return the clock time
+          when playing, m_pausedTime time when paused because we leave the clock running forever.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated):
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm: AVSampleBufferAudioRenderer
+          is now declared in AVFoundationSPI.h.
+
+        * platform/spi/mac/AVFoundationSPI.h: Add AVSampleBufferAudioRenderer and AVSampleBufferRenderSynchronizer.
+
 2016-10-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207582.

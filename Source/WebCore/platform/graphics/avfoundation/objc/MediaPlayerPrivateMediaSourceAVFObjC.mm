@@ -93,31 +93,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
 @end
 
 #pragma mark -
-#pragma mark AVSampleBufferAudioRenderer
-
-@interface AVSampleBufferAudioRenderer : NSObject
-- (void)setVolume:(float)volume;
-- (void)setMuted:(BOOL)muted;
-@property (nonatomic, copy) NSString *audioTimePitchAlgorithm;
-@end
-
-#pragma mark -
-#pragma mark AVSampleBufferRenderSynchronizer
-
-@interface AVSampleBufferRenderSynchronizer : NSObject
-- (CMTimebaseRef)timebase;
-- (float)rate;
-- (void)setRate:(float)rate;
-- (void)setRate:(float)rate time:(CMTime)time;
-- (NSArray *)renderers;
-- (void)addRenderer:(id)renderer;
-- (void)removeRenderer:(id)renderer atTime:(CMTime)time withCompletionHandler:(void (^)(BOOL didRemoveRenderer))completionHandler;
-- (id)addPeriodicTimeObserverForInterval:(CMTime)interval queue:(dispatch_queue_t)queue usingBlock:(void (^)(CMTime time))block;
-- (id)addBoundaryTimeObserverForTimes:(NSArray *)times queue:(dispatch_queue_t)queue usingBlock:(void (^)(void))block;
-- (void)removeTimeObserver:(id)observer;
-@end
-
-#pragma mark - 
 #pragma mark AVStreamSession
 
 @interface AVStreamSession : NSObject

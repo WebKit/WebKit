@@ -47,6 +47,8 @@ void UserMediaPermissionRequestManagerProxy::invalidateRequests()
     for (auto& request : m_pendingDeviceRequests.values())
         request->invalidate();
     m_pendingDeviceRequests.clear();
+
+    m_pageSandboxExtensionsGranted.clear();
 }
 
 Ref<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, const Vector<String>& audioDeviceUIDs, const Vector<String>& videoDeviceUIDs)
@@ -120,6 +122,8 @@ void UserMediaPermissionRequestManagerProxy::denyRequest(uint64_t userMediaID, U
 
 void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t userMediaID, const String& audioDeviceUID, const String& videoDeviceUID)
 {
+    ASSERT(!audioDeviceUID.isEmpty() || !videoDeviceUID.isEmpty());
+
     if (!m_page.isValid())
         return;
 
@@ -127,6 +131,30 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
         return;
 
 #if ENABLE(MEDIA_STREAM)
+    size_t extensionCount = 0;
+    unsigned requiredExtensions = SandboxExtensionsGranted::None;
+    if (!audioDeviceUID.isEmpty()) {
+        requiredExtensions |= SandboxExtensionsGranted::Audio;
+        extensionCount++;
+    }
+    if (!videoDeviceUID.isEmpty()) {
+        requiredExtensions |= SandboxExtensionsGranted::Video;
+        extensionCount++;
+    }
+
+    unsigned currentExtensions = m_pageSandboxExtensionsGranted.get(m_page.pageID());
+    if (!(requiredExtensions & currentExtensions)) {
+        ASSERT(extensionCount);
+        m_pageSandboxExtensionsGranted.set(m_page.pageID(), requiredExtensions | currentExtensions);
+        SandboxExtension::HandleArray handles;
+        handles.allocate(extensionCount);
+        if (!videoDeviceUID.isEmpty())
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.camera", handles[--extensionCount]);
+        if (!audioDeviceUID.isEmpty())
+            SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", handles[--extensionCount]);
+        m_page.process().send(Messages::WebPage::GrantUserMediaDevicesSandboxExtension(handles), m_page.pageID());
+    }
+
     m_page.process().send(Messages::WebPage::UserMediaAccessWasGranted(userMediaID, audioDeviceUID, videoDeviceUID), m_page.pageID());
 #else
     UNUSED_PARAM(audioDeviceUID);

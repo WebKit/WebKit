@@ -1171,6 +1171,7 @@ private:
     void userMediaAccessWasDenied(uint64_t userMediaID, uint64_t reason, String invalidConstraint);
 
     void didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vector<WebCore::CaptureDevice>& devices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
+    void grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray&);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);

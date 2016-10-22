@@ -3706,6 +3706,11 @@ void WebPage::didCompleteMediaDeviceEnumeration(uint64_t userMediaID, const Vect
 {
     m_userMediaPermissionRequestManager.didCompleteMediaDeviceEnumeration(userMediaID, devices, deviceIdentifierHashSalt, originHasPersistentAccess);
 }
+
+void WebPage::grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray& handles)
+{
+    m_userMediaPermissionRequestManager.grantUserMediaDevicesSandboxExtension(handles);
+}
 #endif
 
 #if !PLATFORM(IOS)

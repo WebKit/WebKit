@@ -159,6 +159,9 @@ static WKSandboxExtensionType wkSandboxExtensionType(SandboxExtension::Type type
         return WKSandboxExtensionTypeReadOnly;
     case SandboxExtension::ReadWrite:
         return WKSandboxExtensionTypeReadWrite;
+    case SandboxExtension::Generic:
+        return WKSandboxExtensionTypeGeneric;
+
     }
 
     CRASH();
@@ -272,6 +275,19 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
         return String();
     }
     return String(path.data());
+}
+
+bool SandboxExtension::createHandleForGenericExtension(const String& extensionClass, Handle& handle)
+{
+    ASSERT(!handle.m_sandboxExtension);
+
+    handle.m_sandboxExtension = WKSandboxExtensionCreate(extensionClass.utf8().data(), wkSandboxExtensionType(Type::Generic));
+    if (!handle.m_sandboxExtension) {
+        WTFLogAlways("Could not create a '%s' sandbox extension", extensionClass.utf8().data());
+        return false;
+    }
+    
+    return true;
 }
 
 SandboxExtension::SandboxExtension(const Handle& handle)

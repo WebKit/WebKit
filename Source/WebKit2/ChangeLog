@@ -1,3 +1,39 @@
+2016-10-21  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Dynamically generate media capture sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=154861
+        <rdar://problem/24909411>
+
+        Reviewed by Tim Horton.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleForGenericExtension):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::wkSandboxExtensionType): Add case for generic handle.
+        (WebKit::SandboxExtension::createHandleForGenericExtension): New.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::invalidateRequests): Clear the list of extensions granted.
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted): Extend the web 
+          process sandbox as necessary.
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager): Revoke all
+          sandbox extensions.
+        (WebKit::UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension): Consume
+          sandbox extensions.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::grantUserMediaDevicesSandboxExtension): Pass-through to user media manager.
+        * WebProcess/WebPage/WebPage.h:
+
+        * WebProcess/WebPage/WebPage.messages.in: Add GrantUserMediaDevicesSandboxExtension.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Add rules, defines, and a macro to allow dynamic extensions
+          for media capture devices.
+
 2016-10-21  Gavin Barraclough  <barraclough@apple.com>
 
         WebPage should take UserActivity directly for user input

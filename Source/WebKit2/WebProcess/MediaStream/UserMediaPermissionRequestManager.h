@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "SandboxExtension.h"
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MediaDevicesEnumerationRequest.h>
 #include <WebCore/UserMediaClient.h>
@@ -48,6 +49,8 @@ public:
     void cancelMediaDevicesEnumeration(WebCore::MediaDevicesEnumerationRequest&);
     void didCompleteMediaDeviceEnumeration(uint64_t, const Vector<WebCore::CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 
+    void grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray&);
+
 private:
     WebPage& m_page;
 
@@ -56,6 +59,8 @@ private:
 
     HashMap<uint64_t, RefPtr<WebCore::MediaDevicesEnumerationRequest>> m_idToMediaDevicesEnumerationRequestMap;
     HashMap<RefPtr<WebCore::MediaDevicesEnumerationRequest>, uint64_t> m_mediaDevicesEnumerationRequestToIDMap;
+
+    Vector<RefPtr<SandboxExtension>> m_userMediaDeviceSandboxExtensions;
 };
 
 } // namespace WebKit

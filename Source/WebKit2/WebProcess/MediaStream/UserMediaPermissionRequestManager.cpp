@@ -50,6 +50,8 @@ UserMediaPermissionRequestManager::UserMediaPermissionRequestManager(WebPage& pa
 
 UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
 {
+    for (auto& sandboxExtension : m_userMediaDeviceSandboxExtensions)
+        sandboxExtension->revoke();
 }
 
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
@@ -140,6 +142,18 @@ void UserMediaPermissionRequestManager::didCompleteMediaDeviceEnumeration(uint64
     m_mediaDevicesEnumerationRequestToIDMap.remove(request);
     
     request->setDeviceInfo(deviceList, mediaDeviceIdentifierHashSalt, hasPersistentAccess);
+}
+
+void UserMediaPermissionRequestManager::grantUserMediaDevicesSandboxExtension(const SandboxExtension::HandleArray& sandboxExtensionHandles)
+{
+    ASSERT(m_userMediaDeviceSandboxExtensions.size() <= 2);
+
+    for (size_t i = 0; i < sandboxExtensionHandles.size(); i++) {
+        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(sandboxExtensionHandles[i])) {
+            extension->consume();
+            m_userMediaDeviceSandboxExtensions.append(extension.release());
+        }
+    }
 }
 
 } // namespace WebKit

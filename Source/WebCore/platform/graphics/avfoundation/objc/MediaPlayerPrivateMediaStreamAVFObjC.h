@@ -37,6 +37,7 @@
 
 OBJC_CLASS AVSampleBufferAudioRenderer;
 OBJC_CLASS AVSampleBufferDisplayLayer;
+OBJC_CLASS AVSampleBufferRenderSynchronizer;
 OBJC_CLASS AVStreamSession;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
@@ -121,8 +122,8 @@ private:
 
     void setSize(const IntSize&) override { /* No-op */ }
 
-    void enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
-    void enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample);
+    void enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&);
+    void enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&);
     bool shouldEnqueueVideoSampleBuffer() const;
     void flushAndRemoveVideoSampleBuffers();
 
@@ -186,7 +187,9 @@ private:
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<CGImageRef> m_pausedImage;
+    double m_pausedTime { 0 };
     std::unique_ptr<Clock> m_clock;
 
     HashMap<String, RefPtr<AudioTrackPrivateMediaStream>> m_audioTrackMap;

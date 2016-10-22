@@ -47,7 +47,8 @@ class SandboxExtension : public RefCounted<SandboxExtension> {
 public:
     enum Type {
         ReadOnly,
-        ReadWrite
+        ReadWrite,
+        Generic,
     };
 
     class Handle {
@@ -93,6 +94,7 @@ public:
     static bool createHandle(const String& path, Type type, Handle&);
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
+    static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
     ~SandboxExtension();
 
     bool consume();
@@ -127,6 +129,7 @@ inline RefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
 inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
+inline bool SandboxExtension::createHandleForGenericExtension(const String& /*extensionClass*/, Handle&) { return true; }
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }

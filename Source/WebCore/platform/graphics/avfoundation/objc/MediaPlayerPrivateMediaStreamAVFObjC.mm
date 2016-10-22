@@ -29,12 +29,14 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #import "AVAudioCaptureSource.h"
+#import "AVFoundationSPI.h"
 #import "AVVideoCaptureSource.h"
 #import "AudioTrackPrivateMediaStream.h"
 #import "Clock.h"
 #import "GraphicsContext.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
+#import "MediaTimeAVFoundation.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
@@ -54,6 +56,7 @@
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRenderSynchronizer)
 
 namespace WebCore {
 
@@ -63,6 +66,7 @@ namespace WebCore {
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_weakPtrFactory(this)
+    , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_clock(Clock::create())
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
@@ -99,7 +103,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
 {
-    return AVFoundationLibrary() && isCoreMediaFrameworkAvailable() && getAVSampleBufferDisplayLayerClass();
+    return AVFoundationLibrary() && isCoreMediaFrameworkAvailable() && getAVSampleBufferDisplayLayerClass() && getAVSampleBufferRenderSynchronizerClass();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
@@ -119,26 +123,24 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark AVSampleBuffer Methods
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, PlatformSample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueAudioSampleBufferFromTrack(MediaStreamTrackPrivate&, MediaSample&)
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159836
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate& track, PlatformSample platformSample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSampleBufferFromTrack(MediaStreamTrackPrivate& track, MediaSample& sample)
 {
-    if (&track != m_mediaStreamPrivate->activeVideoTrack())
+    if (&track != m_mediaStreamPrivate->activeVideoTrack() || !shouldEnqueueVideoSampleBuffer())
         return;
 
-    if (shouldEnqueueVideoSampleBuffer()) {
-        [m_sampleBufferDisplayLayer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-        m_isFrameDisplayed = true;
-        
-        if (!m_hasEverEnqueuedVideoFrame) {
-            m_hasEverEnqueuedVideoFrame = true;
-            m_player->firstVideoFrameAvailable();
+    sample.setTimestamps(toMediaTime(CMTimebaseGetTime([m_synchronizer timebase])), MediaTime::invalidTime());
+    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
+    m_isFrameDisplayed = true;
 
-            updatePausedImage();
-        }
+    if (!m_hasEverEnqueuedVideoFrame) {
+        m_hasEverEnqueuedVideoFrame = true;
+        m_player->firstVideoFrameAvailable();
+        updatePausedImage();
     }
 }
 
@@ -172,7 +174,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayer()
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaStreamAVFObjC AVSampleBufferDisplayLayer"];
 #endif
     m_sampleBufferDisplayLayer.get().backgroundColor = cachedCGColor(Color::black);
-    
+
+    [m_synchronizer addRenderer:m_sampleBufferDisplayLayer.get()];
+
     renderingModeChanged();
     
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -186,7 +190,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayer()
         return;
     
     [m_sampleBufferDisplayLayer flush];
+    CMTime currentTime = CMTimebaseGetTime([m_synchronizer timebase]);
+    [m_synchronizer removeRenderer:m_sampleBufferDisplayLayer.get() atTime:currentTime withCompletionHandler:^(BOOL){
+        // No-op.
+    }];
     m_sampleBufferDisplayLayer = nullptr;
+
     renderingModeChanged();
     
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
@@ -310,6 +319,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 
     m_clock->start();
     m_playing = true;
+    [m_synchronizer setRate:1];
     m_haveEverPlayed = true;
     scheduleDeferredTask([this] {
         updateDisplayMode();
@@ -324,8 +334,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     if (!metaDataAvailable() || !m_playing || m_ended)
         return;
 
-    m_clock->stop();
+    m_pausedTime = m_clock->currentTime();
     m_playing = false;
+    [m_synchronizer setRate:0];
     updateDisplayMode();
     updatePausedImage();
 }
@@ -386,7 +397,7 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
 {
-    return MediaTime::createWithDouble(m_clock->currentTime());
+    return MediaTime::createWithDouble(m_playing ? m_clock->currentTime() : m_pausedTime);
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaStreamAVFObjC::networkState() const
@@ -514,7 +525,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::sampleBufferUpdated(MediaStreamTrackP
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=159836
         break;
     case RealtimeMediaSource::Video:
-        enqueueVideoSampleBufferFromTrack(track, mediaSample.platformSample());
+        enqueueVideoSampleBufferFromTrack(track, mediaSample);
         m_hasReceivedMedia = true;
         scheduleDeferredTask([this] {
             updateReadyState();

@@ -59,6 +59,13 @@ private:
     HashMap<uint64_t, RefPtr<UserMediaPermissionRequestProxy>> m_pendingUserMediaRequests;
     HashMap<uint64_t, RefPtr<UserMediaPermissionCheckProxy>> m_pendingDeviceRequests;
 
+    enum SandboxExtensionsGranted {
+        None = 0,
+        Video = 1 << 0,
+        Audio = 1 << 1
+    };
+    HashMap<uint64_t, unsigned> m_pageSandboxExtensionsGranted;
+
     WebPageProxy& m_page;
 };
 
