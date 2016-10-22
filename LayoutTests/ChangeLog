@@ -1,3 +1,13 @@
+2016-10-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/touch-events/historical-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/touch-events/touch-globaleventhandler-interface-expected.txt: Added.
+        * platform/gtk/svg/custom/repaint-shadow-expected.txt: Renamed from LayoutTests/platform/gtk/svg/text/repaint-shadow-expected.txt.
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/simple-text-double-shadow.txt.
+
 2016-10-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Bindings error message for missing required dictionary member should be more explicit
