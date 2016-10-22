@@ -1,3 +1,18 @@
+2016-10-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-03-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-04-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-05-b-expected.txt: Added.
+        * platform/gtk/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/gtk/svg/custom/simple-text-double-shadow.txt: Added.
+        * platform/gtk/svg/text/repaint-shadow-expected.txt: Added.
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.png:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt: Added.
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt: Added.
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents
