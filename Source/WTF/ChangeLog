@@ -1,3 +1,12 @@
+2016-10-23  Chris Dumez  <cdumez@apple.com>
+
+        Another unreviewed attempt to fix the WatchOS / TvOS build after r207585.
+        <rdar://problem/28902292>
+
+        Disable USE_CFURLCONNECTION on newer WatchOS / TvOS.
+
+        * wtf/Platform.h:
+
 2016-10-20  Keith Miller  <keith_miller@apple.com>
 
         Add support for WASM calls
