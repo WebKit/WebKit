@@ -1,3 +1,15 @@
+2016-10-22  Dan Bernstein  <mitz@apple.com>
+
+        Dynamically-added backdrop filter to clip-path'd element with 3D transform renders incorrectly (without clip)
+        https://bugs.webkit.org/show_bug.cgi?id=163497
+
+        Reviewed by Simon Fraser.
+
+        Based on the test case from Tim Horton.
+
+        * css3/filters/backdrop/dynamic-with-clip-path-expected.html: Added.
+        * css3/filters/backdrop/dynamic-with-clip-path.html: Added.
+
 2016-10-22  Simon Fraser  <simon.fraser@apple.com>
 
         Backdrop filter doesn't show if removed then re-added

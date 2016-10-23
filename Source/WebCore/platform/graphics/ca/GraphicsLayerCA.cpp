@@ -2071,6 +2071,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         | BackfaceVisibilityChanged
         | FiltersChanged
         | BackdropFiltersChanged
+        | MaskLayerChanged
         | OpacityChanged;
 
     if (purpose == NoStructuralLayer) {
