@@ -1,3 +1,21 @@
+2016-10-23  Zalan Bujtas  <zalan@apple.com>
+
+        Do not update selection rect on dirty lineboxes.
+        https://bugs.webkit.org/show_bug.cgi?id=163862
+        <rdar://problem/28813156>
+
+        Reviewed by Simon Fraser.
+
+        In addition to checking whether the renderer needs layout, we also need to check if its preferred
+        width is clean and stop computing the selection rects, if needed (while adding a renderer to the tree,
+        there's a transition phase where the parent's preferred width dirty bit is already set, but it does
+        not yet need layout).
+
+        Tests: fast/css-generated-content/dynamic-first-letter-selection-clear-crash.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canUpdateSelectionOnRootLineBoxes):
+
 2016-10-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: m_fonts in &WebCore::FontCascade::primaryFont
