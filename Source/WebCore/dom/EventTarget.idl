@@ -24,17 +24,8 @@
     JSCustomHeader,
     JSCustomToNativeObject,
 ] interface EventTarget {
-    // FIXME: Should be:
-    // void addEventListener(DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options);
-    // void removeEventListener(DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options);
-    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener);
-    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, AddEventListenerOptions options);
-    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener);
-    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, EventListenerOptions options);
-
-    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
-    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? listener, boolean useCapture);
-
+    [ImplementedAs=addEventListenerForBindings] void addEventListener([AtomicString] DOMString type, EventListener? callback, optional (AddEventListenerOptions or boolean) options = false);
+    [ImplementedAs=removeEventListenerForBindings] void removeEventListener([AtomicString] DOMString type, EventListener? callback, optional (EventListenerOptions or boolean) options = false);
     [ImplementedAs=dispatchEventForBindings, MayThrowLegacyException] boolean dispatchEvent(Event event);
 };
 

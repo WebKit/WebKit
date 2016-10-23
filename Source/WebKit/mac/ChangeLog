@@ -1,3 +1,18 @@
+2016-10-23  Chris Dumez  <cdumez@apple.com>
+
+        addEventListener() / removeEventListener() should use a union for last parameter
+        https://bugs.webkit.org/show_bug.cgi?id=163863
+
+        Reviewed by Darin Adler.
+
+        Cast BOOL to bool to help to compiler construct the new variant-type parameter.
+
+        * DOM/DOMNode.mm:
+        (-[DOMNode addEventListener:listener:useCapture:]):
+        (-[DOMNode addEventListener:::]):
+        (-[DOMNode removeEventListener:listener:useCapture:]):
+        (-[DOMNode removeEventListener:::]):
+
 2016-10-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support (insertFrom|deleteBy)Composition and (insert|delete)CompositionText inputTypes for InputEvents

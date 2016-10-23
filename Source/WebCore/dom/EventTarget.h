@@ -35,6 +35,7 @@
 #include "ScriptWrappable.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/Variant.h>
 
 namespace WTF {
 class AtomicString;
@@ -137,10 +138,11 @@ public:
         bool once;
     };
 
-    void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
-    void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, bool useCapture = false);
-    WEBCORE_EXPORT void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const AddEventListenerOptions&);
-    WEBCORE_EXPORT void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, const ListenerOptions&);
+    using AddEventListenerOptionsOrBoolean = WTF::Variant<AddEventListenerOptions, bool>;
+    WEBCORE_EXPORT void addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, AddEventListenerOptionsOrBoolean&&);
+
+    using ListenerOptionsOrBoolean = WTF::Variant<ListenerOptions, bool>;
+    WEBCORE_EXPORT void removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&&, ListenerOptionsOrBoolean&&);
     virtual bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions& = { });
     virtual bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&);
 
@@ -229,16 +231,6 @@ inline bool EventTarget::hasCapturingEventListeners(const AtomicString& eventTyp
     if (!d)
         return false;
     return d->eventListenerMap.containsCapturing(eventType);
-}
-
-inline void EventTarget::addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
-{
-    addEventListenerForBindings(eventType, WTFMove(listener), AddEventListenerOptions(useCapture));
-}
-
-inline void EventTarget::removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, bool useCapture)
-{
-    removeEventListenerForBindings(eventType, WTFMove(listener), ListenerOptions(useCapture));
 }
 
 } // namespace WebCore

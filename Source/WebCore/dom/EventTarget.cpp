@@ -82,18 +82,32 @@ bool EventTarget::addEventListener(const AtomicString& eventType, Ref<EventListe
     return ensureEventTargetData().eventListenerMap.add(eventType, WTFMove(listener), { options.capture, options.passive, options.once });
 }
 
-void EventTarget::addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, const AddEventListenerOptions& options)
+void EventTarget::addEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, AddEventListenerOptionsOrBoolean&& variant)
 {
     if (!listener)
         return;
-    addEventListener(eventType, listener.releaseNonNull(), options);
+
+    auto visitor = WTF::makeVisitor([&](const AddEventListenerOptions& options) {
+        addEventListener(eventType, listener.releaseNonNull(), options);
+    }, [&](bool useCapture) {
+        addEventListener(eventType, listener.releaseNonNull(), AddEventListenerOptions(useCapture));
+    });
+
+    WTF::visit(visitor, variant);
 }
 
-void EventTarget::removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, const ListenerOptions& options)
+void EventTarget::removeEventListenerForBindings(const AtomicString& eventType, RefPtr<EventListener>&& listener, ListenerOptionsOrBoolean&& variant)
 {
     if (!listener)
         return;
-    removeEventListener(eventType, *listener, options);
+
+    auto visitor = WTF::makeVisitor([&](const ListenerOptions& options) {
+        removeEventListener(eventType, *listener, options);
+    }, [&](bool useCapture) {
+        removeEventListener(eventType, *listener, ListenerOptions(useCapture));
+    });
+
+    WTF::visit(visitor, variant);
 }
 
 bool EventTarget::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)

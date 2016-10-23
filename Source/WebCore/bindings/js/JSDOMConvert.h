@@ -618,7 +618,7 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
         constexpr bool hasBooleanType = brigand::any<TypeList, std::is_same<IDLBoolean, brigand::_1>>::value;
         if (hasBooleanType) {
             if (value.isBoolean())
-                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, bool, hasBooleanType>::convert(state, value).value());
+                return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value());
         }
         
         // 14. If V is a Number value, then:
@@ -640,7 +640,7 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
 
         // 17. If types includes a boolean, then return the result of converting V to boolean.
         if (hasBooleanType)
-            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, bool, hasBooleanType>::convert(state, value).value());
+            return std::move<WTF::CheckMoveParameter>(ConditionalConverter<ReturnType, IDLBoolean, hasBooleanType>::convert(state, value).value());
 
         // 18. Throw a TypeError.
         throwTypeError(&state, scope);

@@ -355,25 +355,25 @@ DOMNode *kit(Node* value)
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     JSMainThreadNullState state;
-    unwrap(*self).addEventListenerForBindings(type, ObjCEventListener::wrap(listener), useCapture);
+    unwrap(*self).addEventListenerForBindings(type, ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     JSMainThreadNullState state;
-    unwrap(*self).addEventListenerForBindings(type, ObjCEventListener::wrap(listener), useCapture);
+    unwrap(*self).addEventListenerForBindings(type, ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     JSMainThreadNullState state;
-    unwrap(*self).removeEventListenerForBindings(type, ObjCEventListener::wrap(listener), useCapture);
+    unwrap(*self).removeEventListenerForBindings(type, ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     JSMainThreadNullState state;
-    unwrap(*self).removeEventListenerForBindings(type, ObjCEventListener::wrap(listener), useCapture);
+    unwrap(*self).removeEventListenerForBindings(type, ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
