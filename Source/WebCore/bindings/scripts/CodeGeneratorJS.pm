@@ -1973,8 +1973,8 @@ sub AreTypesDistinguishableForOverloadResolution
         return $codeGenerator->IsFunctionOnlyCallbackInterface($type) || &$isDictionary($type);
     };
 
-    # FIXME: The WebIDL mandates this but this currently does not work because some of our IDL is wrong.
-    # return 0 if $idlTypeA->isNullable && $idlTypeB->isNullable;
+    # Two types are distinguishable for overload resolution if at most one of the two includes a nullable type.
+    return 0 if $idlTypeA->isNullable && $idlTypeB->isNullable;
 
     # Union types: idlTypeA and idlTypeB  are distinguishable if:
     # - Both types are either a union type or nullable union type, and each member type of the one is

@@ -962,6 +962,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWith
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableUnion(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithOptionalUnion(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(JSC::ExecState*);
@@ -1585,6 +1586,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "overloadedMethodWithNonDistinguishingUnion", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithNonDistinguishingUnion), (intptr_t) (2) } },
     { "overloadWithNullableUnion", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadWithNullableUnion), (intptr_t) (1) } },
     { "overloadWithOptionalUnion", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadWithOptionalUnion), (intptr_t) (0) } },
+    { "overloadWithNullableNonDistinguishingParameter", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter), (intptr_t) (2) } },
     { "classMethodWithClamp", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t) (2) } },
     { "classMethodWithEnforceRange", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithEnforceRange), (intptr_t) (2) } },
     { "methodWithUnsignedLongSequence", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t) (1) } },
@@ -7153,6 +7155,76 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithOptionalUnion
         return jsTestObjPrototypeFunctionOverloadWithOptionalUnion1(state);
     }
     return throwVMTypeError(state, throwScope);
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller>(state, "overloadWithNullableNonDistinguishingParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    TestObj* obj = nullptr;
+    if (!state->uncheckedArgument(0).isUndefinedOrNull()) {
+        obj = JSTestObj::toWrapped(state->uncheckedArgument(0));
+        if (UNLIKELY(!obj))
+            return throwArgumentTypeError(*state, throwScope, 0, "obj", "TestObject", "overloadWithNullableNonDistinguishingParameter", "TestObj");
+    }
+    auto node = JSTestNode::toWrapped(state->uncheckedArgument(1));
+    if (UNLIKELY(!node))
+        return throwArgumentTypeError(*state, throwScope, 1, "node", "TestObject", "overloadWithNullableNonDistinguishingParameter", "TestNode");
+    impl.overloadWithNullableNonDistinguishingParameter(WTFMove(obj), *node);
+    return JSValue::encode(jsUndefined());
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller(JSC::ExecState*, JSTestObj*, JSC::ThrowScope&);
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(ExecState* state)
+{
+    return BindingCaller<JSTestObj>::callOperation<jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller>(state, "overloadWithNullableNonDistinguishingParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller(JSC::ExecState* state, JSTestObj* castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    if (UNLIKELY(state->argumentCount() < 2))
+        return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
+    TestNode* node = nullptr;
+    if (!state->uncheckedArgument(0).isUndefinedOrNull()) {
+        node = JSTestNode::toWrapped(state->uncheckedArgument(0));
+        if (UNLIKELY(!node))
+            return throwArgumentTypeError(*state, throwScope, 0, "node", "TestObject", "overloadWithNullableNonDistinguishingParameter", "TestNode");
+    }
+    auto index = convert<IDLLong>(*state, state->uncheckedArgument(1), NormalConversion);
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.overloadWithNullableNonDistinguishingParameter(WTFMove(node), WTFMove(index));
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter(ExecState* state)
+{
+    VM& vm = state->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    size_t argsCount = std::min<size_t>(2, state->argumentCount());
+    if (argsCount == 2) {
+        JSValue distinguishingArg = state->uncheckedArgument(1);
+        if (distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(JSTestNode::info()))
+            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1(state);
+        if (distinguishingArg.isNumber())
+            return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(state);
+        return jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2(state);
+    }
+    return argsCount < 2 ? throwVMError(state, throwScope, createNotEnoughArgumentsError(state)) : throwVMTypeError(state, throwScope);
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(ExecState* state)

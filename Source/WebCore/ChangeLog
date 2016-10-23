@@ -1,5 +1,26 @@
 2016-10-22  Chris Dumez  <cdumez@apple.com>
 
+        [Web IDL] Two types are distinguishable for overload resolution if at most one of the two includes a nullable type
+        https://bugs.webkit.org/show_bug.cgi?id=163791
+
+        Reviewed by Sam Weinig.
+
+        Update overload resolution in the bindings generator so that 2 nullable types
+        are no longer considered as distinguishable, as per Web IDL:
+        - https://heycam.github.io/webidl/#dfn-distinguishable
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AreTypesDistinguishableForOverloadResolution):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter1Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter2Caller):
+        (WebCore::jsTestObjPrototypeFunctionOverloadWithNullableNonDistinguishingParameter):
+        * bindings/scripts/test/TestObj.idl:
+
+2016-10-22  Chris Dumez  <cdumez@apple.com>
+
         WebGLRenderingContextBase.texSubImage2D() should use a union instead of overloading
         https://bugs.webkit.org/show_bug.cgi?id=163859
 
