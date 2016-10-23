@@ -1587,9 +1587,11 @@ inline void StyleBuilderCustom::applyValueFontSize(StyleResolver& styleResolver,
             styleResolver.state().setFontSizeHasViewportUnits(primitiveValue.isViewportPercentageLength());
         } else if (primitiveValue.isPercentage())
             size = (primitiveValue.floatValue() * parentSize) / 100.0f;
-        else if (primitiveValue.isCalculatedPercentageWithLength())
-            size = primitiveValue.cssCalcValue()->createCalculationValue(styleResolver.state().cssToLengthConversionData().copyWithAdjustedZoom(1.0f))->evaluate(parentSize);
-        else
+        else if (primitiveValue.isCalculatedPercentageWithLength()) {
+            const auto& conversionData = styleResolver.state().cssToLengthConversionData();
+            CSSToLengthConversionData parentConversionData { styleResolver.parentStyle(), conversionData.rootStyle(), styleResolver.document().renderView(), 1.0f, true };
+            size = primitiveValue.cssCalcValue()->createCalculationValue(parentConversionData)->evaluate(parentSize);
+        } else
             return;
     }
 

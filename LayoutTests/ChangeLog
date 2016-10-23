@@ -1,3 +1,13 @@
+2016-10-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: m_fonts in &WebCore::FontCascade::primaryFont
+        https://bugs.webkit.org/show_bug.cgi?id=163459
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-size-calc-expected.txt: Added.
+        * fast/text/font-size-calc.html: Added.
+
 2016-10-22  Dan Bernstein  <mitz@apple.com>
 
         Dynamically-added backdrop filter to clip-path'd element with 3D transform renders incorrectly (without clip)

@@ -1,3 +1,22 @@
+2016-10-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        ASSERTION FAILED: m_fonts in &WebCore::FontCascade::primaryFont
+        https://bugs.webkit.org/show_bug.cgi?id=163459
+
+        Reviewed by Darin Adler.
+
+        The CSS Units and Values spec states that font-relative units, when used
+        in the font-size property, are resolved against the parent element. When
+        calc() is specified, we were trying to resolve them against the current
+        element, which is impossible because of the circular dependency. Instead,
+        we should resolve against the parent style the same way as when calc() 
+        isn't specified.
+
+        Test: fast/text/font-size-calc.html
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueFontSize):
+
 2016-10-22  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Two types are distinguishable for overload resolution if at most one of the two includes a nullable type
