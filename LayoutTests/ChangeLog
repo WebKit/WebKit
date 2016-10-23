@@ -1,5 +1,15 @@
 2016-10-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Backdrop filter doesn't show if removed then re-added
+        https://bugs.webkit.org/show_bug.cgi?id=163860
+
+        Reviewed by Dan Bernstein.
+
+        * css3/filters/backdrop/add-remove-add-backdrop-filter-expected.html: Added.
+        * css3/filters/backdrop/add-remove-add-backdrop-filter.html: Added.
+
+2016-10-22  Simon Fraser  <simon.fraser@apple.com>
+
         Fix repainting of slow repaint objects in WK1 when page scale is applied
         https://bugs.webkit.org/show_bug.cgi?id=163854
 

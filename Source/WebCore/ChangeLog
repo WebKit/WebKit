@@ -1,5 +1,24 @@
 2016-10-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Backdrop filter doesn't show if removed then re-added
+        https://bugs.webkit.org/show_bug.cgi?id=163860
+
+        Reviewed by Dan Bernstein.
+
+        When a backdrop filter is removed the re-added, updateBackdropFiltersRect() never
+        runs the second time because m_backdropFiltersRect doesn't change. However, we need
+        to run that code to size and position the newly re-created backdrop layer, so run
+        it explicitly if we just created the backdrop layer. This is similar to how
+        updateContentsImage() calls updateContentsRects().
+
+        Test: css3/filters/backdrop/add-remove-add-backdrop-filter.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setBackdropFilters):
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+
+2016-10-22  Simon Fraser  <simon.fraser@apple.com>
+
         Fix repainting of slow repaint objects in WK1 when page scale is applied
         https://bugs.webkit.org/show_bug.cgi?id=163854
 
