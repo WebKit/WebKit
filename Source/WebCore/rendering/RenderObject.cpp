@@ -885,8 +885,6 @@ void RenderObject::repaintSlowRepaintObject() const
         return;
 
     const RenderLayerModelObject* repaintContainer = containerForRepaint();
-    if (!repaintContainer)
-        repaintContainer = &view;
 
     bool shouldClipToLayer = true;
     IntRect repaintRect;
