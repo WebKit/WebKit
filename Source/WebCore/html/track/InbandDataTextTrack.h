@@ -24,39 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandDataTextTrack_h
-#define InbandDataTextTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
 #include "InbandTextTrack.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class DataCue;
-class Document;
 class InbandTextTrackPrivate;
-
-#if ENABLE(DATACUE_VALUE)
 class SerializedPlatformRepresentation;
-#endif
 
 class InbandDataTextTrack final : public InbandTextTrack {
 public:
-    static Ref<InbandDataTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    static Ref<InbandDataTextTrack> create(ScriptExecutionContext*, TextTrackClient*, RefPtr<InbandTextTrackPrivate>&&);
     virtual ~InbandDataTextTrack();
 
 private:
-    InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    InbandDataTextTrack(ScriptExecutionContext*, TextTrackClient*, RefPtr<InbandTextTrackPrivate>&&);
 
-    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, const void*, unsigned) override;
+    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, const void*, unsigned) final;
 
 #if ENABLE(DATACUE_VALUE)
-    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&) override;
-    void updateDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) override;
-    void removeDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) override;
-    void removeCue(TextTrackCue*, ExceptionCode&) override;
+    void addDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>, const String&) final;
+    void updateDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) final;
+    void removeDataCue(InbandTextTrackPrivate*, const MediaTime& start, const MediaTime& end, PassRefPtr<SerializedPlatformRepresentation>) final;
+    ExceptionOr<void> removeCue(TextTrackCue*) final;
 
     HashMap<RefPtr<SerializedPlatformRepresentation>, RefPtr<DataCue>> m_incompleteCueMap;
 #endif
@@ -64,5 +58,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

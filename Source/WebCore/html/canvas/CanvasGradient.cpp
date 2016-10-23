@@ -27,48 +27,38 @@
 #include "config.h"
 #include "CanvasGradient.h"
 
-#include "CanvasPattern.h"
 #include "CanvasStyle.h"
-#include "CSSParser.h"
 #include "ExceptionCode.h"
 
 namespace WebCore {
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
     : m_gradient(Gradient::create(p0, p1))
-#if ENABLE(DASHBOARD_SUPPORT)
-    , m_dashboardCompatibilityMode(false)
-#endif
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
     : m_gradient(Gradient::create(p0, r0, p1, r1))
-#if ENABLE(DASHBOARD_SUPPORT)
-    , m_dashboardCompatibilityMode(false)
-#endif
 {
 }
 
-void CanvasGradient::addColorStop(float value, const String& colorString, ExceptionCode& ec)
+ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorString)
 {
-    if (!(value >= 0 && value <= 1.0f)) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (!(value >= 0 && value <= 1))
+        return Exception { INDEX_SIZE_ERR };
 
+    // FIXME: Passing null for canvas means this won't work for current color. Is that OK?
     Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
     if (!color.isValid()) {
 #if ENABLE(DASHBOARD_SUPPORT)
-        if (!m_dashboardCompatibilityMode)
-            ec = SYNTAX_ERR;
-#else
-        ec = SYNTAX_ERR;
+        if (m_dashboardCompatibilityMode)
+            return { };
 #endif
-        return;
+        return Exception { SYNTAX_ERR };
     }
 
     m_gradient->addColorStop(value, color);
+    return { };
 }
 
-} // namespace
+}

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef OESVertexArrayObject_h
-#define OESVertexArrayObject_h
+#pragma once
 
 #include "GraphicsTypes3D.h"
 #include "WebGLExtension.h"
@@ -34,21 +33,17 @@ namespace WebCore {
 class WebGLRenderingContextBase;
 class WebGLVertexArrayObjectOES;
 
-typedef int ExceptionCode;
-
 class OESVertexArrayObject final : public WebGLExtension {
 public:
-    OESVertexArrayObject(WebGLRenderingContextBase*);
-    virtual ~OESVertexArrayObject();
+    explicit OESVertexArrayObject(WebGLRenderingContextBase&);
 
-    ExtensionName getName() const override;
-    
     RefPtr<WebGLVertexArrayObjectOES> createVertexArrayOES();
     void deleteVertexArrayOES(WebGLVertexArrayObjectOES*);
     GC3Dboolean isVertexArrayOES(WebGLVertexArrayObjectOES*);
-    void bindVertexArrayOES(WebGLVertexArrayObjectOES*, ExceptionCode&);
+    void bindVertexArrayOES(WebGLVertexArrayObjectOES*);
+
+private:
+    ExtensionName getName() const final;
 };
 
 } // namespace WebCore
-
-#endif // OESVertexArrayObject_h

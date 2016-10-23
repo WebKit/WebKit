@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-Ref<CanvasPattern> CanvasPattern::create(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
+Ref<CanvasPattern> CanvasPattern::create(Ref<Image>&& image, bool repeatX, bool repeatY, bool originClean)
 {
-    return adoptRef(*new CanvasPattern(image, repeatX, repeatY, originClean));
+    return adoptRef(*new CanvasPattern(WTFMove(image), repeatX, repeatY, originClean));
 }
 
-CanvasPattern::CanvasPattern(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(Pattern::create(image, repeatX, repeatY))
+CanvasPattern::CanvasPattern(Ref<Image>&& image, bool repeatX, bool repeatY, bool originClean)
+    : m_pattern(Pattern::create(WTFMove(image), repeatX, repeatY))
     , m_originClean(originClean)
 {
 }
@@ -48,30 +48,29 @@ CanvasPattern::~CanvasPattern()
 {
 }
 
-void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
+bool CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY)
 {
-    ec = 0;
     if (type.isEmpty() || type == "repeat") {
         repeatX = true;
         repeatY = true;
-        return;
+        return true;
     }
     if (type == "no-repeat") {
         repeatX = false;
         repeatY = false;
-        return;
+        return true;
     }
     if (type == "repeat-x") {
         repeatX = true;
         repeatY = false;
-        return;
+        return true;
     }
     if (type == "repeat-y") {
         repeatX = false;
         repeatY = true;
-        return;
+        return true;
     }
-    ec = SYNTAX_ERR;
+    return false;
 }
 
 } // namespace WebCore

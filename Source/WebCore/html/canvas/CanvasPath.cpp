@@ -111,19 +111,16 @@ void CanvasPath::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, f
         m_path.addBezierCurveTo(cp1, cp2, p1);
 }
 
-void CanvasPath::arcTo(float x1, float y1, float x2, float y2, float r, ExceptionCode& ec)
+ExceptionOr<void> CanvasPath::arcTo(float x1, float y1, float x2, float y2, float r)
 {
-    ec = 0;
     if (!std::isfinite(x1) || !std::isfinite(y1) || !std::isfinite(x2) || !std::isfinite(y2) || !std::isfinite(r))
-        return;
+        return { };
 
-    if (r < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (r < 0)
+        return Exception { INDEX_SIZE_ERR };
 
     if (!hasInvertibleTransform())
-        return;
+        return { };
 
     FloatPoint p1 = FloatPoint(x1, y1);
     FloatPoint p2 = FloatPoint(x2, y2);
@@ -134,6 +131,8 @@ void CanvasPath::arcTo(float x1, float y1, float x2, float y2, float r, Exceptio
         lineTo(x1, y1);
     else
         m_path.addArcTo(p1, p2, r);
+
+    return { };
 }
 
 static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwise)
@@ -155,42 +154,39 @@ static void normalizeAngles(float& startAngle, float& endAngle, bool anticlockwi
         endAngle = startAngle + 2 * piFloat;
 }
 
-void CanvasPath::arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise, ExceptionCode& ec)
+ExceptionOr<void> CanvasPath::arc(float x, float y, float radius, float startAngle, float endAngle, bool anticlockwise)
 {
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
+        return { };
 
-    if (radius < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (radius < 0)
+        return Exception { INDEX_SIZE_ERR };
 
     if (!hasInvertibleTransform())
-        return;
+        return { };
 
     normalizeAngles(startAngle, endAngle, anticlockwise);
 
     if (!radius || startAngle == endAngle) {
         // The arc is empty but we still need to draw the connecting line.
         lineTo(x + radius * cosf(startAngle), y + radius * sinf(startAngle));
-        return;
+        return { };
     }
 
     m_path.addArc(FloatPoint(x, y), radius, startAngle, endAngle, anticlockwise);
+    return { };
 }
     
-void CanvasPath::ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise, ExceptionCode& ec)
+ExceptionOr<void> CanvasPath::ellipse(float x, float y, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, bool anticlockwise)
 {
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(radiusX) || !std::isfinite(radiusY) || !std::isfinite(rotation) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
+        return { };
 
-    if (radiusX < 0 || radiusY < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
+    if (radiusX < 0 || radiusY < 0)
+        return Exception { INDEX_SIZE_ERR };
 
     if (!hasInvertibleTransform())
-        return;
+        return { };
 
     normalizeAngles(startAngle, endAngle, anticlockwise);
 
@@ -199,7 +195,7 @@ void CanvasPath::ellipse(float x, float y, float radiusX, float radiusY, float r
         transform.translate(x, y).rotate(rad2deg(rotation));
 
         lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(startAngle), radiusY * sinf(startAngle))));
-        return;
+        return { };
     }
 
     if (!radiusX || !radiusY) {
@@ -217,10 +213,11 @@ void CanvasPath::ellipse(float x, float y, float radiusX, float radiusY, float r
         }
 
         lineTo(transform.mapPoint(FloatPoint(radiusX * cosf(endAngle), radiusY * sinf(endAngle))));
-        return;
+        return { };
     }
 
     m_path.addEllipse(FloatPoint(x, y), radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise);
+    return { };
 }
 
 void CanvasPath::rect(float x, float y, float width, float height)

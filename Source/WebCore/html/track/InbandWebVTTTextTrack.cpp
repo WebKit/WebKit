@@ -82,7 +82,7 @@ void InbandWebVTTTextTrack::newCuesParsed()
             LOG(Media, "InbandWebVTTTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
             return;
         }
-        addCue(WTFMove(vttCue), ASSERT_NO_EXCEPTION);
+        addCue(WTFMove(vttCue));
     }
 }
     

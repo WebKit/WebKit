@@ -34,5 +34,5 @@
     WebGLVertexArrayObjectOES createVertexArrayOES();
     void deleteVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
     boolean isVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
-    [MayThrowLegacyException] void bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
+    void bindVertexArrayOES(optional WebGLVertexArrayObjectOES? arrayObject = null);
 };

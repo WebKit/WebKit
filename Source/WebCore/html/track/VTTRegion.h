@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2013 Google Inc.  All rights reserved.
- * Copyright (C) 2014 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,16 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VTTRegion_h
-#define VTTRegion_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
 #include "ContextDestructionObserver.h"
-#include "Document.h"
 #include "FloatPoint.h"
 #include "TextTrack.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -62,27 +59,27 @@ public:
     void setId(const String&);
 
     double width() const { return m_width; }
-    void setWidth(double, ExceptionCode&);
+    ExceptionOr<void> setWidth(double);
 
-    long height() const { return m_heightInLines; }
-    void setHeight(long, ExceptionCode&);
+    int height() const { return m_heightInLines; }
+    ExceptionOr<void> setHeight(int);
 
     double regionAnchorX() const { return m_regionAnchor.x(); }
-    void setRegionAnchorX(double, ExceptionCode&);
+    ExceptionOr<void> setRegionAnchorX(double);
 
     double regionAnchorY() const { return m_regionAnchor.y(); }
-    void setRegionAnchorY(double, ExceptionCode&);
+    ExceptionOr<void> setRegionAnchorY(double);
 
     double viewportAnchorX() const { return m_viewportAnchor.x(); }
-    void setViewportAnchorX(double, ExceptionCode&);
+    ExceptionOr<void> setViewportAnchorX(double);
 
     double viewportAnchorY() const { return m_viewportAnchor.y(); }
-    void setViewportAnchorY(double, ExceptionCode&);
+    ExceptionOr<void> setViewportAnchorY(double);
 
     const AtomicString& scroll() const;
-    void setScroll(const AtomicString&, ExceptionCode&);
+    ExceptionOr<void> setScroll(const AtomicString&);
 
-    void updateParametersFromRegion(VTTRegion*);
+    void updateParametersFromRegion(const VTTRegion&);
 
     const String& regionSettings() const { return m_settings; }
     void setRegionSettings(const String&);
@@ -91,14 +88,12 @@ public:
 
     HTMLDivElement& getDisplayTree();
     
-    void appendTextTrackCueBox(PassRefPtr<VTTCueBox>);
+    void appendTextTrackCueBox(Ref<VTTCueBox>&&);
     void displayLastTextTrackCueBox();
     void willRemoveTextTrackCueBox(VTTCueBox*);
 
 private:
     VTTRegion(ScriptExecutionContext&);
-
-    Document* ownerDocument() { return downcast<Document>(m_scriptExecutionContext); }
 
     void prepareRegionDisplayTree();
 
@@ -128,13 +123,13 @@ private:
     String m_id;
     String m_settings;
 
-    double m_width;
-    unsigned m_heightInLines;
+    double m_width { 100 };
+    unsigned m_heightInLines { 3 };
 
-    FloatPoint m_regionAnchor;
-    FloatPoint m_viewportAnchor;
+    FloatPoint m_regionAnchor { 0, 100 };
+    FloatPoint m_viewportAnchor { 0, 100 };
 
-    bool m_scroll;
+    bool m_scroll { false };
 
     // The cue container is the container that is scrolled up to obtain the
     // effect of scrolling cues when this is enabled for the regions.
@@ -145,10 +140,10 @@ private:
     // reference a destroyed TextTrack, as this member variable
     // is cleared in the TextTrack destructor and it is generally
     // set/reset within the addRegion and removeRegion methods.
-    TextTrack* m_track;
+    TextTrack* m_track { nullptr };
 
     // Keep track of the current numeric value of the css "top" property.
-    double m_currentTop;
+    double m_currentTop { 0 };
 
     // The timer is used to display the next cue line after the current one has
     // been displayed. It's main use is for scrolling regions and it triggers as
@@ -160,5 +155,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

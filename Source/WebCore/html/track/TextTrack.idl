@@ -44,13 +44,13 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     readonly attribute TextTrackCueList? activeCues;
 
     // FIXME: cue parameter should not be nullable in addCue and removeCue.
-    [MayThrowLegacyException] void addCue(TextTrackCue? cue);
-    [MayThrowLegacyException] void removeCue(TextTrackCue? cue);
+    [MayThrowException] void addCue(TextTrackCue? cue);
+    [MayThrowException] void removeCue(TextTrackCue? cue);
 
     attribute EventHandler oncuechange;
 
     readonly attribute VTTRegionList regions;
     // FIXME: region parameter should not be nullable in addRegion and removeRegion.
     void addRegion(VTTRegion? region);
-    [MayThrowLegacyException] void removeRegion(VTTRegion? region);
+    [MayThrowException] void removeRegion(VTTRegion? region);
 };

@@ -2976,10 +2976,9 @@ void WebGLRenderingContextBase::stencilOpSeparate(GC3Denum face, GC3Denum fail, 
     m_context->stencilOpSeparate(face, fail, zfail, zpass);
 }
 
-void WebGLRenderingContextBase::texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode& ec)
+void WebGLRenderingContextBase::texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     // FIXME: For now we ignore any errors returned.
-    ec = 0;
     WebGLTexture* tex = validateTextureBinding("texImage2D", target, true);
     ASSERT(validateTexFuncParameters("texImage2D", TexImage, target, level, internalformat, width, height, border, format, type));
     ASSERT(tex);
@@ -3011,9 +3010,8 @@ void WebGLRenderingContextBase::texImage2DBase(GC3Denum target, GC3Dint level, G
     tex->setLevelInfo(target, level, internalformat, width, height, type);
 }
 
-void WebGLRenderingContextBase::texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+void WebGLRenderingContextBase::texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha)
 {
-    ec = 0;
     Vector<uint8_t> data;
     GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
     if (!imageExtractor.extractSucceeded()) {
@@ -3036,7 +3034,7 @@ void WebGLRenderingContextBase::texImage2DImpl(GC3Denum target, GC3Dint level, G
 
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
-    texImage2DBase(target, level, internalformat, image->width(), image->height(), 0, format, type, needConversion ? data.data() : imagePixelData, ec);
+    texImage2DBase(target, level, internalformat, image->width(), image->height(), 0, format, type, needConversion ? data.data() : imagePixelData);
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
@@ -3082,7 +3080,7 @@ bool WebGLRenderingContextBase::validateTexFunc(const char* functionName, TexFun
     return true;
 }
 
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels, ExceptionCode& ec)
+void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels)
 {
     if (isContextLostOrPending() || !validateTexFuncData("texImage2D", level, width, height, internalformat, format, type, pixels.get(), NullAllowed)
         || !validateTexFunc("texImage2D", TexImage, SourceArrayBufferView, target, level, internalformat, width, height, border, format, type, 0, 0))
@@ -3102,23 +3100,21 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
     }
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
-    texImage2DBase(target, level, internalformat, width, height, border,
-                   format, type, data, ec);
+    texImage2DBase(target, level, internalformat, width, height, border, format, type, data);
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource> source, ExceptionCode& ec)
+ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource> source)
 {
     if (!source) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "source is null");
-        return;
+        return { };
     }
 
-    auto visitor = WTF::makeVisitor([&](const RefPtr<ImageData>& pixels) {
-        ec = 0;
+    auto visitor = WTF::makeVisitor([&](const RefPtr<ImageData>& pixels) -> ExceptionOr<void> {
         if (isContextLostOrPending() || !validateTexFunc("texImage2D", TexImage, SourceImageData, target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, 0, 0))
-            return;
+            return { };
         Vector<uint8_t> data;
         bool needConversion = true;
         // The data from ImageData is always of format RGBA8.
@@ -3128,35 +3124,38 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
         else {
             if (!m_context->extractImageData(pixels.get(), format, type, m_unpackFlipY, m_unpackPremultiplyAlpha, data)) {
                 synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
-                return;
+                return { };
             }
         }
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
-        texImage2DBase(target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, needConversion ? data.data() : pixels->data()->data(), ec);
+        texImage2DBase(target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, needConversion ? data.data() : pixels->data()->data());
         if (m_unpackAlignment != 1)
             m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
-    }, [&](const RefPtr<HTMLImageElement>& image) {
-        ec = 0;
-        if (isContextLostOrPending() || !validateHTMLImageElement("texImage2D", image.get(), ec))
-            return;
+        return { };
+    }, [&](const RefPtr<HTMLImageElement>& image) -> ExceptionOr<void> {
+        if (wouldTaintOrigin(image.get()))
+            return Exception { SECURITY_ERR };
+        if (isContextLostOrPending() || !validateHTMLImageElement("texImage2D", image.get()))
+            return { };
 
         RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
         if (!imageForRender)
-            return;
+            return { };
 
         if (imageForRender->isSVGImage())
             imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
 
         if (!imageForRender || !validateTexFunc("texImage2D", TexImage, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
-            return;
+            return { };
 
-        texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
-
-    }, [&](const RefPtr<HTMLCanvasElement>& canvas) {
-        ec = 0;
-        if (isContextLostOrPending() || !validateHTMLCanvasElement("texImage2D", canvas.get(), ec) || !validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
-            return;
+        texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha);
+        return { };
+    }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<void> {
+        if (wouldTaintOrigin(canvas.get()))
+            return Exception { SECURITY_ERR };
+        if (isContextLostOrPending() || !validateHTMLCanvasElement("texImage2D", canvas.get()) || !validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
+            return { };
 
         WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
         // If possible, copy from the canvas element directly to the texture
@@ -3171,20 +3170,22 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
             ImageBuffer* buffer = canvas->buffer();
             if (buffer && buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
                 texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
-                return;
+                return { };
             }
         }
 
         RefPtr<ImageData> imageData = canvas->getImageData();
         if (imageData)
-            texImage2D(target, level, internalformat, format, type, TexImageSource(imageData.get()), ec);
+            texImage2D(target, level, internalformat, format, type, TexImageSource(imageData.get()));
         else
-            texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
-    }, [&](const RefPtr<HTMLVideoElement>& video) {
-        ec = 0;
-        if (isContextLostOrPending() || !validateHTMLVideoElement("texImage2D", video.get(), ec)
+            texImage2DImpl(target, level, internalformat, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha);
+        return { };
+    }, [&](const RefPtr<HTMLVideoElement>& video) -> ExceptionOr<void> {
+        if (wouldTaintOrigin(video.get()))
+            return Exception { SECURITY_ERR };
+        if (isContextLostOrPending() || !validateHTMLVideoElement("texImage2D", video.get())
             || !validateTexFunc("texImage2D", TexImage, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
-            return;
+            return { };
 
         // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
         // Otherwise, it will fall back to the normal SW path.
@@ -3198,18 +3199,19 @@ void WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint level, GC3De
             && !level) {
             if (video->copyVideoTextureToPlatformTexture(m_context.get(), texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
                 texture->setLevelInfo(target, level, internalformat, video->videoWidth(), video->videoHeight(), type);
-                return;
+                return { };
             }
         }
 
         // Normal pure SW path.
         RefPtr<Image> image = videoFrameToImage(video.get(), ImageBuffer::fastCopyImageMode());
         if (!image)
-            return;
-        texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+            return { };
+        texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha);
+        return { };
     });
 
-    WTF::visit(visitor, source.value());
+    return WTF::visit(visitor, source.value());
 }
 
 RefPtr<Image> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image, int width, int height, int deviceScaleFactor)
@@ -4472,7 +4474,7 @@ WebGLBuffer* WebGLRenderingContextBase::validateBufferDataParameters(const char*
     return nullptr;
 }
 
-bool WebGLRenderingContextBase::validateHTMLImageElement(const char* functionName, HTMLImageElement* image, ExceptionCode& ec)
+bool WebGLRenderingContextBase::validateHTMLImageElement(const char* functionName, HTMLImageElement* image)
 {
     if (!image || !image->cachedImage()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no image");
@@ -4483,39 +4485,29 @@ bool WebGLRenderingContextBase::validateHTMLImageElement(const char* functionNam
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "invalid image");
         return false;
     }
-    if (wouldTaintOrigin(image)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
     return true;
 }
 
-bool WebGLRenderingContextBase::validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement* canvas, ExceptionCode& ec)
+bool WebGLRenderingContextBase::validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement* canvas)
 {
     if (!canvas || !canvas->buffer()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no canvas");
-        return false;
-    }
-    if (wouldTaintOrigin(canvas)) {
-        ec = SECURITY_ERR;
         return false;
     }
     return true;
 }
 
 #if ENABLE(VIDEO)
-bool WebGLRenderingContextBase::validateHTMLVideoElement(const char* functionName, HTMLVideoElement* video, ExceptionCode& ec)
+
+bool WebGLRenderingContextBase::validateHTMLVideoElement(const char* functionName, HTMLVideoElement* video)
 {
     if (!video || !video->videoWidth() || !video->videoHeight()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no video");
         return false;
     }
-    if (wouldTaintOrigin(video)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
     return true;
 }
+
 #endif
 
 void WebGLRenderingContextBase::vertexAttribfImpl(const char* functionName, GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat v0, GC3Dfloat v1, GC3Dfloat v2, GC3Dfloat v3)

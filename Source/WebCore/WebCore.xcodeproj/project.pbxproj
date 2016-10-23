@@ -10643,6 +10643,7 @@
 		935FBC4409BA00B900E230B1 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
 		9362640A0DE1137D009D5A00 /* CSSReflectionDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectionDirection.h; sourceTree = "<group>"; };
+		936B21F41DBBF8300052E117 /* CanvasPath.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasPath.idl; sourceTree = "<group>"; };
 		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "textAreaResizeCorner@2x.png"; sourceTree = "<group>"; };
 		9371080D1DB754550060744E /* WindowOrWorkerGlobalScope.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WindowOrWorkerGlobalScope.idl; sourceTree = "<group>"; };
@@ -16434,6 +16435,7 @@
 				49484FB5102CF23C00187DD3 /* CanvasGradient.idl */,
 				4671E0631D67A57B00C6B497 /* CanvasPath.cpp */,
 				4671E0641D67A57B00C6B497 /* CanvasPath.h */,
+				936B21F41DBBF8300052E117 /* CanvasPath.idl */,
 				49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */,
 				49484FB7102CF23C00187DD3 /* CanvasPattern.h */,
 				49484FB8102CF23C00187DD3 /* CanvasPattern.idl */,

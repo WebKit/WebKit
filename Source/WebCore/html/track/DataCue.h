@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataCue_h
-#define DataCue_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -113,5 +112,4 @@ const DataCue* toDataCue(const TextTrackCue*);
 
 } // namespace WebCore
 
-#endif
 #endif

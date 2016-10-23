@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLRenderingContextBase_h
-#define WebGLRenderingContextBase_h
+#pragma once
 
 #include "ActiveDOMObject.h"
 #include "CanvasRenderingContext.h"
@@ -37,8 +36,6 @@
 #include <memory>
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
-#include <wtf/Variant.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -83,8 +80,6 @@ class WebGLSharedObject;
 class WebGLShaderPrecisionFormat;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
-
-typedef int ExceptionCode;
 
 inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
 {
@@ -200,8 +195,8 @@ public:
     RefPtr<WebGLContextAttributes> getContextAttributes();
     GC3Denum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
-    virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&) = 0;
-    virtual WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) = 0;
+    virtual WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) = 0;
+    virtual WebGLGetInfo getParameter(GC3Denum pname) = 0;
     WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname);
     String getProgramInfoLog(WebGLProgram*);
     WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname);
@@ -243,26 +238,20 @@ public:
     void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
     void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
 
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&);
 
     using TexImageSource = WTF::Variant<RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
-    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource>, ExceptionCode&);
+    ExceptionOr<void> texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Optional<TexImageSource>);
 
     void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
     void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
 
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Dsizei width, GC3Dsizei height,
-        GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&) = 0;
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&) = 0;
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&) = 0;
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&) = 0;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&) = 0;
+    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, ImageData*) = 0;
+    virtual ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLImageElement*) = 0;
+    virtual ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLCanvasElement*) = 0;
 #if ENABLE(VIDEO)
-    virtual void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&) = 0;
+    virtual ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLVideoElement*) = 0;
 #endif
 
     void uniform1f(const WebGLUniformLocation*, GC3Dfloat x);
@@ -602,10 +591,10 @@ protected:
     // Helper to restore state that clearing the framebuffer may destroy.
     void restoreStateAfterClear();
 
-    void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
-    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    virtual void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&) = 0;
-    virtual void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) = 0;
+    void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
+    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha);
+    virtual void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels) = 0;
+    virtual void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha) = 0;
 
     bool checkTextureCompleteness(const char*, bool);
 
@@ -758,15 +747,11 @@ protected:
     // Return the current bound buffer to target, or 0 if parameters are invalid.
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GC3Denum target, GC3Denum usage);
 
-    // Helper function for tex{Sub}Image2D to make sure image is ready and wouldn't taint Origin.
-    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*, ExceptionCode&);
-
-    // Helper function for tex{Sub}Image2D to make sure canvas is ready and wouldn't taint Origin.
-    bool validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*, ExceptionCode&);
-
+    // Helper function for tex{Sub}Image2D to make sure image is ready.
+    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*);
+    bool validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*);
 #if ENABLE(VIDEO)
-    // Helper function for tex{Sub}Image2D to make sure video is ready wouldn't taint Origin.
-    bool validateHTMLVideoElement(const char* functionName, HTMLVideoElement*, ExceptionCode&);
+    bool validateHTMLVideoElement(const char* functionName, HTMLVideoElement*);
 #endif
 
     // Helper functions for vertexAttribNf{v}.
@@ -793,19 +778,13 @@ protected:
     // Helper for restoration after context lost.
     void maybeRestoreContext();
 
-    enum ConsoleDisplayPreference {
-        DisplayInConsole,
-        DontDisplayInConsole
-    };
-
-    // Wrapper for GraphicsContext3D::synthesizeGLError that sends a message
-    // to the JavaScript console.
+    // Wrapper for GraphicsContext3D::synthesizeGLError that sends a message to the JavaScript console.
+    enum ConsoleDisplayPreference { DisplayInConsole, DontDisplayInConsole };
     void synthesizeGLError(GC3Denum, const char* functionName, const char* description, ConsoleDisplayPreference = DisplayInConsole);
 
     String ensureNotNull(const String&) const;
 
-    // Enable or disable stencil test based on user setting and
-    // whether the current FBO has a stencil buffer.
+    // Enable or disable stencil test based on user setting and whether the current FBO has a stencil buffer.
     void applyStencilTest();
 
     // Helper for enabling or disabling a capability.
@@ -829,5 +808,3 @@ protected:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContextBase, is3d())
-
-#endif

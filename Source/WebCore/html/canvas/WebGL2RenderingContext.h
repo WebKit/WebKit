@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGL2RenderingContext_h
-#define WebGL2RenderingContext_h
+#pragma once
 
 #if ENABLE(WEBGL2)
 
@@ -43,7 +42,6 @@ class WebGL2RenderingContext final : public WebGLRenderingContextBase {
 public:
     WebGL2RenderingContext(HTMLCanvasElement*, GraphicsContext3D::Attributes);
     WebGL2RenderingContext(HTMLCanvasElement*, RefPtr<GraphicsContext3D>&&, GraphicsContext3D::Attributes);
-    bool isWebGL2() const override { return true; }
 
     /* Buffer objects */
     void bufferData(GC3Denum target, ArrayBufferView& data, GC3Denum usage, GC3Duint srcOffset, GC3Duint length);
@@ -53,7 +51,7 @@ public:
     void getBufferSubData(GC3Denum target, GC3Dint64 offset, ArrayBuffer* returnedData);
     
     /* Framebuffer objects */
-    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&) override;
+    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
     void blitFramebuffer(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void framebufferTextureLayer(GC3Denum target, GC3Denum attachment, GC3Duint texture, GC3Dint level, GC3Dint layer);
     WebGLGetInfo getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname);
@@ -102,7 +100,7 @@ public:
     void vertexAttribIPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dsizei stride, GC3Dint64 offset);
     
     /* Writing to the drawing buffer */
-    void clear(GC3Dbitfield mask) override;
+    void clear(GC3Dbitfield mask) final;
     void vertexAttribDivisor(GC3Duint index, GC3Duint divisor);
     void drawArraysInstanced(GC3Denum mode, GC3Dint first, GC3Dsizei count, GC3Dsizei instanceCount);
     void drawElementsInstanced(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dint64 offset, GC3Dsizei instanceCount);
@@ -170,52 +168,47 @@ public:
     GC3Dboolean isVertexArray(WebGLVertexArrayObject* vertexArray);
     void bindVertexArray(WebGLVertexArrayObject* vertexArray);
     
-    /* Extensions */
-    WebGLExtension* getExtension(const String&) override;
-    Vector<String> getSupportedExtensions() override;
-    WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&) override;
+private:
+    bool isWebGL2() const final { return true; }
 
-    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) override;
-    void hint(GC3Denum target, GC3Denum mode) override;
-    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) override;
-    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&) override;
-    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha, ExceptionCode&) override;
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Dsizei width, GC3Dsizei height,
-        GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&, ExceptionCode&) override;
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, ImageData*, ExceptionCode&) override;
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLImageElement*, ExceptionCode&) override;
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLCanvasElement*, ExceptionCode&) override;
+    /* Extensions */
+    WebGLExtension* getExtension(const String&) final;
+    Vector<String> getSupportedExtensions() final;
+    WebGLGetInfo getParameter(GC3Denum pname) final;
+
+    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height) final;
+    void hint(GC3Denum target, GC3Denum mode) final;
+    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border) final;
+    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels) final;
+    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image*, GraphicsContext3D::ImageHtmlDomSource, bool flipY, bool premultiplyAlpha) final;
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&) final;
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, ImageData*) final;
+    ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLImageElement*) final;
+    ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLCanvasElement*) final;
 #if ENABLE(VIDEO)
-    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-        GC3Denum format, GC3Denum type, HTMLVideoElement*, ExceptionCode&) override;
+    ExceptionOr<void> texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLVideoElement*) final;
 #endif
 
-protected:
-    void initializeVertexArrayObjects() override;
-    GC3Dint getMaxDrawBuffers() override;
-    GC3Dint getMaxColorAttachments() override;
-    bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) override;
-    bool validateBlendEquation(const char* functionName, GC3Denum mode) override;
-    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level) override;
+    void initializeVertexArrayObjects() final;
+    GC3Dint getMaxDrawBuffers() final;
+    GC3Dint getMaxColorAttachments() final;
+    bool validateIndexArrayConservative(GC3Denum type, unsigned& numElementsRequired) final;
+    bool validateBlendEquation(const char* functionName, GC3Denum mode) final;
+    bool validateTexFuncFormatAndType(const char* functionName, GC3Denum internalformat, GC3Denum format, GC3Denum type, GC3Dint level) final;
     bool validateTexFuncParameters(const char* functionName,
         TexFuncValidationFunctionType,
         GC3Denum target, GC3Dint level,
         GC3Denum internalformat,
         GC3Dsizei width, GC3Dsizei height, GC3Dint border,
-        GC3Denum format, GC3Denum type) override;
+        GC3Denum format, GC3Denum type) final;
     bool validateTexFuncData(const char* functionName, GC3Dint level,
         GC3Dsizei width, GC3Dsizei height,
         GC3Denum internalformat, GC3Denum format, GC3Denum type,
         ArrayBufferView* pixels,
-        NullDisposition) override;
-    bool validateCapability(const char* functionName, GC3Denum cap) override;
-    bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) override;
+        NullDisposition) final;
+    bool validateCapability(const char* functionName, GC3Denum cap) final;
+    bool validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment) final;
     
-private:
     GC3Denum baseInternalFormatFromInternalFormat(GC3Denum internalformat);
     bool isIntegerFormat(GC3Denum internalformat);
     void initializeShaderExtensions();
@@ -226,5 +219,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGL2RenderingContext, isWebGL2())
 
 #endif // WEBGL2
-
-#endif

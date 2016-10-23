@@ -64,8 +64,8 @@ WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, 
 {
 }
 
-WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, RefPtr<GraphicsContext3D>&& context,
-    GraphicsContext3D::Attributes attributes) : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
+WebGL2RenderingContext::WebGL2RenderingContext(HTMLCanvasElement* passedCanvas, RefPtr<GraphicsContext3D>&& context, GraphicsContext3D::Attributes attributes)
+    : WebGLRenderingContextBase(passedCanvas, WTFMove(context), attributes)
 {
     initializeShaderExtensions();
     initializeVertexArrayObjects();
@@ -807,7 +807,7 @@ Vector<String> WebGL2RenderingContext::getSupportedExtensions()
     return result;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&)
+WebGLGetInfo WebGL2RenderingContext::getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname)
 {
     if (isContextLostOrPending() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
         return WebGLGetInfo();
@@ -1039,9 +1039,8 @@ void WebGL2RenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3D
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
 }
 
-void WebGL2RenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode& ec)
+void WebGL2RenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum internalformat, GC3Denum format, GC3Denum type, const void* pixels)
 {
-    ec = 0;
     ASSERT(!isContextLost());
     if (!validateTexFuncParameters("texSubImage2D", TexSubImage, target, level, internalformat, width, height, 0, format, type))
         return;
@@ -1061,9 +1060,8 @@ void WebGL2RenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, G
     m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
-void WebGL2RenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
+void WebGL2RenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha)
 {
-    ec = 0;
     Vector<uint8_t> data;
     GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
     if (!imageExtractor.extractSucceeded()) {
@@ -1089,12 +1087,12 @@ void WebGL2RenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, G
     
     WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
     GC3Denum internalformat = tex->getInternalFormat(target, level);
-    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(), internalformat, format, type,  needConversion ? data.data() : imagePixelData, ec);
+    texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(), internalformat, format, type,  needConversion ? data.data() : imagePixelData);
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels, ExceptionCode& ec)
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&& pixels)
 {
     if (isContextLostOrPending() || !validateTexFuncData("texSubImage2D", level, width, height, GraphicsContext3D::NONE, format, type, pixels.get(), NullNotAllowed) || !validateTexFunc("texSubImage2D", TexSubImage, SourceArrayBufferView, target, level, GraphicsContext3D::NONE, width, height, 0, format, type, xoffset, yoffset))
         return;
@@ -1116,14 +1114,13 @@ void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Di
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
     GC3Denum internalformat = tex->getInternalFormat(target, level);
-    texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalformat, format, type, data, ec);
+    texSubImage2DBase(target, level, xoffset, yoffset, width, height, internalformat, format, type, data);
     if (changeUnpackAlignment)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode& ec)
+void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, ImageData* pixels)
 {
-    ec = 0;
     if (isContextLostOrPending() || !pixels || !validateTexFunc("texSubImage2D", TexSubImage, SourceImageData, target, level, GraphicsContext3D::NONE,  pixels->width(), pixels->height(), 0, format, type, xoffset, yoffset))
         return;
     
@@ -1144,58 +1141,65 @@ void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Di
     
     WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
     GC3Denum internalformat = tex->getInternalFormat(target, level);
-    texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), internalformat, format, type, needConversion ? data.data() : pixels->data()->data(), ec);
+    texSubImage2DBase(target, level, xoffset, yoffset, pixels->width(), pixels->height(), internalformat, format, type, needConversion ? data.data() : pixels->data()->data());
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLImageElement* image)
 {
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLImageElement("texSubImage2D", image, ec))
-        return;
-    
+    if (wouldTaintOrigin(image))
+        return Exception { SECURITY_ERR };
+    if (isContextLostOrPending() || !validateHTMLImageElement("texSubImage2D", image))
+        return { };
+
     RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
     if (!imageForRender)
-        return;
+        return { };
 
     if (imageForRender->isSVGImage())
         imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1);
     
     if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLImageElement, target, level, GraphicsContext3D::NONE, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
-        return;
+        return { };
     
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha);
+    return { };
 }
 
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-    GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode& ec)
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas)
 {
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLCanvasElement("texSubImage2D", canvas, ec)
+    if (wouldTaintOrigin(canvas))
+        return Exception { SECURITY_ERR };
+    if (isContextLostOrPending() || !validateHTMLCanvasElement("texSubImage2D", canvas)
         || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLCanvasElement, target, level, GraphicsContext3D::NONE, canvas->width(), canvas->height(), 0, format, type, xoffset, yoffset))
-        return;
-    
+        return { };
+
     RefPtr<ImageData> imageData = canvas->getImageData();
     if (imageData)
-        texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get(), ec);
+        texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get());
     else
-        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+        texSubImage2DImpl(target, level, xoffset, yoffset, format, type, canvas->copiedImage(), GraphicsContext3D::HtmlDomCanvas, m_unpackFlipY, m_unpackPremultiplyAlpha);
+    return { };
 }
 
 #if ENABLE(VIDEO)
-void WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode& ec)
+
+ExceptionOr<void> WebGL2RenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, HTMLVideoElement* video)
 {
-    ec = 0;
-    if (isContextLostOrPending() || !validateHTMLVideoElement("texSubImage2D", video, ec)
+    if (wouldTaintOrigin(video))
+        return Exception { SECURITY_ERR };
+    if (isContextLostOrPending() || !validateHTMLVideoElement("texSubImage2D", video)
         || !validateTexFunc("texSubImage2D", TexSubImage, SourceHTMLVideoElement, target, level, GraphicsContext3D::NONE, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
-        return;
-    
+        return { };
+
     RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode());
     if (!image)
-        return;
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+        return { };
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha);
+    return { };
 }
+
 #endif
 
 bool WebGL2RenderingContext::validateTexFuncParameters(const char* functionName, TexFuncValidationFunctionType functionType, GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type)
@@ -1243,8 +1247,7 @@ bool WebGL2RenderingContext::validateTexFuncParameters(const char* functionName,
             return false;
         }
 
-        ExceptionCode ec;
-        bool isSRGB = (getFramebufferAttachmentParameter(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING, ec).getInt() == GraphicsContext3D::SRGB);
+        bool isSRGB = (getFramebufferAttachmentParameter(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING).getInt() == GraphicsContext3D::SRGB);
         if (isSRGB != (framebufferInternalFormat == GraphicsContext3D::SRGB8 || framebufferInternalFormat == GraphicsContext3D::SRGB8_ALPHA8)) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "framebuffer attachment color encoding and internal format do not match");
         return false;
@@ -1813,7 +1816,7 @@ bool WebGL2RenderingContext::isIntegerFormat(GC3Denum internalformat)
     return false;
 }
 
-WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname, ExceptionCode&)
+WebGLGetInfo WebGL2RenderingContext::getParameter(GC3Denum pname)
 {
     if (isContextLostOrPending())
         return WebGLGetInfo();

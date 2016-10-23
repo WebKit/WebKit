@@ -23,38 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandGenericTextTrack_h
-#define InbandGenericTextTrack_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
 #include "InbandTextTrack.h"
 #include "TextTrackCueGeneric.h"
 #include "WebVTTParser.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class Document;
 class InbandTextTrackPrivate;
-class TextTrackCue;
 
-class GenericTextTrackCueMap final {
+class GenericTextTrackCueMap {
 public:
-    GenericTextTrackCueMap();
-    ~GenericTextTrackCueMap();
+    void add(GenericCueData&, TextTrackCueGeneric&);
 
-    void add(GenericCueData*, TextTrackCueGeneric*);
+    void remove(TextTrackCue&);
+    void remove(GenericCueData&);
 
-    void remove(TextTrackCue*);
-    void remove(GenericCueData*);
-
-    PassRefPtr<GenericCueData> find(TextTrackCue*);
-    PassRefPtr<TextTrackCueGeneric> find(GenericCueData*);
+    GenericCueData* find(TextTrackCue&);
+    TextTrackCueGeneric* find(GenericCueData&);
 
 private:
-    typedef HashMap<RefPtr<TextTrackCue>, RefPtr<GenericCueData>> CueToDataMap;
-    typedef HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric>> CueDataToCueMap;
+    using CueToDataMap = HashMap<RefPtr<TextTrackCue>, RefPtr<GenericCueData>>;
+    using CueDataToCueMap = HashMap<RefPtr<GenericCueData>, RefPtr<TextTrackCueGeneric>>;
 
     CueToDataMap m_cueToDataMap;
     CueDataToCueMap m_dataToCueMap;
@@ -68,21 +62,21 @@ public:
 private:
     InbandGenericTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
 
-    void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) override;
-    void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
-    void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) override;
-    void removeCue(TextTrackCue*, ExceptionCode&) override;
+    void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) final;
+    void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
+    void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
+    ExceptionOr<void> removeCue(TextTrackCue*) final;
 
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);
 
     WebVTTParser& parser();
-    void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) override;
-    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) override;
+    void parseWebVTTCueData(InbandTextTrackPrivate*, const ISOWebVTTCue&) final;
+    void parseWebVTTFileHeader(InbandTextTrackPrivate*, String) final;
 
-    void newCuesParsed() override;
-    void newRegionsParsed() override;
-    void fileFailedToParse() override;
+    void newCuesParsed() final;
+    void newRegionsParsed() final;
+    void fileFailedToParse() final;
 
     GenericTextTrackCueMap m_cueMap;
     std::unique_ptr<WebVTTParser> m_webVTTParser;
@@ -90,5 +84,4 @@ private:
 
 } // namespace WebCore
 
-#endif
 #endif

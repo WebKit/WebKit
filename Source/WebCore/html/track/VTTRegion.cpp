@@ -49,21 +49,8 @@
 
 namespace WebCore {
 
-// The following values default values are defined within the WebVTT Regions Spec.
+// The default values are defined within the WebVTT Regions Spec.
 // https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html
-
-// The region occupies by default 100% of the width of the video viewport.
-static const float defaultWidth = 100;
-
-// The region has, by default, 3 lines of text.
-static const long defaultHeightInLines = 3;
-
-// The region and viewport are anchored in the bottom left corner.
-static const float defaultAnchorPointX = 0;
-static const float defaultAnchorPointY = 100;
-
-// The region doesn't have scrolling text, by default.
-static const bool defaultScroll = false;
 
 // Default region line-height (vh units)
 static const float lineHeight = 5.33;
@@ -74,15 +61,6 @@ static const float scrollTime = 0.433;
 VTTRegion::VTTRegion(ScriptExecutionContext& context)
     : ContextDestructionObserver(&context)
     , m_id(emptyString())
-    , m_width(defaultWidth)
-    , m_heightInLines(defaultHeightInLines)
-    , m_regionAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
-    , m_viewportAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
-    , m_scroll(defaultScroll)
-    , m_cueContainer(nullptr)
-    , m_regionDisplayTree(nullptr)
-    , m_track(nullptr)
-    , m_currentTop(0)
     , m_scrollTimer(*this, &VTTRegion::scrollTimerFired)
 {
 }
@@ -101,122 +79,85 @@ void VTTRegion::setId(const String& id)
     m_id = id;
 }
 
-void VTTRegion::setWidth(double value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setWidth(double value)
 {
-    if (std::isinf(value) || std::isnan(value)) {
-        ec = TypeError;
-        return;
-    }
-
-    if (value < 0 || value > 100) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (!(value >= 0 && value <= 100))
+        return Exception { INDEX_SIZE_ERR };
     m_width = value;
+    return { };
 }
 
-void VTTRegion::setHeight(long value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setHeight(int value)
 {
-    if (value < 0) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (value < 0)
+        return Exception { INDEX_SIZE_ERR };
     m_heightInLines = value;
+    return { };
 }
 
-void VTTRegion::setRegionAnchorX(double value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setRegionAnchorX(double value)
 {
-    if (std::isinf(value) || std::isnan(value)) {
-        ec = TypeError;
-        return;
-    }
-
-    if (value < 0 || value > 100) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (!(value >= 0 && value <= 100))
+        return Exception { INDEX_SIZE_ERR };
     m_regionAnchor.setX(value);
+    return { };
 }
 
-void VTTRegion::setRegionAnchorY(double value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setRegionAnchorY(double value)
 {
-    if (std::isinf(value) || std::isnan(value)) {
-        ec = TypeError;
-        return;
-    }
-
-    if (value < 0 || value > 100) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (!(value >= 0 && value <= 100))
+        return Exception { INDEX_SIZE_ERR };
     m_regionAnchor.setY(value);
+    return { };
 }
 
-void VTTRegion::setViewportAnchorX(double value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setViewportAnchorX(double value)
 {
-    if (std::isinf(value) || std::isnan(value)) {
-        ec = TypeError;
-        return;
-    }
-
-    if (value < 0 || value > 100) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (!(value >= 0 && value <= 100))
+        return Exception { INDEX_SIZE_ERR };
     m_viewportAnchor.setX(value);
+    return { };
 }
 
-void VTTRegion::setViewportAnchorY(double value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setViewportAnchorY(double value)
 {
-    if (std::isinf(value) || std::isnan(value)) {
-        ec = TypeError;
-        return;
-    }
-
-    if (value < 0 || value > 100) {
-        ec = INDEX_SIZE_ERR;
-        return;
-    }
-
+    if (!(value >= 0 && value <= 100))
+        return Exception { INDEX_SIZE_ERR };
     m_viewportAnchor.setY(value);
+    return { };
+}
+
+static const AtomicString& upKeyword()
+{
+    static NeverDestroyed<const AtomicString> upKeyword("up", AtomicString::ConstructFromLiteral);
+    return upKeyword;
 }
 
 const AtomicString& VTTRegion::scroll() const
 {
-    static NeverDestroyed<const AtomicString> upScrollValueKeyword("up", AtomicString::ConstructFromLiteral);
-
-    if (m_scroll)
-        return upScrollValueKeyword;
-
-    return emptyAtom;
+    return m_scroll ? upKeyword() : emptyAtom;
 }
 
-void VTTRegion::setScroll(const AtomicString& value, ExceptionCode& ec)
+ExceptionOr<void> VTTRegion::setScroll(const AtomicString& value)
 {
-    static NeverDestroyed<const AtomicString> upScrollValueKeyword("up", AtomicString::ConstructFromLiteral);
-
-    if (value != emptyString() && value != upScrollValueKeyword) {
-        ec = SYNTAX_ERR;
-        return;
+    if (value.isEmpty()) {
+        m_scroll = false;
+        return { };
     }
-
-    m_scroll = value == upScrollValueKeyword;
+    if (value == upKeyword()) {
+        m_scroll = true;
+        return { };
+    }
+    return Exception { SYNTAX_ERR };
 }
 
-void VTTRegion::updateParametersFromRegion(VTTRegion* region)
+void VTTRegion::updateParametersFromRegion(const VTTRegion& other)
 {
-    m_heightInLines = region->height();
-    m_width = region->width();
-
-    m_regionAnchor = FloatPoint(region->regionAnchorX(), region->regionAnchorY());
-    m_viewportAnchor = FloatPoint(region->viewportAnchorX(), region->viewportAnchorY());
-
-    setScroll(region->scroll(), ASSERT_NO_EXCEPTION);
+    m_heightInLines = other.m_heightInLines;
+    m_width = other.m_width;
+    m_regionAnchor = other.m_regionAnchor;
+    m_viewportAnchor = other.m_viewportAnchor;
+    m_scroll = other.m_scroll;
 }
 
 void VTTRegion::setRegionSettings(const String& inputString)
@@ -268,8 +209,6 @@ static inline bool parsedEntireRun(const VTTScanner& input, const VTTScanner::Ru
 
 void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
 {
-    static NeverDestroyed<const AtomicString> scrollUpValueKeyword("up", AtomicString::ConstructFromLiteral);
-
     VTTScanner::Run valueRun = input.collectUntil<isHTMLSpace<UChar>>();
 
     switch (setting) {
@@ -312,7 +251,7 @@ void VTTRegion::parseSettingValue(RegionSetting setting, VTTScanner& input)
         break;
     }
     case Scroll:
-        if (input.scanRun(valueRun, scrollUpValueKeyword.get()))
+        if (input.scanRun(valueRun, upKeyword()))
             m_scroll = true;
         else
             LOG(Media, "VTTRegion::parseSettingValue, invalid Scroll");
@@ -345,14 +284,14 @@ const AtomicString& VTTRegion::textTrackRegionShadowPseudoId()
     return trackRegionShadowPseudoId;
 }
 
-void VTTRegion::appendTextTrackCueBox(PassRefPtr<VTTCueBox> displayBox)
+void VTTRegion::appendTextTrackCueBox(Ref<VTTCueBox>&& displayBox)
 {
     ASSERT(m_cueContainer);
 
-    if (m_cueContainer->contains(displayBox.get()))
+    if (m_cueContainer->contains(displayBox.ptr()))
         return;
 
-    m_cueContainer->appendChild(*displayBox, ASSERT_NO_EXCEPTION);
+    m_cueContainer->appendChild(displayBox, ASSERT_NO_EXCEPTION);
     displayLastTextTrackCueBox();
 }
 
@@ -405,7 +344,7 @@ void VTTRegion::willRemoveTextTrackCueBox(VTTCueBox* box)
 HTMLDivElement& VTTRegion::getDisplayTree()
 {
     if (!m_regionDisplayTree) {
-        m_regionDisplayTree = HTMLDivElement::create(*ownerDocument());
+        m_regionDisplayTree = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
         prepareRegionDisplayTree();
     }
 
@@ -447,7 +386,7 @@ void VTTRegion::prepareRegionDisplayTree()
 
     // The cue container is used to wrap the cues and it is the object which is
     // gradually scrolled out as multiple cues are appended to the region.
-    m_cueContainer = HTMLDivElement::create(*ownerDocument());
+    m_cueContainer = HTMLDivElement::create(downcast<Document>(*m_scriptExecutionContext));
     m_cueContainer->setInlineStyleProperty(CSSPropertyTop, 0.0f, CSSPrimitiveValue::CSS_PX);
 
     m_cueContainer->setPseudo(textTrackCueContainerShadowPseudoId());

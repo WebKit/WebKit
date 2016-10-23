@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextTrackCueGeneric_h
-#define TextTrackCueGeneric_h
+#pragma once
 
 #if ENABLE(VIDEO_TRACK)
 
@@ -42,58 +41,55 @@ public:
     {
         return adoptRef(*new TextTrackCueGeneric(context, start, end, content));
     }
-    
-    virtual ~TextTrackCueGeneric() { }
 
-    PassRefPtr<VTTCueBox> createDisplayTree() override;
+    ExceptionOr<void> setLine(double) final;
+    ExceptionOr<void> setPosition(double) final;
 
-    void setLine(double, ExceptionCode&) override;
-    void setPosition(double, ExceptionCode&) override;
+    bool useDefaultPosition() const { return m_useDefaultPosition; }
 
-    bool useDefaultPosition() const { return m_defaultPosition; }
-    
     double baseFontSizeRelativeToVideoHeight() const { return m_baseFontSizeRelativeToVideoHeight; }
     void setBaseFontSizeRelativeToVideoHeight(double size) { m_baseFontSizeRelativeToVideoHeight = size; }
 
     double fontSizeMultiplier() const { return m_fontSizeMultiplier; }
     void setFontSizeMultiplier(double size) { m_fontSizeMultiplier = size; }
 
-    String fontName() const { return m_fontName; }
-    void setFontName(String name) { m_fontName = name; }
+    const String& fontName() const { return m_fontName; }
+    void setFontName(const String& name) { m_fontName = name; }
 
     const Color& foregroundColor() const { return m_foregroundColor; }
-    void setForegroundColor(Color color) { m_foregroundColor = color; }
+    void setForegroundColor(const Color& color) { m_foregroundColor = color; }
     
     const Color& backgroundColor() const { return m_backgroundColor; }
-    void setBackgroundColor(Color color) { m_backgroundColor = color; }
+    void setBackgroundColor(const Color& color) { m_backgroundColor = color; }
     
     const Color& highlightColor() const { return m_highlightColor; }
-    void setHighlightColor(Color color) { m_highlightColor = color; }
-    
-    void setFontSize(int, const IntSize&, bool important) override;
+    void setHighlightColor(const Color& color) { m_highlightColor = color; }
 
-    bool isEqual(const TextTrackCue&, CueMatchRules) const override;
-    bool cueContentsMatch(const TextTrackCue&) const override;
-    bool doesExtendCue(const TextTrackCue&) const override;
-
-    TextTrackCue::CueType cueType() const override { return TextTrackCue::Generic; }
+    void setFontSize(int, const IntSize&, bool important) final;
 
 private:
-    bool isOrderedBefore(const TextTrackCue*) const override;
-    bool isPositionedAbove(const TextTrackCue*) const override;
-
     TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
     
+    bool isOrderedBefore(const TextTrackCue*) const final;
+    bool isPositionedAbove(const TextTrackCue*) const final;
+
+    Ref<VTTCueBox> createDisplayTree() final;
+
+    bool isEqual(const TextTrackCue&, CueMatchRules) const final;
+    bool cueContentsMatch(const TextTrackCue&) const final;
+    bool doesExtendCue(const TextTrackCue&) const final;
+
+    CueType cueType() const final { return Generic; }
+
     Color m_foregroundColor;
     Color m_backgroundColor;
     Color m_highlightColor;
-    double m_baseFontSizeRelativeToVideoHeight;
-    double m_fontSizeMultiplier;
+    double m_baseFontSizeRelativeToVideoHeight { 0 };
+    double m_fontSizeMultiplier { 0 };
     String m_fontName;
-    bool m_defaultPosition;
+    bool m_useDefaultPosition { true };
 };
 
 } // namespace WebCore
 
-#endif
 #endif

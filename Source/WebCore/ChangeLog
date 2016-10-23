@@ -1,3 +1,254 @@
+2016-10-22  Darin Adler  <darin@apple.com>
+
+        Move HTML canvas and tracks from ExceptionCode to Exception
+        https://bugs.webkit.org/show_bug.cgi?id=163853
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj: Added CanvasPath.idl.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp: Tweaked a bit.
+
+        * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
+        (WebCore::JSWebGLRenderingContextBase::getExtension): Tweaked a bit.
+        (WebCore::JSWebGLRenderingContextBase::getFramebufferAttachmentParameter):
+        Removed unneeded exception handling.
+        (WebCore::JSWebGLRenderingContextBase::getParameter): Ditto.
+        (WebCore::JSWebGLRenderingContextBase::getProgramParameter): Ditto.
+        (WebCore::JSWebGLRenderingContextBase::getShaderParameter): Ditto.
+        (WebCore::JSWebGLRenderingContextBase::getSupportedExtensions): Use a
+        modern for loop.
+        (WebCore::JSWebGLRenderingContextBase::getUniform): Removed unneeded
+        exception handling.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Pass a reference.
+        (WebCore::HTMLCanvasElement::reset): Use is<CanvasRenderingContext2D>.
+        (WebCore::HTMLCanvasElement::setUsesDisplayListDrawing): Ditto.
+        (WebCore::HTMLCanvasElement::setTracksDisplayListReplay) Ditto.:
+        (WebCore::HTMLCanvasElement::displayListAsText): Ditto.
+        (WebCore::HTMLCanvasElement::replayDisplayListAsText): Ditto.
+        (WebCore::HTMLCanvasElement::clearImageBuffer): Ditto.
+
+        * html/canvas/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient): Streamlined.
+        (WebCore::CanvasGradient::addColorStop): Use ExceptionOr.
+        * html/canvas/CanvasGradient.h: Updated for above changes.
+        * html/canvas/CanvasGradient.idl: Use non-legacy exception.
+
+        * html/canvas/CanvasPath.cpp:
+        (WebCore::CanvasPath::arcTo): Use ExceptionOr.
+        (WebCore::CanvasPath::arc): Ditto.
+        (WebCore::CanvasPath::ellipse): Ditto.
+        * html/canvas/CanvasPath.h: Updated for above changes.
+        * html/canvas/CanvasPath.idl: Use non-legacy exceptions.
+
+        * html/canvas/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::create): Use Ref&&.
+        (WebCore::CanvasPattern::CanvasPattern): Ditto.
+        (WebCore::CanvasPattern::parseRepetitionType): Return a boolean
+        instead of using an ExceptionCode.
+        * html/canvas/CanvasPattern.h: Updated for above changes.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (CanvasRenderingContext::wouldTaintOrigin): Reordered function so
+        that it's safe to call it on an image element without a cached
+        image, or a cached image without an underlying image.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        Take a reference.
+        (WebCore::CanvasRenderingContext2D::drawImage): Use ExceptionOr.
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect): Ditto.
+        (WebCore::CanvasRenderingContext2D::createLinearGradient): Ditto.
+        (WebCore::CanvasRenderingContext2D::createRadialGradient): Ditto.
+        (WebCore::CanvasRenderingContext2D::createPattern): Ditto.
+        (WebCore::CanvasRenderingContext2D::createImageData): Ditto.
+        (WebCore::CanvasRenderingContext2D::getImageData): Ditto.
+        (WebCore::CanvasRenderingContext2D::webkitGetImageDataHD): Ditto.
+        (WebCore::CanvasRenderingContext2D::putImageData): Removed unneeded
+        ExceptionCode because this does not throw exceptions; the only one
+        was for non-finite numeric values but this is now handled by bindings.
+        (WebCore::CanvasRenderingContext2D::webkitPutImageDataHD): Ditto.
+        * html/canvas/CanvasRenderingContext2D.h: Updated for above.
+        * html/canvas/CanvasRenderingContext2D.idl: Use non-legacy exceptions
+        and removed exceptions entirely in other cases.
+
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::OESVertexArrayObject): Take a reference.
+        (WebCore::OESVertexArrayObject::~OESVertexArrayObject): Deleted.
+        (WebCore::OESVertexArrayObject::isVertexArrayOES): Use && instead of
+        multiple return statements.
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES): Removed unneeded
+        ExceptionCode since this does not throw an exception.
+        * html/canvas/OESVertexArrayObject.h: Updated for above.
+        * html/canvas/OESVertexArrayObject.idl: Removed unneeded exception.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFramebufferAttachmentParameter):
+        Removed unneeded ExceptionCode since this does not throw an exception.
+        (WebCore::WebGL2RenderingContext::texSubImage2DBase): Ditto.
+        (WebCore::WebGL2RenderingContext::texSubImage2DImpl): Ditto.
+        (WebCore::WebGL2RenderingContext::texSubImage2D): Removed unneeded
+        ExceptionCode for some overloads, for the others, use ExceptionOr
+        for the security exception. Moved security exception code here from
+        the validate functions.
+        (WebCore::WebGL2RenderingContext::validateTexFuncParameters): Removed
+        unneeded ExceptionCode.
+        (WebCore::WebGL2RenderingContext::getParameter): Ditto.
+        * html/canvas/WebGL2RenderingContext.h: Updated for above.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension): Pass a reference.
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+        Remvoed unneeded ExceptionCode since this does not throw an exception.
+        (WebCore::WebGLRenderingContext::texSubImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2DImpl): Ditto.
+        (WebCore::WebGLRenderingContext::texSubImage2D): Removed unneeded
+        ExceptionCode for some overloads, for the others, use ExceptionOr
+        for the security exception. Moved security exception code here from
+        the validate functions.
+        (WebCore::WebGLRenderingContext::getParameter): Removed unneeded
+        ExceptionCode.
+        * html/canvas/WebGLRenderingContext.h: Updated for above changes.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImage2DBase):
+        Remvoed unneeded ExceptionCode since this does not throw an exception.
+        (WebCore::WebGLRenderingContextBase::texImage2DImpl): Ditto.
+        (WebCore::WebGLRenderingContextBase::texImage2D): Removed unneeded
+        ExceptionCode for some overloads, for the others, use ExceptionOr
+        for the security exception. Moved security exception code here from
+        the validate functions.
+        (WebCore::WebGLRenderingContextBase::validateHTMLImageElement):
+        Moved the security exception out of here to the call sites.
+        (WebCore::WebGLRenderingContextBase::validateHTMLCanvasElement): Ditto.
+        (WebCore::WebGLRenderingContextBase::validateHTMLVideoElement): Ditto.
+        * html/canvas/WebGLRenderingContextBase.h: Updated for above changes.
+        * html/canvas/WebGLRenderingContextBase.idl: Use non-legacy exceptions
+        in some cases and no exceptions at all in many others.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        Use a reference instead of a pointer.
+
+        * html/track/DataCue.h: Use pragma once.
+        * html/track/DataCue.idl: Use non-legacy exception for constructor
+        attribute, even though it is custom and so it has no effect.
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::create): Use RefPtr&&.
+        (WebCore::InbandDataTextTrack::InbandDataTextTrack): Ditto.
+        (WebCore::InbandDataTextTrack::addDataCue): Stop using
+        ASSERT_NO_EXCEPTION.
+        (WebCore::InbandDataTextTrack::removeDataCue): Stop using
+        IGNORE_EXCEPTION.
+        (WebCore::InbandDataTextTrack::removeCue): Use ExceptionOr.
+        Also use remove instead of find/remove.
+        * html/track/InbandDataTextTrack.h: Updated for above changes.
+
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::GenericTextTrackCueMap::GenericTextTrackCueMap): Deleted.
+        (WebCore::GenericTextTrackCueMap::~GenericTextTrackCueMap): Deleted.
+        (WebCore::GenericTextTrackCueMap::add): Take references intead of
+        pointers.
+        (WebCore::GenericTextTrackCueMap::find): Ditto. Also use get
+        instead of find.
+        (WebCore::GenericTextTrackCueMap::remove): Ditto. Also use take
+        instead of double hashing to both find and remove.
+        (WebCore::InbandGenericTextTrack::updateCueFromCueData): Stop using
+        IGNORE_EXCEPTION. Also got rid of code that is converting a double
+        to a long and then back to a double by using lround. Instead just
+        use std::round, which keeps it a double. But also, why does this need
+        to round?!
+        (WebCore::InbandGenericTextTrack::addGenericCue): Updated to use
+        reference to work with m_cueMap.
+        (WebCore::InbandGenericTextTrack::updateGenericCue): Ditto.
+        (WebCore::InbandGenericTextTrack::removeGenericCue): Ditto.
+        (WebCore::InbandGenericTextTrack::removeCue): Use ExceptionOr.
+        (WebCore::InbandGenericTextTrack::newCuesParsed): Removed
+        ASSERT_NO_EXCEPTION.
+        * html/track/InbandGenericTextTrack.h: Updated for above changes.
+
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed): Removed
+        ASSERT_NO_EXCEPTION.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue): Use ExcepctionOr.
+        (WebCore::TextTrack::removeCue): Ditto.
+        (WebCore::TextTrack::addRegion): Ditto.
+        (WebCore::TextTrack::removeRegion): Ditto.
+        * html/track/TextTrack.h: Updated for above changes.
+        * html/track/TextTrack.idl: Ditto.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::cueShadowPseudoId): Moved this here
+        since it does not need to be inlined in the header.
+        (WebCore::TextTrackCue::~TextTrackCue): Deleted.
+        (WebCore::TextTrackCue::setStartTime): Removed ExceptionCode&
+        since the exceptions were for non-finite values, but this is
+        now handled by the bindings.
+        (WebCore::TextTrackCue::setEndTime): Ditto.
+        * html/track/TextTrackCue.h: Updated for the above.
+        * html/track/TextTrackCue.idl: Removed SetterMayThrowLegacyException
+        and made startTime and endTime be double rather than unrestricted double.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        Use a reference instead of a pointer.
+        (WebCore::TextTrackCueGeneric::TextTrackCueGeneric): Initialize
+        m_defaultPosition in the class definition instead of here.
+        (WebCore::TextTrackCueGeneric::createDisplayTree): Return a Ref.
+        (WebCore::TextTrackCueGeneric::setLine): Use ExceptionOr.
+        (WebCore::TextTrackCueGeneric::setPosition): Ditto.
+        (WebCore::TextTrackCueGeneric::setFontSize): Updated since
+        displayTreeInternal() now returns a reference.
+        * html/track/TextTrackCueGeneric.h: Updated for above changes.
+        Also fixed some arguument types and made some more things private.
+
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::createDisplayTree): Return a Ref.
+        (WebCore::VTTCue::displayTreeInternal): Return a reference.
+        (WebCore::VTTCue::setVertical): Use ExceptionOr.
+        (WebCore::VTTCue::setLine): Ditto.
+        (WebCore::VTTCue::setPosition): Ditto.
+        (WebCore::VTTCue::setSize): Ditto.
+        (WebCore::VTTCue::setAlign): Ditto.
+        (WebCore::VTTCue::getDisplayTree): Return a reference.
+        (WebCore::VTTCue::removeDisplayTree): Updated since
+        displayTreeInternal returns a reference.
+        (WebCore::VTTCue::setFontSize): Ditto.
+        * html/track/VTTCue.h: Updated for the above.
+        * html/track/VTTCue.idl: Use non-legacy exceptions and also
+        restricted doubles.
+
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::VTTRegion): Moved default values all into
+        the class definition.
+        (WebCore::VTTRegion::setWidth): Removed the check for non-finite
+        since the bindings now handle that. Use ExcpetionOr.
+        (WebCore::VTTRegion::setHeight): Ditto.
+        (WebCore::VTTRegion::setRegionAnchorX): Ditto.
+        (WebCore::VTTRegion::setRegionAnchorY): Ditto.
+        (WebCore::VTTRegion::setViewportAnchorX): Ditto.
+        (WebCore::VTTRegion::setViewportAnchorY): Ditto.
+        (WebCore::upKeyword): Added. Shared by the code below.
+        (WebCore::VTTRegion::scroll): Rewrote to be simpler.
+        (WebCore::VTTRegion::setScroll): Rewrote to be simpler.
+        (WebCore::VTTRegion::updateParametersFromRegion): Read and
+        write data members directly to avoid awkward code that is otherwise
+        required just to copy from one object to the other. Also take a
+        const& instead of a pointer for the thing to update from.
+        (WebCore::VTTRegion::parseSettingValue): Use upKeyword.
+        (WebCore::VTTRegion::appendTextTrackCueBox): Take a Ref&&.
+        (WebCore::VTTRegion::getDisplayTree): Do the downcast to Document
+        here instead of using the helper function.
+        (WebCore::VTTRegion::prepareRegionDisplayTree): Ditto.
+        * html/track/VTTRegion.h: Updated for the above.
+        * html/track/VTTRegion.idl: Use non-legacy exceptions and also
+        use restricted dobules, not unrestricted.
+
 2016-10-22  Chris Dumez  <cdumez@apple.com>
 
         WebGLRenderingContextBase.texImage2D() should use a union instead of overloading

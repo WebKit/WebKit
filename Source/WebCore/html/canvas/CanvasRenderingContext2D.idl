@@ -53,8 +53,8 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
 
     attribute DOMString globalCompositeOperation;
 
-    [MayThrowLegacyException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
-    [MayThrowLegacyException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
+    [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
 
     attribute unrestricted float lineWidth;
     attribute DOMString lineCap;
@@ -132,21 +132,15 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
 
     void strokeRect(unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
 
-    [MayThrowLegacyException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y);
-    [MayThrowLegacyException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y,
-        unrestricted float width, unrestricted float height);
-    [MayThrowLegacyException] void drawImage(HTMLImageElement image, unrestricted float sx, unrestricted float sy, unrestricted float sw,
-        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-    [MayThrowLegacyException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y);
-    [MayThrowLegacyException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y,
-        unrestricted float width, unrestricted float height);
-    [MayThrowLegacyException] void drawImage(HTMLCanvasElement canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw,
-        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
-    [Conditional=VIDEO, MayThrowLegacyException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y);
-    [Conditional=VIDEO, MayThrowLegacyException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y,
-        unrestricted float width, unrestricted float height);
-    [Conditional=VIDEO, MayThrowLegacyException] void drawImage(HTMLVideoElement video, unrestricted float sx, unrestricted float sy, unrestricted float sw,
-        unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y);
+    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [MayThrowException] void drawImage(HTMLImageElement image, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y);
+    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [MayThrowException] void drawImage(HTMLCanvasElement canvas, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
+    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y);
+    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float x, unrestricted float y, unrestricted float width, unrestricted float height);
+    [Conditional=VIDEO, MayThrowException] void drawImage(HTMLVideoElement video, unrestricted float sx, unrestricted float sy, unrestricted float sw, unrestricted float sh, unrestricted float dx, unrestricted float dy, unrestricted float dw, unrestricted float dh);
 
     void drawImageFromRect(HTMLImageElement image,
         optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
@@ -162,25 +156,24 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
     void setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, 
         unrestricted float y, unrestricted float k, unrestricted float a);
 
-    [MayThrowLegacyException] void putImageData(ImageData imagedata, float dx, float dy);
-    [MayThrowLegacyException] void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    void putImageData(ImageData imagedata, float dx, float dy);
+    void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [MayThrowLegacyException] void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
-    [MayThrowLegacyException] void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
+    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
-    [MayThrowLegacyException] CanvasPattern createPattern(HTMLCanvasElement canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [MayThrowLegacyException] CanvasPattern createPattern(HTMLImageElement image, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [Conditional=VIDEO, MayThrowLegacyException] CanvasPattern? createPattern(HTMLVideoElement video, [TreatNullAs=EmptyString] DOMString repetitionType);
-    [MayThrowLegacyException] ImageData createImageData(ImageData? imagedata);
-    [MayThrowLegacyException] ImageData createImageData(float sw, float sh);
+    [MayThrowException] CanvasPattern createPattern(HTMLCanvasElement canvas, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [MayThrowException] CanvasPattern createPattern(HTMLImageElement image, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [Conditional=VIDEO, MayThrowException] CanvasPattern? createPattern(HTMLVideoElement video, [TreatNullAs=EmptyString] DOMString repetitionType);
+    [MayThrowException] ImageData createImageData(ImageData? imagedata);
+    [MayThrowException] ImageData createImageData(float sw, float sh);
 
     [Custom] attribute custom strokeStyle;
     [Custom] attribute custom fillStyle;
 
     // pixel manipulation
-    [MayThrowLegacyException] ImageData getImageData(float sx, float sy, float sw, float sh);
-
-    [MayThrowLegacyException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
+    [MayThrowException] ImageData getImageData(float sx, float sy, float sw, float sh);
+    [MayThrowException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
     
     // Focus rings
     void drawFocusIfNeeded(Element? element); // FIXME: The element parameter should not be nullable.

@@ -53,53 +53,53 @@ EXPECTED (region.width == '100') OK
 
 Invalid percentage value: -Infinity
 RUN(region.viewportAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorX == '0') OK
 RUN(region.viewportAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorY == '100') OK
 RUN(region.regionAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorX == '0') OK
 RUN(region.regionAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorY == '100') OK
 RUN(region.width = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.width == '100') OK
 
 Invalid percentage value: Infinity
 RUN(region.viewportAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorX == '0') OK
 RUN(region.viewportAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorY == '100') OK
 RUN(region.regionAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorX == '0') OK
 RUN(region.regionAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorY == '100') OK
 RUN(region.width = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.width == '100') OK
 
 Invalid percentage value: NaN
 RUN(region.viewportAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorX == '0') OK
 RUN(region.viewportAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.viewportAnchorY == '100') OK
 RUN(region.regionAnchorX = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorX == '0') OK
 RUN(region.regionAnchorY = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.regionAnchorY == '100') OK
 RUN(region.width = invalidPercentageValues[index])
-TypeError: Type error
+TypeError: The provided value is non-finite
 EXPECTED (region.width == '100') OK
 RUN(region.height = -1)
 IndexSizeError (DOM Exception 1): The index is not in the allowed range.

@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "JSWebGL2RenderingContext.h"
 
 #if ENABLE(WEBGL) && ENABLE(WEBGL2)
-#include "JSWebGL2RenderingContext.h"
 
 #include <heap/HeapInlines.h>
 #include <runtime/Error.h>
@@ -37,17 +37,18 @@ using namespace JSC;
 
 namespace WebCore {
 
-static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
+// FIXME: There is a duplicate version of this function in JSWebGLRenderingContextBaseCustom.cpp,
+// but it is not exactly the same! We should merge these.
+static JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, const WebGLGetInfo& info)
 {
     switch (info.getType()) {
     case WebGLGetInfo::kTypeBool:
         return jsBoolean(info.getBool());
     case WebGLGetInfo::kTypeBoolArray: {
         MarkedArgumentBuffer list;
-        const auto& values = info.getBoolArray();
-        for (const auto& value : values)
+        for (auto& value : info.getBoolArray())
             list.append(jsBoolean(value));
-        return constructArray(exec, 0, globalObject, list);
+        return constructArray(state, 0, globalObject, list);
     }
     case WebGLGetInfo::kTypeFloat:
         return jsNumber(info.getFloat());
@@ -56,7 +57,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
     case WebGLGetInfo::kTypeNull:
         return jsNull();
     case WebGLGetInfo::kTypeString:
-        return jsStringWithCache(exec, info.getString());
+        return jsStringWithCache(state, info.getString());
     case WebGLGetInfo::kTypeUnsignedInt:
         return jsNumber(info.getUnsignedInt());
     case WebGLGetInfo::kTypeInt64:
@@ -72,59 +73,50 @@ void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(&wrapped());
 }
 
-JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getInternalformatParameter(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getQueryParameter(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getSamplerParameter(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getSyncParameter(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getIndexedParameter(ExecState& state)
 {
-    VM& vm = exec.vm();
+    VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (exec.argumentCount() != 2)
-        return throwException(&exec, scope, createNotEnoughArgumentsError(&exec));
+    if (state.argumentCount() < 2)
+        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    WebGL2RenderingContext& context = wrapped();
-    unsigned pname = exec.uncheckedArgument(0).toInt32(&exec);
+    unsigned pname = state.uncheckedArgument(0).toInt32(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    unsigned index = exec.uncheckedArgument(1).toInt32(&exec);
+    unsigned index = state.uncheckedArgument(1).toInt32(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    WebGLGetInfo info = context.getIndexedParameter(pname, index);
-    return toJS(&exec, globalObject(), info);
+    return toJS(&state, globalObject(), wrapped().getIndexedParameter(pname, index));
 }
 
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockParameter(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
 
-JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState& exec)
+JSValue JSWebGL2RenderingContext::getActiveUniformBlockName(ExecState&)
 {
-    UNUSED_PARAM(exec);
     return jsUndefined();
 }
-
 
 } // namespace WebCore
 

@@ -71,7 +71,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueWebkitPlaintext);
     
     TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(getCue());
-    RefPtr<HTMLSpanElement> cueElement = cue->element();
+    Ref<HTMLSpanElement> cueElement = cue->element();
 
     CSSValueID alignment = cue->getCSSAlignment();
     float size = static_cast<float>(cue->getCSSSize());
@@ -148,25 +148,28 @@ TextTrackCueGeneric::TextTrackCueGeneric(ScriptExecutionContext& context, const 
     : VTTCue(context, start, end, content)
     , m_baseFontSizeRelativeToVideoHeight(0)
     , m_fontSizeMultiplier(0)
-    , m_defaultPosition(true)
 {
 }
 
-PassRefPtr<VTTCueBox> TextTrackCueGeneric::createDisplayTree()
+Ref<VTTCueBox> TextTrackCueGeneric::createDisplayTree()
 {
     return TextTrackCueGenericBoxElement::create(ownerDocument(), *this);
 }
 
-void TextTrackCueGeneric::setLine(double line, ExceptionCode& ec)
+ExceptionOr<void> TextTrackCueGeneric::setLine(double line)
 {
-    m_defaultPosition = false;
-    VTTCue::setLine(line, ec);
+    auto result = VTTCue::setLine(line);
+    if (!result.hasException())
+        m_useDefaultPosition = false;
+    return result;
 }
 
-void TextTrackCueGeneric::setPosition(double position, ExceptionCode& ec)
+ExceptionOr<void> TextTrackCueGeneric::setPosition(double position)
 {
-    m_defaultPosition = false;
-    VTTCue::setPosition(position, ec);
+    auto result = VTTCue::setPosition(position);
+    if (!result.hasException())
+        m_useDefaultPosition = false;
+    return result;
 }
 
 void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bool important)
@@ -182,7 +185,7 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
-    displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSPrimitiveValue::CSS_PX);
+    displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSPrimitiveValue::CSS_PX);
 
     LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }

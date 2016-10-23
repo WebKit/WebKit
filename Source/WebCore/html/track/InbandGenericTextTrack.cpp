@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
+#include "InbandGenericTextTrack.h"
 
 #if ENABLE(VIDEO_TRACK)
-
-#include "InbandGenericTextTrack.h"
 
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLMediaElement.h"
@@ -37,57 +36,34 @@
 #include <math.h>
 #include <wtf/text/CString.h>
 
-
 namespace WebCore {
 
-GenericTextTrackCueMap::GenericTextTrackCueMap()
+void GenericTextTrackCueMap::add(GenericCueData& cueData, TextTrackCueGeneric& cue)
 {
+    m_dataToCueMap.add(&cueData, &cue);
+    m_cueToDataMap.add(&cue, &cueData);
 }
 
-GenericTextTrackCueMap::~GenericTextTrackCueMap()
+TextTrackCueGeneric* GenericTextTrackCueMap::find(GenericCueData& cueData)
 {
+    return m_dataToCueMap.get(&cueData);
 }
 
-void GenericTextTrackCueMap::add(GenericCueData* cueData, TextTrackCueGeneric* cue)
+GenericCueData* GenericTextTrackCueMap::find(TextTrackCue& cue)
 {
-    m_dataToCueMap.add(cueData, cue);
-    m_cueToDataMap.add(cue, cueData);
+    return m_cueToDataMap.get(&cue);
 }
 
-PassRefPtr<TextTrackCueGeneric> GenericTextTrackCueMap::find(GenericCueData* cueData)
+void GenericTextTrackCueMap::remove(GenericCueData& cueData)
 {
-    CueDataToCueMap::iterator iter = m_dataToCueMap.find(cueData);
-    if (iter == m_dataToCueMap.end())
-        return 0;
-
-    return iter->value;
-}
-
-PassRefPtr<GenericCueData> GenericTextTrackCueMap::find(TextTrackCue* cue)
-{
-    CueToDataMap::iterator iter = m_cueToDataMap.find(cue);
-    if (iter == m_cueToDataMap.end())
-        return 0;
-
-    return iter->value;
-}
-
-void GenericTextTrackCueMap::remove(GenericCueData* cueData)
-{
-    RefPtr<TextTrackCueGeneric> cue = find(cueData);
-
-    if (cue)
+    if (auto cue = m_dataToCueMap.take(&cueData))
         m_cueToDataMap.remove(cue);
-    m_dataToCueMap.remove(cueData);
 }
 
-void GenericTextTrackCueMap::remove(TextTrackCue* cue)
+void GenericTextTrackCueMap::remove(TextTrackCue& cue)
 {
-    RefPtr<GenericCueData> genericData = find(cue);
-    if (genericData) {
-        m_dataToCueMap.remove(genericData);
-        m_cueToDataMap.remove(cue);
-    }
+    if (auto data = m_cueToDataMap.take(&cue))
+        m_dataToCueMap.remove(data);
 }
 
 Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
@@ -120,11 +96,11 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric* cue, Gene
     cue->setFontName(cueData->fontName());
 
     if (cueData->position() > 0)
-        cue->setPosition(lround(cueData->position()), IGNORE_EXCEPTION);
+        cue->setPosition(std::round(cueData->position()));
     if (cueData->line() > 0)
-        cue->setLine(lround(cueData->line()), IGNORE_EXCEPTION);
+        cue->setLine(std::round(cueData->line()));
     if (cueData->size() > 0)
-        cue->setSize(lround(cueData->size()), IGNORE_EXCEPTION);
+        cue->setSize(std::round(cueData->size()));
     if (cueData->backgroundColor().isValid())
         cue->setBackgroundColor(cueData->backgroundColor().rgb());
     if (cueData->foregroundColor().isValid())
@@ -133,11 +109,11 @@ void InbandGenericTextTrack::updateCueFromCueData(TextTrackCueGeneric* cue, Gene
         cue->setHighlightColor(cueData->highlightColor().rgb());
 
     if (cueData->align() == GenericCueData::Start)
-        cue->setAlign(ASCIILiteral("start"), IGNORE_EXCEPTION);
+        cue->setAlign(ASCIILiteral("start"));
     else if (cueData->align() == GenericCueData::Middle)
-        cue->setAlign(ASCIILiteral("middle"), IGNORE_EXCEPTION);
+        cue->setAlign(ASCIILiteral("middle"));
     else if (cueData->align() == GenericCueData::End)
-        cue->setAlign(ASCIILiteral("end"), IGNORE_EXCEPTION);
+        cue->setAlign(ASCIILiteral("end"));
     cue->setSnapToLines(false);
 
     cue->didChange();
@@ -148,7 +124,7 @@ void InbandGenericTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate,
     ASSERT_UNUSED(trackPrivate, trackPrivate == m_private);
 
     RefPtr<GenericCueData> cueData = prpCueData;
-    if (m_cueMap.find(cueData.get()))
+    if (m_cueMap.find(*cueData))
         return;
 
     RefPtr<TextTrackCueGeneric> cue = TextTrackCueGeneric::create(*scriptExecutionContext(), cueData->startTime(), cueData->endTime(), cueData->content());
@@ -161,39 +137,40 @@ void InbandGenericTextTrack::addGenericCue(InbandTextTrackPrivate* trackPrivate,
     LOG(Media, "InbandGenericTextTrack::addGenericCue added cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
 
     if (cueData->status() != GenericCueData::Complete)
-        m_cueMap.add(cueData.get(), cue.get());
+        m_cueMap.add(*cueData, *cue);
 
-    addCue(cue, ASSERT_NO_EXCEPTION);
+    addCue(WTFMove(cue));
 }
 
 void InbandGenericTextTrack::updateGenericCue(InbandTextTrackPrivate*, GenericCueData* cueData)
 {
-    RefPtr<TextTrackCueGeneric> cue = m_cueMap.find(cueData);
+    auto* cue = m_cueMap.find(*cueData);
     if (!cue)
         return;
 
-    updateCueFromCueData(cue.get(), cueData);
+    updateCueFromCueData(cue, cueData);
 
     if (cueData->status() == GenericCueData::Complete)
-        m_cueMap.remove(cueData);
+        m_cueMap.remove(*cueData);
 }
 
 void InbandGenericTextTrack::removeGenericCue(InbandTextTrackPrivate*, GenericCueData* cueData)
 {
-    RefPtr<TextTrackCueGeneric> cue = m_cueMap.find(cueData);
+    auto* cue = m_cueMap.find(*cueData);
     if (cue) {
         LOG(Media, "InbandGenericTextTrack::removeGenericCue removing cue: start=%s, end=%s, content=\"%s\"\n",  toString(cueData->startTime()).utf8().data(), toString(cueData->endTime()).utf8().data(), cueData->content().utf8().data());
-        removeCue(cue.get(), IGNORE_EXCEPTION);
+        removeCue(cue);
     } else {
         LOG(Media, "InbandGenericTextTrack::removeGenericCue UNABLE to find cue: start=%.2f, end=%.2f, content=\"%s\"\n", cueData->startTime().toDouble(), cueData->endTime().toDouble(), cueData->content().utf8().data());
-        m_cueMap.remove(cueData);
     }
 }
 
-void InbandGenericTextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
+ExceptionOr<void> InbandGenericTextTrack::removeCue(TextTrackCue* cue)
 {
-    m_cueMap.remove(cue);
-    TextTrack::removeCue(cue, ec);
+    auto result = TextTrack::removeCue(cue);
+    if (!result.hasException() && cue)
+        m_cueMap.remove(*cue);
+    return result;
 }
 
 WebVTTParser& InbandGenericTextTrack::parser()
@@ -227,7 +204,7 @@ void InbandGenericTextTrack::newCuesParsed()
             LOG(Media, "InbandGenericTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
             return;
         }
-        addCue(WTFMove(vttCue), ASSERT_NO_EXCEPTION);
+        addCue(WTFMove(vttCue));
     }
 }
 

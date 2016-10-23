@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,47 +24,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CanvasGradient_h
-#define CanvasGradient_h
+#pragma once
 
+#include "ExceptionOr.h"
 #include "Gradient.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-    typedef int ExceptionCode;
+class CanvasGradient : public RefCounted<CanvasGradient> {
+public:
+    static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1)
+    {
+        return adoptRef(*new CanvasGradient(p0, p1));
+    }
+    static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
+    {
+        return adoptRef(*new CanvasGradient(p0, r0, p1, r1));
+    }
 
-    class CanvasGradient : public RefCounted<CanvasGradient> {
-    public:
-        static Ref<CanvasGradient> create(const FloatPoint& p0, const FloatPoint& p1)
-        {
-            return adoptRef(*new CanvasGradient(p0, p1));
-        }
-        static Ref<CanvasGradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
-        {
-            return adoptRef(*new CanvasGradient(p0, r0, p1, r1));
-        }
-        
-        Gradient& gradient() { return m_gradient; }
-        const Gradient& gradient() const { return m_gradient; }
+    Gradient& gradient() { return m_gradient; }
+    const Gradient& gradient() const { return m_gradient; }
 
-        void addColorStop(float value, const String& color, ExceptionCode&);
+    ExceptionOr<void> addColorStop(float value, const String& color);
 
 #if ENABLE(DASHBOARD_SUPPORT)
-        void setDashboardCompatibilityMode() { m_dashboardCompatibilityMode = true; }
+    void setDashboardCompatibilityMode() { m_dashboardCompatibilityMode = true; }
 #endif
 
-    private:
-        CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
-        CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
-        
-        Ref<Gradient> m_gradient;
+private:
+    CanvasGradient(const FloatPoint& p0, const FloatPoint& p1);
+    CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+
+    Ref<Gradient> m_gradient;
 #if ENABLE(DASHBOARD_SUPPORT)
-        bool m_dashboardCompatibilityMode;
+    bool m_dashboardCompatibilityMode { false };
 #endif
-    };
+};
 
-} //namespace
-
-#endif
+}

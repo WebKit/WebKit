@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-typedef unsigned long  GLenum;
+typedef unsigned long GLenum;
 typedef boolean GLboolean;
-typedef unsigned long  GLbitfield;
-typedef byte   GLbyte; /* 'byte' should be a signed 8 bit type. */
-typedef short  GLshort;
-typedef long   GLint;
-typedef long   GLsizei;
-typedef long long  GLintptr;
-typedef long long  GLsizeiptr;
-typedef octet  GLubyte; /* 'octet' should be an unsigned 8 bit type. */
+typedef unsigned long GLbitfield;
+typedef byte GLbyte; /* 'byte' should be a signed 8 bit type. */
+typedef short GLshort;
+typedef long GLint;
+typedef long GLsizei;
+typedef long long GLintptr;
+typedef long long GLsizeiptr;
+typedef octet GLubyte; /* 'octet' should be an unsigned 8 bit type. */
 typedef unsigned short GLushort;
-typedef unsigned long  GLuint;
+typedef unsigned long GLuint;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
@@ -545,7 +545,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     WebGLActiveInfo getActiveAttrib(WebGLProgram? program, GLuint index);
     WebGLActiveInfo getActiveUniform(WebGLProgram? program, GLuint index);
 
-    [Custom, MayThrowLegacyException] void getAttachedShaders(WebGLProgram? program);
+    [Custom] void getAttachedShaders(WebGLProgram? program);
 
     GLint getAttribLocation(WebGLProgram? program, DOMString name);
 
@@ -558,12 +558,12 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     // object getExtension(DOMString name);
     [Custom] any getExtension(DOMString name);
 
-    [Custom, MayThrowLegacyException] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
-    [Custom, MayThrowLegacyException] any getParameter(GLenum pname);
-    [Custom, MayThrowLegacyException] any getProgramParameter(WebGLProgram? program, GLenum pname);
+    [Custom] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
+    [Custom] any getParameter(GLenum pname);
+    [Custom] any getProgramParameter(WebGLProgram? program, GLenum pname);
     DOMString? getProgramInfoLog(WebGLProgram? program);
-    [Custom, MayThrowLegacyException] any getRenderbufferParameter(GLenum target, GLenum pname);
-    [Custom, MayThrowLegacyException] any getShaderParameter(WebGLShader? shader, GLenum pname);
+    [Custom] any getRenderbufferParameter(GLenum target, GLenum pname);
+    [Custom] any getShaderParameter(WebGLShader? shader, GLenum pname);
 
     DOMString? getShaderInfoLog(WebGLShader? shader);
 
@@ -573,13 +573,13 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
 
     [Custom] sequence<DOMString> getSupportedExtensions();
 
-    [Custom, MayThrowLegacyException] any getTexParameter(GLenum target, GLenum pname);
+    [Custom] any getTexParameter(GLenum target, GLenum pname);
 
-    [Custom, MayThrowLegacyException] any getUniform(WebGLProgram? program, WebGLUniformLocation? location);
+    [Custom] any getUniform(WebGLProgram? program, WebGLUniformLocation? location);
 
     WebGLUniformLocation getUniformLocation(WebGLProgram? program, DOMString name);
 
-    [Custom, MayThrowLegacyException] any getVertexAttrib(GLuint index, GLenum pname);
+    [Custom] any getVertexAttrib(GLuint index, GLenum pname);
 
     GLsizeiptr getVertexAttribOffset(GLuint index, GLenum pname);
 
@@ -615,43 +615,35 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void texParameteri(GLenum target, GLenum pname, GLint param);
 
     // Supported forms:
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
-    [MayThrowLegacyException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource? source);
+    void texImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
+    [MayThrowException] void texImage2D(GLenum target, GLint level, GLenum internalformat, GLenum format, GLenum type, TexImageSource? source);
 
-    [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
- GLsizei width, GLsizei height,
- GLenum format, GLenum type, ArrayBufferView? pixels);
-    [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
- GLenum format, GLenum type, ImageData? pixels);
-    [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
- GLenum format, GLenum type, HTMLImageElement? image);
-    [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
- GLenum format, GLenum type, HTMLCanvasElement? canvas);
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    [MayThrowLegacyException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset,
- GLenum format, GLenum type, HTMLVideoElement? video);
-#endif
+    void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView? pixels);
+    void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, ImageData? pixels);
+    [MayThrowException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, HTMLImageElement? image);
+    [MayThrowException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, HTMLCanvasElement? canvas);
+    [Conditional=VIDEO, MayThrowException] void texSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLenum format, GLenum type, HTMLVideoElement? video);
 
     void uniform1f(WebGLUniformLocation? location, GLfloat x);
-    [Custom, MayThrowLegacyException] void uniform1fv(WebGLUniformLocation? location, Float32Array v);
+    [Custom] void uniform1fv(WebGLUniformLocation? location, Float32Array v);
     void uniform1i(WebGLUniformLocation? location, GLint x);
-    [Custom, MayThrowLegacyException] void uniform1iv(WebGLUniformLocation? location, Int32Array v);
+    [Custom] void uniform1iv(WebGLUniformLocation? location, Int32Array v);
     void uniform2f(WebGLUniformLocation? location, GLfloat x, GLfloat y);
-    [Custom, MayThrowLegacyException] void uniform2fv(WebGLUniformLocation? location, Float32Array v);
+    [Custom] void uniform2fv(WebGLUniformLocation? location, Float32Array v);
     void uniform2i(WebGLUniformLocation? location, GLint x, GLint y);
-    [Custom, MayThrowLegacyException] void uniform2iv(WebGLUniformLocation? location, Int32Array v);
+    [Custom] void uniform2iv(WebGLUniformLocation? location, Int32Array v);
     void uniform3f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z);
-    [Custom, MayThrowLegacyException] void uniform3fv(WebGLUniformLocation? location, Float32Array v);
+    [Custom] void uniform3fv(WebGLUniformLocation? location, Float32Array v);
     void uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
-    [Custom, MayThrowLegacyException] void uniform3iv(WebGLUniformLocation? location, Int32Array v);
+    [Custom] void uniform3iv(WebGLUniformLocation? location, Int32Array v);
     void uniform4f(WebGLUniformLocation? location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-    [Custom, MayThrowLegacyException] void uniform4fv(WebGLUniformLocation? location, Float32Array v);
+    [Custom] void uniform4fv(WebGLUniformLocation? location, Float32Array v);
     void uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
-    [Custom, MayThrowLegacyException] void uniform4iv(WebGLUniformLocation? location, Int32Array v);
+    [Custom] void uniform4iv(WebGLUniformLocation? location, Int32Array v);
 
-    [Custom, MayThrowLegacyException] void uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
-    [Custom, MayThrowLegacyException] void uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
-    [Custom, MayThrowLegacyException] void uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom] void uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom] void uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
+    [Custom] void uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array array);
 
     void useProgram(WebGLProgram? program);
     void validateProgram(WebGLProgram? program);

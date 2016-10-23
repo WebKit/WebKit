@@ -100,14 +100,14 @@ public:
     void clearClient() override { m_client = nullptr; }
     TextTrackClient* client() { return m_client; }
 
-    void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
-    virtual void removeCue(TextTrackCue*, ExceptionCode&);
+    ExceptionOr<void> addCue(RefPtr<TextTrackCue>&&);
+    virtual ExceptionOr<void> removeCue(TextTrackCue*);
 
     bool hasCue(TextTrackCue*, TextTrackCue::CueMatchRules = TextTrackCue::MatchAllFields);
 
     VTTRegionList* regions();
-    void addRegion(PassRefPtr<VTTRegion>);
-    void removeRegion(VTTRegion*, ExceptionCode&);
+    void addRegion(RefPtr<VTTRegion>&&);
+    ExceptionOr<void> removeRegion(VTTRegion*);
 
     void cueWillChange(TextTrackCue*);
     void cueDidChange(TextTrackCue*);

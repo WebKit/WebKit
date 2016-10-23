@@ -59,7 +59,7 @@ typedef int ExceptionCode;
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext, public CanvasPath {
 public:
-    CanvasRenderingContext2D(HTMLCanvasElement*, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
+    CanvasRenderingContext2D(HTMLCanvasElement&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2D();
 
     const CanvasStyle& strokeStyle() const { return state().strokeStyle; }
@@ -158,45 +158,44 @@ public:
 
     void clearShadow();
 
-    void drawImage(HTMLImageElement&, float x, float y, ExceptionCode&);
-    void drawImage(HTMLImageElement&, float x, float y, float width, float height, ExceptionCode&);
-    void drawImage(HTMLImageElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, ExceptionCode&);
-    void drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
-    void drawImage(HTMLCanvasElement&, float x, float y, ExceptionCode&);
-    void drawImage(HTMLCanvasElement&, float x, float y, float width, float height, ExceptionCode&);
-    void drawImage(HTMLCanvasElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, ExceptionCode&);
-    void drawImage(HTMLCanvasElement&, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
-    void drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&, ExceptionCode&);
+    ExceptionOr<void> drawImage(HTMLImageElement&, float x, float y);
+    ExceptionOr<void> drawImage(HTMLImageElement&, float x, float y, float width, float height);
+    ExceptionOr<void> drawImage(HTMLImageElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(HTMLCanvasElement&, float x, float y);
+    ExceptionOr<void> drawImage(HTMLCanvasElement&, float x, float y, float width, float height);
+    ExceptionOr<void> drawImage(HTMLCanvasElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+    ExceptionOr<void> drawImage(HTMLCanvasElement&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<void> drawImage(HTMLImageElement&, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator&, const BlendMode&);
 #if ENABLE(VIDEO)
-    void drawImage(HTMLVideoElement&, float x, float y, ExceptionCode&);
-    void drawImage(HTMLVideoElement&, float x, float y, float width, float height, ExceptionCode&);
-    void drawImage(HTMLVideoElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh, ExceptionCode&);
-    void drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode&);
+    ExceptionOr<void> drawImage(HTMLVideoElement&, float x, float y);
+    ExceptionOr<void> drawImage(HTMLVideoElement&, float x, float y, float width, float height);
+    ExceptionOr<void> drawImage(HTMLVideoElement&, float sx, float sy, float sw, float sh, float dx, float dy, float dw, float dh);
+    ExceptionOr<void> drawImage(HTMLVideoElement&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
 
-    void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0,
-                           float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
+    void drawImageFromRect(HTMLImageElement&, float sx = 0, float sy = 0, float sw = 0, float sh = 0, float dx = 0, float dy = 0, float dw = 0, float dh = 0, const String& compositeOperation = emptyString());
 
     void setAlpha(float);
 
     void setCompositeOperation(const String&);
 
-    RefPtr<CanvasGradient> createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode&);
-    RefPtr<CanvasGradient> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode&);
-    RefPtr<CanvasPattern> createPattern(HTMLImageElement&, const String& repetitionType, ExceptionCode&);
-    RefPtr<CanvasPattern> createPattern(HTMLCanvasElement&, const String& repetitionType, ExceptionCode&);
+    ExceptionOr<Ref<CanvasGradient>> createLinearGradient(float x0, float y0, float x1, float y1);
+    ExceptionOr<Ref<CanvasGradient>> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLImageElement&, const String& repetitionType);
+    ExceptionOr<Ref<CanvasPattern>> createPattern(HTMLCanvasElement&, const String& repetitionType);
 #if ENABLE(VIDEO)
-    RefPtr<CanvasPattern> createPattern(HTMLVideoElement&, const String& repetitionType, ExceptionCode&);
+    ExceptionOr<RefPtr<CanvasPattern>> createPattern(HTMLVideoElement&, const String& repetitionType);
 #endif
 
-    RefPtr<ImageData> createImageData(RefPtr<ImageData>&&, ExceptionCode&) const;
-    RefPtr<ImageData> createImageData(float width, float height, ExceptionCode&) const;
-    RefPtr<ImageData> getImageData(float sx, float sy, float sw, float sh, ExceptionCode&) const;
-    RefPtr<ImageData> webkitGetImageDataHD(float sx, float sy, float sw, float sh, ExceptionCode&) const;
-    void putImageData(ImageData&, float dx, float dy, ExceptionCode&);
-    void putImageData(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
-    void webkitPutImageDataHD(ImageData&, float dx, float dy, ExceptionCode&);
-    void webkitPutImageDataHD(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
+    ExceptionOr<RefPtr<ImageData>> createImageData(ImageData*) const;
+    ExceptionOr<RefPtr<ImageData>> createImageData(float width, float height) const;
+    ExceptionOr<RefPtr<ImageData>> getImageData(float sx, float sy, float sw, float sh) const;
+    ExceptionOr<RefPtr<ImageData>> webkitGetImageDataHD(float sx, float sy, float sw, float sh) const;
+    void putImageData(ImageData&, float dx, float dy);
+    void putImageData(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
+    void webkitPutImageDataHD(ImageData&, float dx, float dy);
+    void webkitPutImageDataHD(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
     void drawFocusIfNeeded(Element*);
     void drawFocusIfNeeded(DOMPath&, Element*);
@@ -371,8 +370,8 @@ private:
 
     void prepareGradientForDashboard(CanvasGradient& gradient) const;
 
-    RefPtr<ImageData> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh, ExceptionCode&) const;
-    void putImageData(ImageData&, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight, ExceptionCode&);
+    ExceptionOr<RefPtr<ImageData>> getImageData(ImageBuffer::CoordinateSystem, float sx, float sy, float sw, float sh) const;
+    void putImageData(ImageData&, ImageBuffer::CoordinateSystem, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
     bool is2d() const override { return true; }
     bool isAccelerated() const override;
@@ -391,7 +390,6 @@ private:
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
 #endif
-
     bool m_usesDisplayListDrawing { false };
     bool m_tracksDisplayListReplay { false };
     mutable std::unique_ptr<struct DisplayListDrawingContext> m_recordingContext;
