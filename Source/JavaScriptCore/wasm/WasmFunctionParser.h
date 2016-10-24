@@ -190,6 +190,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return m_context.store(static_cast<StoreOpType>(op), pointer, value, offset);
     }
 
+    case OpType::F32Const:
     case OpType::I32Const: {
         uint32_t constant;
         if (!parseVarUInt32(constant))
@@ -198,6 +199,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
         return true;
     }
 
+    case OpType::F64Const:
     case OpType::I64Const: {
         uint64_t constant;
         if (!parseVarUInt64(constant))
@@ -236,9 +238,15 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
         const FunctionInformation& info = m_functions[functionIndex];
 
+        if (info.signature->arguments.size() > m_expressionStack.size())
+            return false;
+
+        size_t firstArgumentIndex = m_expressionStack.size() - info.signature->arguments.size();
         Vector<ExpressionType> args;
-        for (unsigned i = 0; i < info.signature->arguments.size(); ++i)
-            args.append(m_expressionStack.takeLast());
+        args.reserveInitialCapacity(info.signature->arguments.size());
+        for (unsigned i = firstArgumentIndex; i < m_expressionStack.size(); ++i)
+            args.append(m_expressionStack[i]);
+        m_expressionStack.shrink(firstArgumentIndex);
 
         ExpressionType result = Context::emptyExpression;
         if (!m_context.addCall(functionIndex, info, args, result))
@@ -318,8 +326,6 @@ bool FunctionParser<Context>::parseExpression(OpType op)
     case OpType::BrTable:
     case OpType::Nop:
     case OpType::Drop:
-    case OpType::F32Const:
-    case OpType::F64Const:
     case OpType::TeeLocal:
     case OpType::GetGlobal:
     case OpType::SetGlobal:
@@ -374,7 +380,10 @@ bool FunctionParser<Context>::parseUnreachableExpression(OpType op)
 
     // one immediate cases
     case OpType::Return:
+    case OpType::F32Const:
     case OpType::I32Const:
+    case OpType::F64Const:
+    case OpType::I64Const:
     case OpType::SetLocal:
     case OpType::GetLocal: {
         uint32_t unused;

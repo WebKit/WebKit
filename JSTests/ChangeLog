@@ -1,3 +1,23 @@
+2016-10-24  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should support floating point operations.
+        https://bugs.webkit.org/show_bug.cgi?id=163770
+
+        Reviewed by Michael Saboff.
+
+        Add appropriate b3op names for floating point wasm bytecodes, where they exist.
+        Also, fix some WASM => Wasm in WasmOps.h generator script that I missed
+        the first time I made the change.
+
+        * wasm/generate-wasmops-header.js:
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.template.typename.Int.inline.bool.isValidOpType): Deleted.
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.BinaryOpType): Deleted.
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.UnaryOpType): Deleted.
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.LoadOpType): Deleted.
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.enum.StoreOpType): Deleted.
+        (const.template.pragma.once.ENABLE.WEBASSEMBLY.include.cstdint.namespace.JSC.namespace.WASM.undef.CREATE_ENUM_VALUE.inline.bool.isControlOp): Deleted.
+        * wasm/wasm.json:
+
 2016-10-21  Saam Barati  <sbarati@apple.com>
 
         SpeculativeJIT::compileTryGetById needs to pass in NeedsToSpill along both the cell speculation and untyped speculation path

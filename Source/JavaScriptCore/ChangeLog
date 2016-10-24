@@ -1,3 +1,32 @@
+2016-10-24  Keith Miller  <keith_miller@apple.com>
+
+        Wasm should support floating point operations.
+        https://bugs.webkit.org/show_bug.cgi?id=163770
+
+        Reviewed by Michael Saboff.
+
+        Since we now have a Double => Float Trunc in B3, we can now support calls in Wasm
+        that take floating point arguments. This patch also enables most of the Wasm
+        floating point operations, as the associated B3 opcode has been linked via wasm.json.
+        If there is no direct mapping to a B3 opcode the Wasm is not yet implemented. This
+        patch also fixes a bug in calls where the arguments would be reversed.
+
+        * testWasm.cpp:
+        (cast):
+        (invoke):
+        (boxf):
+        (boxd):
+        (runWasmTests):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::createJSWrapper):
+        * wasm/WasmCallingConvention.h:
+        (JSC::Wasm::CallingConvention::loadArguments):
+        (JSC::Wasm::CallingConvention::setupCall):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmOps.h:
+
 2016-10-24  Mark Lam  <mark.lam@apple.com>
 
         Dumping of op_negate bytecode is broken.

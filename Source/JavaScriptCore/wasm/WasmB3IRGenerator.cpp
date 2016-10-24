@@ -697,10 +697,19 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
     });
 
     // Return the result, if needed.
-    if (signature->returnType != Void)
-        block->appendNewControlValue(proc, B3::Return, Origin(), result);
-    else
+    switch (signature->returnType) {
+    case Void:
         block->appendNewControlValue(proc, B3::Return, Origin());
+        break;
+    case F32:
+    case F64:
+        result = block->appendNew<Value>(proc, BitwiseCast, Origin(), result);
+        FALLTHROUGH;
+    case I32:
+    case I64:
+        block->appendNewControlValue(proc, B3::Return, Origin(), result);
+        break;
+    }
 
     return std::make_unique<Compilation>(vm, proc);
 }

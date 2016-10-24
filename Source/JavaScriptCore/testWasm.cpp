@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "B3Common.h"
 #include "B3Compilation.h"
 #include "InitializeThreading.h"
 #include "JSCJSValueInlines.h"
@@ -95,6 +96,8 @@ StaticLock crashLock;
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, toCString(#x " == " #y, " (" #x " == ", __x, ", " #y " == ", __y, ")").data()); \
         CRASH(); \
     } while (false)
+
+#define CHECK(x) CHECK_EQ(x, true)
 
 #define FOR_EACH_UNSIGNED_LEB_TEST(macro) \
     /* Simple tests that use all the bits in the array */ \
@@ -208,6 +211,24 @@ using namespace Wasm;
 using namespace B3;
 
 template<typename T>
+T cast(EncodedJSValue value)
+{
+    return static_cast<T>(value);
+}
+
+template<>
+double cast(EncodedJSValue value)
+{
+    return bitwise_cast<double>(value);
+}
+
+template<>
+float cast(EncodedJSValue value)
+{
+    return bitwise_cast<float>(static_cast<int>(value));
+}
+
+template<typename T>
 T invoke(MacroAssemblerCodePtr ptr, std::initializer_list<JSValue> args)
 {
     JSValue firstArgument;
@@ -224,8 +245,7 @@ T invoke(MacroAssemblerCodePtr ptr, std::initializer_list<JSValue> args)
     ProtoCallFrame protoCallFrame;
     protoCallFrame.init(nullptr, nullptr, firstArgument, argCount, remainingArguments);
 
-    // This won't work for floating point values but we don't have those yet.
-    return static_cast<T>(vmEntryToWasm(ptr.executableAddress(), vm, &protoCallFrame));
+    return cast<T>(vmEntryToWasm(ptr.executableAddress(), vm, &protoCallFrame));
 }
 
 template<typename T>
@@ -239,9 +259,78 @@ inline JSValue box(uint64_t value)
     return JSValue::decode(value);
 }
 
+inline JSValue boxf(float value)
+{
+    return box(bitwise_cast<uint32_t>(value));
+}
+
+inline JSValue boxd(double value)
+{
+    return box(bitwise_cast<uint64_t>(value));
+}
+
 // For now we inline the test files.
 static void runWasmTests()
 {
+
+    {
+        // Generated from:
+        //    (module
+        //     (func $f32-sub (export "f32-sub") (param f32) (param f32) (result f32) (return (f32.sub (get_local 0) (get_local 1))))
+        //     (func (export "indirect-f32-sub") (param f32) (param f32) (result f32) (return (call $f32-sub (get_local 0) (get_local 1))))
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x03, 0x03, 0x01, 0x03, 0x03, 0x83, 0x80, 0x80, 0x80, 0x00, 0x02, 0x00, 0x00, 0x07, 0x9e,
+            0x80, 0x80, 0x80, 0x00, 0x02, 0x07, 0x66, 0x33, 0x32, 0x2d, 0x73, 0x75, 0x62, 0x00, 0x00, 0x10,
+            0x69, 0x6e, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x2d, 0x66, 0x33, 0x32, 0x2d, 0x73, 0x75, 0x62,
+            0x00, 0x01, 0x0a, 0x9c, 0x80, 0x80, 0x80, 0x00, 0x02, 0x88, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14,
+            0x00, 0x14, 0x01, 0x76, 0x09, 0x0f, 0x89, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x00, 0x14, 0x01,
+            0x16, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 2 || !plan.result[0] || !plan.result[1]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK(isIdentical(invoke<float>(*plan.result[1]->jsEntryPoint, { boxf(0.0), boxf(1.5) }), -1.5f));
+        CHECK(isIdentical(invoke<float>(*plan.result[1]->jsEntryPoint, { boxf(100.1234), boxf(12.5) }), 87.6234f));
+        CHECK(isIdentical(invoke<float>(*plan.result[0]->jsEntryPoint, { boxf(0.0), boxf(1.5) }), -1.5f));
+        CHECK(isIdentical(invoke<float>(*plan.result[0]->jsEntryPoint, { boxf(100.1234), boxf(12.5) }), 87.6234f));
+    }
+
+    {
+        // Generated from:
+        //    (module
+        //     (func $f32-add (export "f32-add") (param f32) (param f32) (result f32) (return (f32.add (get_local 0) (get_local 1))))
+        //     (func (export "indirect-f32-add") (param f32) (param f32) (result f32) (return (call $f32-add (get_local 0) (get_local 1))))
+        //     )
+        Vector<uint8_t> vector = {
+            0x00, 0x61, 0x73, 0x6d, 0x0c, 0x00, 0x00, 0x00, 0x01, 0x87, 0x80, 0x80, 0x80, 0x00, 0x01, 0x40,
+            0x02, 0x03, 0x03, 0x01, 0x03, 0x03, 0x83, 0x80, 0x80, 0x80, 0x00, 0x02, 0x00, 0x00, 0x07, 0x9e,
+            0x80, 0x80, 0x80, 0x00, 0x02, 0x07, 0x66, 0x33, 0x32, 0x2d, 0x61, 0x64, 0x64, 0x00, 0x00, 0x10,
+            0x69, 0x6e, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x2d, 0x66, 0x33, 0x32, 0x2d, 0x61, 0x64, 0x64,
+            0x00, 0x01, 0x0a, 0x9c, 0x80, 0x80, 0x80, 0x00, 0x02, 0x88, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14,
+            0x00, 0x14, 0x01, 0x75, 0x09, 0x0f, 0x89, 0x80, 0x80, 0x80, 0x00, 0x00, 0x14, 0x00, 0x14, 0x01,
+            0x16, 0x00, 0x09, 0x0f
+        };
+
+        Plan plan(*vm, vector);
+        if (plan.result.size() != 2 || !plan.result[0] || !plan.result[1]) {
+            dataLogLn("Module failed to compile correctly.");
+            CRASH();
+        }
+
+        // Test this doesn't crash.
+        CHECK(isIdentical(invoke<float>(*plan.result[1]->jsEntryPoint, { boxf(0.0), boxf(1.5) }), 1.5f));
+        CHECK(isIdentical(invoke<float>(*plan.result[1]->jsEntryPoint, { boxf(100.1234), boxf(12.5) }), 112.6234f));
+        CHECK(isIdentical(invoke<float>(*plan.result[0]->jsEntryPoint, { boxf(0.0), boxf(1.5) }), 1.5f));
+        CHECK(isIdentical(invoke<float>(*plan.result[0]->jsEntryPoint, { boxf(100.1234), boxf(12.5) }), 112.6234f));
+    }
+
     {
         // Generated from:
         //    (module

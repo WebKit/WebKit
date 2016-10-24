@@ -1,4 +1,4 @@
-// Use the JSON description of WebAssembly to generate the JavaScriptCore's WASMOps.h.
+// Use the JSON description of WebAssembly to generate the JavaScriptCore's WasmOps.h.
 
 const jsonFile = 'wasm.json';
 const wasm = JSON.parse(read(jsonFile));
@@ -90,7 +90,7 @@ const template = `/*
 
 #include <cstdint>
 
-namespace JSC { namespace WASM {
+namespace JSC { namespace Wasm {
 
 ${defines}
 
@@ -147,7 +147,7 @@ inline bool isControlOp(OpType op)
     return false;
 }
 
-} } // namespace JSC::WASM
+} } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
 `;

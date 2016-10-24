@@ -68,19 +68,19 @@ namespace JSC { namespace Wasm {
     macro(I64Clz, 0x72, Clz) \
     macro(I64Ctz, 0x73, Oops) \
     macro(I64Popcnt, 0x74, Oops) \
-    macro(F32Abs, 0x7b, Oops) \
+    macro(F32Abs, 0x7b, Abs) \
     macro(F32Neg, 0x7c, Oops) \
     macro(F32Copysign, 0x7d, Oops) \
-    macro(F32Ceil, 0x7e, Oops) \
-    macro(F32Floor, 0x7f, Oops) \
+    macro(F32Ceil, 0x7e, Ceil) \
+    macro(F32Floor, 0x7f, Floor) \
     macro(F32Trunc, 0x80, Oops) \
     macro(F32Nearest, 0x81, Oops) \
     macro(F32Sqrt, 0x82, Oops) \
-    macro(F64Abs, 0x8f, Oops) \
+    macro(F64Abs, 0x8f, Abs) \
     macro(F64Neg, 0x90, Oops) \
     macro(F64Copysign, 0x91, Oops) \
-    macro(F64Ceil, 0x92, Oops) \
-    macro(F64Floor, 0x93, Oops) \
+    macro(F64Ceil, 0x92, Ceil) \
+    macro(F64Floor, 0x93, Floor) \
     macro(F64Trunc, 0x94, Oops) \
     macro(F64Nearest, 0x95, Oops) \
     macro(F64Sqrt, 0x96, Oops)
@@ -136,30 +136,30 @@ namespace JSC { namespace Wasm {
     macro(I64GeS, 0x6f, GreaterEqual) \
     macro(I64GtU, 0x70, Above) \
     macro(I64GeU, 0x71, AboveEqual) \
-    macro(F32Add, 0x75, Oops) \
-    macro(F32Sub, 0x76, Oops) \
-    macro(F32Mul, 0x77, Oops) \
-    macro(F32Div, 0x78, Oops) \
+    macro(F32Add, 0x75, Add) \
+    macro(F32Sub, 0x76, Sub) \
+    macro(F32Mul, 0x77, Mul) \
+    macro(F32Div, 0x78, Div) \
     macro(F32Min, 0x79, Oops) \
     macro(F32Max, 0x7a, Oops) \
-    macro(F32Eq, 0x83, Oops) \
-    macro(F32Ne, 0x84, Oops) \
-    macro(F32Lt, 0x85, Oops) \
-    macro(F32Le, 0x86, Oops) \
-    macro(F32Gt, 0x87, Oops) \
-    macro(F32Ge, 0x88, Oops) \
-    macro(F64Add, 0x89, Oops) \
-    macro(F64Sub, 0x8a, Oops) \
-    macro(F64Mul, 0x8b, Oops) \
-    macro(F64Div, 0x8c, Oops) \
+    macro(F32Eq, 0x83, Equal) \
+    macro(F32Ne, 0x84, NotEqual) \
+    macro(F32Lt, 0x85, LessThan) \
+    macro(F32Le, 0x86, LessEqual) \
+    macro(F32Gt, 0x87, GreaterThan) \
+    macro(F32Ge, 0x88, GreaterEqual) \
+    macro(F64Add, 0x89, Add) \
+    macro(F64Sub, 0x8a, Sub) \
+    macro(F64Mul, 0x8b, Mul) \
+    macro(F64Div, 0x8c, Div) \
     macro(F64Min, 0x8d, Oops) \
     macro(F64Max, 0x8e, Oops) \
-    macro(F64Eq, 0x97, Oops) \
-    macro(F64Ne, 0x98, Oops) \
-    macro(F64Lt, 0x99, Oops) \
-    macro(F64Le, 0x9a, Oops) \
-    macro(F64Gt, 0x9b, Oops) \
-    macro(F64Ge, 0x9c, Oops)
+    macro(F64Eq, 0x97, Equal) \
+    macro(F64Ne, 0x98, NotEqual) \
+    macro(F64Lt, 0x99, LessThan) \
+    macro(F64Le, 0x9a, LessEqual) \
+    macro(F64Gt, 0x9b, GreaterThan) \
+    macro(F64Ge, 0x9c, GreaterEqual)
 
 #define FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \
     macro(I32Load8S, 0x20, Oops) \

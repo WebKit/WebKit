@@ -98,10 +98,8 @@ public:
             B3::ValueRep rep = marshallArgument(type, gpArgumentCount, fpArgumentCount, stackOffset);
             if (rep.isReg()) {
                 argument = block->appendNew<B3::ArgumentRegValue>(proc, origin, rep.reg());
-                if (type == B3::Int32)
+                if (type == B3::Int32 || type == B3::Float)
                     argument = block->appendNew<B3::Value>(proc, B3::Trunc, origin, argument);
-                // FIXME: How do I get a float from a FPR? We don't support floating points yet so it's not a big deal... yet.
-                // see: https://bugs.webkit.org/show_bug.cgi?id=163770
             } else {
                 ASSERT(rep.isStackArgument());
                 B3::Value* address = block->appendNew<B3::Value>(proc, B3::Add, origin, framePointer,
@@ -134,10 +132,18 @@ public:
         patchpoint->appendVector(constrainedArguments);
         patchpointFunctor(patchpoint);
 
-        if (returnType == B3::Void)
+        switch (returnType) {
+        case B3::Void:
             return nullptr;
-
-        patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
+        case B3::Float:
+        case B3::Double:
+            patchpoint->resultConstraint = B3::ValueRep::reg(FPRInfo::returnValueFPR);
+            break;
+        case B3::Int32:
+        case B3::Int64:
+            patchpoint->resultConstraint = B3::ValueRep::reg(GPRInfo::returnValueGPR);
+            break;
+        }
         return patchpoint;
     }
 
