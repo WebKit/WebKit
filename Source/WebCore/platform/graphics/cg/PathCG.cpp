@@ -80,7 +80,7 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
         return path;
 
     Vector<CGPoint, 32> cgPoints;
-    cgPoints.reserveInitialCapacity(points.size() - 1);
+    cgPoints.reserveInitialCapacity(points.size());
     for (size_t i = 0; i < points.size(); ++i)
         cgPoints.uncheckedAppend(points[i]);
 
