@@ -116,7 +116,6 @@
 #include "JSCoordinates.cpp"
 #include "JSCounter.cpp"
 #include "JSCrypto.cpp"
-#include "JSCSSCharsetRule.cpp"
 #if ENABLE(FONT_LOAD_EVENTS)
 #include "JSCSSFontFaceLoadEvent.cpp"
 #endif
