@@ -26,10 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum TestEnumInStandaloneDictionaryFile { "enumValue1", "enumValue2" };
+
 [
     ImplementedAs=DictionaryImplName,
     Conditional=Condition1,
 ] dictionary TestStandaloneDictionary {
     boolean boolMember;
     DOMString stringMember;
+    TestEnumInStandaloneDictionaryFile enumMember;
 };

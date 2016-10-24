@@ -1,3 +1,40 @@
+2016-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CodeGeneratorJS] Support enums for standalone dictionaries
+        https://bugs.webkit.org/show_bug.cgi?id=163885
+
+        Reviewed by Youenn Fablet.
+
+        Add support for enumerations in WebIDL files that specify
+        standalone dictionaries. Implementation of this is pretty
+        straight-forward and mirrors interface and callback generators
+        by calling GenerateEnumerations{Header,Implementation}Content()
+        functions in GenerateDictionary{Header,Implementation}().
+
+        In GenerateEnumerationsImplementationContent(), the
+        NeverDestroyed.h header is added to the implementation includes
+        since that class is used to hold an array of possible enum
+        values.
+
+        A test enum is added to the TestStandaloneDictionary.idl file
+        and the baselines are updated to reflect the new capability.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionary):
+        (GenerateEnumerationsImplementationContent):
+        (GenerateDictionaryHeader):
+        (GenerateDictionaryImplementation):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertEnumerationToJS):
+        (WebCore::parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>):
+        (WebCore::convertEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>):
+        (WebCore::expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>):
+        (WebCore::convertDictionary<DictionaryImplName>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         Remove CSSCharsetRule from the CSS OM

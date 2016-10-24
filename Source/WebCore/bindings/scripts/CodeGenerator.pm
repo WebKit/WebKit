@@ -216,7 +216,7 @@ sub ProcessDocument
     # It is possible to have dictionaries in an IDL file without any interface.
     unless (@$interfaces) {
         foreach my $dictionary (@{$useDocument->dictionaries}) {
-            $codeGenerator->GenerateDictionary($dictionary);
+            $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
             $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
         }
     }

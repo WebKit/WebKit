@@ -134,11 +134,11 @@ sub new
 
 sub GenerateDictionary
 {
-    my ($object, $dictionary) = @_;
+    my ($object, $dictionary, $enumerations) = @_;
 
     my $className = GetDictionaryClassName($dictionary->name);
-    $object->GenerateDictionaryHeader($dictionary, $className);
-    $object->GenerateDictionaryImplementation($dictionary, $className);
+    $object->GenerateDictionaryHeader($dictionary, $className, $enumerations);
+    $object->GenerateDictionaryImplementation($dictionary, $className, $enumerations);
 }
 
 sub GenerateInterface
@@ -889,6 +889,7 @@ sub GenerateEnumerationsImplementationContent
         $result .= "{\n";
         # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
         # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
+        AddToImplIncludes("<wtf/NeverDestroyed.h>");
         $result .= "    static NeverDestroyed<const String> values[] = {\n";
         foreach my $value (@{$enumeration->values}) {
             if ($value eq "") {
@@ -4454,7 +4455,7 @@ sub GenerateReturnParameters
 
 sub GenerateDictionaryHeader
 {
-    my ($object, $dictionary, $className) = @_;
+    my ($object, $dictionary, $className, $enumerations) = @_;
 
     my $dictionaryName = $dictionary->name;
 
@@ -4466,6 +4467,7 @@ sub GenerateDictionaryHeader
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
     push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
+    push(@headerContent, GenerateEnumerationsHeaderContent($dictionary, $enumerations));
     push(@headerContent, "} // namespace WebCore\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
@@ -4488,13 +4490,14 @@ sub GenerateDictionaryHeader
 
 sub GenerateDictionaryImplementation
 {
-    my ($object, $dictionary, $className) = @_;
+    my ($object, $dictionary, $className, $enumerations) = @_;
 
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($dictionary));
 
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
     push(@implContent, "} // namespace WebCore\n");
 
