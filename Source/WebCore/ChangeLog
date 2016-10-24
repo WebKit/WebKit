@@ -1,3 +1,33 @@
+2016-10-23  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary full style resolution in getComputedStyle for non-inherited properties
+        https://bugs.webkit.org/show_bug.cgi?id=163875
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-style-resolution.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::hasValidStyleForProperty):
+
+            For non-inherited properties we don't need to update style even if some ancestor style is invalid
+            as long as explicit 'inherit' is not being used.
+            We still need to update if we find out that the whole subtree we are in is invalid.
+
+        (WebCore::updateStyleIfNeededForProperty):
+
+            Pass the property.
+
+        (WebCore::ComputedStyleExtractor::customPropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::CSSComputedStyleDeclaration::length):
+        (WebCore::elementOrItsAncestorNeedsStyleRecalc): Deleted.
+        (WebCore::updateStyleIfNeededForElement): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::colorFromPrimitiveValue):
+
+            Mark style as using explicit inheritance if 'currentcolor' value is used.
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: canvas()->securityOrigin()->toString() == cachedImage.origin()->toString()

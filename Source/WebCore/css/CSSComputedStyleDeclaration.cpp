@@ -57,6 +57,7 @@
 #include "ExceptionCode.h"
 #include "FontTaggedSettings.h"
 #include "HTMLFrameOwnerElement.h"
+#include "NodeRenderStyle.h"
 #include "Pair.h"
 #include "PseudoElement.h"
 #include "Rect.h"
@@ -2337,6 +2338,23 @@ static StyleSelfAlignmentData resolveAlignSelfAuto(const StyleSelfAlignmentData&
     return parent->computedStyle()->alignItems();
 }
 
+static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
+{
+    // It would be nice if grid and flex worked within normal CSS mechanisms and not invented their own inheritance system.
+    switch (propertyID) {
+    case CSSPropertyAlignSelf:
+#if ENABLE(CSS_GRID_LAYOUT)
+    case CSSPropertyJustifySelf:
+    case CSSPropertyJustifyItems:
+#endif
+    // FIXME: In StyleResolver::adjustRenderStyle z-index is adjusted based on the parent display property for grid/flex.
+    case CSSPropertyZIndex:
+        return true;
+    default:
+        return false;
+    }
+}
+
 RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
     return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
@@ -2347,35 +2365,47 @@ Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
     return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
 }
 
-static inline bool elementOrItsAncestorNeedsStyleRecalc(Element& element)
+static inline bool hasValidStyleForProperty(Element& element, CSSPropertyID propertyID)
 {
-    if (element.needsStyleRecalc())
-        return true;
-    if (element.document().hasPendingForcedStyleRecalc())
-        return true;
-    if (!element.document().childNeedsStyleRecalc())
+    if (element.styleValidity() != Style::Validity::Valid)
         return false;
+    if (element.document().hasPendingForcedStyleRecalc())
+        return false;
+    if (!element.document().childNeedsStyleRecalc())
+        return true;
+
+    bool isInherited = CSSProperty::isInheritedProperty(propertyID) || isImplicitlyInheritedGridOrFlexProperty(propertyID);
+    bool maybeExplicitlyInherited = !isInherited;
 
     const auto* currentElement = &element;
     for (auto& ancestor : composedTreeAncestors(element)) {
-        if (ancestor.needsStyleRecalc())
-            return true;
+        if (ancestor.styleValidity() >= Style::Validity::SubtreeInvalid)
+            return false;
+
+        if (maybeExplicitlyInherited) {
+            auto* style = currentElement->renderStyle();
+            maybeExplicitlyInherited = !style || style->hasExplicitlyInheritedProperties();
+        }
+
+        if ((isInherited || maybeExplicitlyInherited) && ancestor.styleValidity() == Style::Validity::ElementInvalid)
+            return false;
 
         if (ancestor.directChildNeedsStyleRecalc() && currentElement->styleIsAffectedByPreviousSibling())
-            return true;
+            return false;
 
         currentElement = &ancestor;
     }
-    return false;
+
+    return true;
 }
 
-static bool updateStyleIfNeededForElement(Element& element)
+static bool updateStyleIfNeededForProperty(Element& element, CSSPropertyID propertyID)
 {
     auto& document = element.document();
 
     document.styleScope().flushPendingUpdate();
 
-    if (!elementOrItsAncestorNeedsStyleRecalc(element))
+    if (hasValidStyleForProperty(element, propertyID))
         return false;
 
     document.updateStyleIfNeeded();
@@ -2468,7 +2498,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const String& prope
     if (!styledElement)
         return nullptr;
     
-    if (updateStyleIfNeededForElement(*styledElement)) {
+    if (updateStyleIfNeededForProperty(*styledElement, CSSPropertyCustom)) {
         // Style update may change styledElement() to PseudoElement or back.
         styledElement = this->styledElement();
     }
@@ -2500,7 +2530,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (updateLayout) {
         Document& document = m_element->document();
 
-        if (updateStyleIfNeededForElement(*styledElement)) {
+        if (updateStyleIfNeededForProperty(*styledElement, propertyID)) {
             // Style update may change styledElement() to PseudoElement or back.
             styledElement = this->styledElement();
         }
@@ -3977,7 +4007,7 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
 
 unsigned CSSComputedStyleDeclaration::length() const
 {
-    updateStyleIfNeededForElement(m_element.get());
+    updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
 
     auto* style = m_element->computedStyle(m_pseudoElementSpecifier);
     if (!style)

@@ -1,3 +1,13 @@
+2016-10-23  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary full style resolution in getComputedStyle for non-inherited properties
+        https://bugs.webkit.org/show_bug.cgi?id=163875
+
+        Reviewed by Andreas Kling.
+
+        * fast/css/getComputedStyle/getComputedStyle-style-resolution-expected.txt: Added.
+        * fast/css/getComputedStyle/getComputedStyle-style-resolution.html: Added.
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: canvas()->securityOrigin()->toString() == cachedImage.origin()->toString()
