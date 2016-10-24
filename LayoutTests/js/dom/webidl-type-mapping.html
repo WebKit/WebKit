@@ -52,7 +52,7 @@ function testNonNumericToNumericEnforceRange(attribute)
     convert(attribute, "null", "0");
     convertThrows(attribute, "undefined");
 }
-
+// 
 type = "testLong";
 verifyAttribute(type);
 convert(type, "0");
@@ -585,6 +585,37 @@ shouldBeEqualToString("converter.testString", "\u0100");
     shouldBeEqualToString("converter.testUSVString", value);
     shouldBeEqualToString("converter.testString", value);
 });
+
+evalAndLog("converter.testUnion = 'hello'");
+shouldBe("converter.testUnion", "'hello'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = 1");
+shouldBe("converter.testUnion", "1");
+shouldBe("typeof converter.testUnion", "'number'");
+evalAndLog("converter.testUnion = false");
+shouldBe("converter.testUnion", "false");
+shouldBe("typeof converter.testUnion", "'boolean'");
+evalAndLog("converter.testUnion = document");
+shouldBe("converter.testUnion", "document");
+shouldBe("typeof converter.testUnion", "'object'");
+shouldBeType("converter.testUnion", "Document");
+evalAndLog("converter.testUnion = [1, 2]");
+shouldBe("converter.testUnion", "[1, 2]");
+shouldBe("typeof converter.testUnion", "'object'");
+shouldBeType("converter.testUnion", "Array");
+evalAndLog("converter.testUnion = null");
+shouldBe("converter.testUnion", "'null'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = undefined");
+shouldBe("converter.testUnion", "'undefined'");
+shouldBe("typeof converter.testUnion", "'string'");
+evalAndLog("converter.testUnion = window");
+shouldBe("typeof converter.testUnion", "'string'");
+shouldBe("converter.testUnion", "'[object Window]'");
+evalAndLog("converter.testUnion = { }");
+shouldBe("typeof converter.testUnion", "'string'");
+shouldBe("converter.testUnion", "'[object Object]'");
+shouldThrow("converter.testUnion = { toString: function() { throw Error(); } }");
 
 evalAndLog("converter.setTypeConversionsDictionary({ longValue: 1 })");
 shouldBe("converter.typeConversionsDictionaryLongValue", "1");

@@ -25,10 +25,9 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "URL.h"
+#include "JSDOMConvert.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -150,7 +149,7 @@ static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.value());
+    JSValue result = toJS<IDLDOMString>(state, impl.value());
     return result;
 }
 
@@ -217,7 +216,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsStringifierPrototypeFunctionT
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.value());
+    JSValue result = toJS<IDLDOMString>(*state, impl.value());
     return JSValue::encode(result);
 }
 

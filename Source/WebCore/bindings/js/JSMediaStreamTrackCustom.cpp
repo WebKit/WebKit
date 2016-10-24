@@ -140,7 +140,7 @@ JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
                 facingModes.append(RealtimeMediaSourceSettings::facingMode(mode));
         }
 
-        object->putDirect(state.vm(), Identifier::fromString(&state, "facingMode"), jsArray(&state, castedThis->globalObject(), facingModes), DontDelete | ReadOnly);
+        object->putDirect(state.vm(), Identifier::fromString(&state, "facingMode"), toJS<IDLSequence<IDLDOMString>>(state, *castedThis->globalObject(), facingModes), DontDelete | ReadOnly);
     }
     if (capabilities->supportsVolume())
         object->putDirect(state.vm(), Identifier::fromString(&state, "volume"), capabilityValue(capabilities->volume(), state), DontDelete | ReadOnly);
@@ -150,12 +150,12 @@ JSC::JSValue JSMediaStreamTrack::getCapabilities(ExecState& state)
         object->putDirect(state.vm(), Identifier::fromString(&state, "sampleSize"), capabilityValue(capabilities->sampleSize(), state), DontDelete | ReadOnly);
     if (capabilities->supportsEchoCancellation()) {
         Vector<String> cancellation;
-        cancellation.reserveCapacity(2);
+        cancellation.reserveInitialCapacity(2);
 
-        cancellation.append("true");
-        cancellation.append(capabilities->echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite ? "true" : "false");
+        cancellation.uncheckedAppend("true");
+        cancellation.uncheckedAppend(capabilities->echoCancellation() == RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite ? "true" : "false");
 
-        object->putDirect(state.vm(), Identifier::fromString(&state, "echoCancellation"), jsArray(&state, castedThis->globalObject(), cancellation), DontDelete | ReadOnly);
+        object->putDirect(state.vm(), Identifier::fromString(&state, "echoCancellation"), toJS<IDLSequence<IDLDOMString>>(state, *castedThis->globalObject(), cancellation), DontDelete | ReadOnly);
     }
     if (capabilities->supportsDeviceId())
         object->putDirect(state.vm(), Identifier::fromString(&state, "deviceId"), jsStringWithCache(&state, capabilities->deviceId()), DontDelete | ReadOnly);

@@ -22,7 +22,7 @@
 #include "JSSVGLength.h"
 
 #include "ExceptionCode.h"
-#include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 #include "SVGAnimatedProperty.h"
 #include "SVGException.h"
 #include "SVGLengthContext.h"
@@ -36,7 +36,7 @@ JSValue JSSVGLength::value(ExecState& state) const
 {
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return toJSNumber(state, scope, wrapped().propertyReference().valueForBindings(SVGLengthContext { wrapped().contextElement() }));
+    return toJS<IDLUnrestrictedFloat>(state, scope, wrapped().propertyReference().valueForBindings(SVGLengthContext { wrapped().contextElement() }));
 }
 
 void JSSVGLength::setValue(ExecState& state, JSValue value)

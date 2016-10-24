@@ -24,9 +24,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "URL.h"
 #include <runtime/Error.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -205,7 +203,7 @@ static inline JSValue jsTestEventConstructorAttr1Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attr1());
+    JSValue result = toJS<IDLDOMString>(state, impl.attr1());
     return result;
 }
 
@@ -221,7 +219,7 @@ static inline JSValue jsTestEventConstructorAttr2Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attr2());
+    JSValue result = toJS<IDLDOMString>(state, impl.attr2());
     return result;
 }
 
@@ -238,7 +236,7 @@ static inline JSValue jsTestEventConstructorAttr3Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attr3());
+    JSValue result = toJS<IDLDOMString>(state, impl.attr3());
     return result;
 }
 

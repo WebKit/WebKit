@@ -50,11 +50,13 @@ public:
         String stringValue;
     };
 
+    using DictionaryUnion = Variant<RefPtr<Node>, Vector<String>, OtherDictionary>;
+
     struct Dictionary {
         int longValue;
         String stringValue;
         Vector<String> sequenceValue;
-        Variant<RefPtr<Node>, Vector<String>, OtherDictionary> unionValue;
+        DictionaryUnion unionValue;
     };
 
     long testLong() { return m_long; }
@@ -98,6 +100,10 @@ public:
     const String& testUSVString() const { return m_usvstring; }
     void setTestUSVString(const String& usvstring) { m_usvstring = usvstring; }
 
+    using TestUnion = Variant<String, int, bool, RefPtr<Node>, Vector<int>>;
+    const TestUnion& testUnion() const { return m_union; }
+    void setTestUnion(const TestUnion& value) { m_union = value; }
+
     void setTypeConversionsDictionary(Dictionary& dictionary)
     {
         m_typeConversionsDictionaryLongValue = dictionary.longValue;
@@ -108,7 +114,8 @@ public:
 
     int typeConversionsDictionaryLongValue() { return m_typeConversionsDictionaryLongValue; }
     String typeConversionsDictionaryStringValue() { return m_typeConversionsDictionaryStringValue; }
-    Vector<String> typeConversionsDictionarySequenceValue() { return m_typeConversionsDictionarySequenceValue; }
+    const Vector<String>& typeConversionsDictionarySequenceValue() { return m_typeConversionsDictionarySequenceValue; }
+    const DictionaryUnion& typeConversionsDictionaryUnionValue() { return m_typeConversionsDictionaryUnionValue; }
     UnionType typeConversionsDictionaryUnionType()
     {
         return WTF::switchOn(m_typeConversionsDictionaryUnionValue,
@@ -133,11 +140,12 @@ private:
     uint16_t m_UnsignedShort { 0 };
     String m_string;
     String m_usvstring;
+    TestUnion m_union;
     
     int m_typeConversionsDictionaryLongValue { 0 };
     String m_typeConversionsDictionaryStringValue;
     Vector<String> m_typeConversionsDictionarySequenceValue;
-    Variant<RefPtr<Node>, Vector<String>, OtherDictionary> m_typeConversionsDictionaryUnionValue;
+    DictionaryUnion m_typeConversionsDictionaryUnionValue;
 };
 
 } // namespace WebCore

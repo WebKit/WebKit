@@ -25,9 +25,7 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSTestNode.h"
-#include "URL.h"
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSString.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -162,7 +160,7 @@ static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState& s
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.firstStringAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.firstStringAttribute());
     return result;
 }
 
@@ -178,7 +176,7 @@ static inline JSValue jsTestSerializationSecondLongAttributeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.secondLongAttribute());
+    JSValue result = toJS<IDLLong>(impl.secondLongAttribute());
     return result;
 }
 
@@ -210,7 +208,7 @@ static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.fourthUnrestrictedDoubleAttribute());
+    JSValue result = toJS<IDLUnrestrictedDouble>(impl.fourthUnrestrictedDoubleAttribute());
     return result;
 }
 
@@ -226,7 +224,7 @@ static inline JSValue jsTestSerializationFifthLongAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.fifthLongAttribute());
+    JSValue result = toJS<IDLLong>(impl.fifthLongAttribute());
     return result;
 }
 

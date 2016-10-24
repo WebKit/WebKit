@@ -24,12 +24,11 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSDOMIterator.h"
 #include "JSDOMPromise.h"
 #include "RuntimeEnabledFeatures.h"
-#include "URL.h"
 #include <runtime/Error.h>
-#include <runtime/JSString.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -189,7 +188,7 @@ static inline JSValue jsTestNodeNameGetter(ExecState& state, JSTestNode& thisObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.name());
+    JSValue result = toJS<IDLDOMString>(state, impl.name());
     return result;
 }
 

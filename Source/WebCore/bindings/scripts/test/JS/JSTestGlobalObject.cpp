@@ -26,11 +26,9 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "RuntimeEnabledFeatures.h"
-#include "URL.h"
 #include "WebCoreJSClientData.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(TEST_FEATURE)
@@ -199,7 +197,7 @@ static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.regularAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.regularAttribute());
     return result;
 }
 
@@ -215,7 +213,7 @@ static inline JSValue jsTestGlobalObjectPublicAndPrivateAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.publicAndPrivateAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.publicAndPrivateAttribute());
     return result;
 }
 
@@ -232,7 +230,7 @@ static inline JSValue jsTestGlobalObjectPublicAndPrivateConditionalAttributeGett
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.publicAndPrivateConditionalAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.publicAndPrivateConditionalAttribute());
     return result;
 }
 
@@ -251,7 +249,7 @@ static inline JSValue jsTestGlobalObjectEnabledAtRuntimeAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.enabledAtRuntimeAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.enabledAtRuntimeAttribute());
     return result;
 }
 

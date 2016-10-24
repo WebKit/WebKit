@@ -1059,6 +1059,36 @@ converter.testUSVString = undefined
 converter.testString = undefined
 PASS converter.testUSVString is "undefined"
 PASS converter.testString is "undefined"
+converter.testUnion = 'hello'
+PASS converter.testUnion is 'hello'
+PASS typeof converter.testUnion is 'string'
+converter.testUnion = 1
+PASS converter.testUnion is 1
+PASS typeof converter.testUnion is 'number'
+converter.testUnion = false
+PASS converter.testUnion is false
+PASS typeof converter.testUnion is 'boolean'
+converter.testUnion = document
+PASS converter.testUnion is document
+PASS typeof converter.testUnion is 'object'
+PASS converter.testUnion is an instance of Document
+converter.testUnion = [1, 2]
+PASS converter.testUnion is [1, 2]
+PASS typeof converter.testUnion is 'object'
+PASS converter.testUnion is an instance of Array
+converter.testUnion = null
+PASS converter.testUnion is 'null'
+PASS typeof converter.testUnion is 'string'
+converter.testUnion = undefined
+PASS converter.testUnion is 'undefined'
+PASS typeof converter.testUnion is 'string'
+converter.testUnion = window
+PASS typeof converter.testUnion is 'string'
+PASS converter.testUnion is '[object Window]'
+converter.testUnion = { }
+PASS typeof converter.testUnion is 'string'
+PASS converter.testUnion is '[object Object]'
+PASS converter.testUnion = { toString: function() { throw Error(); } } threw exception Error.
 converter.setTypeConversionsDictionary({ longValue: 1 })
 PASS converter.typeConversionsDictionaryLongValue is 1
 converter.setTypeConversionsDictionary({ stringValue: 'hello' })

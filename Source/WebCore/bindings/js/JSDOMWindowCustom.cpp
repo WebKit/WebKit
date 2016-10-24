@@ -556,7 +556,7 @@ JSValue JSDOMWindow::setTimeout(ExecState& state)
         return jsNumber(0);
 
     int delay = state.argument(1).toInt32(&state);
-    return toJSNumber(state, scope, wrapped().setTimeout(WTFMove(action), delay));
+    return toJS<IDLLong>(state, scope, wrapped().setTimeout(WTFMove(action), delay));
 }
 
 JSValue JSDOMWindow::setInterval(ExecState& state)
@@ -574,7 +574,7 @@ JSValue JSDOMWindow::setInterval(ExecState& state)
         return jsNumber(0);
 
     int delay = state.argument(1).toInt32(&state);
-    return toJSNumber(state, scope, wrapped().setInterval(WTFMove(action), delay));
+    return toJS<IDLLong>(state, scope, wrapped().setInterval(WTFMove(action), delay));
 }
 
 DOMWindow* JSDOMWindow::toWrapped(JSValue value)

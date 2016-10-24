@@ -93,7 +93,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSString* jsStringWithCache(ExecState* state, TestObj::EnumType enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumType enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         emptyString(),
@@ -106,7 +106,7 @@ JSString* jsStringWithCache(ExecState* state, TestObj::EnumType enumerationValue
     static_assert(static_cast<size_t>(TestObj::EnumType::EnumValue2) == 2, "TestObj::EnumType::EnumValue2 is not 2 as expected");
     static_assert(static_cast<size_t>(TestObj::EnumType::EnumValue3) == 3, "TestObj::EnumType::EnumValue3 is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(ExecState& state, JSValue value)
@@ -140,7 +140,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumType>()
     return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\"";
 }
 
-JSString* jsStringWithCache(ExecState* state, TestObj::Optional enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Optional enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         emptyString(),
@@ -153,7 +153,7 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Optional enumerationValue
     static_assert(static_cast<size_t>(TestObj::Optional::OptionalValue2) == 2, "TestObj::Optional::OptionalValue2 is not 2 as expected");
     static_assert(static_cast<size_t>(TestObj::Optional::OptionalValue3) == 3, "TestObj::Optional::OptionalValue3 is not 3 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(ExecState& state, JSValue value)
@@ -187,7 +187,7 @@ template<> const char* expectedEnumerationValues<TestObj::Optional>()
     return "\"\", \"OptionalValue1\", \"OptionalValue2\", \"OptionalValue3\"";
 }
 
-JSString* jsStringWithCache(ExecState* state, AlternateEnumName enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, AlternateEnumName enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("enumValue1"),
@@ -196,7 +196,7 @@ JSString* jsStringWithCache(ExecState* state, AlternateEnumName enumerationValue
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue1) == 0, "AlternateEnumName::EnumValue1 is not 0 as expected");
     static_assert(static_cast<size_t>(AlternateEnumName::EnumValue2) == 1, "AlternateEnumName::EnumValue2 is not 1 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(ExecState& state, JSValue value)
@@ -228,14 +228,14 @@ template<> const char* expectedEnumerationValues<AlternateEnumName>()
 
 #if ENABLE(Condition1)
 
-JSString* jsStringWithCache(ExecState* state, TestObj::EnumA enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumA enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("A"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumA::A) == 0, "TestObj::EnumA::A is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(ExecState& state, JSValue value)
@@ -267,14 +267,14 @@ template<> const char* expectedEnumerationValues<TestObj::EnumA>()
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
 
-JSString* jsStringWithCache(ExecState* state, TestObj::EnumB enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumB enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("B"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumB::B) == 0, "TestObj::EnumB::B is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(ExecState& state, JSValue value)
@@ -306,14 +306,14 @@ template<> const char* expectedEnumerationValues<TestObj::EnumB>()
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-JSString* jsStringWithCache(ExecState* state, TestObj::EnumC enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumC enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("C"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumC::C) == 0, "TestObj::EnumC::C is not 0 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(ExecState& state, JSValue value)
@@ -343,7 +343,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumC>()
 
 #endif
 
-JSString* jsStringWithCache(ExecState* state, TestObj::Kind enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Kind enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("quick"),
@@ -352,7 +352,7 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Kind enumerationValue)
     static_assert(static_cast<size_t>(TestObj::Kind::Quick) == 0, "TestObj::Kind::Quick is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Kind::Dead) == 1, "TestObj::Kind::Dead is not 1 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(ExecState& state, JSValue value)
@@ -382,7 +382,7 @@ template<> const char* expectedEnumerationValues<TestObj::Kind>()
     return "\"quick\", \"dead\"";
 }
 
-JSString* jsStringWithCache(ExecState* state, TestObj::Size enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Size enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("small"),
@@ -391,7 +391,7 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Size enumerationValue)
     static_assert(static_cast<size_t>(TestObj::Size::Small) == 0, "TestObj::Size::Small is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Size::MuchMuchLarger) == 1, "TestObj::Size::MuchMuchLarger is not 1 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::Size> parseEnumeration<TestObj::Size>(ExecState& state, JSValue value)
@@ -421,7 +421,7 @@ template<> const char* expectedEnumerationValues<TestObj::Size>()
     return "\"small\", \"much-much-larger\"";
 }
 
-JSString* jsStringWithCache(ExecState* state, TestObj::Confidence enumerationValue)
+template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Confidence enumerationValue)
 {
     static NeverDestroyed<const String> values[] = {
         ASCIILiteral("high"),
@@ -430,7 +430,7 @@ JSString* jsStringWithCache(ExecState* state, TestObj::Confidence enumerationVal
     static_assert(static_cast<size_t>(TestObj::Confidence::High) == 0, "TestObj::Confidence::High is not 0 as expected");
     static_assert(static_cast<size_t>(TestObj::Confidence::KindaLow) == 1, "TestObj::Confidence::KindaLow is not 1 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
-    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);
+    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);
 }
 
 template<> Optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(ExecState& state, JSValue value)
@@ -1747,7 +1747,7 @@ static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.readOnlyLongAttr());
+    JSValue result = toJS<IDLLong>(impl.readOnlyLongAttr());
     return result;
 }
 
@@ -1763,7 +1763,7 @@ static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.readOnlyStringAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.readOnlyStringAttr());
     return result;
 }
 
@@ -1794,7 +1794,7 @@ EncodedJSValue jsTestObjConstructorStaticReadOnlyLongAttr(ExecState* state, Enco
 static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsNumber(TestObj::staticReadOnlyLongAttr());
+    JSValue result = toJS<IDLLong>(TestObj::staticReadOnlyLongAttr());
     return result;
 }
 
@@ -1809,7 +1809,7 @@ EncodedJSValue jsTestObjConstructorStaticStringAttr(ExecState* state, EncodedJSV
 static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsStringWithCache(&state, TestObj::staticStringAttr());
+    JSValue result = toJS<IDLDOMString>(state, TestObj::staticStringAttr());
     return result;
 }
 
@@ -1858,7 +1858,7 @@ static inline JSValue jsTestObjEnumAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.enumAttr());
+    JSValue result = toJS<IDLEnumeration<TestObj::EnumType>>(state, impl.enumAttr());
     return result;
 }
 
@@ -1874,7 +1874,7 @@ static inline JSValue jsTestObjByteAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.byteAttr());
+    JSValue result = toJS<IDLByte>(impl.byteAttr());
     return result;
 }
 
@@ -1890,7 +1890,7 @@ static inline JSValue jsTestObjOctetAttrGetter(ExecState& state, JSTestObj& this
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.octetAttr());
+    JSValue result = toJS<IDLOctet>(impl.octetAttr());
     return result;
 }
 
@@ -1906,7 +1906,7 @@ static inline JSValue jsTestObjShortAttrGetter(ExecState& state, JSTestObj& this
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.shortAttr());
+    JSValue result = toJS<IDLShort>(impl.shortAttr());
     return result;
 }
 
@@ -1922,7 +1922,7 @@ static inline JSValue jsTestObjClampedShortAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.clampedShortAttr());
+    JSValue result = toJS<IDLShort>(impl.clampedShortAttr());
     return result;
 }
 
@@ -1938,7 +1938,7 @@ static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.enforceRangeShortAttr());
+    JSValue result = toJS<IDLShort>(impl.enforceRangeShortAttr());
     return result;
 }
 
@@ -1954,7 +1954,7 @@ static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState& state, JSTestO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.unsignedShortAttr());
+    JSValue result = toJS<IDLUnsignedShort>(impl.unsignedShortAttr());
     return result;
 }
 
@@ -1970,7 +1970,7 @@ static inline JSValue jsTestObjLongAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.longAttr());
+    JSValue result = toJS<IDLLong>(impl.longAttr());
     return result;
 }
 
@@ -1986,7 +1986,7 @@ static inline JSValue jsTestObjLongLongAttrGetter(ExecState& state, JSTestObj& t
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.longLongAttr());
+    JSValue result = toJS<IDLLongLong>(impl.longLongAttr());
     return result;
 }
 
@@ -2002,7 +2002,7 @@ static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.unsignedLongLongAttr());
+    JSValue result = toJS<IDLUnsignedLongLong>(impl.unsignedLongLongAttr());
     return result;
 }
 
@@ -2018,7 +2018,7 @@ static inline JSValue jsTestObjStringAttrGetter(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttr());
     return result;
 }
 
@@ -2034,7 +2034,7 @@ static inline JSValue jsTestObjUsvstringAttrGetter(ExecState& state, JSTestObj& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.usvstringAttr());
+    JSValue result = toJS<IDLUSVString>(state, impl.usvstringAttr());
     return result;
 }
 
@@ -2098,7 +2098,7 @@ static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState& state, JSTestObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.unforgeableAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.unforgeableAttr());
     return result;
 }
 
@@ -2114,7 +2114,7 @@ static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttrTreatingNullAsEmptyString());
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrTreatingNullAsEmptyString());
     return result;
 }
 
@@ -2130,7 +2130,7 @@ static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.usvstringAttrTreatingNullAsEmptyString());
+    JSValue result = toJS<IDLUSVString>(state, impl.usvstringAttrTreatingNullAsEmptyString());
     return result;
 }
 
@@ -2146,7 +2146,7 @@ static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.implementationEnumAttr());
+    JSValue result = toJS<IDLEnumeration<AlternateEnumName>>(state, impl.implementationEnumAttr());
     return result;
 }
 
@@ -2178,7 +2178,7 @@ static inline JSValue jsTestObjCreateGetter(ExecState& state, JSTestObj& thisObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsBoolean(impl.isCreate());
+    JSValue result = toJS<IDLBoolean>(impl.isCreate());
     return result;
 }
 
@@ -2194,7 +2194,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
+    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
@@ -2210,7 +2210,7 @@ static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
+    JSValue result = toJS<IDLUSVString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
     return result;
 }
 
@@ -2226,7 +2226,7 @@ static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+    JSValue result = toJS<IDLLong>(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
     return result;
 }
 
@@ -2242,7 +2242,7 @@ static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
+    JSValue result = toJS<IDLUnsignedLong>(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
     return result;
 }
 
@@ -2258,7 +2258,7 @@ static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
+    JSValue result = toJS<IDLBoolean>(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
     return result;
 }
 
@@ -2274,7 +2274,7 @@ static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+    JSValue result = toJS<IDLDOMString>(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
     return result;
 }
 
@@ -2290,7 +2290,7 @@ static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
+    JSValue result = toJS<IDLUSVString>(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
     return result;
 }
 
@@ -2306,7 +2306,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
+    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 
@@ -2322,7 +2322,7 @@ static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+    JSValue result = toJS<IDLLong>(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
     return result;
 }
 
@@ -2338,7 +2338,7 @@ static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState& state
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsBoolean(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
+    JSValue result = toJS<IDLBoolean>(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
     return result;
 }
 
@@ -2354,7 +2354,7 @@ static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+    JSValue result = toJS<IDLDOMString>(state, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
     return result;
 }
 
@@ -2371,7 +2371,7 @@ static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.enabledAtRuntimeAttribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.enabledAtRuntimeAttribute());
     return result;
 }
 
@@ -2405,7 +2405,7 @@ static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJSNumber(state, throwScope, impl.attributeWithGetterException());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.attributeWithGetterException());
     return result;
 }
 
@@ -2422,7 +2422,7 @@ static inline JSValue jsTestObjAttributeWithGetterLegacyExceptionGetter(ExecStat
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.attributeWithGetterLegacyException(ec));
+    JSValue result = toJS<IDLLong>(impl.attributeWithGetterLegacyException(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -2439,7 +2439,7 @@ static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.attributeWithSetterException());
+    JSValue result = toJS<IDLLong>(impl.attributeWithSetterException());
     return result;
 }
 
@@ -2455,7 +2455,7 @@ static inline JSValue jsTestObjAttributeWithSetterLegacyExceptionGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.attributeWithSetterLegacyException());
+    JSValue result = toJS<IDLLong>(impl.attributeWithSetterLegacyException());
     return result;
 }
 
@@ -2472,7 +2472,7 @@ static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState& st
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttrWithGetterException(ec));
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrWithGetterException(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -2489,7 +2489,7 @@ static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttrWithSetterException());
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrWithSetterException());
     return result;
 }
 
@@ -2547,7 +2547,7 @@ static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.withScriptStateAttribute(state));
+    JSValue result = toJS<IDLLong>(impl.withScriptStateAttribute(state));
     return result;
 }
 
@@ -2563,7 +2563,7 @@ static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.withCallWithAndSetterCallWithAttribute(state));
+    JSValue result = toJS<IDLLong>(impl.withCallWithAndSetterCallWithAttribute(state));
     return result;
 }
 
@@ -2713,7 +2713,7 @@ static inline JSValue jsTestObjConditionalAttr1Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.conditionalAttr1());
+    JSValue result = toJS<IDLLong>(impl.conditionalAttr1());
     return result;
 }
 
@@ -2732,7 +2732,7 @@ static inline JSValue jsTestObjConditionalAttr2Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.conditionalAttr2());
+    JSValue result = toJS<IDLLong>(impl.conditionalAttr2());
     return result;
 }
 
@@ -2751,7 +2751,7 @@ static inline JSValue jsTestObjConditionalAttr3Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.conditionalAttr3());
+    JSValue result = toJS<IDLLong>(impl.conditionalAttr3());
     return result;
 }
 
@@ -2822,7 +2822,7 @@ static inline JSValue jsTestObjCachedAttribute1Getter(ExecState& state, JSTestOb
     if (JSValue cachedValue = thisObject.m_cachedAttribute1.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.cachedAttribute1();
+    JSValue result = toJS<IDLAny>(impl.cachedAttribute1());
     thisObject.m_cachedAttribute1.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -2841,7 +2841,7 @@ static inline JSValue jsTestObjCachedAttribute2Getter(ExecState& state, JSTestOb
     if (JSValue cachedValue = thisObject.m_cachedAttribute2.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.cachedAttribute2();
+    JSValue result = toJS<IDLAny>(impl.cachedAttribute2());
     thisObject.m_cachedAttribute2.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -2858,7 +2858,7 @@ static inline JSValue jsTestObjAnyAttributeGetter(ExecState& state, JSTestObj& t
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = impl.anyAttribute();
+    JSValue result = toJS<IDLAny>(impl.anyAttribute());
     return result;
 }
 
@@ -2921,7 +2921,7 @@ static inline JSValue jsTestObjStrawberryGetter(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.blueberry());
+    JSValue result = toJS<IDLLong>(impl.blueberry());
     return result;
 }
 
@@ -2937,7 +2937,7 @@ static inline JSValue jsTestObjDescriptionGetter(ExecState& state, JSTestObj& th
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.description());
+    JSValue result = toJS<IDLLong>(impl.description());
     return result;
 }
 
@@ -2953,7 +2953,7 @@ static inline JSValue jsTestObjIdGetter(ExecState& state, JSTestObj& thisObject,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.id());
+    JSValue result = toJS<IDLLong>(impl.id());
     return result;
 }
 
@@ -2969,7 +2969,7 @@ static inline JSValue jsTestObjHashGetter(ExecState& state, JSTestObj& thisObjec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.hash());
+    JSValue result = toJS<IDLDOMString>(state, impl.hash());
     return result;
 }
 
@@ -2985,7 +2985,7 @@ static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.replaceableAttribute());
+    JSValue result = toJS<IDLLong>(impl.replaceableAttribute());
     return result;
 }
 
@@ -3001,7 +3001,7 @@ static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toNullableJSNumber(impl.nullableDoubleAttribute());
+    JSValue result = toJS<IDLNullable<IDLUnrestrictedDouble>>(impl.nullableDoubleAttribute());
     return result;
 }
 
@@ -3017,7 +3017,7 @@ static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toNullableJSNumber(impl.nullableLongAttribute());
+    JSValue result = toJS<IDLNullable<IDLLong>>(impl.nullableLongAttribute());
     return result;
 }
 
@@ -3033,7 +3033,7 @@ static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsBoolean(impl.nullableBooleanAttribute());
+    JSValue result = toJS<IDLNullable<IDLBoolean>>(impl.nullableBooleanAttribute());
     return result;
 }
 
@@ -3065,7 +3065,7 @@ static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toNullableJSNumber(impl.nullableLongSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLLong>>(impl.nullableLongSettableAttribute());
     return result;
 }
 
@@ -3114,7 +3114,7 @@ static inline JSValue jsTestObjNullableStringValueGetter(ExecState& state, JSTes
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
     auto& impl = thisObject.wrapped();
-    JSValue result = toNullableJSNumber(impl.nullableStringValue(ec));
+    JSValue result = toJS<IDLNullable<IDLLong>>(impl.nullableStringValue(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -3131,7 +3131,7 @@ static inline JSValue jsTestObjAttributeGetter(ExecState& state, JSTestObj& this
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attribute());
+    JSValue result = toJS<IDLDOMString>(state, impl.attribute());
     return result;
 }
 
@@ -3147,7 +3147,7 @@ static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithReservedEnumType());
+    JSValue result = toJS<IDLEnumeration<TestObj::Optional>>(state, impl.attributeWithReservedEnumType());
     return result;
 }
 
@@ -3211,7 +3211,7 @@ static inline JSValue jsTestObjStringifierAttributeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringifierAttribute());
+    JSValue result = toJS<IDLUSVString>(state, impl.stringifierAttribute());
     return result;
 }
 
@@ -4825,7 +4825,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodCaller(JSC
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.byteMethod());
+    JSValue result = toJS<IDLByte>(impl.byteMethod());
     return JSValue::encode(result);
 }
 
@@ -4850,7 +4850,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionByteMethodWithArgsCa
     auto objArg = JSTestObj::toWrapped(state->uncheckedArgument(2));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, throwScope, 2, "objArg", "TestObject", "byteMethodWithArgs", "TestObj");
-    JSValue result = jsNumber(impl.byteMethodWithArgs(WTFMove(byteArg), WTFMove(strArg), *objArg));
+    JSValue result = toJS<IDLByte>(impl.byteMethodWithArgs(WTFMove(byteArg), WTFMove(strArg), *objArg));
     return JSValue::encode(result);
 }
 
@@ -4866,7 +4866,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodCaller(JS
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.octetMethod());
+    JSValue result = toJS<IDLOctet>(impl.octetMethod());
     return JSValue::encode(result);
 }
 
@@ -4891,7 +4891,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOctetMethodWithArgsC
     auto objArg = JSTestObj::toWrapped(state->uncheckedArgument(2));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, throwScope, 2, "objArg", "TestObject", "octetMethodWithArgs", "TestObj");
-    JSValue result = jsNumber(impl.octetMethodWithArgs(WTFMove(octetArg), WTFMove(strArg), *objArg));
+    JSValue result = toJS<IDLOctet>(impl.octetMethodWithArgs(WTFMove(octetArg), WTFMove(strArg), *objArg));
     return JSValue::encode(result);
 }
 
@@ -4907,7 +4907,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodCaller(JSC
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.longMethod());
+    JSValue result = toJS<IDLLong>(impl.longMethod());
     return JSValue::encode(result);
 }
 
@@ -4932,7 +4932,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionLongMethodWithArgsCa
     auto objArg = JSTestObj::toWrapped(state->uncheckedArgument(2));
     if (UNLIKELY(!objArg))
         return throwArgumentTypeError(*state, throwScope, 2, "objArg", "TestObject", "longMethodWithArgs", "TestObj");
-    JSValue result = jsNumber(impl.longMethodWithArgs(WTFMove(longArg), WTFMove(strArg), *objArg));
+    JSValue result = toJS<IDLLong>(impl.longMethodWithArgs(WTFMove(longArg), WTFMove(strArg), *objArg));
     return JSValue::encode(result);
 }
 
@@ -4989,7 +4989,7 @@ static inline JSC::EncodedJSValue jsTestObjInstanceFunctionUnforgeableMethodCall
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsNumber(impl.unforgeableMethod());
+    JSValue result = toJS<IDLLong>(impl.unforgeableMethod());
     return JSValue::encode(result);
 }
 
@@ -5310,7 +5310,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithExceptionR
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = toJSNumber(*state, throwScope, impl.methodWithExceptionReturningLong());
+    JSValue result = toJS<IDLLong>(*state, throwScope, impl.methodWithExceptionReturningLong());
     return JSValue::encode(result);
 }
 
@@ -5392,7 +5392,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPrivateMethodCaller(
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto argument = state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsStringWithCache(state, impl.privateMethod(WTFMove(argument)));
+    JSValue result = toJS<IDLDOMString>(*state, impl.privateMethod(WTFMove(argument)));
     return JSValue::encode(result);
 }
 
@@ -5412,7 +5412,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionPublicAndPrivateMeth
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto argument = state->uncheckedArgument(0).toWTFString(state);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsStringWithCache(state, impl.publicAndPrivateMethod(WTFMove(argument)));
+    JSValue result = toJS<IDLDOMString>(*state, impl.publicAndPrivateMethod(WTFMove(argument)));
     return JSValue::encode(result);
 }
 
@@ -6410,7 +6410,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionConditionalMethod1Ca
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.conditionalMethod1());
+    JSValue result = toJS<IDLDOMString>(*state, impl.conditionalMethod1());
     return JSValue::encode(result);
 }
 
@@ -7243,7 +7243,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional
     UNUSED_PARAM(throwScope);
     auto arg = state->argument(0).isUndefined() ? Optional<int32_t>() : convert<IDLLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsNumber(TestObj::classMethodWithOptional(WTFMove(arg)));
+    JSValue result = toJS<IDLLong>(TestObj::classMethodWithOptional(WTFMove(arg)));
     return JSValue::encode(result);
 }
 
@@ -7388,7 +7388,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionStringArrayFunctionC
     ExceptionCode ec = 0;
     auto values = convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsArray(state, castedThis->globalObject(), impl.stringArrayFunction(WTFMove(values), ec));
+    JSValue result = toJS<IDLSequence<IDLDOMString>>(*state, *castedThis->globalObject(), impl.stringArrayFunction(WTFMove(values), ec));
 
     setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
@@ -8152,7 +8152,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionToStringCaller(JSC::
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringWithCache(state, impl.stringifierAttribute());
+    JSValue result = toJS<IDLUSVString>(*state, impl.stringifierAttribute());
     return JSValue::encode(result);
 }
 

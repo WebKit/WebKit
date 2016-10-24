@@ -31,11 +31,9 @@
 #include "JSTestSubObj.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
-#include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Variant.h>
 
@@ -238,7 +236,7 @@ static inline JSValue jsTestTypedefsUnsignedLongLongAttrGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.unsignedLongLongAttr());
+    JSValue result = toJS<IDLUnsignedLongLong>(impl.unsignedLongLongAttr());
     return result;
 }
 
@@ -285,7 +283,7 @@ static inline JSValue jsTestTypedefsAttrWithGetterExceptionGetter(ExecState& sta
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.attrWithGetterException(ec));
+    JSValue result = toJS<IDLLong>(impl.attrWithGetterException(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -302,7 +300,7 @@ static inline JSValue jsTestTypedefsAttrWithSetterExceptionGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.attrWithSetterException());
+    JSValue result = toJS<IDLLong>(impl.attrWithSetterException());
     return result;
 }
 
@@ -319,7 +317,7 @@ static inline JSValue jsTestTypedefsStringAttrWithGetterExceptionGetter(ExecStat
     UNUSED_PARAM(state);
     ExceptionCode ec = 0;
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttrWithGetterException(ec));
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrWithGetterException(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -336,7 +334,7 @@ static inline JSValue jsTestTypedefsStringAttrWithSetterExceptionGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.stringAttrWithSetterException());
+    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrWithSetterException());
     return result;
 }
 
@@ -549,7 +547,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithSeque
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto sequenceArg = convert<IDLSequence<IDLInterface<SerializedScriptValue>>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsNumber(impl.methodWithSequenceArg(WTFMove(sequenceArg)));
+    JSValue result = toJS<IDLUnsignedLongLong>(impl.methodWithSequenceArg(WTFMove(sequenceArg)));
     return JSValue::encode(result);
 }
 
@@ -688,7 +686,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     ExceptionCode ec = 0;
     auto values = convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction(WTFMove(values), ec));
+    JSValue result = toJS<IDLSequence<IDLDOMString>>(*state, *castedThis->globalObject(), impl.stringSequenceFunction(WTFMove(values), ec));
 
     setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
@@ -711,7 +709,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionStringSequenceF
     ExceptionCode ec = 0;
     auto values = convert<IDLSequence<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsArray(state, castedThis->globalObject(), impl.stringSequenceFunction2(WTFMove(values), ec));
+    JSValue result = toJS<IDLSequence<IDLDOMString>>(*state, *castedThis->globalObject(), impl.stringSequenceFunction2(WTFMove(values), ec));
 
     setDOMException(state, throwScope, ec);
     return JSValue::encode(result);
@@ -733,7 +731,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionCallWithSequenc
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto sequenceArg = convert<IDLSequence<IDLInterface<TestEventTarget>>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsBoolean(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)));
+    JSValue result = toJS<IDLBoolean>(impl.callWithSequenceThatRequiresInclude(WTFMove(sequenceArg)));
     return JSValue::encode(result);
 }
 

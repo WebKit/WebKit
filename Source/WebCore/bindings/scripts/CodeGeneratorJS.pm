@@ -171,7 +171,14 @@ sub AddStringifierOperationIfNeeded
         $stringifier->signature->extendedAttributes($extendedAttributeList);
         $stringifier->signature->name("toString");
         die "stringifier can only be used on attributes of String types" unless $codeGenerator->IsStringType($attribute->signature->type);
-        $stringifier->signature->type($attribute->signature->type);
+        
+        # FIXME: This should use IDLParser's cloneType.
+        my $type = domType->new();
+        $type->name($attribute->signature->type);
+
+        $stringifier->signature->idlType($type);
+        $stringifier->signature->type($type->name);
+
         push(@{$interface->functions}, $stringifier);
         last;
     }
@@ -877,9 +884,8 @@ sub GenerateEnumerationsImplementationContent
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
         $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-        # Take an ExecState* instead of an ExecState& to match the jsStringWithCache from JSString.h.
         # FIXME: Change to take VM& instead of ExecState*.
-        $result .= "JSString* jsStringWithCache(ExecState* state, $className enumerationValue)\n";
+        $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
         $result .= "{\n";
         # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
         # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
@@ -899,7 +905,7 @@ sub GenerateEnumerationsImplementationContent
             $index++;
         }
         $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
-        $result .= "    return jsStringWithCache(state, values[static_cast<size_t>(enumerationValue)]);\n";
+        $result .= "    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);\n";
         $result .= "}\n\n";
 
         # FIXME: Change to take VM& instead of ExecState&.
@@ -966,11 +972,7 @@ sub GenerateEnumerationsHeaderContent
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
         $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-        $result .= "JSC::JSString* jsStringWithCache(JSC::ExecState*, $className);\n\n";
-
-        $result .= "template<> struct JSValueTraits<$className> {\n";
-        $result .= "    static JSC::JSString* arrayJSValue(JSC::ExecState* state, JSDOMGlobalObject*, $className value) { return jsStringWithCache(state, value); }\n";
-        $result .= "};\n\n";
+        $result .= "template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
 
         $result .= "template<> Optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
         $result .= "template<> $className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
@@ -4932,7 +4934,6 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "DOMString" => "String",
     "USVString" => "String",
-    "DOMTimeStamp" => "DOMTimeStamp",
     "Date" => "double",
     "Dictionary" => "Dictionary",
     "EventListener" => "RefPtr<EventListener>",
@@ -5162,7 +5163,7 @@ sub GetIntegerConversionConfiguration
     return "NormalConversion";
 }
 
-sub IsHandledByDOMConvert
+sub JSValueToNativeIsHandledByDOMConvert
 {
     my $idlType = shift;
 
@@ -5191,7 +5192,7 @@ sub JSValueToNative
     $stateReference = "*state" unless $stateReference;
     $thisObjectReference = "*castedThis" unless $thisObjectReference;
 
-    if (IsHandledByDOMConvert($idlType)) {
+    if (JSValueToNativeIsHandledByDOMConvert($idlType)) {
         AddToImplIncludes("JSDOMConvert.h");
         AddToImplIncludesForIDLType($idlType, $conditional);
 
@@ -5245,6 +5246,48 @@ sub JSValueToNative
     return ("JS${type}::toWrapped($value)", 0);
 }
 
+sub NativeToJSValueIsHandledByDOMConvert
+{
+    my ($idlType) = @_;
+
+    return 0 if $idlType->isNullable && ($codeGenerator->IsStringType($idlType->name) || $codeGenerator->IsEnumType($idlType->name));
+    
+    return 1 if $idlType->name eq "any";
+    return 1 if $idlType->name eq "boolean";
+    return 1 if $codeGenerator->IsIntegerType($idlType->name);
+    return 1 if $codeGenerator->IsFloatingPointType($idlType->name);
+    return 1 if $codeGenerator->IsStringType($idlType->name);
+    return 1 if $codeGenerator->IsEnumType($idlType->name);
+    return 1 if $idlType->isUnion;
+    return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
+
+    return 0;
+}
+
+sub NativeToJSValueDOMConvertNeedsState
+{
+    my ($idlType) = @_;
+    
+    # FIXME: This should actually check if all the sub-objects of the union need the state.
+    return 1 if $idlType->isUnion;
+    return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
+    return 1 if $codeGenerator->IsStringType($idlType->name);
+    return 1 if $codeGenerator->IsEnumType($idlType->name);
+
+    return 0;
+}
+
+sub NativeToJSValueDOMConvertNeedsGlobalObject
+{
+    my ($idlType) = @_;
+    
+    # FIXME: This should actually check if all the sub-objects of the union need the global object.
+    return 1 if $idlType->isUnion;
+    return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
+
+    return 0;
+}
+
 sub NativeToJSValueUsingReferences
 {
     my ($signature, $inFunctionCall, $interface, $value, $thisValue) = @_;
@@ -5274,50 +5317,15 @@ sub NativeToJSValue
 
     my $conditional = $signature->extendedAttributes->{Conditional};
     my $type = $signature->type;
+    my $idlType = $signature->idlType;
     my $isNullable = $signature->isNullable;
     my $mayThrowException = $signature->extendedAttributes->{GetterMayThrowException} || $signature->extendedAttributes->{MayThrowException};
 
-    return "toJSBoolean($stateReference, throwScope, $value)" if $type eq "boolean" && $mayThrowException;
-    return "jsBoolean($value)" if $type eq "boolean";
-    return "toJSNullableDate($stateReference, throwScope, $value)" if $type eq "Date" && $isNullable && $mayThrowException;
-    return "jsDateOrNull($statePointer, $value)" if $type eq "Date" && $isNullable;
-    return "toJSDate($stateReference, throwScope, $value)" if $type eq "Date" && $mayThrowException;
-    return "jsDate($statePointer, $value)" if $type eq "Date";
-
-    if ($codeGenerator->IsNumericType($type) or $type eq "DOMTimeStamp") {
-        # We could instead overload a function to work with optional as well as non-optional numbers, but this
-        # is slightly better because it guarantees we will fail to compile if the IDL file doesn't match the C++.
-        if ($signature->extendedAttributes->{Reflect} and ($type eq "unsigned long" or $type eq "unsigned short")) {
-            $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
-            $value = "std::max(0, $value)";
-        }
-        return "toJSNullableNumber($stateReference, throwScope, $value)" if $isNullable && $mayThrowException;
-        return "toNullableJSNumber($value)" if $isNullable;
-        return "toJSNumber($stateReference, throwScope, $value)" if $mayThrowException;
-        return "jsNumber($value)";
-    }
-
-    if ($codeGenerator->IsEnumType($type)) {
-        AddToImplIncludes("<runtime/JSString.h>", $conditional);
-        return "jsStringWithCache($statePointer, $value)";
-    }
-
-    if ($codeGenerator->IsStringType($type)) {
-        AddToImplIncludes("URL.h", $conditional);
-        return "toJSNullableString($stateReference, throwScope, $value)" if $isNullable && $mayThrowException;
-        return "jsStringOrNull($statePointer, $value)" if $isNullable;
-        return "toJSString($stateReference, throwScope, $value)" if $mayThrowException;
-        AddToImplIncludes("<runtime/JSString.h>", $conditional);
-        return "jsStringWithCache($statePointer, $value)";
-    }
-
-    if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
-        my $innerType = $codeGenerator->GetSequenceOrFrozenArrayInnerType($type);
-        AddToImplIncludes("JS${innerType}.h", $conditional) if $codeGenerator->IsRefPtrType($innerType);
-        my $isSequence = $codeGenerator->IsSequenceType($type);
-        return "toJSArray($stateReference, *$globalObject, throwScope, $value)" if $isSequence && $mayThrowException;
-        return "jsArray($statePointer, $globalObject, $value)" if $isSequence;
-        return "jsFrozenArray($statePointer, $globalObject, $value)";;
+    # We could instead overload a function to work with optional as well as non-optional numbers, but this
+    # is slightly better because it guarantees we will fail to compile if the IDL file doesn't match the C++.
+    if ($signature->extendedAttributes->{Reflect} and ($type eq "unsigned long" or $type eq "unsigned short")) {
+        $value =~ s/getUnsignedIntegralAttribute/getIntegralAttribute/g;
+        $value = "std::max(0, $value)";
     }
 
     if ($type eq "any") {
@@ -5326,7 +5334,33 @@ sub NativeToJSValue
             AddToImplIncludes("IDBBindingUtilities.h", $conditional);
             return "toJS($stateReference, *$globalObject, $value)";
         }
-        return $value;
+    }
+
+    if (NativeToJSValueIsHandledByDOMConvert($idlType)) {
+        AddToImplIncludes("JSDOMConvert.h");
+        AddToImplIncludesForIDLType($idlType, $conditional);
+
+        my $IDLType = GetIDLType($interface, $idlType);
+
+        my @conversionArguments = ();
+        push(@conversionArguments, "$stateReference") if NativeToJSValueDOMConvertNeedsState($idlType) || $mayThrowException;
+        push(@conversionArguments, "*$globalObject") if NativeToJSValueDOMConvertNeedsGlobalObject($idlType);
+        push(@conversionArguments, "throwScope") if $mayThrowException;
+        push(@conversionArguments, "$value");
+
+        return "toJS<$IDLType>(" . join(", ", @conversionArguments) . ")";
+    }
+
+    return "toJSNullableDate($stateReference, throwScope, $value)" if $type eq "Date" && $isNullable && $mayThrowException;
+    return "jsDateOrNull($statePointer, $value)" if $type eq "Date" && $isNullable;
+    return "toJSDate($stateReference, throwScope, $value)" if $type eq "Date" && $mayThrowException;
+    return "jsDate($statePointer, $value)" if $type eq "Date";
+
+    if ($codeGenerator->IsStringType($type)) {
+        AddToImplIncludes("URL.h", $conditional);
+        return "toJSNullableString($stateReference, throwScope, $value)" if $isNullable && $mayThrowException;
+        return "jsStringOrNull($statePointer, $value)" if $isNullable;
+        assert("Unhandled string type");
     }
 
     if ($type eq "SerializedScriptValue") {

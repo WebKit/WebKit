@@ -223,8 +223,6 @@ WEBCORE_EXPORT String valueToUSVString(JSC::ExecState*, JSC::JSValue);
 String valueToUSVStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
 String valueToUSVStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue);
 
-template<typename T> JSC::JSValue toNullableJSNumber(Optional<T>); // null if the optional is null
-
 int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);
 
 // The following functions convert values to integers as per the WebIDL specification.
@@ -283,10 +281,6 @@ template<typename T> JSC::JSValue toJSIterator(JSC::ExecState&, JSDOMGlobalObjec
 
 JSC::JSValue toJSIteratorEnd(JSC::ExecState&);
 
-template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>&);
-template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>*);
-template<typename T, size_t inlineCapacity> JSC::JSValue jsFrozenArray(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T, inlineCapacity>&);
-
 JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
 template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);
 
@@ -328,8 +322,6 @@ String propertyNameToString(JSC::PropertyName);
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
 template<JSC::NativeFunction, int length> JSC::EncodedJSValue nonCachingStaticFunctionGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-
-template<typename T> struct NativeValueTraits;
 
 
 enum class CastedThisErrorBehavior { Throw, ReturnEarly, RejectPromise, Assert };
@@ -413,15 +405,10 @@ struct BindingCaller {
 // ExceptionOr handling.
 void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
-template<typename T> JSC::JSValue toJSArray(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
-JSC::JSValue toJSBoolean(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<bool>&&);
 JSC::JSValue toJSDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<double>&&);
 JSC::JSValue toJSNullableDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<Optional<double>>&&);
 JSC::JSValue toJSNullableString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-template<typename T> JSC::JSValue toJSNumber(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-template<typename T> JSC::JSValue toJSNullableNumber(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<T>&& value);
-JSC::JSValue toJSString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 
 // Inline functions and template definitions.
 
@@ -721,71 +708,6 @@ inline JSC::JSValue toJSIteratorEnd(JSC::ExecState& state)
     return createIteratorResultObject(&state, JSC::jsUndefined(), true);
 }
 
-template<typename T> struct JSValueTraits {
-    static JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const T& value)
-    {
-        return toJS(exec, globalObject, WTF::getPtr(value));
-    }
-};
-
-template<> struct JSValueTraits<String> {
-    static JSC::JSValue arrayJSValue(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
-    {
-        return JSC::jsStringWithCache(exec, value);
-    }
-};
-
-template<> struct JSValueTraits<double> {
-    static JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const double& value)
-    {
-        return JSC::jsNumber(value);
-    }
-};
-
-template<> struct JSValueTraits<float> {
-    static JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const float& value)
-    {
-        return JSC::jsNumber(value);
-    }
-};
-
-template<> struct JSValueTraits<unsigned long> {
-    static JSC::JSValue arrayJSValue(JSC::ExecState*, JSDOMGlobalObject*, const unsigned long& value)
-    {
-        return JSC::jsNumber(value);
-    }
-};
-
-template<typename T, size_t inlineCapacity> JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
-{
-    JSC::MarkedArgumentBuffer list;
-    for (auto& element : vector)
-        list.append(JSValueTraits<T>::arrayJSValue(exec, globalObject, element));
-    return JSC::constructArray(exec, nullptr, globalObject, list);
-}
-
-template<typename T, size_t inlineCapacity> inline JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>* vector)
-{
-    if (!vector)
-        return JSC::constructEmptyArray(exec, nullptr, globalObject, 0);
-    return jsArray(exec, globalObject, *vector);
-}
-
-template<typename T, size_t inlineCapacity> JSC::JSValue jsFrozenArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, const Vector<T, inlineCapacity>& vector)
-{
-    JSC::VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSC::MarkedArgumentBuffer list;
-    for (auto& element : vector) {
-        list.append(JSValueTraits<T>::arrayJSValue(exec, globalObject, element));
-        RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    }
-    auto* array = JSC::constructArray(exec, nullptr, globalObject, list);
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-    return JSC::objectConstructorFreeze(exec, array);
-}
-
 inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::JSValue value1, JSC::JSValue value2)
 {
     JSC::MarkedArgumentBuffer args;
@@ -816,46 +738,6 @@ inline RefPtr<JSC::Uint16Array> toUint16Array(JSC::JSValue value) { return JSC::
 inline RefPtr<JSC::Uint32Array> toUint32Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Uint32Adaptor>(value); }
 inline RefPtr<JSC::Float32Array> toFloat32Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float32Adaptor>(value); }
 inline RefPtr<JSC::Float64Array> toFloat64Array(JSC::JSValue value) { return JSC::toNativeTypedView<JSC::Float64Adaptor>(value); }
-
-template<> struct NativeValueTraits<String> {
-    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, String& indexedValue)
-    {
-        JSC::VM& vm = exec.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        indexedValue = jsValue.toWTFString(&exec);
-        return !scope.exception();
-    }
-};
-
-template<> struct NativeValueTraits<unsigned> {
-    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, unsigned& indexedValue)
-    {
-        JSC::VM& vm = exec.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        indexedValue = jsValue.toUInt32(&exec);
-        return !scope.exception();
-    }
-};
-
-template<> struct NativeValueTraits<float> {
-    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, float& indexedValue)
-    {
-        JSC::VM& vm = exec.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        indexedValue = jsValue.toFloat(&exec);
-        return !scope.exception();
-    }
-};
-
-template<> struct NativeValueTraits<double> {
-    static inline bool nativeValue(JSC::ExecState& exec, JSC::JSValue jsValue, double& indexedValue)
-    {
-        JSC::VM& vm = exec.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        indexedValue = jsValue.toNumber(&exec);
-        return !scope.exception();
-    }
-};
 
 template<typename T, typename JST> inline Vector<Ref<T>> toRefNativeArray(JSC::ExecState& state, JSC::JSValue value)
 {
@@ -897,11 +779,6 @@ template<JSC::NativeFunction nativeFunction, int length> JSC::EncodedJSValue non
     return JSC::JSValue::encode(JSC::JSFunction::create(exec->vm(), exec->lexicalGlobalObject(), length, propertyName.publicName(), nativeFunction));
 }
 
-template<typename T> inline JSC::JSValue toNullableJSNumber(Optional<T> optionalNumber)
-{
-    return optionalNumber ? JSC::jsNumber(optionalNumber.value()) : JSC::jsNull();
-}
-
 ALWAYS_INLINE void propagateException(JSC::ExecState& state, JSC::ThrowScope& throwScope, Exception&& exception)
 {
     if (throwScope.exception())
@@ -931,24 +808,6 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobal
     return toJS(&state, &globalObject, value.releaseReturnValue());
 }
 
-template<typename T> inline JSC::JSValue toJSArray(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return jsArray(&state, &globalObject, value.releaseReturnValue());
-}
-
-inline JSC::JSValue toJSBoolean(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<bool>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return JSC::jsBoolean(value.releaseReturnValue());
-}
-
 template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
 {
     if (UNLIKELY(value.hasException())) {
@@ -965,24 +824,6 @@ inline JSC::JSValue toJSNullableString(JSC::ExecState& state, JSC::ThrowScope& t
         return { };
     }
     return jsStringOrNull(&state, value.releaseReturnValue());
-}
-
-template<typename T> inline JSC::JSValue toJSNumber(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<T>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return JSC::jsNumber(value.releaseReturnValue());
-}
-
-inline JSC::JSValue toJSString(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<String>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return JSC::jsStringWithCache(&state, value.releaseReturnValue());
 }
 
 } // namespace WebCore

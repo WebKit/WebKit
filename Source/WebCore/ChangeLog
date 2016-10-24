@@ -1,3 +1,156 @@
+2016-10-22  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add IDLType based toJS conversion
+        https://bugs.webkit.org/show_bug.cgi?id=163861
+
+        Reviewed by Darin Adler.
+
+        Adds toJS<IDLType>() functions to be the new way of converting
+        from implementation types to JS types. These are implemented via
+        a similar mechanism to the convert<IDL>() functions, though specializations
+        of a JSConverter struct (rather than the Converter structs). This allows
+        us to support arbitrarily complex aggregate types easily (e.g. sequence<(Node or DOMString?)>).
+
+        * Modules/geolocation/Geoposition.idl:
+        * dom/Event.idl:
+        Add typedef for DOMTimeStamp. Eventually, our IDLParser should do this for us, but
+        for now it allows us to simplify the type system.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::JSValueTraits::arrayJSValue): Deleted.
+        (WebCore::JSValueTraits<String>::arrayJSValue): Deleted.
+        (WebCore::JSValueTraits<double>::arrayJSValue): Deleted.
+        (WebCore::JSValueTraits<float>::arrayJSValue): Deleted.
+        (WebCore::jsArray): Deleted.
+        (WebCore::jsFrozenArray): Deleted.
+        (WebCore::NativeValueTraits<String>::nativeValue): Deleted.
+        (WebCore::NativeValueTraits<unsigned>::nativeValue): Deleted.
+        (WebCore::NativeValueTraits<float>::nativeValue): Deleted.
+        (WebCore::NativeValueTraits<double>::nativeValue): Deleted.
+        (WebCore::toNullableJSNumber): Deleted.
+        (WebCore::toJSArray): Deleted.
+        (WebCore::toJSBoolean): Deleted.
+        (WebCore::toJSNumber): Deleted.
+        (WebCore::toJSString): Deleted.
+        Remove many now-unneeded conversion functions.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::toJS):
+        Add 5 primary toJS functions which take combinations of the following
+        arguments: ExecState, JSDOMGlobalObject, ThrowScope.  All take the value 
+        to be converted as well, except in the case of the throwScope ones, where
+        they take the value in an ExceptionOr<>.
+
+        To simplify the implementations of the JSConverter specializations, avoiding
+        the need for each one to implement their conversion up to 3 times (one for just
+        the value, one for the value and the ExecState, and one for the value, the ExecState
+        and the global object), each JSConverter instead specifies whether it's converter
+        needs an ExecState or global object via a static constexpr. We then use the 
+        JSConverterOverloader template, to call the correct function. This can probably be
+        improved in the future, by inferring the number of arguments needed via SFINAE, but
+        this seemed like a more straightforward first cut.
+
+        (WebCore::JSConverter<IDLNullable<T>>::convert):
+        (WebCore::JSConverter<IDLBoolean>::convert):
+        (WebCore::JSConverter<IDLInterface<T>>::convert):
+        (WebCore::JSConverter<IDLAny>::convert):
+        (WebCore::JSConverter<IDLByte>::convert):
+        (WebCore::JSConverter<IDLOctet>::convert):
+        (WebCore::JSConverter<IDLShort>::convert):
+        (WebCore::JSConverter<IDLUnsignedShort>::convert):
+        (WebCore::JSConverter<IDLLong>::convert):
+        (WebCore::JSConverter<IDLUnsignedLong>::convert):
+        (WebCore::JSConverter<IDLLongLong>::convert):
+        (WebCore::JSConverter<IDLUnsignedLongLong>::convert):
+        (WebCore::JSConverter<IDLFloat>::convert):
+        (WebCore::JSConverter<IDLUnrestrictedFloat>::convert):
+        (WebCore::JSConverter<IDLDouble>::convert):
+        (WebCore::JSConverter<IDLUnrestrictedDouble>::convert):
+        (WebCore::JSConverter<IDLDOMString>::convert):
+        (WebCore::JSConverter<IDLUSVString>::convert):
+        (WebCore::JSConverter<IDLSequence<T>>::convert):
+        (WebCore::JSConverter<IDLFrozenArray<T>>::convert):
+        (WebCore::JSConverter<IDLEnumeration<T>>::convert):
+        (WebCore::JSConverter<IDLUnion<T...>>::convert):
+        There is slightly more duplication than I would have liked, for instance we have a
+        specialization for each numeric type, even though they are all the same, but that is
+        something that can be improved going forward.
+
+        (WebCore::Converter<IDLUnion<T...>>::convert)
+        Fix the normal IDLUnion converter to work with boolean types. This was caught by the
+        test case I added via TypeConversions.idl.
+        
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertySlotDelegate):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        * bindings/js/JSDataTransferCustom.cpp:
+        (WebCore::JSDataTransfer::types):
+        * bindings/js/JSMediaStreamTrackCustom.cpp:
+        (WebCore::JSMediaStreamTrack::getCapabilities):
+        * bindings/js/JSMutationCallback.cpp:
+        (WebCore::JSMutationCallback::call):
+        * bindings/js/JSSVGLengthCustom.cpp:
+        (WebCore::JSSVGLength::value):
+        Switch to use new toJS<> functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddStringifierOperationIfNeeded):
+        Fix stringifier function signature to contain an idlType.
+
+        (GenerateEnumerationsHeaderContent):
+        Remove now unnecessary JSValueTraits specializations.
+
+        (JSValueToNativeIsHandledByDOMConvert):
+        Renamed from IsHandledByDOMConvert, since that name is now ambiguous.
+
+        (JSValueToNative):
+        Update for new name of IsHandledByDOMConvert.
+
+        (NativeToJSValueIsHandledByDOMConvert):
+        Predicate guarding what types currently work with the new conversion system.
+
+        (NativeToJSValueDOMConvertNeedsState):
+        Predicate for determining if the ExecState is needed in the conversion function.
+
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Predicate for determining if the global object is needed in the conversion function.
+
+        (NativeToJSValue):
+        Move things around a little bit and start converting use the new toJS<> when possible.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseAttributeOrOperationRest):
+        Fix a missing place where were not setting the idlType.
+ 
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNondeterministic.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSattribute.cpp:
+        Update test results.
+
+        * testing/TypeConversions.h:
+        (WebCore::TypeConversions::testUnion):
+        (WebCore::TypeConversions::setTestUnion):
+        (WebCore::TypeConversions::typeConversionsDictionarySequenceValue):
+        (WebCore::TypeConversions::typeConversionsDictionaryUnionValue):
+        * testing/TypeConversions.idl:
+        Add a testUnion attribute, now that we can return unions to JS.
+
 2016-10-23  Zalan Bujtas  <zalan@apple.com>
 
         Unreviewed, rolling out r207727.

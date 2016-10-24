@@ -31,14 +31,12 @@
 
 namespace WebCore {
 
+// Conversion from JSValue -> Implementation
 template<typename T> struct Converter;
 
 template<typename T, typename U = T> using EnableIfIntegralType = typename std::enable_if<IsIDLInteger<T>::value, typename Converter<U>::ReturnType>::type;
 template<typename T, typename U = T> using EnableIfNotIntegralType = typename std::enable_if<!IsIDLInteger<T>::value, typename Converter<U>::ReturnType>::type;
-
 template<typename T> EnableIfNotIntegralType<T> convert(JSC::ExecState&, JSC::JSValue);
-
-// Specialization for integer types, allowing passing of a conversion flag.
 template<typename T> EnableIfIntegralType<T> convert(JSC::ExecState&, JSC::JSValue, IntegerConversionConfiguration = NormalConversion);
 
 // Specialized by generated code for IDL dictionary conversion.
@@ -48,8 +46,6 @@ template<typename T> T convertDictionary(JSC::ExecState&, JSC::JSValue);
 template<typename T> Optional<T> parseEnumeration(JSC::ExecState&, JSC::JSValue);
 template<typename T> T convertEnumeration(JSC::ExecState&, JSC::JSValue);
 template<typename T> const char* expectedEnumerationValues();
-
-// This is where the implementation of the things declared above begins:
 
 template<typename T> inline EnableIfNotIntegralType<T> convert(JSC::ExecState& state, JSC::JSValue value)
 {
@@ -61,11 +57,95 @@ template<typename T> inline EnableIfIntegralType<T> convert(JSC::ExecState& stat
     return Converter<T>::convert(state, value, configuration);
 }
 
-template<typename T> struct DefaultConverter {
-    using ReturnType = typename T::ImplementationType;
+
+// Conversion from Implementation -> JSValue
+template<typename T> struct JSConverter;
+
+template<typename T, typename U> inline JSC::JSValue toJS(U&&);
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, U&&);
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, U&&);
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<U>&&);
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<U>&&);
+
+// Specialized by generated code for IDL enumeration conversion.
+template<typename T> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, T);
+
+
+template<typename T, bool needsState = JSConverter<T>::needsState, bool needsGlobalObject = JSConverter<T>::needsGlobalObject>
+struct JSConverterOverloader;
+
+template<typename T>
+struct JSConverterOverloader<T, true, true> {
+    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+    {
+        return JSConverter<T>::convert(state, globalObject, std::forward<U>(value));
+    }
 };
 
-template<typename T> struct Converter : DefaultConverter<T> {
+template<typename T>
+struct JSConverterOverloader<T, true, false> {
+    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, U&& value)
+    {
+        return JSConverter<T>::convert(state, std::forward<U>(value));
+    }
+
+    template<typename U> static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject&, U&& value)
+    {
+        return JSConverter<T>::convert(state, std::forward<U>(value));
+    }
+};
+
+template<typename T>
+struct JSConverterOverloader<T, false, false> {
+    template<typename U> static JSC::JSValue convert(JSC::ExecState&, U&& value)
+    {
+        return JSConverter<T>::convert(std::forward<U>(value));
+    }
+
+    template<typename U> static JSC::JSValue convert(JSC::ExecState&, JSDOMGlobalObject&, U&& value)
+    {
+        return JSConverter<T>::convert(std::forward<U>(value));
+    }
+};
+
+template<typename T, typename U> inline JSC::JSValue toJS(U&& value)
+{
+    return JSConverter<T>::convert(std::forward<U>(value));
+}
+
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, U&& value)
+{
+    return JSConverterOverloader<T>::convert(state, std::forward<U>(value));
+}
+
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, U&& value)
+{
+    return JSConverterOverloader<T>::convert(state, globalObject, std::forward<U>(value));
+}
+
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<U>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+
+    return toJS<T>(state, value.releaseReturnValue());
+}
+
+template<typename T, typename U> inline JSC::JSValue toJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::ThrowScope& throwScope, ExceptionOr<U>&& value)
+{
+    if (UNLIKELY(value.hasException())) {
+        propagateException(state, throwScope, value.releaseException());
+        return { };
+    }
+
+    return toJS<T>(state, globalObject, value.releaseReturnValue());
+}
+
+
+template<typename T> struct DefaultConverter {
+    using ReturnType = typename T::ImplementationType;
 };
 
 // MARK: -
@@ -94,6 +174,35 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
     }
 };
 
+template<typename T> struct JSConverter<IDLNullable<T>> {
+    using ImplementationType = typename IDLNullable<T>::ImplementationType;
+
+    static constexpr bool needsState = JSConverter<T>::needsState;
+    static constexpr bool needsGlobalObject = JSConverter<T>::needsGlobalObject;
+
+    // FIXME: These only work if ImplementationType is an Optional. We should generalize
+    // this so it can work for types that don't use Optional to represent nullness, like
+    // String and interface types.
+    static JSC::JSValue convert(const ImplementationType& value)
+    {
+        if (!value)
+            return JSC::jsNull();
+        return JSConverter<T>::convert(value.value());
+    }
+    static JSC::JSValue convert(JSC::ExecState& state, const ImplementationType& value)
+    {
+        if (!value)
+            return JSC::jsNull();
+        return JSConverter<T>::convert(state, value.value());
+    }
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ImplementationType& value)
+    {
+        if (!value)
+            return JSC::jsNull();
+        return JSConverter<T>::convert(state, globalObject, value.value());
+    }
+};
+
 // MARK: -
 // MARK: Boolean type
 
@@ -101,6 +210,16 @@ template<> struct Converter<IDLBoolean> : DefaultConverter<IDLBoolean> {
     static bool convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return value.toBoolean(&state);
+    }
+};
+
+template<> struct JSConverter<IDLBoolean> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(bool value)
+    {
+        return JSC::jsBoolean(value);
     }
 };
 
@@ -131,6 +250,17 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
         if (!object)
             throwTypeError(&state, scope);
         return object;
+    }
+};
+
+template<typename T> struct JSConverter<IDLInterface<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template<typename U>
+    static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&exec, &globalObject, WTF::getPtr(value));
     }
 };
 
@@ -165,6 +295,16 @@ template<> struct Converter<IDLAny> : DefaultConverter<IDLAny> {
     }
 };
 
+template<> struct JSConverter<IDLAny> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(const JSC::JSValue& value)
+    {
+        return value;
+    }
+};
+
 // MARK: -
 // MARK: Integer types
 
@@ -183,6 +323,18 @@ template<> struct Converter<IDLByte> : DefaultConverter<IDLByte> {
     }
 };
 
+template<> struct JSConverter<IDLByte> {
+    using Type = typename IDLByte::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLOctet> : DefaultConverter<IDLOctet> {
     static uint8_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration = NormalConversion)
     {
@@ -195,6 +347,18 @@ template<> struct Converter<IDLOctet> : DefaultConverter<IDLOctet> {
             return toUInt8Clamp(state, value);
         }
         return toUInt8(state, value);
+    }
+};
+
+template<> struct JSConverter<IDLOctet> {
+    using Type = typename IDLOctet::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
     }
 };
 
@@ -213,6 +377,18 @@ template<> struct Converter<IDLShort> : DefaultConverter<IDLShort> {
     }
 };
 
+template<> struct JSConverter<IDLShort> {
+    using Type = typename IDLShort::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLUnsignedShort> : DefaultConverter<IDLUnsignedShort> {
     static uint16_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration = NormalConversion)
     {
@@ -225,6 +401,18 @@ template<> struct Converter<IDLUnsignedShort> : DefaultConverter<IDLUnsignedShor
             return toUInt16Clamp(state, value);
         }
         return toUInt16(state, value);
+    }
+};
+
+template<> struct JSConverter<IDLUnsignedShort> {
+    using Type = typename IDLUnsignedShort::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
     }
 };
 
@@ -243,6 +431,18 @@ template<> struct Converter<IDLLong> : DefaultConverter<IDLLong> {
     }
 };
 
+template<> struct JSConverter<IDLLong> {
+    using Type = typename IDLLong::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLUnsignedLong> : DefaultConverter<IDLUnsignedLong> {
     static uint32_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration = NormalConversion)
     {
@@ -255,6 +455,18 @@ template<> struct Converter<IDLUnsignedLong> : DefaultConverter<IDLUnsignedLong>
             return toUInt32Clamp(state, value);
         }
         return value.toUInt32(&state);
+    }
+};
+
+template<> struct JSConverter<IDLUnsignedLong> {
+    using Type = typename IDLUnsignedLong::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
     }
 };
 
@@ -276,6 +488,18 @@ template<> struct Converter<IDLLongLong> : DefaultConverter<IDLLongLong> {
     }
 };
 
+template<> struct JSConverter<IDLLongLong> {
+    using Type = typename IDLLongLong::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLUnsignedLongLong> : DefaultConverter<IDLUnsignedLongLong> {
     static uint64_t convert(JSC::ExecState& state, JSC::JSValue value, IntegerConversionConfiguration configuration = NormalConversion)
     {
@@ -294,6 +518,18 @@ template<> struct Converter<IDLUnsignedLongLong> : DefaultConverter<IDLUnsignedL
     }
 };
 
+template<> struct JSConverter<IDLUnsignedLongLong> {
+    using Type = typename IDLUnsignedLongLong::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 // MARK: -
 // MARK: Floating point types
 
@@ -309,10 +545,34 @@ template<> struct Converter<IDLFloat> : DefaultConverter<IDLFloat> {
     }
 };
 
+template<> struct JSConverter<IDLFloat> {
+    using Type = typename IDLFloat::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLUnrestrictedFloat> : DefaultConverter<IDLUnrestrictedFloat> {
     static float convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return static_cast<float>(value.toNumber(&state));
+    }
+};
+
+template<> struct JSConverter<IDLUnrestrictedFloat> {
+    using Type = typename IDLUnrestrictedFloat::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
     }
 };
 
@@ -328,10 +588,40 @@ template<> struct Converter<IDLDouble> : DefaultConverter<IDLDouble> {
     }
 };
 
+template<> struct JSConverter<IDLDouble> {
+    using Type = typename IDLDouble::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+};
+
 template<> struct Converter<IDLUnrestrictedDouble> : DefaultConverter<IDLUnrestrictedDouble> {
     static double convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return value.toNumber(&state);
+    }
+};
+
+template<> struct JSConverter<IDLUnrestrictedDouble> {
+    using Type = typename IDLUnrestrictedDouble::ImplementationType;
+
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(Type value)
+    {
+        return JSC::jsNumber(value);
+    }
+
+    // Add overload for MediaTime.
+    static JSC::JSValue convert(MediaTime value)
+    {
+        return JSC::jsNumber(value.toDouble());
     }
 };
 
@@ -345,10 +635,30 @@ template<> struct Converter<IDLDOMString> : DefaultConverter<IDLDOMString> {
     }
 };
 
+template<> struct JSConverter<IDLDOMString> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSC::jsStringWithCache(&state, value);
+    }
+};
+
 template<> struct Converter<IDLUSVString> : DefaultConverter<IDLUSVString> {
     static String convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return valueToUSVString(&state, value);
+    }
+};
+
+template<> struct JSConverter<IDLUSVString> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, const String& value)
+    {
+        return JSC::jsStringWithCache(&state, value);
     }
 };
 
@@ -406,12 +716,41 @@ template<typename T> struct Converter<IDLSequence<T>> : DefaultConverter<IDLSequ
     }
 };
 
+template<typename T> struct JSConverter<IDLSequence<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template<typename U, size_t inlineCapacity>
+    static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const Vector<U, inlineCapacity>& vector)
+    {
+        JSC::MarkedArgumentBuffer list;
+        for (auto& element : vector)
+            list.append(toJS<T>(exec, globalObject, element));
+        return JSC::constructArray(&exec, nullptr, &globalObject, list);
+    }
+};
+
 template<typename T> struct Converter<IDLFrozenArray<T>> : DefaultConverter<IDLFrozenArray<T>> {
     using ReturnType = typename Detail::ArrayConverter<T>::ReturnType;
 
     static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
     {
         return Detail::ArrayConverter<T>::convert(state, value);
+    }
+};
+
+template<typename T> struct JSConverter<IDLFrozenArray<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template<typename U, size_t inlineCapacity>
+    static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const Vector<U, inlineCapacity>& vector)
+    {
+        JSC::MarkedArgumentBuffer list;
+        for (auto& element : vector)
+            list.append(toJS<T>(exec, globalObject, element));
+        auto* array = JSC::constructArray(&exec, nullptr, &globalObject, list);
+        return JSC::objectConstructorFreeze(&exec, array);
     }
 };
 
@@ -437,6 +776,15 @@ template<typename T> struct Converter<IDLEnumeration<T>> : DefaultConverter<IDLE
     }
 };
 
+template<typename T> struct JSConverter<IDLEnumeration<T>> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& exec, T value)
+    {
+        return convertEnumerationToJS(exec, value);
+    }
+};
 
 // MARK: -
 // MARK: Union type
@@ -480,9 +828,7 @@ namespace Detail {
 template<typename List, bool condition>
 using ConditionalFront = typename Detail::ConditionalFront<List, condition>::type;
 
-template<typename... T>
-struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
-{
+template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>> {
     using Type = IDLUnion<T...>;
     using TypeList = typename Type::TypeList;
     using ReturnType = typename Type::ImplementationType;
@@ -548,14 +894,16 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
                 if (returnValue)
                     return;
                 
-                using ImplementationType = typename WTF::RemoveCVAndReference<decltype(type)>::type::type::RawType;
-                using WrapperType = typename JSDOMWrapperConverterTraits<ImplementationType>::WrapperClass;
+                using Type = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
+                using ImplementationType = typename Type::ImplementationType;
+                using RawType = typename Type::RawType;
+                using WrapperType = typename JSDOMWrapperConverterTraits<RawType>::WrapperClass;
 
                 auto castedValue = WrapperType::toWrapped(value);
                 if (!castedValue)
                     return;
                 
-                returnValue = ReturnType(castedValue);
+                returnValue = ReturnType(ImplementationType(castedValue));
             });
 
             if (returnValue)
@@ -645,6 +993,34 @@ struct Converter<IDLUnion<T...>> : DefaultConverter<IDLUnion<T...>>
         // 18. Throw a TypeError.
         throwTypeError(&state, scope);
         return ReturnType();
+    }
+};
+
+template<typename... T> struct JSConverter<IDLUnion<T...>> {
+    using Type = IDLUnion<T...>;
+    using TypeList = typename Type::TypeList;
+    using ImplementationType = typename Type::ImplementationType;
+
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    using Sequence = brigand::make_sequence<brigand::ptrdiff_t<0>, WTF::variant_size<ImplementationType>::value>;
+
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ImplementationType& variant)
+    {
+        auto index = variant.index();
+
+        Optional<JSC::JSValue> returnValue;
+        brigand::for_each<Sequence>([&](auto&& type) {
+            using I = typename WTF::RemoveCVAndReference<decltype(type)>::type::type;
+            if (I::value == index) {
+                ASSERT(!returnValue);
+                returnValue = toJS<brigand::at<TypeList, I>>(state, globalObject, WTF::get<I::value>(variant));
+            }
+        });
+
+        ASSERT(returnValue);
+        return returnValue.value();
     }
 };
 

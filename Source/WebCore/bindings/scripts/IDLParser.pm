@@ -1283,6 +1283,7 @@ sub parseAttributeOrOperationRest
         my $returnType = $self->parseReturnType();
         my $interface = $self->parseOperationRest($extendedAttributeList);
         if (defined ($interface)) {
+            $interface->signature->idlType($returnType);
             $interface->signature->type($returnType->name);
             $interface->signature->isNullable($returnType->isNullable);
         }

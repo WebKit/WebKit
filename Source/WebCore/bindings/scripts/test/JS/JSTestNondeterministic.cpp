@@ -24,10 +24,9 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "URL.h"
+#include "JSDOMConvert.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 #if ENABLE(WEB_REPLAY)
@@ -171,7 +170,7 @@ static inline JSValue jsTestNondeterministicNondeterministicReadonlyAttrGetter(E
     if (cursor.isCapturing()) {
         int32_t memoizedResult = thisObject.wrapped().nondeterministicReadonlyAttr();
         cursor.appendInput<MemoizedDOMResult<int32_t>>(bindingName.get().string(), memoizedResult, 0);
-        JSValue result = jsNumber(memoizedResult);
+        JSValue result = toJS<IDLLong>(memoizedResult);
         return result;
     }
 
@@ -179,13 +178,13 @@ static inline JSValue jsTestNondeterministicNondeterministicReadonlyAttrGetter(E
         int32_t memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<int32_t>(memoizedResult)) {
-            JSValue result = jsNumber(memoizedResult);
+            JSValue result = toJS<IDLLong>(memoizedResult);
             return result;
         }
     }
 #endif
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.nondeterministicReadonlyAttr());
+    JSValue result = toJS<IDLLong>(impl.nondeterministicReadonlyAttr());
     return result;
 }
 
@@ -207,7 +206,7 @@ static inline JSValue jsTestNondeterministicNondeterministicWriteableAttrGetter(
     if (cursor.isCapturing()) {
         String memoizedResult = thisObject.wrapped().nondeterministicWriteableAttr();
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
-        JSValue result = jsStringWithCache(&state, memoizedResult);
+        JSValue result = toJS<IDLDOMString>(state, memoizedResult);
         return result;
     }
 
@@ -215,13 +214,13 @@ static inline JSValue jsTestNondeterministicNondeterministicWriteableAttrGetter(
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
-            JSValue result = jsStringWithCache(&state, memoizedResult);
+            JSValue result = toJS<IDLDOMString>(state, memoizedResult);
             return result;
         }
     }
 #endif
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.nondeterministicWriteableAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.nondeterministicWriteableAttr());
     return result;
 }
 
@@ -243,7 +242,7 @@ static inline JSValue jsTestNondeterministicNondeterministicExceptionAttrGetter(
     if (cursor.isCapturing()) {
         String memoizedResult = thisObject.wrapped().nondeterministicExceptionAttr();
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
-        JSValue result = jsStringWithCache(&state, memoizedResult);
+        JSValue result = toJS<IDLDOMString>(state, memoizedResult);
         return result;
     }
 
@@ -251,13 +250,13 @@ static inline JSValue jsTestNondeterministicNondeterministicExceptionAttrGetter(
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
-            JSValue result = jsStringWithCache(&state, memoizedResult);
+            JSValue result = toJS<IDLDOMString>(state, memoizedResult);
             return result;
         }
     }
 #endif
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.nondeterministicExceptionAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.nondeterministicExceptionAttr());
     return result;
 }
 
@@ -280,7 +279,7 @@ static inline JSValue jsTestNondeterministicNondeterministicGetterExceptionAttrG
     if (cursor.isCapturing()) {
         String memoizedResult = thisObject.wrapped().nondeterministicGetterExceptionAttr(ec);
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, ec);
-        JSValue result = jsStringWithCache(&state, memoizedResult);
+        JSValue result = toJS<IDLDOMString>(state, memoizedResult);
         setDOMException(&state, throwScope, ec);
         return result;
     }
@@ -289,14 +288,14 @@ static inline JSValue jsTestNondeterministicNondeterministicGetterExceptionAttrG
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
-            JSValue result = jsStringWithCache(&state, memoizedResult);
+            JSValue result = toJS<IDLDOMString>(state, memoizedResult);
             setDOMException(&state, throwScope, input->exceptionCode());
             return result;
         }
     }
 #endif
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.nondeterministicGetterExceptionAttr(ec));
+    JSValue result = toJS<IDLDOMString>(state, impl.nondeterministicGetterExceptionAttr(ec));
     setDOMException(&state, throwScope, ec);
     return result;
 }
@@ -319,7 +318,7 @@ static inline JSValue jsTestNondeterministicNondeterministicSetterExceptionAttrG
     if (cursor.isCapturing()) {
         String memoizedResult = thisObject.wrapped().nondeterministicSetterExceptionAttr();
         cursor.appendInput<MemoizedDOMResult<String>>(bindingName.get().string(), memoizedResult, 0);
-        JSValue result = jsStringWithCache(&state, memoizedResult);
+        JSValue result = toJS<IDLDOMString>(state, memoizedResult);
         return result;
     }
 
@@ -327,13 +326,13 @@ static inline JSValue jsTestNondeterministicNondeterministicSetterExceptionAttrG
         String memoizedResult;
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         if (input && input->convertTo<String>(memoizedResult)) {
-            JSValue result = jsStringWithCache(&state, memoizedResult);
+            JSValue result = toJS<IDLDOMString>(state, memoizedResult);
             return result;
         }
     }
 #endif
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.nondeterministicSetterExceptionAttr());
+    JSValue result = toJS<IDLDOMString>(state, impl.nondeterministicSetterExceptionAttr());
     return result;
 }
 
@@ -463,18 +462,18 @@ static inline JSC::EncodedJSValue jsTestNondeterministicPrototypeFunctionNondete
     if (cursor.isCapturing()) {
         bool memoizedResult = impl.nondeterministicZeroArgFunction();
         cursor.appendInput<MemoizedDOMResult<bool>>(bindingName.get().string(), memoizedResult, 0);
-        result = jsBoolean(memoizedResult);
+        result = toJS<IDLBoolean>(memoizedResult);
     } else if (cursor.isReplaying()) {
         MemoizedDOMResultBase* input = cursor.fetchInput<MemoizedDOMResultBase>();
         bool memoizedResult;
         if (input && input->convertTo<bool>(memoizedResult)) {
-            result = jsBoolean(memoizedResult);
+            result = toJS<IDLBoolean>(memoizedResult);
         } else
-            result = jsBoolean(impl.nondeterministicZeroArgFunction());
+            result = toJS<IDLBoolean>(impl.nondeterministicZeroArgFunction());
     } else
-        result = jsBoolean(impl.nondeterministicZeroArgFunction());
+        result = toJS<IDLBoolean>(impl.nondeterministicZeroArgFunction());
 #else
-    result = jsBoolean(impl.nondeterministicZeroArgFunction());
+    result = toJS<IDLBoolean>(impl.nondeterministicZeroArgFunction());
 #endif
     return JSValue::encode(result);
 }

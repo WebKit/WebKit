@@ -26,6 +26,7 @@
 
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSMessagePort.h"
 #include "SerializedScriptValue.h"
 #include <runtime/FunctionPrototype.h>
@@ -200,7 +201,7 @@ static inline JSValue jsTestSerializedScriptValueInterfacePortsGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsArray(&state, thisObject.globalObject(), impl.ports());
+    JSValue result = toJS<IDLSequence<IDLInterface<MessagePort>>>(state, *thisObject.globalObject(), impl.ports());
     return result;
 }
 

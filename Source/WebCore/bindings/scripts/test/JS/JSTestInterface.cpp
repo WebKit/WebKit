@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "TestObj.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>
@@ -40,8 +41,6 @@
 #if ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition22) || ENABLE(Condition23)
 #include "JSNode.h"
 #include "JSTestObj.h"
-#include "URL.h"
-#include <runtime/JSString.h>
 #endif
 
 using namespace JSC;
@@ -421,7 +420,7 @@ EncodedJSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttr(ExecState*
 static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsNumber(TestInterface::implementsStaticReadOnlyAttr());
+    JSValue result = toJS<IDLLong>(TestInterface::implementsStaticReadOnlyAttr());
     return result;
 }
 
@@ -439,7 +438,7 @@ EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, 
 static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsStringWithCache(&state, TestInterface::implementsStaticAttr());
+    JSValue result = toJS<IDLDOMString>(state, TestInterface::implementsStaticAttr());
     return result;
 }
 
@@ -458,7 +457,7 @@ static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.implementsStr1());
+    JSValue result = toJS<IDLDOMString>(state, impl.implementsStr1());
     return result;
 }
 
@@ -477,7 +476,7 @@ static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.implementsStr2());
+    JSValue result = toJS<IDLDOMString>(state, impl.implementsStr2());
     return result;
 }
 
@@ -531,7 +530,7 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecStat
 static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsNumber(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
+    JSValue result = toJS<IDLLong>(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
 }
 
@@ -549,7 +548,7 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state
 static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(ExecState& state)
 {
     UNUSED_PARAM(state);
-    JSValue result = jsStringWithCache(&state, WebCore::TestSupplemental::supplementalStaticAttr());
+    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStaticAttr());
     return result;
 }
 
@@ -568,7 +567,7 @@ static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, WebCore::TestSupplemental::supplementalStr1(impl));
+    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStr1(impl));
     return result;
 }
 
@@ -587,7 +586,7 @@ static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, WebCore::TestSupplemental::supplementalStr2(impl));
+    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStr2(impl));
     return result;
 }
 

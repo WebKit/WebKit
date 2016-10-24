@@ -25,13 +25,12 @@
 #include "JSTestCallback.h"
 
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
-#include "URL.h"
 #include <runtime/JSLock.h>
-#include <runtime/JSString.h>
 #include <runtime/ObjectPrototype.h>
 
 using namespace JSC;
@@ -147,7 +146,7 @@ bool JSTestCallback::callbackWithSerializedScriptValueParam(RefPtr<SerializedScr
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
     args.append(srzParam ? srzParam->deserialize(*state, m_data->globalObject()) : jsNull());
-    args.append(jsStringWithCache(state, strArg));
+    args.append(toJS<IDLDOMString>(*state, strArg));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithSerializedScriptValueParam"), returnedException);
@@ -187,7 +186,7 @@ bool JSTestCallback::callbackWithBoolean(bool boolParam)
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(jsBoolean(boolParam));
+    args.append(toJS<IDLBoolean>(boolParam));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(state, "callbackWithBoolean"), returnedException);
@@ -207,7 +206,7 @@ bool JSTestCallback::callbackRequiresThisToPass(int32_t longParam, TestNode* tes
 
     ExecState* state = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(jsNumber(longParam));
+    args.append(toJS<IDLLong>(longParam));
     args.append(toJS(state, m_data->globalObject(), testNodeParam));
 
     NakedPtr<JSC::Exception> returnedException;

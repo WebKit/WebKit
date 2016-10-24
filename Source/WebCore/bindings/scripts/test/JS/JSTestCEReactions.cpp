@@ -26,11 +26,10 @@
 #include "HTMLNames.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSTestCEReactionsStringifier.h"
-#include "URL.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
-#include <runtime/JSString.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;
@@ -158,7 +157,7 @@ static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithCEReactions());
+    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithCEReactions());
     return result;
 }
 
@@ -174,7 +173,7 @@ static inline JSValue jsTestCEReactionsReflectAttributeWithCEReactionsGetter(Exe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringWithCache(&state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr));
+    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr));
     return result;
 }
 

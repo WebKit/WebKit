@@ -24,6 +24,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "JSNode.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
@@ -164,7 +165,7 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, 
     if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
-    JSValue result = jsNumber(impl.excitingAttr());
+    JSValue result = toJS<IDLLong>(impl.excitingAttr());
     return result;
 }
 

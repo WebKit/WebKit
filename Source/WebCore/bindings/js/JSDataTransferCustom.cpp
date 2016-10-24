@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSDataTransfer.h"
 
-#include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 
 using namespace JSC;
 
@@ -38,7 +38,7 @@ namespace WebCore {
 JSValue JSDataTransfer::types(ExecState& state) const
 {
     Vector<String> types = wrapped().types();
-    return types.isEmpty() ? jsNull() : jsArray(&state, globalObject(), types);
+    return types.isEmpty() ? jsNull() : toJS<IDLSequence<IDLDOMString>>(state, *globalObject(), types);
 }
 
 } // namespace WebCore

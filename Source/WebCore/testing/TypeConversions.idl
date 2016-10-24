@@ -52,12 +52,14 @@ enum UnionType { "node", "sequence", "dictionary" };
 
     attribute DOMString testString;
     attribute USVString testUSVString;
+
+    attribute (DOMString or long or boolean or Node or sequence<long>) testUnion;
     
     void setTypeConversionsDictionary(TypeConversionsDictionary d);
     readonly attribute long typeConversionsDictionaryLongValue;
     readonly attribute DOMString typeConversionsDictionaryStringValue;
     readonly attribute sequence<DOMString> typeConversionsDictionarySequenceValue;
-    readonly attribute UnionType typeConversionsDictionaryUnionType; 
+    readonly attribute UnionType typeConversionsDictionaryUnionType;
 };
 
 dictionary TypeConversionsOtherDictionary {
