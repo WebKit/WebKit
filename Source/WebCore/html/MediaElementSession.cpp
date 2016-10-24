@@ -218,11 +218,6 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
 
 bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose) const
 {
-    if (purpose == PlaybackControlsPurpose::NowPlaying && !pageAllowsNowPlayingControls()) {
-        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Now playing not allowed in foreground tab");
-        return false;
-    }
-
     if (m_element.isFullscreen()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is fullscreen");
         return true;
@@ -733,7 +728,7 @@ bool MediaElementSession::updateIsMainContent() const
     return m_isMainContent;
 }
 
-bool MediaElementSession::pageAllowsNowPlayingControls() const
+bool MediaElementSession::allowsNowPlayingControlsVisibility() const
 {
     auto page = m_element.document().page();
     return page && !page->isVisibleAndActive();

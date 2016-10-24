@@ -1,5 +1,26 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207220. rdar://problem/28811939
+
+    2016-10-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Now playing media sessions are always cleared for the active foreground tab
+            https://bugs.webkit.org/show_bug.cgi?id=163310
+            <rdar://problem/28573301>
+
+            Reviewed by Jer Noble.
+
+            Tweaks existing unit tests to verify that media session info persists when backgrounding and foregrounding, but
+            that media session info is correctly cleared out if the media session itself is no longer eligible for Now
+            Playing (not accounting for foreground/active state). Previously, these tests were verifying that we would
+            always clear out the information, but this is incorrect, and is the source of the problem.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/NowPlayingControlsTests.mm:
+            (-[NowPlayingTestWebView waitForNowPlayingInfoToChange]):
+            (TestWebKitAPI::TEST):
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206771. rdar://problem/28811939
 
     2016-10-04  Wenson Hsieh  <wenson_hsieh@apple.com>

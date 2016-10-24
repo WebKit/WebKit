@@ -62,6 +62,28 @@
     }
 }
 
+- (void)waitForNowPlayingInfoToChange
+{
+    BOOL initialHasActiveNowPlayingSession = self.hasActiveNowPlayingSession;
+    NSString *initialTitle = self.lastUpdatedTitle;
+    double initialDuration = self.lastUpdatedDuration;
+    double initialElapsedTime = self.lastUpdatedElapsedTime;
+    while ([[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]]) {
+        BOOL currentlyHasActiveNowPlayingSession = self.hasActiveNowPlayingSession;
+        if (initialHasActiveNowPlayingSession != currentlyHasActiveNowPlayingSession)
+            break;
+
+        if (initialDuration != self.lastUpdatedDuration)
+            break;
+
+        if (initialElapsedTime != self.lastUpdatedElapsedTime)
+            break;
+
+        if (![initialTitle isEqualToString:self.lastUpdatedTitle] && self.lastUpdatedTitle != initialTitle)
+            break;
+    }
+}
+
 - (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime
 {
     _hasActiveNowPlayingSession = hasActiveSession;
@@ -87,9 +109,9 @@ TEST(NowPlayingControlsTests, NowPlayingControlsDoNotShowForForegroundPage)
     [webView.window makeKeyWindow];
     [webView expectHasActiveNowPlayingSession:NO];
 
-    ASSERT_STREQ("", webView.lastUpdatedTitle.UTF8String);
-    ASSERT_TRUE(isnan(webView.lastUpdatedDuration));
-    ASSERT_TRUE(isnan(webView.lastUpdatedElapsedTime));
+    ASSERT_STREQ("foo", webView.lastUpdatedTitle.UTF8String);
+    ASSERT_EQ(10, webView.lastUpdatedDuration);
+    ASSERT_GE(webView.lastUpdatedElapsedTime, 0);
 }
 
 TEST(NowPlayingControlsTests, NowPlayingControlsShowForBackgroundPage)
@@ -109,7 +131,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsShowForBackgroundPage)
     ASSERT_GE(webView.lastUpdatedElapsedTime, 0);
 }
 
-TEST(NowPlayingControlsTests, NowPlayingControlsHideAfterShowingClearsInfo)
+TEST(NowPlayingControlsTests, NowPlayingControlsHideAfterShowingKeepsSessionActive)
 {
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
     configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
@@ -127,9 +149,9 @@ TEST(NowPlayingControlsTests, NowPlayingControlsHideAfterShowingClearsInfo)
 
     [webView expectHasActiveNowPlayingSession:NO];
 
-    ASSERT_STREQ("", webView.lastUpdatedTitle.UTF8String);
-    ASSERT_TRUE(isnan(webView.lastUpdatedDuration));
-    ASSERT_TRUE(isnan(webView.lastUpdatedElapsedTime));
+    ASSERT_STREQ("foo", webView.lastUpdatedTitle.UTF8String);
+    ASSERT_EQ(10, webView.lastUpdatedDuration);
+    ASSERT_GE(webView.lastUpdatedElapsedTime, 0);
 }
 
 TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerValid)
@@ -144,7 +166,7 @@ TEST(NowPlayingControlsTests, NowPlayingControlsClearInfoAfterSessionIsNoLongerV
     [webView.window setIsVisible:NO];
     [webView.window resignKeyWindow];
 
-    [webView expectHasActiveNowPlayingSession:NO];
+    [webView waitForNowPlayingInfoToChange];
 
     ASSERT_STREQ("", webView.lastUpdatedTitle.UTF8String);
     ASSERT_TRUE(isnan(webView.lastUpdatedDuration));

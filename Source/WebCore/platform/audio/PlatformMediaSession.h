@@ -168,6 +168,8 @@ public:
     virtual void resetPlaybackSessionState() { }
     String sourceApplicationIdentifier() const;
 
+    virtual bool allowsNowPlayingControlsVisibility() const { return false; }
+
 protected:
     PlatformMediaSessionClient& client() const { return m_client; }
 

@@ -124,6 +124,7 @@ public:
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
     double mostRecentUserInteractionTime() const;
 
+    bool allowsNowPlayingControlsVisibility() const override;
 private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -139,8 +140,6 @@ private:
 #endif
     bool updateIsMainContent() const;
     void mainContentCheckTimerFired();
-
-    bool pageAllowsNowPlayingControls() const;
 
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
