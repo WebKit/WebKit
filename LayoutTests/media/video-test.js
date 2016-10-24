@@ -4,6 +4,7 @@ var mediaElement = document; // If not set, an event from any element will trigg
 var consoleElement = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
 var Failed = false;
+var Success = true;
 
 var track = null; // Current TextTrack being tested.
 var cues = null; // Current TextTrackCueList being tested.
@@ -266,6 +267,11 @@ function failTest(text)
     endTest();
 }
 
+function passTest(text)
+{
+    logResult(Success, text);
+    endTest();
+}
 
 function logResult(success, text)
 {

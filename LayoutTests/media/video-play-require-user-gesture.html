@@ -9,26 +9,6 @@
             if (window.internals) 
                 window.internals.settings.setVideoPlaybackRequiresUserGesture(true);
 
-            function click()
-            {
-                if (window.eventSender) {
-                    var playCoords;
-                    try {
-                        playCoords = mediaControlsButtonCoordinates(video, "play-button");
-                    } catch (exception) {
-                        failTest(exception.description);
-                        return;
-                    }
-                    var x = playCoords[0];
-                    var y = playCoords[1];
-                     
-                    userGestureInitiated = 1;
-                    eventSender.mouseMoveTo(x, y);
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
-                }
-            }
-
             function playing()
             {
                 if (userGestureInitiated == 0) {
@@ -62,7 +42,13 @@
                 consoleWrite("");
 
                 consoleWrite("* User gesture initiated");
-                click();
+                userGestureInitiated = 1;
+                try {
+                    clickPlayButton(video);
+                } catch (exception) {
+                    failTest(exception.description);
+                    return;
+                }
             }
 
             function start()

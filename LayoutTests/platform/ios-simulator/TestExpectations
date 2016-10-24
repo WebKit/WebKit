@@ -3020,3 +3020,11 @@ platform/ios-simulator/media/video-interruption-suspendunderlock.html [ Skip ]
 
 # System font on iOS 9 cannot be bold and italic.
 fast/text/system-font-weight-italic.html [ Failure ]
+
+# Media tests cannot tap play button on iOS.
+webkit.org/b/163291 media/require-user-gesture-to-load-video.html
+webkit.org/b/163291 media/video-controls-transformed.html [ Failure ]
+webkit.org/b/163291 media/video-controls-visible-audio-only.html [ Failure ]
+webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
+webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
+webkit.org/b/163291 media/video-play-require-user-gesture.html 

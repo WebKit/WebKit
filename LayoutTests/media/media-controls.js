@@ -92,3 +92,18 @@ function textTrackDisplayElement(parentElement, id, cueNumber)
 
     return displayElement;
 }
+
+// FIXME: Make this work for iOS.
+function clickPlayButton(video)
+{
+    if (!window.eventSender)
+        return;
+
+    var playButtonCoordinates = mediaControlsButtonCoordinates(video, "play-button");
+    var x = playButtonCoordinates[0];
+    var y = playButtonCoordinates[1];
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}

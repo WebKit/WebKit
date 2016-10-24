@@ -1,5 +1,35 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207159. rdar://problem/28857481
+
+    2016-10-11  Daniel Bates  <dabates@apple.com>
+
+            [iOS] REGRESSION (r197953): User gesture required to load video in iOS 9-built apps
+            https://bugs.webkit.org/show_bug.cgi?id=163244
+            <rdar://problem/27250015>
+
+            Reviewed by Jer Noble.
+
+            Add tests to ensure that Settings::setRequiresUserGestureToLoadVideo() behaves as expected.
+
+            * media/loadedmetadata-fires-without-user-gesture-when-setRequiresUserGestureToLoadVideo-false-expected.txt: Added.
+            * media/loadedmetadata-fires-without-user-gesture-when-setRequiresUserGestureToLoadVideo-false.html: Added.
+            * media/media-controls.js:
+            (clickPlayButton): Added.
+            * media/require-user-gesture-to-load-video-expected.txt: Added.
+            * media/require-user-gesture-to-load-video.html: Added.
+            * media/video-controls-transformed.html: Write in terms of clickPlayButton().
+            * media/video-controls-visible-audio-only.html: Ditto.
+            * media/video-fullscreeen-only-playback.html: Ditto.
+            * media/video-play-audio-require-user-gesture.html: Ditto.
+            * media/video-play-require-user-gesture.html: Ditto.
+            * media/video-test.js:
+            (passTest): Added.
+            * platform/ios-simulator/TestExpectations: Skip test media/require-user-gesture-to-load-video.html as
+            we need to fix <https://bugs.webkit.org/show_bug.cgi?id=163291> to support tapping the play button on iOS.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r206712. rdar://problem/28216065
 
     2016-10-01  Simon Fraser  <simon.fraser@apple.com>

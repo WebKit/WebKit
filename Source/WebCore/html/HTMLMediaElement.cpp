@@ -522,7 +522,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     if (document.ownerElement() || !document.isMediaDocument()) {
         if (settings && settings->videoPlaybackRequiresUserGesture()) {
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForVideoRateChange);
-            m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
+            if (settings->requiresUserGestureToLoadVideo())
+                m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForLoad);
         }
 
         if (settings && settings->audioPlaybackRequiresUserGesture())

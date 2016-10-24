@@ -169,6 +169,8 @@ static const bool defaultMediaControlsScaleWithPageZoom = true;
 static const bool defaultQuickTimePluginReplacementEnabled = false;
 #endif
 
+static const bool defaultRequiresUserGestureToLoadVideo = true;
+
 static const bool defaultAllowsPictureInPictureMediaPlayback = true;
 
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
