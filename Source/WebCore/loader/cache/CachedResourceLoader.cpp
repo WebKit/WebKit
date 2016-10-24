@@ -550,6 +550,17 @@ bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(con
     return !newRequest.isNull();
 }
 
+static inline bool originsMatch(const CachedResourceRequest& request, const CachedResource& resource)
+{
+    if (request.origin() == resource.origin())
+        return true;
+    if (!request.origin() || !resource.origin())
+        return false;
+    // We use string comparison as this is how they are serialized as HTTP Origin header value.
+    // This is in particular useful for unique origins that are serialized as "null"
+    return request.origin()->toString() == resource.origin()->toString();
+}
+
 bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const CachedResource& resource, const CachedResourceRequest& request)
 {
     // WebKit is not supporting CORS for fonts (https://bugs.webkit.org/show_bug.cgi?id=86817), no need to update the resource before reusing it.
@@ -583,7 +594,7 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         break;
     }
 
-    if (resource.options().mode != request.options().mode || request.resourceRequest().httpOrigin() != resource.resourceRequest().httpOrigin())
+    if (resource.options().mode != request.options().mode || !originsMatch(request, resource))
         return true;
 
     if (resource.options().redirect != request.options().redirect && resource.hasRedirections())
