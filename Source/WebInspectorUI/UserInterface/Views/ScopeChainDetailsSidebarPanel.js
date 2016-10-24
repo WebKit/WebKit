@@ -168,6 +168,10 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 
         let scopeChain = callFrame.mergedScopeChain();
         for (let scope of scopeChain) {
+            // Don't show sections for empty scopes unless it is the local scope, since it has "this".
+            if (scope.empty && scope.type !== WebInspector.ScopeChainNode.Type.Local)
+                continue;
+
             let title = null;
             let extraPropertyDescriptor = null;
             let collapsedByDefault = false;

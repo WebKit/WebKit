@@ -68,6 +68,13 @@ function isSymbol(obj)
     return typeof obj === "symbol";
 }
 
+function isEmptyObject(object)
+{
+    for (let key in object)
+        return false;
+    return true;
+}
+
 var InjectedScript = function()
 {
     this._lastBoundObjectId = 1;
@@ -1335,15 +1342,19 @@ InjectedScript.CallFrameProxy._scopeTypeNames = {
 
 InjectedScript.CallFrameProxy._createScopeJson = function(object, {name, type, location}, groupId)
 {
-    var scope = {
+    let scope = {
         object: injectedScript._wrapObject(object, groupId),
         type: InjectedScript.CallFrameProxy._scopeTypeNames[type],
     };
 
     if (name)
         scope.name = name;
+
     if (location)
         scope.location = location;
+
+    if (isEmptyObject(object))
+        scope.empty = true;
 
     return scope;
 }

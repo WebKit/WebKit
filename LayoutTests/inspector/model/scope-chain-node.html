@@ -45,10 +45,17 @@ function test()
             InspectorTest.log("SCOPE CHAIN:");
             for (let {scope, propertyDescriptors} of results) {
                 InspectorTest.log(`    ${scopeTypeToString(scope.type)}`);
-                if (scope.type !== WebInspector.ScopeChainNode.Type.Global) {
-                    for (let descriptor of propertyDescriptors)
-                        InspectorTest.log(`      - ${descriptor.name}: ${firstLine(descriptor.value.description)}`);
+                if (scope.type === WebInspector.ScopeChainNode.Type.Global)
+                    continue;
+
+                if (!propertyDescriptors.length) {
+                    InspectorTest.assert(scope.empty, "Scope should be empty if there are no property descriptors.");
+                    InspectorTest.log("      (empty)");
+                    continue;
                 }
+
+                for (let descriptor of propertyDescriptors)
+                    InspectorTest.log(`      - ${descriptor.name}: ${firstLine(descriptor.value.description)}`);
             }
             return results;
         });

@@ -55,9 +55,11 @@ SCOPE CHAIN:
 -- Running test case: WebInspector.ScopeChainNode.FunctionNameInFunctionExpression
 SCOPE CHAIN:
     Closure
+      (empty)
     FunctionName
       - functionName: function functionName() {
     Closure
+      (empty)
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
@@ -65,9 +67,11 @@ SCOPE CHAIN:
 -- Running test case: WebInspector.ScopeChainNode.FunctionNameInClassMethod
 SCOPE CHAIN:
     Closure
+      (empty)
     Block
       - MyClass: class MyClass
     Closure
+      (empty)
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
@@ -101,28 +105,33 @@ SCOPE CHAIN:
     Closure
       - a: 1
     Closure
+      (empty)
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
 PASS: Pause #17 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
+      (empty)
     Block
       - MyClass: class MyClass
     Closure
       - a: 1
     Closure
+      (empty)
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global
 PASS: Pause #18 - Contains a Block scope.
 SCOPE CHAIN:
     Closure
+      (empty)
     Block
       - MyClassWithStaticMethod: class MyClassWithStaticMethod
     Closure
       - a: 1
     Closure
+      (empty)
     GlobalLexicalEnvironment
       - lexicalGlobalVariable: 2
     Global

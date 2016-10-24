@@ -686,8 +686,8 @@ WebInspector.DebuggerManager = class DebuggerManager extends WebInspector.Object
             console.error("Unknown type: " + payload.type);
         }
 
-        var object = WebInspector.RemoteObject.fromPayload(payload.object);
-        return new WebInspector.ScopeChainNode(type, [object], payload.name, payload.location);
+        let object = WebInspector.RemoteObject.fromPayload(payload.object);
+        return new WebInspector.ScopeChainNode(type, [object], payload.name, payload.location, payload.empty);
     }
 
     _pauseReasonFromPayload(payload)

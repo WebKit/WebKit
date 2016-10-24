@@ -25,7 +25,7 @@
 
 WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
 {
-    constructor(type, objects, name, location)
+    constructor(type, objects, name, location, empty)
     {
         super();
 
@@ -39,6 +39,7 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
         this._objects = objects || [];
         this._name = name || "";
         this._location = location || null;
+        this._empty = empty || false;
     }
 
     // Public
@@ -47,6 +48,7 @@ WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
     get objects() { return this._objects; }
     get name() { return this._name; }
     get location() { return this._location; }
+    get empty() { return this._empty; }
 
     get hash()
     {

@@ -1,3 +1,18 @@
+2016-10-24  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Scope chain shouldn't show empty Closure sections
+        https://bugs.webkit.org/show_bug.cgi?id=152348
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InjectedScriptSource.js:
+        (isEmptyObject):
+        (InjectedScript.CallFrameProxy._createScopeJson):
+        If the scope object has no properties, set empty to true.
+
+        * inspector/protocol/Debugger.json:
+        Added empty property to Scope type.
+
 2016-10-24  Keith Miller  <keith_miller@apple.com>
 
         Wasm should support floating point operations.
