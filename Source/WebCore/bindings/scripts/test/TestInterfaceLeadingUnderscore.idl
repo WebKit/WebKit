@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary formstrArg, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
+// Identifiers with a leading underscore, which should be removed.
 [
-    ActiveDOMObject,
-    CustomNamedSetter,
-    Conditional=Condition1|Condition2,
-    ConstructorCallWith=ScriptExecutionContext,
-    Constructor(DOMString str1, optional DOMString str2 = "defaultString"),
-    ConstructorMayThrowLegacyException,
-    ExportMacro=WEBCORE_EXPORT,
     ImplementationLacksVTable
-] interface TestInterface {
+] interface _TestInterfaceLeadingUnderscore {
+   readonly attribute DOMString _readonly;
 };
-
-TestInterface implements TestImplements;

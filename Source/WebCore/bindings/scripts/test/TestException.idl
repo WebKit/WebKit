@@ -25,11 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 exception TestException {
    readonly attribute DOMString name;
-};
-
-// Identifiers with a leading underscore, which should be removed.
-exception _attribute {
-   readonly attribute DOMString _readonly;
 };

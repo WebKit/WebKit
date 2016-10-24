@@ -1,3 +1,68 @@
+2016-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CodeGenerator] Only allow a single interface or standalone dictionary per WebIDL file
+        https://bugs.webkit.org/show_bug.cgi?id=163889
+
+        Reviewed by Chris Dumez.
+
+        Assert that there's only one interface or standalone dictionary
+        per WebIDL input file, and exit from the generator otherwise.
+
+        This avoids potential linking issues where multiple enumeration
+        and dictionary bindings code can be generated if the source
+        WebIDL for them is specified in a file that contains multiple
+        interfaces or standalone dictionaries.
+
+        Additionally, the generator now also exits if it fails to
+        generate code for any interface of standalone dictionary. This
+        should avoid processing WebIDL files that are empty in
+        substance.
+
+        TestException.idl and TestInterface.idl files have their second
+        interfaces removed. In place of those a new testing IDL file is
+        added, TestInterfaceLeadingUnderscore.idl. Like the two removed
+        interfaces, it tests that the leading underscode in the
+        identifier is removed by the generator.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp: Added.
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::create):
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::createStructure):
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::JSTestInterfaceLeadingUnderscorePrototype):
+        (WebCore::JSTestInterfaceLeadingUnderscoreConstructor::prototypeForStructure):
+        (WebCore::JSTestInterfaceLeadingUnderscoreConstructor::initializeProperties):
+        (WebCore::JSTestInterfaceLeadingUnderscorePrototype::finishCreation):
+        (WebCore::JSTestInterfaceLeadingUnderscore::JSTestInterfaceLeadingUnderscore):
+        (WebCore::JSTestInterfaceLeadingUnderscore::createPrototype):
+        (WebCore::JSTestInterfaceLeadingUnderscore::prototype):
+        (WebCore::JSTestInterfaceLeadingUnderscore::destroy):
+        (WebCore::BindingCaller<JSTestInterfaceLeadingUnderscore>::castForAttribute):
+        (WebCore::jsTestInterfaceLeadingUnderscoreReadonly):
+        (WebCore::jsTestInterfaceLeadingUnderscoreReadonlyGetter):
+        (WebCore::jsTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::setJSTestInterfaceLeadingUnderscoreConstructor):
+        (WebCore::JSTestInterfaceLeadingUnderscore::getConstructor):
+        (WebCore::JSTestInterfaceLeadingUnderscoreOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestInterfaceLeadingUnderscoreOwner::finalize):
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        (WebCore::JSTestInterfaceLeadingUnderscore::toWrapped):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.h: Renamed from Source/WebCore/bindings/scripts/test/JS/JSreadonly.h.
+        (WebCore::JSTestInterfaceLeadingUnderscore::create):
+        (WebCore::JSTestInterfaceLeadingUnderscore::createStructure):
+        (WebCore::JSTestInterfaceLeadingUnderscore::finishCreation):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperKey):
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * bindings/scripts/test/JS/JSattribute.cpp: Removed.
+        * bindings/scripts/test/JS/JSattribute.h: Removed.
+        * bindings/scripts/test/JS/JSreadonly.cpp: Removed.
+        * bindings/scripts/test/TestException.idl:
+        * bindings/scripts/test/TestInterface.idl:
+        * bindings/scripts/test/TestInterfaceLeadingUnderscore.idl: Copied from Source/WebCore/bindings/scripts/test/TestException.idl.
+
 2016-10-21  Alex Christensen  <achristensen@webkit.org>
 
         URL::port should return Optional<uint16_t>

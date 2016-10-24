@@ -205,21 +205,28 @@ sub ProcessDocument
     }
 
     my $interfaces = $useDocument->interfaces;
-    foreach my $interface (@$interfaces) {
+    if (@$interfaces) {
+        die "Multiple interfaces per document are not supported" if @$interfaces > 1;
+
+        my $interface = @$interfaces[0];
         print "Generating $useGenerator bindings code for IDL interface \"" . $interface->name . "\"...\n" if $verbose;
-        # FIXME: Repeating each enumeration and dictionaries for every interface would not work if we actually were using
-        # multiple interfaces per file, but we aren't, so this is fine for now.
         $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
         $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
+        return;
     }
 
-    # It is possible to have dictionaries in an IDL file without any interface.
-    unless (@$interfaces) {
-        foreach my $dictionary (@{$useDocument->dictionaries}) {
-            $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
-            $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
-        }
+    my $dictionaries = $useDocument->dictionaries;
+    if (@$dictionaries) {
+        die "Multiple standalone dictionaries per document are not supported" if @$dictionaries > 1;
+
+        my $dictionary = @$dictionaries[0];
+        print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->name . "\"...\n" if $verbose;
+        $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
+        $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
+        return;
     }
+
+    die "Processing document " . $useDocument->fileName . " did not generate anything"
 }
 
 sub FileNamePrefix

@@ -21,25 +21,24 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "attribute.h"
-#include <runtime/ErrorPrototype.h>
+#include "TestInterfaceLeadingUnderscore.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSattribute : public JSDOMWrapper<attribute> {
+class JSTestInterfaceLeadingUnderscore : public JSDOMWrapper<TestInterfaceLeadingUnderscore> {
 public:
-    using Base = JSDOMWrapper<attribute>;
-    static JSattribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<attribute>&& impl)
+    using Base = JSDOMWrapper<TestInterfaceLeadingUnderscore>;
+    static JSTestInterfaceLeadingUnderscore* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
     {
-        JSattribute* ptr = new (NotNull, JSC::allocateCell<JSattribute>(globalObject->vm().heap)) JSattribute(structure, *globalObject, WTFMove(impl));
+        JSTestInterfaceLeadingUnderscore* ptr = new (NotNull, JSC::allocateCell<JSTestInterfaceLeadingUnderscore>(globalObject->vm().heap)) JSTestInterfaceLeadingUnderscore(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSC::JSGlobalObject*);
     static JSC::JSObject* prototype(JSC::VM&, JSC::JSGlobalObject*);
-    static attribute* toWrapped(JSC::JSValue);
+    static TestInterfaceLeadingUnderscore* toWrapped(JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -50,10 +49,8 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 protected:
-    JSattribute(JSC::Structure*, JSDOMGlobalObject&, Ref<attribute>&&);
+    JSTestInterfaceLeadingUnderscore(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterfaceLeadingUnderscore>&&);
 
     void finishCreation(JSC::VM& vm)
     {
@@ -63,31 +60,31 @@ protected:
 
 };
 
-class JSattributeOwner : public JSC::WeakHandleOwner {
+class JSTestInterfaceLeadingUnderscoreOwner : public JSC::WeakHandleOwner {
 public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, attribute*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestInterfaceLeadingUnderscore*)
 {
-    static NeverDestroyed<JSattributeOwner> owner;
+    static NeverDestroyed<JSTestInterfaceLeadingUnderscoreOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(attribute* wrappableObject)
+inline void* wrapperKey(TestInterfaceLeadingUnderscore* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, attribute&);
-inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, attribute* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<attribute>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<attribute>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterfaceLeadingUnderscore&);
+inline JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, TestInterfaceLeadingUnderscore* impl) { return impl ? toJS(state, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject*, Ref<TestInterfaceLeadingUnderscore>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::ExecState* state, JSDOMGlobalObject* globalObject, RefPtr<TestInterfaceLeadingUnderscore>&& impl) { return impl ? toJSNewlyCreated(state, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<attribute> {
-    using WrapperClass = JSattribute;
-    using ToWrappedReturnType = attribute*;
+template<> struct JSDOMWrapperConverterTraits<TestInterfaceLeadingUnderscore> {
+    using WrapperClass = JSTestInterfaceLeadingUnderscore;
+    using ToWrappedReturnType = TestInterfaceLeadingUnderscore*;
 };
 
 } // namespace WebCore
