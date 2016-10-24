@@ -1,3 +1,11 @@
+2016-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r207767 and r207769
+
+        * css/CSSAllInOne.cpp:
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::getProtectionSpace):
+
 2016-10-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] AVCF based media engine does not block cross-site/cross-domain loads.

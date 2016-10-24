@@ -423,7 +423,7 @@ static bool getProtectionSpace(CURL* h, const ResourceResponse& response, Protec
         return false;
 
     String host = url.host();
-    String protocol = url.protocol();
+    StringView protocol = url.protocol();
 
     String realm;
 
