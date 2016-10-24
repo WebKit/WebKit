@@ -136,7 +136,7 @@ public:
     void checkForPendingPreloads();
     void printPreloadStats();
 
-    bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&);
+    bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&);
 
     static const ResourceLoaderOptions& defaultCachedResourceOptions();
 
@@ -171,15 +171,16 @@ private:
 
     bool shouldContinueAfterNotifyingLoadedFromMemoryCache(const CachedResourceRequest&, CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const URL&) const;
-    bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived);
+    bool allowedByContentSecurityPolicy(CachedResource::Type, const URL&, const ResourceLoaderOptions&, ContentSecurityPolicy::RedirectResponseReceived) const;
 
     void performPostLoadActions();
 
     bool clientDefersImage(const URL&) const;
     void reloadImagesIfNotDeferred();
 
+    bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
-    
+
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;

@@ -105,17 +105,22 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
     WebCore::updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
 }
 
-void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
+void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document)
 {
-    URL url = m_resourceRequest.url();
+    URL url = request.url();
 
     ASSERT(document.contentSecurityPolicy());
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(url, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    if (url == m_resourceRequest.url())
+    if (url == request.url())
         return;
 
-    m_resourceRequest.setURL(url);
+    request.setURL(url);
+}
+
+void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
+{
+    upgradeInsecureResourceRequestIfNeeded(m_resourceRequest, document);
 }
 
 #if ENABLE(CACHE_PARTITIONING)

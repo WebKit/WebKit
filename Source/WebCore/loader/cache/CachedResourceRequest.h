@@ -94,6 +94,8 @@ private:
     String m_fragmentIdentifier;
 };
 
+void upgradeInsecureResourceRequestIfNeeded(ResourceRequest&, Document&);
+
 } // namespace WebCore
 
 #endif

@@ -1,3 +1,31 @@
+2016-10-24  Youenn Fablet  <youenn@apple.com>
+
+        Redirections should be upgraded if CSP policy says so
+        https://bugs.webkit.org/show_bug.cgi?id=163544
+
+        Reviewed by Darin Adler.
+
+        Test: http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/basic-upgrade-after-redirect.https.html
+
+        Introducing CachedResourceLoader::updateRequestAfterRedirection to do the checks that CachedResourceLoader is doing
+        to the initial request, but for redirection requests.
+
+        Implemented URL upgrade according CSP policy, as specified by fetch algorithm.
+        Minor refactoring in CachedResourceRequest to share some code.
+        Fixing some constness issues.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy):
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection):
+        (WebCore::CachedResourceLoader::updateRequestAfterRedirection):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::upgradeInsecureResourceRequestIfNeeded):
+        (WebCore::CachedResourceRequest::upgradeInsecureRequestIfNeeded):
+        * loader/cache/CachedResourceRequest.h:
+
 2016-10-22  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add IDLType based toJS conversion
