@@ -1,3 +1,20 @@
+2016-10-21  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Concatenate JS and CSS files into a single JS and CSS resources
+        https://bugs.webkit.org/show_bug.cgi?id=163785
+        <rdar://problem/28890058>
+
+        Reviewed by Darin Adler.
+
+        Concatenate CSS and JS resources for modern media controls into single JS and CSS files
+        during build and load these single resources alone at runtime.
+
+        * Modules/modern-media-controls/js-files: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::mediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::mediaControlsScript):
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unprefix -webkit-writing-mode
