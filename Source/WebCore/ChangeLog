@@ -1,3 +1,10 @@
+2016-10-24  Darin Adler  <darin@apple.com>
+
+        Try to fix Windows build.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp: Rearranged includes
+        so they are inside the conditional as they should be.
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         Activate WEB_RTC compilation flags for Mac bots

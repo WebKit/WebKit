@@ -24,14 +24,13 @@
  */
 
 #include "config.h"
-#include "JSWebGL2RenderingContext.h"
 
 #if ENABLE(WEBGL) && ENABLE(WEBGL2)
 
+#include "JSWebGL2RenderingContext.h"
+#include "NotImplemented.h"
 #include <heap/HeapInlines.h>
 #include <runtime/Error.h>
-#include "NotImplemented.h"
-#include "WebGL2RenderingContext.h"
 
 using namespace JSC;
 
