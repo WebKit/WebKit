@@ -86,6 +86,7 @@ private:
 #endif
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
+    bool m_hasReceivedData { false };
 };
 
 } // namespace WebKit
