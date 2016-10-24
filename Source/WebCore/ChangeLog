@@ -1,5 +1,24 @@
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
+        Remove CachedResource::passesSameOriginPolicyCheck
+        https://bugs.webkit.org/show_bug.cgi?id=163593
+
+        Reviewed by Andreas Kling.
+
+        No change of behavior.
+
+        Removing no-longer used code.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::redirectReceived):
+        (WebCore::CachedResource::passesAccessControlCheck): Deleted.
+        (WebCore::CachedResource::passesSameOriginPolicyCheck): Deleted.
+        (WebCore::CachedResource::responseForSameOriginPolicyChecks): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::response):
+
+2016-10-24  Youenn Fablet  <youenn@apple.com>
+
         Redirections should be upgraded if CSP policy says so
         https://bugs.webkit.org/show_bug.cgi?id=163544
 

@@ -410,19 +410,6 @@ void CachedResource::finish()
         m_status = Cached;
 }
 
-bool CachedResource::passesAccessControlCheck(SecurityOrigin& securityOrigin)
-{
-    String errorDescription;
-    return WebCore::passesAccessControlCheck(response(), resourceRequest().allowCookies() ? AllowStoredCredentials : DoNotAllowStoredCredentials, securityOrigin, errorDescription);
-}
-
-bool CachedResource::passesSameOriginPolicyCheck(SecurityOrigin& securityOrigin)
-{
-    if (securityOrigin.canRequest(responseForSameOriginPolicyChecks().url()))
-        return true;
-    return passesAccessControlCheck(securityOrigin);
-}
-
 void CachedResource::setCrossOrigin()
 {
     ASSERT(m_options.mode != FetchOptions::Mode::SameOrigin);
@@ -484,22 +471,13 @@ std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceRespon
     return computeFreshnessLifetimeForHTTPFamily(response, m_responseTimestamp);
 }
 
-void CachedResource::redirectReceived(ResourceRequest& request, const ResourceResponse& response)
+void CachedResource::redirectReceived(ResourceRequest&, const ResourceResponse& response)
 {
     m_requestedFromNetworkingLayer = true;
     if (response.isNull())
         return;
 
-    // Redirect to data: URL uses the last HTTP response for SOP.
-    if (response.isHTTP() && request.url().protocolIsData())
-        m_redirectResponseForSameOriginPolicyChecks = response;
-
     updateRedirectChainStatus(m_redirectChainCacheStatus, response);
-}
-
-const ResourceResponse& CachedResource::responseForSameOriginPolicyChecks() const
-{
-    return m_redirectResponseForSameOriginPolicyChecks.isNull() ? m_response : m_redirectResponseForSameOriginPolicyChecks;
 }
 
 void CachedResource::setResponse(const ResourceResponse& response)

@@ -20,8 +20,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef CachedResource_h
-#define CachedResource_h
+#pragma once
 
 #include "CachePolicy.h"
 #include "CacheValidation.h"
@@ -42,12 +41,12 @@
 
 namespace WebCore {
 
-class MemoryCache;
 class CachedResourceClient;
 class CachedResourceHandleBase;
 class CachedResourceLoader;
 class CachedResourceRequest;
 class InspectorResource;
+class MemoryCache;
 class SecurityOrigin;
 class SharedBuffer;
 class SubresourceLoader;
@@ -60,7 +59,7 @@ class CachedResource {
     WTF_MAKE_NONCOPYABLE(CachedResource); WTF_MAKE_FAST_ALLOCATED;
     friend class MemoryCache;
     friend class InspectorResource;
-    
+
 public:
     enum Type {
         MainResource,
@@ -152,7 +151,7 @@ public:
     unsigned encodedSize() const { return m_encodedSize; }
     unsigned decodedSize() const { return m_decodedSize; }
     unsigned overheadSize() const;
-    
+
     bool isLoaded() const { return !m_loading; } // FIXME. Method name is inaccurate. Loading might not have started yet.
 
     bool isLoading() const { return m_loading; }
@@ -180,12 +179,9 @@ public:
     unsigned accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
 
-    // Computes the status of an object after loading.  
+    // Computes the status of an object after loading.
     // Updates the expire date on the cache entry file
     void finish();
-
-    bool passesAccessControlCheck(SecurityOrigin&);
-    bool passesSameOriginPolicyCheck(SecurityOrigin&);
 
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself
@@ -193,7 +189,7 @@ public:
     // The resource can be brought back to cache after successful revalidation.
     void setInCache(bool inCache) { m_inCache = inCache; }
     bool inCache() const { return m_inCache; }
-    
+
     void clearLoader();
 
     SharedBuffer* resourceBuffer() const { return m_data.get(); }
@@ -203,8 +199,6 @@ public:
     virtual bool shouldCacheResponse(const ResourceResponse&) { return true; }
     void setResponse(const ResourceResponse&);
     const ResourceResponse& response() const { return m_response; }
-    // This is the same as response() except after HTTP redirect to data: URL.
-    const ResourceResponse& responseForSameOriginPolicyChecks() const;
 
     void setCrossOrigin();
     bool isCrossOrigin() const;
@@ -295,7 +289,6 @@ protected:
     ResourceLoaderOptions m_options;
     ResourceResponse m_response;
     ResourceResponse::Tainting m_responseTainting { ResourceResponse::Tainting::Basic };
-    ResourceResponse m_redirectResponseForSameOriginPolicyChecks;
     RefPtr<SharedBuffer> m_data;
     DeferrableOneShotTimer m_decodedDataDeletionTimer;
 
@@ -352,7 +345,7 @@ private:
 #endif
 
     CachedResourceLoader* m_owningCachedResourceLoader { nullptr }; // only non-null for resources that are not in the cache
-    
+
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
     // to to be clients of m_resourceToRevalidate and the resource is deleted. If not, the field is zeroed and this
@@ -395,5 +388,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
     static bool isType(const WebCore::CachedResource& resource) { return resource.type() == WebCore::CachedResourceType; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif // CachedResource_h
