@@ -59,6 +59,7 @@
 namespace JSC {
 
 namespace DOMJIT {
+class GetterSetter;
 class Patchpoint;
 class CallDOMPatchpoint;
 }
@@ -229,6 +230,11 @@ struct StackAccessData {
     FlushFormat format;
     
     FlushedAt flushedAt() { return FlushedAt(format, machineLocal); }
+};
+
+struct CallDOMData {
+    DOMJIT::GetterSetter* domJIT { nullptr };
+    DOMJIT::CallDOMPatchpoint* patchpoint { nullptr };
 };
 
 // === Node ===
@@ -2336,15 +2342,15 @@ public:
         return m_opInfo.as<DOMJIT::Patchpoint*>();
     }
 
-    bool hasCallDOMPatchpoint() const
+    bool hasCallDOMData() const
     {
         return op() == CallDOM;
     }
 
-    DOMJIT::CallDOMPatchpoint* callDOMPatchpoint()
+    CallDOMData* callDOMData()
     {
-        ASSERT(hasCallDOMPatchpoint());
-        return m_opInfo.as<DOMJIT::CallDOMPatchpoint*>();
+        ASSERT(hasCallDOMData());
+        return m_opInfo.as<CallDOMData*>();
     }
 
     bool hasClassInfo() const

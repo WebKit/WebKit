@@ -25,31 +25,39 @@
 
 #pragma once
 
+#include <domjit/DOMJITHeapRange.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
+
 #if ENABLE(JIT)
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
+namespace WebCore { namespace DOMJIT {
 
-namespace JSC { namespace DOMJIT {
+// Describe your abstract heap hierarchy here.
+// V(AbstractHeapName, Parent)
+#define DOMJIT_ABSTRACT_HEAP_LIST(V) \
+    V(Node, DOM) \
+    V(Node_firstChild, Node) \
+    V(Node_lastChild, Node) \
+    V(Node_parentNode, Node) \
+    V(Node_nextSibling, Node) \
+    V(Node_previousSibling, Node) \
 
-class CallDOMPatchpoint : public Patchpoint {
+
+class AbstractHeapRepository {
+WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
 public:
-    static Ref<CallDOMPatchpoint> create()
-    {
-        return adoptRef(*new CallDOMPatchpoint());
-    }
+    friend class NeverDestroyed<AbstractHeapRepository>;
+    static const AbstractHeapRepository& instance();
 
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
+    JSC::DOMJIT::HeapRange DOM;
 
-    Effect effect { };
+#define DOMJIT_DEFINE_MEMBER(name, parent) JSC::DOMJIT::HeapRange name;
+    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_MEMBER)
+#undef DOMJIT_DEFINE_MEMBER
 
 private:
-    CallDOMPatchpoint() = default;
+    AbstractHeapRepository();
 };
 
 } }

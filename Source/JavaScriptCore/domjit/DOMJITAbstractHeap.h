@@ -25,31 +25,44 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#include "DOMJITHeapRange.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
+#if ENABLE(JIT)
 
 namespace JSC { namespace DOMJIT {
 
-class CallDOMPatchpoint : public Patchpoint {
+class AbstractHeap {
 public:
-    static Ref<CallDOMPatchpoint> create()
+    AbstractHeap(const String& name)
+        : m_name(name)
     {
-        return adoptRef(*new CallDOMPatchpoint());
     }
 
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
+    void setParent(AbstractHeap* parent)
+    {
+        ASSERT(!m_parent);
+        parent->m_children.append(this);
+        m_parent = parent;
+    }
 
-    Effect effect { };
+    bool isRoot() const { return !m_parent; }
+
+    JS_EXPORT_PRIVATE void compute(unsigned begin);
+
+    bool isComputed() const { return !!m_range; }
+    HeapRange range() const { return m_range; }
+
+    JS_EXPORT_PRIVATE void dump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void shallowDump(PrintStream&) const;
+    JS_EXPORT_PRIVATE void deepDump(PrintStream&, unsigned indent = 0) const;
 
 private:
-    CallDOMPatchpoint() = default;
+    String m_name;
+    AbstractHeap* m_parent { nullptr };
+    Vector<AbstractHeap*> m_children { };
+    HeapRange m_range;
 };
 
 } }

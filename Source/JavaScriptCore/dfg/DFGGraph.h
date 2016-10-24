@@ -901,6 +901,7 @@ public:
     Bag<LoadVarargsData> m_loadVarargsData;
     Bag<StackAccessData> m_stackAccessData;
     Bag<LazyJSValue> m_lazyJSValues;
+    Bag<CallDOMData> m_callDOMData;
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;

@@ -81,6 +81,23 @@ bool ClobberSet::overlaps(AbstractHeap heap) const
 {
     if (m_clobbers.find(heap) != m_clobbers.end())
         return true;
+    if (heap.kind() == DOMState && !heap.payload().isTop()) {
+        // DOMState heap has its own hierarchy. For direct heap clobbers that payload is not Top,
+        // we should query whether the clobber overlaps with the given heap.
+        DOMJIT::HeapRange range = DOMJIT::HeapRange::fromRaw(heap.payload().value32());
+        for (auto pair : m_clobbers) {
+            bool direct = pair.value;
+            if (!direct)
+                continue;
+            AbstractHeap clobber = pair.key;
+            if (clobber.kind() != DOMState)
+                continue;
+            if (clobber.payload().isTop())
+                return true;
+            if (DOMJIT::HeapRange::fromRaw(clobber.payload().value32()).overlaps(range))
+                return true;
+        }
+    }
     while (heap.kind() != World) {
         heap = heap.supertype();
         if (contains(heap))

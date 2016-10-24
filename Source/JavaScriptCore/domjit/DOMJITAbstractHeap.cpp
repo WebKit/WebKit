@@ -23,34 +23,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DOMJITAbstractHeap.h"
 
 #if ENABLE(JIT)
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
-
 namespace JSC { namespace DOMJIT {
 
-class CallDOMPatchpoint : public Patchpoint {
-public:
-    static Ref<CallDOMPatchpoint> create()
-    {
-        return adoptRef(*new CallDOMPatchpoint());
+void AbstractHeap::compute(unsigned begin)
+{
+    unsigned current = begin;
+    // Increment the end of the range.
+    if (m_children.isEmpty()) {
+        m_range = HeapRange(begin, current + 1);
+        return;
+    }
+    for (auto& child : m_children) {
+        child->compute(current);
+        current = child->range().end();
+    }
+    ASSERT(begin < UINT16_MAX);
+    ASSERT(current <= UINT16_MAX);
+    m_range = HeapRange(begin, current);
+}
+
+void AbstractHeap::dump(PrintStream& out) const
+{
+    shallowDump(out);
+    if (m_parent)
+        out.print("->", *m_parent);
+}
+
+void AbstractHeap::shallowDump(PrintStream& out) const
+{
+    out.print(m_name, "<", m_range, ">");
+}
+
+void AbstractHeap::deepDump(PrintStream& out, unsigned indent) const
+{
+    auto printIndent = [&] () {
+        for (unsigned i = indent; i--;)
+            out.print("    ");
+    };
+
+    printIndent();
+    shallowDump(out);
+
+    if (m_children.isEmpty()) {
+        out.print("\n");
+        return;
     }
 
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
-
-    Effect effect { };
-
-private:
-    CallDOMPatchpoint() = default;
-};
+    out.print(":\n");
+    for (auto* child : m_children)
+        child->deepDump(out, indent + 1);
+}
 
 } }
 

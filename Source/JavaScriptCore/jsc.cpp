@@ -733,7 +733,7 @@ public:
             patchpoint->numFPScratchRegisters = 3;
             patchpoint->setGenerator([=](CCallHelpers& jit, DOMJIT::PatchpointParams& params) {
                 JSValueRegs results = params[0].jsValueRegs();
-                GPRReg domGPR = params[2].gpr();
+                GPRReg domGPR = params[1].gpr();
                 for (unsigned i = 0; i < patchpoint->numGPScratchRegisters; ++i)
                     jit.move(CCallHelpers::TrustedImm32(42), params.gpScratch(i));
 

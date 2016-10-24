@@ -2289,10 +2289,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         filterClassInfo(value, node->classInfo());
         break;
     }
-    case CallDOM:
-        clobberWorld(node->origin.semantic, clobberLimit);
+    case CallDOM: {
+        DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+        if (patchpoint->effect.writes)
+            clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).makeBytecodeTop();
         break;
+    }
     case CheckArray: {
         if (node->arrayMode().alreadyChecked(m_graph, node, forNode(node->child1()))) {
             m_state.setFoundConstants(true);

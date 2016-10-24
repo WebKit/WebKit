@@ -6167,6 +6167,8 @@
 		E1FF8F6D180DB5BE00132674 /* CryptoAlgorithmRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */; };
 		E3150EA61DA7219000194012 /* JSNodeDOMJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */; };
 		E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = E3150EA51DA7218D00194012 /* DOMJITHelpers.h */; };
+		E35CA14D1DBC3A3F00F83516 /* DOMJITAbstractHeapRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35CA14B1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.cpp */; };
+		E35CA14E1DBC3A4200F83516 /* DOMJITAbstractHeapRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA14C1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.h */; };
 		E377FE4D1DADE16500CDD025 /* NodeConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D049931DADC04500718F3C /* NodeConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E38838981BAD145F00D62EE3 /* ScriptModuleLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */; };
 		E38838991BAD145F00D62EE3 /* ScriptModuleLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */; };
@@ -13948,6 +13950,8 @@
 		E1FF8F6A180DB5BE00132674 /* CryptoAlgorithmRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmRegistry.cpp; sourceTree = "<group>"; };
 		E1FF8F6B180DB5BE00132674 /* CryptoAlgorithmRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmRegistry.h; sourceTree = "<group>"; };
 		E3150EA51DA7218D00194012 /* DOMJITHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHelpers.h; sourceTree = "<group>"; };
+		E35CA14B1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeapRepository.cpp; sourceTree = "<group>"; };
+		E35CA14C1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeapRepository.h; sourceTree = "<group>"; };
 		E38838941BAD145F00D62EE3 /* ScriptModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptModuleLoader.cpp; sourceTree = "<group>"; };
 		E38838951BAD145F00D62EE3 /* ScriptModuleLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptModuleLoader.h; sourceTree = "<group>"; };
 		E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeDOMJIT.cpp; sourceTree = "<group>"; };
@@ -22683,6 +22687,8 @@
 		E3AFA9631DA6E8AF002861BD /* domjit */ = {
 			isa = PBXGroup;
 			children = (
+				E35CA14B1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.cpp */,
+				E35CA14C1DBC3A3C00F83516 /* DOMJITAbstractHeapRepository.h */,
 				E3150EA51DA7218D00194012 /* DOMJITHelpers.h */,
 				E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */,
 			);
@@ -26621,6 +26627,7 @@
 				439046E812DA25E800AF80A2 /* RenderMathMLScripts.h in Headers */,
 				439046EC12DA25E800AF80A9 /* RenderMathMLToken.h in Headers */,
 				439046EA12DA25E800AF80A2 /* RenderMathMLUnderOver.h in Headers */,
+				E35CA14E1DBC3A4200F83516 /* DOMJITAbstractHeapRepository.h in Headers */,
 				E4C279590CF9741900E97B98 /* RenderMedia.h in Headers */,
 				DEBCCDD216646E8200A452E1 /* RenderMediaControlElements.h in Headers */,
 				41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */,
@@ -28722,6 +28729,7 @@
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				1C3969D01B74211E002BCFA7 /* FontCacheCoreText.cpp in Sources */,
 				3727DFD5142AAE4500D449CB /* FontCacheIOS.mm in Sources */,
+				E35CA14D1DBC3A3F00F83516 /* DOMJITAbstractHeapRepository.cpp in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
 				B2C3DA600D006CD600EF6F26 /* FontCascade.cpp in Sources */,
 				B2AFFC800D00A5C10030074D /* FontCascadeCocoa.mm in Sources */,

@@ -9064,25 +9064,24 @@ private:
 
     void compileCallDOM()
     {
-        DOMJIT::CallDOMPatchpoint* domJIT = m_node->callDOMPatchpoint();
-        int childIndex = 0;
+        DOMJIT::CallDOMPatchpoint* domJIT = m_node->callDOMData()->patchpoint;
+
+        Edge& baseEdge = m_node->child1();
+        LValue base = lowCell(baseEdge);
+        JSValue baseConstant = m_state.forNode(baseEdge).value();
 
         LValue globalObject;
         JSValue globalObjectConstant;
         if (domJIT->requireGlobalObject) {
-            Edge& globalObjectEdge = m_graph.varArgChild(m_node, childIndex++);
+            Edge& globalObjectEdge = m_node->child2();
             globalObject = lowCell(globalObjectEdge);
             globalObjectConstant = m_state.forNode(globalObjectEdge).value();
         }
 
-        Edge& baseEdge = m_graph.varArgChild(m_node, childIndex++);
-        LValue base = lowCell(baseEdge);
-        JSValue baseConstant = m_state.forNode(baseEdge).value();
-
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+        patchpoint->appendSomeRegister(base);
         if (domJIT->requireGlobalObject)
             patchpoint->appendSomeRegister(globalObject);
-        patchpoint->appendSomeRegister(base);
         patchpoint->append(m_tagMask, ValueRep::reg(GPRInfo::tagMaskRegister));
         patchpoint->append(m_tagTypeNumber, ValueRep::reg(GPRInfo::tagTypeNumberRegister));
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
@@ -9101,11 +9100,10 @@ private:
                 Vector<FPRReg> fpScratch;
                 Vector<DOMJIT::Value> regs;
 
-                int childIndex = 1;
                 regs.append(JSValueRegs(params[0].gpr()));
+                regs.append(DOMJIT::Value(params[1].gpr(), baseConstant));
                 if (domJIT->requireGlobalObject)
-                    regs.append(DOMJIT::Value(params[childIndex++].gpr(), globalObjectConstant));
-                regs.append(DOMJIT::Value(params[childIndex++].gpr(), baseConstant));
+                    regs.append(DOMJIT::Value(params[2].gpr(), globalObjectConstant));
 
                 for (unsigned i = 0; i < domJIT->numGPScratchRegisters; ++i)
                     gpScratch.append(params.gpScratch(i));

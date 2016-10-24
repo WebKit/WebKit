@@ -1,3 +1,55 @@
+2016-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add a way for DOMJIT::Patchpoint to express effects
+        https://bugs.webkit.org/show_bug.cgi?id=163657
+
+        Reviewed by Saam Barati.
+
+        CallDOMPatchpoint now has the way to tell its effects to DFG and FTL compilers.
+        WebCore DOMJIT::AbstractHeapRepository will construct the hierarchy of the abstract
+        heap. And then it encodes these information into the pairs of the integers.
+
+        And this patch also changes the DOMJIT::PatchpointParams' parameter order.
+        So we change them in all the DOMJIT::CallDOMPatchpoint sites.
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/domjit/DOMJITAbstractHeap.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        * ForwardingHeaders/domjit/DOMJITEffect.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        * ForwardingHeaders/domjit/DOMJITHeapRange.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        * WebCore.xcodeproj/project.pbxproj:
+        * domjit/DOMJITAbstractHeapRepository.cpp: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (WebCore::DOMJIT::AbstractHeapRepository::AbstractHeapRepository):
+        (WebCore::DOMJIT::AbstractHeapRepository::instance):
+        * domjit/DOMJITAbstractHeapRepository.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJITHelpers::branchIfNotWorldIsNormal): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNotWeakIsLive): Deleted.
+        (WebCore::DOMJITHelpers::tryLookUpWrapperCache): Deleted.
+        (WebCore::DOMJITHelpers::toWrapper): Deleted.
+        (WebCore::DOMJITHelpers::branchIfDOMWrapper): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNotDOMWrapper): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNode): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNotNode): Deleted.
+        (WebCore::DOMJITHelpers::branchIfElement): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNotElement): Deleted.
+        (WebCore::DOMJITHelpers::branchIfDocumentWrapper): Deleted.
+        (WebCore::DOMJITHelpers::branchIfNotDocumentWrapper): Deleted.
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::createCallDOMForOffsetAccess):
+        (WebCore::checkNode):
+        (WebCore::NodeFirstChildDOMJIT::checkDOM):
+        (WebCore::NodeFirstChildDOMJIT::callDOM):
+        (WebCore::NodeLastChildDOMJIT::checkDOM):
+        (WebCore::NodeLastChildDOMJIT::callDOM):
+        (WebCore::NodeNextSiblingDOMJIT::checkDOM):
+        (WebCore::NodeNextSiblingDOMJIT::callDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::checkDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::callDOM):
+        (WebCore::NodeParentNodeDOMJIT::checkDOM):
+        (WebCore::NodeParentNodeDOMJIT::callDOM):
+        (WebCore::NodeNodeTypeDOMJIT::checkDOM):
+        (WebCore::NodeNodeTypeDOMJIT::callDOM):
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix :lang argument parsing

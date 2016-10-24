@@ -23,34 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DOMJITHeapRange.h"
 
 #if ENABLE(JIT)
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
-
 namespace JSC { namespace DOMJIT {
 
-class CallDOMPatchpoint : public Patchpoint {
-public:
-    static Ref<CallDOMPatchpoint> create()
-    {
-        return adoptRef(*new CallDOMPatchpoint());
-    }
-
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
-
-    Effect effect { };
-
-private:
-    CallDOMPatchpoint() = default;
-};
+void HeapRange::dump(PrintStream& out) const
+{
+    out.printf("0x%x-0x%x", static_cast<unsigned>(begin()), static_cast<unsigned>(end()));
+}
 
 } }
 

@@ -32,8 +32,7 @@
 
 #if ENABLE(JIT)
 
-namespace WebCore {
-namespace DOMJITHelpers {
+namespace WebCore { namespace DOMJIT {
 
 using JSC::CCallHelpers;
 using JSC::GPRReg;

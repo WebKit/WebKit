@@ -1,3 +1,15 @@
+2016-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add a way for DOMJIT::Patchpoint to express effects
+        https://bugs.webkit.org/show_bug.cgi?id=163657
+
+        Reviewed by Saam Barati.
+
+        Simplify nonEmptyRangesOverlap.
+
+        * wtf/MathExtras.h:
+        (WTF::nonEmptyRangesOverlap):
+
 2016-10-23  Chris Dumez  <cdumez@apple.com>
 
         Another unreviewed attempt to fix the WatchOS / TvOS build after r207585.

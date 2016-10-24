@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DOMJITHeapRange.h"
 #include "VirtualRegister.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
@@ -73,6 +74,8 @@ namespace JSC { namespace DFG {
     macro(MathDotRandomState) \
     macro(InternalState) \
     macro(Absolute) \
+    /* DOMJIT tells the heap range with the pair of integers. */\
+    macro(DOMState) \
     /* Use this for writes only, to indicate that this may fire watchpoints. Usually this is never directly written but instead we test to see if a node clobbers this; it just so happens that you have to write world to clobber it. */\
     macro(Watchpoint_fire) \
     /* Use these for reads only, just to indicate that if the world got clobbered, then this operation will not work. */\
@@ -233,6 +236,15 @@ public:
     bool isStrictSubtypeOf(const AbstractHeap& other) const
     {
         AbstractHeap current = *this;
+        if (current.kind() == DOMState && other.kind() == DOMState) {
+            Payload currentPayload = current.payload();
+            Payload otherPayload = other.payload();
+            if (currentPayload.isTop())
+                return false;
+            if (otherPayload.isTop())
+                return true;
+            return DOMJIT::HeapRange::fromRaw(currentPayload.value32()).isStrictSubtypeOf(DOMJIT::HeapRange::fromRaw(otherPayload.value32()));
+        }
         while (current.kind() != World) {
             current = current.supertype();
             if (current == other)

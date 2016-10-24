@@ -152,6 +152,9 @@ void printInternal(PrintStream& out, LocationKind kind)
     case MapHasLoc:
         out.print("MapHasLoc");
         return;
+    case DOMStateLoc:
+        out.print("DOMStateLoc");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

@@ -45,6 +45,10 @@ void AbstractHeap::dump(PrintStream& out) const
     out.print(kind());
     if (kind() == InvalidAbstractHeap || kind() == World || kind() == Heap || payload().isTop())
         return;
+    if (kind() == DOMState) {
+        out.print("(", DOMJIT::HeapRange::fromRaw(payload().value32()), ")");
+        return;
+    }
     out.print("(", payload(), ")");
 }
 

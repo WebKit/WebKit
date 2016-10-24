@@ -25,31 +25,57 @@
 
 #pragma once
 
-#if ENABLE(JIT)
+#include "DOMJITHeapRange.h"
+#include <wtf/Optional.h>
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
+#if ENABLE(JIT)
 
 namespace JSC { namespace DOMJIT {
 
-class CallDOMPatchpoint : public Patchpoint {
-public:
-    static Ref<CallDOMPatchpoint> create()
+struct Effect {
+    HeapRange reads { HeapRange::top() };
+    HeapRange writes { HeapRange::top() };
+    Optional<HeapRange> def;
+
+    static Effect forReadWrite(HeapRange readRange, HeapRange writeRange)
     {
-        return adoptRef(*new CallDOMPatchpoint());
+        Effect effect;
+        effect.reads = readRange;
+        effect.writes = writeRange;
+        return effect;
     }
 
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
+    static Effect forPure()
+    {
+        Effect effect;
+        effect.reads = HeapRange::none();
+        effect.writes = HeapRange::none();
+        effect.def = HeapRange::none();
+        return effect;
+    }
 
-    Effect effect { };
+    static Effect forDef(HeapRange def)
+    {
+        Effect effect;
+        effect.reads = def;
+        effect.writes = HeapRange::none();
+        effect.def = def;
+        return effect;
+    }
 
-private:
-    CallDOMPatchpoint() = default;
+    static Effect forDef(HeapRange def, HeapRange readRange, HeapRange writeRange)
+    {
+        Effect effect;
+        effect.reads = readRange;
+        effect.writes = writeRange;
+        effect.def = def;
+        return effect;
+    }
+
+    bool mustGenerate() const
+    {
+        return !!writes;
+    }
 };
 
 } }

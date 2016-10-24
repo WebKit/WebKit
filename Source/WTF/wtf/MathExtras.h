@@ -444,12 +444,8 @@ inline bool nonEmptyRangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
 {
     ASSERT(leftMin < leftMax);
     ASSERT(rightMin < rightMax);
-    
-    if (leftMin <= rightMin && leftMax > rightMin)
-        return true;
-    if (rightMin <= leftMin && rightMax > leftMin)
-        return true;
-    return false;
+
+    return leftMax > rightMin && rightMax > leftMin;
 }
 
 // Pass ranges with the min being inclusive and the max being exclusive. For example, this should

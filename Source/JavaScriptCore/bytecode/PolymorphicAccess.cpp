@@ -1471,11 +1471,11 @@ void AccessCase::emitDOMJITGetter(AccessGenerationState& state, GPRReg baseForGe
     JSGlobalObject* globalObjectForDOMJIT = structure()->globalObject();
 
     regs.append(paramValueRegs);
+    regs.append(paramBaseGPR);
     if (patchpoint->requireGlobalObject) {
         ASSERT(paramGlobalObjectGPR != InvalidGPRReg);
         regs.append(DOMJIT::Value(paramGlobalObjectGPR, globalObjectForDOMJIT));
     }
-    regs.append(paramBaseGPR);
 
     if (patchpoint->numGPScratchRegisters) {
         unsigned i = 0;

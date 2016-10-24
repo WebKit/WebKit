@@ -23,34 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DOMJITAbstractHeapRepository.h"
+
+#include <domjit/DOMJITAbstractHeap.h>
+#include <wtf/DataLog.h>
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(JIT)
 
-#include "DOMJITEffect.h"
-#include "DOMJITPatchpoint.h"
-#include "RegisterSet.h"
+namespace WebCore { namespace DOMJIT {
 
-namespace JSC { namespace DOMJIT {
+static const bool verbose = false;
 
-class CallDOMPatchpoint : public Patchpoint {
-public:
-    static Ref<CallDOMPatchpoint> create()
-    {
-        return adoptRef(*new CallDOMPatchpoint());
+AbstractHeapRepository::AbstractHeapRepository()
+{
+    JSC::DOMJIT::AbstractHeap DOMHeap("DOM");
+#define DOMJIT_DEFINE_HEAP(name, parent) JSC::DOMJIT::AbstractHeap name##Heap(#name);
+    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_HEAP)
+#undef DOMJIT_DEFINE_HEAP
+
+#define DOMJIT_INITIALIZE_HEAP(name, parent) name##Heap.setParent(&parent##Heap);
+    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_INITIALIZE_HEAP)
+#undef DOMJIT_INITIALIZE_HEAP
+
+    DOMHeap.compute(0);
+
+#define DOMJIT_INITIALIZE_MEMBER(name, parent) name = name##Heap.range();
+    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_INITIALIZE_MEMBER)
+#undef DOMJIT_INITIALIZE_MEMBER
+
+    if (verbose) {
+        dataLog("DOMJIT Heap Repository:\n");
+        DOMHeap.deepDump(WTF::dataFile());
     }
+}
 
-    // To look up DOMWrapper cache, GlobalObject is required.
-    // FIXME: Later, we will extend this patchpoint to represent the result type by DOMJIT::Signature.
-    // And after that, we will automatically pass a global object when the result type includes a DOM wrapper thing.
-    // https://bugs.webkit.org/show_bug.cgi?id=162980
-    bool requireGlobalObject { true };
-
-    Effect effect { };
-
-private:
-    CallDOMPatchpoint() = default;
-};
+const AbstractHeapRepository& AbstractHeapRepository::instance()
+{
+    static NeverDestroyed<AbstractHeapRepository> repository;
+    return repository.get();
+}
 
 } }
 

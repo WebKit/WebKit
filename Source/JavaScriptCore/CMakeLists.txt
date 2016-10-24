@@ -413,6 +413,9 @@ set(JavaScriptCore_SOURCES
     disassembler/udis86/udis86_syn-intel.c
     disassembler/udis86/udis86_syn.c
 
+    domjit/DOMJITAbstractHeap.cpp
+    domjit/DOMJITHeapRange.cpp
+
     ftl/FTLAbstractHeap.cpp
     ftl/FTLAbstractHeapRepository.cpp
     ftl/FTLAvailableRecovery.cpp

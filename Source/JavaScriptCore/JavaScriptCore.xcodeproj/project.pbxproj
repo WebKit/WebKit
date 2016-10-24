@@ -2164,6 +2164,10 @@
 		E3555B8A1DAE03A500F36921 /* DOMJITCallDOMPatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E355F3521B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */; };
 		E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */; };
+		E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */; };
+		E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E35CA1551DBC3A5F00F83516 /* DOMJITAbstractHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */; };
+		E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E35E035F1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */; };
 		E35E03601B7AB43E0073AD2A /* InspectorInstrumentationObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E751B77EB97005543AE /* ModuleAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */; };
@@ -2178,6 +2182,7 @@
 		E3BFD0BB1DAF80870065DEA2 /* DOMJITAccessCasePatchpointParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD0B91DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.cpp */; };
 		E3BFD0BC1DAF808E0065DEA2 /* DOMJITAccessCasePatchpointParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */; };
 		E3C08E3C1DA41B810039478F /* DOMJITPatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3D239C81B829C1C00BBEF67 /* JSModuleEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */; };
 		E3D239C91B829C1C00BBEF67 /* JSModuleEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3EF88741B66DF23003F26CB /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3EF88721B66DF23003F26CB /* JSPropertyNameIterator.cpp */; };
@@ -4536,6 +4541,10 @@
 		E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCallDOMPatchpoint.h; sourceTree = "<group>"; };
 		E355F3501B7DC85300C50DC5 /* ModuleLoaderPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleLoaderPrototype.cpp; sourceTree = "<group>"; };
 		E355F3511B7DC85300C50DC5 /* ModuleLoaderPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleLoaderPrototype.h; sourceTree = "<group>"; };
+		E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAbstractHeap.cpp; sourceTree = "<group>"; };
+		E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAbstractHeap.h; sourceTree = "<group>"; };
+		E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHeapRange.cpp; sourceTree = "<group>"; };
+		E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHeapRange.h; sourceTree = "<group>"; };
 		E35E035D1B7AB43E0073AD2A /* InspectorInstrumentationObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentationObject.cpp; sourceTree = "<group>"; };
 		E35E035E1B7AB43E0073AD2A /* InspectorInstrumentationObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.h; sourceTree = "<group>"; };
 		E35E03611B7AB4850073AD2A /* InspectorInstrumentationObject.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InspectorInstrumentationObject.js; sourceTree = "<group>"; };
@@ -4551,6 +4560,7 @@
 		E3BFD0B91DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITAccessCasePatchpointParams.cpp; sourceTree = "<group>"; };
 		E3BFD0BA1DAF807C0065DEA2 /* DOMJITAccessCasePatchpointParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITAccessCasePatchpointParams.h; sourceTree = "<group>"; };
 		E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITPatchpoint.h; sourceTree = "<group>"; };
+		E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITEffect.h; sourceTree = "<group>"; };
 		E3CB1E241DA7540A00FA1E56 /* DOMJITSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITSlowPathCalls.h; sourceTree = "<group>"; };
 		E3D239C61B829C1C00BBEF67 /* JSModuleEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleEnvironment.cpp; sourceTree = "<group>"; };
 		E3D239C71B829C1C00BBEF67 /* JSModuleEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleEnvironment.h; sourceTree = "<group>"; };
@@ -7408,8 +7418,13 @@
 		E3FF752D1D9CE9EA00C7E16D /* domjit */ = {
 			isa = PBXGroup;
 			children = (
+				E35CA14F1DBC3A5600F83516 /* DOMJITAbstractHeap.cpp */,
+				E35CA1501DBC3A5600F83516 /* DOMJITAbstractHeap.h */,
 				E3555B891DAE03A200F36921 /* DOMJITCallDOMPatchpoint.h */,
+				E3C79CAA1DB9A4D600D1ECA4 /* DOMJITEffect.h */,
 				E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */,
+				E35CA1511DBC3A5600F83516 /* DOMJITHeapRange.cpp */,
+				E35CA1521DBC3A5600F83516 /* DOMJITHeapRange.h */,
 				E3C08E3B1DA41B7B0039478F /* DOMJITPatchpoint.h */,
 				E37AD83A1DA4928000F3D412 /* DOMJITPatchpointParams.h */,
 				E37AD83B1DA4928000F3D412 /* DOMJITReg.h */,
@@ -7637,6 +7652,7 @@
 				0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */,
 				A77F1822164088B200640A47 /* CodeCache.h in Headers */,
 				99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */,
+				E3C79CAB1DB9A4DC00D1ECA4 /* DOMJITEffect.h in Headers */,
 				99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */,
 				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,
 				0FBD7E691447999600481315 /* CodeOrigin.h in Headers */,
@@ -8304,6 +8320,7 @@
 				AD2FCC1F1DB59CB200B3E736 /* WebAssemblyRuntimeErrorPrototype.lut.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
 				9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */,
+				E35CA1561DBC3A5F00F83516 /* DOMJITAbstractHeap.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
 				0F33FCFB1C1625BE00323F67 /* B3CFG.h in Headers */,
@@ -8422,6 +8439,7 @@
 				7C008CE7187631B600955C24 /* Microtask.h in Headers */,
 				DC0184191D10C1890057B053 /* JITWorklist.h in Headers */,
 				86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */,
+				E35CA1541DBC3A5C00F83516 /* DOMJITHeapRange.h in Headers */,
 				C4703CD7192844CC0013FBEA /* models.py in Headers */,
 				E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */,
 				E355F3531B7DC85300C50DC5 /* ModuleLoaderPrototype.h in Headers */,
@@ -9930,6 +9948,7 @@
 				0F61832B1C45BF070072450B /* AirCustom.cpp in Sources */,
 				0F13912B16771C3A009CCB07 /* ProfilerProfiledBytecodes.cpp in Sources */,
 				0FD3E40D1B618B6600C80E1E /* PropertyCondition.cpp in Sources */,
+				E35CA1531DBC3A5C00F83516 /* DOMJITHeapRange.cpp in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,
 				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
@@ -9948,6 +9967,7 @@
 				8642C512151C083D0046D4EF /* RegExpMatchesArray.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
+				E35CA1551DBC3A5F00F83516 /* DOMJITAbstractHeap.cpp in Sources */,
 				6540C7A01B82E1C3000F6B79 /* RegisterAtOffset.cpp in Sources */,
 				6540C7A11B82E1C3000F6B79 /* RegisterAtOffsetList.cpp in Sources */,
 				0FC3141518146D7000033232 /* RegisterSet.cpp in Sources */,

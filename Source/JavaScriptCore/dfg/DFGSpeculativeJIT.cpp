@@ -7225,7 +7225,7 @@ static void allocateTemporaryRegistersForPatchpoint(SpeculativeJIT* jit, Vector<
 
 void SpeculativeJIT::compileCallDOM(Node* node)
 {
-    DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMPatchpoint();
+    DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
 
     Vector<GPRReg> gpScratch;
     Vector<FPRReg> fpScratch;
@@ -7234,18 +7234,16 @@ void SpeculativeJIT::compileCallDOM(Node* node)
     JSValueRegsTemporary result(this);
     regs.append(result.regs());
 
-    int childIndex = 0;
+    Edge& baseEdge = node->child1();
+    SpeculateCellOperand base(this, baseEdge);
+    regs.append(DOMJIT::Value(base.gpr(), m_state.forNode(baseEdge).value()));
 
     Optional<SpeculateCellOperand> globalObject;
     if (patchpoint->requireGlobalObject) {
-        Edge& globalObjectEdge = m_jit.graph().varArgChild(node, childIndex++);
+        Edge& globalObjectEdge = node->child2();
         globalObject = SpeculateCellOperand(this, globalObjectEdge);
         regs.append(DOMJIT::Value(globalObject->gpr(), m_state.forNode(globalObjectEdge).value()));
     }
-
-    Edge& baseEdge = m_jit.graph().varArgChild(node, childIndex++);
-    SpeculateCellOperand base(this, baseEdge);
-    regs.append(DOMJIT::Value(base.gpr(), m_state.forNode(baseEdge).value()));
 
     Vector<GPRTemporary> gpTempraries;
     Vector<FPRTemporary> fpTempraries;

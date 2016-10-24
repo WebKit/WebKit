@@ -1711,11 +1711,10 @@ private:
             break;
 
         case CallDOM: {
-            int childIndex = 0;
-            DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMPatchpoint();
+            DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+            fixEdge<CellUse>(node->child1()); // DOM.
             if (patchpoint->requireGlobalObject)
-                fixEdge<KnownCellUse>(m_graph.varArgChild(node, childIndex++)); // GlobalObject.
-            fixEdge<CellUse>(m_graph.varArgChild(node, childIndex++)); // DOM.
+                fixEdge<KnownCellUse>(node->child2()); // GlobalObject.
             break;
         }
 

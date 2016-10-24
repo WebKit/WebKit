@@ -118,7 +118,6 @@ bool doesGC(Graph& graph, Node* node)
     case CheckStructure:
     case GetExecutable:
     case GetButterfly:
-    case CallDOM:
     case CheckDOM:
     case CheckArray:
     case GetScope:
@@ -299,6 +298,7 @@ bool doesGC(Graph& graph, Node* node)
     case StringReplaceRegExp:
     case CreateRest:
     case ToLowerCase:
+    case CallDOM:
         return true;
         
     case MultiPutByOffset:

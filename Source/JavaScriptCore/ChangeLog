@@ -1,3 +1,125 @@
+2016-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Add a way for DOMJIT::Patchpoint to express effects
+        https://bugs.webkit.org/show_bug.cgi?id=163657
+
+        Reviewed by Saam Barati.
+
+        This patch introduces DOMJIT::Effect. It describes the side effects of
+        the DOMJIT::CallDOMPatchpoint. DOMJIT::CallDOMPatchpoint can use this
+        feature to teach the compilers about the effects. And the compilers
+        will perform CSE based on the reported effects.
+
+        As the same to B3's HeapRange, the effects are represented as a pair of
+        integers. [begin, end) pair will represents the range of the abstract
+        heap. We encode the abstract heap hierarchy into these pairs. Like,
+
+                                Root: [0, 32)
+                 Child1: [0, 20)             Child2: [20, 32)
+        Child11: [0, 4) Child12: [4, 20)
+
+        This simplifies the representation of the abstract heap. And WebCore
+        just tells pairs of integers and it does not tell any detailed hierarchy.
+        So, DFG and FTL can optimize DOM operations without deep knowledge of
+        the DOM abstract heap hierarchy. For example, WebCore will tell that
+        firstChild will read Node_firstChild abstract heap. But this information
+        is encoded to the pair and DFG does not know the details. But still
+        DFG can understand the abstract heap hierarchy and can query whether the
+        given abstract heap overlaps with some abstract heap.
+
+        The heap range told by the WebCore is represented as DOMJIT::HeapRange.
+        DFG will handle this under the DOMState abstract heap. DOMJIT::HeapRange
+        is stored in DFG::AbstractHeap's Payload. We maintain the hierarchy by
+        DOMJIT::HeapRange in the DOMState abstract heap. We add a necessary
+        handling in DFG's AbstractHeap and ClobberSet.
+
+        And we also introduce DOMStateLoc for HeapLocation. It is combined with
+        DOMState AbstractHeap with DOMJIT::HeapRange. For example, we can
+        represent Node.firstChild as `read(DOMState:Node_firstChild)` and
+        `def(HeapLocation(node, DOMState:Node_firstChild))` thingy. This allows us
+        to perform CSE onto DOM getters that will read some of DOM heap!
+
+        For simplicity, we convert CallDOM from NodeVarArgs to the normal one.
+        CallDOM is now just used for DOMJIT getter. So its children is at most 2.
+        It may have either 1 or 2 children. If the global object is required
+        by CallDOMPatchpoint, it has 2 children. And we changed the order of
+        the children to further simplify the code. Before this change, the order
+        is 1: globalObject 2: base. After this patch, the order becomes 1: base,
+        and 2: globalObject. And the child2 may not exists if the global object
+        is not required. We changed all the existing DOMJIT patchpoint to this
+        form.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessCase::emitDOMJITGetter):
+        * dfg/DFGAbstractHeap.cpp:
+        (JSC::DFG::AbstractHeap::dump):
+        * dfg/DFGAbstractHeap.h:
+        (JSC::DFG::AbstractHeap::isStrictSubtypeOf):
+        (JSC::DFG::AbstractHeap::overlaps):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::blessCallDOM):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        * dfg/DFGClobberSet.cpp:
+        (JSC::DFG::ClobberSet::overlaps):
+        * dfg/DFGClobberSet.h:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasCallDOMData):
+        (JSC::DFG::Node::callDOMData):
+        (JSC::DFG::Node::hasCallDOMPatchpoint): Deleted.
+        (JSC::DFG::Node::callDOMPatchpoint): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOM):
+        * domjit/DOMJITAbstractHeap.cpp: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (JSC::DOMJIT::AbstractHeap::compute):
+        (JSC::DOMJIT::AbstractHeap::dump):
+        (JSC::DOMJIT::AbstractHeap::shallowDump):
+        (JSC::DOMJIT::AbstractHeap::deepDump):
+        * domjit/DOMJITAbstractHeap.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (JSC::DOMJIT::AbstractHeap::AbstractHeap):
+        (JSC::DOMJIT::AbstractHeap::setParent):
+        (JSC::DOMJIT::AbstractHeap::isRoot):
+        (JSC::DOMJIT::AbstractHeap::isComputed):
+        (JSC::DOMJIT::AbstractHeap::range):
+        * domjit/DOMJITCallDOMPatchpoint.h:
+        * domjit/DOMJITEffect.h: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (JSC::DOMJIT::Effect::forReadWrite):
+        (JSC::DOMJIT::Effect::forPure):
+        (JSC::DOMJIT::Effect::forDef):
+        (JSC::DOMJIT::Effect::mustGenerate):
+        * domjit/DOMJITHeapRange.cpp: Copied from Source/JavaScriptCore/domjit/DOMJITCallDOMPatchpoint.h.
+        (JSC::DOMJIT::HeapRange::dump):
+        * domjit/DOMJITHeapRange.h: Added.
+        (JSC::DOMJIT::HeapRange::HeapRange):
+        (JSC::DOMJIT::HeapRange::fromRaw):
+        (JSC::DOMJIT::HeapRange::begin):
+        (JSC::DOMJIT::HeapRange::end):
+        (JSC::DOMJIT::HeapRange::rawRepresentation):
+        (JSC::DOMJIT::HeapRange::operator bool):
+        (JSC::DOMJIT::HeapRange::operator==):
+        (JSC::DOMJIT::HeapRange::top):
+        (JSC::DOMJIT::HeapRange::none):
+        (JSC::DOMJIT::HeapRange::isStrictSubtypeOf):
+        (JSC::DOMJIT::HeapRange::isSubtypeOf):
+        (JSC::DOMJIT::HeapRange::overlaps):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        * jsc.cpp:
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         JSONParse should not crash with null Strings

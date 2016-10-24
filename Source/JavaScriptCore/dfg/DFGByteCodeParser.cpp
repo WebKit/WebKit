@@ -2673,6 +2673,13 @@ bool ByteCodeParser::handleIntrinsicGetter(int resultOperand, const GetByIdVaria
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static void blessCallDOM(Node* node)
+{
+    DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+    if (!patchpoint->effect.mustGenerate())
+        node->clearFlags(NodeMustGenerate);
+}
+
 bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant& variant, Node* thisNode, SpeculatedType prediction)
 {
     if (!variant.domJIT())
@@ -2691,14 +2698,22 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
     // We do not need to emit CheckCell thingy here. When the custom accessor is replaced to different one, Structure transition occurs.
     addToGraph(CheckDOM, OpInfo(checkDOMPatchpoint.ptr()), OpInfo(domJIT->thisClassInfo()), thisNode);
 
+    CallDOMData* callDOMData = m_graph.m_callDOMData.add();
     Ref<DOMJIT::CallDOMPatchpoint> callDOMPatchpoint = domJIT->callDOM();
     m_graph.m_domJITPatchpoints.append(callDOMPatchpoint.ptr());
+
+    callDOMData->domJIT = domJIT;
+    callDOMData->patchpoint = callDOMPatchpoint.ptr();
+
+    Node* callDOMNode = nullptr;
+    // GlobalObject of thisNode is always used to create a DOMWrapper.
     if (callDOMPatchpoint->requireGlobalObject) {
         Node* globalObject = addToGraph(GetGlobalObject, thisNode);
-        addVarArgChild(globalObject); // GlobalObject of thisNode is always used to create a DOMWrapper.
-    }
-    addVarArgChild(thisNode);
-    set(VirtualRegister(resultOperand), addToGraph(Node::VarArg, CallDOM, OpInfo(callDOMPatchpoint.ptr()), OpInfo(prediction)));
+        callDOMNode = addToGraph(CallDOM, OpInfo(callDOMData), OpInfo(prediction), thisNode, globalObject);
+    } else
+        callDOMNode = addToGraph(CallDOM, OpInfo(callDOMData), OpInfo(prediction), thisNode);
+    blessCallDOM(callDOMNode);
+    set(VirtualRegister(resultOperand), callDOMNode);
     return true;
 }
 

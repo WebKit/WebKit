@@ -33,6 +33,7 @@
 #include "DFGHeapLocation.h"
 #include "DFGLazyNode.h"
 #include "DFGPureValue.h"
+#include "DOMJITCallDOMPatchpoint.h"
 
 namespace JSC { namespace DFG {
 
@@ -907,10 +908,34 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node, node->classInfo()));
         return;
 
-    case CallDOM:
-        read(World);
-        write(Heap);
+    case CallDOM: {
+        DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+        DOMJIT::Effect effect = patchpoint->effect;
+        if (effect.reads) {
+            if (effect.reads == DOMJIT::HeapRange::top())
+                read(World);
+            else
+                read(AbstractHeap(DOMState, effect.reads.rawRepresentation()));
+        }
+        if (effect.writes) {
+            if (effect.writes == DOMJIT::HeapRange::top())
+                write(World);
+            else
+                write(AbstractHeap(DOMState, effect.writes.rawRepresentation()));
+        }
+        if (effect.def) {
+            DOMJIT::HeapRange range = effect.def.value();
+            if (range == DOMJIT::HeapRange::none())
+                def(PureValue(node, node->callDOMData()->domJIT));
+            else {
+                // Def with heap location. We do not include "GlobalObject" for that since this information is included in the base node.
+                // FIXME: When supporting the other nodes like getElementById("string"), we should include the base and the id string.
+                // Currently, we only see the DOMJIT getter here. So just including "base" is ok.
+                def(HeapLocation(DOMStateLoc, AbstractHeap(DOMState, range.rawRepresentation()), node->child1()), LazyNode(node));
+            }
+        }
         return;
+    }
 
     case Arrayify:
     case ArrayifyToStructure:

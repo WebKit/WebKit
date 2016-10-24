@@ -60,7 +60,8 @@ enum LocationKind {
     StackPayloadLoc,
     MapBucketLoc,
     JSMapGetLoc,
-    MapHasLoc
+    MapHasLoc,
+    DOMStateLoc,
 };
 
 class HeapLocation {
