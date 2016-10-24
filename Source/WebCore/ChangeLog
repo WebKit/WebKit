@@ -1,3 +1,32 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix -webkit-box-reflect parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163890
+
+        Reviewed by Zalan Bujtas.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeReflect):
+        Do a WTFMove on the mask instead of a .releaseNonNull(), since mask can be a nullptr.
+        Exactly matches the old parser.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeValue):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        (WebCore::CSSPropertyParserHelpers::consumeUrl):
+        (WebCore::CSSPropertyParserHelpers::consumeColor):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientPoint):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientColorStop):
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+        (WebCore::CSSPropertyParserHelpers::consumeImageSet):
+        Clean up all instances of CSSPrimitiveValue::create to use the CSSValuePool.
+
 2016-10-21  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Concatenate JS and CSS files into a single JS and CSS resources
