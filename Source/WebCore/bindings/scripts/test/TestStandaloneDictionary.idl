@@ -28,6 +28,7 @@
 
 [
     ImplementedAs=DictionaryImplName,
+    Conditional=Condition1,
 ] dictionary TestStandaloneDictionary {
     boolean boolMember;
     DOMString stringMember;

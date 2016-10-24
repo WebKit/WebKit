@@ -1053,10 +1053,9 @@ sub GenerateConversionRuleWithLeadingComma
 
 sub GenerateDictionaryHeaderContent
 {
-    my ($dictionary, $className) = @_;
+    my ($dictionary, $className, $conditionalString) = @_;
 
     my $result = "";
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
     $result .= "template<> $className convertDictionary<$className>(JSC::ExecState&, JSC::JSValue);\n\n";
     $result .= "#endif\n\n" if $conditionalString;
@@ -1075,20 +1074,20 @@ sub GenerateDictionariesHeaderContent
     foreach my $dictionary (@$allDictionaries) {
         $headerIncludes{$interface->name . ".h"} = 1;
         my $className = GetDictionaryClassName($dictionary->name, $interface);
-        $result .= GenerateDictionaryHeaderContent($dictionary, $className);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+        $result .= GenerateDictionaryHeaderContent($dictionary, $className, $conditionalString);
     }
     return $result;
 }
 
 sub GenerateDictionaryImplementationContent
 {
-    my ($dictionary, $className, $interface) = @_;
+    my ($dictionary, $className, $interface, $conditionalString) = @_;
 
     my $result = "";
 
     my $name = $dictionary->name;
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
     # FIXME: A little ugly to have this be a side effect instead of a return value.
@@ -1186,7 +1185,8 @@ sub GenerateDictionariesImplementationContent
     my $result = "";
     foreach my $dictionary (@$allDictionaries) {
         my $className = GetDictionaryClassName($dictionary->name, $interface);
-        $result .= GenerateDictionaryImplementationContent($dictionary, $className, $interface);
+        my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+        $result .= GenerateDictionaryImplementationContent($dictionary, $className, $interface, $conditionalString);
     }
     return $result;
 }
@@ -4467,6 +4467,9 @@ sub GenerateDictionaryHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
     push(@headerContent, GenerateDictionaryHeaderContent($dictionary, $className));
     push(@headerContent, "} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+    push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
     
     # - Generate dependencies.
     if ($writeDependencies) {
@@ -4494,6 +4497,9 @@ sub GenerateDictionaryImplementation
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
     push(@implContent, "} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
 sub GenerateCallbackHeader

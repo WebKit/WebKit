@@ -184,5 +184,23 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
 
 template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(JSC::ExecState&, JSC::JSValue);
 
+#if ENABLE(Condition1)
+
+template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::ConditionalDictionaryA>(JSC::ExecState&, JSC::JSValue);
+
+#endif
+
+#if ENABLE(Condition1) && ENABLE(Condition2)
+
+template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::ConditionalDictionaryB>(JSC::ExecState&, JSC::JSValue);
+
+#endif
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
+template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::ConditionalDictionaryC>(JSC::ExecState&, JSC::JSValue);
+
+#endif
+
 
 } // namespace WebCore

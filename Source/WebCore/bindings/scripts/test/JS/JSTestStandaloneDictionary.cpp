@@ -19,6 +19,9 @@
 */
 
 #include "config.h"
+
+#if ENABLE(Condition1)
+
 #include "JSTestStandaloneDictionary.h"
 
 
@@ -55,3 +58,5 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(Condition1)

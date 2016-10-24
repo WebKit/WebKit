@@ -20,6 +20,8 @@
 
 #pragma once
 
+#if ENABLE(Condition1)
+
 #include "DictionaryImplName.h"
 #include "JSDOMConvert.h"
 
@@ -28,3 +30,5 @@ namespace WebCore {
 template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSC::ExecState&, JSC::JSValue);
 
 } // namespace WebCore
+
+#endif // ENABLE(Condition1)

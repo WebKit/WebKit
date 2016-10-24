@@ -512,3 +512,20 @@ dictionary ChildDictionary : ParentDictionary {
     boolean childMember1;
 };
 
+[
+    Conditional=Condition1
+] dictionary TestConditionalDictionaryA {
+    DOMString stringWithoutDefault;
+};
+
+[
+    Conditional=Condition1&Condition2
+] dictionary TestConditionalDictionaryB {
+    DOMString stringWithoutDefault;
+};
+
+[
+    Conditional=Condition1|Condition2
+] dictionary TestConditionalDictionaryC {
+    DOMString stringWithoutDefault;
+};

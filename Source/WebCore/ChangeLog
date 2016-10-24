@@ -1,3 +1,54 @@
+2016-10-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CodeGeneratorJS] Standalone dictionaries have misplaced build guards
+        https://bugs.webkit.org/show_bug.cgi?id=163881
+
+        Reviewed by Chris Dumez.
+
+        Build guards that are generated from the Conditional attribute
+        on WebIDL dictionary declarations properly guard the relevant
+        convertDictionary() functions for WebIDL files that also specify
+        interfaces. But for standalone dictionaries these build guards
+        should guard the complete header and implementation files, much
+        like this is done for files that originate from interfaces or
+        callbacks.
+
+        Before this patch, guarding a standalone dictionary resulted in
+        malformed output because GenerateHeaderContentHeader() and
+        GenerateImplementationContentHeader() functions both generated
+        the #if macro that would guard the whole file, but
+        GenerateDictionary{Header,Implementation}() didn't generate the
+        closing #endif.
+
+        CodeGeneratorJS.pm now passes the conditional string, if any,
+        to GenerateDictionary{Header,Implementation}Content() functions
+        in case of a non-standalone dictionary. Otherwise, the
+        conditional string, if any, is used to guard the complete
+        header and implementation files.
+
+        Generator tests are updated to cover various build guard
+        combinations on dictionaries in TestObj.idl, and the standalone
+        dictionary WebIDL file now has a Conditional attribute to check
+        that the build guards cover complete generated header and
+        implementation files.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryHeaderContent):
+        (GenerateDictionariesHeaderContent):
+        (GenerateDictionaryImplementationContent):
+        (GenerateDictionariesImplementationContent):
+        (GenerateDictionaryHeader):
+        (GenerateDictionaryImplementation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryA>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryB>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryC>):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestStandaloneDictionary.idl:
+
 2016-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Separate media capture and audio playback muting
