@@ -127,6 +127,11 @@ void WebIDBConnectionToClient::didDeleteIndex(const WebCore::IDBResultData& resu
     send(Messages::WebIDBConnectionToServer::DidDeleteIndex(resultData));
 }
 
+void WebIDBConnectionToClient::didRenameIndex(const WebCore::IDBResultData& resultData)
+{
+    send(Messages::WebIDBConnectionToServer::DidRenameIndex(resultData));
+}
+
 void WebIDBConnectionToClient::didPutOrAdd(const WebCore::IDBResultData& resultData)
 {
     send(Messages::WebIDBConnectionToServer::DidPutOrAdd(resultData));
@@ -258,6 +263,11 @@ void WebIDBConnectionToClient::createIndex(const IDBRequestData& request, const 
 void WebIDBConnectionToClient::deleteIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, const String& name)
 {
     DatabaseProcess::singleton().idbServer().deleteIndex(request, objectStoreIdentifier, name);
+}
+
+void WebIDBConnectionToClient::renameIndex(const IDBRequestData& request, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    DatabaseProcess::singleton().idbServer().renameIndex(request, objectStoreIdentifier, indexIdentifier, newName);
 }
 
 void WebIDBConnectionToClient::putOrAdd(const IDBRequestData& request, const IDBKeyData& key, const IDBValue& value, unsigned overwriteMode)

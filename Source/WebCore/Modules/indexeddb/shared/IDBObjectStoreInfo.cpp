@@ -85,6 +85,15 @@ IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(const String& name)
     return nullptr;
 }
 
+IDBIndexInfo* IDBObjectStoreInfo::infoForExistingIndex(uint64_t identifier)
+{
+    auto iterator = m_indexMap.find(identifier);
+    if (iterator == m_indexMap.end())
+        return nullptr;
+
+    return &iterator->value;
+}
+
 IDBObjectStoreInfo IDBObjectStoreInfo::isolatedCopy() const
 {
     IDBObjectStoreInfo result = { m_identifier, m_name.isolatedCopy(), m_keyPath.isolatedCopy(), m_autoIncrement };

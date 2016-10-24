@@ -279,7 +279,7 @@ void IDBTransaction::internalAbort()
 
     if (isVersionChange()) {
         for (auto& objectStore : m_referencedObjectStores.values())
-            objectStore->rollbackInfoForVersionChangeAbort();
+            objectStore->rollbackForVersionChangeAbort();
     }
 
     transitionedToFinishing(IndexedDB::TransactionState::Aborting);
@@ -675,6 +675,40 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
 
     // Otherwise, failure to create an index forced abortion of the transaction.
     abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(resultData.error().code()), resultData.error().message()));
+}
+
+void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
+{
+    LOG(IndexedDB, "IDBTransaction::renameIndex");
+    ASSERT(isVersionChange());
+    ASSERT(scriptExecutionContext());
+    ASSERT(currentThread() == m_database->originThreadID());
+
+    ASSERT(m_referencedObjectStores.contains(index.objectStore().info().name()));
+    ASSERT(m_referencedObjectStores.get(index.objectStore().info().name()) == &index.objectStore());
+
+    index.objectStore().renameReferencedIndex(index, newName);
+
+    uint64_t objectStoreIdentifier = index.objectStore().info().identifier();
+    uint64_t indexIdentifier = index.info().identifier();
+    auto operation = IDBClient::createTransactionOperation(*this, &IDBTransaction::didRenameIndexOnServer, &IDBTransaction::renameIndexOnServer, objectStoreIdentifier, indexIdentifier, newName);
+    scheduleOperation(WTFMove(operation));
+}
+
+void IDBTransaction::renameIndexOnServer(IDBClient::TransactionOperation& operation, const uint64_t& objectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "IDBTransaction::renameIndexOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT(isVersionChange());
+
+    m_database->connectionProxy().renameIndex(operation, objectStoreIdentifier, indexIdentifier, newName);
+}
+
+void IDBTransaction::didRenameIndexOnServer(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBTransaction::didRenameIndexOnServer");
+    ASSERT(currentThread() == m_database->originThreadID());
+    ASSERT_UNUSED(resultData, resultData.type() == IDBResultType::RenameIndexSuccess || resultData.type() == IDBResultType::Error);
 }
 
 Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& execState, IDBObjectStore& objectStore, const IDBCursorInfo& info)

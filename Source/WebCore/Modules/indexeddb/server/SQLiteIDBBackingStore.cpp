@@ -1275,6 +1275,49 @@ IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
     return { };
 }
 
+IDBError SQLiteIDBBackingStore::renameIndex(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "SQLiteIDBBackingStore::renameIndex - object store %" PRIu64 ", index %" PRIu64, objectStoreIdentifier, indexIdentifier);
+
+    ASSERT(m_sqliteDB);
+    ASSERT(m_sqliteDB->isOpen());
+
+    auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    if (!objectStoreInfo)
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not rename index") };
+
+    auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
+    if (!indexInfo)
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not rename index") };
+
+    auto* transaction = m_transactions.get(transactionIdentifier);
+    if (!transaction || !transaction->inProgress()) {
+        LOG_ERROR("Attempt to rename an index without an in-progress transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an index without an in-progress transaction") };
+    }
+
+    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+        LOG_ERROR("Attempt to rename an index in a non-version-change transaction");
+        return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an index in a non-version-change transaction") };
+    }
+
+    {
+        SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("UPDATE IndexInfo SET name = ? WHERE objectStoreID = ? AND id = ?;"));
+        if (sql.prepare() != SQLITE_OK
+            || sql.bindText(1, newName) != SQLITE_OK
+            || sql.bindInt64(2, objectStoreIdentifier) != SQLITE_OK
+            || sql.bindInt64(3, indexIdentifier) != SQLITE_OK
+            || sql.step() != SQLITE_DONE) {
+            LOG_ERROR("Could not update name for index id (%" PRIi64 ", %" PRIi64 ") in IndexInfo table (%i) - %s", objectStoreIdentifier, indexIdentifier, m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
+            return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not rename index") };
+        }
+    }
+
+    indexInfo->rename(newName);
+
+    return { };
+}
+
 IDBError SQLiteIDBBackingStore::keyExistsInObjectStore(const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreID, const IDBKeyData& keyData, bool& keyExists)
 {
     LOG(IndexedDB, "SQLiteIDBBackingStore::keyExistsInObjectStore - key %s, object store %" PRIu64, keyData.loggingString().utf8().data(), objectStoreID);

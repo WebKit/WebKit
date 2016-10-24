@@ -159,6 +159,11 @@ IDBResultData IDBResultData::deleteIndexSuccess(const IDBResourceIdentifier& req
     return { IDBResultType::DeleteIndexSuccess, requestIdentifier };
 }
 
+IDBResultData IDBResultData::renameIndexSuccess(const IDBResourceIdentifier& requestIdentifier)
+{
+    return { IDBResultType::RenameIndexSuccess, requestIdentifier };
+}
+
 IDBResultData IDBResultData::putOrAddSuccess(const IDBResourceIdentifier& requestIdentifier, const IDBKeyData& resultKey)
 {
     IDBResultData result(IDBResultType::PutOrAddSuccess, requestIdentifier);

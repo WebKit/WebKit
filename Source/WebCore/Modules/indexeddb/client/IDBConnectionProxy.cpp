@@ -133,6 +133,14 @@ void IDBConnectionProxy::renameObjectStore(TransactionOperation& operation, uint
     callConnectionOnMainThread(&IDBConnectionToServer::renameObjectStore, requestData, objectStoreIdentifier, newName);
 }
 
+void IDBConnectionProxy::renameIndex(TransactionOperation& operation, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    const IDBRequestData requestData(operation);
+    saveOperation(operation);
+
+    callConnectionOnMainThread(&IDBConnectionToServer::renameIndex, requestData, objectStoreIdentifier, indexIdentifier, newName);
+}
+
 void IDBConnectionProxy::deleteObjectStore(TransactionOperation& operation, const String& objectStoreName)
 {
     const IDBRequestData requestData(operation);

@@ -172,6 +172,20 @@ void IDBConnectionToServer::didDeleteIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
+void IDBConnectionToServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::renameIndex");
+    ASSERT(isMainThread());
+
+    m_delegate->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
+}
+
+void IDBConnectionToServer::didRenameIndex(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "IDBConnectionToServer::didRenameIndex");
+    m_proxy->completeOperation(resultData);
+}
+
 void IDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");

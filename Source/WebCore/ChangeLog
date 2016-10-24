@@ -1,3 +1,114 @@
+2016-10-24  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBIndex name assignment.
+        <rdar://problem/28806932> and https://bugs.webkit.org/show_bug.cgi?id=163805
+
+        Reviewed by Alex Christensen.
+
+        Tests: storage/indexeddb/modern/index-rename-1-private.html
+               storage/indexeddb/modern/index-rename-1.html
+
+        Touches a *lot* of code sites, but none of them are particularly interesting.
+        They are all just getting the new name spread out to all of the various objects that need it.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::renameIndex):
+        * Modules/indexeddb/IDBDatabase.h:
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::IDBIndex):
+        (WebCore::IDBIndex::setName):
+        (WebCore::IDBIndex::rollbackInfoForVersionChangeAbort):
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBIndex.idl:
+
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::rollbackForVersionChangeAbort):
+        (WebCore::IDBObjectStore::renameReferencedIndex):
+        (WebCore::IDBObjectStore::rollbackInfoForVersionChangeAbort): Deleted.
+        * Modules/indexeddb/IDBObjectStore.h:
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::internalAbort):
+        (WebCore::IDBTransaction::renameIndex):
+        (WebCore::IDBTransaction::renameIndexOnServer):
+        (WebCore::IDBTransaction::didRenameIndexOnServer):
+        * Modules/indexeddb/IDBTransaction.h:
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::renameIndex):
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        (WebCore::IDBClient::IDBConnectionToServer::renameIndex):
+        (WebCore::IDBClient::IDBConnectionToServer::didRenameIndex):
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+
+        * Modules/indexeddb/client/TransactionOperation.h:
+        (WebCore::IDBClient::createTransactionOperation):
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+
+        * Modules/indexeddb/server/IDBConnectionToClient.cpp:
+        (WebCore::IDBServer::IDBConnectionToClient::didRenameIndex):
+        * Modules/indexeddb/server/IDBConnectionToClient.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::renameIndex):
+        * Modules/indexeddb/server/IDBServer.h:
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::indexRenamed):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameIndex):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+
+        * Modules/indexeddb/server/MemoryIndex.h:
+        (WebCore::IDBServer::MemoryIndex::rename):
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::renameIndex):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performRenameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformRenameIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didRenameIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::renameIndex):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        (WebCore::IDBIndexInfo::rename):
+
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::infoForExistingIndex):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::renameIndexSuccess):
+        * Modules/indexeddb/shared/IDBResultData.h:
+
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::didRenameIndex):
+        (WebCore::InProcessIDBServer::renameIndex):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Fix -webkit-box-reflect parsing

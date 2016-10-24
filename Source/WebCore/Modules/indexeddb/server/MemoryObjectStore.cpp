@@ -475,6 +475,17 @@ MemoryObjectStoreCursor* MemoryObjectStore::maybeOpenCursor(const IDBCursorInfo&
     return result.iterator->value.get();
 }
 
+void MemoryObjectStore::renameIndex(MemoryIndex& index, const String& newName)
+{
+    ASSERT(m_indexesByName.get(index.info().name()) == &index);
+    ASSERT(!m_indexesByName.contains(newName));
+    ASSERT(m_info.infoForExistingIndex(index.info().name()));
+
+    m_info.infoForExistingIndex(index.info().name())->rename(newName);
+    m_indexesByName.set(newName, m_indexesByName.take(index.info().name()));
+    index.rename(newName);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

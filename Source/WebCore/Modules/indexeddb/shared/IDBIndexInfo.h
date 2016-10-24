@@ -47,6 +47,8 @@ public:
     bool unique() const { return m_unique; }
     bool multiEntry() const { return m_multiEntry; }
 
+    void rename(const String& newName) { m_name = newName; }
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, IDBIndexInfo&);
 

@@ -30,7 +30,7 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface IDBIndex {
-    readonly attribute DOMString name;
+    [SetterMayThrowException] attribute DOMString name;
     readonly attribute IDBObjectStore objectStore;
     [ImplementationReturnType=IDBKeyPath] readonly attribute any keyPath;
     readonly attribute boolean multiEntry;

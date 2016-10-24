@@ -34,6 +34,7 @@
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseException.h"
+#include "IDBIndex.h"
 #include "IDBObjectStore.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBResultData.h"
@@ -115,6 +116,18 @@ void IDBDatabase::renameObjectStore(IDBObjectStore& objectStore, const String& n
     m_info.renameObjectStore(objectStore.info().identifier(), newName);
 
     m_versionChangeTransaction->renameObjectStore(objectStore, newName);
+}
+
+void IDBDatabase::renameIndex(IDBIndex& index, const String& newName)
+{
+    ASSERT(currentThread() == originThreadID());
+    ASSERT(m_versionChangeTransaction);
+    ASSERT(m_info.hasObjectStore(index.objectStore().info().name()));
+    ASSERT(m_info.infoForExistingObjectStore(index.objectStore().info().name())->hasIndex(index.info().name()));
+
+    m_info.infoForExistingObjectStore(index.objectStore().info().name())->infoForExistingIndex(index.info().identifier())->rename(newName);
+
+    m_versionChangeTransaction->renameIndex(index, newName);
 }
 
 ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String&, const Dictionary&)

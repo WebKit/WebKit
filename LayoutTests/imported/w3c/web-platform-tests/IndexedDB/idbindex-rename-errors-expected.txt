@@ -1,10 +1,8 @@
 
-FAIL IndexedDB deleted index rename throws assert_throws: function "() => index.name = 'renamed_by_author'" did not throw
-FAIL IndexedDB index rename throws in a readonly transaction assert_throws: function "() => index.name = 'renamed_by_author'" did not throw
-FAIL IndexedDB index rename throws in a readwrite transaction assert_throws: function "() => index.name = 'renamed_by_author'" did not throw
-FAIL IndexedDB index rename throws in an inactive transaction assert_throws: function "() => authorIndex.name = 'renamed_by_author'" did not throw
-FAIL IndexedDB index rename to the name of another index throws assert_throws: function "() => index.name = 'by_title'" did not throw
-FAIL IndexedDB index rename handles exceptions when stringifying names assert_throws: IDBObjectStore rename should re-raise toString() exception function "() => {
-              index.name = {
-                toSt..." did not throw
+PASS IndexedDB deleted index rename throws 
+PASS IndexedDB index rename throws in a readonly transaction 
+PASS IndexedDB index rename throws in a readwrite transaction 
+FAIL IndexedDB index rename throws in an inactive transaction assert_throws: function "() => authorIndex.name = 'renamed_by_author'" threw object "InvalidStateError (DOM Exception 11): Failed set property..." that is not a DOMException TransactionInactiveError: property "code" is equal to 11, expected 0
+FAIL IndexedDB index rename to the name of another index throws assert_throws: function "() => index.name = 'by_title'" threw object "InvalidStateError (DOM Exception 11): Failed set property..." that is not a DOMException ConstraintError: property "code" is equal to 11, expected 0
+PASS IndexedDB index rename handles exceptions when stringifying names 
 

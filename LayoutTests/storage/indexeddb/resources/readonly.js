@@ -63,7 +63,6 @@ function checkCursor()
     }
 
     index = evalAndLog("index = objectStore.createIndex('first', 'first');");
-    setReadonlyProperty("index.name", "'bar'");
     setReadonlyProperty("index.objectStore", "this");
     setReadonlyProperty("index.keyPath", "'bar'");
     setReadonlyProperty("index.unique", "true");

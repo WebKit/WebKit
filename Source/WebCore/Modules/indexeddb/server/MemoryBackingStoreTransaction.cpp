@@ -160,6 +160,16 @@ void MemoryBackingStoreTransaction::objectStoreRenamed(MemoryObjectStore& object
     m_originalObjectStoreNames.add(&objectStore, oldName);
 }
 
+void MemoryBackingStoreTransaction::indexRenamed(MemoryIndex& index, const String& oldName)
+{
+    ASSERT(m_objectStores.contains(&index.objectStore()));
+    ASSERT(m_info.mode() == IndexedDB::TransactionMode::VersionChange);
+
+    // We only care about the first rename in a given transaction, because if the transaction is aborted we want
+    // to go back to the first 'oldName'
+    m_originalIndexNames.add(&index, oldName);
+}
+
 void MemoryBackingStoreTransaction::indexCleared(MemoryIndex& index, std::unique_ptr<IndexValueStore>&& valueStore)
 {
     auto addResult = m_clearedIndexValueStores.add(&index, nullptr);
@@ -202,6 +212,10 @@ void MemoryBackingStoreTransaction::abort()
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
 
     TemporaryChange<bool> change(m_isAborting, true);
+
+    for (auto iterator : m_originalIndexNames)
+        iterator.key->rename(iterator.value);
+    m_originalIndexNames.clear();
 
     for (auto iterator : m_originalObjectStoreNames)
         iterator.key->rename(iterator.value);

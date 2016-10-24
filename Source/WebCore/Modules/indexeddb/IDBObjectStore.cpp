@@ -526,10 +526,14 @@ void IDBObjectStore::markAsDeleted()
     m_deleted = true;
 }
 
-void IDBObjectStore::rollbackInfoForVersionChangeAbort()
+void IDBObjectStore::rollbackForVersionChangeAbort()
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());
     m_info = m_originalInfo;
+
+    Locker<Lock> locker(m_referencedIndexLock);
+    for (auto& index : m_referencedIndexes.values())
+        index->rollbackInfoForVersionChangeAbort();
 }
 
 void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
@@ -537,6 +541,21 @@ void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
     Locker<Lock> locker(m_referencedIndexLock);
     for (auto& index : m_referencedIndexes.values())
         visitor.addOpaqueRoot(index.get());
+}
+
+void IDBObjectStore::renameReferencedIndex(IDBIndex& index, const String& newName)
+{
+    LOG(IndexedDB, "IDBObjectStore::renameReferencedIndex");
+
+    auto* indexInfo = m_info.infoForExistingIndex(index.info().identifier());
+    ASSERT(indexInfo);
+    indexInfo->rename(newName);
+
+    ASSERT(m_referencedIndexes.contains(index.info().name()));
+    ASSERT(!m_referencedIndexes.contains(newName));
+    ASSERT(m_referencedIndexes.get(index.info().name()) == &index);
+
+    m_referencedIndexes.set(newName, m_referencedIndexes.take(index.info().name()));
 }
 
 } // namespace WebCore

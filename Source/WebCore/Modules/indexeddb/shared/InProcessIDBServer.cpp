@@ -174,6 +174,13 @@ void InProcessIDBServer::didDeleteIndex(const IDBResultData& resultData)
     });
 }
 
+void InProcessIDBServer::didRenameIndex(const IDBResultData& resultData)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
+        m_connectionToServer->didRenameIndex(resultData);
+    });
+}
+
 void InProcessIDBServer::didPutOrAdd(const IDBResultData& resultData)
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), resultData] {
@@ -276,6 +283,13 @@ void InProcessIDBServer::deleteIndex(const IDBRequestData& requestData, uint64_t
 {
     RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, objectStoreIdentifier, indexName] {
         m_server->deleteIndex(requestData, objectStoreIdentifier, indexName);
+    });
+}
+
+void InProcessIDBServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    RunLoop::current().dispatch([this, protectedThis = makeRef(*this), requestData, objectStoreIdentifier, indexIdentifier, newName] {
+        m_server->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
     });
 }
 

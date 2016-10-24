@@ -63,6 +63,7 @@ public:
     void close();
 
     void renameObjectStore(IDBObjectStore&, const String& newName);
+    void renameIndex(IDBIndex&, const String& newName);
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return IDBDatabaseEventTargetInterfaceType; }

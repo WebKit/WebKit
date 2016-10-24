@@ -93,9 +93,10 @@ public:
 
     const IDBObjectStoreInfo& info() const { return m_info; }
 
-    void rollbackInfoForVersionChangeAbort();
+    void rollbackForVersionChangeAbort();
 
     void visitReferencedIndexes(JSC::SlotVisitor&) const;
+    void renameReferencedIndex(IDBIndex&, const String& newName);
 
 private:
     IDBObjectStore(ScriptExecutionContext&, const IDBObjectStoreInfo&, IDBTransaction&);

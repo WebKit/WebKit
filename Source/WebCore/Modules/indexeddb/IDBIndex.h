@@ -48,10 +48,13 @@ public:
     virtual ~IDBIndex();
 
     const String& name() const;
+    ExceptionOr<void> setName(const String&);
     IDBObjectStore& objectStore();
     const IDBKeyPath& keyPath() const;
     bool unique() const;
     bool multiEntry() const;
+
+    void rollbackInfoForVersionChangeAbort();
 
     ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, IDBKeyRange*, const String& direction);
     ExceptionOr<Ref<IDBRequest>> openCursor(JSC::ExecState&, JSC::JSValue key, const String& direction);
@@ -87,6 +90,7 @@ private:
     bool hasPendingActivity() const final;
 
     IDBIndexInfo m_info;
+    IDBIndexInfo m_originalInfo;
 
     bool m_deleted { false };
 

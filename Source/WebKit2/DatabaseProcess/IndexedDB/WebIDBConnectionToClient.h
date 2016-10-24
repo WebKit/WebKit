@@ -68,6 +68,7 @@ public:
     void didClearObjectStore(const WebCore::IDBResultData&) final;
     void didCreateIndex(const WebCore::IDBResultData&) final;
     void didDeleteIndex(const WebCore::IDBResultData&) final;
+    void didRenameIndex(const WebCore::IDBResultData&) final;
     void didPutOrAdd(const WebCore::IDBResultData&) final;
     void didGetRecord(const WebCore::IDBResultData&) final;
     void didGetCount(const WebCore::IDBResultData&) final;
@@ -97,6 +98,7 @@ public:
     void clearObjectStore(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier);
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
+    void renameIndex(const WebCore::IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
     void putOrAdd(const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, unsigned overwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);

@@ -212,6 +212,13 @@ void UniqueIDBDatabaseConnection::didDeleteIndex(const IDBResultData& resultData
     m_connectionToClient.didDeleteIndex(resultData);
 }
 
+void UniqueIDBDatabaseConnection::didRenameIndex(const IDBResultData& resultData)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseConnection::didRenameIndex");
+
+    m_connectionToClient.didRenameIndex(resultData);
+}
+
 } // namespace IDBServer
 } // namespace WebCore
 

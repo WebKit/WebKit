@@ -35,9 +35,6 @@ trying to set readonly property cursor.primaryKey
 cursor.primaryKey = Infinity
 PASS cursor.primaryKey is still first
 index = objectStore.createIndex('first', 'first');
-trying to set readonly property index.name
-index.name = 'bar'
-PASS index.name is still first
 trying to set readonly property index.objectStore
 index.objectStore = this
 PASS index.objectStore is still [object IDBObjectStore]

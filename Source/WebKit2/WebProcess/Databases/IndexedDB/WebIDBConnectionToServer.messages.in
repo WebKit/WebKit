@@ -33,6 +33,7 @@ messages -> WebIDBConnectionToServer {
     DidClearObjectStore(WebCore::IDBResultData result)
     DidCreateIndex(WebCore::IDBResultData result)
     DidDeleteIndex(WebCore::IDBResultData result)
+    DidRenameIndex(WebCore::IDBResultData result)
     DidPutOrAdd(WebCore::IDBResultData result)
     DidGetRecord(WebKit::WebIDBResult result)
     DidGetCount(WebCore::IDBResultData result)

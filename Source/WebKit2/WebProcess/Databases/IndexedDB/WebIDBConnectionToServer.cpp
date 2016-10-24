@@ -138,6 +138,11 @@ void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, ui
     send(Messages::WebIDBConnectionToClient::DeleteIndex(requestData, objectStoreIdentifier, indexName));
 }
 
+void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    send(Messages::WebIDBConnectionToClient::RenameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName));
+}
+
 void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
     send(Messages::WebIDBConnectionToClient::PutOrAdd(requestData, keyData, value, static_cast<unsigned>(mode)));
@@ -251,6 +256,11 @@ void WebIDBConnectionToServer::didCreateIndex(const IDBResultData& result)
 void WebIDBConnectionToServer::didDeleteIndex(const IDBResultData& result)
 {
     m_connectionToServer->didDeleteIndex(result);
+}
+
+void WebIDBConnectionToServer::didRenameIndex(const IDBResultData& result)
+{
+    m_connectionToServer->didRenameIndex(result);
 }
 
 void WebIDBConnectionToServer::didPutOrAdd(const IDBResultData& result)

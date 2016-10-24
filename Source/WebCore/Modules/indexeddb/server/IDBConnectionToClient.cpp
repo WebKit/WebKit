@@ -93,6 +93,11 @@ void IDBConnectionToClient::didDeleteIndex(const IDBResultData& result)
     m_delegate->didDeleteIndex(result);
 }
 
+void IDBConnectionToClient::didRenameIndex(const IDBResultData& result)
+{
+    m_delegate->didRenameIndex(result);
+}
+
 void IDBConnectionToClient::didPutOrAdd(const IDBResultData& result)
 {
     m_delegate->didPutOrAdd(result);

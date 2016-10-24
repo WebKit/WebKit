@@ -80,6 +80,9 @@ public:
     void deleteIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, const String& indexName);
     WEBCORE_EXPORT void didDeleteIndex(const IDBResultData&);
 
+    void renameIndex(const IDBRequestData&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
+    WEBCORE_EXPORT void didRenameIndex(const IDBResultData&);
+
     void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
     WEBCORE_EXPORT void didPutOrAdd(const IDBResultData&);
 

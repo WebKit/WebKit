@@ -57,6 +57,7 @@ public:
     bool hasIndex(const String& name) const;
     bool hasIndex(uint64_t indexIdentifier) const;
     IDBIndexInfo* infoForExistingIndex(const String& name);
+    IDBIndexInfo* infoForExistingIndex(uint64_t identifier);
 
     Vector<String> indexNames() const;
     const HashMap<uint64_t, IDBIndexInfo>& indexMap() const { return m_indexMap; }
@@ -79,7 +80,6 @@ private:
     uint64_t m_maxIndexID { 0 };
 
     HashMap<uint64_t, IDBIndexInfo> m_indexMap;
-
 };
 
 template<class Encoder>

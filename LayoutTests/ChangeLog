@@ -1,3 +1,21 @@
+2016-10-24  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support IDBIndex name assignment.
+        <rdar://problem/28806932> and https://bugs.webkit.org/show_bug.cgi?id=163805
+
+        Reviewed by Alex Christensen.
+
+        * storage/indexeddb/modern/index-rename-1-expected.txt: Added.
+        * storage/indexeddb/modern/index-rename-1-private-expected.txt: Added.
+        * storage/indexeddb/modern/index-rename-1-private.html: Added.
+        * storage/indexeddb/modern/index-rename-1.html: Added.
+        * storage/indexeddb/modern/resources/index-rename-1.js: Added.
+
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/readonly-private-expected.txt:
+        * storage/indexeddb/resources/readonly.js: Removed the test that verifies that index names are
+          readonly as they are no longer readonly.
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unprefix -webkit-writing-mode

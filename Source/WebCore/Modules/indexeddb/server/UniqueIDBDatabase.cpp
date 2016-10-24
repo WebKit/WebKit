@@ -819,6 +819,60 @@ void UniqueIDBDatabase::didPerformDeleteIndex(uint64_t callbackIdentifier, const
     performErrorCallback(callbackIdentifier, error);
 }
 
+void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback callback)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::renameIndex");
+
+    uint64_t callbackID = storeCallbackOrFireError(callback);
+    if (!callbackID)
+        return;
+
+    auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+    if (!objectStoreInfo) {
+        performErrorCallback(callbackID, { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename index in non-existant object store") });
+        return;
+    }
+
+    auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
+    if (!indexInfo) {
+        performErrorCallback(callbackID, { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename non-existant index") });
+        return;
+    }
+
+    postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performRenameIndex, callbackID, transaction.info().identifier(), objectStoreIdentifier, indexIdentifier, newName));
+}
+
+void UniqueIDBDatabase::performRenameIndex(uint64_t callbackIdentifier, const IDBResourceIdentifier& transactionIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    ASSERT(!isMainThread());
+    LOG(IndexedDB, "(db) UniqueIDBDatabase::performRenameIndex");
+
+    ASSERT(m_backingStore);
+    m_backingStore->renameIndex(transactionIdentifier, objectStoreIdentifier, indexIdentifier, newName);
+
+    IDBError error;
+    postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformRenameIndex, callbackIdentifier, error, objectStoreIdentifier, indexIdentifier, newName));
+}
+
+void UniqueIDBDatabase::didPerformRenameIndex(uint64_t callbackIdentifier, const IDBError& error, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    ASSERT(isMainThread());
+    LOG(IndexedDB, "(main) UniqueIDBDatabase::didPerformRenameIndex");
+
+    if (error.isNull()) {
+        auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(objectStoreIdentifier);
+        ASSERT(objectStoreInfo);
+        if (objectStoreInfo) {
+            auto* indexInfo = objectStoreInfo->infoForExistingIndex(indexIdentifier);
+            ASSERT(indexInfo);
+            indexInfo->rename(newName);
+        }
+    }
+
+    performErrorCallback(callbackIdentifier, error);
+}
+
 void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode, KeyDataCallback callback)
 {
     ASSERT(isMainThread());

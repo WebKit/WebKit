@@ -204,6 +204,24 @@ void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData
     });
 }
 
+void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameIndex");
+
+    ASSERT(isVersionChange());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    RefPtr<UniqueIDBDatabaseTransaction> protectedThis(this);
+    m_databaseConnection->database().renameIndex(*this, objectStoreIdentifier, indexIdentifier, newName, [this, protectedThis, requestData](const IDBError& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameIndex (callback)");
+        if (error.isNull())
+            m_databaseConnection->didRenameIndex(IDBResultData::renameIndexSuccess(requestData.requestIdentifier()));
+        else
+            m_databaseConnection->didRenameIndex(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
+
 void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd");

@@ -115,6 +115,7 @@ public:
     Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);
     void renameObjectStore(IDBObjectStore&, const String& newName);
     std::unique_ptr<IDBIndex> createIndex(IDBObjectStore&, const IDBIndexInfo&);
+    void renameIndex(IDBIndex&, const String& newName);
 
     Ref<IDBRequest> requestPutOrAdd(JSC::ExecState&, IDBObjectStore&, IDBKey*, SerializedScriptValue&, IndexedDB::ObjectStoreOverwriteMode);
     Ref<IDBRequest> requestGetRecord(JSC::ExecState&, IDBObjectStore&, const IDBGetRecordData&);
@@ -177,6 +178,9 @@ private:
 
     void createIndexOnServer(IDBClient::TransactionOperation&, const IDBIndexInfo&);
     void didCreateIndexOnServer(const IDBResultData&);
+
+    void renameIndexOnServer(IDBClient::TransactionOperation&, const uint64_t& objectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName);
+    void didRenameIndexOnServer(const IDBResultData&);
 
     void clearObjectStoreOnServer(IDBClient::TransactionOperation&, const uint64_t& objectStoreIdentifier);
     void didClearObjectStoreOnServer(IDBRequest&, const IDBResultData&);
