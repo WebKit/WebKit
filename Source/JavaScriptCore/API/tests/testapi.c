@@ -44,6 +44,7 @@
 #include "ExecutionTimeLimitTest.h"
 #include "FunctionOverridesTest.h"
 #include "GlobalContextWithFinalizerTest.h"
+#include "JSONParseTest.h"
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
 
@@ -1129,8 +1130,6 @@ int main(int argc, char* argv[])
     testObjectiveCAPI();
 #endif
 
-
-
     const char *scriptPath = "testapi.js";
     if (argc > 1) {
         scriptPath = argv[1];
@@ -1889,6 +1888,7 @@ int main(int argc, char* argv[])
     failed = testFunctionOverrides() || failed;
     failed = testGlobalContextWithFinalizer() || failed;
     failed = testPingPongStackOverflow() || failed;
+    failed = testJSONParse() || failed;
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

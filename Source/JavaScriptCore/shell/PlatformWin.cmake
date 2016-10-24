@@ -31,9 +31,10 @@ add_library(testapiLib SHARED
     ../API/tests/ExecutionTimeLimitTest.cpp
     ../API/tests/FunctionOverridesTest.cpp
     ../API/tests/GlobalContextWithFinalizerTest.cpp
+    ../API/tests/JSONParseTest.cpp
     ../API/tests/PingPongStackOverflowTest.cpp
     ../API/tests/testapi.c
-   ../API/tests/TypedArrayCTest.cpp
+    ../API/tests/TypedArrayCTest.cpp
 )
 set_source_files_properties(../API/tests/CustomGlobalObjectClassTest.c PROPERTIES COMPILE_FLAGS "/TP /MT")
 set_source_files_properties(../API/tests/testapi.c PROPERTIES COMPILE_FLAGS "/TP /MT")

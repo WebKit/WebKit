@@ -791,6 +791,9 @@ JSValue JSONParse(ExecState* exec, const String& json)
 {
     LocalScope scope(exec->vm());
 
+    if (json.isNull())
+        return JSValue();
+
     if (json.is8Bit()) {
         LiteralParser<LChar> jsonParser(exec, json.characters8(), json.length(), StrictJSON);
         return jsonParser.tryLiteralParse();

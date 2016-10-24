@@ -1,3 +1,27 @@
+2016-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        JSONParse should not crash with null Strings
+        https://bugs.webkit.org/show_bug.cgi?id=163918
+        <rdar://problem/28834095>
+
+        Reviewed by Michael Saboff.
+
+        When JSONParse is called with a null String, it calls String::is8bit, which dereferences a null pointer.
+        This is happening with new work in the Fetch API, but callers of JSONParse should not have to check
+        if the String is null.
+
+        * API/tests/JSONParseTest.cpp: Added.
+        (testJSONParse):
+        * API/tests/JSONParseTest.h: Added.
+        * API/tests/testapi.c:
+        (main):
+        Test parsing null Strings.  They should have the same result as parsing empty Strings.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSONObject.cpp:
+        (JSC::JSONParse):
+        Check for null Strings.
+        * shell/PlatformWin.cmake:
+
 2016-10-24  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Scope chain shouldn't show empty Closure sections
