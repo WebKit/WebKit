@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "JSWebGLRenderingContextBase.h"
 
 #if ENABLE(WEBGL)
+
+#include "JSWebGLRenderingContextBase.h"
 
 #include "ANGLEInstancedArrays.h"
 #include "EXTBlendMinMax.h"
