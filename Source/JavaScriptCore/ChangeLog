@@ -1,3 +1,16 @@
+2016-10-24  Mark Lam  <mark.lam@apple.com>
+
+        Dumping of op_negate bytecode is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=163896
+
+        Reviewed by Darin Adler.
+
+        It thinks the bytecode consists of only 3 machine words, when it consists of 4.
+        This is now fixed.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         Activate WEB_RTC compilation flags for Mac bots

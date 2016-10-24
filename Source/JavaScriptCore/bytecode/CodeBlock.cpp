@@ -999,6 +999,7 @@ void CodeBlock::dumpBytecode(
         }
         case op_negate: {
             printUnaryOp(out, exec, location, it, "negate");
+            ++it; // op_negate has an extra operand for the ArithProfile.
             break;
         }
         case op_add: {
