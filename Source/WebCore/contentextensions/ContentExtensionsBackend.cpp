@@ -197,7 +197,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
         }
         case ContentExtensions::ActionType::MakeHTTPS: {
             if ((url.protocolIs("http") || url.protocolIs("ws"))
-                && (!url.hasPort() || isDefaultPortForProtocol(url.port(), url.protocol())))
+                && (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol())))
                 willMakeHTTPS = true;
             break;
         }
@@ -233,12 +233,12 @@ void applyBlockedStatusToRequest(const BlockedStatus& status, ResourceRequest& r
     if (status.madeHTTPS) {
         const URL& originalURL = request.url();
         ASSERT(originalURL.protocolIs("http"));
-        ASSERT(!originalURL.hasPort() || isDefaultPortForProtocol(originalURL.port(), originalURL.protocol()));
+        ASSERT(!originalURL.port() || isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
 
         URL newURL = originalURL;
         newURL.setProtocol("https");
-        if (originalURL.hasPort())
-            newURL.setPort(defaultPortForProtocol("https"));
+        if (originalURL.port())
+            newURL.setPort(defaultPortForProtocol("https").value());
         request.setURL(newURL);
     }
 }

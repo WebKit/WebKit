@@ -10,8 +10,8 @@ PASS Parsing: < foo.com  > against <http://example.org/foo/bar>
 FAIL Parsing: <a:	 foo.com> against <http://example.org/foo/bar> assert_equals: origin expected "null" but got "a://"
 PASS Parsing: <http://f:21/ b ? d # e > against <http://example.org/foo/bar> 
 PASS Parsing: <http://f:/c> against <http://example.org/foo/bar> 
-FAIL Parsing: <http://f:0/c> against <http://example.org/foo/bar> assert_equals: origin expected "http://f:0" but got "http://f"
-FAIL Parsing: <http://f:00000000000000/c> against <http://example.org/foo/bar> assert_equals: origin expected "http://f:0" but got "http://f"
+PASS Parsing: <http://f:0/c> against <http://example.org/foo/bar> 
+PASS Parsing: <http://f:00000000000000/c> against <http://example.org/foo/bar> 
 PASS Parsing: <http://f:00000000000000000000080/c> against <http://example.org/foo/bar> 
 PASS Parsing: <http://f:b/c> against <http://example.org/foo/bar> 
 PASS Parsing: <http://f: /c> against <http://example.org/foo/bar> 

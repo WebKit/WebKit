@@ -57,10 +57,10 @@ TEST_F(URLTest, URLConstructorConstChar)
     EXPECT_FALSE(kurl.isNull());
     EXPECT_TRUE(kurl.isValid());
 
-    EXPECT_EQ(String("http"), kurl.protocol());
+    EXPECT_EQ(kurl.protocol() == "http", true);
     EXPECT_EQ(String("www.example.com"), kurl.host());
-    EXPECT_TRUE(kurl.hasPort());
-    EXPECT_EQ(8080, kurl.port());
+    EXPECT_TRUE(!!kurl.port());
+    EXPECT_EQ(8080, kurl.port().value());
     EXPECT_EQ(String("username"), kurl.user());
     EXPECT_EQ(String("password"), kurl.pass());
     EXPECT_EQ(String("/index.html"), kurl.path());

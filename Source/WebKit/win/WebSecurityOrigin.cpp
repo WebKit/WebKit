@@ -119,7 +119,7 @@ HRESULT WebSecurityOrigin::port(_Out_ unsigned short* result)
     if (!result)
         return E_POINTER;
 
-    *result = m_securityOrigin->port();
+    *result = m_securityOrigin->port().valueOr(0);
 
     return S_OK;
 }

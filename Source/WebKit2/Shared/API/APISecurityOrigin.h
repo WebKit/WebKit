@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APISecurityOrigin_h
-#define APISecurityOrigin_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/SecurityOrigin.h>
@@ -39,7 +38,7 @@ public:
         return create(WebCore::SecurityOrigin::createFromString(string));
     }
 
-    static RefPtr<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, int port)
+    static RefPtr<SecurityOrigin> create(const WTF::String& protocol, const WTF::String& host, Optional<uint16_t> port)
     {
         return create(WebCore::SecurityOrigin::create(protocol, host, port));
     }
@@ -66,5 +65,3 @@ private:
 };
 
 }
-
-#endif

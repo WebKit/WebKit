@@ -316,7 +316,7 @@ static NSURL *origin(WebPage& page)
     if (!mainFrameOrigin->isUnique())
         mainFrameOriginString = mainFrameOrigin->toRawString();
     else
-        mainFrameOriginString = mainFrameURL.protocol() + ':'; // toRawString() is not supposed to work with unique origins, and would just return "://".
+        mainFrameOriginString = makeString(mainFrameURL.protocol(), ':'); // toRawString() is not supposed to work with unique origins, and would just return "://".
 
     // +[NSURL URLWithString:] returns nil when its argument is malformed. It's unclear when we would have a malformed URL here,
     // but it happens in practice according to <rdar://problem/14173389>. Leaving an assertion in to catch a reproducible case.

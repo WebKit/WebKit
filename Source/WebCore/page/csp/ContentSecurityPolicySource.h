@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicySource_h
-#define ContentSecurityPolicySource_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
@@ -37,7 +36,7 @@ class URL;
 class ContentSecurityPolicySource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard);
+    ContentSecurityPolicySource(const ContentSecurityPolicy&, const String& scheme, const String& host, Optional<uint16_t> port, const String& path, bool hostHasWildcard, bool portHasWildcard);
 
     bool matches(const URL&, bool didReceiveRedirectResponse = false) const;
 
@@ -51,7 +50,7 @@ private:
     const ContentSecurityPolicy& m_policy;
     String m_scheme;
     String m_host;
-    int m_port;
+    Optional<uint16_t> m_port;
     String m_path;
 
     bool m_hostHasWildcard;
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicySource_h */

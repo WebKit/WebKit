@@ -624,7 +624,7 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
     }
 }
 
-ALWAYS_INLINE static bool isDefaultPort(StringView scheme, uint16_t port)
+Optional<uint16_t> defaultPortForProtocol(StringView scheme)
 {
     static const uint16_t ftpPort = 21;
     static const uint16_t gopherPort = 70;
@@ -635,53 +635,63 @@ ALWAYS_INLINE static bool isDefaultPort(StringView scheme, uint16_t port)
     
     auto length = scheme.length();
     if (!length)
-        return false;
+        return Nullopt;
     switch (scheme[0]) {
     case 'w':
         switch (length) {
         case 2:
-            return scheme[1] == 's'
-                && port == wsPort;
+            if (scheme[1] == 's')
+                return wsPort;
+            return Nullopt;
         case 3:
-            return scheme[1] == 's'
-                && scheme[2] == 's'
-                && port == wssPort;
+            if (scheme[1] == 's'
+                && scheme[2] == 's')
+                return wssPort;
+            return Nullopt;
         default:
             return false;
         }
     case 'h':
         switch (length) {
         case 4:
-            return scheme[1] == 't'
+            if (scheme[1] == 't'
                 && scheme[2] == 't'
-                && scheme[3] == 'p'
-                && port == httpPort;
+                && scheme[3] == 'p')
+                return httpPort;
+            return Nullopt;
         case 5:
-            return scheme[1] == 't'
+            if (scheme[1] == 't'
                 && scheme[2] == 't'
                 && scheme[3] == 'p'
-                && scheme[4] == 's'
-                && port == httpsPort;
+                && scheme[4] == 's')
+                return httpsPort;
+            return Nullopt;
         default:
-            return false;
+            return Nullopt;
         }
     case 'g':
-        return length == 6
+        if (length == 6
             && scheme[1] == 'o'
             && scheme[2] == 'p'
             && scheme[3] == 'h'
             && scheme[4] == 'e'
-            && scheme[5] == 'r'
-            && port == gopherPort;
+            && scheme[5] == 'r')
+            return gopherPort;
+        return Nullopt;
     case 'f':
-        return length == 3
+        if (length == 3
             && scheme[1] == 't'
-            && scheme[2] == 'p'
-            && port == ftpPort;
-        return false;
+            && scheme[2] == 'p')
+            return ftpPort;
+        return Nullopt;
     default:
-        return false;
+        return Nullopt;
     }
+}
+
+bool isDefaultPortForProtocol(uint16_t port, StringView protocol)
+{
+    return defaultPortForProtocol(protocol) == port;
 }
 
 enum class Scheme {
@@ -2589,7 +2599,7 @@ bool URLParser::parsePort(CodePointIterator<CharacterType>& iterator)
     if (!port && digitCount > 1)
         syntaxViolation(colonIterator);
 
-    if (UNLIKELY(isDefaultPort(parsedDataView(0, m_url.m_schemeEnd), port)))
+    if (UNLIKELY(isDefaultPortForProtocol(port, parsedDataView(0, m_url.m_schemeEnd))))
         syntaxViolation(colonIterator);
     else {
         appendToASCIIBuffer(':');

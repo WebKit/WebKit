@@ -145,7 +145,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
 bool isValidCrossOriginRedirectionURL(const URL& redirectURL)
 {
-    return SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol())
+    return SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled(redirectURL.protocol().toStringWithoutCopying())
         && redirectURL.user().isEmpty()
         && redirectURL.pass().isEmpty();
 }

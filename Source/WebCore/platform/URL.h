@@ -100,10 +100,9 @@ public:
 
     String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
-    WEBCORE_EXPORT String protocol() const;
+    WEBCORE_EXPORT StringView protocol() const;
     WEBCORE_EXPORT String host() const;
-    WEBCORE_EXPORT unsigned short port() const;
-    bool hasPort() const;
+    WEBCORE_EXPORT Optional<uint16_t> port() const;
     WEBCORE_EXPORT String user() const;
     WEBCORE_EXPORT String pass() const;
     WEBCORE_EXPORT String path() const;
@@ -312,8 +311,8 @@ WEBCORE_EXPORT bool protocolIs(const String& url, const char* protocol);
 WEBCORE_EXPORT bool protocolIsJavaScript(const String& url);
 WEBCORE_EXPORT bool protocolIsInHTTPFamily(const String& url);
 
-unsigned short defaultPortForProtocol(const String& protocol);
-WEBCORE_EXPORT bool isDefaultPortForProtocol(unsigned short port, const String& protocol);
+Optional<uint16_t> defaultPortForProtocol(StringView protocol);
+WEBCORE_EXPORT bool isDefaultPortForProtocol(uint16_t port, StringView protocol);
 WEBCORE_EXPORT bool portAllowed(const URL&); // Blacklist ports that should never be used for Web resources.
 
 bool isValidProtocol(const String&);
@@ -387,11 +386,6 @@ inline bool URL::isValid() const
 inline bool URL::hasPath() const
 {
     return m_pathEnd != m_portEnd;
-}
-
-inline bool URL::hasPort() const
-{
-    return m_hostEnd < m_portEnd;
 }
 
 inline bool URL::hasUsername() const

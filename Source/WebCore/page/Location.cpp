@@ -76,7 +76,7 @@ String Location::protocol() const
     if (!m_frame)
         return String();
 
-    return url().protocol() + ":";
+    return makeString(url().protocol(), ":");
 }
 
 String Location::host() const
@@ -87,7 +87,7 @@ String Location::host() const
     // Note: this is the IE spec. The NS spec swaps the two, it says
     // "The hostname property is the concatenation of the host and port properties, separated by a colon."
     const URL& url = this->url();
-    return url.hasPort() ? url.host() + ":" + String::number(url.port()) : url.host();
+    return url.port() ? url.host() + ":" + String::number(url.port().value()) : url.host();
 }
 
 String Location::hostname() const
@@ -104,7 +104,7 @@ String Location::port() const
         return String();
 
     const URL& url = this->url();
-    return url.hasPort() ? String::number(url.port()) : emptyString();
+    return url.port() ? String::number(url.port().value()) : emptyString();
 }
 
 String Location::pathname() const

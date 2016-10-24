@@ -440,7 +440,7 @@ bool CachedResource::isExpired() const
     return computeCurrentAge(m_response, m_responseTimestamp) > freshnessLifetime(m_response);
 }
 
-static inline bool shouldCacheSchemeIndefinitely(const String& scheme)
+static inline bool shouldCacheSchemeIndefinitely(StringView scheme)
 {
 #if PLATFORM(COCOA)
     if (equalLettersIgnoringASCIICase(scheme, "applewebdata"))
@@ -456,12 +456,12 @@ static inline bool shouldCacheSchemeIndefinitely(const String& scheme)
 std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
     if (!response.url().protocolIsInHTTPFamily()) {
-        String protocol = response.url().protocol();
+        StringView protocol = response.url().protocol();
         if (!shouldCacheSchemeIndefinitely(protocol)) {
             // Don't cache non-HTTP main resources since we can't check for freshness.
             // FIXME: We should not cache subresources either, but when we tried this
             // it caused performance and flakiness issues in our test infrastructure.
-            if (m_type == MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol))
+            if (m_type == MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
                 return 0us;
         }
 

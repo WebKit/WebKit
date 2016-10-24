@@ -58,7 +58,7 @@
 
 - (NSInteger)port
 {
-    return _securityOrigin->securityOrigin().port();
+    return _securityOrigin->securityOrigin().port().valueOr(0);
 }
 
 #pragma mark WKObject protocol implementation

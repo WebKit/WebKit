@@ -1,3 +1,13 @@
+2016-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        URL::port should return Optional<uint16_t>
+        https://bugs.webkit.org/show_bug.cgi?id=163806
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        (-[WebSecurityOrigin port]):
+
 2016-10-24  Dave Hyatt  <hyatt@apple.com>
 
         Remove CSSCharsetRule from the CSS OM

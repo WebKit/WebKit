@@ -453,7 +453,7 @@ bool ContentSecurityPolicy::allowPluginType(const String& type, const String& ty
 
 bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
 {
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
     // As per section object-src of the Content Security Policy Level 3 spec., <http://w3c.github.io/webappsec-csp> (Editor's Draft, 29 February 2016),
     // "If plugin content is loaded without an associated URL (perhaps an object element lacks a data attribute, but loads some default plugin based
@@ -469,7 +469,7 @@ bool ContentSecurityPolicy::allowObjectFromSource(const URL& url, RedirectRespon
 
 bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
 {
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
     String sourceURL;
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
@@ -483,7 +483,7 @@ bool ContentSecurityPolicy::allowChildFrameFromSource(const URL& url, RedirectRe
 
 bool ContentSecurityPolicy::allowResourceFromSource(const URL& url, RedirectResponseReceived redirectResponseReceived, const char* name, ResourcePredicate resourcePredicate) const
 {
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
     String sourceURL;
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
@@ -526,7 +526,7 @@ bool ContentSecurityPolicy::allowMediaFromSource(const URL& url, RedirectRespons
 
 bool ContentSecurityPolicy::allowConnectToSource(const URL& url, RedirectResponseReceived redirectResponseReceived) const
 {
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
     String sourceURL;
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
@@ -546,7 +546,7 @@ bool ContentSecurityPolicy::allowBaseURI(const URL& url, bool overrideContentSec
 {
     if (overrideContentSecurityPolicy)
         return true;
-    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol()))
+    if (SchemeRegistry::schemeShouldBypassContentSecurityPolicy(url.protocol().toStringWithoutCopying()))
         return true;
     String sourceURL;
     TextPosition sourcePosition(WTF::OrdinalNumber::beforeFirst(), WTF::OrdinalNumber());
@@ -562,7 +562,7 @@ static String stripURLForUseInReport(Document& document, const URL& url)
     if (!url.isValid())
         return String();
     if (!url.isHierarchical() || url.protocolIs("file"))
-        return url.protocol();
+        return url.protocol().toString();
     return document.securityOrigin()->canRequest(url) ? url.strippedForUseAsReferrer() : SecurityOrigin::create(url).get().toString();
 }
 
@@ -797,7 +797,7 @@ void ContentSecurityPolicy::upgradeInsecureRequestIfNeeded(URL& url, InsecureReq
     else
         return;
     
-    if (url.port() == 80)
+    if (url.port() && url.port().value() == 80)
         url.setPort(443);
 }
 

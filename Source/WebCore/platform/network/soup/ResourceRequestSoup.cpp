@@ -144,7 +144,7 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
-    bool shouldPortBeResetToZero = m_url.hasPort() && !m_url.port();
+    bool shouldPortBeResetToZero = m_url.port() && !m_url.port().value();
     m_url = URL(soup_message_get_uri(soupMessage));
 
     // SoupURI cannot differeniate between an explicitly specified port 0 and

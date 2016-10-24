@@ -38,12 +38,12 @@ String WorkerLocation::href() const
 
 String WorkerLocation::protocol() const
 {
-    return m_url.protocol() + ":";
+    return makeString(m_url.protocol(), ":");
 }
 
 String WorkerLocation::host() const
 {
-    return m_url.port() ? m_url.host() + ":" + String::number(m_url.port()) : m_url.host();
+    return m_url.port() ? m_url.host() + ":" + String::number(m_url.port().value()) : m_url.host();
 }
 
 String WorkerLocation::hostname() const
@@ -53,7 +53,7 @@ String WorkerLocation::hostname() const
 
 String WorkerLocation::port() const
 {
-    return m_url.port() ? String::number(m_url.port()) : "";
+    return m_url.port() ? String::number(m_url.port().value()) : emptyString();
 }
 
 String WorkerLocation::pathname() const

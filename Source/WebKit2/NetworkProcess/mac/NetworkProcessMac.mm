@@ -70,8 +70,8 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
         URL httpProxyURL(URL(), httpProxy);
         if (httpProxyURL.isValid()) {
             [proxySettings setObject:nsStringFromWebCoreString(httpProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPProxy];
-            if (httpProxyURL.hasPort()) {
-                NSNumber *port = [NSNumber numberWithInt:httpProxyURL.port()];
+            if (httpProxyURL.port()) {
+                NSNumber *port = [NSNumber numberWithInt:httpProxyURL.port().value()];
                 [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPPort];
             }
         }
@@ -83,8 +83,8 @@ static void overrideSystemProxies(const String& httpProxy, const String& httpsPr
         URL httpsProxyURL(URL(), httpsProxy);
         if (httpsProxyURL.isValid()) {
             [proxySettings setObject:nsStringFromWebCoreString(httpsProxyURL.host()) forKey:(NSString *)kCFNetworkProxiesHTTPSProxy];
-            if (httpsProxyURL.hasPort()) {
-                NSNumber *port = [NSNumber numberWithInt:httpsProxyURL.port()];
+            if (httpsProxyURL.port()) {
+                NSNumber *port = [NSNumber numberWithInt:httpsProxyURL.port().value()];
                 [proxySettings setObject:port forKey:(NSString *)kCFNetworkProxiesHTTPSPort];
             }
         } else

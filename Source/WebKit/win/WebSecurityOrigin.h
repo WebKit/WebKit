@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSecurityOrigin_h
-#define WebSecurityOrigin_h
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/SecurityOrigin.h>
@@ -62,5 +61,3 @@ private:
     ULONG m_refCount { 0 };
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 };
-
-#endif // WebSecurityOrigin_h

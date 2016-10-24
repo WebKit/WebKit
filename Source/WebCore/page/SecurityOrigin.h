@@ -26,8 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SecurityOrigin_h
-#define SecurityOrigin_h
+#pragma once
 
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -60,7 +59,7 @@ public:
     WEBCORE_EXPORT static RefPtr<SecurityOrigin> maybeCreateFromDatabaseIdentifier(const String&);
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, int port);
+    WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, Optional<uint16_t> port);
 
     // Some URL schemes use nested URLs for their security context. For example,
     // filesystem URLs look like the following:
@@ -88,7 +87,7 @@ public:
     String protocol() const { return m_protocol; }
     String host() const { return m_host; }
     String domain() const { return m_domain; }
-    unsigned short port() const { return m_port; }
+    Optional<uint16_t> port() const { return m_port; }
 
     // Returns true if a given URL is secure, based either directly on its
     // own protocol, or, when relevant, on the protocol of its "inner URL"
@@ -226,7 +225,7 @@ private:
     String m_host;
     String m_domain;
     String m_filePath;
-    unsigned short m_port;
+    Optional<uint16_t> m_port;
     bool m_isUnique;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
@@ -237,5 +236,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // SecurityOrigin_h

@@ -84,9 +84,9 @@ static String hostName(const URL& url, bool secure)
     ASSERT(url.protocolIs("wss") == secure);
     StringBuilder builder;
     builder.append(url.host().convertToASCIILowercase());
-    if (url.port() && ((!secure && url.port() != 80) || (secure && url.port() != 443))) {
+    if (url.port() && ((!secure && url.port().value() != 80) || (secure && url.port().value() != 443))) {
         builder.append(':');
-        builder.appendNumber(url.port());
+        builder.appendNumber(url.port().value());
     }
     return builder.toString();
 }

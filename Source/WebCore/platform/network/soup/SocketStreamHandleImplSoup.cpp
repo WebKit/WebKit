@@ -52,7 +52,7 @@ Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, Socke
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 
-    unsigned port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
+    unsigned port = url.port() ? url.port().value() : (url.protocolIs("wss") ? 443 : 80);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss"))
         g_socket_client_set_tls(socketClient.get(), TRUE);

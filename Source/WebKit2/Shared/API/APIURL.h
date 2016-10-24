@@ -70,7 +70,7 @@ public:
     WTF::String protocol() const
     {
         parseURLIfNecessary();
-        return m_parsedURL->isValid() ? m_parsedURL->protocol() : WTF::String();
+        return m_parsedURL->isValid() ? m_parsedURL->protocol().toString() : WTF::String();
     }
 
     WTF::String path() const

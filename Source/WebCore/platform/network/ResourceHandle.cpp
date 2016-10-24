@@ -88,10 +88,8 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
 
 RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
 {
-    BuiltinResourceHandleConstructorMap::iterator protocolMapItem = builtinResourceHandleConstructorMap().find(request.url().protocol());
-
-    if (protocolMapItem != builtinResourceHandleConstructorMap().end())
-        return protocolMapItem->value(request, client);
+    if (auto constructor = builtinResourceHandleConstructorMap().get(request.url().protocol().toStringWithoutCopying()))
+        return constructor(request, client);
 
     auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff));
 
@@ -134,10 +132,8 @@ void ResourceHandle::failureTimerFired()
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    BuiltinResourceHandleSynchronousLoaderMap::iterator protocolMapItem = builtinResourceHandleSynchronousLoaderMap().find(request.url().protocol());
-
-    if (protocolMapItem != builtinResourceHandleSynchronousLoaderMap().end()) {
-        protocolMapItem->value(context, request, storedCredentials, error, response, data);
+    if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(request.url().protocol().toStringWithoutCopying())) {
+        constructor(context, request, storedCredentials, error, response, data);
         return;
     }
 

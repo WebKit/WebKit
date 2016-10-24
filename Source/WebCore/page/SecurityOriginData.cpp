@@ -49,7 +49,7 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
 #if !LOG_DISABLED
 String SecurityOriginData::debugString() const
 {
-    return makeString(protocol, "://", host, ":", String::number(port));
+    return makeString(protocol, "://", host, ":", String::number(port.valueOr(0)));
 }
 #endif
 

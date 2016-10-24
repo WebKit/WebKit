@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentSecurityPolicySourceList_h
-#define ContentSecurityPolicySourceList_h
+#pragma once
 
 #include "ContentSecurityPolicyHash.h"
 #include "ContentSecurityPolicySource.h"
@@ -59,10 +58,10 @@ public:
 private:
     void parse(const UChar* begin, const UChar* end);
 
-    bool parseSource(const UChar* begin, const UChar* end, String& scheme, String& host, int& port, String& path, bool& hostHasWildcard, bool& portHasWildcard);
+    bool parseSource(const UChar* begin, const UChar* end, String& scheme, String& host, Optional<uint16_t>& port, String& path, bool& hostHasWildcard, bool& portHasWildcard);
     bool parseScheme(const UChar* begin, const UChar* end, String& scheme);
     bool parseHost(const UChar* begin, const UChar* end, String& host, bool& hostHasWildcard);
-    bool parsePort(const UChar* begin, const UChar* end, int& port, bool& portHasWildcard);
+    bool parsePort(const UChar* begin, const UChar* end, Optional<uint16_t>& port, bool& portHasWildcard);
     bool parsePath(const UChar* begin, const UChar* end, String& path);
 
     bool parseNonceSource(const UChar* begin, const UChar* end);
@@ -85,5 +84,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif /* ContentSecurityPolicySourceList_h */

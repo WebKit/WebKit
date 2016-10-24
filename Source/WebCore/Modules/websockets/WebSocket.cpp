@@ -225,7 +225,12 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
     contentSecurityPolicy.upgradeInsecureRequestIfNeeded(m_url, ContentSecurityPolicy::InsecureRequestType::Load);
 
     if (!portAllowed(m_url)) {
-        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, "WebSocket port " + String::number(m_url.port()) + " blocked");
+        String message;
+        if (m_url.port())
+            message = makeString("WebSocket port ", String::number(m_url.port().value()), " blocked");
+        else
+            message = ASCIILiteral("WebSocket without port blocked");
+        context.addConsoleMessage(MessageSource::JS, MessageLevel::Error, message);
         m_state = CLOSED;
         return Exception { SECURITY_ERR };
     }

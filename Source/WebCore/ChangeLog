@@ -1,3 +1,116 @@
+2016-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        URL::port should return Optional<uint16_t>
+        https://bugs.webkit.org/show_bug.cgi?id=163806
+
+        Reviewed by Darin Adler.
+
+        A URL without a port is different than a URL with port 0.
+        This matches the spec, Chrome, and Firefox.
+
+        Covered by newly-passing web platform tests.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::IDBDatabaseIdentifier::isHashTableDeletedValue):
+        (WebCore::IDBDatabaseIdentifier::hash):
+        (WebCore::IDBDatabaseIdentifier::isValid):
+        (WebCore::IDBDatabaseIdentifier::isEmpty):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::hostName):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::applyBlockedStatusToRequest):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::userDidClickSnapshot):
+        (WebCore::HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn):
+        * html/URLUtils.h:
+        (WebCore::URLUtils<T>::protocol):
+        (WebCore::URLUtils<T>::host):
+        (WebCore::URLUtils<T>::port):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isValidCrossOriginRedirectionURL):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::isRemoteWebArchive):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::shouldCacheSchemeIndefinitely):
+        (WebCore::CachedResource::freshnessLifetime):
+        * page/Location.cpp:
+        (WebCore::Location::protocol):
+        (WebCore::Location::host):
+        (WebCore::Location::port):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isSecure):
+        (WebCore::SecurityOrigin::canDisplay):
+        (WebCore::SecurityOrigin::toRawString):
+        (WebCore::SecurityOrigin::create):
+        (WebCore::SecurityOrigin::databaseIdentifier):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::port):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::debugString):
+        * page/SecurityOriginData.h:
+        (): Deleted.
+        * page/SecurityOriginHash.h:
+        (WebCore::SecurityOriginHash::hash):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource):
+        (WebCore::ContentSecurityPolicy::allowChildFrameFromSource):
+        (WebCore::ContentSecurityPolicy::allowResourceFromSource):
+        (WebCore::ContentSecurityPolicy::allowConnectToSource):
+        (WebCore::ContentSecurityPolicy::allowBaseURI):
+        (WebCore::stripURLForUseInReport):
+        (WebCore::ContentSecurityPolicy::upgradeInsecureRequestIfNeeded):
+        * page/csp/ContentSecurityPolicySource.cpp:
+        (WebCore::ContentSecurityPolicySource::ContentSecurityPolicySource):
+        (WebCore::ContentSecurityPolicySource::portMatches):
+        * page/csp/ContentSecurityPolicySource.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::parse):
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+        (WebCore::ContentSecurityPolicySourceList::parsePort):
+        * page/csp/ContentSecurityPolicySourceList.h:
+        * platform/SchemeRegistry.h:
+        * platform/URL.cpp:
+        (WebCore::URL::protocol):
+        (WebCore::URL::port):
+        (WebCore::URL::serialize):
+        (WebCore::portAllowed):
+        (WebCore::defaultPortsMap): Deleted.
+        (WebCore::defaultPortForProtocol): Deleted.
+        (WebCore::isDefaultPortForProtocol): Deleted.
+        * platform/URL.h:
+        (WebCore::URL::hasPort): Deleted.
+        * platform/URLParser.cpp:
+        (WebCore::defaultPortForProtocol):
+        (WebCore::isDefaultPortForProtocol):
+        (WebCore::URLParser::parsePort):
+        (WebCore::isDefaultPort): Deleted.
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::originStringFromURL):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::platformClose):
+        (WebCore::SocketStreamHandleImpl::port):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::protocol):
+        (WebCore::WorkerLocation::host):
+        (WebCore::WorkerLocation::port):
+
 2016-10-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CodeGeneratorJS] Support enums for standalone dictionaries

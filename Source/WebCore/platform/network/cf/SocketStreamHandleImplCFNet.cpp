@@ -691,16 +691,16 @@ void SocketStreamHandleImpl::platformClose()
     CFReadStreamClose(m_readStream.get());
     CFWriteStreamClose(m_writeStream.get());
     
-    m_readStream = 0;
-    m_writeStream = 0;
+    m_readStream = nullptr;
+    m_writeStream = nullptr;
 
     m_client.didCloseSocketStream(*this);
 }
 
 unsigned short SocketStreamHandleImpl::port() const
 {
-    if (unsigned short urlPort = m_url.port())
-        return urlPort;
+    if (auto urlPort = m_url.port())
+        return urlPort.value();
     if (shouldUseSSL())
         return 443;
     return 80;

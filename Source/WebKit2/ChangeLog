@@ -1,3 +1,25 @@
+2016-10-21  Alex Christensen  <achristensen@webkit.org>
+
+        URL::port should return Optional<uint16_t>
+        https://bugs.webkit.org/show_bug.cgi?id=163806
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::overrideSystemProxies):
+        * Shared/API/APISecurityOrigin.h:
+        (API::SecurityOrigin::create):
+        * Shared/API/APIURL.h:
+        (API::URL::protocol):
+        * Shared/API/c/WKSecurityOriginRef.cpp:
+        (WKSecurityOriginGetPort):
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin port]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canHandleRequest):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::origin):
+
 2016-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Separate media capture and audio playback muting

@@ -53,7 +53,6 @@ namespace WebCore {
 typedef Vector<char, 512> CharBuffer;
 typedef Vector<UChar, 512> UCharBuffer;
 
-static const unsigned maximumValidPortNumber = 0xFFFE;
 static const unsigned invalidPortNumber = 0xFFFF;
 
 static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLetter)
@@ -702,9 +701,9 @@ String URL::lastPathComponent() const
     return m_string.substring(start, end - start + 1);
 }
 
-String URL::protocol() const
+StringView URL::protocol() const
 {
-    return m_string.left(m_schemeEnd);
+    return StringView(m_string).substring(0, m_schemeEnd);
 }
 
 String URL::host() const
@@ -713,13 +712,10 @@ String URL::host() const
     return m_string.substring(start, m_hostEnd - start);
 }
 
-unsigned short URL::port() const
+Optional<uint16_t> URL::port() const
 {
-    // We return a port of 0 if there is no port specified. This can happen in two situations:
-    // 1) The URL contains no colon after the host name and before the path component of the URL.
-    // 2) The URL contains a colon but there's no port number before the path component of the URL begins.
-    if (m_hostEnd == m_portEnd || m_hostEnd == m_portEnd - 1)
-        return 0;
+    if (!m_portEnd || m_hostEnd >= m_portEnd - 1)
+        return Nullopt;
 
     bool ok = false;
     unsigned number;
@@ -727,8 +723,8 @@ unsigned short URL::port() const
         number = charactersToUIntStrict(m_string.characters8() + m_hostEnd + 1, m_portEnd - m_hostEnd - 1, &ok);
     else
         number = charactersToUIntStrict(m_string.characters16() + m_hostEnd + 1, m_portEnd - m_hostEnd - 1, &ok);
-    if (!ok || number > maximumValidPortNumber)
-        return invalidPortNumber;
+    if (!ok || number > std::numeric_limits<uint16_t>::max())
+        return Nullopt;
     return number;
 }
 
@@ -1336,9 +1332,9 @@ String URL::serialize(bool omitFragment) const
         }
         // FIXME: Serialize host according https://url.spec.whatwg.org/#concept-host-serializer for IPv4 and IPv6 addresses.
         urlBuilder.append(m_string, start, m_hostEnd - start);
-        if (hasPort()) {
+        if (port()) {
             urlBuilder.appendLiteral(":");
-            urlBuilder.appendNumber(port());
+            urlBuilder.appendNumber(port().value());
         }
     } else if (protocolIs("file"))
         urlBuilder.appendLiteral("//");
@@ -2236,33 +2232,9 @@ bool URL::isBlankURL() const
     return protocolIs("about");
 }
 
-typedef HashMap<String, unsigned short, ASCIICaseInsensitiveHash> DefaultPortsMap;
-static const DefaultPortsMap& defaultPortsMap()
-{
-    static NeverDestroyed<const DefaultPortsMap> defaultPortsMap(DefaultPortsMap({
-        { "http", 80 },
-        { "https", 443 },
-        { "ftp", 21 },
-        { "ftps", 990 }
-    }));
-    return defaultPortsMap.get();
-}
-unsigned short defaultPortForProtocol(const String& protocol)
-{
-    return defaultPortsMap().get(protocol);
-}
-
-bool isDefaultPortForProtocol(unsigned short port, const String& protocol)
-{
-    if (protocol.isEmpty())
-        return false;
-
-    return defaultPortForProtocol(protocol) == port;
-}
-
 bool portAllowed(const URL& url)
 {
-    unsigned short port = url.port();
+    Optional<uint16_t> port = url.port();
 
     // Since most URLs don't have a port, return early for the "no port" case.
     if (!port)
@@ -2270,7 +2242,7 @@ bool portAllowed(const URL& url)
 
     // This blocked port list matches the port blocking that Mozilla implements.
     // See http://www.mozilla.org/projects/netlib/PortBanning.html for more information.
-    static const unsigned short blockedPortList[] = {
+    static const uint16_t blockedPortList[] = {
         1,    // tcpmux
         7,    // echo
         9,    // discard
@@ -2351,11 +2323,11 @@ bool portAllowed(const URL& url)
 #endif
 
     // If the port is not in the blocked port list, allow it.
-    if (!std::binary_search(blockedPortList, blockedPortListEnd, port))
+    if (!std::binary_search(blockedPortList, blockedPortListEnd, port.value()))
         return true;
 
     // Allow ports 21 and 22 for FTP URLs, as Mozilla does.
-    if ((port == 21 || port == 22) && url.protocolIs("ftp"))
+    if ((port.value() == 21 || port.value() == 22) && url.protocolIs("ftp"))
         return true;
 
     // Allow any port number in a file URL, since the port number is ignored.

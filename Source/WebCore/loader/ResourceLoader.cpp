@@ -450,7 +450,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
             didFail(error);
             return;
         }
-        if (!isDefaultPortForProtocol(url.port(), url.protocol())) {
+        if (url.port() && !isDefaultPortForProtocol(url.port().value(), url.protocol())) {
             String message = "Cancelled resource load from '" + url.string() + "' because it is using HTTP/0.9 on a non-default port.";
             m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, identifier());
             ResourceError error(emptyString(), 0, url, message);
