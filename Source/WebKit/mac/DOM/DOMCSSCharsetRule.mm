@@ -25,7 +25,6 @@
 
 #import "DOMCSSCharsetRule.h"
 
-#import <WebCore/CSSCharsetRule.h>
 #import "DOMCSSRuleInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"
@@ -35,14 +34,14 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::CSSCharsetRule*>(reinterpret_cast<WebCore::CSSRule*>(_internal))
-
 @implementation DOMCSSCharsetRule
 
 - (NSString *)encoding
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->encoding();
+
+    // This has been removed from the CSS OM, so we're just keeping this around to not crash.
+    return nil;
 }
 
 @end

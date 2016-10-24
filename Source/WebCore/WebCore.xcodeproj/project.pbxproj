@@ -3994,7 +3994,6 @@
 		A80E6CF50A1989CA007FB8C5 /* CSSPageRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCB0A1989CA007FB8C5 /* CSSPageRule.cpp */; };
 		A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCC0A1989CA007FB8C5 /* CSSImportRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CF70A1989CA007FB8C5 /* CSSProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */; };
-		A80E6CF90A1989CA007FB8C5 /* CSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CD00A1989CA007FB8C5 /* CSSImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CFB0A1989CA007FB8C5 /* Pair.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CD10A1989CA007FB8C5 /* Pair.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E6CFC0A1989CA007FB8C5 /* CSSMediaRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CD20A1989CA007FB8C5 /* CSSMediaRule.cpp */; };
@@ -5134,8 +5133,6 @@
 		BC3D85BC1C0E2E7A00D3B610 /* JSHTMLPictureElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC808B131C0E2B350066FD6B /* JSHTMLPictureElement.h */; };
 		BC4368E80C226E32005EFB5F /* Rect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4368E70C226E32005EFB5F /* Rect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC46C1EE0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */; };
-		BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */; };
-		BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */; };
 		BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */; };
 		BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */; };
 		BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */; };
@@ -6143,7 +6140,6 @@
 		E1E1BF00115FF6FB006F52CA /* WindowsKeyboardCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1E6EEA40B628DA8005F2F70 /* JSHTMLSelectElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */; };
 		E1E6EEA80B628DB3005F2F70 /* JSHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */; };
-		E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */; };
 		E1EC299F0BB04C6B00EA187B /* XPathNodeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EC299D0BB04C6B00EA187B /* XPathNodeSet.cpp */; };
 		E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
@@ -10426,7 +10422,6 @@
 		85C56CA30AA89CA400D95755 /* CSSFontFaceRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSFontFaceRule.idl; sourceTree = "<group>"; };
 		85C56CA60AA89D5F00D95755 /* CSSPageRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSPageRule.idl; sourceTree = "<group>"; };
 		85C56CA90AA89E6600D95755 /* CSSImportRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSImportRule.idl; sourceTree = "<group>"; };
-		85C56CAC0AA89F8E00D95755 /* CSSCharsetRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSCharsetRule.idl; sourceTree = "<group>"; };
 		85C56CAD0AA89FE000D95755 /* CSSUnknownRule.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = CSSUnknownRule.idl; sourceTree = "<group>"; };
 		85DF2F690AA3C74300AD64C5 /* HTMLCollection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLCollection.idl; sourceTree = "<group>"; };
 		85DF2F920AA3C9B600AD64C5 /* HTMLOptionsCollection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLOptionsCollection.idl; sourceTree = "<group>"; };
@@ -11461,7 +11456,6 @@
 		A80E6CCC0A1989CA007FB8C5 /* CSSImportRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSImportRule.h; sourceTree = "<group>"; };
 		A80E6CCD0A1989CA007FB8C5 /* CSSProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSProperty.cpp; sourceTree = "<group>"; };
 		A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSUnknownRule.h; sourceTree = "<group>"; };
-		A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCharsetRule.h; sourceTree = "<group>"; };
 		A80E6CD00A1989CA007FB8C5 /* CSSImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSImageValue.h; sourceTree = "<group>"; };
 		A80E6CD10A1989CA007FB8C5 /* Pair.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Pair.h; sourceTree = "<group>"; };
 		A80E6CD20A1989CA007FB8C5 /* CSSMediaRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSMediaRule.cpp; sourceTree = "<group>"; };
@@ -12788,8 +12782,6 @@
 		BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSMediaList.h; sourceTree = "<group>"; };
 		BC4368E70C226E32005EFB5F /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
 		BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = JSCSSRuleCustom.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSCharsetRule.cpp; sourceTree = "<group>"; };
-		BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSCharsetRule.h; sourceTree = "<group>"; };
 		BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceRule.cpp; sourceTree = "<group>"; };
 		BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSFontFaceRule.h; sourceTree = "<group>"; };
 		BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSImportRule.cpp; sourceTree = "<group>"; };
@@ -13926,7 +13918,6 @@
 		E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowsKeyboardCodes.h; sourceTree = "<group>"; };
 		E1E6EEA30B628DA8005F2F70 /* JSHTMLSelectElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLSelectElement.cpp; sourceTree = "<group>"; };
 		E1E6EEA70B628DB3005F2F70 /* JSHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSHTMLSelectElement.h; sourceTree = "<group>"; };
-		E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCharsetRule.cpp; sourceTree = "<group>"; };
 		E1EC299D0BB04C6B00EA187B /* XPathNodeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathNodeSet.cpp; sourceTree = "<group>"; };
 		E1EC299E0BB04C6B00EA187B /* XPathNodeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathNodeSet.h; sourceTree = "<group>"; };
 		E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValueMappings.h; sourceTree = "<group>"; };
@@ -19922,8 +19913,6 @@
 				BCC065860F3CE2A700CD2D87 /* JSClientRectList.h */,
 				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
 				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
-				BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */,
-				BC46C1F10C0DDC8F0020CFC3 /* JSCSSCharsetRule.h */,
 				BC46C1F20C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp */,
 				BC46C1F30C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h */,
 				BC46C1F40C0DDC8F0020CFC3 /* JSCSSImportRule.cpp */,
@@ -22790,9 +22779,6 @@
 				49AE2D8D134EE50C0072920A /* CSSCalculationValue.h */,
 				BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */,
 				BC6049CB0DB560C200204739 /* CSSCanvasValue.h */,
-				E1EBBBD30AAC9B87001FE8E2 /* CSSCharsetRule.cpp */,
-				A80E6CCF0A1989CA007FB8C5 /* CSSCharsetRule.h */,
-				85C56CAC0AA89F8E00D95755 /* CSSCharsetRule.idl */,
 				BCEA477C097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp */,
 				BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */,
 				9DAC7C521AF2CAA100437C44 /* CSSContentDistributionValue.cpp */,
@@ -24639,7 +24625,6 @@
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
 				49AE2D8F134EE50C0072920A /* CSSCalculationValue.h in Headers */,
 				BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */,
-				A80E6CF90A1989CA007FB8C5 /* CSSCharsetRule.h in Headers */,
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
 				9DAC7C551AF2CAA200437C44 /* CSSContentDistributionValue.h in Headers */,
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
@@ -25481,7 +25466,6 @@
 				E1F80B8E183172B5007885C3 /* JSCryptoKeyPair.h in Headers */,
 				E125F85218283A5600D84CD9 /* JSCryptoKeySerializationJWK.h in Headers */,
 				E125F83E182411E700D84CD9 /* JSCryptoOperationData.h in Headers */,
-				BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */,
 				409EBDC316B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h in Headers */,
 				BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */,
 				BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */,
@@ -28401,7 +28385,6 @@
 				BC274B31140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp in Sources */,
 				49AE2D8E134EE50C0072920A /* CSSCalculationValue.cpp in Sources */,
 				BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */,
-				E1EBBBD40AAC9B87001FE8E2 /* CSSCharsetRule.cpp in Sources */,
 				BCEA478F097CAAC80094C9E4 /* CSSComputedStyleDeclaration.cpp in Sources */,
 				9DAC7C541AF2CAA100437C44 /* CSSContentDistributionValue.cpp in Sources */,
 				2D8FEBDC143E3EF70072502B /* CSSCrossfadeValue.cpp in Sources */,
@@ -29158,7 +29141,6 @@
 				E1F80B8A183172A2007885C3 /* JSCryptoKeyPairCustom.cpp in Sources */,
 				E125F85118283A5600D84CD9 /* JSCryptoKeySerializationJWK.cpp in Sources */,
 				E125F83D182411E700D84CD9 /* JSCryptoOperationData.cpp in Sources */,
-				BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */,
 				409EBDC516B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,

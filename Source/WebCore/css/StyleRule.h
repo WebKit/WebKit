@@ -350,3 +350,7 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleKeyframe)
 static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isKeyframeRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleCharset)
+static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isCharsetRule(); }
+SPECIALIZE_TYPE_TRAITS_END()
+

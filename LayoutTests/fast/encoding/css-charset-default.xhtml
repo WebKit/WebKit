@@ -30,7 +30,7 @@ function test() {
 
     document.getElementById("res2").innerHTML += document.styleSheets[1].cssRules[0].style.content;
     
-    document.getElementById("res3").innerHTML += document.styleSheets[2].cssRules[1].styleSheet.cssRules[0].style.content;
+    document.getElementById("res3").innerHTML += document.styleSheets[2].cssRules[0].styleSheet.cssRules[0].style.content;
 
     document.getElementById("res4").innerHTML += document.styleSheets[3].cssRules[0].styleSheet.cssRules[0].style.content;
   } catch (ex) {

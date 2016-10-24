@@ -1,3 +1,35 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        Remove CSSCharsetRule from the CSS OM
+        https://bugs.webkit.org/show_bug.cgi?id=163891
+
+        Reviewed by Darin Adler.
+
+        Remove CSSCharsetRule from the CSS OM. All other browser engines have made this
+        change. This eliminates the weird overloading of isCharsetRule to match both
+        CSSCharsetRule and StyleRuleCharset (only used by the new parser).
+
+        Fix the destroy() method in StyleRuleBase to clean up StyleRuleCharsets created
+        by the new parser properly.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSCharsetRule.cpp: Removed.
+        * css/CSSCharsetRule.h: Removed.
+        * css/CSSCharsetRule.idl: Removed.
+        * css/CSSPropertySourceData.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::item):
+        (WebCore::CSSStyleSheet::rules):
+        * css/CSSStyleSheet.h:
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+
 2016-10-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [CodeGeneratorJS] Standalone dictionaries have misplaced build guards

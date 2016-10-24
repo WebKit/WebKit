@@ -68,8 +68,6 @@ PASS 'function Attr() {    [native code]}' is 'function Attr() {    [native code
 PASS 'function Attr() {    [native code]}' is 'function Attr() {    [native code]}'
 PASS 'function CDATASection() {    [native code]}' is 'function CDATASection() {    [native code]}'
 PASS 'function CDATASection() {    [native code]}' is 'function CDATASection() {    [native code]}'
-PASS 'function CSSCharsetRule() {    [native code]}' is 'function CSSCharsetRule() {    [native code]}'
-PASS 'function CSSCharsetRule() {    [native code]}' is 'function CSSCharsetRule() {    [native code]}'
 PASS 'function CSSFontFaceRule() {    [native code]}' is 'function CSSFontFaceRule() {    [native code]}'
 PASS 'function CSSFontFaceRule() {    [native code]}' is 'function CSSFontFaceRule() {    [native code]}'
 PASS 'function CSSImportRule() {    [native code]}' is 'function CSSImportRule() {    [native code]}'

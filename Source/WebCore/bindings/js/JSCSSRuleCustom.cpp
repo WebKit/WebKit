@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSCSSRule.h"
 
-#include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
@@ -35,7 +34,6 @@
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
-#include "JSCSSCharsetRule.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSCSSImportRule.h"
 #include "JSCSSKeyframeRule.h"
@@ -73,8 +71,6 @@ JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<CSSRul
         return createWrapper<CSSPageRule>(globalObject, WTFMove(rule));
     case CSSRule::IMPORT_RULE:
         return createWrapper<CSSImportRule>(globalObject, WTFMove(rule));
-    case CSSRule::CHARSET_RULE:
-        return createWrapper<CSSCharsetRule>(globalObject, WTFMove(rule));
     case CSSRule::KEYFRAME_RULE:
         return createWrapper<CSSKeyframeRule>(globalObject, WTFMove(rule));
     case CSSRule::KEYFRAMES_RULE:

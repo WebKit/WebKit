@@ -22,7 +22,6 @@
 #include "config.h"
 #include "StyleRule.h"
 
-#include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframeRule.h"
@@ -96,8 +95,10 @@ void StyleRuleBase::destroy()
     case Keyframe:
         delete downcast<StyleKeyframe>(this);
         return;
-    case Unknown:
     case Charset:
+        delete downcast<StyleRuleCharset>(this);
+        return;
+    case Unknown:
 #if !ENABLE(CSS_REGIONS)
     case Region:
 #endif

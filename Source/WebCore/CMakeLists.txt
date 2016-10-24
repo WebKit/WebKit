@@ -332,7 +332,6 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/SubtleCrypto.idl
     crypto/WebKitSubtleCrypto.idl
 
-    css/CSSCharsetRule.idl
     css/CSSFontFaceLoadEvent.idl
     css/CSSFontFaceRule.idl
     css/CSSImportRule.idl
@@ -1259,7 +1258,6 @@ set(WebCore_SOURCES
     css/CSSBorderImageSliceValue.cpp
     css/CSSCalculationValue.cpp
     css/CSSCanvasValue.cpp
-    css/CSSCharsetRule.cpp
     css/CSSComputedStyleDeclaration.cpp
     css/CSSContentDistributionValue.cpp
     css/CSSCrossfadeValue.cpp

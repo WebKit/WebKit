@@ -21,7 +21,6 @@
 #include "config.h"
 #include "CSSStyleSheet.h"
 
-#include "CSSCharsetRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
 #include "CSSKeyframesRule.h"
@@ -245,13 +244,8 @@ CSSRule* CSSStyleSheet::item(unsigned index)
     ASSERT(m_childRuleCSSOMWrappers.size() == ruleCount);
     
     RefPtr<CSSRule>& cssRule = m_childRuleCSSOMWrappers[index];
-    if (!cssRule) {
-        if (index == 0 && m_contents->hasCharsetRule()) {
-            ASSERT(!m_contents->ruleAt(0));
-            cssRule = CSSCharsetRule::create(this, m_contents->encodingFromCharsetRule());
-        } else
-            cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(this);
-    }
+    if (!cssRule)
+        cssRule = m_contents->ruleAt(index)->createCSSOMWrapper(this);
     return cssRule.get();
 }
 
@@ -274,15 +268,11 @@ RefPtr<CSSRuleList> CSSStyleSheet::rules()
     if (!canAccessRules())
         return nullptr;
     // IE behavior.
-    RefPtr<StaticCSSRuleList> nonCharsetRules = StaticCSSRuleList::create();
+    RefPtr<StaticCSSRuleList> ruleList = StaticCSSRuleList::create();
     unsigned ruleCount = length();
-    for (unsigned i = 0; i < ruleCount; ++i) {
-        CSSRule* rule = item(i);
-        if (rule->type() == CSSRule::CHARSET_RULE)
-            continue;
-        nonCharsetRules->rules().append(rule);
-    }
-    return nonCharsetRules;
+    for (unsigned i = 0; i < ruleCount; ++i)
+        ruleList->rules().append(item(i));
+    return ruleList;
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::deprecatedInsertRule(const String& ruleString)

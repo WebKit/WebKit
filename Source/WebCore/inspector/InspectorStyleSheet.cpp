@@ -195,12 +195,8 @@ static RefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
 
     RefPtr<StaticCSSRuleList> list = StaticCSSRuleList::create();
     Vector<RefPtr<CSSRule>>& listRules = list->rules();
-    for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
-        CSSRule* item = styleSheet->item(i);
-        if (item->type() == CSSRule::CHARSET_RULE)
-            continue;
-        listRules.append(item);
-    }
+    for (unsigned i = 0, size = styleSheet->length(); i < size; ++i)
+        listRules.append(styleSheet->item(i));
     return WTFMove(list);
 }
 

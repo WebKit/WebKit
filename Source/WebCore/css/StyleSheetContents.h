@@ -100,7 +100,6 @@ public:
 
     void clearRules();
 
-    bool hasCharsetRule() const { return !m_encodingFromCharsetRule.isNull(); }
     String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
     // Rules other than @charset and @import.
     const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }

@@ -1,3 +1,18 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        Remove CSSCharsetRule from the CSS OM
+        https://bugs.webkit.org/show_bug.cgi?id=163891
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/resources/window-properties.js:
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+        * fast/encoding/css-charset-default.xhtml:
+        * fast/encoding/css-charset-dom-expected.txt: Removed.
+        * fast/encoding/css-charset-dom.html: Removed.
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
 2016-10-24  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Separate media capture and audio playback muting

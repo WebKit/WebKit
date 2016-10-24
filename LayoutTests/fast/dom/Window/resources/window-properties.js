@@ -33,7 +33,6 @@ var propertyInfo = [
 
     ["Attr", "object"],
     ["CDATASection", "object"],
-    ["CSSCharsetRule", "object"],
     ["CSSFontFaceRule", "object"],
     ["CSSImportRule", "object"],
     ["CSSMediaRule", "object"],

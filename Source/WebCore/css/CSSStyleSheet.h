@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class CSSCharsetRule;
 class CSSImportRule;
 class CSSParser;
 class CSSRule;

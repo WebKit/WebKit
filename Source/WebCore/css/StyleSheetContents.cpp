@@ -160,11 +160,6 @@ StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
     ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
     
     unsigned childVectorIndex = index;
-    if (hasCharsetRule()) {
-        if (index == 0)
-            return 0;
-        --childVectorIndex;
-    }
     if (childVectorIndex < m_importRules.size())
         return m_importRules[childVectorIndex].get();
 
@@ -175,7 +170,6 @@ StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
 unsigned StyleSheetContents::ruleCount() const
 {
     unsigned result = 0;
-    result += hasCharsetRule() ? 1 : 0;
     result += m_importRules.size();
     result += m_childRules.size();
     return result;
@@ -212,15 +206,6 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
     ASSERT(!rule->isCharsetRule());
     
     unsigned childVectorIndex = index;
-    // m_childRules does not contain @charset which is always in index 0 if it exists.
-    if (hasCharsetRule()) {
-        if (childVectorIndex == 0) {
-            // Nothing can be inserted before @charset.
-            return false;
-        }
-        --childVectorIndex;
-    }
-    
     if (childVectorIndex < m_importRules.size() || (childVectorIndex == m_importRules.size() && rule->isImportRule())) {
         // Inserting non-import rule before @import is not allowed.
         if (!is<StyleRuleImport>(rule))
@@ -250,13 +235,6 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
     ASSERT_WITH_SECURITY_IMPLICATION(index < ruleCount());
 
     unsigned childVectorIndex = index;
-    if (hasCharsetRule()) {
-        if (childVectorIndex == 0) {
-            clearCharsetRule();
-            return;
-        }
-        --childVectorIndex;
-    }
     if (childVectorIndex < m_importRules.size()) {
         m_importRules[childVectorIndex]->clearParentStyleSheet();
         m_importRules.remove(childVectorIndex);
