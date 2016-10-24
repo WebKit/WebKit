@@ -116,6 +116,10 @@ private:
 
     virtual void contentsNeedsDisplay();
 
+    URL resolvedURL() const override;
+
+    bool hasSingleSecurityOrigin() const override;
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     std::unique_ptr<CDMSession> createSession(const String&, CDMSessionClient*) override;
 #endif

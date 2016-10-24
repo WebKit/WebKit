@@ -225,6 +225,9 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCopyAudiovisualMIMETypes, CFArr
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCreateWithURLAndOptions, AVCFURLAssetRef, __cdecl, (CFAllocatorRef allocator, CFURLRef URL, CFDictionaryRef options, dispatch_queue_t notificationQueue), (allocator, URL, options, notificationQueue))
 #define AVCFURLAssetCreateWithURLAndOptions softLink_AVCFURLAssetCreateWithURLAndOptions
 
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetCopyResolvedURL, CFURLRef, __cdecl, (AVCFAssetRef asset), (asset));
+#define AVCFAssetCopyResolvedURL softLink_AVCFAssetCopyResolvedURL
+
 SOFT_LINK_DLL_IMPORT_OPTIONAL(AVFoundationCF, AVCFPlayerSetDirect3DDevice, void, __cdecl, (AVCFPlayerRef player, IDirect3DDevice9* d3dDevice))
 #define AVCFPlayerSetDirect3DDevice softLink_AVCFPlayerSetDirect3DDevice
 
@@ -396,6 +399,9 @@ SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFAssetPropertyAvailableMediaCha
 
 SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFURLAssetInheritURIQueryComponentFromReferencingURIKey, const CFStringRef);
 #define AVCFURLAssetInheritURIQueryComponentFromReferencingURIKey  getAVCFURLAssetInheritURIQueryComponentFromReferencingURIKey()
+
+SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFURLAssetReferenceRestrictionsKey, const CFStringRef);
+#define AVCFURLAssetReferenceRestrictionsKey getAVCFURLAssetReferenceRestrictionsKey()
 
 SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFMediaCharacteristicEasyToRead, const CFStringRef);
 #define AVCFMediaCharacteristicEasyToRead getAVCFMediaCharacteristicEasyToRead()

@@ -1,3 +1,22 @@
+2016-10-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] AVCF based media engine does not block cross-site/cross-domain loads.
+        https://bugs.webkit.org/show_bug.cgi?id=163783
+
+        Reviewed by Brent Fulgham.
+
+        Prevent cross-site/cross-domain loads by setting appropriate AVCF options.
+
+        No new tests; covered by media/video-canvas-source.html. Media tests are
+        currently skipped on Windows.
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::resolvedURL):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::hasSingleSecurityOrigin):
+        (WebCore::AVFWrapper::createAssetForURL):
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h:
+
 2016-10-24  Anders Carlsson  <andersca@apple.com>
 
         Fix build with newer versions of clang

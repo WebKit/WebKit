@@ -83,6 +83,11 @@
 #pragma comment(lib, "libdispatch.lib")
 #endif
 
+enum {
+    AVAssetReferenceRestrictionForbidRemoteReferenceToLocal = (1UL << 0),
+    AVAssetReferenceRestrictionForbidLocalReferenceToRemote = (1UL << 1)
+};
+
 using namespace std;
 
 namespace WebCore {
@@ -1333,6 +1338,26 @@ void MediaPlayerPrivateAVFoundationCF::contentsNeedsDisplay()
         m_avfWrapper->setVideoLayerNeedsCommit();
 }
 
+URL MediaPlayerPrivateAVFoundationCF::resolvedURL() const
+{
+    if (!m_avfWrapper || !m_avfWrapper->avAsset())
+        return URL();
+
+    auto resolvedURL = adoptCF(AVCFAssetCopyResolvedURL(m_avfWrapper->avAsset()));
+
+    return URL(resolvedURL.get());
+}
+
+bool MediaPlayerPrivateAVFoundationCF::hasSingleSecurityOrigin() const
+{
+    if (!m_avfWrapper || !m_avfWrapper->avAsset())
+        return false;
+
+    Ref<SecurityOrigin> resolvedOrigin(SecurityOrigin::create(resolvedURL()));
+    Ref<SecurityOrigin> requestedOrigin(SecurityOrigin::createFromString(assetURL()));
+    return resolvedOrigin.get().isSameSchemeHostPort(&requestedOrigin.get());
+}
+
 AVFWrapper::AVFWrapper(MediaPlayerPrivateAVFoundationCF* owner)
     : m_owner(owner)
     , m_objectID(s_nextAVFWrapperObjectID++)
@@ -1491,6 +1516,11 @@ void AVFWrapper::createAssetForURL(const String& url, bool inheritURI)
 
     if (inheritURI)
         CFDictionarySetValue(optionsRef.get(), AVCFURLAssetInheritURIQueryComponentFromReferencingURIKey, kCFBooleanTrue);
+
+    const int restrictions = AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote;
+    auto cfRestrictions = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &restrictions));
+
+    CFDictionarySetValue(optionsRef.get(), AVCFURLAssetReferenceRestrictionsKey, cfRestrictions.get());
 
     m_avAsset = adoptCF(AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), optionsRef.get(), m_notificationQueue));
 
