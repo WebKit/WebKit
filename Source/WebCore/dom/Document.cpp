@@ -3831,8 +3831,11 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
                 newFocusedElement = nullptr;
             }
         } else {
+            // Match the order in HTMLTextFormControlElement::dispatchBlurEvent.
             if (is<HTMLInputElement>(*oldFocusedElement))
                 downcast<HTMLInputElement>(*oldFocusedElement).endEditing();
+            if (page())
+                page()->chrome().client().elementDidBlur(oldFocusedElement.get());
             ASSERT(!m_focusedElement);
         }
 

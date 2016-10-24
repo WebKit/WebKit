@@ -100,6 +100,7 @@ void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedE
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility();
+    // Match the order in Document::setFocusedElement.
     handleBlurEvent();
     HTMLFormControlElementWithState::dispatchBlurEvent(WTFMove(newFocusedElement));
 }

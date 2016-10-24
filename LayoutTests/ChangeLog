@@ -1,5 +1,22 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207486. rdar://problem/28409742
+
+    2016-10-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION (r201471): Keyboard remains visible when swiping back on twitter.com
+            https://bugs.webkit.org/show_bug.cgi?id=163581
+            <rdar://problem/27739558>
+
+            Reviewed by Simon Fraser.
+
+            Added a regression test for hiding a keyboard when the focused element is removed from the DOM.
+
+            * fast/forms/ios/hide-keyboard-on-node-removal-expected.txt: Added.
+            * fast/forms/ios/hide-keyboard-on-node-removal.html: Added.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r207275. rdar://problem/28810752
 
     2016-10-12  Zalan Bujtas  <zalan@apple.com>
