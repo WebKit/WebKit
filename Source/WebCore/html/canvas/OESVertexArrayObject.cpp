@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "OESVertexArrayObject.h"
 
 #if ENABLE(WEBGL)
+
+#include "OESVertexArrayObject.h"
 
 #include "Extensions3D.h"
 #include "WebGLRenderingContext.h"

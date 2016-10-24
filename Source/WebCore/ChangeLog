@@ -2,6 +2,12 @@
 
         Fix AppleWin build after r207720.
 
+        * html/canvas/OESVertexArrayObject.cpp:
+
+2016-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix AppleWin build after r207720.
+
         * bindings/js/JSWebGLRenderingContextBaseCustom.cpp:
 
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
