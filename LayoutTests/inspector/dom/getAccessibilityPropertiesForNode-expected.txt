@@ -23,7 +23,7 @@ Total elements to be tested: 81.
     role: treeitem
     childNodeIds.length: 1
     parentNodeId: exists
-    hierarchyLevel: 2
+    hierarchyLevel: 1
 
 <ul>
             <li role="treeitem">Tree Item Level 2</li>
