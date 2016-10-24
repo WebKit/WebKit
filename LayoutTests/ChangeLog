@@ -1,3 +1,16 @@
+2016-10-24  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Improve Quick Open sorting algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=163705
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/unit-tests/resource-query-controller-expected.txt:
+        * inspector/unit-tests/resource-query-controller.html:
+        Changed the ExecuteQueryGeneralRankings and ExecuteQueryPositionRankings tests to reflect
+        the new ranking logic.  Added ExecuteQueryConsecutiveRankings to test more realistic
+        scenarios and ensure better ranking.
+
 2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline tests for ios-simulator after r207757.

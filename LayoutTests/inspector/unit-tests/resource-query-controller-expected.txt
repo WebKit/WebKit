@@ -208,6 +208,9 @@ PASS: Results should be ranked by descending relevancy.
 -- Running test case: ExecuteQueryPositionRankings
 PASS: Results should be ranked by descending relevancy.
 
+-- Running test case: ExecuteQueryConsecutiveRankings
+PASS: Results should be ranked by descending relevancy.
+
 -- Running test case: GetMatchingTextRanges
 PASS: Result TextRanges should match the expected ranges.
 PASS: Result TextRanges should match the expected ranges.

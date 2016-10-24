@@ -61,23 +61,44 @@ WebInspector.ResourceQueryResult = class QueryResult extends WebInspector.Object
 
     _calculateRank()
     {
-        const specialWeight = 50;
         const normalWeight = 10;
-        const consecutiveMatchWeight = 5;
+        const consecutiveWeight = 5;
+        const specialMultiplier = 5;
+
+        function getMultiplier(match) {
+            if (match.type === WebInspector.ResourceQueryMatch.Type.Special)
+                return specialMultiplier;
+
+            return 1;
+        }
 
         this._rank = 0;
 
         let previousMatch = null;
+        let consecutiveMatchStart = null;
         for (let match of this._matches) {
-            this._rank += match.type === WebInspector.ResourceQueryMatch.Type.Special ? specialWeight : normalWeight;
-            if (previousMatch && previousMatch.index === match.index - 1)
-                this._rank += consecutiveMatchWeight;
+            this._rank += normalWeight * getMultiplier(match);
+
+            let consecutive = previousMatch && previousMatch.index === match.index - 1;
+            if (consecutive) {
+                if (!consecutiveMatchStart)
+                    consecutiveMatchStart = previousMatch;
+
+                // If the first match in this consecutive series was a special character, give a
+                // bonus (more likely to match a specific word in the text).  Otherwise, multiply
+                // by the current length of the consecutive sequence (gives priority to fewer
+                // longer sequences instead of more short sequences).
+                this._rank += consecutiveWeight * getMultiplier(consecutiveMatchStart) * (match.index - consecutiveMatchStart.index);
+            } else if (consecutiveMatchStart)
+                consecutiveMatchStart = null;
 
             previousMatch = match;
 
-            // The match index is deducted from the total rank, so matches that
-            // occur closer to the beginning of the string are ranked higher.
-            this._rank -= match.index;
+            // The match index is deducted from the total rank, so matches that occur closer to
+            // the beginning of the string are ranked higher.  Increase the amount subtracted if
+            // the match is special, so as to favor matches towards the beginning of the string.
+            if (!consecutive)
+                this._rank -= match.index * getMultiplier(match);
         }
     }
 
