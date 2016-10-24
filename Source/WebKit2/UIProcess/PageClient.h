@@ -249,7 +249,7 @@ public:
     virtual void recommendedScrollbarStyleDidChange(WebCore::ScrollbarStyle) = 0;
     virtual void removeNavigationGestureSnapshot() = 0;
     virtual void handleControlledElementIDResponse(const String&) = 0;
-    virtual void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession) = 0;
+    virtual void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) = 0;
 
     virtual CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const = 0;
 

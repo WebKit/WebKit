@@ -278,7 +278,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_didUpdateCandidateListVisibility:(BOOL)visible WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readonly) BOOL _shouldRequestCandidates WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_requestActiveNowPlayingSessionInfo WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

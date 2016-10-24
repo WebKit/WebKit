@@ -1035,7 +1035,7 @@ public:
     void requestControlledElementID() const;
     void handleControlledElementIDResponse(const String&) const;
     void requestActiveNowPlayingSessionInfo();
-    void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession) const;
+    void handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) const;
     bool isPlayingVideoInEnhancedFullscreen() const;
 #endif
 

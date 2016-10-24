@@ -4581,7 +4581,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         _page->requestActiveNowPlayingSessionInfo();
 }
 
-- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession
+- (void)_handleActiveNowPlayingSessionInfoResponse:(BOOL)hasActiveSession title:(NSString *)title duration:(double)duration elapsedTime:(double)elapsedTime
 {
     // Overridden by subclasses.
 }

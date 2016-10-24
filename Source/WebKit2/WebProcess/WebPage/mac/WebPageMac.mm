@@ -163,10 +163,17 @@ void WebPage::handleAcceptedCandidate(WebCore::TextCheckingResult acceptedCandid
 void WebPage::requestActiveNowPlayingSessionInfo()
 {
     bool hasActiveSession = false;
-    if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists())
+    String title = emptyString();
+    double duration = NAN;
+    double elapsedTime = NAN;
+    if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
         hasActiveSession = sharedManager->hasActiveNowPlayingSession();
+        title = sharedManager->lastUpdatedNowPlayingTitle();
+        duration = sharedManager->lastUpdatedNowPlayingDuration();
+        elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
+    }
 
-    send(Messages::WebPageProxy::HandleActiveNowPlayingSessionInfoResponse(hasActiveSession));
+    send(Messages::WebPageProxy::HandleActiveNowPlayingSessionInfoResponse(hasActiveSession, title, duration, elapsedTime));
 }
 
 NSObject *WebPage::accessibilityObjectForMainFramePlugin()

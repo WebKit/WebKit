@@ -6310,9 +6310,9 @@ void WebPageProxy::requestActiveNowPlayingSessionInfo()
     m_process->send(Messages::WebPage::RequestActiveNowPlayingSessionInfo(), m_pageID);
 }
 
-void WebPageProxy::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession) const
+void WebPageProxy::handleActiveNowPlayingSessionInfoResponse(bool hasActiveSession, const String& title, double duration, double elapsedTime) const
 {
-    m_pageClient.handleActiveNowPlayingSessionInfoResponse(hasActiveSession);
+    m_pageClient.handleActiveNowPlayingSessionInfoResponse(hasActiveSession, title, duration, elapsedTime);
 }
 
 void WebPageProxy::handleControlledElementIDResponse(const String& identifier) const
