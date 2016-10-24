@@ -53,7 +53,6 @@ static RetainPtr<NSDictionary> toDictionary(PKPaymentToken *paymentToken)
 static RetainPtr<NSDictionary> toDictionary(PKPayment *payment)
 {
     ASSERT(payment);
-    (void)payment;
 
     auto result = adoptNS([[NSMutableDictionary alloc] init]);
 

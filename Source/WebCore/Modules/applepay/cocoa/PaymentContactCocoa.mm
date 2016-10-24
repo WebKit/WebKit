@@ -126,7 +126,6 @@ Optional<PaymentContact> PaymentContact::fromJS(JSC::ExecState& state, JSC::JSVa
 RetainPtr<NSDictionary> toDictionary(PKContact *contact)
 {
     ASSERT(contact);
-    (void)contact;
 
     auto result = adoptNS([[NSMutableDictionary alloc] init]);
 
