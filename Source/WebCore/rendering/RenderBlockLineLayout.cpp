@@ -581,12 +581,6 @@ void RenderBlockFlow::updateRubyForJustifiedText(RenderRubyRun& rubyRun, BidiRun
     rubyRun.clearOverrideLogicalContentWidth();
     r.box()->setExpansion(newRubyRunWidth - r.box()->logicalWidth());
 
-    // This relayout caused the size of the RenderRubyText and the RenderRubyBase to change, dependent on the line's current expansion. Next time we relayout the
-    // RenderRubyRun, make sure that we relayout the RenderRubyBase and RenderRubyText as well.
-    rubyBase.setNeedsLayout(MarkOnlyThis);
-    if (RenderRubyText* rubyText = rubyRun.rubyText())
-        rubyText->setNeedsLayout(MarkOnlyThis);
-
     totalLogicalWidth += totalExpansion;
     expansionOpportunityCount -= totalOpportunitiesInRun;
 }
