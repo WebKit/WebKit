@@ -1,3 +1,25 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Fix :lang argument parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163913
+
+        Reviewed by Zalan Bujtas.
+
+        * css/SelectorPseudoClassAndCompatibilityElementMap.in:
+        Modify the map to support versions of the function pseudos
+        without the left paren included.
+
+        * css/parser/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::setLangArgumentList):
+        * css/parser/CSSParserValues.h:
+        Add a helper to just directly pass an AtomicString Vector through.
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeLangArgumentList):
+        (WebCore::CSSSelectorParser::consumePseudo):
+        Add a new consumeLangArgumentList to collect the languages into
+        an AtomicString Vector.
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix AppleWin build after r207720.
