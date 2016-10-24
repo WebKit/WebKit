@@ -88,6 +88,7 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
     UIPreviewItemTypeLink,
     UIPreviewItemTypeImage,
     UIPreviewItemTypeText,
+    UIPreviewItemTypeAttachment,
 };
 
 @class UIPreviewItemController;
@@ -860,5 +861,10 @@ extern NSString *const UIKeyInputPageDown;
 extern const NSString *UIPreviewDataLink;
 extern const NSString *UIPreviewDataDDResult;
 extern const NSString *UIPreviewDataDDContext;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+extern const NSString *UIPreviewDataAttachmentList;
+extern const NSString *UIPreviewDataAttachmentIndex;
+#endif
 
 WTF_EXTERN_C_END
