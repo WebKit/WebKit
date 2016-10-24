@@ -264,7 +264,7 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
 
     bool isFixed = false;
     IntRect absRect = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed).enclosingBoundingBox();
-    bool boxIsHorizontal = !box->isSVGInlineTextBox() ? box->isHorizontal() : !style().svgStyle().isVerticalWritingMode();
+    bool boxIsHorizontal = !box->isSVGInlineTextBox() ? box->isHorizontal() : !style().isVerticalWritingMode();
     // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
     // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
     // determine if the element is the last on the line.

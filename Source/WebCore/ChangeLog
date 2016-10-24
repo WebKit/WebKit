@@ -1,3 +1,87 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unprefix -webkit-writing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=163870
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        Change -webkit-writing mode to writing-mode.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator WritingMode):
+        (WebCore::CSSPrimitiveValue::operator SVGWritingMode): Deleted.
+        Eliminate the SVGWritingMode converters. Add support for the unique SVG-specific
+        values to the WritingMode converters.
+
+        * css/CSSPropertyNames.in:
+        Alias -webkit-writing-mode to writing-mode. Move writing-mode up to be
+        high priority like -webkit-writing mode was. Alias -epub-writing-mode to writing-mode
+        instead of to -webkit-writing-mode.
+
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+        Remove writing-mode from SVG computed style, since the base CSSComputedStyleDeclaration handles it.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWritingMode):
+        (WebCore::StyleBuilderCustom::applyValueWebkitWritingMode): Deleted.
+        Renamed applyValueWebkitWritingMode to applyValueWritingMode. Removed the SVG code, since
+        the underlying converter for WritingMode now handles those values.
+
+        * css/StyleResolver.cpp:
+        (WebCore::extractDirectionAndWritingMode):
+        Rename -webkit-writing-mode to writing-mode.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        Eliminate -webkit-writing-mode and make sure writing-mode handles both the SVG values
+        and the normal values.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        Same deal here.
+
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGenericBoxElement::applyCSSProperties):
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCueBox::applyCSSProperties):
+        Cue stuff was setting -webkit-writing-mode, so make it set writing-mode instead now.
+
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionRects):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRects):
+        Switch the SVG-specific code here over to accessing the RenderStyle writing-mode and not
+        the SVG-specific one.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isVerticalWritingMode):
+        Add a helper function for asking if something is vertical writing mode.
+
+        * rendering/style/SVGRenderStyle.cpp:
+        * rendering/style/SVGRenderStyle.h:
+        * rendering/style/SVGRenderStyleDefs.h:
+        (WebCore::SVGRenderStyle::diff):
+        Remove the SVG writing mode code.
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::computeNewScaledFontForStyle):
+        Make sure to force SVG font descriptions to be horizontal, since SVG controls
+        its own glyph orientation.
+
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/svg/SVGTextChunk.cpp:
+        (WebCore::SVGTextChunk::SVGTextChunk):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::layoutInlineTextBox):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::executeQuery):
+        Changed to access the RenderStyle writing mode instead of the SVG-specific one.
+
 2016-10-23  Antti Koivisto  <antti@apple.com>
 
         Avoid unnecessary full style resolution in getComputedStyle for non-inherited properties

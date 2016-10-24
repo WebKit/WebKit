@@ -432,8 +432,6 @@ rect: style.getPropertyValue(-webkit-user-modify) : read-only
 rect: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-select) : text
 rect: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
-rect: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
 rect: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-rule) : nonzero
@@ -498,7 +496,7 @@ rect: style.getPropertyValue(kerning) : 0
 rect: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(writing-mode) : lr-tb
+rect: style.getPropertyValue(writing-mode) : horizontal-tb
 rect: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 rect: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]
@@ -942,8 +940,6 @@ g: style.getPropertyValue(-webkit-user-modify) : read-only
 g: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-select) : text
 g: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
-g: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none
 g: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-rule) : nonzero
@@ -1008,7 +1004,7 @@ g: style.getPropertyValue(kerning) : 0
 g: style.getPropertyCSSValue(kerning) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(writing-mode) : lr-tb
+g: style.getPropertyValue(writing-mode) : horizontal-tb
 g: style.getPropertyCSSValue(writing-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(glyph-orientation-horizontal) : 0deg
 g: style.getPropertyCSSValue(glyph-orientation-horizontal) : [object CSSPrimitiveValue]

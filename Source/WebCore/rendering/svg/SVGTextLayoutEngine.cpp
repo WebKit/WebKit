@@ -220,7 +220,7 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox& textBox)
     const RenderStyle& style = text.style();
 
     textBox.clearTextFragments();
-    m_isVerticalText = style.svgStyle().isVerticalWritingMode();
+    m_isVerticalText = style.isVerticalWritingMode();
     layoutTextOnLineOrPath(textBox, text, style);
 
     if (m_inPathLayout) {

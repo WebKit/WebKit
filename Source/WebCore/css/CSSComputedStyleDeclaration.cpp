@@ -407,7 +407,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
-    CSSPropertyWebkitWritingMode,
 #if ENABLE(CSS_REGIONS)
     CSSPropertyWebkitFlowInto,
     CSSPropertyWebkitFlowFrom,
@@ -3684,7 +3683,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return CSSPrimitiveValue::create(style->lineSnap());
         case CSSPropertyWebkitLineAlign:
             return CSSPrimitiveValue::create(style->lineAlign());
-        case CSSPropertyWebkitWritingMode:
+        case CSSPropertyWritingMode:
             return cssValuePool.createValue(style->writingMode());
         case CSSPropertyWebkitTextCombine:
             return cssValuePool.createValue(style->textCombine());
@@ -3985,7 +3984,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyKerning:
         case CSSPropertyTextAnchor:
         case CSSPropertyVectorEffect:
-        case CSSPropertyWritingMode:
         case CSSPropertyWebkitSvgShadow:
             return svgPropertyValue(propertyID, DoNotUpdateLayout);
         case CSSPropertyCustom:

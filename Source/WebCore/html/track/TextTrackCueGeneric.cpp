@@ -140,7 +140,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 
     if (cue->backgroundColor().isValid())
         setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
-    setInlineStyleProperty(CSSPropertyWebkitWritingMode, cue->getCSSWritingMode(), false);
+    setInlineStyleProperty(CSSPropertyWritingMode, cue->getCSSWritingMode(), false);
     setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
 }
 

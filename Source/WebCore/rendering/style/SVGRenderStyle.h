@@ -70,7 +70,6 @@ public:
     static LineJoin initialJoinStyle() { return MiterJoin; }
     static EShapeRendering initialShapeRendering() { return SR_AUTO; }
     static ETextAnchor initialTextAnchor() { return TA_START; }
-    static SVGWritingMode initialWritingMode() { return WM_LRTB; }
     static EGlyphOrientation initialGlyphOrientationHorizontal() { return GO_0DEG; }
     static EGlyphOrientation initialGlyphOrientationVertical() { return GO_AUTO; }
     static float initialFillOpacity() { return 1; }
@@ -126,7 +125,6 @@ public:
     void setJoinStyle(LineJoin val) { svg_inherited_flags._joinStyle = val; }
     void setShapeRendering(EShapeRendering val) { svg_inherited_flags._shapeRendering = val; }
     void setTextAnchor(ETextAnchor val) { svg_inherited_flags._textAnchor = val; }
-    void setWritingMode(SVGWritingMode val) { svg_inherited_flags._writingMode = val; }
     void setGlyphOrientationHorizontal(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationHorizontal = val; }
     void setGlyphOrientationVertical(EGlyphOrientation val) { svg_inherited_flags._glyphOrientationVertical = val; }
     void setMaskType(EMaskType val) { svg_noninherited_flags.f.maskType = val; }
@@ -334,7 +332,6 @@ public:
     LineJoin joinStyle() const { return (LineJoin) svg_inherited_flags._joinStyle; }
     EShapeRendering shapeRendering() const { return (EShapeRendering) svg_inherited_flags._shapeRendering; }
     ETextAnchor textAnchor() const { return (ETextAnchor) svg_inherited_flags._textAnchor; }
-    SVGWritingMode writingMode() const { return (SVGWritingMode) svg_inherited_flags._writingMode; }
     EGlyphOrientation glyphOrientationHorizontal() const { return (EGlyphOrientation) svg_inherited_flags._glyphOrientationHorizontal; }
     EGlyphOrientation glyphOrientationVertical() const { return (EGlyphOrientation) svg_inherited_flags._glyphOrientationVertical; }
     float fillOpacity() const { return fill->opacity; }
@@ -387,7 +384,6 @@ public:
     bool hasStroke() const { return strokePaintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
     bool hasVisibleStroke() const { return hasStroke() && !strokeWidth().isZero(); }
     bool hasFill() const { return fillPaintType() != SVGPaint::SVG_PAINTTYPE_NONE; }
-    bool isVerticalWritingMode() const { return writingMode() == WM_TBRL || writingMode() == WM_TB; }
     bool isolatesBlending() const { return hasMasker() || shadow(); }
 
 protected:
@@ -404,7 +400,6 @@ protected:
                 && (_textAnchor == other._textAnchor)
                 && (_colorInterpolation == other._colorInterpolation)
                 && (_colorInterpolationFilters == other._colorInterpolationFilters)
-                && (_writingMode == other._writingMode)
                 && (_glyphOrientationHorizontal == other._glyphOrientationHorizontal)
                 && (_glyphOrientationVertical == other._glyphOrientationVertical)
                 && (paintOrder == other.paintOrder);
@@ -424,7 +419,6 @@ protected:
         unsigned _textAnchor : 2; // ETextAnchor
         unsigned _colorInterpolation : 2; // EColorInterpolation
         unsigned _colorInterpolationFilters : 2; // EColorInterpolation
-        unsigned _writingMode : 3; // SVGWritingMode
         unsigned _glyphOrientationHorizontal : 3; // EGlyphOrientation
         unsigned _glyphOrientationVertical : 3; // EGlyphOrientation
         unsigned paintOrder : 3; // PaintOrder
@@ -481,7 +475,6 @@ private:
         svg_inherited_flags._joinStyle = initialJoinStyle();
         svg_inherited_flags._colorInterpolation = initialColorInterpolation();
         svg_inherited_flags._colorInterpolationFilters = initialColorInterpolationFilters();
-        svg_inherited_flags._writingMode = initialWritingMode();
         svg_inherited_flags._glyphOrientationHorizontal = initialGlyphOrientationHorizontal();
         svg_inherited_flags._glyphOrientationVertical = initialGlyphOrientationVertical();
         svg_inherited_flags.paintOrder = initialPaintOrder();

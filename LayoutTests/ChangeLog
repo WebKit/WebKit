@@ -1,3 +1,16 @@
+2016-10-24  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unprefix -webkit-writing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=163870
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         svg/as-image/svg-image-with-data-uri-use-data-uri.svg is flaky after r207754

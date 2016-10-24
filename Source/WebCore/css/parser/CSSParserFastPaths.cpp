@@ -741,11 +741,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly;
     case CSSPropertyWebkitUserSelect: // auto | none | text | all
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll;
-    case CSSPropertyWebkitWritingMode:
-        return valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt;
     case CSSPropertyWritingMode:
-        return valueID == CSSValueHorizontalTb
-            || valueID == CSSValueVerticalRl || valueID == CSSValueVerticalLr
+        // Note that horizontal-bt is not supported by the unprefixed version of
+        // the property, only by the -webkit- version.
+        return (valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
             || valueID == CSSValueLrTb || valueID == CSSValueRlTb || valueID == CSSValueTbRl
             || valueID == CSSValueLr || valueID == CSSValueRl || valueID == CSSValueTb;
     case CSSPropertyWhiteSpace: // normal | pre | nowrap
@@ -877,7 +876,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitUserDrag:
     case CSSPropertyWebkitUserModify:
     case CSSPropertyWebkitUserSelect:
-    case CSSPropertyWebkitWritingMode:
     case CSSPropertyWhiteSpace:
     case CSSPropertyWordBreak:
     case CSSPropertyWordWrap:

@@ -123,8 +123,9 @@ font-variant-east-asian [Inherited, FontProperty, NameForMethods=VariantEastAsia
 #if defined(ENABLE_TEXT_AUTOSIZING) && ENABLE_TEXT_AUTOSIZING
 -webkit-text-size-adjust [Inherited, Custom=Value]
 #endif
--webkit-writing-mode [Inherited, Custom=Value]
--epub-writing-mode = -webkit-writing-mode
+writing-mode [Inherited, Custom=Value]
+-webkit-writing-mode = writing-mode
+-epub-writing-mode = writing-mode
 -webkit-text-zoom [Inherited, Custom=Value]
 zoom [Custom=All]
 font-synthesis [Inherited, FontProperty, Converter=FontSynthesis]
@@ -368,7 +369,6 @@ word-break [Inherited]
 -epub-word-break = word-break
 word-spacing [Inherited, ConditionalConverter=WordSpacing]
 word-wrap [Inherited=EOverflowWrap, NameForMethods=OverflowWrap]
-writing-mode [Inherited, SVG]
 x [Initial=initialZeroLength, Converter=Length]
 y [Initial=initialZeroLength, Converter=Length]
 z-index [AutoFunctions]

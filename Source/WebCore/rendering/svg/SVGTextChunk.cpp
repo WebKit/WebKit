@@ -37,7 +37,7 @@ SVGTextChunk::SVGTextChunk(const Vector<SVGInlineTextBox*>& lineLayoutBoxes, uns
     if (!style.isLeftToRightDirection())
         m_chunkStyle |= SVGTextChunk::RightToLeftText;
 
-    if (svgStyle.isVerticalWritingMode())
+    if (style.isVerticalWritingMode())
         m_chunkStyle |= SVGTextChunk::VerticalText;
     
     switch (svgStyle.textAnchor()) {

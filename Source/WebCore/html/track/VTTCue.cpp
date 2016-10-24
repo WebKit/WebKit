@@ -158,7 +158,7 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyDirection, m_cue.getCSSWritingDirection());
 
     // the 'writing-mode' property must be set to writing-mode
-    setInlineStyleProperty(CSSPropertyWebkitWritingMode, m_cue.getCSSWritingMode(), false);
+    setInlineStyleProperty(CSSPropertyWritingMode, m_cue.getCSSWritingMode(), false);
 
     std::pair<float, float> position = m_cue.getCSSPosition();
 

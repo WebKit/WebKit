@@ -1161,6 +1161,7 @@ public:
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
     bool isHorizontalWritingMode() const { return WebCore::isHorizontalWritingMode(writingMode()); }
+    bool isVerticalWritingMode() const { return WebCore::isVerticalWritingMode(writingMode()); }
     bool isFlippedLinesWritingMode() const { return WebCore::isFlippedLinesWritingMode(writingMode()); }
     bool isFlippedBlocksWritingMode() const { return WebCore::isFlippedWritingMode(writingMode()); }
 

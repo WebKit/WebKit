@@ -1013,10 +1013,6 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         }
         break;
-    case CSSPropertyWebkitWritingMode:
-        if (valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
-            return true;
-        break;
     case CSSPropertyWhiteSpace: // normal | pre | nowrap | inherit
         if (valueID == CSSValueNormal || valueID == CSSValuePre || valueID == CSSValuePreWrap || valueID == CSSValuePreLine || valueID == CSSValueNowrap)
             return true;
@@ -1127,7 +1123,9 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
             return true;
         break;
     case CSSPropertyWritingMode:
-        if (valueID == CSSValueLrTb || valueID == CSSValueRlTb || valueID == CSSValueTbRl || valueID == CSSValueLr || valueID == CSSValueRl || valueID == CSSValueTb)
+        if ((valueID >= CSSValueHorizontalTb && valueID <= CSSValueHorizontalBt)
+            || valueID == CSSValueLrTb || valueID == CSSValueRlTb || valueID == CSSValueTbRl
+            || valueID == CSSValueLr || valueID == CSSValueRl || valueID == CSSValueTb)
             return true;
         break;
     default:

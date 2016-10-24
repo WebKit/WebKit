@@ -240,6 +240,11 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     // FIXME: We need to better handle the case when we compute very small fonts below (below 1pt).
     fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSizeForSVGInlineText(fontDescription.computedSize(), fontDescription.isAbsoluteSize(), scalingFactor, renderer.document()));
 
+    // SVG controls its own glyph orientation, so don't allow writing-mode
+    // to affect it.
+    if (fontDescription.orientation() != FontOrientation::Horizontal)
+        fontDescription.setOrientation(FontOrientation::Horizontal);
+
     scaledFont = FontCascade(fontDescription, 0, 0);
     scaledFont.update(&renderer.document().fontSelector());
 }
