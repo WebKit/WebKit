@@ -1,5 +1,28 @@
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207160. rdar://problem/28857480
+
+    2016-10-11  Daniel Bates  <dabates@apple.com>
+
+            REGRESSION (r198251): -[UIWebView mediaPlaybackRequiresUserAction] defaults to NO
+            https://bugs.webkit.org/show_bug.cgi?id=163259
+            <rdar://problem/28680515>
+
+            Reviewed by Jer Noble.
+
+            In WebKit1 on iOS we want to require user action to load and play videos by default and
+            allow an embedding app to change this behavior via -[UIWebView setMediaPlaybackRequiresUserAction:].
+            Following r198251, -[UIWebView mediaPlaybackRequiresUserAction] defaults to NO and videos
+            can load and play without being initiated by a user action.
+
+            * WebView/WebPreferences.mm:
+            (+[WebPreferences initialize]): Initialize the default value of the deprecated preference
+            WebKitRequiresUserGestureForMediaPlaybackPreferenceKey to YES on iOS. The value of this
+            preference takes precedence over the values of its replacement preferences
+            WebKitRequiresUserGestureForVideoPlaybackPreferenceKey and WebKitRequiresUserGestureForAudioPlaybackPreferenceKey.
+
+2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r207159. rdar://problem/28857481
 
     2016-10-11  Daniel Bates  <dabates@apple.com>
