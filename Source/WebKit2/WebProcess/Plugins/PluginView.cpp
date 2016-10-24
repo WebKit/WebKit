@@ -1531,7 +1531,7 @@ bool PluginView::isMuted() const
     if (!frame() || !frame()->page())
         return false;
 
-    return frame()->page()->isMuted();
+    return frame()->page()->isAudioMuted();
 }
 #endif
 

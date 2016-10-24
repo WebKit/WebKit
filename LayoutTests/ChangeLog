@@ -1,3 +1,15 @@
+2016-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Separate media capture and audio playback muting
+        https://bugs.webkit.org/show_bug.cgi?id=163855
+        <rdar://problem/28827186>
+
+        Reviewed by Darin Adler.
+
+        * fast/mediastream/MediaStream-page-muted-expected.txt: Added.
+        * fast/mediastream/MediaStream-page-muted.html: Added.
+        * media/video-muted-after-setting-page-muted-state.html: Updated.
+
 2016-10-24  Youenn Fablet  <youenn@apple.com>
 
         Activate WEB_RTC compilation flags for Mac bots

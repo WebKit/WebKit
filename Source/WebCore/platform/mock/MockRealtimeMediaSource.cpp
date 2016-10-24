@@ -124,6 +124,18 @@ RealtimeMediaSourceSupportedConstraints& MockRealtimeMediaSource::supportedConst
     return m_supportedConstraints;
 }
 
+void MockRealtimeMediaSource::startProducingData()
+{
+    m_isProducingData = true;
+    setMuted(false);
+}
+
+void MockRealtimeMediaSource::stopProducingData()
+{
+    m_isProducingData = false;
+    setMuted(true);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

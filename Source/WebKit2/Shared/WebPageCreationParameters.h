@@ -35,6 +35,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/MediaProducer.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SessionID.h>
@@ -99,7 +100,7 @@ struct WebPageCreationParameters {
     float topContentInset;
     
     float mediaVolume;
-    bool muted;
+    WebCore::MediaProducer::MutedStateFlags muted;
     bool mayStartMediaWhenInWindow;
 
     WebCore::IntSize minimumLayoutSize;

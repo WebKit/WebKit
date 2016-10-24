@@ -84,7 +84,7 @@ void RealtimeMediaSource::removeObserver(RealtimeMediaSource::Observer* observer
 
 void RealtimeMediaSource::setMuted(bool muted)
 {
-    if (m_muted == muted)
+    if (m_stopped || m_muted == muted)
         return;
 
     m_muted = muted;
@@ -150,7 +150,6 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
     stop(callingObserver);
 }
 
-#if 1
 double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 {
     RealtimeMediaSourceCapabilities& capabilities = *this->capabilities();
@@ -275,7 +274,6 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
 
     return 0;
 }
-#endif
 
 template <typename ValueType>
 static void applyNumericConstraint(const NumericConstraint<ValueType>& constraint, ValueType current, ValueType capabilityMin, ValueType capabilityMax, RealtimeMediaSource* source, void (RealtimeMediaSource::*applier)(ValueType))

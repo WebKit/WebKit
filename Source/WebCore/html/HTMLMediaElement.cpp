@@ -4846,7 +4846,7 @@ void HTMLMediaElement::updateVolume()
 
         if (m_mediaController) {
             volumeMultiplier *= m_mediaController->volume();
-            shouldMute = m_mediaController->muted() || (page && page->isMuted());
+            shouldMute = m_mediaController->muted() || (page && page->isAudioMuted());
         }
 
 #if ENABLE(MEDIA_SESSION)
@@ -7007,7 +7007,7 @@ void HTMLMediaElement::pageMutedStateDidChange()
 
 bool HTMLMediaElement::effectiveMuted() const
 {
-    return muted() || (document().page() && document().page()->isMuted());
+    return muted() || (document().page() && document().page()->isAudioMuted());
 }
 
 void HTMLMediaElement::updateAudioAssertionState()

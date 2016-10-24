@@ -937,7 +937,7 @@ public:
     void printMainFrame();
     
     void setMediaVolume(float);
-    void setMuted(bool);
+    void setMuted(WebCore::MediaProducer::MutedStateFlags);
     void setMayStartMediaWhenInWindow(bool);
     bool mayStartMediaWhenInWindow() const { return m_mayStartMediaWhenInWindow; }
         
@@ -1852,7 +1852,7 @@ private:
     WebCore::IntSize m_minimumLayoutSize;
 
     float m_mediaVolume;
-    bool m_muted;
+    WebCore::MediaProducer::MutedStateFlags m_mutedState { WebCore::MediaProducer::NoneMuted };
     bool m_mayStartMediaWhenInWindow;
 
     bool m_waitingForDidUpdateViewState;

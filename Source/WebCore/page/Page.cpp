@@ -193,7 +193,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_inLowQualityInterpolationMode(false)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
-    , m_muted(false)
     , m_pageScaleFactor(1)
     , m_zoomedOutPageScaleFactor(0)
     , m_topContentInset(0)
@@ -1381,12 +1380,12 @@ void Page::updateIsPlayingMedia(uint64_t sourceElementID)
     chrome().client().isPlayingMediaDidChange(state, sourceElementID);
 }
 
-void Page::setMuted(bool muted)
+void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {
-    if (m_muted == muted)
+    if (m_mutedState == muted)
         return;
 
-    m_muted = muted;
+    m_mutedState = muted;
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())

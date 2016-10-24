@@ -973,7 +973,7 @@ MediaProducer::MediaStateFlags AudioContext::mediaState() const
 void AudioContext::pageMutedStateDidChange()
 {
     if (m_destinationNode && document()->page())
-        m_destinationNode->setMuted(document()->page()->isMuted());
+        m_destinationNode->setMuted(document()->page()->isAudioMuted());
 }
 
 void AudioContext::isPlayingAudioDidChange()

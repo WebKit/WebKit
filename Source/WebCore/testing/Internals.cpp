@@ -86,6 +86,7 @@
 #include "MainFrame.h"
 #include "MallocStatistics.h"
 #include "MediaPlayer.h"
+#include "MediaProducer.h"
 #include "MemoryCache.h"
 #include "MemoryInfo.h"
 #include "MemoryPressureHandler.h"
@@ -2945,14 +2946,24 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText() const
     return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame());
 }
 
-void Internals::setPageMuted(bool muted)
+void Internals::setPageMuted(const String& states)
 {
     Document* document = contextDocument();
     if (!document)
         return;
 
+    WebCore::MediaProducer::MutedStateFlags state = MediaProducer::NoneMuted;
+    Vector<String> stateString;
+    states.split(',', false, stateString);
+    for (auto& muteString : stateString) {
+        if (equalLettersIgnoringASCIICase(muteString, "audio"))
+            state |= MediaProducer::AudioIsMuted;
+        if (equalLettersIgnoringASCIICase(muteString, "capturedevices"))
+            state |= MediaProducer::CaptureDevicesAreMuted;
+    }
+
     if (Page* page = document->page())
-        page->setMuted(muted);
+        page->setMuted(state);
 }
 
 bool Internals::isPagePlayingAudio()

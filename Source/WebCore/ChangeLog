@@ -1,3 +1,47 @@
+2016-10-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Separate media capture and audio playback muting
+        https://bugs.webkit.org/show_bug.cgi?id=163855
+        <rdar://problem/28827186>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/mediastream/MediaStream-page-muted.html
+
+        Change page.muted from a bool to a bitfield so audio and media capture muted are independent.
+        Fix a couple of bugs in the mock media capture device uncovered by new test case.
+        
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::pageMutedStateDidChange): page.isMuted -> page.mutedState.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::pageMutedStateDidChange): Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateVolume): Ditto.
+        (WebCore::HTMLMediaElement::effectiveMuted): Ditto.
+
+        * page/MediaProducer.h: Add MutedState enum.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setMuted): Take MutedStateFlags instead of bool. m_muted -> m_mutedState.
+        * page/Page.h:
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::startProducingData): Call setMuted.
+        (WebCore::MockRealtimeMediaSource::stopProducingData): Ditto.
+        * platform/mock/MockRealtimeMediaSource.h:
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::stopProducingData): Call correct base class method.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageMuted): Change parameter from a bool to a string.
+        * testing/Internals.h:
+
+        * testing/Internals.idl:
+
 2016-10-24  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.

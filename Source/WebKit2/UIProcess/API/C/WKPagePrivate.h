@@ -120,7 +120,14 @@ WK_EXPORT bool WKPageGetAddsVisitedLinks(WKPageRef page);
 WK_EXPORT void WKPageSetAddsVisitedLinks(WKPageRef page, bool visitedLinks);
 
 WK_EXPORT bool WKPageIsPlayingAudio(WKPageRef page);
-WK_EXPORT void WKPageSetMuted(WKPageRef page, bool muted);
+
+enum {
+    kWKMediaNoneMuted = 0,
+    kWKMediaAudioMuted = 1 << 0,
+    kWKMediaCaptureDevicesMuted = 1 << 1,
+};
+typedef uint32_t WKMediaMutedState;
+WK_EXPORT void WKPageSetMuted(WKPageRef page, WKMediaMutedState muted);
 
 enum {
     kWKMediaIsNotPlaying = 0,
@@ -129,6 +136,7 @@ enum {
     kWKMediaHasActiveCaptureDevice = 1 << 2,
 };
 typedef uint32_t WKMediaState;
+
 
 WK_EXPORT WKMediaState WKPageGetMediaState(WKPageRef page);
 

@@ -256,7 +256,7 @@ void MediaStream::pageMutedStateDidChange()
     if (!document)
         return;
 
-    bool pageMuted = document->page()->isMuted();
+    bool pageMuted = document->page()->isMediaCaptureMuted();
     if (m_externallyMuted == pageMuted)
         return;
 

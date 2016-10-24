@@ -69,8 +69,8 @@ protected:
     virtual void initializeCapabilities(RealtimeMediaSourceCapabilities&) = 0;
     virtual void initializeSupportedConstraints(RealtimeMediaSourceSupportedConstraints&) = 0;
 
-    void startProducingData() override { m_isProducingData = true; }
-    void stopProducingData() override { m_isProducingData = false; }
+    void startProducingData() override;
+    void stopProducingData() override;
 
     RefPtr<RealtimeMediaSourceCapabilities> capabilities() override;
     const RealtimeMediaSourceSettings& settings() override;

@@ -5,13 +5,13 @@
 <script>
     testExpected("video.muted", false);
     if (window.internals)
-        internals.setPageMuted(true);
+        internals.setPageMuted("audio");
     testExpected("video.muted", false);
 
     run("video.muted = true");
     testExpected("video.muted", true);
     if (window.internals)
-        internals.setPageMuted(false);
+        internals.setPageMuted("");
     testExpected("video.muted", true);
     endTest();
 </script>

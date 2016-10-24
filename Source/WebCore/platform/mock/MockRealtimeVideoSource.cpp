@@ -85,7 +85,7 @@ void MockRealtimeVideoSource::startProducingData()
 
 void MockRealtimeVideoSource::stopProducingData()
 {
-    MockRealtimeMediaSource::startProducingData();
+    MockRealtimeMediaSource::stopProducingData();
     m_timer.stop();
     m_elapsedTime += monotonicallyIncreasingTime() - m_startTime;
     m_startTime = NAN;

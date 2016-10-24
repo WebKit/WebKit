@@ -444,7 +444,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_suppressVisibilityUpdates(false)
     , m_autoSizingShouldExpandToViewHeight(false)
     , m_mediaVolume(1)
-    , m_muted(false)
     , m_mayStartMediaWhenInWindow(true)
     , m_waitingForDidUpdateViewState(false)
 #if PLATFORM(COCOA)
@@ -1588,7 +1587,7 @@ void WebPageProxy::updateThrottleState()
 
     // We should suppress if the page is not active, is visually idle, and supression is enabled.
     bool isLoading = m_pageLoadState.isLoading();
-    bool isPlayingAudio = m_mediaState & MediaProducer::IsPlayingAudio && !m_muted;
+    bool isPlayingAudio = m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted);
     bool pageShouldBeSuppressed = !isLoading && !isPlayingAudio && processSuppressionEnabled && (m_viewState & ViewState::IsVisuallyIdle);
     if (m_pageSuppressed != pageShouldBeSuppressed) {
         m_pageSuppressed = pageShouldBeSuppressed;
@@ -4152,17 +4151,17 @@ void WebPageProxy::setMediaVolume(float volume)
     m_process->send(Messages::WebPage::SetMediaVolume(volume), m_pageID);    
 }
 
-void WebPageProxy::setMuted(bool muted)
+void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
 {
-    if (m_muted == muted)
+    if (m_mutedState == state)
         return;
 
-    m_muted = muted;
+    m_mutedState = state;
 
     if (!isValid())
         return;
 
-    m_process->send(Messages::WebPage::SetMuted(muted), m_pageID);
+    m_process->send(Messages::WebPage::SetMuted(state), m_pageID);
 
     updateThrottleState();
 }
@@ -5483,7 +5482,7 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.viewScaleFactor = m_viewScaleFactor;
     parameters.topContentInset = m_topContentInset;
     parameters.mediaVolume = m_mediaVolume;
-    parameters.muted = m_muted;
+    parameters.muted = m_mutedState;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.minimumLayoutSize = m_minimumLayoutSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;

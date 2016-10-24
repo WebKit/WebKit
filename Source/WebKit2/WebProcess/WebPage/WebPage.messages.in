@@ -314,7 +314,7 @@ messages -> WebPage LegacyReceiver {
 
     # Media
     SetMediaVolume(float volume)
-    SetMuted(bool muted)
+    SetMuted(WebCore::MediaProducer::MutedStateFlags muted)
     SetMayStartMediaWhenInWindow(bool mayStartMedia)
 
 #if ENABLE(MEDIA_SESSION)
