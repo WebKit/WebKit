@@ -80,7 +80,7 @@ public:
     void stop() override;
 
     bool isNegotiationNeeded() const override { return m_negotiationNeeded; };
-    void markAsNeedingNegotiation();
+    void markAsNeedingNegotiation() override;
     void clearNegotiationNeededState() override { m_negotiationNeeded = false; };
 
     void emulatePlatformEvent(const String& action) override;

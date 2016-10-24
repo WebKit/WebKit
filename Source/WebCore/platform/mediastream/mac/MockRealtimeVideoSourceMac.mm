@@ -58,6 +58,13 @@ MockRealtimeVideoSourceMac::MockRealtimeVideoSourceMac()
 {
 }
 
+Ref<MockRealtimeVideoSource> MockRealtimeVideoSource::createMuted(const String& name)
+{
+    auto source = adoptRef(*new MockRealtimeVideoSource(name));
+    source->m_muted = true;
+    return source;
+}
+
 RetainPtr<CMSampleBufferRef> MockRealtimeVideoSourceMac::CMSampleBufferFromPixelBuffer(CVPixelBufferRef pixelBuffer)
 {
     if (!pixelBuffer)

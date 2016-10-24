@@ -446,7 +446,7 @@ my @features = (
       define => "ENABLE_WEB_REPLAY", default => isAppleMacWebKit(), value => \$webReplaySupport },
 
     { option => "web-rtc", desc => "Toggle WebRTC support",
-      define => "ENABLE_WEB_RTC", default => (isGtk()), value => \$webRTCSupport },
+      define => "ENABLE_WEB_RTC", default => (isAppleMacWebKit() || isIOSWebKit() || isGtk()), value => \$webRTCSupport },
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value => \$webSocketsSupport },

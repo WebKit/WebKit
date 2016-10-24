@@ -1,3 +1,26 @@
+2016-10-24  Youenn Fablet  <youenn@apple.com>
+
+        Activate WEB_RTC compilation flags for Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=163886
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        Fixing compilation errors due to missing WEBCORE_EXPORT, missing method and missing override keywords.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::SDPProcessor::generate):
+        (WebCore::SDPProcessor::parse):
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        (WebCore::MockRealtimeVideoSource::createMuted):
+
 2016-10-24  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBIndex name assignment.
