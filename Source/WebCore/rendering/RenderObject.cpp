@@ -1778,14 +1778,8 @@ bool RenderObject::canUpdateSelectionOnRootLineBoxes()
     if (needsLayout())
         return false;
 
-    if (preferredLogicalWidthsDirty())
-        return false;
-
     RenderBlock* containingBlock = this->containingBlock();
-    if (!containingBlock)
-        return true;
-
-    return !containingBlock->needsLayout() && !containingBlock->preferredLogicalWidthsDirty();
+    return containingBlock ? !containingBlock->needsLayout() : true;
 }
 
 // We only create "generated" child renderers like one for first-letter if:
