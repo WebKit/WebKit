@@ -3829,7 +3829,7 @@ void testAbsArgWithEffectfulDoubleConversion(float a)
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
     CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(fabs(a)))));
-    CHECK(isIdentical(effect, fabs(a)));
+    CHECK(isIdentical(effect, static_cast<double>(fabs(a))));
 }
 
 void testCeilArg(double a)
@@ -4333,7 +4333,7 @@ void testSqrtArgWithEffectfulDoubleConversion(float a)
     double effect = 0;
     int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
     CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(sqrt(a)))));
-    CHECK(isIdentical(effect, sqrt(a)));
+    CHECK(isIdentical(effect, static_cast<double>(sqrt(a))));
 }
 
 void testCompareTwoFloatToDouble(float a, float b)

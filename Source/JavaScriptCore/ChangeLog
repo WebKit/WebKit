@@ -1,3 +1,13 @@
+2016-10-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Build fix for Clang and libstdc++ configurations.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testAbsArgWithEffectfulDoubleConversion): Explicitly cast the
+        float-typed return value of fabs(float) to double in order to avoid
+        ambiguous calls to isIdentical().
+        (JSC::B3::testSqrtArgWithEffectfulDoubleConversion): Ditto for sqrt(float).
+
 2016-10-22  Chris Dumez  <cdumez@apple.com>
 
         WebGLRenderingContextBase.bufferData() should use a union instead of overloading
