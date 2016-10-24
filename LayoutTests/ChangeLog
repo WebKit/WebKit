@@ -1,3 +1,11 @@
+2016-10-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font variations test gardening
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
 2016-10-24  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Scope chain shouldn't show empty Closure sections
