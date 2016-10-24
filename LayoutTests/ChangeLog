@@ -1,3 +1,16 @@
+2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline tests for ios-simulator after r207757.
+        https://bugs.webkit.org/show_bug.cgi?id=163904
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/ios-simulator/svg/batik/text/verticalText-expected.txt:
+        * platform/ios-simulator/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/ios-simulator/svg/text/text-align-06-b-expected.txt:
+        * platform/ios-simulator/svg/text/text-vkern-expected.txt:
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         Rebase tests after r207767
