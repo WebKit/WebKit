@@ -42,6 +42,7 @@ class IDBTransaction;
 
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor>, public ActiveDOMObject {
 public:
+    static Ref<IDBCursor> create(IDBTransaction&, IDBObjectStore&, const IDBCursorInfo&);
     static Ref<IDBCursor> create(IDBTransaction&, IDBIndex&, const IDBCursorInfo&);
 
     static const AtomicString& directionNext();

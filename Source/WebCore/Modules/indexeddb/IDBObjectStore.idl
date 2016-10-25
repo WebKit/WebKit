@@ -45,6 +45,8 @@
     [CallWith=ScriptState, MayThrowException] IDBRequest clear();
     [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
     [CallWith=ScriptState, MayThrowException] IDBRequest openCursor(any key, optional DOMString direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(optional IDBKeyRange? range = null, optional DOMString direction = "next");
+    [CallWith=ScriptState, MayThrowException] IDBRequest openKeyCursor(any key, optional DOMString direction = "next");
     [CallWith=ScriptState, MayThrowException] IDBIndex createIndex(DOMString name, (DOMString or sequence<DOMString>) keyPath, optional IDBIndexParameters options);
     [MayThrowException] IDBIndex index(DOMString name);
     [MayThrowException] void deleteIndex(DOMString name);

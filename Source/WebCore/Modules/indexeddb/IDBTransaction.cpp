@@ -731,6 +731,9 @@ Ref<IDBRequest> IDBTransaction::requestOpenCursor(ExecState& execState, IDBObjec
     LOG(IndexedDB, "IDBTransaction::requestOpenCursor");
     ASSERT(currentThread() == m_database->originThreadID());
 
+    if (info.cursorType() == IndexedDB::CursorType::KeyOnly)
+        return doRequestOpenCursor(execState, IDBCursor::create(*this, objectStore, info));
+
     return doRequestOpenCursor(execState, IDBCursorWithValue::create(*this, objectStore, info));
 }
 

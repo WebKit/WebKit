@@ -15,6 +15,12 @@ Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 0
 Cursor primary key is: 0
 Success opening cursor
+Cursor is: [object IDBCursor]
+Cursor direction is: next
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: 0
+Cursor primary key is: 0
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: next
 Cursor source is: [object IDBIndex] (TestIndex1)
@@ -28,6 +34,12 @@ Cursor key is: Hello
 Cursor primary key is: foo
 Success opening cursor
 Cursor is: [object IDBCursorWithValue]
+Cursor direction is: nextunique
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: 0
+Cursor primary key is: 0
+Success opening cursor
+Cursor is: [object IDBCursor]
 Cursor direction is: nextunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: 0
@@ -51,6 +63,12 @@ Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: foo
 Cursor primary key is: foo
 Success opening cursor
+Cursor is: [object IDBCursor]
+Cursor direction is: prev
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: foo
+Cursor primary key is: foo
+Success opening cursor
 Cursor is: [object IDBCursorWithValue]
 Cursor direction is: prev
 Cursor source is: [object IDBIndex] (TestIndex1)
@@ -64,6 +82,12 @@ Cursor key is: Hello
 Cursor primary key is: foo
 Success opening cursor
 Cursor is: [object IDBCursorWithValue]
+Cursor direction is: prevunique
+Cursor source is: [object IDBObjectStore] (TestObjectStore)
+Cursor key is: foo
+Cursor primary key is: foo
+Success opening cursor
+Cursor is: [object IDBCursor]
 Cursor direction is: prevunique
 Cursor source is: [object IDBObjectStore] (TestObjectStore)
 Cursor key is: foo

@@ -106,6 +106,11 @@ const AtomicString& IDBCursor::directionToString(IndexedDB::CursorDirection dire
     }
 }
 
+Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBObjectStore& objectStore, const IDBCursorInfo& info)
+{
+    return adoptRef(*new IDBCursor(transaction, objectStore, info));
+}
+
 Ref<IDBCursor> IDBCursor::create(IDBTransaction& transaction, IDBIndex& index, const IDBCursorInfo& info)
 {
     return adoptRef(*new IDBCursor(transaction, index, info));

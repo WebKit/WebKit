@@ -74,6 +74,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const IDBCur
     , m_objectStoreID(info.objectStoreIdentifier())
     , m_indexID(info.cursorSource() == IndexedDB::CursorSource::Index ? info.sourceIdentifier() : IDBIndexInfo::InvalidId)
     , m_cursorDirection(info.cursorDirection())
+    , m_cursorType(info.cursorType())
     , m_keyRange(info.range())
 {
     ASSERT(m_objectStoreID);
@@ -85,6 +86,7 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const uint64
     , m_objectStoreID(objectStoreID)
     , m_indexID(indexID ? indexID : IDBIndexInfo::InvalidId)
     , m_cursorDirection(IndexedDB::CursorDirection::Next)
+    , m_cursorType(IndexedDB::CursorType::KeyAndValue)
     , m_keyRange(range)
     , m_backingStoreCursor(true)
 {
@@ -396,7 +398,8 @@ SQLiteIDBCursor::AdvanceResult SQLiteIDBCursor::internalAdvanceOnce()
             return AdvanceResult::Failure;
         }
 
-        m_currentValue = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData), blobURLs, blobFilePaths);
+        if (m_cursorType == IndexedDB::CursorType::KeyAndValue)
+            m_currentValue = std::make_unique<IDBValue>(ThreadSafeDataBuffer::adoptVector(keyData), blobURLs, blobFilePaths);
     } else {
         if (!deserializeIDBKeyData(keyData.data(), keyData.size(), m_currentPrimaryKey)) {
             LOG_ERROR("Unable to deserialize value data from database while advancing index cursor");

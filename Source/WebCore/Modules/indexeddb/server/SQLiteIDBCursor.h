@@ -96,6 +96,7 @@ private:
     int64_t m_objectStoreID;
     int64_t m_indexID { IDBIndexInfo::InvalidId };
     IndexedDB::CursorDirection m_cursorDirection { IndexedDB::CursorDirection::Next };
+    IndexedDB::CursorType m_cursorType;
     IDBKeyRangeData m_keyRange;
 
     IDBKeyData m_currentLowerKey;

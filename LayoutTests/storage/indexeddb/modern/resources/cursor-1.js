@@ -44,6 +44,8 @@ function testCursorDirection(direction)
     var range = IDBKeyRange.lowerBound(-Infinity);
     var request = objectStore.openCursor(range, direction);
     setupRequest(request);
+    request = objectStore.openKeyCursor(range, direction);
+    setupRequest(request);
     request = index.openCursor(range, direction);
     setupRequest(request);
     request = index.openKeyCursor(range, direction);
