@@ -371,7 +371,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(ExecState& execState)
     return m_transaction->requestClearObjectStore(execState, *this);
 }
 
-ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, const IDBKeyPath& keyPath, const IndexParameters& parameters)
+ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, IDBKeyPathVariant&& keyPath, const IndexParameters& parameters)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
     ASSERT(currentThread() == m_transaction->database().originThreadID());
@@ -385,7 +385,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String&
     if (!m_transaction->isActive())
         return Exception { IDBDatabaseException::TransactionInactiveError };
 
-    if (!keyPath.isValid())
+    if (!isIDBKeyPathValid(keyPath))
         return Exception { IDBDatabaseException::SyntaxError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument contains an invalid key path.") };
 
     if (name.isNull())
@@ -394,11 +394,11 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String&
     if (m_info.hasIndex(name))
         return Exception { IDBDatabaseException::ConstraintError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': An index with the specified name already exists.") };
 
-    if (keyPath.type() == IDBKeyPath::Type::Array && parameters.multiEntry)
+    if (parameters.multiEntry && WTF::holds_alternative<Vector<String>>(keyPath))
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true.") };
 
     // Install the new Index into the ObjectStore's info.
-    IDBIndexInfo info = m_info.createNewIndex(name, keyPath, parameters.unique, parameters.multiEntry);
+    IDBIndexInfo info = m_info.createNewIndex(name, Optional<IDBKeyPathVariant>(WTFMove(keyPath)), parameters.unique, parameters.multiEntry);
     m_transaction->database().didCreateIndexInfo(info);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.

@@ -146,15 +146,15 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     if (m_info.hasObjectStore(name))
         return Exception { IDBDatabaseException::ConstraintError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': An object store with the specified name already exists.") };
 
-    IDBKeyPath keyPath(WTFMove(parameters.keyPath));
-    if (!keyPath.isNull() && !keyPath.isValid())
+    auto& keyPath = parameters.keyPath;
+    if (keyPath && !isIDBKeyPathValid(keyPath.value()))
         return Exception { IDBDatabaseException::SyntaxError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.") };
 
-    if (parameters.autoIncrement && ((keyPath.type() == IDBKeyPath::Type::String && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::Type::Array))
+    if (keyPath && parameters.autoIncrement && ((WTF::holds_alternative<String>(keyPath.value()) && WTF::get<String>(keyPath.value()).isEmpty()) || WTF::holds_alternative<Vector<String>>(keyPath.value())))
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.") };
 
     // Install the new ObjectStore into the connection's metadata.
-    auto info = m_info.createNewObjectStore(name, keyPath, parameters.autoIncrement);
+    auto info = m_info.createNewObjectStore(name, WTFMove(keyPath), parameters.autoIncrement);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
     return m_versionChangeTransaction->createObjectStore(info);

@@ -222,24 +222,20 @@ IDBKeyPath::IDBKeyPath(Optional<IDBKeyPathVariant>&& variant)
     }
 }
 
-bool IDBKeyPath::isValid() const
+bool isIDBKeyPathValid(const IDBKeyPathVariant& keyPath)
 {
-    switch (m_type) {
-    case Type::Null:
-        return false;
-    case Type::String:
-        return IDBIsValidKeyPath(m_string);
-    case Type::Array:
-        if (m_array.isEmpty())
+    auto visitor = WTF::makeVisitor([](const String& string) {
+        return IDBIsValidKeyPath(string);
+    }, [](const Vector<String>& vector) {
+        if (vector.isEmpty())
             return false;
-        for (auto& key : m_array) {
+        for (auto& key : vector) {
             if (!IDBIsValidKeyPath(key))
                 return false;
         }
         return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    });
+    return WTF::visit(visitor, keyPath);
 }
 
 bool IDBKeyPath::operator==(const IDBKeyPath& other) const

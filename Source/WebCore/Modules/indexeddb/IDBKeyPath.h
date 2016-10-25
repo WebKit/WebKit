@@ -34,6 +34,7 @@
 namespace WebCore {
 
 using IDBKeyPathVariant = WTF::Variant<String, Vector<String>>;
+bool isIDBKeyPathValid(const IDBKeyPathVariant&);
 
 class KeyedDecoder;
 class KeyedEncoder;
@@ -71,7 +72,6 @@ public:
     }
 
     bool isNull() const { return m_type == Type::Null; }
-    bool isValid() const;
     bool operator==(const IDBKeyPath& other) const;
 
     IDBKeyPath isolatedCopy() const;

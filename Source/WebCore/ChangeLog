@@ -1,3 +1,27 @@
+2016-10-25  Chris Dumez  <cdumez@apple.com>
+
+        IDBObjectStore.createIndex() should take a union in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=163935
+
+        Reviewed by Darin Adler.
+
+        IDBObjectStore.createIndex() should take a union in parameter:
+        - https://www.w3.org/TR/IndexedDB/#idl-def-IDBObjectStore
+
+        No new tests, no expected Web-exposed behavior change.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::isIDBKeyPathValid):
+        (WebCore::IDBKeyPath::isValid): Deleted.
+        * Modules/indexeddb/IDBKeyPath.h:
+        (WebCore::IDBKeyPath::isNull):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBObjectStore.idl:
+
 2016-10-24  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move more types over to the new JSConverter based toJS functions
