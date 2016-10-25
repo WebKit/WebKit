@@ -95,12 +95,4 @@ void registerNotifyCallback(const String& notifyID, std::function<void()> callba
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#if !LOG_DISABLED
-void logFunctionResult(WTFLogChannel* channel, std::function<const char*()> function)
-{
-    WTFLog(channel, "%s", function());
-}
-
-#endif // !LOG_DISABLED
-
 } // namespace WebCore

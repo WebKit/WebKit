@@ -29,22 +29,14 @@
 
 #if LOG_DISABLED
 
-#define LOG_RESULT(channel, function) ((void)0)
 #define LOG_WITH_STREAM(channel, commands) ((void)0)
 
 #else
 
-namespace WebCore {
-WEBCORE_EXPORT void logFunctionResult(WTFLogChannel*, std::function<const char*()>);
-}
-
-#define LOG_RESULT(channel, function) WebCore::logFunctionResult(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), function)
-
-#define LOG_WITH_STREAM(channel, commands) WebCore::logFunctionResult(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), \
-    [&]() { \
+#define LOG_WITH_STREAM(channel, commands) do { \
         WebCore::TextStream stream(WebCore::TextStream::LineMode::SingleLine); \
         commands; \
-        return stream.release().utf8().data(); \
-    });
+        WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), "%s", stream.release().utf8().data()); \
+    } while (0);
 
 #endif // !LOG_DISABLED

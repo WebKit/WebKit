@@ -1,3 +1,19 @@
+2016-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the lifetime of strings used in LOG_WITH_STREAM
+        https://bugs.webkit.org/show_bug.cgi?id=163923
+
+        Reviewed by Brent Fulgham.
+
+        Make sure the const char* passed to WTFLog() outlives the call.
+
+        Removed logFunctionResult which wasn't used anywhere else, and encourages this bad
+        pattern.
+
+        * platform/LogMacros.h:
+        * platform/Logging.cpp:
+        (WebCore::logFunctionResult): Deleted.
+
 2016-10-24  Chris Dumez  <cdumez@apple.com>
 
         Reduce special handling for typed arrays in JSDOMConvert.h
