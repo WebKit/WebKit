@@ -1,3 +1,38 @@
+2016-10-25  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r178265): XSS Auditor fails to block document.write() of incomplete tag
+        https://bugs.webkit.org/show_bug.cgi?id=163978
+        <rdar://problem/25962131>
+
+        Reviewed by Darin Adler.
+
+        During the tokenization process of an HTML tag the start and end positions of each of its
+        attributes is tracked so that the XSS Auditor can request a snippet around a suspected
+        injected attribute. We need to take care to consider document.write() boundaries when
+        tracking the start and end positions of each HTML tag and attribute so that the XSS Auditor
+        receives the correct snippet. Following r178265 we no longer consider document.write()
+        boundaries when tracking the start and end positions of attributes. So, the substring
+        represented by the start and end positions of an attribute may correspond to some other
+        attribute in the tag. Therefore the XSS Auditor may fail to block an injection because the
+        snippet it requested may not be the snippet that it intended to request.
+
+        Tests: http/tests/security/xssAuditor/dom-write-location-dom-write-open-img-onerror.html
+               http/tests/security/xssAuditor/dom-write-location-open-img-onerror.html
+               http/tests/security/xssAuditor/nested-dom-write-location-open-img-onerror.html
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::startToken): Set the attribute base offset to be the token
+        start position.
+        (WebCore::HTMLSourceTracker::source): Use the specified attribute start position as-is. We no
+        longer adjust it here because it was adjusted with respect to the attribute base offset, which
+        takes into account document.write() boundaries.
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::setAttributeBaseOffset): Added.
+        (WebCore::HTMLToken::beginAttribute): Subtract attribute base offset from the specified offset.
+        (WebCore::HTMLToken::endAttribute): Ditto.
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::setTokenAttributeBaseOffset): Added.
+
 2016-10-25  Chris Dumez  <cdumez@apple.com>
 
         IDBDatabase.transaction() should take a union in parameter
