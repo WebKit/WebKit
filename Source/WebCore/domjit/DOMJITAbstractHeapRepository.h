@@ -45,7 +45,7 @@ namespace WebCore { namespace DOMJIT {
 
 
 class AbstractHeapRepository {
-WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
+    WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
 public:
     static const AbstractHeapRepository& shared();
 
@@ -55,8 +55,6 @@ public:
     DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_MEMBER)
 #undef DOMJIT_DEFINE_MEMBER
 
-private:
-    friend class NeverDestroyed<AbstractHeapRepository>;
     AbstractHeapRepository();
 };
 

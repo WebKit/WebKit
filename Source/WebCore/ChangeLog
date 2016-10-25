@@ -1,3 +1,13 @@
+2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, attempt to fix Windows build after r207787
+        https://bugs.webkit.org/show_bug.cgi?id=163657
+
+        Make the constructor public in DOMJIT::AbstractHeapRepository to make Windows bot green.
+        It's a bit unfortunate that we need to introduce a workaround here.
+
+        * domjit/DOMJITAbstractHeapRepository.h:
+
 2016-10-24  Chris Dumez  <cdumez@apple.com>
 
         event.(dataTransfer|clipboardData).getData('text/html') (onpaste, ondrop)
