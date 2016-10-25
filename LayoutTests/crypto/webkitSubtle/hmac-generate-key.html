@@ -27,7 +27,7 @@ crypto.webkitSubtle.generateKey({name: "hmac", hash: "sha-1"}, extractable, ["si
     shouldBe("key.type", "'secret'");
     shouldBe("key.extractable", "true");
     shouldBe("key.algorithm.name", "'HMAC'");
-    shouldBe("key.algorithm.length", "64");
+    shouldBe("key.algorithm.length", "512");
     shouldBe("key.algorithm.hash.name", "'SHA-1'");
     shouldBe("key.usages", '["sign", "verify"]');
 

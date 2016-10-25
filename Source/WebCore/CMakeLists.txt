@@ -327,10 +327,16 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/KeyframeEffect.idl
     animation/WebAnimation.idl
 
+    crypto/CryptoAlgorithmParameters.idl
     crypto/CryptoKey.idl
     crypto/CryptoKeyPair.idl
     crypto/SubtleCrypto.idl
     crypto/WebKitSubtleCrypto.idl
+
+    crypto/parameters/AesKeyGenParams.idl
+    crypto/parameters/HmacKeyGenParams.idl
+    crypto/parameters/RsaHashedKeyGenParams.idl
+    crypto/parameters/RsaKeyGenParams.idl
 
     css/CSSFontFaceLoadEvent.idl
     css/CSSFontFaceRule.idl
@@ -1181,6 +1187,7 @@ set(WebCore_SOURCES
     bindings/js/JSStorageCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
+    bindings/js/JSSubtleCryptoCustom.cpp
     bindings/js/JSTextCustom.cpp
     bindings/js/JSTextTrackCueCustom.cpp
     bindings/js/JSTextTrackCustom.cpp

@@ -1,3 +1,66 @@
+2016-10-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::generateKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=163718
+        <rdar://problem/28864380>
+
+        Reviewed by Chris Dumez.
+
+        Besides adding tests for SubtleCrypto::generateKey related stuff and fixing HMAC. This patch also add
+        shouldReject(_a, _rejectCallback, _resolveCallback, _message) in js-test-pre.js.
+
+        * TestExpectations:
+        * crypto/subtle/aes-cbc-generate-key-length-128-expected.txt: Added.
+        * crypto/subtle/aes-cbc-generate-key-length-128.html: Added.
+        * crypto/subtle/aes-cbc-generate-key-length-192-expected.txt: Added.
+        * crypto/subtle/aes-cbc-generate-key-length-192.html: Added.
+        * crypto/subtle/aes-cbc-generate-key-length-256-expected.txt: Added.
+        * crypto/subtle/aes-cbc-generate-key-length-256.html: Added.
+        * crypto/subtle/aes-generate-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/aes-generate-key-malformed-parameters.html: Added.
+        * crypto/subtle/aes-kw-generate-key-expected.txt: Added.
+        * crypto/subtle/aes-kw-generate-key.html: Added.
+        * crypto/subtle/generate-key-malformed-paramters-expected.txt: Added.
+        * crypto/subtle/generate-key-malformed-paramters.html: Added.
+        * crypto/subtle/hmac-generate-key-customized-length-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-customized-length.html: Added.
+        * crypto/subtle/hmac-generate-key-hash-object-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-hash-object.html: Added.
+        * crypto/subtle/hmac-generate-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-malformed-parameters.html: Added.
+        * crypto/subtle/hmac-generate-key-sha1-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sha1.html: Added.
+        * crypto/subtle/hmac-generate-key-sha224-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sha224.html: Added.
+        * crypto/subtle/hmac-generate-key-sha256-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sha256.html: Added.
+        * crypto/subtle/hmac-generate-key-sha384-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sha384.html: Added.
+        * crypto/subtle/hmac-generate-key-sha512-expected.txt: Added.
+        * crypto/subtle/hmac-generate-key-sha512.html: Added.
+        * crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Added.
+        * crypto/subtle/rsa-generate-key-malformed-parameters.html: Added.
+        * crypto/subtle/rsa-oaep-generate-key-expected.txt: Added.
+        * crypto/subtle/rsa-oaep-generate-key.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-extractable-expected.txt: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key-extractable.html: Added.
+        * crypto/subtle/rsaes-pkcs1-v1_5-generate-key.html: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key-expected.txt: Added.
+        * crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html: Added.
+        * crypto/webkitSubtle/hmac-generate-key-expected.txt:
+        * crypto/webkitSubtle/hmac-generate-key.html:
+        * crypto/workers/subtle/aes-generate-key-expected.txt: Added.
+        * crypto/workers/subtle/aes-generate-key.html: Added.
+        * crypto/workers/subtle/hmac-generate-key-expected.txt: Added.
+        * crypto/workers/subtle/hmac-generate-key.html: Added.
+        * crypto/workers/subtle/resources/aes-generate-key.js: Added.
+        * crypto/workers/subtle/resources/hmac-generate-key.js: Added.
+        * crypto/workers/subtle/resources/rsa-generate-key.js: Added.
+        * crypto/workers/subtle/rsa-generate-key-expected.txt: Added.
+        * crypto/workers/subtle/rsa-generate-key.html: Added.
+        * resources/js-test-pre.js:
+
 2016-10-24  Chris Dumez  <cdumez@apple.com>
 
         IDBDatabase.createObjectStore() should take a IDBObjectStoreParameters dictionary in parameter

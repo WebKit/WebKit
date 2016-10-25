@@ -95,6 +95,7 @@ public:
 
     CryptoAlgorithmIdentifier algorithmIdentifier() const { return m_algorithmIdentifier; }
     CryptoKeyUsage usagesBitmap() const { return m_usages; }
+    void setUsagesBitmap(CryptoKeyUsage usage) { m_usages = usage; };
     bool allows(CryptoKeyUsage usage) const { return usage == (m_usages & usage); }
 
     virtual std::unique_ptr<CryptoKeyData> exportData() const = 0;

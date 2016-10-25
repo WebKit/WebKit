@@ -54,7 +54,7 @@ public:
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS(ToClassName) \
+#define SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS_DEPRECATED(ToClassName) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CryptoAlgorithm##ToClassName##Deprecated) \
     static bool isType(const WebCore::CryptoAlgorithmParametersDeprecated& parameters) { return parameters.parametersClass() == WebCore::CryptoAlgorithmParametersDeprecated::Class::ToClassName; } \
 SPECIALIZE_TYPE_TRAITS_END()

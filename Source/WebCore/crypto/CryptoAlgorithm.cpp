@@ -40,6 +40,11 @@ CryptoAlgorithm::~CryptoAlgorithm()
 {
 }
 
+void CryptoAlgorithm::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&&, bool, CryptoKeyUsage, KeyOrKeyPairCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+{
+    exceptionCallback(NOT_SUPPORTED_ERR);
+}
+
 void CryptoAlgorithm::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey&, const CryptoOperationData&, VectorCallback&&, VoidCallback&&, ExceptionCode& ec)
 {
     ec = NOT_SUPPORTED_ERR;
@@ -65,7 +70,7 @@ void CryptoAlgorithm::digest(const CryptoAlgorithmParametersDeprecated&, const C
     ec = NOT_SUPPORTED_ERR;
 }
 
-void CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&&, ExceptionCode& ec)
+void CryptoAlgorithm::generateKey(const CryptoAlgorithmParametersDeprecated&, bool, CryptoKeyUsage, KeyOrKeyPairCallback&&, VoidCallback&&, ExceptionCode& ec, ScriptExecutionContext*)
 {
     ec = NOT_SUPPORTED_ERR;
 }

@@ -23,6 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: The spec suggests that CryptoKeyPair should be of type Dictionary
+// as of 11 December 2014: https://www.w3.org/TR/WebCryptoAPI/#keypair
+// Since we don't support convert a Dictionary type object from its native
+// type to JSValue yet, we use a NoInterfaceObject hack for now. See:
+// https://bugs.webkit.org/show_bug.cgi?id=163711
 [
     Conditional=SUBTLE_CRYPTO,
     ImplementationLacksVTable,

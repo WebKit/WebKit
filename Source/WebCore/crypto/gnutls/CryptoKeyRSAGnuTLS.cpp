@@ -95,7 +95,7 @@ std::unique_ptr<CryptoKeyData> CryptoKeyRSA::exportData() const
     return nullptr;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback)
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback, ScriptExecutionContext* context)
 {
     notImplemented();
     failureCallback();
@@ -108,6 +108,7 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
     UNUSED_PARAM(extractable);
     UNUSED_PARAM(usage);
     UNUSED_PARAM(callback);
+    UNUSED_PARAM(context);
 }
 
 } // namespace WebCore

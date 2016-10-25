@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmHmacKeyGenParams.h"
 #include "CryptoAlgorithmHmacKeyParamsDeprecated.h"
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyDataOctetSequence.h"
@@ -67,6 +68,29 @@ bool CryptoAlgorithmHMAC::keyAlgorithmMatches(const CryptoAlgorithmHmacParamsDep
     return true;
 }
 
+void CryptoAlgorithmHMAC::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+{
+    const auto& hmacParameters = downcast<CryptoAlgorithmHmacKeyGenParams>(*parameters);
+
+    if (usages & (CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
+        exceptionCallback(SYNTAX_ERR);
+        return;
+    }
+
+    if (hmacParameters.length && !hmacParameters.length.value()) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    auto result = CryptoKeyHMAC::generate(hmacParameters.length.valueOr(0), hmacParameters.hashIdentifier, extractable, usages);
+    if (!result) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    callback(result.get(), nullptr);
+}
+
 void CryptoAlgorithmHMAC::sign(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     const CryptoAlgorithmHmacParamsDeprecated& hmacParameters = downcast<CryptoAlgorithmHmacParamsDeprecated>(parameters);
@@ -91,7 +115,7 @@ void CryptoAlgorithmHMAC::verify(const CryptoAlgorithmParametersDeprecated& para
     platformVerify(hmacParameters, downcast<CryptoKeyHMAC>(key), expectedSignature, data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmHMAC::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*)
 {
     const CryptoAlgorithmHmacKeyParamsDeprecated& hmacParameters = downcast<CryptoAlgorithmHmacKeyParamsDeprecated>(parameters);
 

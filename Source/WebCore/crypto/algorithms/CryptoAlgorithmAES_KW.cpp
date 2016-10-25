@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmAesKeyGenParams.h"
 #include "CryptoAlgorithmAesKeyGenParamsDeprecated.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
@@ -64,6 +65,24 @@ bool CryptoAlgorithmAES_KW::keyAlgorithmMatches(const CryptoKey& key) const
     return true;
 }
 
+void CryptoAlgorithmAES_KW::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext*)
+{
+    const auto& aesParameters = downcast<CryptoAlgorithmAesKeyGenParams>(*parameters);
+
+    if (usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageEncrypt | CryptoKeyUsageDecrypt)) {
+        exceptionCallback(SYNTAX_ERR);
+        return;
+    }
+
+    auto result = CryptoKeyAES::generate(CryptoAlgorithmIdentifier::AES_KW, aesParameters.length, extractable, usages);
+    if (!result) {
+        exceptionCallback(OperationError);
+        return;
+    }
+
+    callback(result.get(), nullptr);
+}
+
 void CryptoAlgorithmAES_KW::encryptForWrapKey(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     if (!keyAlgorithmMatches(key)) {
@@ -84,7 +103,7 @@ void CryptoAlgorithmAES_KW::decryptForUnwrapKey(const CryptoAlgorithmParametersD
     platformDecrypt(downcast<CryptoKeyAES>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmAES_KW::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext*)
 {
     const CryptoAlgorithmAesKeyGenParamsDeprecated& aesParameters = downcast<CryptoAlgorithmAesKeyGenParamsDeprecated>(parameters);
 

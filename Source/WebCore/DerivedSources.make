@@ -52,6 +52,7 @@ VPATH = \
     $(WebCore)/bindings/generic \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
+    $(WebCore)/crypto/parameters \
     $(WebCore)/css \
     $(WebCore)/dom \
     $(WebCore)/editing \
@@ -237,8 +238,13 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/DocumentTimeline.idl \
     $(WebCore)/animation/KeyframeEffect.idl \
     $(WebCore)/animation/WebAnimation.idl \
+    $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \
     $(WebCore)/crypto/CryptoKeyPair.idl \
+    $(WebCore)/crypto/parameters/AesKeyGenParams.idl \
+    $(WebCore)/crypto/parameters/HmacKeyGenParams.idl \
+    $(WebCore)/crypto/parameters/RsaHashedKeyGenParams.idl \
+    $(WebCore)/crypto/parameters/RsaKeyGenParams.idl \
     $(WebCore)/crypto/SubtleCrypto.idl \
     $(WebCore)/crypto/WebKitSubtleCrypto.idl \
     $(WebCore)/css/CSSFontFaceLoadEvent.idl \
@@ -1210,6 +1216,7 @@ IDL_INCLUDES = \
     $(WebCore)/Modules \
     $(WebCore)/animation \
     $(WebCore)/css \
+    $(WebCore)/crypto \
     $(WebCore)/dom \
     $(WebCore)/fileapi \
     $(WebCore)/html \

@@ -1,3 +1,61 @@
+2016-10-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::generateKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=163718
+        <rdar://problem/28864380>
+
+        Reviewed by Chris Dumez.
+
+        * WebCryptoAPI/generateKey/test_aes-cbc-expected.txt:
+        * WebCryptoAPI/generateKey/test_aes-cbc.html:
+        * WebCryptoAPI/generateKey/test_aes-ctr-expected.txt:
+        * WebCryptoAPI/generateKey/test_aes-ctr.html:
+        * WebCryptoAPI/generateKey/test_failures-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures.html:
+        * WebCryptoAPI/generateKey/test_failures_AES-CBC-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_AES-CBC.html:
+        * WebCryptoAPI/generateKey/test_failures_AES-CTR-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_AES-CTR.html:
+        * WebCryptoAPI/generateKey/test_failures_AES-GCM-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_AES-GCM.html:
+        * WebCryptoAPI/generateKey/test_failures_AES-KW-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_AES-KW.html:
+        * WebCryptoAPI/generateKey/test_failures_ECDH-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_ECDH.html:
+        * WebCryptoAPI/generateKey/test_failures_ECDSA-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_ECDSA.html:
+        * WebCryptoAPI/generateKey/test_failures_HMAC-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_HMAC.html:
+        * WebCryptoAPI/generateKey/test_failures_RSA-OAEP-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_RSA-OAEP.html:
+        * WebCryptoAPI/generateKey/test_failures_RSA-PSS-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_RSA-PSS.html:
+        * WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5-expected.txt:
+        * WebCryptoAPI/generateKey/test_failures_RSASSA-PKCS1-v1_5.html:
+        * WebCryptoAPI/generateKey/test_successes-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes.html:
+        * WebCryptoAPI/generateKey/test_successes_AES-CBC-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_AES-CBC.html:
+        * WebCryptoAPI/generateKey/test_successes_AES-CTR-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_AES-CTR.html:
+        * WebCryptoAPI/generateKey/test_successes_AES-GCM-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_AES-GCM.html:
+        * WebCryptoAPI/generateKey/test_successes_AES-KW-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_AES-KW.html:
+        * WebCryptoAPI/generateKey/test_successes_ECDH-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_ECDH.html:
+        * WebCryptoAPI/generateKey/test_successes_ECDSA-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_ECDSA.html:
+        * WebCryptoAPI/generateKey/test_successes_HMAC-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_HMAC.html:
+        * WebCryptoAPI/generateKey/test_successes_RSA-OAEP-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html:
+        * WebCryptoAPI/generateKey/test_successes_RSA-PSS-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_RSA-PSS.html:
+        * WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5-expected.txt:
+        * WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html:
+        * WebCryptoAPI/idlharness-expected.txt:
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should match old URL::parse with %2E in path

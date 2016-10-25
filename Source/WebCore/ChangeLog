@@ -1,3 +1,119 @@
+2016-10-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update SubtleCrypto::generateKey to match the latest spec
+        https://bugs.webkit.org/show_bug.cgi?id=163718
+        <rdar://problem/28864380>
+
+        Reviewed by Chris Dumez.
+
+        This patch does following few things:
+        1. It updates the SubtleCrypto::generateKey method to match the latest spec:
+           https://www.w3.org/TR/WebCryptoAPI/#SubtleCrypto-method-generateKey.
+           It also refers to the latest Editor's Draft at a certain degree:
+           https://w3c.github.io/webcrypto/Overview.html#SubtleCrypto-method-generateKey.
+        2. It implements generateKey operations of following algorithms: AES-CBC, AES-KW,
+           HMAC, RSAES-PKCS1-V1_5, RSASSA-PKCS1-V1_5, and RSA-OAEP.
+        3. It replaces SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS with
+        SPECIALIZE_TYPE_TRAITS_CRYPTO_ALGORITHM_PARAMETERS_DEPRECATED for deprecated params.
+        4. It fixes https://bugs.webkit.org/show_bug.cgi?id=129750 as well.
+
+        Tests: crypto/subtle/aes-cbc-generate-key-length-128.html
+               crypto/subtle/aes-cbc-generate-key-length-192.html
+               crypto/subtle/aes-cbc-generate-key-length-256.html
+               crypto/subtle/aes-generate-key-malformed-parameters.html
+               crypto/subtle/aes-kw-generate-key.html
+               crypto/subtle/generate-key-malformed-paramters.html
+               crypto/subtle/hmac-generate-key-customized-length.html
+               crypto/subtle/hmac-generate-key-hash-object.html
+               crypto/subtle/hmac-generate-key-malformed-parameters.html
+               crypto/subtle/hmac-generate-key-sha1.html
+               crypto/subtle/hmac-generate-key-sha224.html
+               crypto/subtle/hmac-generate-key-sha256.html
+               crypto/subtle/hmac-generate-key-sha384.html
+               crypto/subtle/hmac-generate-key-sha512.html
+               crypto/subtle/rsa-generate-key-malformed-parameters.html
+               crypto/subtle/rsa-oaep-generate-key.html
+               crypto/subtle/rsaes-pkcs1-v1_5-generate-key-extractable.html
+               crypto/subtle/rsaes-pkcs1-v1_5-generate-key.html
+               crypto/subtle/rsassa-pkcs1-v1_5-generate-key.html
+               crypto/webkitSubtle/hmac-generate-key.html:
+               crypto/workers/subtle/aes-generate-key.html
+               crypto/workers/subtle/hmac-generate-key.html
+               crypto/workers/subtle/rsa-generate-key.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/encryptedmedia/CDMSessionClearKey.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSubtleCryptoCustom.cpp: Added.
+        (WebCore::toHashIdentifier):
+        (WebCore::normalizeCryptoAlgorithmParameters):
+        (WebCore::cryptoKeyUsagesFromJSValue):
+        (WebCore::createAlgorithm):
+        (WebCore::rejectWithException):
+        (WebCore::jsSubtleCryptoFunctionGenerateKeyPromise):
+        (WebCore::JSSubtleCrypto::generateKey):
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        (WebCore::JSWebKitSubtleCrypto::generateKey):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::CryptoAlgorithm::generateKey):
+        * crypto/CryptoAlgorithm.h:
+        * crypto/CryptoAlgorithmParameters.h: Added.
+        (WebCore::CryptoAlgorithmParameters::CryptoAlgorithmParameters):
+        (WebCore::CryptoAlgorithmParameters::~CryptoAlgorithmParameters):
+        (WebCore::CryptoAlgorithmParameters::parametersClass):
+        * crypto/CryptoAlgorithmParameters.idl: Added.
+        * crypto/CryptoAlgorithmParametersDeprecated.h:
+        * crypto/CryptoKey.cpp:
+        (WebCore::CryptoKey::setUsagesBitmap):
+        * crypto/CryptoKey.h:
+        * crypto/CryptoKeyPair.idl:
+        * crypto/SubtleCrypto.idl:
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.cpp:
+        (WebCore::CryptoAlgorithmAES_CBC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.cpp:
+        (WebCore::CryptoAlgorithmAES_KW::generateKey):
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.cpp:
+        (WebCore::CryptoAlgorithmHMAC::generateKey):
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp:
+        (WebCore::CryptoAlgorithmRSASSA_PKCS1_v1_5::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp:
+        (WebCore::CryptoAlgorithmRSA_OAEP::generateKey):
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/gnutls/CryptoKeyRSAGnuTLS.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::generate):
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::generate):
+        * crypto/keys/CryptoKeyRSA.h:
+        * crypto/mac/CryptoKeyRSAMac.cpp:
+        (WebCore::CryptoKeyRSA::generatePair):
+        * crypto/parameters/AesKeyGenParams.idl: Added.
+        * crypto/parameters/CryptoAlgorithmAesCbcParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParams.h: Added.
+        * crypto/parameters/CryptoAlgorithmAesKeyGenParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmHmacKeyGenParams.h: Added.
+        * crypto/parameters/CryptoAlgorithmHmacKeyParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmHmacParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmRsaHashedKeyGenParams.h: Added.
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h: Added.
+        (WebCore::CryptoAlgorithmRsaKeyGenParams::arrayToVector):
+        * crypto/parameters/CryptoAlgorithmRsaKeyGenParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmRsaOaepParamsDeprecated.h:
+        * crypto/parameters/CryptoAlgorithmRsaSsaParamsDeprecated.h:
+        * crypto/parameters/HmacKeyGenParams.idl: Added.
+        * crypto/parameters/RsaHashedKeyGenParams.idl: Added.
+        * crypto/parameters/RsaKeyGenParams.idl: Added.
+
 2016-10-24  Chris Dumez  <cdumez@apple.com>
 
         IDBDatabase.createObjectStore() should take a IDBObjectStoreParameters dictionary in parameter

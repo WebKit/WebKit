@@ -28,9 +28,11 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "CryptoAlgorithmRsaKeyGenParams.h"
 #include "CryptoAlgorithmRsaKeyGenParamsDeprecated.h"
 #include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
 #include "CryptoKeyDataRSAComponents.h"
+#include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
 #include "ExceptionCode.h"
 
@@ -65,6 +67,27 @@ bool CryptoAlgorithmRSAES_PKCS1_v1_5::keyAlgorithmMatches(const CryptoKey& key) 
     return true;
 }
 
+void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const std::unique_ptr<CryptoAlgorithmParameters>&& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext* context)
+{
+    const auto& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParams>(*parameters);
+
+    if (usages & (CryptoKeyUsageSign | CryptoKeyUsageVerify | CryptoKeyUsageDeriveKey | CryptoKeyUsageDeriveBits | CryptoKeyUsageWrapKey | CryptoKeyUsageUnwrapKey)) {
+        exceptionCallback(SYNTAX_ERR);
+        return;
+    }
+
+    auto keyPairCallback = [capturedCallback = WTFMove(callback)](CryptoKeyPair& pair) {
+        pair.publicKey()->setUsagesBitmap(pair.publicKey()->usagesBitmap() & CryptoKeyUsageEncrypt);
+        pair.privateKey()->setUsagesBitmap(pair.privateKey()->usagesBitmap() & CryptoKeyUsageDecrypt);
+        capturedCallback(nullptr, &pair);
+    };
+    auto failureCallback = [capturedCallback = WTFMove(exceptionCallback)]() {
+        capturedCallback(OperationError);
+    };
+    // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect.
+    CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, CryptoAlgorithmIdentifier::SHA_1, false, rsaParameters.modulusLength, rsaParameters.publicExponentVector(), extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), context);
+}
+
 void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(const CryptoAlgorithmParametersDeprecated&, const CryptoKey& key, const CryptoOperationData& data, VectorCallback&& callback, VoidCallback&& failureCallback, ExceptionCode& ec)
 {
     if (!keyAlgorithmMatches(key)) {
@@ -85,15 +108,15 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(const CryptoAlgorithmParametersDep
     platformDecrypt(downcast<CryptoKeyRSA>(key), data, WTFMove(callback), WTFMove(failureCallback), ec);
 }
 
-void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)
+void CryptoAlgorithmRSAES_PKCS1_v1_5::generateKey(const CryptoAlgorithmParametersDeprecated& parameters, bool extractable, CryptoKeyUsage usages, KeyOrKeyPairCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&, ScriptExecutionContext* context)
 {
     const CryptoAlgorithmRsaKeyGenParamsDeprecated& rsaParameters = downcast<CryptoAlgorithmRsaKeyGenParamsDeprecated>(parameters);
 
-    auto keyPairCallback = [callback](CryptoKeyPair& pair) {
-        callback(nullptr, &pair);
+    auto keyPairCallback = [capturedCallback = WTFMove(callback)](CryptoKeyPair& pair) {
+        capturedCallback(nullptr, &pair);
     };
 
-    CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, rsaParameters.hash, rsaParameters.hasHash, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback));
+    CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5, rsaParameters.hash, rsaParameters.hasHash, rsaParameters.modulusLength, rsaParameters.publicExponent, extractable, usages, WTFMove(keyPairCallback), WTFMove(failureCallback), context);
 }
 
 void CryptoAlgorithmRSAES_PKCS1_v1_5::importKey(const CryptoAlgorithmParametersDeprecated& parameters, const CryptoKeyData& keyData, bool extractable, CryptoKeyUsage usage, KeyCallback&& callback, VoidCallback&& failureCallback, ExceptionCode&)

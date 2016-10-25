@@ -27,7 +27,7 @@
 #define CryptoKeyRSA_h
 
 #include "CryptoKey.h"
-#include <functional>
+#include <wtf/Function.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 
@@ -46,6 +46,7 @@ namespace WebCore {
 class CryptoKeyDataRSAComponents;
 class CryptoKeyPair;
 class PromiseWrapper;
+class ScriptExecutionContext;
 
 class RsaKeyAlgorithm : public KeyAlgorithm {
 public:
@@ -95,9 +96,9 @@ public:
 
     size_t keySizeInBits() const;
 
-    typedef std::function<void(CryptoKeyPair&)> KeyPairCallback;
-    typedef std::function<void()> VoidCallback;
-    static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback);
+    using KeyPairCallback = WTF::Function<void(CryptoKeyPair&)>;
+    using VoidCallback = WTF::Function<void()>;
+    static void generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage, KeyPairCallback, VoidCallback failureCallback, ScriptExecutionContext*);
 
     PlatformRSAKey platformKey() const { return m_platformKey; }
 

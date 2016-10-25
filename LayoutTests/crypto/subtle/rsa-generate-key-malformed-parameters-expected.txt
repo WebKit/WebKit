@@ -1,0 +1,40 @@
+Test generating an RSA key with malformed-paramters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS crypto.subtle.generateKey("RSAES-PKCS1-v1_5", extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member RsaKeyGenParams.modulusLength is required and must be an instance of unsigned long.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5"}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member RsaKeyGenParams.modulusLength is required and must be an instance of unsigned long.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: undefined, publicExponent: publicExponent}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member RsaKeyGenParams.modulusLength is required and must be an instance of unsigned long.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: Symbol(), publicExponent: publicExponent}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Cannot convert a symbol to a number.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: 1}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: true}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: null}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: undefined}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Member RsaKeyGenParams.publicExponent is required and must be an instance of Uint8Array.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: { }}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: Symbol()}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: "foo"}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: [ ]}, extractable, ["encrypt", "decrypt"]) rejected promise  with TypeError: Type error.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["sign", "verify"]) rejected promise  with TypeError: Member RsaHashedKeyGenParams.hash is required and must be an instance of any.
+PASS crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["decrypt", "encrypt"]) rejected promise  with TypeError: Member RsaHashedKeyGenParams.hash is required and must be an instance of any.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSAES-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent}, extractable, ["unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["encrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["decrypt"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["wrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["unwrapKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["verify"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveKey"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["deriveBits"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS crypto.subtle.generateKey({name: "RSASSA-PKCS1-v1_5", modulusLength: 0, publicExponent: publicExponent, hash: "sha-1"}, extractable, ["sign", "verify"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

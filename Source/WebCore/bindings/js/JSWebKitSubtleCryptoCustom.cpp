@@ -41,6 +41,7 @@
 #include "JSCryptoKeySerializationJWK.h"
 #include "JSCryptoOperationData.h"
 #include "JSDOMPromise.h"
+#include "ScriptState.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
@@ -445,7 +446,7 @@ JSValue JSWebKitSubtleCrypto::generateKey(ExecState& state)
     };
 
     ExceptionCode ec = 0;
-    algorithm->generateKey(*parameters, extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback), ec);
+    algorithm->generateKey(*parameters, extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback), ec, scriptExecutionContextFromExecState(&state));
     if (ec) {
         setDOMException(&state, ec);
         return jsUndefined();

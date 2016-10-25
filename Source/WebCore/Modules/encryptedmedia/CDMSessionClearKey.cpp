@@ -27,9 +27,6 @@
 #include "CDMSessionClearKey.h"
 
 #include "ArrayValue.h"
-#include "CryptoAlgorithm.h"
-#include "CryptoAlgorithmIdentifier.h"
-#include "CryptoKeyDataOctetSequence.h"
 #include "Dictionary.h"
 #include "JSMainThreadExecState.h"
 #include "Logging.h"

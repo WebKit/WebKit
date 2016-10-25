@@ -32,6 +32,7 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -229,7 +230,7 @@ static bool bigIntegerToUInt32(const Vector<uint8_t>& bigInteger, uint32_t& resu
     return true;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback)
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsage usage, KeyPairCallback callback, VoidCallback failureCallback, ScriptExecutionContext* context)
 {
     uint32_t e;
     if (!bigIntegerToUInt32(publicExponent, e)) {
@@ -239,29 +240,33 @@ void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier algorithm, CryptoAlgor
         return;
     }
 
-    // We only use the callback functions when back on the main thread, but captured variables are copied on a secondary thread too.
+    // We only use the callback functions when back on the main/worker thread, but captured variables are copied on a secondary thread too.
     KeyPairCallback* localCallback = new KeyPairCallback(WTFMove(callback));
     VoidCallback* localFailureCallback = new VoidCallback(WTFMove(failureCallback));
+    context->ref();
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        ASSERT(context);
         CCRSACryptorRef ccPublicKey;
         CCRSACryptorRef ccPrivateKey;
         CCCryptorStatus status = CCRSACryptorGeneratePair(modulusLength, e, &ccPublicKey, &ccPrivateKey);
         if (status) {
             WTFLogAlways("Could not generate a key pair, status %d", status);
-            callOnWebThreadOrDispatchAsyncOnMainThread(^{
+            context->postTask([localCallback, localFailureCallback](ScriptExecutionContext& context) {
                 (*localFailureCallback)();
                 delete localCallback;
                 delete localFailureCallback;
+                context.deref();
             });
             return;
         }
-        callOnWebThreadOrDispatchAsyncOnMainThread(^{
+        context->postTask([algorithm, hash, hasHash, extractable, usage, localCallback, localFailureCallback, ccPublicKey, ccPrivateKey](ScriptExecutionContext& context) {
             auto publicKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Public, ccPublicKey, true, usage);
             auto privateKey = CryptoKeyRSA::create(algorithm, hash, hasHash, CryptoKeyType::Private, ccPrivateKey, extractable, usage);
             (*localCallback)(CryptoKeyPair::create(WTFMove(publicKey), WTFMove(privateKey)));
             delete localCallback;
             delete localFailureCallback;
+            context.deref();
         });
     });
 }

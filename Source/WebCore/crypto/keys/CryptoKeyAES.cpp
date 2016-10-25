@@ -57,7 +57,7 @@ bool CryptoKeyAES::isValidAESAlgorithm(CryptoAlgorithmIdentifier algorithm)
 
 RefPtr<CryptoKeyAES> CryptoKeyAES::generate(CryptoAlgorithmIdentifier algorithm, size_t lengthBits, bool extractable, CryptoKeyUsage usages)
 {
-    if (lengthBits % 8)
+    if ((lengthBits != 128) && (lengthBits != 192) && (lengthBits != 256))
         return nullptr;
     return adoptRef(new CryptoKeyAES(algorithm, randomData(lengthBits / 8), extractable, usages));
 }

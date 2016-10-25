@@ -1,0 +1,18 @@
+[Worker] Test generating an AES key using AES-CBC algorithm in workers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/aes-generate-key.js
+[Worker] Generating a key...
+PASS [Worker] crypto.subtle.generateKey({name: "aes-cbc", length: 128}, extractable, ["sign"]) rejected promise  with SyntaxError (DOM Exception 12): A required parameter was missing or out-of-range.
+PASS [Worker] crypto.subtle.generateKey({name: "aes-cbc", length: 111}, extractable, ["encrypt"]) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS [Worker] key.type is 'secret'
+PASS [Worker] key.extractable is true
+PASS [Worker] key.algorithm.name is 'AES-CBC'
+PASS [Worker] key.algorithm.length is 128
+PASS [Worker] key.usages is ['decrypt', 'encrypt', 'unwrapKey', 'wrapKey']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
