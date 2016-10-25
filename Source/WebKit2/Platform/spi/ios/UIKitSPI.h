@@ -654,8 +654,7 @@ struct _UIWebTouchPoint {
     unsigned identifier;
     UITouchPhase phase;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > 100000
-    // FIXME: Uncomment this once UIKit is updated (rdar://problem/28555313).
-    // CGFloat majorRadiusInScreenCoordinates;
+    CGFloat majorRadiusInScreenCoordinates;
     CGFloat force;
     CGFloat altitudeAngle;
     CGFloat azimuthAngle;

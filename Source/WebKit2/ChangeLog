@@ -1,3 +1,16 @@
+2016-10-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r207494.
+
+        iOS SDK has been updated on the bots now so rollout the
+        rollout
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r207413."
+        https://bugs.webkit.org/show_bug.cgi?id=163547
+        http://trac.webkit.org/changeset/207494
+
 2016-10-25  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed build fix.
