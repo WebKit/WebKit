@@ -1,5 +1,11 @@
 2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix timeouts in 12 GTK+ unit tests after r207812.
+
+        * NetworkProcess/NetworkProcessCreationParameters.h: Initialize loadThrottleLatency.
+
+2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix Soup based ports debug build after r207813.
 
         * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
