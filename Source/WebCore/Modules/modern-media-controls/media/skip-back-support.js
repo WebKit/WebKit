@@ -23,53 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+const SkipBackSeconds = 30;
+
+class SkipBackSupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new MuteSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.skipBackButton;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    buttonWasClicked(control)
     {
-        // FIXME: To be implemented.
-    }
-
-    handleEvent(event)
-    {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
-    }
-
-    // Private
-
-    _updateControlsSize()
-    {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        const media = this.mediaController.media;
+        media.currentTime = Math.max(media.currentTime - SkipBackSeconds, media.seekable.start(0));
     }
 
 }

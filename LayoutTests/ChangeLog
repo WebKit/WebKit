@@ -1,3 +1,29 @@
+2016-10-25  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: skip back support
+        https://bugs.webkit.org/show_bug.cgi?id=163725
+        <rdar://problem/27989480>
+
+        Reviewed by Dean Jackson.
+
+        Added a new test for the SkipBackButton class to ensure that we correctly seek back by 30 seconds when pressed.
+        Updated the other tests to reflect the addition of the SkipBackSupport class.
+
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click-expected.txt: Added.
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/mute-support/mute-support-button-click.html:
+        * media/modern-media-controls/mute-support/mute-support-media-api.html:
+        * media/modern-media-controls/mute-support/mute-support-muted.html:
+        * media/modern-media-controls/start-support/start-support-audio.html:
+        * media/modern-media-controls/start-support/start-support-autoplay.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/start-support/start-support-error.html:
+        * media/modern-media-controls/start-support/start-support-fullscreen.html:
+        * media/modern-media-controls/start-support/start-support-manual-play.html:
+        * media/modern-media-controls/start-support/start-support-no-source.html:
+
 2016-10-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207578.
