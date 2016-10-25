@@ -1,3 +1,37 @@
+2016-10-25  Antti Koivisto  <antti@apple.com>
+
+        Add support for introducing simulated latency in network process
+        https://bugs.webkit.org/show_bug.cgi?id=163902
+
+        Reviewed by Alex Christensen.
+
+        For testing purposes it is useful to have a mechanism for simulating high latency.
+        This patch adds a basic mechanism that introduces a delay to each response in network
+        process. In Safari it can be used with
+
+             defaults write com.apple.Safari WebKitNetworkLoadThrottleLatencyMilliseconds 200
+
+        Setting the delay to 0 disables the feature.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::Throttle::Throttle):
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        (WebKit::NetworkLoad::didReceiveData):
+        (WebKit::NetworkLoad::didCompleteWithError):
+        (WebKit::NetworkLoad::throttleDelayCompleted):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::loadThrottleLatency):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2016-10-24  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r206410): Sandbox violations beneath WebProcessProxy::platformIsBeingDebugged

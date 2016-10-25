@@ -124,6 +124,9 @@ private:
     void wasBlocked() final;
     void cannotShowURL() final;
 
+    void notifyDidReceiveResponse(WebCore::ResourceResponse&&, ResponseCompletionHandler&&);
+    void throttleDelayCompleted();
+
     void completeAuthenticationChallenge(ChallengeCompletionHandler&&);
 #endif
 
@@ -137,6 +140,9 @@ private:
 #endif
     ResponseCompletionHandler m_responseCompletionHandler;
     RedirectCompletionHandler m_redirectCompletionHandler;
+    
+    struct Throttle;
+    std::unique_ptr<Throttle> m_throttle;
 #else
     bool m_waitingForContinueCanAuthenticateAgainstProtectionSpace { false };
     RefPtr<RemoteNetworkingContext> m_networkingContext;

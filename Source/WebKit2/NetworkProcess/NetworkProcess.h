@@ -120,6 +120,8 @@ public:
 
     void grantSandboxExtensionsToDatabaseProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
 
+    std::chrono::milliseconds loadThrottleLatency() const { return m_loadThrottleLatency; }
+
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -210,6 +212,7 @@ private:
     bool m_suppressMemoryPressureHandler { false };
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
+    std::chrono::milliseconds m_loadThrottleLatency;
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
