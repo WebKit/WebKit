@@ -1,3 +1,13 @@
+2016-10-25  Alex Christensen  <achristensen@webkit.org>
+
+        CMake build fix.
+
+        * PlatformMac.cmake:
+        * Shared/WebHitTestResultData.cpp:
+        (WebKit::WebHitTestResultData::WebHitTestResultData):
+        Explicitly call AtomicString::string to make the String constructor no longer ambiguous.
+        It couldn't decide whether to use operator const String& or operator NSString*.
+
 2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Network process assertion in NetworkDataTask::continueHTTPRedirection
