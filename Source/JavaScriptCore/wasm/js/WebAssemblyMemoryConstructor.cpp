@@ -57,10 +57,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyMemory(ExecState* state)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Memory"));
 }
 
-WebAssemblyMemoryConstructor* WebAssemblyMemoryConstructor::create(VM& vm, Structure* structure, WebAssemblyMemoryPrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyMemoryConstructor* WebAssemblyMemoryConstructor::create(VM& vm, Structure* structure, WebAssemblyMemoryPrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyMemoryConstructor>(vm.heap)) WebAssemblyMemoryConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -69,12 +69,11 @@ Structure* WebAssemblyMemoryConstructor::createStructure(VM& vm, JSGlobalObject*
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryPrototype* prototype, Structure* structure)
+void WebAssemblyMemoryConstructor::finishCreation(VM& vm, WebAssemblyMemoryPrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("Memory"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    m_MemoryStructure.set(vm, this, structure);
 }
 
 WebAssemblyMemoryConstructor::WebAssemblyMemoryConstructor(VM& vm, Structure* structure)
@@ -99,7 +98,6 @@ void WebAssemblyMemoryConstructor::visitChildren(JSCell* cell, SlotVisitor& visi
     auto* thisObject = jsCast<WebAssemblyMemoryConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_MemoryStructure);
 }
 
 } // namespace JSC

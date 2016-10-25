@@ -47,6 +47,8 @@ protected:
     JSWebAssemblyCompileError(VM&, Structure*);
 };
 
+JSObject* createWebAssemblyCompileError(ExecState*, const String&);
+
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

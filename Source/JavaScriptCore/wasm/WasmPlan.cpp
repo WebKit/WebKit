@@ -37,14 +37,20 @@
 namespace JSC { namespace Wasm {
 
 static const bool verbose = false;
-
+    
 Plan::Plan(VM& vm, Vector<uint8_t> source)
+    : Plan(vm, source.data(), source.size())
+{
+}
+
+Plan::Plan(VM& vm, const uint8_t* source, size_t sourceLength)
 {
     if (verbose)
         dataLogLn("Starting plan.");
-    ModuleParser moduleParser(source);
+    ModuleParser moduleParser(source, sourceLength);
     if (!moduleParser.parse()) {
-        dataLogLn("Parsing module failed.");
+        dataLogLn("Parsing module failed: ", moduleParser.errorMessage());
+        m_errorMessage = moduleParser.errorMessage();
         return;
     }
 
@@ -54,18 +60,24 @@ Plan::Plan(VM& vm, Vector<uint8_t> source)
     for (const FunctionInformation& info : moduleParser.functionInformation()) {
         if (verbose)
             dataLogLn("Processing funcion starting at: ", info.start, " and ending at: ", info.end);
-        result.append(parseAndCompile(vm, source, moduleParser.memory().get(), info, moduleParser.functionInformation()));
+        const uint8_t* functionStart = source + info.start;
+        size_t functionLength = info.end - info.start;
+        ASSERT(functionLength <= sourceLength);
+        m_result.append(parseAndCompile(vm, functionStart, functionLength, moduleParser.memory().get(), info.signature, moduleParser.functionInformation()));
     }
 
     // Patch the call sites for each function.
-    for (std::unique_ptr<FunctionCompilation>& functionPtr : result) {
+    for (std::unique_ptr<FunctionCompilation>& functionPtr : m_result) {
         FunctionCompilation* function = functionPtr.get();
         for (auto& call : function->unlinkedCalls)
-            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(result[call.functionIndex]->code->code()));
+            MacroAssembler::repatchCall(call.callLocation, CodeLocationLabel(m_result[call.functionIndex]->code->code()));
     }
 
-    memory = WTFMove(moduleParser.memory());
+    m_memory = WTFMove(moduleParser.memory());
+    m_failed = false;
 }
+
+Plan::~Plan() { }
 
 } } // namespace JSC::Wasm
 

@@ -718,13 +718,13 @@ static std::unique_ptr<Compilation> createJSWrapper(VM& vm, const Signature* sig
     return std::make_unique<Compilation>(vm, proc);
 }
 
-std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& source, Memory* memory, FunctionInformation info, const Vector<FunctionInformation>& functions, unsigned optLevel)
+std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, const uint8_t* functionStart, size_t functionLength, Memory* memory, const Signature* signature, const Vector<FunctionInformation>& functions, unsigned optLevel)
 {
     auto result = std::make_unique<FunctionCompilation>();
 
     Procedure procedure;
     B3IRGenerator context(memory, procedure, result->unlinkedCalls);
-    FunctionParser<B3IRGenerator> parser(context, source, info, functions);
+    FunctionParser<B3IRGenerator> parser(context, functionStart, functionLength, signature, functions);
     if (!parser.parse())
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -736,7 +736,7 @@ std::unique_ptr<FunctionCompilation> parseAndCompile(VM& vm, Vector<uint8_t>& so
         dataLog("Post SSA: ", procedure);
 
     result->code = std::make_unique<Compilation>(vm, procedure, optLevel);
-    result->jsEntryPoint = createJSWrapper(vm, info.signature, result->code->code(), memory);
+    result->jsEntryPoint = createJSWrapper(vm, signature, result->code->code(), memory);
     return result;
 }
 

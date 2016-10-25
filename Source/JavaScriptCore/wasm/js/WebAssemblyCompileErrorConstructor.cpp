@@ -48,7 +48,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyCompileError(ExecState
 {
     auto& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = state->argumentCount() ? state->argument(0) : jsUndefined();
+    JSValue message = state->argument(0);
     auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyCompileErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(JSWebAssemblyCompileError::create(state, structure, message, false));
@@ -61,10 +61,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyCompileError(ExecState* sta
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.CompileError"));
 }
 
-WebAssemblyCompileErrorConstructor* WebAssemblyCompileErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyCompileErrorPrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyCompileErrorConstructor* WebAssemblyCompileErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyCompileErrorPrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyCompileErrorConstructor>(vm.heap)) WebAssemblyCompileErrorConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -73,7 +73,7 @@ Structure* WebAssemblyCompileErrorConstructor::createStructure(VM& vm, JSGlobalO
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyCompileErrorConstructor::finishCreation(VM& vm, WebAssemblyCompileErrorPrototype* prototype, Structure*)
+void WebAssemblyCompileErrorConstructor::finishCreation(VM& vm, WebAssemblyCompileErrorPrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("CompileError"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, ReadOnly | DontEnum | DontDelete);

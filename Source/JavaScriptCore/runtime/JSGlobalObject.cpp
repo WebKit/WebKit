@@ -832,7 +832,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         auto* base = m_ ## prototypeBase ## Prototype.get(); \
         auto* prototype = Prototype::create(vm, this, Prototype::createStructure(vm, this, base)); \
         auto* structure = JSObj::createStructure(vm, this, prototype); \
-        auto* constructor = Constructor::create(vm, Constructor::createStructure(vm, this, this->functionPrototype()), prototype, structure); \
+        auto* constructor = Constructor::create(vm, Constructor::createStructure(vm, this, this->functionPrototype()), prototype); \
         prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructor, DontEnum); \
         m_ ## lowerName ## Prototype.set(vm, this, prototype); \
         m_ ## properName ## Structure.set(vm, this, structure); \

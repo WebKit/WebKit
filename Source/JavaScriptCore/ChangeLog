@@ -1,3 +1,114 @@
+2016-10-25  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement Module
+
+        This implementation allows us to:
+         - Syncrhonously create a WebAssembly.Module with a typed array.
+         - Creates a compilation plan.
+         - Parse the Module and creates corresponding code.
+         - Throw WebAssembly.CompileError with mildly helpful [*] error messages on
+           failure.
+
+        Consult the API documentation for expected behavior: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymodule-constructor
+
+        For now the implementation discards the generated code.
+
+        The next steps will be:
+         - Expose a Module's exports.
+         - Implement WebAssembly.Instance, which allows instantiating and running a
+           compiled Module.
+         - Beef up the testing infrastructure under JSTests/wasm so that more complex
+           modules can be created and tested (instead of writing the bits by hand).
+
+        This patch also:
+         - Adds assert.instanceof in assert.js.
+         - Refactors Wasm::Parser and friends to accept const uint8_t* as well as a
+           Vector, to avoid copying when invoked synchronously.
+         - Remove useless Structure from some of the wasm constructors: they're already
+           on the JSGlobalObject, visited properly and all.
+         - Fix off-by-one error in parsing: Parser::parseUInt32 failed if the integer
+           was exactly at end of file.
+
+         [*] On error messages while parsing: I filed https://bugs.webkit.org/show_bug.cgi?id=163919
+
+        WebAssembly JS API: implement Module
+        https://bugs.webkit.org/show_bug.cgi?id=163903
+
+        Reviewed by Keith Miller.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::defaultSourceAppender): make this public so that WebAssembly can use it: it generates those fancy (evaluating '...') messages at the end
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): remove the useless Structure from the WebAssembly objects (it's already in this file, no need to hold two references and visit them twice)
+        * testWasm.cpp:
+        (runWasmTests): update API
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile): use updated API
+        * wasm/WasmB3IRGenerator.h:
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::FunctionParser): use updated API
+        (JSC::Wasm::FunctionParser<Context>::parseExpression): use updated API
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse): generate error messages
+        * wasm/WasmModuleParser.h:
+        (JSC::Wasm::ModuleParser::ModuleParser):
+        (JSC::Wasm::ModuleParser::failed):
+        (JSC::Wasm::ModuleParser::errorMessage):
+        (JSC::Wasm::ModuleParser::functionInformation):
+        (JSC::Wasm::ModuleParser::memory):
+        * wasm/WasmParser.h: use update non-public API
+        (JSC::Wasm::Parser::parseVarUInt32):
+        (JSC::Wasm::Parser::parseVarUInt64):
+        (JSC::Wasm::Parser::source):
+        (JSC::Wasm::Parser::length):
+        (JSC::Wasm::Parser::Parser):
+        (JSC::Wasm::Parser::consumeCharacter):
+        (JSC::Wasm::Parser::consumeString):
+        (JSC::Wasm::Parser::parseUInt32):
+        (JSC::Wasm::Parser::parseUInt7):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+        (JSC::Wasm::Plan::~Plan):
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::failed):
+        (JSC::Wasm::Plan::errorMessage):
+        (JSC::Wasm::Plan::resultSize):
+        (JSC::Wasm::Plan::result):
+        (JSC::Wasm::Plan::memory):
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createWebAssemblyCompileError): makes it easier to throw a WebAssembly.CompileError from Module
+        * wasm/js/JSWebAssemblyCompileError.h:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::create):
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyCompileErrorConstructor.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::create):
+        (JSC::WebAssemblyInstanceConstructor::finishCreation):
+        (JSC::WebAssemblyInstanceConstructor::visitChildren):
+        * wasm/js/WebAssemblyInstanceConstructor.h:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::create):
+        (JSC::WebAssemblyMemoryConstructor::finishCreation):
+        (JSC::WebAssemblyMemoryConstructor::visitChildren):
+        * wasm/js/WebAssemblyMemoryConstructor.h:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule):
+        (JSC::WebAssemblyModuleConstructor::create):
+        (JSC::WebAssemblyModuleConstructor::finishCreation):
+        (JSC::WebAssemblyModuleConstructor::visitChildren):
+        * wasm/js/WebAssemblyModuleConstructor.h:
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::create):
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.h:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::create):
+        (JSC::WebAssemblyTableConstructor::finishCreation):
+        (JSC::WebAssemblyTableConstructor::visitChildren):
+        * wasm/js/WebAssemblyTableConstructor.h:
+
 2016-10-25  Keith Miller  <keith_miller@apple.com>
 
         Add trivial Wasm conversion opcodes

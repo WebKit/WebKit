@@ -101,7 +101,7 @@ static String defaultApproximateSourceError(const String& originalMessage, const
     return makeString(originalMessage, " (near '...", sourceText, "...')");
 }
 
-static String defaultSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+String defaultSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
 {
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);

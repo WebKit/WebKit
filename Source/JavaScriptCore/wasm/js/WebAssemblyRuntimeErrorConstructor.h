@@ -39,13 +39,13 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static WebAssemblyRuntimeErrorConstructor* create(VM&, Structure*, WebAssemblyRuntimeErrorPrototype*, Structure*);
+    static WebAssemblyRuntimeErrorConstructor* create(VM&, Structure*, WebAssemblyRuntimeErrorPrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&, WebAssemblyRuntimeErrorPrototype*, Structure*);
+    void finishCreation(VM&, WebAssemblyRuntimeErrorPrototype*);
 
 private:
     WebAssemblyRuntimeErrorConstructor(VM&, Structure*);

@@ -37,7 +37,7 @@ namespace JSC { namespace Wasm {
 
 class Memory;
 
-std::unique_ptr<FunctionCompilation> parseAndCompile(VM&, Vector<uint8_t>&, Memory*, FunctionInformation, const Vector<FunctionInformation>&, unsigned optLevel = 1);
+std::unique_ptr<FunctionCompilation> parseAndCompile(VM&, const uint8_t*, size_t, Memory*, const Signature*, const Vector<FunctionInformation>&, unsigned optLevel = 1);
 
 } } // namespace JSC::Wasm
 

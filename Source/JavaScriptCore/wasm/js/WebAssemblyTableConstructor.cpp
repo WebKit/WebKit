@@ -57,10 +57,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* state)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Table"));
 }
 
-WebAssemblyTableConstructor* WebAssemblyTableConstructor::create(VM& vm, Structure* structure, WebAssemblyTablePrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyTableConstructor* WebAssemblyTableConstructor::create(VM& vm, Structure* structure, WebAssemblyTablePrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyTableConstructor>(vm.heap)) WebAssemblyTableConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -69,12 +69,11 @@ Structure* WebAssemblyTableConstructor::createStructure(VM& vm, JSGlobalObject* 
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype, Structure* structure)
+void WebAssemblyTableConstructor::finishCreation(VM& vm, WebAssemblyTablePrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("Table"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    m_TableStructure.set(vm, this, structure);
 }
 
 WebAssemblyTableConstructor::WebAssemblyTableConstructor(VM& vm, Structure* structure)
@@ -99,7 +98,6 @@ void WebAssemblyTableConstructor::visitChildren(JSCell* cell, SlotVisitor& visit
     auto* thisObject = jsCast<WebAssemblyTableConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_TableStructure);
 }
 
 } // namespace JSC

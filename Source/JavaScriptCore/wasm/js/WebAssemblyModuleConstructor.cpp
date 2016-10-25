@@ -28,8 +28,14 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
+#include "JSArrayBuffer.h"
 #include "JSCInlines.h"
+#include "JSTypedArrays.h"
+#include "JSWebAssemblyCompileError.h"
+#include "JSWebAssemblyModule.h"
+#include "WasmPlan.h"
 #include "WebAssemblyModulePrototype.h"
 
 #include "WebAssemblyModuleConstructor.lut.h"
@@ -45,9 +51,30 @@ const ClassInfo WebAssemblyModuleConstructor::s_info = { "Function", &Base::s_in
 
 static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyModule(ExecState* state)
 {
-    VM& vm = state->vm();
+    auto& vm = state->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    return JSValue::encode(throwException(state, scope, createError(state, ASCIILiteral("WebAssembly doesn't yet implement the Module constructor property"))));
+    JSValue val = state->argument(0);
+    JSArrayBuffer* arrayBuffer = val.getObject() ? jsDynamicCast<JSArrayBuffer*>(val.getObject()) : nullptr;
+    JSArrayBufferView* arrayBufferView = val.getObject() ? jsDynamicCast<JSArrayBufferView*>(val.getObject()) : nullptr;
+    if (!(arrayBuffer || arrayBufferView))
+        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("first argument to WebAssembly.Module must be an ArrayBufferView or an ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(val))));
+
+    if (arrayBufferView ? arrayBufferView->isNeutered() : arrayBuffer->impl()->isNeutered())
+        return JSValue::encode(throwException(state, scope, createTypeError(state, ASCIILiteral("underlying TypedArray has been detatched from the ArrayBuffer"), defaultSourceAppender, runtimeTypeForValue(val))));
+
+    size_t byteOffset = arrayBufferView ? arrayBufferView->byteOffset() : 0;
+    size_t byteSize = arrayBufferView ? arrayBufferView->length() : arrayBuffer->impl()->byteLength();
+    const auto* base = arrayBufferView ? static_cast<uint8_t*>(arrayBufferView->vector()) : static_cast<uint8_t*>(arrayBuffer->impl()->data());
+
+    Wasm::Plan plan(vm, base + byteOffset, byteSize);
+    if (plan.failed())
+        return JSValue::encode(throwException(state, scope, createWebAssemblyCompileError(state, plan.errorMessage())));
+
+    // FIXME take content from Plan.
+
+    auto* structure = InternalFunction::createSubclassStructure(state, state->newTarget(), asInternalFunction(state->callee())->globalObject()->WebAssemblyModuleStructure());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    return JSValue::encode(JSWebAssemblyModule::create(vm, structure));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
@@ -57,10 +84,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyModule(ExecState* state)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Module"));
 }
 
-WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyModuleConstructor* WebAssemblyModuleConstructor::create(VM& vm, Structure* structure, WebAssemblyModulePrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyModuleConstructor>(vm.heap)) WebAssemblyModuleConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -69,12 +96,11 @@ Structure* WebAssemblyModuleConstructor::createStructure(VM& vm, JSGlobalObject*
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModulePrototype* prototype, Structure* structure)
+void WebAssemblyModuleConstructor::finishCreation(VM& vm, WebAssemblyModulePrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("Module"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    m_ModuleStructure.set(vm, this, structure);
 }
 
 WebAssemblyModuleConstructor::WebAssemblyModuleConstructor(VM& vm, Structure* structure)
@@ -99,7 +125,6 @@ void WebAssemblyModuleConstructor::visitChildren(JSCell* cell, SlotVisitor& visi
     auto* thisObject = jsCast<WebAssemblyModuleConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_ModuleStructure);
 }
 
 } // namespace JSC

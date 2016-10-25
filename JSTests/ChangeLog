@@ -1,3 +1,50 @@
+2016-10-25  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly JS API: implement Module
+
+        This implementation allows us to:
+         - Syncrhonously create a WebAssembly.Module with a typed array.
+         - Creates a compilation plan.
+         - Parse the Module and creates corresponding code.
+         - Throw WebAssembly.CompileError with mildly helpful [*] error messages on
+           failure.
+
+        Consult the API documentation for expected behavior: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblymodule-constructor
+
+        For now the implementation discards the generated code.
+
+        The next steps will be:
+         - Expose a Module's exports.
+         - Implement WebAssembly.Instance, which allows instantiating and running a
+           compiled Module.
+         - Beef up the testing infrastructure under JSTests/wasm so that more complex
+           modules can be created and tested (instead of writing the bits by hand).
+
+        This patch also:
+         - Adds assert.instanceof in assert.js.
+         - Refactors Wasm::Parser and friends to accept const uint8_t* as well as a
+           Vector, to avoid copying when invoked synchronously.
+         - Remove useless Structure from some of the wasm constructors: they're already
+           on the JSGlobalObject, visited properly and all.
+         - Fix off-by-one error in parsing: Parser::parseUInt32 failed if the integer
+           was exactly at end of file.
+
+         [*] On error messages while parsing: I filed https://bugs.webkit.org/show_bug.cgi?id=163919
+
+        WebAssembly JS API: implement Module
+        https://bugs.webkit.org/show_bug.cgi?id=163903
+
+        Reviewed by Keith Miller.
+
+        * wasm/assert.js: use underscore in name, and remove when exporting to avoid clasing with builtin names
+        (const._notUndef):
+        (const._isUndef):
+        (const._eq):
+        (const._ge):
+        (const._throws):
+        * wasm/js-api/test_basic_api.js: test the WebAssembly.Module API
+        (const.c.in.constructorProperties.switch):
+
 2016-10-25  Keith Miller  <keith_miller@apple.com>
 
         Add trivial Wasm conversion opcodes

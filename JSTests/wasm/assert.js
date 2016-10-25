@@ -23,29 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const notUndef = (v) => {
+const _notUndef = (v) => {
     if (typeof v === "undefined")
         throw new Error("Shouldn't be undefined");
 };
 
-export const isUndef = (v) => {
+const _isUndef = (v) => {
     if (typeof v !== "undefined")
         throw new Error("Should be undefined");
 };
 
-export const eq = (lhs, rhs) => {
+const _eq = (lhs, rhs) => {
     if (lhs !== rhs)
         throw new Error(`Not the same: "${lhs}" and "${rhs}"`);
 };
 
-export const ge = (lhs, rhs) => {
-    notUndef(lhs);
-    notUndef(rhs);
+const _ge = (lhs, rhs) => {
+    _notUndef(lhs);
+    _notUndef(rhs);
     if (!(lhs >= rhs))
         throw new Error(`Expected: "${lhs}" < "${rhs}"`);
 };
 
-export const throws = (func, type, message, ...args) => {
+const _throws = (func, type, message, ...args) => {
     try {
         func(...args);
     } catch (e) {
@@ -54,4 +54,16 @@ export const throws = (func, type, message, ...args) => {
         throw new Error(`Expected to throw a ${type.name} with message "${message}", got ${e.name} with message "${e.message}"`);
     }
     throw new Error(`Expected to throw a ${type.name} with message "${message}"`);
+};
+
+const _instanceof = (obj, type) => obj instanceof type;
+
+// Use underscore names to avoid clashing with builtin names.
+export {
+    _notUndef as notUndef,
+    _isUndef as isUndef,
+    _eq as eq,
+    _ge as ge,
+    _throws as throws,
+    _instanceof as instanceof,
 };

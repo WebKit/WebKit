@@ -39,15 +39,33 @@ public:
 
     static const unsigned magicNumber = 0xc;
 
+    ModuleParser(const uint8_t* sourceBuffer, size_t sourceLength)
+        : Parser(sourceBuffer, sourceLength)
+    {
+    }
     ModuleParser(const Vector<uint8_t>& sourceBuffer)
-        : Parser(sourceBuffer, 0, sourceBuffer.size())
+        : Parser(sourceBuffer.data(), sourceBuffer.size())
     {
     }
 
     bool WARN_UNUSED_RETURN parse();
+    bool WARN_UNUSED_RETURN failed() const { return m_failed; }
+    const String& errorMessage() const
+    {
+        RELEASE_ASSERT(failed());
+        return m_errorMessage;
+    }
 
-    const Vector<FunctionInformation>& functionInformation() const { return m_functions; }
-    std::unique_ptr<Memory>& memory() { return m_memory; }
+    const Vector<FunctionInformation>& functionInformation() const
+    {
+        RELEASE_ASSERT(!failed());
+        return m_functions;
+    }
+    std::unique_ptr<Memory>& memory()
+    {
+        RELEASE_ASSERT(!failed());
+        return m_memory;
+    }
 
 private:
     bool WARN_UNUSED_RETURN parseMemory();
@@ -59,6 +77,8 @@ private:
     Vector<FunctionInformation> m_functions;
     Vector<Signature> m_signatures;
     std::unique_ptr<Memory> m_memory;
+    bool m_failed { true };
+    String m_errorMessage;
 };
 
 } } // namespace JSC::Wasm

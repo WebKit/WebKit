@@ -38,7 +38,7 @@ namespace JSC { namespace Wasm {
 
 class Parser {
 protected:
-    Parser(const Vector<uint8_t>&, size_t start, size_t end);
+    Parser(const uint8_t*, size_t);
 
     bool WARN_UNUSED_RETURN consumeCharacter(char);
     bool WARN_UNUSED_RETURN consumeString(const char*);
@@ -46,31 +46,32 @@ protected:
     bool WARN_UNUSED_RETURN parseVarUInt1(uint8_t& result);
     bool WARN_UNUSED_RETURN parseUInt7(uint8_t& result);
     bool WARN_UNUSED_RETURN parseUInt32(uint32_t& result);
-    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return WTF::LEBDecoder::decodeUInt32(m_source.data(), m_sourceLength, m_offset, result); }
-    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t& result) { return WTF::LEBDecoder::decodeUInt64(m_source.data(), m_sourceLength, m_offset, result); }
-
+    bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t& result) { return WTF::LEBDecoder::decodeUInt32(m_source, m_sourceLength, m_offset, result); }
+    bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t& result) { return WTF::LEBDecoder::decodeUInt64(m_source, m_sourceLength, m_offset, result); }
 
     bool WARN_UNUSED_RETURN parseValueType(Type& result);
 
-    const Vector<uint8_t>& m_source;
+    const uint8_t* source() const { return m_source; }
+    size_t length() const { return m_sourceLength; }
+
+    size_t m_offset = 0;
+
+private:
+    const uint8_t* m_source;
     size_t m_sourceLength;
-    size_t m_offset;
 };
 
-ALWAYS_INLINE Parser::Parser(const Vector<uint8_t>& sourceBuffer, size_t start, size_t end)
+ALWAYS_INLINE Parser::Parser(const uint8_t* sourceBuffer, size_t sourceLength)
     : m_source(sourceBuffer)
-    , m_sourceLength(end)
-    , m_offset(start)
+    , m_sourceLength(sourceLength)
 {
-    ASSERT(end <= sourceBuffer.size());
-    ASSERT(start < end);
 }
 
 ALWAYS_INLINE bool Parser::consumeCharacter(char c)
 {
-    if (m_offset >= m_sourceLength)
+    if (m_offset >= length())
         return false;
-    if (c == m_source[m_offset]) {
+    if (c == source()[m_offset]) {
         m_offset++;
         return true;
     }
@@ -80,9 +81,9 @@ ALWAYS_INLINE bool Parser::consumeCharacter(char c)
 ALWAYS_INLINE bool Parser::consumeString(const char* str)
 {
     unsigned start = m_offset;
-    if (m_offset >= m_sourceLength)
+    if (m_offset >= length())
         return false;
-    for (unsigned i = 0; str[i]; i++) {
+    for (size_t i = 0; str[i]; i++) {
         if (!consumeCharacter(str[i])) {
             m_offset = start;
             return false;
@@ -93,18 +94,18 @@ ALWAYS_INLINE bool Parser::consumeString(const char* str)
 
 ALWAYS_INLINE bool Parser::parseUInt32(uint32_t& result)
 {
-    if (m_sourceLength < 4 || m_offset >= m_sourceLength - 4)
+    if (length() < 4 || m_offset > length() - 4)
         return false;
-    result = *reinterpret_cast<const uint32_t*>(m_source.data() + m_offset);
+    result = *reinterpret_cast<const uint32_t*>(source() + m_offset);
     m_offset += 4;
     return true;
 }
 
 ALWAYS_INLINE bool Parser::parseUInt7(uint8_t& result)
 {
-    if (m_offset >= m_sourceLength)
+    if (m_offset >= length())
         return false;
-    result = m_source[m_offset++];
+    result = source()[m_offset++];
     return result < 0x80;
 }
 

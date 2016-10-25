@@ -37,6 +37,8 @@ namespace JSC {
 
 typedef JSObject* (*ErrorFactory)(ExecState*, const String&, ErrorInstance::SourceAppender);
 
+String defaultSourceAppender(const String&, const String&, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
+
 JSObject* createTerminatedExecutionException(VM*);
 JS_EXPORT_PRIVATE bool isTerminatedExecutionException(Exception*);
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, JSValue, const String&, ErrorInstance::SourceAppender);

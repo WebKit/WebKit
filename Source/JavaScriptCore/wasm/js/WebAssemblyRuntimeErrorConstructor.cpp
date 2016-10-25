@@ -61,10 +61,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyRuntimeError(ExecState* sta
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.RuntimeError"));
 }
 
-WebAssemblyRuntimeErrorConstructor* WebAssemblyRuntimeErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyRuntimeErrorPrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyRuntimeErrorConstructor* WebAssemblyRuntimeErrorConstructor::create(VM& vm, Structure* structure, WebAssemblyRuntimeErrorPrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyRuntimeErrorConstructor>(vm.heap)) WebAssemblyRuntimeErrorConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -73,7 +73,7 @@ Structure* WebAssemblyRuntimeErrorConstructor::createStructure(VM& vm, JSGlobalO
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype, Structure*)
+void WebAssemblyRuntimeErrorConstructor::finishCreation(VM& vm, WebAssemblyRuntimeErrorPrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("RuntimeError"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, ReadOnly | DontEnum | DontDelete);

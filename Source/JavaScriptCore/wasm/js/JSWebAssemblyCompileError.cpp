@@ -47,6 +47,14 @@ JSWebAssemblyCompileError::JSWebAssemblyCompileError(VM& vm, Structure* structur
 
 const ClassInfo JSWebAssemblyCompileError::s_info = { "WebAssembly.CompileError", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyCompileError) };
 
+    
+JSObject* createWebAssemblyCompileError(ExecState* exec, const String& message)
+{
+    ASSERT(!message.isEmpty());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    return ErrorInstance::create(exec, globalObject->vm(), globalObject->WebAssemblyCompileErrorStructure(), message, defaultSourceAppender, TypeNothing, true);
+}
+
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

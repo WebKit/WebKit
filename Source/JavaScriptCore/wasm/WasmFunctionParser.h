@@ -44,7 +44,7 @@ public:
     typedef typename Context::ExpressionType ExpressionType;
     typedef typename Context::ControlType ControlType;
 
-    FunctionParser(Context&, const Vector<uint8_t>& sourceBuffer, const FunctionInformation&, const Vector<FunctionInformation>& functions);
+    FunctionParser(Context&, const uint8_t* functionStart, size_t functionLength, const Signature*, const Vector<FunctionInformation>& functions);
 
     bool WARN_UNUSED_RETURN parse();
 
@@ -59,21 +59,21 @@ private:
     Context& m_context;
     Vector<ExpressionType, 1> m_expressionStack;
     Vector<ControlType> m_controlStack;
-    const Signature& m_signature;
+    const Signature* m_signature;
     const Vector<FunctionInformation>& m_functions;
     unsigned m_unreachableBlocks { 0 };
 };
 
 template<typename Context>
-FunctionParser<Context>::FunctionParser(Context& context, const Vector<uint8_t>& sourceBuffer, const FunctionInformation& info, const Vector<FunctionInformation>& functions)
-    : Parser(sourceBuffer, info.start, info.end)
+FunctionParser<Context>::FunctionParser(Context& context, const uint8_t* functionStart, size_t functionLength, const Signature* signature, const Vector<FunctionInformation>& functions)
+    : Parser(functionStart, functionLength)
     , m_context(context)
-    , m_signature(*info.signature)
+    , m_signature(signature)
     , m_functions(functions)
 {
     if (verbose)
-        dataLogLn("Parsing function starting at: ", info.start, " ending at: ", info.end);
-    m_context.addArguments(m_signature.arguments);
+        dataLogLn("Parsing function starting at: ", (uintptr_t)functionStart, " of length: ", functionLength);
+    m_context.addArguments(m_signature->arguments);
 }
 
 template<typename Context>
@@ -309,7 +309,7 @@ bool FunctionParser<Context>::parseExpression(OpType op)
 
     case OpType::Return: {
         Vector<ExpressionType, 1> returnValues;
-        if (m_signature.returnType != Void)
+        if (m_signature->returnType != Void)
             returnValues.append(m_expressionStack.takeLast());
 
         m_unreachableBlocks = 1;

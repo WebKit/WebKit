@@ -39,23 +39,19 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static WebAssemblyModuleConstructor* create(VM&, Structure*, WebAssemblyModulePrototype*, Structure*);
+    static WebAssemblyModuleConstructor* create(VM&, Structure*, WebAssemblyModulePrototype*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    Structure* ModuleStructure() const { return m_ModuleStructure.get(); }
-
 protected:
-    void finishCreation(VM&, WebAssemblyModulePrototype*, Structure*);
+    void finishCreation(VM&, WebAssemblyModulePrototype*);
 
 private:
     WebAssemblyModuleConstructor(VM&, Structure*);
     static ConstructType getConstructData(JSCell*, ConstructData&);
     static CallType getCallData(JSCell*, CallData&);
     static void visitChildren(JSCell*, SlotVisitor&);
-
-    WriteBarrier<Structure> m_ModuleStructure;
 };
 
 } // namespace JSC

@@ -57,10 +57,10 @@ static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyInstance(ExecState* state)
     return JSValue::encode(throwConstructorCannotBeCalledAsFunctionTypeError(state, scope, "WebAssembly.Instance"));
 }
 
-WebAssemblyInstanceConstructor* WebAssemblyInstanceConstructor::create(VM& vm, Structure* structure, WebAssemblyInstancePrototype* thisPrototype, Structure* thisStructure)
+WebAssemblyInstanceConstructor* WebAssemblyInstanceConstructor::create(VM& vm, Structure* structure, WebAssemblyInstancePrototype* thisPrototype)
 {
     auto* constructor = new (NotNull, allocateCell<WebAssemblyInstanceConstructor>(vm.heap)) WebAssemblyInstanceConstructor(vm, structure);
-    constructor->finishCreation(vm, thisPrototype, thisStructure);
+    constructor->finishCreation(vm, thisPrototype);
     return constructor;
 }
 
@@ -69,12 +69,11 @@ Structure* WebAssemblyInstanceConstructor::createStructure(VM& vm, JSGlobalObjec
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-void WebAssemblyInstanceConstructor::finishCreation(VM& vm, WebAssemblyInstancePrototype* prototype, Structure* structure)
+void WebAssemblyInstanceConstructor::finishCreation(VM& vm, WebAssemblyInstancePrototype* prototype)
 {
     Base::finishCreation(vm, ASCIILiteral("Instance"));
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
     putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-    m_InstanceStructure.set(vm, this, structure);
 }
 
 WebAssemblyInstanceConstructor::WebAssemblyInstanceConstructor(VM& vm, Structure* structure)
@@ -99,7 +98,6 @@ void WebAssemblyInstanceConstructor::visitChildren(JSCell* cell, SlotVisitor& vi
     auto* thisObject = jsCast<WebAssemblyInstanceConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(&thisObject->m_InstanceStructure);
 }
 
 } // namespace JSC
