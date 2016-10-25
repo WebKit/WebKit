@@ -36,7 +36,7 @@ if (SHOULD_INSTALL_JS_SHELL)
     install(TARGETS jsc DESTINATION "${LIBEXEC_INSTALL_DIR}")
 endif ()
 
-if (WIN32)
+if (TARGET jscLib)
     add_dependencies(jsc jscLib)
 endif ()
 

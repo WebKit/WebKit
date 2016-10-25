@@ -1,3 +1,16 @@
+2016-10-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Check if jscLib and WebKitGUID targets exist before using them
+        https://bugs.webkit.org/show_bug.cgi?id=163945
+
+        Reviewed by Alex Christensen.
+
+        Currently these targets are used under WIN32 condition, however they
+        are defined in PlatformWin.cmake, causing CMake warnings if port
+        supports WIN32 but does not use PlatformWin.cmake
+
+        * shell/CMakeLists.txt:
+
 2016-10-25  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: implement Module
