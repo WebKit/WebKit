@@ -1,3 +1,26 @@
+2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, attempt to fix Windows build after r207787
+        https://bugs.webkit.org/show_bug.cgi?id=163657
+
+        According to the similar code in WebKit, I guess that
+        Visual C++ requires friend class declaration is done
+        in the private section to access private members.
+
+        And I also changed ::instance to ::shared to align to
+        the existing WebCore code.
+
+        * domjit/DOMJITAbstractHeapRepository.cpp:
+        (WebCore::DOMJIT::AbstractHeapRepository::shared):
+        (WebCore::DOMJIT::AbstractHeapRepository::instance): Deleted.
+        * domjit/DOMJITAbstractHeapRepository.h:
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::NodeFirstChildDOMJIT::callDOM):
+        (WebCore::NodeLastChildDOMJIT::callDOM):
+        (WebCore::NodeNextSiblingDOMJIT::callDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::callDOM):
+        (WebCore::NodeParentNodeDOMJIT::callDOM):
+
 2016-10-24  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the lifetime of strings used in LOG_WITH_STREAM

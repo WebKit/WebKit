@@ -59,7 +59,7 @@ AbstractHeapRepository::AbstractHeapRepository()
     }
 }
 
-const AbstractHeapRepository& AbstractHeapRepository::instance()
+const AbstractHeapRepository& AbstractHeapRepository::shared()
 {
     static NeverDestroyed<AbstractHeapRepository> repository;
     return repository.get();
