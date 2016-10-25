@@ -42,6 +42,7 @@
 namespace WebCore {
 
 class DOMError;
+class DOMStringList;
 class IDBCursor;
 class IDBCursorInfo;
 class IDBDatabase;
@@ -78,6 +79,7 @@ public:
     ~IDBTransaction() final;
 
     // IDBTransaction IDL
+    Ref<DOMStringList> objectStoreNames() const;
     const String& mode() const;
     IDBDatabase* db();
     DOMError* error() const;

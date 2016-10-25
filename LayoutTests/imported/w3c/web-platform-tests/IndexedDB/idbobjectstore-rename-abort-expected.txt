@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-FAIL IndexedDB object store rename in aborted transaction undefined is not an object (evaluating 'actual.length')
-TIMEOUT IndexedDB object store creation and rename in an aborted transaction Test timed out
+PASS IndexedDB object store rename in aborted transaction 
+FAIL IndexedDB object store creation and rename in an aborted transaction assert_equals: IDBObjectStore.name should reflect the last rename immediately after transaction.abort() returns expected "not_books_renamed_again" but got "not_books"
 

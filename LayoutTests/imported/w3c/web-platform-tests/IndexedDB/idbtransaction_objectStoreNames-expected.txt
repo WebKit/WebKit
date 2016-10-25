@@ -1,10 +1,10 @@
 
-FAIL IDBTransaction.objectStoreNames - during upgrade transaction undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - value after close undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - transaction scope undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - value after commit undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - value after abort undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - sorting undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - no duplicates undefined is not an object (evaluating 'actual.length')
-FAIL IDBTransaction.objectStoreNames - unusual names undefined is not an object (evaluating 'actual.length')
+PASS IDBTransaction.objectStoreNames - during upgrade transaction 
+PASS IDBTransaction.objectStoreNames - value after close 
+PASS IDBTransaction.objectStoreNames - transaction scope 
+PASS IDBTransaction.objectStoreNames - value after commit 
+PASS IDBTransaction.objectStoreNames - value after abort 
+PASS IDBTransaction.objectStoreNames - sorting 
+FAIL IDBTransaction.objectStoreNames - no duplicates assert_array_equals: transaction objectStoreNames should not have duplicates lengths differ, expected 2 got 3
+FAIL IDBTransaction.objectStoreNames - unusual names assert_array_equals: transaction should have names sorted with no duplicates lengths differ, expected 14 got 28
 
