@@ -1,3 +1,19 @@
+2016-10-25  Keith Miller  <keith_miller@apple.com>
+
+        Add trivial Wasm conversion opcodes
+        https://bugs.webkit.org/show_bug.cgi?id=163950
+
+        Reviewed by Filip Pizlo.
+
+        This patch differentiates between Wasm opcodes that are trivially mapped to a B3 opcode and
+        those that are not.  Some of the Wasm opcodes that are currently a non-simple opcode will
+        become simple as we add B3 opcodes for Wasm operations.  The remaining opcodes will need to
+        be added via patchpoints in a later patch.
+
+        * wasm/WasmB3IRGenerator.cpp:
+        * wasm/WasmOps.h:
+        (JSC::Wasm::isSimple):
+
 2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Arrow functions with concise bodies cannot return regular expressions

@@ -448,12 +448,16 @@ bool B3IRGenerator::store(StoreOpType op, ExpressionType pointer, ExpressionType
 
 bool B3IRGenerator::unaryOp(UnaryOpType op, ExpressionType arg, ExpressionType& result)
 {
+    if (!isSimple(op))
+        return false;
     result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), arg);
     return true;
 }
 
 bool B3IRGenerator::binaryOp(BinaryOpType op, ExpressionType left, ExpressionType right, ExpressionType& result)
 {
+    if (!isSimple(op))
+        return false;
     result = m_currentBlock->appendNew<Value>(m_proc, toB3Op(op), Origin(), left, right);
     return true;
 }

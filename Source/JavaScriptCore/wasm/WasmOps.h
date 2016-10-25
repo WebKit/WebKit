@@ -61,46 +61,72 @@ namespace JSC { namespace Wasm {
     macro(Nop, 0xa, Oops) \
     macro(End, 0xf, Oops)
 
-#define FOR_EACH_WASM_UNARY_OP(macro) \
+#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro) \
     macro(I32Clz, 0x57, Clz) \
-    macro(I32Ctz, 0x58, Oops) \
-    macro(I32Popcnt, 0x59, Oops) \
     macro(I64Clz, 0x72, Clz) \
-    macro(I64Ctz, 0x73, Oops) \
-    macro(I64Popcnt, 0x74, Oops) \
     macro(F32Abs, 0x7b, Abs) \
-    macro(F32Neg, 0x7c, Oops) \
-    macro(F32Copysign, 0x7d, Oops) \
     macro(F32Ceil, 0x7e, Ceil) \
     macro(F32Floor, 0x7f, Floor) \
+    macro(F64Abs, 0x8f, Abs) \
+    macro(F64Ceil, 0x92, Ceil) \
+    macro(F64Floor, 0x93, Floor) \
+    macro(I64ExtendSI32, 0xa6, SExt32) \
+    macro(I64ExtendUI32, 0xa7, ZExt32) \
+    macro(F32DemoteF64, 0xac, DoubleToFloat) \
+    macro(F32ReinterpretI32, 0xad, BitwiseCast) \
+    macro(F64PromoteF32, 0xb2, FloatToDouble) \
+    macro(F64ReinterpretI64, 0xb3, BitwiseCast) \
+    macro(I32ReinterpretF32, 0xb4, BitwiseCast) \
+    macro(I64ReinterpretF64, 0xb5, BitwiseCast)
+
+#define FOR_EACH_WASM_UNARY_OP(macro) \
+    FOR_EACH_WASM_SIMPLE_UNARY_OP(macro) \
+    macro(I32Ctz, 0x58, Oops) \
+    macro(I32Popcnt, 0x59, Oops) \
+    macro(I32Eqz, 0x5a, Oops) \
+    macro(I64Ctz, 0x73, Oops) \
+    macro(I64Popcnt, 0x74, Oops) \
+    macro(I64Eqz, 0xba, Oops) \
+    macro(F32Neg, 0x7c, Oops) \
+    macro(F32Copysign, 0x7d, Oops) \
     macro(F32Trunc, 0x80, Oops) \
     macro(F32Nearest, 0x81, Oops) \
     macro(F32Sqrt, 0x82, Oops) \
-    macro(F64Abs, 0x8f, Abs) \
     macro(F64Neg, 0x90, Oops) \
     macro(F64Copysign, 0x91, Oops) \
-    macro(F64Ceil, 0x92, Ceil) \
-    macro(F64Floor, 0x93, Floor) \
     macro(F64Trunc, 0x94, Oops) \
     macro(F64Nearest, 0x95, Oops) \
-    macro(F64Sqrt, 0x96, Oops)
+    macro(F64Sqrt, 0x96, Oops) \
+    macro(I32TruncSF32, 0x9d, Oops) \
+    macro(I32TruncSF64, 0x9e, Oops) \
+    macro(I32TruncUF32, 0x9f, Oops) \
+    macro(I32TruncUF64, 0xa0, Oops) \
+    macro(I32WrapI64, 0xa1, Oops) \
+    macro(I64TruncSF32, 0xa2, Oops) \
+    macro(I64TruncSF64, 0xa3, Oops) \
+    macro(I64TruncUF32, 0xa4, Oops) \
+    macro(I64TruncUF64, 0xa5, Oops) \
+    macro(F32ConvertSI32, 0xa8, Oops) \
+    macro(F32ConvertUI32, 0xa9, Oops) \
+    macro(F32ConvertSI64, 0xaa, Oops) \
+    macro(F32ConvertUI64, 0xab, Oops) \
+    macro(F64ConvertSI32, 0xae, Oops) \
+    macro(F64ConvertUI32, 0xaf, Oops) \
+    macro(F64ConvertSI64, 0xb0, Oops) \
+    macro(F64ConvertUI64, 0xb1, Oops)
 
-#define FOR_EACH_WASM_BINARY_OP(macro) \
+#define FOR_EACH_WASM_SIMPLE_BINARY_OP(macro) \
     macro(I32Add, 0x40, Add) \
     macro(I32Sub, 0x41, Sub) \
     macro(I32Mul, 0x42, Mul) \
     macro(I32DivS, 0x43, Div) \
-    macro(I32DivU, 0x44, Oops) \
     macro(I32RemS, 0x45, Mod) \
-    macro(I32RemU, 0x46, Oops) \
     macro(I32And, 0x47, BitAnd) \
     macro(I32Or, 0x48, BitOr) \
     macro(I32Xor, 0x49, BitXor) \
     macro(I32Shl, 0x4a, Shl) \
     macro(I32ShrU, 0x4b, SShr) \
     macro(I32ShrS, 0x4c, ZShr) \
-    macro(I32Rotr, 0xb6, Oops) \
-    macro(I32Rotl, 0xb7, Oops) \
     macro(I32Eq, 0x4d, Equal) \
     macro(I32Ne, 0x4e, NotEqual) \
     macro(I32LtS, 0x4f, LessThan) \
@@ -115,17 +141,13 @@ namespace JSC { namespace Wasm {
     macro(I64Sub, 0x5c, Sub) \
     macro(I64Mul, 0x5d, Mul) \
     macro(I64DivS, 0x5e, Div) \
-    macro(I64DivU, 0x5f, Oops) \
     macro(I64RemS, 0x60, Mod) \
-    macro(I64RemU, 0x61, Oops) \
     macro(I64And, 0x62, BitAnd) \
     macro(I64Or, 0x63, BitOr) \
     macro(I64Xor, 0x64, BitXor) \
     macro(I64Shl, 0x65, Shl) \
     macro(I64ShrU, 0x66, SShr) \
     macro(I64ShrS, 0x67, ZShr) \
-    macro(I64Rotr, 0xb8, Oops) \
-    macro(I64Rotl, 0xb9, Oops) \
     macro(I64Eq, 0x68, Equal) \
     macro(I64Ne, 0x69, NotEqual) \
     macro(I64LtS, 0x6a, LessThan) \
@@ -140,8 +162,6 @@ namespace JSC { namespace Wasm {
     macro(F32Sub, 0x76, Sub) \
     macro(F32Mul, 0x77, Mul) \
     macro(F32Div, 0x78, Div) \
-    macro(F32Min, 0x79, Oops) \
-    macro(F32Max, 0x7a, Oops) \
     macro(F32Eq, 0x83, Equal) \
     macro(F32Ne, 0x84, NotEqual) \
     macro(F32Lt, 0x85, LessThan) \
@@ -152,14 +172,27 @@ namespace JSC { namespace Wasm {
     macro(F64Sub, 0x8a, Sub) \
     macro(F64Mul, 0x8b, Mul) \
     macro(F64Div, 0x8c, Div) \
-    macro(F64Min, 0x8d, Oops) \
-    macro(F64Max, 0x8e, Oops) \
     macro(F64Eq, 0x97, Equal) \
     macro(F64Ne, 0x98, NotEqual) \
     macro(F64Lt, 0x99, LessThan) \
     macro(F64Le, 0x9a, LessEqual) \
     macro(F64Gt, 0x9b, GreaterThan) \
     macro(F64Ge, 0x9c, GreaterEqual)
+
+#define FOR_EACH_WASM_BINARY_OP(macro) \
+    FOR_EACH_WASM_SIMPLE_BINARY_OP(macro) \
+    macro(I32DivU, 0x44, Oops) \
+    macro(I32RemU, 0x46, Oops) \
+    macro(I32Rotr, 0xb6, Oops) \
+    macro(I32Rotl, 0xb7, Oops) \
+    macro(I64DivU, 0x5f, Oops) \
+    macro(I64RemU, 0x61, Oops) \
+    macro(I64Rotr, 0xb8, Oops) \
+    macro(I64Rotl, 0xb9, Oops) \
+    macro(F32Min, 0x79, Oops) \
+    macro(F32Max, 0x7a, Oops) \
+    macro(F64Min, 0x8d, Oops) \
+    macro(F64Max, 0x8e, Oops)
 
 #define FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \
     macro(I32Load8S, 0x20, Oops) \
@@ -235,6 +268,32 @@ inline bool isControlOp(OpType op)
     switch (op) {
 #define CREATE_CASE(name, id, b3op) case OpType::name:
     FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
+        return true;
+#undef CREATE_CASE
+    default:
+        break;
+    }
+    return false;
+}
+
+inline bool isSimple(UnaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, b3op) case UnaryOpType::name:
+    FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
+        return true;
+#undef CREATE_CASE
+    default:
+        break;
+    }
+    return false;
+}
+
+inline bool isSimple(BinaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, b3op) case BinaryOpType::name:
+    FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
     default:

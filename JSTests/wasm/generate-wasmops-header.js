@@ -27,15 +27,23 @@ function* opcodeMacroizer(filter) {
         yield cppMacro(op.name, op.opcode.value, op.opcode.b3op || "Oops");
 }
 
+const isNormalOp = op => op.category === "arithmetic" || op.category === "conversion" || op.category === "comparison";
+const isUnaryOp = op => isNormalOp(op) && op.parameter.length === 1;
+const isBinaryOp = op => isNormalOp(op) && op.parameter.length === 2;
+
 const defines = [
     "#define FOR_EACH_WASM_SPECIAL_OP(macro)",
     ...opcodeMacroizer(op => op.category === "special" || op.category === "call"),
     "\n\n#define FOR_EACH_WASM_CONTROL_FLOW_OP(macro)",
     ...opcodeMacroizer(op => op.category === "control"),
-    "\n\n#define FOR_EACH_WASM_UNARY_OP(macro)",
-    ...opcodeMacroizer(op => op.category === "arithmetic" && op.parameter.length === 1),
-    "\n\n#define FOR_EACH_WASM_BINARY_OP(macro)",
-    ...opcodeMacroizer(op => (op.category === "arithmetic" || op.category === "comparison") && op.parameter.length === 2),
+    "\n\n#define FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)",
+    ...opcodeMacroizer(op => isUnaryOp(op) && op.b3op),
+    "\n\n#define FOR_EACH_WASM_UNARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_UNARY_OP(macro)",
+    ...opcodeMacroizer(op => isUnaryOp(op) && !op.b3op),
+    "\n\n#define FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)",
+    ...opcodeMacroizer(op => isBinaryOp(op) && op.b3op),
+    "\n\n#define FOR_EACH_WASM_BINARY_OP(macro) \\\n    FOR_EACH_WASM_SIMPLE_BINARY_OP(macro)",
+    ...opcodeMacroizer(op => isBinaryOp(op) && !op.b3op),
     "\n\n#define FOR_EACH_WASM_MEMORY_LOAD_OP(macro)",
     ...opcodeMacroizer(op => (op.category === "memory" && op.return.length === 1)),
     "\n\n#define FOR_EACH_WASM_MEMORY_STORE_OP(macro)",
@@ -139,6 +147,32 @@ inline bool isControlOp(OpType op)
     switch (op) {
 #define CREATE_CASE(name, id, b3op) case OpType::name:
     FOR_EACH_WASM_CONTROL_FLOW_OP(CREATE_CASE)
+        return true;
+#undef CREATE_CASE
+    default:
+        break;
+    }
+    return false;
+}
+
+inline bool isSimple(UnaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, b3op) case UnaryOpType::name:
+    FOR_EACH_WASM_SIMPLE_UNARY_OP(CREATE_CASE)
+        return true;
+#undef CREATE_CASE
+    default:
+        break;
+    }
+    return false;
+}
+
+inline bool isSimple(BinaryOpType op)
+{
+    switch (op) {
+#define CREATE_CASE(name, id, b3op) case BinaryOpType::name:
+    FOR_EACH_WASM_SIMPLE_BINARY_OP(CREATE_CASE)
         return true;
 #undef CREATE_CASE
     default:
