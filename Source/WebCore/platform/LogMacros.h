@@ -37,6 +37,6 @@
         WebCore::TextStream stream(WebCore::TextStream::LineMode::SingleLine); \
         commands; \
         WTFLog(&JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), "%s", stream.release().utf8().data()); \
-    } while (0);
+    } while (0)
 
 #endif // !LOG_DISABLED

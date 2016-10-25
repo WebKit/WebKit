@@ -1,5 +1,14 @@
 2016-10-25  Chris Dumez  <cdumez@apple.com>
 
+        LOG_WITH_STREAM() macro should not have a semi colon at the end
+        https://bugs.webkit.org/show_bug.cgi?id=163951
+
+        Reviewed by Simon Fraser.
+
+        * platform/LogMacros.h:
+
+2016-10-25  Chris Dumez  <cdumez@apple.com>
+
         IDBObjectStore.createIndex() should take a union in parameter
         https://bugs.webkit.org/show_bug.cgi?id=163935
 
