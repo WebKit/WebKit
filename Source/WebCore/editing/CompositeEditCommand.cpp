@@ -918,15 +918,13 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(PassRefPtr<Text> p
 
     VisiblePosition visibleUpstreamPos(Position(textNode, upstream));
     VisiblePosition visibleDownstreamPos(Position(textNode, downstream));
-
-    Node* nextSibling = textNode->nextSibling();
+    
     String string = text.substring(upstream, length);
     String rebalancedString = stringWithRebalancedWhitespace(string,
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
-        isStartOfParagraph(visibleUpstreamPos) || !upstream,
-        (isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length())
-        && !(nextSibling && nextSibling->isTextNode() && downcast<Text>(nextSibling)->data().at(0) != ' '));
+                                                             isStartOfParagraph(visibleUpstreamPos) || upstream == 0, 
+                                                             isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length());
     
     if (string != rebalancedString)
         replaceTextInNodePreservingMarkers(WTFMove(textNode), upstream, length, rebalancedString);

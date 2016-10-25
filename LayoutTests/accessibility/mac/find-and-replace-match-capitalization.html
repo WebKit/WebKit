@@ -20,15 +20,15 @@
       
         // 'Man' is capitalized, so the replaced text should end up capitalized.
         var result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "man", "test");
-        shouldBe("document.getElementById('text').innerHTML", "'The Test&nbsp;jumped high.'");
+        shouldBe("document.getElementById('text').innerHTML", "'The&nbsp;Test&nbsp;jumped high.'");
 
         // 'jumped' is not capitalized so the text should not be capitalized.
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "jumped", "Test");
-        shouldBe("document.getElementById('text').innerHTML", "'The Test test&nbsp;high.'");
+        shouldBe("document.getElementById('text').innerHTML", "'The&nbsp;Test&nbsp;test&nbsp;high.'");
 
         // The replacement text was all caps, so don't change based on the existing text.
         result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestToSelection", "high", "TEST");
-        shouldBe("document.getElementById('text').innerHTML", "'The Test test TEST.'");
+        shouldBe("document.getElementById('text').innerHTML", "'The&nbsp;Test&nbsp;test&nbsp;TEST.'");
 
     }
 </script>
