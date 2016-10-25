@@ -105,7 +105,7 @@ using WebKit::ProcessAssertionClient;
 {
     if (_needsToRunInBackgroundCount && _backgroundTask == UIBackgroundTaskInvalid) {
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
-            LOG_ALWAYS_ERROR(true, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
+            RELEASE_LOG_ERROR("Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
             // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
             if (RunLoop::isMain())
                 [self _notifyClientsOfImminentSuspension];
@@ -165,7 +165,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Fun
     auto weakThis = createWeakPtr();
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
-            LOG_ALWAYS_ERROR(true, "Unable to acquire assertion for process %d", pid);
+            RELEASE_LOG_ERROR("Unable to acquire assertion for process %d", pid);
             ASSERT_NOT_REACHED();
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakThis)

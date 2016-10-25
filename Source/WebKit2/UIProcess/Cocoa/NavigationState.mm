@@ -823,10 +823,10 @@ void NavigationState::didChangeIsLoading()
 {
 #if PLATFORM(IOS)
     if (m_webView->_page->pageLoadState().isLoading()) {
-        LOG_ALWAYS(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because a page load started");
+        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is taking a background assertion because a page load started");
         m_activityToken = m_webView->_page->process().throttler().backgroundActivityToken();
     } else {
-        LOG_ALWAYS(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because a page load completed");
+        RELEASE_LOG_IF(m_webView->_page->isAlwaysOnLoggingAllowed(), "UIProcess is releasing a background assertion because a page load completed");
         m_activityToken = nullptr;
     }
 #endif

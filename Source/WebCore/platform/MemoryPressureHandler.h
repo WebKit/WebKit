@@ -92,7 +92,7 @@ public:
     public:
         explicit ReliefLogger(const char *log)
             : m_logString(log)
-#if !LOG_ALWAYS_DISABLED
+#if !RELEASE_LOG_DISABLED
             , m_initialMemory(platformMemoryUsage())
 #else
             , m_initialMemory(s_loggingEnabled ? platformMemoryUsage() : 0)
@@ -102,7 +102,7 @@ public:
 
         ~ReliefLogger()
         {
-#if !LOG_ALWAYS_DISABLED
+#if !RELEASE_LOG_DISABLED
             logMemoryUsageChange();
 #else
             if (s_loggingEnabled)

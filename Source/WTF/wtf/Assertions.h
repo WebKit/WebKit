@@ -84,8 +84,8 @@
 #define LOG_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
-#ifndef LOG_ALWAYS_DISABLED
-#define LOG_ALWAYS_DISABLED !(USE(OS_LOG))
+#ifndef RELEASE_LOG_DISABLED
+#define RELEASE_LOG_DISABLED !(USE(OS_LOG))
 #endif
 
 #if COMPILER(GCC_OR_CLANG)
@@ -380,17 +380,19 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication()
 #define LOG_VERBOSE(channel, ...) WTFLogVerbose(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, &JOIN_LOG_CHANNEL_WITH_PREFIX(LOG_CHANNEL_PREFIX, channel), __VA_ARGS__)
 #endif
 
-/* LOG_ALWAYS */
+/* RELEASE_LOG */
 
 #define WTF_LOGGING_PREFIX "#WK: "
-#if LOG_ALWAYS_DISABLED
-#define LOG_ALWAYS(isAllowed, format, ...)       ((void)0)
-#define LOG_ALWAYS_ERROR(isAllowed, format, ...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, format, ##__VA_ARGS__)
+#if RELEASE_LOG_DISABLED
+#define RELEASE_LOG(format, ...)       ((void)0)
+#define RELEASE_LOG_ERROR(format, ...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, format, ##__VA_ARGS__)
 #else
 #define WTF_LOG_DEFAULT OS_LOG_DEFAULT
-#define LOG_ALWAYS(isAllowed, format, ...)       do { if (isAllowed) os_log(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__); } while (0)
-#define LOG_ALWAYS_ERROR(isAllowed, format, ...) do { if (isAllowed) os_log_error(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG(format, ...)       os_log(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR(format, ...) os_log_error(WTF_LOG_DEFAULT, WTF_LOGGING_PREFIX format, ##__VA_ARGS__)
 #endif
+#define RELEASE_LOG_IF(isAllowed, format, ...)       do { if (isAllowed) RELEASE_LOG(format, ##__VA_ARGS__); } while (0)
+#define RELEASE_LOG_ERROR_IF(isAllowed, format, ...) do { if (isAllowed) RELEASE_LOG_ERROR(format, ##__VA_ARGS__); } while (0)
 
 /* RELEASE_ASSERT */
 
