@@ -1,3 +1,20 @@
+2016-10-25  Chris Dumez  <cdumez@apple.com>
+
+        IDBDatabase.transaction() should take a union in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=163966
+
+        Reviewed by Sam Weinig.
+
+        IDBDatabase.transaction() should take a union in parameter:
+        - https://www.w3.org/TR/IndexedDB/#widl-IDBDatabase-transaction-IDBTransaction-DOMString-sequence-DOMString--storeNames-IDBTransactionMode-mode
+
+        No new tests, no expected Web-exposed behavior change.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+
 2016-10-25  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support IDBObjectStore openKeyCursor.

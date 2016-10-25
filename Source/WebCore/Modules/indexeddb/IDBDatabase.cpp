@@ -160,7 +160,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     return m_versionChangeTransaction->createObjectStore(info);
 }
 
-ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(const Vector<String>& objectStores, const String& modeString)
+ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfStrings&& storeNames, const String& modeString)
 {
     LOG(IndexedDB, "IDBDatabase::transaction");
 
@@ -168,6 +168,12 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(const Vector<String>& 
 
     if (m_closePending)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.") };
+
+    Vector<String> objectStores;
+    if (WTF::holds_alternative<Vector<String>>(storeNames))
+        objectStores = WTFMove(WTF::get<Vector<String>>(storeNames));
+    else
+        objectStores.append(WTFMove(WTF::get<String>(storeNames)));
 
     if (objectStores.isEmpty())
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.") };
@@ -196,15 +202,6 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(const Vector<String>& 
     m_activeTransactions.set(info.identifier(), transaction.ptr());
 
     return WTFMove(transaction);
-}
-
-ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(const String& objectStore, const String& mode)
-{
-    ASSERT(currentThread() == originThreadID());
-
-    Vector<String> objectStores(1);
-    objectStores[0] = objectStore;
-    return transaction(objectStores, mode);
 }
 
 ExceptionOr<void> IDBDatabase::deleteObjectStore(const String& objectStoreName)
