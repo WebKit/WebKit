@@ -1,3 +1,48 @@
+2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Arrow functions with concise bodies cannot return regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=163162
+
+        Reviewed by Filip Pizlo.
+
+        When we encounter the RegExp in the parser, we first scan it as / or /=.
+        And if / or /= is parsed under the primary expression context, we rescan it
+        as RegExp. However, we did not update the token record information. So the
+        token record still says "I'm / or /=".
+
+        When we parse the string "() => /hello/", the last token becomes "/", which is
+        the first character of the RegExp, instead of "/hello/". Since the arrow
+        function parsing utilizes the end offset of the last token, we accidentally
+        recognize the range of the above arrow function as "() => /".
+
+        In this patch, we update the token when rescanning under the RegExp context.
+        This logic is similar to parsing Tail Template Literal token.
+
+        We also refine the error message for regular expression literals. And since
+        the REGEXP token is now introduced, the other error messages using that token
+        are improved too.
+
+        Currently, unterminated error messages can be seen in Parser.cpp. However,
+        these messages cannot be shown to users if the lexer has m_error. So these
+        code is meaningless. I'll move these tokenizing errors to the lexer in the
+        subsequent patch[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=163928
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::fillTokenInfo):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::scanRegExp):
+        (JSC::Lexer<T>::scanTrailingTemplateString):
+        (JSC::Lexer<T>::skipRegExp): Deleted.
+        * parser/Lexer.h:
+        (JSC::Lexer::getToken):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        * parser/Parser.h:
+        (JSC::Parser::getToken):
+        * parser/ParserTokens.h:
+
 2016-10-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] CMake build type is not set.

@@ -33,8 +33,8 @@ Testing regexp: /a\_/
 PASS regexp.test('a_') is true
 
 Testing regexp: [invalid \ variations]
-PASS /\/ threw exception SyntaxError: Unexpected token '/'. Invalid regular expression..
-PASS /a\/ threw exception SyntaxError: Unexpected token '/'. Invalid regular expression..
+PASS /\/ threw exception SyntaxError: Unterminated regular expression literal '/\/'.
+PASS /a\/ threw exception SyntaxError: Unterminated regular expression literal '/a\/'.
 
 Testing regexp: /./
 PASS regexp.test('a') is true
@@ -80,8 +80,8 @@ PASS /)/ threw exception SyntaxError: Invalid regular expression: unmatched pare
 PASS /a)/ threw exception SyntaxError: Invalid regular expression: unmatched parentheses.
 
 Testing regexp: [invalid [ variations]
-PASS /[/ threw exception SyntaxError: Unexpected token '/'. Invalid regular expression..
-PASS /a[/ threw exception SyntaxError: Unexpected token '/'. Invalid regular expression..
+PASS /[/ threw exception SyntaxError: Unterminated regular expression literal '/[/'.
+PASS /a[/ threw exception SyntaxError: Unterminated regular expression literal '/a[/'.
 PASS /[b-a]/ threw exception SyntaxError: Invalid regular expression: range out of order in character class.
 PASS /a[b-a]/ threw exception SyntaxError: Invalid regular expression: range out of order in character class.
 

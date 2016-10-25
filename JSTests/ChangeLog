@@ -1,3 +1,16 @@
+2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Arrow functions with concise bodies cannot return regular expressions
+        https://bugs.webkit.org/show_bug.cgi?id=163162
+
+        Reviewed by Filip Pizlo.
+
+        * ChakraCore/test/Operators/instanceof.baseline-jsc:
+        * ChakraCore/test/Regex/nul_character.baseline-jsc:
+        * ChakraCore/test/es5/Lex_u3.baseline-jsc:
+        * stress/parse-regexp-as-token.js: Added.
+        (shouldBe):
+
 2016-10-24  Keith Miller  <keith_miller@apple.com>
 
         Wasm should support floating point operations.

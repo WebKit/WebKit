@@ -1,23 +1,23 @@
 --- 1 ---
 5
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
+SyntaxError: Unterminated regular expression literal '/'
+SyntaxError: Unterminated regular expression literal '/'
 --- 2 ---
 4
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
+SyntaxError: Unterminated regular expression literal '/\'
+SyntaxError: Unterminated regular expression literal '/\'
+SyntaxError: Unterminated regular expression literal '/\'
+SyntaxError: Unterminated regular expression literal '/\'
+SyntaxError: Unterminated regular expression literal '/\'
 4
 5
 --- 3 ---
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
-SyntaxError: Unexpected token '/'. Invalid regular expression.
+SyntaxError: Unterminated regular expression literal '/['
+SyntaxError: Unterminated regular expression literal '/['
+SyntaxError: Unterminated regular expression literal '/['
+SyntaxError: Unterminated regular expression literal '/['
 5
-SyntaxError: Unexpected token '/'. Invalid regular expression.
+SyntaxError: Unterminated regular expression literal '/['
 SyntaxError: Invalid regular expression: unmatched parentheses
 --- 4 ---
 9

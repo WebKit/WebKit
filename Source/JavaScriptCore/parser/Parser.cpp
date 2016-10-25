@@ -4306,13 +4306,14 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case DIVEQUAL:
     case DIVIDE: {
         /* regexp */
-        const Identifier* pattern;
-        const Identifier* flags;
         if (match(DIVEQUAL))
-            failIfFalse(m_lexer->scanRegExp(pattern, flags, '='), "Invalid regular expression");
+            m_token.m_type = m_lexer->scanRegExp(&m_token, '=');
         else
-            failIfFalse(m_lexer->scanRegExp(pattern, flags), "Invalid regular expression");
-        
+            m_token.m_type = m_lexer->scanRegExp(&m_token);
+        matchOrFail(REGEXP, "Invalid regular expression");
+
+        const Identifier* pattern = m_token.m_data.pattern;
+        const Identifier* flags = m_token.m_data.flags;
         JSTextPosition start = tokenStartPosition();
         JSTokenLocation location(tokenLocation());
         next();

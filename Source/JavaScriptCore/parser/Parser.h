@@ -1288,9 +1288,9 @@ private:
     }
 
     void printUnexpectedTokenText(WTF::PrintStream&);
-    ALWAYS_INLINE StringView getToken() {
-        SourceProvider* sourceProvider = m_source->provider();
-        return sourceProvider->getRange(tokenStart(), tokenEndPosition().offset);
+    ALWAYS_INLINE StringView getToken()
+    {
+        return m_lexer->getToken(m_token);
     }
     
     ALWAYS_INLINE bool match(JSTokenType expected)
