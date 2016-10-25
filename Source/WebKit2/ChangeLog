@@ -1,5 +1,33 @@
 2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206762. rdar://problem/28544885
+
+    2016-10-03  Keith Rollin  <krollin@apple.com>
+
+            More logging to diagnose "WebKit encountered an internal error" messages
+            https://bugs.webkit.org/show_bug.cgi?id=162754
+
+            Reviewed by Antti Koivisto.
+
+            Add more logging around calls to internalError, as well as some
+            low-level logging around SharedMemory, and mach_vm_map in particular.
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::startNetworkLoad):
+            * Platform/Logging.h:
+            * Platform/mac/SharedMemoryMac.cpp:
+            (WebKit::SharedMemory::allocate):
+            (WebKit::makeMemoryEntry):
+            (WebKit::SharedMemory::map):
+            (WebKit::SharedMemory::~SharedMemory):
+            * WebProcess/Network/WebLoaderStrategy.cpp:
+            (WebKit::WebLoaderStrategy::networkProcessCrashed):
+            (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+            * WebProcess/Network/WebResourceLoader.cpp:
+            (WebKit::WebResourceLoader::didReceiveResource):
+
+2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r204472. rdar://problem/28544885
 
     2016-08-15  Keith Rollin  <krollin@apple.com>
