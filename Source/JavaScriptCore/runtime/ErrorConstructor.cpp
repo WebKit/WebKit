@@ -52,7 +52,7 @@ EncodedJSValue JSC_HOST_CALL Interpreter::constructWithErrorConstructor(ExecStat
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    JSValue message = exec->argument(0);
     Structure* errorStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), asInternalFunction(exec->callee())->globalObject()->errorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
@@ -66,7 +66,7 @@ ConstructType ErrorConstructor::getConstructData(JSCell*, ConstructData& constru
 
 EncodedJSValue JSC_HOST_CALL Interpreter::callErrorConstructor(ExecState* exec)
 {
-    JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
+    JSValue message = exec->argument(0);
     Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message, nullptr, TypeNothing, false));
 }

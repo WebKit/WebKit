@@ -1,3 +1,20 @@
+2016-10-25  JF Bastien  <jfbastien@apple.com>
+
+        Remove redundant argument count check
+
+        Indexing argument out of bounds already returns jsUndefined().
+
+        Remove redundant argument count check
+        https://bugs.webkit.org/show_bug.cgi?id=163957
+
+        Reviewed by Keith Miller.
+
+        * runtime/ErrorConstructor.cpp:
+        (JSC::Interpreter::constructWithErrorConstructor):
+        (JSC::Interpreter::callErrorConstructor):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
         Add ThrowScope::release() calls at all call sites of jsMakeNontrivialString().
