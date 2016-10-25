@@ -1,3 +1,27 @@
+2016-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused ANGLE.vcxproj after switching to CMake on Windows
+
+        * ANGLE.vcxproj: Removed.
+        * ANGLE.vcxproj/ANGLERelease.props: Removed.
+        * ANGLE.vcxproj/DirectX32.props: Removed.
+        * ANGLE.vcxproj/DirectX64.props: Removed.
+        * ANGLE.vcxproj/libEGL.vcxproj: Removed.
+        * ANGLE.vcxproj/libEGL.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/libEGLCommon.props: Removed.
+        * ANGLE.vcxproj/libGLESv2.vcxproj: Removed.
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/libGLESv2Common.props: Removed.
+        * ANGLE.vcxproj/preprocessor.vcxproj: Removed.
+        * ANGLE.vcxproj/preprocessor.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/translatorCommon.props: Removed.
+        * ANGLE.vcxproj/translator_common.vcxproj: Removed.
+        * ANGLE.vcxproj/translator_common.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/translator_glsl.vcxproj: Removed.
+        * ANGLE.vcxproj/translator_glsl.vcxproj.filters: Removed.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj: Removed.
+        * ANGLE.vcxproj/translator_hlsl.vcxproj.filters: Removed.
+
 2016-09-09  Dean Jackson  <dino@apple.com>
 
         [ANGLE] instantiation of variable 'gl::GLTypeToGLenum<float>::value' required here, but no definition is available
