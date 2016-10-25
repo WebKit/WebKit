@@ -1,3 +1,29 @@
+2016-10-24  Chris Dumez  <cdumez@apple.com>
+
+        event.(dataTransfer|clipboardData).getData('text/html') (onpaste, ondrop)
+        https://bugs.webkit.org/show_bug.cgi?id=19893
+        <rdar://problem/6055546>
+
+        Reviewed by Ryosuke Niwa.
+
+        We now write selection as HTML as well to the pasteboard so that
+        event.(dataTransfer|clipboardData).getData('text/html') now works.
+
+        I have verified manually that it is still possible to copy text from
+        Safari and paste it to Excel 2011 Mac after this change. The text is
+        now pasted as HTML instead of text, which is fine because Excel can
+        display HTML.
+
+        No new tests, unskipped existing tests.
+
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::selectionInHTMLFormat):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        * platform/Pasteboard.h:
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::write):
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should match old URL::parse with %2E in path
