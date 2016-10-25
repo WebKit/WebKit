@@ -1279,7 +1279,7 @@ String insertListTypeBulletedAccessibilityTitle()
 
 String insertListTypeNumbered()
 {
-    return WEB_UI_STRING("1. 2. 3.…", "Option in segmented control for choosing list type in text editing");
+    return WEB_UI_STRING("1. 2. 3.", "Option in segmented control for choosing list type in text editing");
 }
 
 String insertListTypeNumberedAccessibilityTitle()

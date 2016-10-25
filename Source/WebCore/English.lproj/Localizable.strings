@@ -83,7 +83,7 @@
 "1 Video (file upload on page label for one video)" = "1 Video";
 
 /* Option in segmented control for choosing list type in text editing */
-"1. 2. 3.…" = "1. 2. 3.…";
+"1. 2. 3." = "1. 2. 3.";
 
 /* Menu item title for KEYGEN pop-up menu */
 "1024 (Medium Grade)" = "1024 (Medium Grade)";
@@ -934,8 +934,8 @@
 /* HTTP result code string */
 "length required" = "length required";
 
-/* The less good value description for a meter element */
-"less good" = "critical value";
+/* The less good value description for a meter element. */
+"less good" = "less good";
 
 /* accessibility role description for link */
 "link" = "link";
@@ -1021,11 +1021,11 @@
 /* accessibility help text for remaining time display */
 "number of seconds of movie remaining" = "number of seconds of movie remaining";
 
+/* The optimum value description for a meter element. */
+"optimum" = "optimum";
+
 /* accessibility role description for an output element */
 "output" = "output";
-
-/* The optimum value description for a meter element */
-"optimum" = "optimal value";
 
 /* HTTP result code string */
 "partial content" = "partial content";
@@ -1129,8 +1129,8 @@
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
 
-/* The suboptimal value description for a meter element */
-"suboptimal" = "suboptimal value";
+/* The suboptimal value description for a meter element. */
+"suboptimal" = "suboptimal";
 
 /* HTTP result code string */
 "success" = "success";

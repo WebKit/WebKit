@@ -1,3 +1,16 @@
+2016-10-25  Beth Dakin  <bdakin@apple.com>
+
+        Numbered list should be represented without ‘…’
+        https://bugs.webkit.org/show_bug.cgi?id=163992
+        -and corresponding-
+        rdar://problem/28911337
+
+        Reviewed by Darin Adler.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::insertListTypeNumbered):
+
 2016-10-25  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r178265): XSS Auditor fails to block document.write() of incomplete tag
