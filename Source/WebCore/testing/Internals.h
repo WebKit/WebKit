@@ -441,7 +441,7 @@ public:
     ExceptionOr<String> pageOverlayLayerTreeAsText() const;
 
     void setPageMuted(const String&);
-    bool isPagePlayingAudio();
+    String pageMediaState();
 
     void setPageDefersLoading(bool);
 

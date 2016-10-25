@@ -5,27 +5,38 @@
         <script>
             let mediaStream;
             let eventCount = 0;
+            let muteChangedEvent;
+
+            function nextStep()
+            {
+                if (muteChangedEvent.type == "unmute") {
+                    finishJSTest();
+                    return;
+                }
+
+                debug("<br>*** Unmuting capture devices");
+                eventCount = 0;
+                internals.setPageMuted("");
+            }
 
             function muteChanged(ev)
             {
-                event = ev;
-                debug(`EVENT: ${ev.type}`);
-                shouldBe('event.target.muted', (ev.type == "mute").toString());
-                debug("");
+                muteChangedEvent = ev;
+                debug(`EVENT: ${muteChangedEvent.type}`);
+                shouldBe('muteChangedEvent.target.muted', (muteChangedEvent.type == "mute").toString());
+                shouldBe("window.internals.pageMediaState().includes('HasMediaCaptureDevice')", "true");
 
                 if (++eventCount == 2) {
-                    eventCount = 0;
-
-                    if (ev.type == "unmute") {
-                        finishJSTest();
-                        return;
-                    }
-
-                    if (window.internals) {
-                        debug("<br>*** Unmuting capture devices");
-                        internals.setPageMuted("");
-                    }
+                    debug("");
+                    let shouldBeActive = muteChangedEvent.type == "mute" ? "false" : "true";
+                    shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice')", shouldBeActive, nextStep);
                 }
+            }
+            
+            function muteCaptureDevices()
+            {
+                debug("<br>*** Muting capture devices");
+                internals.setPageMuted("capturedevices");
             }
             
             function testWhenEnabled()
@@ -43,10 +54,7 @@
                             tracks[i].onunmute = muteChanged;
                         }
 
-                        if (window.internals) {
-                            debug("<br>*** Muting capture devices");
-                            internals.setPageMuted("capturedevices");
-                        }
+                        shouldBecomeEqual("window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice')", "true", muteCaptureDevices);
                     })
                     .catch((err) => {
                         testFailed(`mediaDevices.getUserMedia() failed with ${err.name}`);
