@@ -1,5 +1,17 @@
 2016-10-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Cmd-+ doesn't "zoom in" to increase text size in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=163961
+        <rdar://problem/28895308>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        Add a duplicate set of keyboard shortcuts for the Shift variants.
+
+2016-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove dead code in FrameTreeElement
         https://bugs.webkit.org/show_bug.cgi?id=163914
 
