@@ -1,3 +1,25 @@
+2016-10-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add "has capture device" bit to media state flags
+        https://bugs.webkit.org/show_bug.cgi?id=163952
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated fast/mediastream/MediaStream-page-muted.html, media/muted-video-is-playing-audio.html,
+        and webaudio/web-audio-is-playing.html.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaState): Set HasMediaCaptureDevice, only set HasActiveMediaCaptureDevice when
+          actually producing data.
+
+        * page/MediaProducer.h: Add HasMediaCaptureDevice bit.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState): Return a string representing MediaStateFlags.
+        (WebCore::Internals::isPagePlayingAudio): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2016-10-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r207827 and r207828.
