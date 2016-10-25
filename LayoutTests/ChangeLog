@@ -1,3 +1,22 @@
+2016-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.dataTransfer for the InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163213
+        <rdar://problem/28700407>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds 2 new layout tests verifying that input events dispatched as a result of pasting or spell checking contain
+        DataTransfers that have rich and plain text representations of the contents being inserted.
+
+        * fast/events/input-events-fired-when-typing-expected.txt:
+        * fast/events/input-events-fired-when-typing.html:
+        * fast/events/input-events-paste-rich-datatransfer-expected.txt: Added.
+        * fast/events/input-events-paste-rich-datatransfer.html: Added.
+        * fast/events/input-events-spell-checking-datatransfer-expected.txt: Added.
+        * fast/events/input-events-spell-checking-datatransfer.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-25  Andy Estes  <aestes@apple.com>
 
         Implement rel=noopener

@@ -39,14 +39,17 @@ public:
     }
 private:
     SpellingCorrectionCommand(PassRefPtr<Range> rangeToBeCorrected, const String& correction);
+    bool willApplyCommand() final;
     void doApply() override;
     bool shouldRetainAutocorrectionIndicator() const override;
 
     String inputEventData() const final;
     Vector<RefPtr<StaticRange>> targetRanges() const final;
+    RefPtr<DataTransfer> inputEventDataTransfer() const final;
 
     RefPtr<Range> m_rangeToBeCorrected;
     VisibleSelection m_selectionToBeCorrected;
+    RefPtr<DocumentFragment> m_correctionFragment;
     String m_corrected;
     String m_correction;
 };

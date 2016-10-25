@@ -107,6 +107,12 @@ static Vector<String> writableTypesForImage()
     return types;
 }
 
+Pasteboard::Pasteboard()
+    : m_pasteboardName(emptyString())
+    , m_changeCount(0)
+{
+}
+
 Pasteboard::Pasteboard(const String& pasteboardName)
     : m_pasteboardName(pasteboardName)
     , m_changeCount(platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
@@ -279,6 +285,10 @@ bool Pasteboard::canSmartReplace()
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
     return types.contains(WebSmartPastePboardType);
+}
+
+void Pasteboard::writeMarkup(const String&)
+{
 }
 
 void Pasteboard::read(PasteboardPlainText& text)

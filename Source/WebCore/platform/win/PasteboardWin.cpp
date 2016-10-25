@@ -1051,4 +1051,16 @@ void Pasteboard::writeMarkup(const String& markup)
         GlobalFree(medium.hGlobal);
 }
 
+void Pasteboard::write(const PasteboardWebContent&)
+{
+}
+
+void Pasteboard::read(PasteboardWebContentReader&)
+{
+}
+
+void Pasteboard::write(const PasteboardImage&)
+{
+}
+
 } // namespace WebCore

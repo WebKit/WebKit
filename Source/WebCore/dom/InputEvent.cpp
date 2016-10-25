@@ -27,6 +27,7 @@
 #include "InputEvent.h"
 
 #include "DOMWindow.h"
+#include "DataTransfer.h"
 #include "EventNames.h"
 #include "Node.h"
 #include "NotImplemented.h"
@@ -35,10 +36,16 @@
 
 namespace WebCore {
 
-InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+Ref<InputEvent> InputEvent::create(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, WebCore::DOMWindow *view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
+{
+    return adoptRef(*new InputEvent(eventType, inputType, canBubble, cancelable, view, data, WTFMove(dataTransfer), targetRanges, detail));
+}
+
+InputEvent::InputEvent(const AtomicString& eventType, const String& inputType, bool canBubble, bool cancelable, DOMWindow* view, const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail)
     : UIEvent(eventType, canBubble, cancelable, view, detail)
     , m_inputType(inputType)
     , m_data(data)
+    , m_dataTransfer(dataTransfer)
     , m_targetRanges(targetRanges)
 {
 }
@@ -48,6 +55,11 @@ InputEvent::InputEvent(const AtomicString& eventType, const Init& initializer, I
     , m_inputType(emptyString())
     , m_data(initializer.data)
 {
+}
+
+RefPtr<DataTransfer> InputEvent::dataTransfer() const
+{
+    return m_dataTransfer;
 }
 
 } // namespace WebCore

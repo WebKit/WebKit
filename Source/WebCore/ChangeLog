@@ -1,3 +1,131 @@
+2016-10-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support InputEvent.dataTransfer for the InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163213
+        <rdar://problem/28700407>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds support for the dataTransfer attribute of InputEvent, which contains both HTML and plain text
+        representations of inserted content corresponding to input types "insertFromPaste", "insertFromDrop" and
+        "insertReplacementText". The specification calls for the data transfer's drag data item list to contain this
+        information via two entries with type strings "text/html" and "text/plain". However, WebKit does not yet support
+        the DataTransfer.items -- in lieu of this, we will provide this information for now via getData("text/plain")
+        and getData("text/html"), respectively.
+
+        To support this attribute, we need a special type of DataTransfer which is readonly and returns canned data
+        given a type string. To implement this, we introduce StaticPasteboard, a type of Pasteboard which is initialized
+        with a map of type string to data. When asked for its data via getData, the StaticPasteboard searches its map
+        for the requested type and returns the result, if any.
+
+        An editing command may now create a new DataTransfer via DataTransfer::createForInputEvent from HTML and
+        plaintext strings, and then vend this information to its dispatched input events by overriding
+        CompositeEditCommand::inputEventDataTransfer.
+
+        Some further work will be needed to ensure that all information exposed via this DataTransfer does not contain
+        hidden content. To do this, we should create a new Document, "paste" the contents of our copied HTML string into
+        it, then simulate selecting the content and generating markup from the selection to create a sanitized
+        DocumentFragment corresponding to the original copied HTML. This will be addressed in a future patch.
+
+        Tests: fast/events/input-events-paste-rich-datatransfer.html
+               fast/events/input-events-spell-checking-datatransfer.html
+
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * PlatformWin.cmake:
+
+        Add StaticPasteboard.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::DataTransfer):
+        (WebCore::DataTransfer::createForInputEvent):
+
+        Initializes a new DataTransfer for the purposes of input events. This takes a HTML and plain text
+        representations of the data being inserted and creates a new readonly DataTransfer backed by a StaticPasteboard
+        that only knows how to map the "text/plain" data type to the given plaintext string and "text/html" to the
+        given HTML text.
+
+        * dom/DataTransfer.h:
+        * dom/InputEvent.cpp:
+        (WebCore::InputEvent::create):
+        (WebCore::InputEvent::InputEvent):
+        (WebCore::InputEvent::dataTransfer):
+        * dom/InputEvent.h:
+        * dom/InputEvent.idl:
+
+        Add the InputEvent.dataTransfer attribute.
+
+        * dom/Node.cpp:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::inputEventDataTransfer):
+
+        Add a new hook for CompositeEditCommands to vend a DataTransfer for the purposes of input events. By default,
+        this is null.
+
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::dispatchBeforeInputEvent):
+        (WebCore::dispatchInputEvent):
+        (WebCore::dispatchBeforeInputEvents):
+        (WebCore::dispatchInputEvents):
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::appliedEditing):
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::willApplyCommand):
+        (WebCore::ReplaceRangeWithTextCommand::doApply):
+        (WebCore::ReplaceRangeWithTextCommand::inputEventDataTransfer):
+        * editing/ReplaceRangeWithTextCommand.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::willApplyCommand):
+
+        Initialize the ReplacementFragment here before applying the command, adjusting the DocumentFragment to be
+        inserted in the process.
+
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::inputEventDataTransfer):
+        (WebCore::ReplaceSelectionCommand::ensureReplacementFragment):
+
+        Returns the ReplacementFragment used to apply the command, initializing it if necessary and stripping extraneous
+        nodes off of the document fragment in the process. Since ReplaceSelectionCommand may be used as a top-level
+        editing command or a child of another CompositeEditCommand such as the ReplaceRangeWithTextCommand, the
+        ReplacementFragment may be initialized either in willApplyCommand or in doApply.
+
+        * editing/ReplaceSelectionCommand.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::willApplyCommand):
+        (WebCore::SpellingCorrectionCommand::doApply):
+        (WebCore::SpellingCorrectionCommand::inputEventDataTransfer):
+        * editing/SpellingCorrectionCommand.h:
+
+        Using the replacement text fragment, create and return a DataTransfer for input events.
+
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.cpp: Added.
+        (WebCore::StaticPasteboard::create):
+        (WebCore::StaticPasteboard::StaticPasteboard):
+        (WebCore::StaticPasteboard::hasData):
+        (WebCore::StaticPasteboard::types):
+        (WebCore::StaticPasteboard::readString):
+        * platform/StaticPasteboard.h: Copied from Source/WebCore/dom/InputEvent.cpp.
+        * platform/efl/PasteboardEfl.cpp:
+        (WebCore::Pasteboard::writeMarkup):
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::read):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeMarkup):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeMarkup):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::writeMarkup):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::write):
+        (WebCore::Pasteboard::read):
+
+        To account for virtual methods on Pasteboard, add implementations for methods that were previously defined but
+        unimplemented on these platforms.
+
 2016-10-25  Andy Estes  <aestes@apple.com>
 
         Implement rel=noopener

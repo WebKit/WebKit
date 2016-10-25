@@ -87,6 +87,7 @@ list(APPEND WebCore_SOURCES
     page/scrolling/AxisScrollSnapOffsets.cpp
 
     platform/KillRingNone.cpp
+    platform/StaticPasteboard.cpp
 
     platform/audio/efl/AudioBusEfl.cpp
 

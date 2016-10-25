@@ -125,4 +125,24 @@ void Pasteboard::writePasteboard(const Pasteboard&)
     notImplemented();
 }
 
+void Pasteboard::writeMarkup(const String&)
+{
+    notImplemented();
+}
+
+void Pasteboard::write(const PasteboardWebContent&)
+{
+    notImplemented();
+}
+
+void Pasteboard::read(PasteboardWebContentReader&)
+{
+    notImplemented();
+}
+
+void Pasteboard::write(const PasteboardImage&)
+{
+    notImplemented();
+}
+
 }

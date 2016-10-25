@@ -87,6 +87,11 @@ Pasteboard::Pasteboard(const String& name)
 {
 }
 
+Pasteboard::Pasteboard()
+    : m_selectionData(SelectionData::create())
+{
+}
+
 Pasteboard::~Pasteboard()
 {
 }
@@ -271,6 +276,10 @@ void Pasteboard::read(PasteboardPlainText& text)
     text.text = m_selectionData->text();
 }
 
+void Pasteboard::read(PasteboardWebContentReader&)
+{
+}
+
 bool Pasteboard::hasData()
 {
     readFromClipboard();
@@ -331,6 +340,10 @@ Vector<String> Pasteboard::readFilenames()
 {
     readFromClipboard();
     return m_selectionData->filenames();
+}
+
+void Pasteboard::writeMarkup(const String&)
+{
 }
 
 }

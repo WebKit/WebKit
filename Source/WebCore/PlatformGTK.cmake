@@ -84,6 +84,7 @@ list(APPEND WebCore_SOURCES
     loader/soup/SubresourceLoaderSoup.cpp
 
     platform/KillRingNone.cpp
+    platform/StaticPasteboard.cpp
     platform/UserAgentQuirks.cpp
 
     platform/audio/glib/AudioBusGLib.cpp

@@ -88,6 +88,10 @@ Pasteboard::Pasteboard()
 {
 }
 
+void Pasteboard::writeMarkup(const String&)
+{
+}
+
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
     return std::make_unique<Pasteboard>();

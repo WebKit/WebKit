@@ -45,6 +45,7 @@ namespace WebCore {
     class DataTransfer : public RefCounted<DataTransfer> {
     public:
         static Ref<DataTransfer> createForCopyAndPaste(DataTransferAccessPolicy);
+        static Ref<DataTransfer> createForInputEvent(const String& plainText, const String& htmlText);
 
         WEBCORE_EXPORT ~DataTransfer();
 
@@ -97,7 +98,7 @@ namespace WebCore {
 #endif
 
     private:
-        enum Type { CopyAndPaste, DragAndDrop };
+        enum Type { CopyAndPaste, DragAndDrop, InputEvent };
         DataTransfer(DataTransferAccessPolicy, std::unique_ptr<Pasteboard>, Type = CopyAndPaste, bool forFileDrag = false);
 
 #if ENABLE(DRAG_SUPPORT)

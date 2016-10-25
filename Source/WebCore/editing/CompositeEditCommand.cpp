@@ -30,6 +30,7 @@
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
 #include "BreakBlockquoteCommand.h"
+#include "DataTransfer.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -397,6 +398,11 @@ Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRangesForBindings() cons
         return { };
 
     return targetRanges();
+}
+
+RefPtr<DataTransfer> CompositeEditCommand::inputEventDataTransfer() const
+{
+    return nullptr;
 }
 
 EditCommandComposition* CompositeEditCommand::ensureComposition()

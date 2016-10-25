@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class EditingStyle;
+class DataTransfer;
 class HTMLElement;
 class StaticRange;
 class StyledElement;
@@ -118,6 +119,7 @@ public:
     virtual String inputEventData() const { return { }; }
     virtual bool isBeforeInputEventCancelable() const { return true; }
     Vector<RefPtr<StaticRange>> targetRangesForBindings() const;
+    virtual RefPtr<DataTransfer> inputEventDataTransfer() const;
 
 protected:
     explicit CompositeEditCommand(Document&, EditAction = EditActionUnspecified);

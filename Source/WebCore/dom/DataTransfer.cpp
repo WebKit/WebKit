@@ -36,6 +36,7 @@
 #include "HTMLImageElement.h"
 #include "Image.h"
 #include "Pasteboard.h"
+#include "StaticPasteboard.h"
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ DataTransfer::DataTransfer(DataTransferAccessPolicy policy, std::unique_ptr<Past
     : m_policy(policy)
     , m_pasteboard(WTFMove(pasteboard))
 #if ENABLE(DRAG_SUPPORT)
-    , m_forDrag(type != CopyAndPaste)
+    , m_forDrag(type == DragAndDrop)
     , m_forFileDrag(forFileDrag)
     , m_dropEffect(ASCIILiteral("uninitialized"))
     , m_effectAllowed(ASCIILiteral("uninitialized"))
@@ -67,7 +68,7 @@ DataTransfer::DataTransfer(DataTransferAccessPolicy policy, std::unique_ptr<Past
 #endif
 {
 #if !ENABLE(DRAG_SUPPORT)
-    ASSERT_UNUSED(type, type == CopyAndPaste);
+    ASSERT_UNUSED(type, type != DragAndDrop);
     ASSERT_UNUSED(forFileDrag, !forFileDrag);
 #endif
 }
@@ -196,6 +197,14 @@ bool DataTransfer::hasStringOfType(const String& type)
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
 
     return !type.isNull() && types().contains(type);
+}
+
+Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
+{
+    TypeToStringMap typeToStringMap;
+    typeToStringMap.set(ASCIILiteral("text/plain"), plainText);
+    typeToStringMap.set(ASCIILiteral("text/html"), htmlText);
+    return adoptRef(*new DataTransfer(DataTransferAccessPolicy::Readable, StaticPasteboard::create(WTFMove(typeToStringMap)), InputEvent));
 }
 
 #if !ENABLE(DRAG_SUPPORT)

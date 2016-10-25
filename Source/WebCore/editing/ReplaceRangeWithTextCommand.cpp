@@ -27,6 +27,7 @@
 #include "ReplaceRangeWithTextCommand.h"
 
 #include "AlternativeTextController.h"
+#include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
@@ -46,6 +47,12 @@ ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(RefPtr<Range> rangeToBe
 {
 }
 
+bool ReplaceRangeWithTextCommand::willApplyCommand()
+{
+    m_textFragment = createFragmentFromText(*m_rangeToBeReplaced, m_text);
+    return CompositeEditCommand::willApplyCommand();
+}
+
 void ReplaceRangeWithTextCommand::doApply()
 {
     VisibleSelection selection = *m_rangeToBeReplaced;
@@ -61,9 +68,7 @@ void ReplaceRangeWithTextCommand::doApply()
         return;
 
     applyCommandToComposite(SetSelectionCommand::create(selection, FrameSelection::defaultSetSelectionOptions()));
-
-    auto fragment = createFragmentFromText(*m_rangeToBeReplaced, m_text);
-    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(fragment), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
+    applyCommandToComposite(ReplaceSelectionCommand::create(document(), WTFMove(m_textFragment), ReplaceSelectionCommand::MatchStyle, EditActionPaste));
 }
 
 String ReplaceRangeWithTextCommand::inputEventData() const
@@ -72,6 +77,14 @@ String ReplaceRangeWithTextCommand::inputEventData() const
         return m_text;
 
     return CompositeEditCommand::inputEventData();
+}
+
+RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
+{
+    if (!isEditingTextAreaOrTextInput())
+        return DataTransfer::createForInputEvent(m_text, createMarkup(*m_textFragment));
+
+    return CompositeEditCommand::inputEventDataTransfer();
 }
 
 Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const

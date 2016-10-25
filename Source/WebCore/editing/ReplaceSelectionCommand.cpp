@@ -32,6 +32,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "BreakBlockquoteCommand.h"
 #include "CSSStyleDeclaration.h"
+#include "DataTransfer.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "ElementIterator.h"
@@ -68,6 +69,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
+
+static void removeHeadContents(ReplacementFragment&);
 
 // --- ReplacementFragment helper class
 
@@ -909,6 +912,14 @@ inline Node* nodeToSplitToAvoidPastingIntoInlineNodesWithStyle(const Position& i
     return highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary, containgBlock);
 }
 
+bool ReplaceSelectionCommand::willApplyCommand()
+{
+    ensureReplacementFragment();
+    m_documentFragmentPlainText = m_documentFragment->textContent();
+    m_documentFragmentHTMLMarkup = createMarkup(*m_documentFragment);
+    return CompositeEditCommand::willApplyCommand();
+}
+
 void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
@@ -922,7 +933,7 @@ void ReplaceSelectionCommand::doApply()
     if (!selection.isContentRichlyEditable())
         m_matchStyle = false;
 
-    ReplacementFragment fragment(document(), m_documentFragment.get(), selection);
+    ReplacementFragment& fragment = *ensureReplacementFragment();
     if (performTrivialReplace(fragment))
         return;
     
@@ -1044,8 +1055,6 @@ void ReplaceSelectionCommand::doApply()
     // FIXME: Can this wait until after the operation has been performed?  There doesn't seem to be
     // any work performed after this that queries or uses the typing style.
     frame().selection().clearTypingStyle();
-
-    removeHeadContents(fragment);
 
     // We don't want the destination to end up inside nodes that weren't selected.  To avoid that, we move the
     // position forward without changing the visible position so we're still at the same visible location, but
@@ -1260,6 +1269,14 @@ String ReplaceSelectionCommand::inputEventData() const
         return m_documentFragment->textContent();
 
     return CompositeEditCommand::inputEventData();
+}
+
+RefPtr<DataTransfer> ReplaceSelectionCommand::inputEventDataTransfer() const
+{
+    if (isEditingTextAreaOrTextInput())
+        return CompositeEditCommand::inputEventDataTransfer();
+
+    return DataTransfer::createForInputEvent(m_documentFragmentPlainText, m_documentFragmentHTMLMarkup);
 }
 
 bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePosition& originalVisPosBeforeEndBR)
@@ -1493,6 +1510,16 @@ void ReplaceSelectionCommand::updateNodesInserted(Node *node)
         m_startOfInsertedContent = firstPositionInOrBeforeNode(node);
 
     m_endOfInsertedContent = lastPositionInOrAfterNode(node->lastDescendant());
+}
+
+ReplacementFragment* ReplaceSelectionCommand::ensureReplacementFragment()
+{
+    if (!m_replacementFragment) {
+        m_replacementFragment = std::make_unique<ReplacementFragment>(document(), m_documentFragment.get(), endingSelection());
+        removeHeadContents(*m_replacementFragment);
+    }
+
+    return m_replacementFragment.get();
 }
 
 // During simple pastes, where we're just pasting a text node into a run of text, we insert the text node

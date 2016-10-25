@@ -36,6 +36,7 @@
             debug("Fired `oninput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
             shouldBeDefined("event.__lookupGetter__('data')");
+            shouldBeDefined("event.__lookupGetter__('dataTransfer')");
             shouldBeDefined("event.getTargetRanges");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");
@@ -48,6 +49,7 @@
             debug("Fired `onbeforeinput`!");
             shouldBeDefined("event.__lookupGetter__('inputType')");
             shouldBeDefined("event.__lookupGetter__('data')");
+            shouldBeDefined("event.__lookupGetter__('dataTransfer')");
             shouldBeDefined("event.getTargetRanges");
             shouldBe("event.target.id", "expectedTargetID");
             shouldBe("event.bubbles", "true");
