@@ -39,6 +39,10 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
+#if PLATFORM(COCOA)
+#include "NetworkDataTaskCocoa.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;

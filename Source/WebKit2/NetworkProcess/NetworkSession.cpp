@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2013 University of Szeged. All rights reserved.
- * Copyright (C) 2013 Company 100 Inc.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,43 +24,63 @@
  */
 
 #include "config.h"
-#include "RemoteNetworkingContext.h"
-
 #include "NetworkSession.h"
-#include "SessionTracker.h"
+
+#if USE(NETWORK_SESSION)
+
 #include <WebCore/NetworkStorageSession.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
+#include <wtf/MainThread.h>
+
+#if PLATFORM(COCOA)
+#include "NetworkSessionCocoa.h"
+#endif
+#if USE(SOUP)
+#include "NetworkSessionSoup.h"
+#endif
+
 
 using namespace WebCore;
 
 namespace WebKit {
 
-RemoteNetworkingContext::~RemoteNetworkingContext()
+Ref<NetworkSession> NetworkSession::create(SessionID sessionID, CustomProtocolManager* customProtocolManager)
+{
+#if PLATFORM(COCOA)
+    return NetworkSessionCocoa::create(sessionID, customProtocolManager);
+#endif
+#if USE(SOUP)
+    UNUSED_PARAM(customProtocolManager);
+    return NetworkSessionSoup::create(sessionID);
+#endif
+}
+
+NetworkSession& NetworkSession::defaultSession()
+{
+#if PLATFORM(COCOA)
+    return NetworkSessionCocoa::defaultSession();
+#else
+    ASSERT(isMainThread());
+    static NetworkSession* session = &NetworkSession::create(SessionID::defaultSessionID()).leakRef();
+    return *session;
+#endif
+}
+
+NetworkStorageSession& NetworkSession::networkStorageSession() const
+{
+    auto* storageSession = NetworkStorageSession::storageSession(m_sessionID);
+    RELEASE_ASSERT(storageSession);
+    return *storageSession;
+}
+
+NetworkSession::NetworkSession(SessionID sessionID)
+    : m_sessionID(sessionID)
 {
 }
 
-bool RemoteNetworkingContext::isValid() const
+NetworkSession::~NetworkSession()
 {
-    return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
-{
-    ASSERT(sessionID.isEphemeral());
+} // namespace WebKit
 
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
-
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
-}
-
-NetworkStorageSession& RemoteNetworkingContext::storageSession() const
-{
-    if (auto session = NetworkStorageSession::storageSession(m_sessionID))
-        return *session;
-    return NetworkStorageSession::defaultStorageSession();
-}
-
-}
+#endif // USE(NETWORK_SESSION)

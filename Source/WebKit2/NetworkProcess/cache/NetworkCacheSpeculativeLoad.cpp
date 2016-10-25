@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
+#include "NetworkSession.h"
 #include <WebCore/SessionID.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>

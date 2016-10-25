@@ -34,7 +34,7 @@
 
 #if USE(NETWORK_SESSION)
 #include "DownloadID.h"
-#include "NetworkSession.h"
+#include "NetworkDataTask.h"
 #include <WebCore/AuthenticationChallenge.h>
 #endif
 

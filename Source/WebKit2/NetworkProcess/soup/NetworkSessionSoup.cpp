@@ -24,8 +24,9 @@
  */
 
 #include "config.h"
-#include "NetworkSession.h"
+#include "NetworkSessionSoup.h"
 
+#include "NetworkDataTaskSoup.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <wtf/MainThread.h>
@@ -34,47 +35,24 @@ using namespace WebCore;
 
 namespace WebKit {
 
-Ref<NetworkSession> NetworkSession::create(Type type, SessionID sessionID, CustomProtocolManager*)
-{
-    return adoptRef(*new NetworkSession(type, sessionID, nullptr));
-}
-
-NetworkSession& NetworkSession::defaultSession()
-{
-    ASSERT(isMainThread());
-    static NetworkSession* session = &NetworkSession::create(NetworkSession::Type::Normal, SessionID::defaultSessionID(), nullptr).leakRef();
-    return *session;
-}
-
-NetworkStorageSession& NetworkSession::networkStorageSession() const
-{
-    auto* storageSession = NetworkStorageSession::storageSession(m_sessionID);
-    RELEASE_ASSERT(storageSession);
-    return *storageSession;
-}
-
-NetworkSession::NetworkSession(Type type, SessionID sessionID, CustomProtocolManager*)
-    : m_sessionID(sessionID)
+NetworkSessionSoup::NetworkSessionSoup(SessionID sessionID)
+    : NetworkSession(sessionID)
 {
 }
 
-NetworkSession::~NetworkSession()
+NetworkSessionSoup::~NetworkSessionSoup()
 {
 }
 
-SoupSession* NetworkSession::soupSession() const
+SoupSession* NetworkSessionSoup::soupSession() const
 {
     return networkStorageSession().soupNetworkSession().soupSession();
 }
 
-void NetworkSession::invalidateAndCancel()
+void NetworkSessionSoup::invalidateAndCancel()
 {
     for (auto* task : m_dataTaskSet)
         task->invalidateAndCancel();
-}
-
-void NetworkSession::clearCredentials()
-{
 }
 
 } // namespace WebKit

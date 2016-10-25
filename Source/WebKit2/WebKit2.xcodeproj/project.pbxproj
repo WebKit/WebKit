@@ -1039,6 +1039,10 @@
 		52D5A1B01C57495A00DE34A3 /* WebVideoFullscreenManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 52D5A1AA1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.h */; };
 		52D5A1B11C57496200DE34A3 /* WebVideoFullscreenManagerProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1AC1C57494E00DE34A3 /* WebVideoFullscreenManagerProxy.mm */; };
 		52D5A1B71C574A0200DE34A3 /* WebVideoFullscreenManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */; };
+		532159531DBAE7180054AA3C /* NetworkSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532159521DBAE6FC0054AA3C /* NetworkSession.cpp */; };
+		532159541DBAE71D0054AA3C /* NetworkDataTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */; };
+		532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */; };
+		532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */; };
 		5C052F261C6D3BD30076E919 /* AuthenticationManagerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */; };
 		5C1426EC1C23F80900D41183 /* NetworkProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */; };
 		5C1426ED1C23F80900D41183 /* NetworkProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */; };
@@ -3119,6 +3123,10 @@
 		52D5A1B21C5749F200DE34A3 /* WebVideoFullscreenManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenManager.h; sourceTree = "<group>"; };
 		52D5A1B31C5749F200DE34A3 /* WebVideoFullscreenManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebVideoFullscreenManager.messages.in; sourceTree = "<group>"; };
 		52D5A1B41C5749F200DE34A3 /* WebVideoFullscreenManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenManager.mm; sourceTree = "<group>"; };
+		5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkDataTaskCocoa.h; path = NetworkProcess/cocoa/NetworkDataTaskCocoa.h; sourceTree = "<group>"; };
+		532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSessionCocoa.h; path = NetworkProcess/cocoa/NetworkSessionCocoa.h; sourceTree = "<group>"; };
+		532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkDataTask.cpp; path = NetworkProcess/NetworkDataTask.cpp; sourceTree = "<group>"; };
+		532159521DBAE6FC0054AA3C /* NetworkSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkSession.cpp; path = NetworkProcess/NetworkSession.cpp; sourceTree = "<group>"; };
 		579D18B71CCFE34B00B1974C /* PhotosSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PhotosSPI.h; sourceTree = "<group>"; };
 		5C052F241C6D3AB60076E919 /* AuthenticationManagerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManagerCocoa.mm; path = Authentication/cocoa/AuthenticationManagerCocoa.mm; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessCreationParameters.cpp; path = NetworkProcess/NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
@@ -5435,6 +5443,7 @@
 				513A16491630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp */,
 				513A164A1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h */,
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
+				532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */,
 				5CBC9B891C6524A500A8FDCF /* NetworkDataTask.h */,
 				839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */,
 				839901FE1BE9A01B000F3653 /* NetworkLoad.h */,
@@ -5453,6 +5462,7 @@
 				E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */,
 				5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */,
 				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
+				532159521DBAE6FC0054AA3C /* NetworkSession.cpp */,
 				5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
@@ -5845,8 +5855,10 @@
 		7EC4F0F818E4A922008056AF /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5321594F1DBAE6D70054AA3C /* NetworkDataTaskCocoa.h */,
 				5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */,
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
+				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
 			);
 			name = cocoa;
@@ -8124,6 +8136,7 @@
 				BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */,
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
 				ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */,
+				532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */,
 				1AB474EA184D45130051B622 /* WKBundlePagePolicyClient.h in Headers */,
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
 				1AB474DA184D44250051B622 /* WKBundlePageResourceLoadClient.h in Headers */,
@@ -8193,6 +8206,7 @@
 				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
 				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
+				532159551DBAE7290054AA3C /* NetworkSessionCocoa.h in Headers */,
 				0FCB4E4F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h in Headers */,
 				BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */,
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
@@ -9607,6 +9621,7 @@
 				2DFC7DBC1BCCC19500C1548C /* WebViewImpl.mm in Sources */,
 				C0337DD1127A2980008FF4F4 /* WebWheelEvent.cpp in Sources */,
 				868160D0187645570021E79D /* WindowServerConnection.mm in Sources */,
+				532159531DBAE7180054AA3C /* NetworkSession.cpp in Sources */,
 				29CD55AB128E294F00133C85 /* WKAccessibilityWebPageObjectBase.mm in Sources */,
 				29232DF818B2A9AE00D0596F /* WKAccessibilityWebPageObjectIOS.mm in Sources */,
 				29232DF918B2AB3A00D0596F /* WKAccessibilityWebPageObjectMac.mm in Sources */,
@@ -9625,6 +9640,7 @@
 				BCBAACF51452324F0053F82F /* WKBrowsingContextGroup.mm in Sources */,
 				1AE00D4C182D6EB000087DD7 /* WKBrowsingContextHandle.mm in Sources */,
 				BC204EEE11C83EC8008F3375 /* WKBundle.cpp in Sources */,
+				532159541DBAE71D0054AA3C /* NetworkDataTask.cpp in Sources */,
 				935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */,
 				935EEBA0127761AC003322B8 /* WKBundleBackForwardListItem.cpp in Sources */,
 				51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */,

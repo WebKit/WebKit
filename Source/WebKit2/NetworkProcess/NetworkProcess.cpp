@@ -74,6 +74,10 @@
 #include "NetworkCacheCoders.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "NetworkSessionCocoa.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -102,7 +106,7 @@ NetworkProcess::NetworkProcess()
     addSupplement<WebCookieManager>();
     addSupplement<CustomProtocolManager>();
 #if USE(NETWORK_SESSION) && PLATFORM(COCOA)
-    NetworkSession::setCustomProtocolManager(supplement<CustomProtocolManager>());
+    NetworkSessionCocoa::setCustomProtocolManager(supplement<CustomProtocolManager>());
 #endif
 }
 

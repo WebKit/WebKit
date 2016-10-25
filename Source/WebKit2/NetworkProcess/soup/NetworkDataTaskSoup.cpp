@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "NetworkDataTask.h"
+#include "NetworkDataTaskSoup.h"
 
 #include "AuthenticationManager.h"
 #include "DataReference.h"
@@ -32,7 +32,7 @@
 #include "DownloadSoupErrors.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
-#include "NetworkSession.h"
+#include "NetworkSessionSoup.h"
 #include "WebErrors.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
@@ -47,30 +47,14 @@ namespace WebKit {
 
 static const size_t gDefaultReadBufferSize = 8192;
 
-NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentials storedCredentials, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
-    : m_failureTimer(*this, &NetworkDataTask::failureTimerFired)
-    , m_session(&session)
-    , m_client(&client)
-    , m_storedCredentials(storedCredentials)
-    , m_lastHTTPMethod(requestWithCredentials.httpMethod())
-    , m_firstRequest(requestWithCredentials)
-    , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
+NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentials storedCredentials, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    : NetworkDataTask(session, client, requestWithCredentials, storedCredentials, shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_shouldContentSniff(shouldContentSniff)
-    , m_timeoutSource(RunLoop::main(), this, &NetworkDataTask::timeoutFired)
+    , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
-    ASSERT(isMainThread());
-
-    m_session->m_dataTaskSet.add(this);
-
-    if (!requestWithCredentials.url().isValid()) {
-        scheduleFailure(InvalidURLFailure);
+    static_cast<NetworkSessionSoup&>(m_session.get()).registerNetworkDataTask(*this);
+    if (m_scheduledFailureType != NoFailure)
         return;
-    }
-
-    if (!portAllowed(requestWithCredentials.url())) {
-        scheduleFailure(BlockedFailure);
-        return;
-    }
 
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
@@ -93,44 +77,13 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     createRequest(request);
 }
 
-NetworkDataTask::~NetworkDataTask()
+NetworkDataTaskSoup::~NetworkDataTaskSoup()
 {
-    ASSERT(isMainThread());
-    ASSERT(!m_client);
     clearRequest();
-    m_session->m_dataTaskSet.remove(this);
+    static_cast<NetworkSessionSoup&>(m_session.get()).unregisterNetworkDataTask(*this);
 }
 
-void NetworkDataTask::scheduleFailure(FailureType type)
-{
-    ASSERT(type != NoFailure);
-    m_scheduledFailureType = type;
-    m_failureTimer.startOneShot(0);
-}
-
-void NetworkDataTask::failureTimerFired()
-{
-    RefPtr<NetworkDataTask> protectedThis(this);
-
-    switch (m_scheduledFailureType) {
-    case BlockedFailure:
-        m_scheduledFailureType = NoFailure;
-        if (m_client)
-            m_client->wasBlocked();
-        return;
-    case InvalidURLFailure:
-        m_scheduledFailureType = NoFailure;
-        if (m_client)
-            m_client->cannotShowURL();
-        return;
-    case NoFailure:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-String NetworkDataTask::suggestedFilename()
+String NetworkDataTaskSoup::suggestedFilename() const
 {
     if (!m_suggestedFilename.isEmpty())
         return m_suggestedFilename;
@@ -142,23 +95,13 @@ String NetworkDataTask::suggestedFilename()
     return decodeURLEscapeSequences(m_response.url().lastPathComponent());
 }
 
-void NetworkDataTask::setSuggestedFilename(const String& suggestedName)
+void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle& sandboxExtensionHandle, bool allowOverwrite)
 {
-    m_suggestedFilename = suggestedName;
-}
-
-void NetworkDataTask::setPendingDownloadLocation(const String& filename, const SandboxExtension::Handle&, bool allowOverwrite)
-{
-    m_pendingDownloadLocation = filename;
+    NetworkDataTask::setPendingDownloadLocation(filename, sandboxExtensionHandle, allowOverwrite);
     m_allowOverwriteDownload = allowOverwrite;
 }
 
-bool NetworkDataTask::allowsSpecificHTTPSCertificateForHost(const AuthenticationChallenge&)
-{
-    return false;
-}
-
-void NetworkDataTask::createRequest(const ResourceRequest& request)
+void NetworkDataTaskSoup::createRequest(const ResourceRequest& request)
 {
     GUniquePtr<SoupURI> soupURI = request.createSoupURI();
     if (!soupURI) {
@@ -166,7 +109,7 @@ void NetworkDataTask::createRequest(const ResourceRequest& request)
         return;
     }
 
-    GRefPtr<SoupRequest> soupRequest = adoptGRef(soup_session_request_uri(m_session->soupSession(), soupURI.get(), nullptr));
+    GRefPtr<SoupRequest> soupRequest = adoptGRef(soup_session_request_uri(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), soupURI.get(), nullptr));
     if (!soupRequest) {
         scheduleFailure(InvalidURLFailure);
         return;
@@ -218,19 +161,19 @@ void NetworkDataTask::createRequest(const ResourceRequest& request)
     g_signal_connect(m_soupMessage.get(), "notify::tls-errors", G_CALLBACK(tlsErrorsChangedCallback), this);
     g_signal_connect(m_soupMessage.get(), "got-headers", G_CALLBACK(gotHeadersCallback), this);
     g_signal_connect(m_soupMessage.get(), "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), this);
-    g_signal_connect(m_session->soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
+    g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "authenticate",  G_CALLBACK(authenticateCallback), this);
 #if ENABLE(WEB_TIMING)
     g_signal_connect(m_soupMessage.get(), "network-event", G_CALLBACK(networkEventCallback), this);
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
 #if SOUP_CHECK_VERSION(2, 49, 91)
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
 #else
-    g_signal_connect(m_session->soupSession(), "request-started", G_CALLBACK(requestStartedCallback), this);
+    g_signal_connect(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), "request-started", G_CALLBACK(requestStartedCallback), this);
 #endif
 #endif
 }
 
-void NetworkDataTask::clearRequest()
+void NetworkDataTaskSoup::clearRequest()
 {
     if (m_state == State::Completed)
         return;
@@ -247,13 +190,13 @@ void NetworkDataTask::clearRequest()
     m_cancellable = nullptr;
     if (m_soupMessage) {
         g_signal_handlers_disconnect_matched(m_soupMessage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-        soup_session_cancel_message(m_session->soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
+        soup_session_cancel_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
         m_soupMessage = nullptr;
     }
-    g_signal_handlers_disconnect_matched(m_session->soupSession(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+    g_signal_handlers_disconnect_matched(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 }
 
-void NetworkDataTask::resume()
+void NetworkDataTaskSoup::resume()
 {
     ASSERT(m_state != State::Running);
     if (m_state == State::Canceling || m_state == State::Completed)
@@ -268,7 +211,7 @@ void NetworkDataTask::resume()
 
     startTimeout();
 
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     if (m_soupRequest && !m_cancellable) {
         m_cancellable = adoptGRef(g_cancellable_new());
         soup_request_send_async(m_soupRequest.get(), m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(sendRequestCallback), protectedThis.leakRef());
@@ -288,7 +231,7 @@ void NetworkDataTask::resume()
     }
 }
 
-void NetworkDataTask::suspend()
+void NetworkDataTaskSoup::suspend()
 {
     ASSERT(m_state != State::Suspended);
     if (m_state == State::Canceling || m_state == State::Completed)
@@ -298,7 +241,7 @@ void NetworkDataTask::suspend()
     stopTimeout();
 }
 
-void NetworkDataTask::cancel()
+void NetworkDataTaskSoup::cancel()
 {
     if (m_state == State::Canceling || m_state == State::Completed)
         return;
@@ -306,7 +249,7 @@ void NetworkDataTask::cancel()
     m_state = State::Canceling;
 
     if (m_soupMessage)
-        soup_session_cancel_message(m_session->soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
+        soup_session_cancel_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get(), SOUP_STATUS_CANCELLED);
 
     g_cancellable_cancel(m_cancellable.get());
 
@@ -314,43 +257,43 @@ void NetworkDataTask::cancel()
         cleanDownloadFiles();
 }
 
-void NetworkDataTask::invalidateAndCancel()
+void NetworkDataTaskSoup::invalidateAndCancel()
 {
     cancel();
     clearRequest();
 }
 
-NetworkDataTask::State NetworkDataTask::state() const
+NetworkDataTask::State NetworkDataTaskSoup::state() const
 {
     return m_state;
 }
 
-void NetworkDataTask::timeoutFired()
+void NetworkDataTaskSoup::timeoutFired()
 {
     if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
         clearRequest();
         return;
     }
 
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     invalidateAndCancel();
     m_client->didCompleteWithError(ResourceError::timeoutError(m_firstRequest.url()));
 }
 
-void NetworkDataTask::startTimeout()
+void NetworkDataTaskSoup::startTimeout()
 {
     if (m_firstRequest.timeoutInterval() > 0)
         m_timeoutSource.startOneShot(m_firstRequest.timeoutInterval());
 }
 
-void NetworkDataTask::stopTimeout()
+void NetworkDataTaskSoup::stopTimeout()
 {
     m_timeoutSource.stop();
 }
 
-void NetworkDataTask::sendRequestCallback(SoupRequest* soupRequest, GAsyncResult* result, NetworkDataTask* task)
+void NetworkDataTaskSoup::sendRequestCallback(SoupRequest* soupRequest, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
-    RefPtr<NetworkDataTask> protectedThis = adoptRef(task);
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
         return;
@@ -371,7 +314,7 @@ void NetworkDataTask::sendRequestCallback(SoupRequest* soupRequest, GAsyncResult
         task->didSendRequest(WTFMove(inputStream));
 }
 
-void NetworkDataTask::didSendRequest(GRefPtr<GInputStream>&& inputStream)
+void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
     if (m_soupMessage) {
         if (m_shouldContentSniff == SniffContent && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
@@ -405,7 +348,7 @@ void NetworkDataTask::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     didReceiveResponse();
 }
 
-void NetworkDataTask::didReceiveResponse()
+void NetworkDataTaskSoup::didReceiveResponse()
 {
     ASSERT(!m_response.isNull());
 
@@ -436,7 +379,7 @@ void NetworkDataTask::didReceiveResponse()
     });
 }
 
-void NetworkDataTask::tlsErrorsChangedCallback(SoupMessage* soupMessage, GParamSpec*, NetworkDataTask* task)
+void NetworkDataTaskSoup::tlsErrorsChangedCallback(SoupMessage* soupMessage, GParamSpec*, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
@@ -447,20 +390,20 @@ void NetworkDataTask::tlsErrorsChangedCallback(SoupMessage* soupMessage, GParamS
     task->tlsErrorsChanged();
 }
 
-void NetworkDataTask::tlsErrorsChanged()
+void NetworkDataTaskSoup::tlsErrorsChanged()
 {
     ASSERT(m_soupRequest);
     SoupNetworkSession::checkTLSErrors(m_soupRequest.get(), m_soupMessage.get(), [this] (const ResourceError& error) {
         if (error.isNull())
             return;
 
-        RefPtr<NetworkDataTask> protectedThis(this);
+        RefPtr<NetworkDataTaskSoup> protectedThis(this);
         invalidateAndCancel();
         m_client->didCompleteWithError(error);
     });
 }
 
-void NetworkDataTask::applyAuthenticationToRequest(ResourceRequest& request)
+void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 {
     // We always put the credentials into the URL. In the Coca port HTTP family credentials are applied in
     // the didReceiveChallenge callback, but libsoup requires us to use this method to override
@@ -480,9 +423,9 @@ void NetworkDataTask::applyAuthenticationToRequest(ResourceRequest& request)
     request.setURL(url);
 }
 
-void NetworkDataTask::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTask* task)
+void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == task->m_session->soupSession());
+    ASSERT(session == task->static_cast<NetworkSessionSoup&>(m_session.get()).soupSession());
     if (soupMessage != task->m_soupMessage.get())
         return;
 
@@ -499,7 +442,7 @@ static inline bool isAuthenticationFailureStatusCode(int httpStatusCode)
     return httpStatusCode == SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED || httpStatusCode == SOUP_STATUS_UNAUTHORIZED;
 }
 
-void NetworkDataTask::authenticate(AuthenticationChallenge&& challenge)
+void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
 {
     ASSERT(m_soupMessage);
     if (m_storedCredentials == AllowStoredCredentials) {
@@ -525,7 +468,7 @@ void NetworkDataTask::authenticate(AuthenticationChallenge&& challenge)
         }
     }
 
-    soup_session_pause_message(m_session->soupSession(), m_soupMessage.get());
+    soup_session_pause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get());
 
     // We could also do this before we even start the request, but that would be at the expense
     // of all request latency, versus a one-time latency for the small subset of requests that
@@ -547,7 +490,7 @@ void NetworkDataTask::authenticate(AuthenticationChallenge&& challenge)
         continueAuthenticate(WTFMove(challenge));
 }
 
-void NetworkDataTask::continueAuthenticate(AuthenticationChallenge&& challenge)
+void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challenge)
 {
     m_client->didReceiveChallenge(challenge, [this, protectedThis = makeRef(*this), challenge](AuthenticationChallengeDisposition disposition, const Credential& credential) {
         if (m_state == State::Canceling || m_state == State::Completed) {
@@ -579,13 +522,13 @@ void NetworkDataTask::continueAuthenticate(AuthenticationChallenge&& challenge)
             soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
         }
 
-        soup_session_unpause_message(m_session->soupSession(), m_soupMessage.get());
+        soup_session_unpause_message(static_cast<NetworkSessionSoup&>(m_session.get()).soupSession(), m_soupMessage.get());
     });
 }
 
-void NetworkDataTask::skipInputStreamForRedirectionCallback(GInputStream* inputStream, GAsyncResult* result, NetworkDataTask* task)
+void NetworkDataTaskSoup::skipInputStreamForRedirectionCallback(GInputStream* inputStream, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
-    RefPtr<NetworkDataTask> protectedThis = adoptRef(task);
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
         return;
@@ -602,15 +545,15 @@ void NetworkDataTask::skipInputStreamForRedirectionCallback(GInputStream* inputS
         task->didFinishSkipInputStreamForRedirection();
 }
 
-void NetworkDataTask::skipInputStreamForRedirection()
+void NetworkDataTaskSoup::skipInputStreamForRedirection()
 {
     ASSERT(m_inputStream);
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     g_input_stream_skip_async(m_inputStream.get(), gDefaultReadBufferSize, G_PRIORITY_DEFAULT, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(skipInputStreamForRedirectionCallback), protectedThis.leakRef());
 }
 
-void NetworkDataTask::didFinishSkipInputStreamForRedirection()
+void NetworkDataTaskSoup::didFinishSkipInputStreamForRedirection()
 {
     g_input_stream_close(m_inputStream.get(), nullptr, nullptr);
     continueHTTPRedirection();
@@ -637,7 +580,7 @@ static bool shouldRedirectAsGET(SoupMessage* message, bool crossOrigin)
     return false;
 }
 
-bool NetworkDataTask::shouldStartHTTPRedirection()
+bool NetworkDataTaskSoup::shouldStartHTTPRedirection()
 {
     ASSERT(m_soupMessage);
     ASSERT(!m_response.isNull());
@@ -656,7 +599,7 @@ bool NetworkDataTask::shouldStartHTTPRedirection()
     return true;
 }
 
-void NetworkDataTask::continueHTTPRedirection()
+void NetworkDataTaskSoup::continueHTTPRedirection()
 {
     ASSERT(m_soupMessage);
     ASSERT(!m_response.isNull());
@@ -727,9 +670,9 @@ void NetworkDataTask::continueHTTPRedirection()
     });
 }
 
-void NetworkDataTask::readCallback(GInputStream* inputStream, GAsyncResult* result, NetworkDataTask* task)
+void NetworkDataTaskSoup::readCallback(GInputStream* inputStream, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
-    RefPtr<NetworkDataTask> protectedThis = adoptRef(task);
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
     if (task->state() == State::Canceling || task->state() == State::Completed || (!task->m_client && !task->isDownload())) {
         task->clearRequest();
         return;
@@ -752,16 +695,16 @@ void NetworkDataTask::readCallback(GInputStream* inputStream, GAsyncResult* resu
         task->didFinishRead();
 }
 
-void NetworkDataTask::read()
+void NetworkDataTaskSoup::read()
 {
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     ASSERT(m_inputStream);
     m_readBuffer.grow(gDefaultReadBufferSize);
     g_input_stream_read_async(m_inputStream.get(), m_readBuffer.data(), m_readBuffer.size(), G_PRIORITY_DEFAULT, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(readCallback), protectedThis.leakRef());
 }
 
-void NetworkDataTask::didRead(gssize bytesRead)
+void NetworkDataTaskSoup::didRead(gssize bytesRead)
 {
     m_readBuffer.shrink(bytesRead);
     if (m_downloadOutputStream) {
@@ -774,7 +717,7 @@ void NetworkDataTask::didRead(gssize bytesRead)
     }
 }
 
-void NetworkDataTask::didFinishRead()
+void NetworkDataTaskSoup::didFinishRead()
 {
     ASSERT(m_inputStream);
     g_input_stream_close(m_inputStream.get(), nullptr, nullptr);
@@ -794,9 +737,9 @@ void NetworkDataTask::didFinishRead()
     m_client->didCompleteWithError({ });
 }
 
-void NetworkDataTask::requestNextPartCallback(SoupMultipartInputStream* multipartInputStream, GAsyncResult* result, NetworkDataTask* task)
+void NetworkDataTaskSoup::requestNextPartCallback(SoupMultipartInputStream* multipartInputStream, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
-    RefPtr<NetworkDataTask> protectedThis = adoptRef(task);
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
         return;
@@ -819,16 +762,16 @@ void NetworkDataTask::requestNextPartCallback(SoupMultipartInputStream* multipar
         task->didFinishRequestNextPart();
 }
 
-void NetworkDataTask::requestNextPart()
+void NetworkDataTaskSoup::requestNextPart()
 {
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     ASSERT(m_multipartInputStream);
     ASSERT(!m_inputStream);
     soup_multipart_input_stream_next_part_async(m_multipartInputStream.get(), G_PRIORITY_DEFAULT, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(requestNextPartCallback), protectedThis.leakRef());
 }
 
-void NetworkDataTask::didRequestNextPart(GRefPtr<GInputStream>&& inputStream)
+void NetworkDataTaskSoup::didRequestNextPart(GRefPtr<GInputStream>&& inputStream)
 {
     ASSERT(!m_inputStream);
     m_inputStream = WTFMove(inputStream);
@@ -838,7 +781,7 @@ void NetworkDataTask::didRequestNextPart(GRefPtr<GInputStream>&& inputStream)
     didReceiveResponse();
 }
 
-void NetworkDataTask::didFinishRequestNextPart()
+void NetworkDataTaskSoup::didFinishRequestNextPart()
 {
     ASSERT(!m_inputStream);
     ASSERT(m_multipartInputStream);
@@ -847,7 +790,7 @@ void NetworkDataTask::didFinishRequestNextPart()
     m_client->didCompleteWithError({ });
 }
 
-void NetworkDataTask::gotHeadersCallback(SoupMessage* soupMessage, NetworkDataTask* task)
+void NetworkDataTaskSoup::gotHeadersCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
@@ -857,7 +800,7 @@ void NetworkDataTask::gotHeadersCallback(SoupMessage* soupMessage, NetworkDataTa
     task->didGetHeaders();
 }
 
-void NetworkDataTask::didGetHeaders()
+void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
     // since we are waiting until we know that this authentication succeeded before actually storing.
@@ -870,7 +813,7 @@ void NetworkDataTask::didGetHeaders()
     }
 }
 
-void NetworkDataTask::wroteBodyDataCallback(SoupMessage* soupMessage, SoupBuffer* buffer, NetworkDataTask* task)
+void NetworkDataTaskSoup::wroteBodyDataCallback(SoupMessage* soupMessage, SoupBuffer* buffer, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
         task->clearRequest();
@@ -880,14 +823,14 @@ void NetworkDataTask::wroteBodyDataCallback(SoupMessage* soupMessage, SoupBuffer
     task->didWriteBodyData(buffer->length);
 }
 
-void NetworkDataTask::didWriteBodyData(uint64_t bytesSent)
+void NetworkDataTaskSoup::didWriteBodyData(uint64_t bytesSent)
 {
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
     m_bodyDataTotalBytesSent += bytesSent;
     m_client->didSendData(m_bodyDataTotalBytesSent, m_soupMessage->request_body->length);
 }
 
-void NetworkDataTask::download()
+void NetworkDataTaskSoup::download()
 {
     ASSERT(isDownload());
     ASSERT(m_pendingDownloadLocation);
@@ -931,9 +874,9 @@ void NetworkDataTask::download()
     read();
 }
 
-void NetworkDataTask::writeDownloadCallback(GOutputStream* outputStream, GAsyncResult* result, NetworkDataTask* task)
+void NetworkDataTaskSoup::writeDownloadCallback(GOutputStream* outputStream, GAsyncResult* result, NetworkDataTaskSoup* task)
 {
-    RefPtr<NetworkDataTask> protectedThis = adoptRef(task);
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->isDownload()) {
         task->clearRequest();
         return;
@@ -955,9 +898,9 @@ void NetworkDataTask::writeDownloadCallback(GOutputStream* outputStream, GAsyncR
         task->didWriteDownload(bytesWritten);
 }
 
-void NetworkDataTask::writeDownload()
+void NetworkDataTaskSoup::writeDownload()
 {
-    RefPtr<NetworkDataTask> protectedThis(this);
+    RefPtr<NetworkDataTaskSoup> protectedThis(this);
 #if GLIB_CHECK_VERSION(2, 44, 0)
     g_output_stream_write_all_async(m_downloadOutputStream.get(), m_readBuffer.data(), m_readBuffer.size(), G_PRIORITY_DEFAULT, m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(writeDownloadCallback), protectedThis.leakRef());
@@ -966,7 +909,7 @@ void NetworkDataTask::writeDownload()
         reinterpret_cast<GAsyncReadyCallback>(writeDownloadCallback), protectedThis.leakRef()));
     g_task_set_task_data(writeTask.get(), this, nullptr);
     g_task_run_in_thread(writeTask.get(), [](GTask* writeTask, gpointer source, gpointer userData, GCancellable* cancellable) {
-        auto* task = static_cast<NetworkDataTask*>(userData);
+        auto* task = static_cast<NetworkDataTaskSoup*>(userData);
         GOutputStream* outputStream = G_OUTPUT_STREAM(source);
         RELEASE_ASSERT(task->m_downloadOutputStream.get() == outputStream);
         RELEASE_ASSERT(task->m_cancellable.get() == cancellable);
@@ -985,7 +928,7 @@ void NetworkDataTask::writeDownload()
 #endif
 }
 
-void NetworkDataTask::didWriteDownload(gsize bytesWritten)
+void NetworkDataTaskSoup::didWriteDownload(gsize bytesWritten)
 {
     ASSERT(bytesWritten == m_readBuffer.size());
     auto* download = NetworkProcess::singleton().downloadManager().download(m_pendingDownloadID);
@@ -994,7 +937,7 @@ void NetworkDataTask::didWriteDownload(gsize bytesWritten)
     read();
 }
 
-void NetworkDataTask::didFinishDownload()
+void NetworkDataTaskSoup::didFinishDownload()
 {
     ASSERT(!m_response.isNull());
     ASSERT(m_downloadOutputStream);
@@ -1021,7 +964,7 @@ void NetworkDataTask::didFinishDownload()
     download->didFinish();
 }
 
-void NetworkDataTask::didFailDownload(const ResourceError& error)
+void NetworkDataTaskSoup::didFailDownload(const ResourceError& error)
 {
     clearRequest();
     cleanDownloadFiles();
@@ -1034,7 +977,7 @@ void NetworkDataTask::didFailDownload(const ResourceError& error)
     }
 }
 
-void NetworkDataTask::cleanDownloadFiles()
+void NetworkDataTaskSoup::cleanDownloadFiles()
 {
     if (m_downloadDestinationFile) {
         g_file_delete(m_downloadDestinationFile.get(), nullptr, nullptr);
@@ -1046,7 +989,7 @@ void NetworkDataTask::cleanDownloadFiles()
     }
 }
 
-void NetworkDataTask::didFail(const ResourceError& error)
+void NetworkDataTaskSoup::didFail(const ResourceError& error)
 {
     if (isDownload()) {
         didFailDownload(platformDownloadNetworkError(error.errorCode(), error.failingURL(), error.localizedDescription()));
@@ -1059,7 +1002,7 @@ void NetworkDataTask::didFail(const ResourceError& error)
 }
 
 #if ENABLE(WEB_TIMING)
-void NetworkDataTask::networkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream*, NetworkDataTask* task)
+void NetworkDataTaskSoup::networkEventCallback(SoupMessage* soupMessage, GSocketClientEvent event, GIOStream*, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
         return;
@@ -1068,7 +1011,7 @@ void NetworkDataTask::networkEventCallback(SoupMessage* soupMessage, GSocketClie
     task->networkEvent(event);
 }
 
-void NetworkDataTask::networkEvent(GSocketClientEvent event)
+void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event)
 {
     double deltaTime = monotonicallyIncreasingTimeMS() - m_startTime;
     auto& loadTiming = m_response.networkLoadTiming();
@@ -1105,7 +1048,7 @@ void NetworkDataTask::networkEvent(GSocketClientEvent event)
 }
 
 #if SOUP_CHECK_VERSION(2, 49, 91)
-void NetworkDataTask::startingCallback(SoupMessage* soupMessage, NetworkDataTask* task)
+void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
     if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client)
         return;
@@ -1114,9 +1057,9 @@ void NetworkDataTask::startingCallback(SoupMessage* soupMessage, NetworkDataTask
     task->didStartRequest();
 }
 #else
-void NetworkDataTask::requestStartedCallback(SoupSession* session, SoupMessage* soupMessage, SoupSocket*, NetworkDataTask* task)
+void NetworkDataTaskSoup::requestStartedCallback(SoupSession* session, SoupMessage* soupMessage, SoupSocket*, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == task->m_session->soupSession());
+    ASSERT(session == task->static_cast<NetworkSessionSoup&>(m_session.get()).soupSession());
     if (soupMessage != task->m_soupMessage.get())
         return;
 
@@ -1127,12 +1070,12 @@ void NetworkDataTask::requestStartedCallback(SoupSession* session, SoupMessage* 
 }
 #endif
 
-void NetworkDataTask::didStartRequest()
+void NetworkDataTaskSoup::didStartRequest()
 {
     m_response.networkLoadTiming().requestStart = monotonicallyIncreasingTimeMS() - m_startTime;
 }
 
-void NetworkDataTask::restartedCallback(SoupMessage* soupMessage, NetworkDataTask* task)
+void NetworkDataTaskSoup::restartedCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
     // Called each time the message is going to be sent again except the first time.
     // This happens when libsoup handles HTTP authentication.
@@ -1143,7 +1086,7 @@ void NetworkDataTask::restartedCallback(SoupMessage* soupMessage, NetworkDataTas
     task->didRestart();
 }
 
-void NetworkDataTask::didRestart()
+void NetworkDataTaskSoup::didRestart()
 {
     m_startTime = monotonicallyIncreasingTimeMS();
 }

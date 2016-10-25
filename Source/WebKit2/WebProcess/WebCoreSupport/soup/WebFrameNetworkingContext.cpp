@@ -50,7 +50,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
         return;
 
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, nullptr));
+    SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)

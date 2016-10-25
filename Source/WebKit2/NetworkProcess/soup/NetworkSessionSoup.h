@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2013 University of Szeged. All rights reserved.
- * Copyright (C) 2013 Company 100 Inc.
+ * Copyright (C) 2016 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteNetworkingContext.h"
+#pragma once
 
 #include "NetworkSession.h"
-#include "SessionTracker.h"
-#include <WebCore/NetworkStorageSession.h>
-#include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
+#include <wtf/HashSet.h>
 
-using namespace WebCore;
+typedef struct _SoupSession SoupSession;
 
 namespace WebKit {
 
-RemoteNetworkingContext::~RemoteNetworkingContext()
-{
-}
+class NetworkDataTaskSoup;
 
-bool RemoteNetworkingContext::isValid() const
-{
-    return true;
-}
+class NetworkSessionSoup final : public NetworkSession {
+public:
+    static Ref<NetworkSession> create(WebCore::SessionID sessionID)
+    {
+        return adoptRef(*new NetworkSessionSoup(sessionID));
+    }
+    ~NetworkSessionSoup();
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
-{
-    ASSERT(sessionID.isEphemeral());
+    SoupSession* soupSession() const;
 
-    if (NetworkStorageSession::storageSession(sessionID))
-        return;
+    void registerNetworkDataTask(NetworkDataTaskSoup& task) { m_dataTaskSet.add(&task); }
+    void unregisterNetworkDataTask(NetworkDataTaskSoup& task) { m_dataTaskSet.remove(&task); }
 
-    NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, String::number(sessionID.sessionID()));
-    SessionTracker::setSession(sessionID, NetworkSession::create(sessionID));
-}
+private:
+    NetworkSessionSoup(WebCore::SessionID);
 
-NetworkStorageSession& RemoteNetworkingContext::storageSession() const
-{
-    if (auto session = NetworkStorageSession::storageSession(m_sessionID))
-        return *session;
-    return NetworkStorageSession::defaultStorageSession();
-}
+    void invalidateAndCancel() override;
 
-}
+    HashSet<NetworkDataTaskSoup*> m_dataTaskSet;
+};
+
+} // namespace WebKit

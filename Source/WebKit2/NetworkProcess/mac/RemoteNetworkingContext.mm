@@ -95,7 +95,7 @@ void RemoteNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>());
+    auto networkSession = NetworkSession::create(sessionID, NetworkProcess::singleton().supplement<CustomProtocolManager>());
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
 #endif
 }

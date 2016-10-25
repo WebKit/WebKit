@@ -60,7 +60,7 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID
 
     NetworkStorageSession::ensurePrivateBrowsingSession(sessionID, base + '.' + String::number(sessionID.sessionID()));
 #if USE(NETWORK_SESSION)
-    auto networkSession = NetworkSession::create(NetworkSession::Type::Ephemeral, sessionID, nullptr);
+    auto networkSession = NetworkSession::create(sessionID);
     SessionTracker::setSession(sessionID, WTFMove(networkSession));
 #endif
 }

@@ -29,7 +29,7 @@
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
-#import "NetworkSession.h"
+#import "NetworkSessionCocoa.h"
 #import "SandboxExtension.h"
 #import "SessionTracker.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -85,11 +85,11 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 
 #if USE(NETWORK_SESSION)
-    NetworkSession::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
-    NetworkSession::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
-    NetworkSession::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
+    NetworkSessionCocoa::setSourceApplicationAuditTokenData(sourceApplicationAuditData());
+    NetworkSessionCocoa::setSourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier);
+    NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier);
 #if PLATFORM(IOS)
-    NetworkSession::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
+    NetworkSessionCocoa::setCTDataConnectionServiceType(parameters.ctDataConnectionServiceType);
 #endif
 #endif
 
