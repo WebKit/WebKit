@@ -1,3 +1,14 @@
+2016-10-24  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support new IDBKeyRange interfaces.
+        <rdar://problem/28806929> and https://bugs.webkit.org/show_bug.cgi?id=163910
+
+        Reviewed by Andy Estes.
+
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/keyrange-private-expected.txt:
+        * storage/indexeddb/resources/keyrange.js:
+
 2016-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Add a way for DOMJIT::Patchpoint to express effects

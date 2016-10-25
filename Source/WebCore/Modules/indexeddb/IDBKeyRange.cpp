@@ -113,6 +113,33 @@ bool IDBKeyRange::isOnlyKey() const
     return m_lower && m_upper && !m_isLowerOpen && !m_isUpperOpen && m_lower->isEqual(*m_upper);
 }
 
+ExceptionOr<bool> IDBKeyRange::contains(JSC::ExecState& state, JSC::JSValue keyValue)
+{
+    auto key = scriptValueToIDBKey(state, keyValue);
+    if (!key->isValid())
+        return Exception { IDBDatabaseException::DataError, "Failed to execute 'contains' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key." };
+
+    if (m_lower) {
+        int compare = m_lower->compare(key.get());
+
+        if (compare > 0)
+            return false;
+        if (m_isLowerOpen && !compare)
+            return false;
+    }
+
+    if (m_upper) {
+        int compare = m_upper->compare(key.get());
+
+        if (compare < 0)
+            return false;
+        if (m_isUpperOpen && !compare)
+            return false;
+    }
+
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

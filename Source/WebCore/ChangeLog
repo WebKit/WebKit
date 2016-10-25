@@ -1,3 +1,19 @@
+2016-10-24  Brady Eidson  <beidson@apple.com>
+
+        IndexedDB 2.0: Support new IDBKeyRange interfaces.
+        <rdar://problem/28806929> and https://bugs.webkit.org/show_bug.cgi?id=163910
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by additions to existing test)
+
+        The "new IDBKeyRanges interfaces" really just means adding the instance method IDBKeyRange.contains.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::contains):
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBKeyRange.idl:
+
 2016-10-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Add a way for DOMJIT::Patchpoint to express effects

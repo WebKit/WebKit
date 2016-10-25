@@ -9,6 +9,7 @@ PASS 'lower' in IDBKeyRange is false
 PASS 'upper' in IDBKeyRange is false
 PASS 'lowerOpen' in IDBKeyRange is false
 PASS 'upperOpen' in IDBKeyRange is false
+PASS 'contains' in IDBKeyRange is false
 PASS 'only' in IDBKeyRange is true
 PASS 'lowerBound' in IDBKeyRange is true
 PASS 'upperBound' in IDBKeyRange is true
@@ -19,6 +20,7 @@ PASS 'lower' in instance is true
 PASS 'upper' in instance is true
 PASS 'lowerOpen' in instance is true
 PASS 'upperOpen' in instance is true
+PASS 'contains' in instance is true
 PASS 'only' in instance is false
 PASS 'lowerBound' in instance is false
 PASS 'upperBound' in instance is false
@@ -29,186 +31,281 @@ PASS keyRange.lower is 1
 PASS keyRange.upper is 1
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(1.1) is false
+PASS keyRange.contains(0.9) is false
+PASS keyRange.contains(1) is true
 IDBKeyRange.only(3.14)
 PASS keyRange.lower is 3.14
 PASS keyRange.upper is 3.14
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(3.24) is false
+PASS keyRange.contains(3.04) is false
+PASS keyRange.contains(3.14) is true
 IDBKeyRange.only('a')
 PASS keyRange.lower is 'a'
 PASS keyRange.upper is 'a'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains('aa') is false
+PASS keyRange.contains('') is false
+PASS keyRange.contains('a') is true
 IDBKeyRange.lowerBound(10,true)
 PASS keyRange.lower is 10
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(10) is false
+PASS keyRange.contains(10.1) is true
+PASS keyRange.contains(9.9) is false
 IDBKeyRange.lowerBound(11,false)
 PASS keyRange.lower is 11
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(11) is true
+PASS keyRange.contains(11.1) is true
+PASS keyRange.contains(10.9) is false
 IDBKeyRange.lowerBound(12,undefined)
 PASS keyRange.lower is 12
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(12) is true
+PASS keyRange.contains(12.1) is true
+PASS keyRange.contains(11.9) is false
 IDBKeyRange.lowerBound(10.1,true)
 PASS keyRange.lower is 10.1
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(10.1) is false
+PASS keyRange.contains(10.2) is true
+PASS keyRange.contains(10) is false
 IDBKeyRange.lowerBound(11.2,false)
 PASS keyRange.lower is 11.2
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(11.2) is true
+PASS keyRange.contains(11.299999999999999) is true
+PASS keyRange.contains(11.1) is false
 IDBKeyRange.lowerBound(12.3,undefined)
 PASS keyRange.lower is 12.3
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(12.3) is true
+PASS keyRange.contains(12.4) is true
+PASS keyRange.contains(12.200000000000001) is false
 IDBKeyRange.lowerBound('aa',true)
 PASS keyRange.lower is 'aa'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains('aa') is false
+PASS keyRange.contains('aaa') is true
+PASS keyRange.contains('a') is false
 IDBKeyRange.lowerBound('ab',false)
 PASS keyRange.lower is 'ab'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains('ab') is true
+PASS keyRange.contains('abb') is true
+PASS keyRange.contains('a') is false
 IDBKeyRange.lowerBound('ac',undefined)
 PASS keyRange.lower is 'ac'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upper is undefined.
 PASS keyRange.upperOpen is true
+PASS keyRange.contains('ac') is true
+PASS keyRange.contains('acc') is true
+PASS keyRange.contains('a') is false
 IDBKeyRange.upperBound(20,true)
 PASS keyRange.upper is 20
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(20) is false
+PASS keyRange.contains(20.1) is false
+PASS keyRange.contains(19.9) is true
 IDBKeyRange.upperBound(21,false)
 PASS keyRange.upper is 21
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(21) is true
+PASS keyRange.contains(21.1) is false
+PASS keyRange.contains(20.9) is true
 IDBKeyRange.upperBound(22,undefined)
 PASS keyRange.upper is 22
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(22) is true
+PASS keyRange.contains(22.1) is false
+PASS keyRange.contains(21.9) is true
 IDBKeyRange.upperBound(20.2,true)
 PASS keyRange.upper is 20.2
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(20.2) is false
+PASS keyRange.contains(20.3) is false
+PASS keyRange.contains(20.099999999999998) is true
 IDBKeyRange.upperBound(21.3,false)
 PASS keyRange.upper is 21.3
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(21.3) is true
+PASS keyRange.contains(21.400000000000002) is false
+PASS keyRange.contains(21.2) is true
 IDBKeyRange.upperBound(22.4,undefined)
 PASS keyRange.upper is 22.4
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains(22.4) is true
+PASS keyRange.contains(22.5) is false
+PASS keyRange.contains(22.299999999999997) is true
 IDBKeyRange.upperBound('ba',true)
 PASS keyRange.upper is 'ba'
 PASS keyRange.upperOpen is true
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains('ba') is false
+PASS keyRange.contains('baa') is false
+PASS keyRange.contains('b') is true
 IDBKeyRange.upperBound('bb',false)
 PASS keyRange.upper is 'bb'
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains('bb') is true
+PASS keyRange.contains('bbb') is false
+PASS keyRange.contains('b') is true
 IDBKeyRange.upperBound('bc',undefined)
 PASS keyRange.upper is 'bc'
 PASS keyRange.upperOpen is false
 PASS keyRange.lower is undefined.
 PASS keyRange.lowerOpen is true
+PASS keyRange.contains('bc') is true
+PASS keyRange.contains('bcc') is false
+PASS keyRange.contains('b') is true
 IDBKeyRange.bound(30,40, undefined, undefined)
 PASS keyRange.lower is 30
 PASS keyRange.upper is 40
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(30) is true
+PASS keyRange.contains(40) is true
 IDBKeyRange.bound(31,41, false, false)
 PASS keyRange.lower is 31
 PASS keyRange.upper is 41
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(31) is true
+PASS keyRange.contains(41) is true
 IDBKeyRange.bound(32,42, false, true)
 PASS keyRange.lower is 32
 PASS keyRange.upper is 42
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(32) is true
+PASS keyRange.contains(42) is false
 IDBKeyRange.bound(33,43, true, false)
 PASS keyRange.lower is 33
 PASS keyRange.upper is 43
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(33) is false
+PASS keyRange.contains(43) is true
 IDBKeyRange.bound(34,44, true, true)
 PASS keyRange.lower is 34
 PASS keyRange.upper is 44
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(34) is false
+PASS keyRange.contains(44) is false
 IDBKeyRange.bound(30.1,40.2, undefined, undefined)
 PASS keyRange.lower is 30.1
 PASS keyRange.upper is 40.2
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(30.1) is true
+PASS keyRange.contains(40.2) is true
 IDBKeyRange.bound(31.3,41.4, false, false)
 PASS keyRange.lower is 31.3
 PASS keyRange.upper is 41.4
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(31.3) is true
+PASS keyRange.contains(41.4) is true
 IDBKeyRange.bound(32.5,42.6, false, true)
 PASS keyRange.lower is 32.5
 PASS keyRange.upper is 42.6
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(32.5) is true
+PASS keyRange.contains(42.6) is false
 IDBKeyRange.bound(33.7,43.8, true, false)
 PASS keyRange.lower is 33.7
 PASS keyRange.upper is 43.8
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
+PASS keyRange.contains(33.7) is false
+PASS keyRange.contains(43.8) is true
 IDBKeyRange.bound(34.9,44, true, true)
 PASS keyRange.lower is 34.9
 PASS keyRange.upper is 44
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
+PASS keyRange.contains(34.9) is false
+PASS keyRange.contains(44) is false
 IDBKeyRange.bound('aaa','aba', false, false)
 PASS keyRange.lower is 'aaa'
 PASS keyRange.upper is 'aba'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains('aaa') is true
+PASS keyRange.contains('aba') is true
 IDBKeyRange.bound('aab','abb', undefined, undefined)
 PASS keyRange.lower is 'aab'
 PASS keyRange.upper is 'abb'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains('aab') is true
+PASS keyRange.contains('abb') is true
 IDBKeyRange.bound('aac','abc', false, false)
 PASS keyRange.lower is 'aac'
 PASS keyRange.upper is 'abc'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is false
+PASS keyRange.contains('aac') is true
+PASS keyRange.contains('abc') is true
 IDBKeyRange.bound('aad','abd', false, true)
 PASS keyRange.lower is 'aad'
 PASS keyRange.upper is 'abd'
 PASS keyRange.lowerOpen is false
 PASS keyRange.upperOpen is true
+PASS keyRange.contains('aad') is true
+PASS keyRange.contains('abd') is false
 IDBKeyRange.bound('aae','abe', true, false)
 PASS keyRange.lower is 'aae'
 PASS keyRange.upper is 'abe'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is false
+PASS keyRange.contains('aae') is false
+PASS keyRange.contains('abe') is true
 IDBKeyRange.bound('aaf','abf', true, true)
 PASS keyRange.lower is 'aaf'
 PASS keyRange.upper is 'abf'
 PASS keyRange.lowerOpen is true
 PASS keyRange.upperOpen is true
+PASS keyRange.contains('aaf') is false
+PASS keyRange.contains('abf') is false
 Passing an invalid key into only({})
 Expecting exception from IDBKeyRange.only({})
 PASS Exception was thrown.
@@ -270,6 +367,12 @@ PASS code is 0
 PASS ename is 'DataError'
 Exception message: The data provided does not meet requirements.
 Equal keys, none of the bounds is open, bound(4, 4, false, false)
+Passing an invalid key in to IDBKeyRange.contains({})
+Expecting exception from invalidKeyKeyRange.contains({})
+PASS Exception was thrown.
+PASS code is 0
+PASS ename is 'DataError'
+Exception message: Failed to execute 'contains' on 'IDBKeyRange': The passed-in value is not a valid IndexedDB key.
 PASS successfullyParsed is true
 
 TEST COMPLETE
