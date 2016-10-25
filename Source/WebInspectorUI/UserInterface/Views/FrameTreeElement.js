@@ -46,9 +46,6 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         frame.domTree.addEventListener(WebInspector.DOMTree.Event.ContentFlowWasRemoved, this._childContentFlowWasRemoved, this);
         frame.domTree.addEventListener(WebInspector.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
 
-        if (this._frame.isMainFrame())
-            this._downloadingPage = false;
-
         this.shouldRefreshChildren = true;
         this.folderSettingsKey = this._frame.url.hash;
 
