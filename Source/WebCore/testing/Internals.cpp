@@ -2966,49 +2966,13 @@ void Internals::setPageMuted(const String& states)
         page->setMuted(state);
 }
 
-String Internals::pageMediaState()
+bool Internals::isPagePlayingAudio()
 {
     Document* document = contextDocument();
     if (!document || !document->page())
-        return emptyString();
+        return false;
 
-    WebCore::MediaProducer::MediaStateFlags state = document->page()->mediaState();
-    StringBuilder string;
-    if (state & MediaProducer::IsPlayingAudio)
-        string.append("IsPlayingAudio,");
-    if (state & MediaProducer::IsPlayingVideo)
-        string.append("IsPlayingVideo,");
-    if (state & MediaProducer::IsPlayingToExternalDevice)
-        string.append("IsPlayingToExternalDevice,");
-    if (state & MediaProducer::RequiresPlaybackTargetMonitoring)
-        string.append("RequiresPlaybackTargetMonitoring,");
-    if (state & MediaProducer::ExternalDeviceAutoPlayCandidate)
-        string.append("ExternalDeviceAutoPlayCandidate,");
-    if (state & MediaProducer::DidPlayToEnd)
-        string.append("DidPlayToEnd,");
-    if (state & MediaProducer::IsSourceElementPlaying)
-        string.append("IsSourceElementPlaying,");
-
-    if (state & MediaProducer::IsNextTrackControlEnabled)
-        string.append("IsNextTrackControlEnabled,");
-    if (state & MediaProducer::IsPreviousTrackControlEnabled)
-        string.append("IsPreviousTrackControlEnabled,");
-
-    if (state & MediaProducer::HasPlaybackTargetAvailabilityListener)
-        string.append("HasPlaybackTargetAvailabilityListener,");
-    if (state & MediaProducer::HasAudioOrVideo)
-        string.append("HasAudioOrVideo,");
-    if (state & MediaProducer::HasActiveMediaCaptureDevice)
-        string.append("HasActiveMediaCaptureDevice,");
-    if (state & MediaProducer::HasMediaCaptureDevice)
-        string.append("HasMediaCaptureDevice,");
-
-    if (string.isEmpty())
-        string.append("IsNotPlaying");
-    else
-        string.resize(string.length() - 1);
-
-    return string.toString();
+    return !!(document->page()->mediaState() & MediaProducer::IsPlayingAudio);
 }
 
 void Internals::setPageDefersLoading(bool defersLoading)

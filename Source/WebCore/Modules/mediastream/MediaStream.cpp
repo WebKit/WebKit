@@ -274,8 +274,7 @@ MediaProducer::MediaStateFlags MediaStream::mediaState() const
     if (!m_isActive)
         return state;
 
-    state |= HasMediaCaptureDevice;
-    if (m_private->isProducingData())
+    if (m_externallyMuted || m_private->isProducingData())
         state |= HasActiveMediaCaptureDevice;
 
     if (m_private->hasAudio() || m_private->hasVideo())

@@ -7,27 +7,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 *** Mock capture devices should be enabled by default
 PASS mediaStream is an instance of Object
 PASS mediaStream.getTracks().length is 2
-PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') became true
 
 *** Muting capture devices
 EVENT: mute
-PASS muteChangedEvent.target.muted is true
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
-EVENT: mute
-PASS muteChangedEvent.target.muted is true
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
+PASS event.target.muted is true
 
-PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') became false
+EVENT: mute
+PASS event.target.muted is true
+
 
 *** Unmuting capture devices
 EVENT: unmute
-PASS muteChangedEvent.target.muted is false
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
-EVENT: unmute
-PASS muteChangedEvent.target.muted is false
-PASS window.internals.pageMediaState().includes('HasMediaCaptureDevice') is true
+PASS event.target.muted is false
 
-PASS window.internals.pageMediaState().includes('HasActiveMediaCaptureDevice') became true
+EVENT: unmute
+PASS event.target.muted is false
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
