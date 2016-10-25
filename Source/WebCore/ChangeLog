@@ -1,3 +1,22 @@
+2016-10-24  Alex Christensen  <achristensen@webkit.org>
+
+        URLParser should match old URL::parse with %2E in path
+        https://bugs.webkit.org/show_bug.cgi?id=163929
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by updated API tests, which show that URLParser now matches URL::parse in these cases.
+        Also covered by newly failing web platform tests, which were failing before URLParser was enabled.
+        If https://github.com/whatwg/url/issues/87 is resolved we can change behavior to match.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::isSingleDotPathSegment):
+        (WebCore::URLParser::isDoubleDotPathSegment):
+        (WebCore::URLParser::consumeSingleDotPathSegment):
+        (WebCore::URLParser::consumeDoubleDotPathSegment):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::isPercentEncodedDot): Deleted.
+
 2016-10-24  Zalan Bujtas  <zalan@apple.com>
 
         Do not update selection rect on dirty lineboxes.
