@@ -1,3 +1,114 @@
+2016-10-24  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move more types over to the new JSConverter based toJS functions
+        https://bugs.webkit.org/show_bug.cgi?id=163920
+
+        Reviewed by Darin Adler.
+
+        - Adds WebIDL-extension type IDLDate, and use it for Date conversions.
+        - Move JSDOMIterator over to using IDLType based conversions. Make them more
+          explicit by adding a traits template argument which describes the iterator.
+        - Add correct parsing for WebIDL iterable, parsing the parameter types into
+          domTypes.
+        - Support non-Optional nullable types via trait-like functions on IDLTypes.
+
+
+        * bindings/generic/IDLTypes.h:
+        (WebCore::IDLType::isNullValue):
+        (WebCore::IDLType::extractValueFromNullable):
+        (WebCore::IDLString::isNullValue):
+        (WebCore::IDLString::extractValueFromNullable):
+        (WebCore::IDLInterface::isNullValue):
+        (WebCore::IDLInterface::extractValueFromNullable):
+        (WebCore::IDLDate::isNullValue):
+        (WebCore::IDLDate::extractValueFromNullable):
+        Add isNullValue and extractValueFromNullable functions to allow non-Optional
+        based nullable types.
+        
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::stylePropertyGetter):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::invokeAttributeChangedCallback):
+        Switch to IDLType based toJS.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringOrNull): Deleted.
+        (WebCore::jsDateOrNull): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsPair): Deleted.
+        (WebCore::toJSNullableString): Deleted.
+        Remove now unusued toJS functions.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::JSConverter<IDLNullable<T>>::convert):
+        Use new functions to detect and extract nullable values.
+
+        (WebCore::Converter<IDLBufferSource>::convert):
+        Moved to be with the other converters.
+
+        (WebCore::Converter<IDLDate>::convert):
+        (WebCore::JSConverter<IDLDate>::convert):
+        Added.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::jsPair):
+        (WebCore::iteratorCreate):
+        (WebCore::IteratorTraits>::asJS):
+        (WebCore::appendForEachArguments):
+        (WebCore::iteratorForEach):
+        (WebCore::IteratorTraits>::destroy):
+        (WebCore::IteratorTraits>::next):
+        (WebCore::IteratorTraits>::finishCreation):
+        (WebCore::IteratorInspector::decltype): Deleted.
+        (WebCore::IteratorInspector::test): Deleted.
+        (WebCore::JSDOMIterator<JSWrapper>::asJS): Deleted.
+        (WebCore::JSDOMIterator<JSWrapper>::destroy): Deleted.
+        (WebCore::JSDOMIterator<JSWrapper>::next): Deleted.
+        (WebCore::JSDOMIteratorPrototype<JSWrapper>::next): Deleted.
+        (WebCore::JSDOMIteratorPrototype<JSWrapper>::finishCreation): Deleted.
+        Switch to new Traits based model, and have the generated code pass in 
+        the type (map or set) and key/value types. With the explicit types known,
+        we can use the new toJS functions.
+        
+        Also, moved the jsPair functions here from JSDOMBinding.h, since this was
+        the only place it was used.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementationIterableFunctions):
+        Add iterator trait definition and update for new parameters to JSDOMIterator
+        and JSDOMIteratorPrototype.
+
+        (GetBaseIDLType):
+        Add IDLDate, and move IDLBufferSource up to the simple path.
+
+        (JSValueToNativeIsHandledByDOMConvert):
+        Allow Date.
+
+        (JSValueToNative):
+        Remove special case for Date.
+
+        (NativeToJSValueIsHandledByDOMConvert):
+        Allow Date and remove restriction of nullable string-like types.
+
+        (NativeToJSValueDOMConvertNeedsState):
+        Add Date to list of types needing state.
+
+        (NativeToJSValue):
+        Remove special cases for Date and nullable-strings.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseOptionalIterableInterface):
+        Add correct parsing of iterable.
+
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        Update test results.
+
 2016-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add "has capture device" bit to media state flags

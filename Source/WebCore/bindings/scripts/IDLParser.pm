@@ -103,8 +103,10 @@ struct( domSignature => {
 # Used to represent Iterable interfaces
 struct( domIterable => {
     isKeyValue => '$',# Is map iterable or set iterable
-    keyType => '$',   # Key type for map iterables
-    valueType => '$', # Value type for map or set iterables
+    keyType => '$',   # Key type name for map iterables (DEPRECATED - please use idlKeyType)
+    valueType => '$', # Value type name for map or set iterables (DEPRECATED - please use idlValueType)
+    idlKeyType => '$',   # Key type for map iterables
+    idlValueType => '$', # Value type for map or set iterables
     functions => '@', # Iterable functions (entries, keys, values, [Symbol.Iterator], forEach)
     extendedAttributes => '$', # Extended attributes
 });
@@ -1514,15 +1516,21 @@ sub parseOptionalIterableInterface
     push(@{$newDataNode->functions}, $forEachFunction);
 
     $self->assertTokenValue($self->getToken(), "<", __LINE__);
-    my $type1 = $self->getToken()->value();
+    my $type1 = $self->parseType();
+
     if ($self->nextToken()->value() eq ",") {
         $self->assertTokenValue($self->getToken(), ",", __LINE__);
+
+        my $type2 = $self->parseType();
         $newDataNode->isKeyValue(1);
-        $newDataNode->keyType($type1);
-        $newDataNode->valueType($self->getToken()->value());
+        $newDataNode->idlKeyType($type1);
+        $newDataNode->keyType($type1->name);
+        $newDataNode->idlValueType($type2);
+        $newDataNode->valueType($type2->name);
     } else {
         $newDataNode->isKeyValue(0);
-        $newDataNode->valueType($type1);
+        $newDataNode->idlValueType($type1);
+        $newDataNode->valueType($type1->name);
     }
     $self->assertTokenValue($self->getToken(), ">", __LINE__);
 

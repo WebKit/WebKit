@@ -264,8 +264,14 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseCa
     return JSValue::encode(jsUndefined());
 }
 
-using TestNodeIterator = JSDOMIterator<JSTestNode>;
-using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode>;
+struct TestNodeIteratorTraits {
+    static constexpr JSDOMIteratorType type = JSDOMIteratorType::Set;
+    using KeyType = void;
+    using ValueType = IDLInterface<TestNode>;
+};
+
+using TestNodeIterator = JSDOMIterator<JSTestNode, TestNodeIteratorTraits>;
+using TestNodeIteratorPrototype = JSDOMIteratorPrototype<JSTestNode, TestNodeIteratorTraits>;
 
 template<>
 const JSC::ClassInfo TestNodeIterator::s_info = { "TestNode Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(TestNodeIterator) };
@@ -275,7 +281,7 @@ const JSC::ClassInfo TestNodeIteratorPrototype::s_info = { "TestNode Iterator", 
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionSymbolIteratorCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Value));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC::ExecState* state)
@@ -285,7 +291,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionSymbolIterator(JSC:
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionEntriesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::KeyValue));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::KeyValue));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecState* state)
@@ -295,7 +301,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionEntries(JSC::ExecSt
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionKeysCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Key));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Key));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState* state)
@@ -305,7 +311,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionKeys(JSC::ExecState
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionValuesCaller(ExecState*, JSTestNode* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<JSTestNode>(*thisObject, IterationKind::Value));
+    return JSValue::encode(iteratorCreate<TestNodeIterator>(*thisObject, IterationKind::Value));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecState* state)
@@ -315,7 +321,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionValues(JSC::ExecSta
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionForEachCaller(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(iteratorForEach<JSTestNode>(*state, *thisObject, throwScope));
+    return JSValue::encode(iteratorForEach<TestNodeIterator>(*state, *thisObject, throwScope));
 }
 
 JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecState* state)

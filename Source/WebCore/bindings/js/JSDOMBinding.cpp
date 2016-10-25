@@ -64,13 +64,6 @@ void addImpureProperty(const AtomicString& propertyName)
     JSDOMWindow::commonVM().addImpureProperty(propertyName);
 }
 
-JSValue jsStringOrNull(ExecState* exec, const String& s)
-{
-    if (s.isNull())
-        return jsNull();
-    return jsStringWithCache(exec, s);
-}
-
 JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)
 {
     if (s.isNull())
@@ -87,13 +80,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const String& s)
 
 JSValue jsString(ExecState* exec, const URL& url)
 {
-    return jsStringWithCache(exec, url.string());
-}
-
-JSValue jsStringOrNull(ExecState* exec, const URL& url)
-{
-    if (url.isNull())
-        return jsNull();
     return jsStringWithCache(exec, url.string());
 }
 
@@ -168,14 +154,6 @@ String valueToUSVStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 
 JSValue jsDate(ExecState* exec, double value)
 {
-    return DateInstance::create(exec->vm(), exec->lexicalGlobalObject()->dateStructure(), value);
-}
-
-JSValue jsDateOrNull(ExecState* exec, double value)
-{
-    // For nullable Date types, we use NaN as null value.
-    if (std::isnan(value))
-        return jsNull();
     return DateInstance::create(exec->vm(), exec->lexicalGlobalObject()->dateStructure(), value);
 }
 

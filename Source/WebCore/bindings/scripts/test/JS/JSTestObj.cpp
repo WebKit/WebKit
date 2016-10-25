@@ -3130,7 +3130,7 @@ static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringOrNull(&state, impl.nullableStringAttribute());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, impl.nullableStringAttribute());
     return result;
 }
 
@@ -3162,7 +3162,7 @@ static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringOrNull(&state, impl.nullableStringSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, impl.nullableStringSettableAttribute());
     return result;
 }
 
@@ -3178,7 +3178,7 @@ static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = jsStringOrNull(&state, impl.nullableUSVStringSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLUSVString>>(state, impl.nullableUSVStringSettableAttribute());
     return result;
 }
 
@@ -5128,7 +5128,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringMethod
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    JSValue result = jsStringOrNull(state, impl.nullableStringMethod());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(*state, impl.nullableStringMethod());
     return JSValue::encode(result);
 }
 
@@ -5137,7 +5137,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionNullableStringStaticMet
     VM& vm = state->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
-    JSValue result = jsStringOrNull(state, TestObj::nullableStringStaticMethod());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(*state, TestObj::nullableStringStaticMethod());
     return JSValue::encode(result);
 }
 
@@ -5157,7 +5157,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionNullableStringSpecia
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto index = convert<IDLUnsignedLong>(*state, state->uncheckedArgument(0), NormalConversion);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    JSValue result = jsStringOrNull(state, impl.nullableStringSpecialMethod(WTFMove(index)));
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(*state, impl.nullableStringSpecialMethod(WTFMove(index)));
     return JSValue::encode(result);
 }
 

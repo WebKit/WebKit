@@ -164,10 +164,8 @@ template<typename T> struct Converter<IDLNullable<T>> : DefaultConverter<IDLNull
         // NOTE: Handled elsewhere.
 
         // 2. Otherwise, if V is null or undefined, then return the IDL nullable type T? value null.
-        if (value.isUndefinedOrNull()) {
-            // FIXME: Should we make it part of the IDLType to provide the null value?
-            return ReturnType();
-        }
+        if (value.isUndefinedOrNull())
+            return T::nullValue();
 
         // 3. Otherwise, return the result of converting V using the rules for the inner IDL type T.
         return Converter<T>::convert(state, value);
@@ -180,26 +178,23 @@ template<typename T> struct JSConverter<IDLNullable<T>> {
     static constexpr bool needsState = JSConverter<T>::needsState;
     static constexpr bool needsGlobalObject = JSConverter<T>::needsGlobalObject;
 
-    // FIXME: These only work if ImplementationType is an Optional. We should generalize
-    // this so it can work for types that don't use Optional to represent nullness, like
-    // String and interface types.
     static JSC::JSValue convert(const ImplementationType& value)
     {
-        if (!value)
+        if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(value.value());
+        return JSConverter<T>::convert(T::extractValueFromNullable(value));
     }
     static JSC::JSValue convert(JSC::ExecState& state, const ImplementationType& value)
     {
-        if (!value)
+        if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(state, value.value());
+        return JSConverter<T>::convert(state, T::extractValueFromNullable(value));
     }
     static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ImplementationType& value)
     {
-        if (!value)
+        if (T::isNullValue(value))
             return JSC::jsNull();
-        return JSConverter<T>::convert(state, globalObject, value.value());
+        return JSConverter<T>::convert(state, globalObject, T::extractValueFromNullable(value));
     }
 };
 
@@ -1010,6 +1005,47 @@ template<typename... T> struct JSConverter<IDLUnion<T...>> {
 };
 
 // MARK: -
+// MARK: BufferSource type
+
+template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource> {
+    using ReturnType = BufferSource;
+
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        JSC::VM& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        if (JSC::ArrayBuffer* buffer = JSC::toArrayBuffer(value))
+            return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
+        if (RefPtr<JSC::ArrayBufferView> bufferView = toArrayBufferView(value))
+            return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
+
+        throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as BufferSource arguments"));
+        return { nullptr, 0 };
+    }
+};
+
+// MARK: -
+// MARK: Date type
+
+template<> struct Converter<IDLDate> : DefaultConverter<IDLDate> {
+    static double convert(JSC::ExecState& state, JSC::JSValue value)
+    {
+        return valueToDate(&state, value);
+    }
+};
+
+template<> struct JSConverter<IDLDate> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(JSC::ExecState& state, double value)
+    {
+        return jsDate(&state, value);
+    }
+};
+
+// MARK: -
 // MARK: Support for variadic tail convertions
 
 namespace Detail {
@@ -1075,26 +1111,5 @@ template<typename IDLType> typename Detail::VariadicConverter<IDLType>::Result c
 
     return { length, WTFMove(result) };
 }
-
-// MARK: -
-// MARK: BufferSource type
-
-template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource> {
-    using ReturnType = BufferSource;
-
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
-    {
-        JSC::VM& vm = state.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        if (JSC::ArrayBuffer* buffer = JSC::toArrayBuffer(value))
-            return { static_cast<uint8_t*>(buffer->data()), buffer->byteLength() };
-        if (RefPtr<JSC::ArrayBufferView> bufferView = toArrayBufferView(value))
-            return { static_cast<uint8_t*>(bufferView->baseAddress()), bufferView->byteLength() };
-
-        throwTypeError(&state, scope, ASCIILiteral("Only ArrayBuffer and ArrayBufferView objects can be passed as BufferSource arguments"));
-        return { nullptr, 0 };
-    }
-};
 
 } // namespace WebCore

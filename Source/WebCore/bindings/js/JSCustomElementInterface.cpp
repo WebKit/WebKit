@@ -289,10 +289,10 @@ void JSCustomElementInterface::setAttributeChangedCallback(JSC::JSObject* callba
 void JSCustomElementInterface::invokeAttributeChangedCallback(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
 {
     invokeCallback(element, m_attributeChangedCallback.get(), [&](ExecState* state, JSDOMGlobalObject*, MarkedArgumentBuffer& args) {
-        args.append(jsStringWithCache(state, attributeName.localName()));
-        args.append(jsStringOrNull(state, oldValue));
-        args.append(jsStringOrNull(state, newValue));
-        args.append(jsStringOrNull(state, attributeName.namespaceURI()));
+        args.append(toJS<IDLDOMString>(*state, attributeName.localName()));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*state, oldValue));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*state, newValue));
+        args.append(toJS<IDLNullable<IDLDOMString>>(*state, attributeName.namespaceURI()));
     });
 }
 

@@ -4865,15 +4865,29 @@ sub GenerateImplementationIterableFunctions
 
     return unless IsKeyValueIterableInterface($interface);
 
+    my $iteratorName = "${interfaceName}Iterator";
+    my $iteratorPrototypeName = "${interfaceName}IteratorPrototype";
+
+    my $iteratorTraitsName = "${interfaceName}IteratorTraits";
+    my $iteratorTraitsType = $interface->iterable->isKeyValue ? "JSDOMIteratorType::Map" : "JSDOMIteratorType::Set";
+    my $iteratorTraitsKeyType = $interface->iterable->isKeyValue ? GetIDLType($interface, $interface->iterable->idlKeyType) : "void";
+    my $iteratorTraitsValueType = GetIDLType($interface, $interface->iterable->idlValueType);
+
     push(@implContent,  <<END);
-using ${interfaceName}Iterator = JSDOMIterator<${className}>;
-using ${interfaceName}IteratorPrototype = JSDOMIteratorPrototype<${className}>;
+struct ${iteratorTraitsName} {
+    static constexpr JSDOMIteratorType type = ${iteratorTraitsType};
+    using KeyType = ${iteratorTraitsKeyType};
+    using ValueType = ${iteratorTraitsValueType};
+};
+
+using ${iteratorName} = JSDOMIterator<${className}, ${iteratorTraitsName}>;
+using ${iteratorPrototypeName} = JSDOMIteratorPrototype<${className}, ${iteratorTraitsName}>;
 
 template<>
-const JSC::ClassInfo ${interfaceName}Iterator::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${interfaceName}Iterator) };
+const JSC::ClassInfo ${iteratorName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${iteratorName}) };
 
 template<>
-const JSC::ClassInfo ${interfaceName}IteratorPrototype::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${interfaceName}IteratorPrototype) };
+const JSC::ClassInfo ${iteratorPrototypeName}::s_info = { "${visibleInterfaceName} Iterator", &Base::s_info, 0, CREATE_METHOD_TABLE(${iteratorPrototypeName}) };
 
 END
 
@@ -4885,7 +4899,7 @@ END
             push(@implContent,  <<END);
 static inline EncodedJSValue ${functionName}Caller(ExecState* state, JS$interfaceName* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(iteratorForEach<${className}>(*state, *thisObject, throwScope));
+    return JSValue::encode(iteratorForEach<${iteratorName}>(*state, *thisObject, throwScope));
 }
 
 END
@@ -4898,7 +4912,7 @@ END
             push(@implContent,  <<END);
 static inline EncodedJSValue ${functionName}Caller(ExecState*, JS$interfaceName* thisObject, JSC::ThrowScope&)
 {
-    return JSValue::encode(iteratorCreate<${className}>(*thisObject, IterationKind::${iterationKind}));
+    return JSValue::encode(iteratorCreate<${iteratorName}>(*thisObject, IterationKind::${iterationKind}));
 }
 
 END
@@ -5047,6 +5061,10 @@ sub GetBaseIDLType
         "DOMString" => "IDLDOMString",
         "ByteString" => "IDLByteString",
         "USVString" => "IDLUSVString",
+        
+        # Non-WebIDL extensions
+        "Date" => "IDLDate",
+        "BufferSource" => "IDLBufferSource",
     );
 
     return $IDLTypes{$idlType->name} if exists $IDLTypes{$idlType->name};
@@ -5055,7 +5073,6 @@ sub GetBaseIDLType
     return "IDLSequence<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsSequenceType($idlType->name);
     return "IDLFrozenArray<" . GetIDLType($interface, @{$idlType->subtypes}[0]) . ">" if $codeGenerator->IsFrozenArrayType($idlType->name);
     return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $idlType)) . ">" if $idlType->isUnion;
-    return "IDLBufferSource" if $idlType->name eq "BufferSource";
     return "IDLInterface<" . $idlType->name . ">";
 }
 
@@ -5177,9 +5194,10 @@ sub JSValueToNativeIsHandledByDOMConvert
     my $idlType = shift;
 
     return 1 if $idlType->isUnion;
-    return 1 if $idlType->name eq "BufferSource";
     return 1 if $idlType->name eq "any";
     return 1 if $idlType->name eq "boolean";
+    return 1 if $idlType->name eq "Date";
+    return 1 if $idlType->name eq "BufferSource";
     return 1 if $codeGenerator->IsIntegerType($idlType->name);
     return 1 if $codeGenerator->IsFloatingPointType($idlType->name);
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
@@ -5241,7 +5259,6 @@ sub JSValueToNative
         return ("Dictionary($statePointer, $value)", 0);
     }
 
-    return ("valueToDate($statePointer, $value)", 1) if $type eq "Date";
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);
     return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1) if $codeGenerator->IsEnumType($type);
 
@@ -5258,11 +5275,10 @@ sub JSValueToNative
 sub NativeToJSValueIsHandledByDOMConvert
 {
     my ($idlType) = @_;
-
-    return 0 if $idlType->isNullable && ($codeGenerator->IsStringType($idlType->name) || $codeGenerator->IsEnumType($idlType->name));
     
     return 1 if $idlType->name eq "any";
     return 1 if $idlType->name eq "boolean";
+    return 1 if $idlType->name eq "Date";
     return 1 if $codeGenerator->IsIntegerType($idlType->name);
     return 1 if $codeGenerator->IsFloatingPointType($idlType->name);
     return 1 if $codeGenerator->IsStringType($idlType->name);
@@ -5282,6 +5298,7 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
     return 1 if $codeGenerator->IsStringType($idlType->name);
     return 1 if $codeGenerator->IsEnumType($idlType->name);
+    return 1 if $idlType->name eq "Date";
 
     return 0;
 }
@@ -5358,18 +5375,6 @@ sub NativeToJSValue
         push(@conversionArguments, "$value");
 
         return "toJS<$IDLType>(" . join(", ", @conversionArguments) . ")";
-    }
-
-    return "toJSNullableDate($stateReference, throwScope, $value)" if $type eq "Date" && $isNullable && $mayThrowException;
-    return "jsDateOrNull($statePointer, $value)" if $type eq "Date" && $isNullable;
-    return "toJSDate($stateReference, throwScope, $value)" if $type eq "Date" && $mayThrowException;
-    return "jsDate($statePointer, $value)" if $type eq "Date";
-
-    if ($codeGenerator->IsStringType($type)) {
-        AddToImplIncludes("URL.h", $conditional);
-        return "toJSNullableString($stateReference, throwScope, $value)" if $isNullable && $mayThrowException;
-        return "jsStringOrNull($statePointer, $value)" if $isNullable;
-        assert("Unhandled string type");
     }
 
     if ($type eq "SerializedScriptValue") {

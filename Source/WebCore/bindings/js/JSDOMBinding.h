@@ -202,9 +202,6 @@ WEBCORE_EXPORT void setDOMExceptionSlow(JSC::ExecState*, JSC::ThrowScope&, Excep
 
 JSC::JSValue jsString(JSC::ExecState*, const URL&); // empty if the URL is null
 
-JSC::JSValue jsStringOrNull(JSC::ExecState*, const String&); // null if the string is null
-JSC::JSValue jsStringOrNull(JSC::ExecState*, const URL&); // null if the URL is null
-
 JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const String&); // undefined if the string is null
 JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const URL&); // undefined if the URL is null
 
@@ -257,7 +254,6 @@ WEBCORE_EXPORT int64_t toInt64(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT uint64_t toUInt64(JSC::ExecState&, JSC::JSValue);
 
 JSC::JSValue jsDate(JSC::ExecState*, double value);
-JSC::JSValue jsDateOrNull(JSC::ExecState*, double value);
 
 // NaN if the value can't be converted to a date.
 double valueToDate(JSC::ExecState*, JSC::JSValue);
@@ -273,16 +269,11 @@ template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, Ref<
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, RefPtr<T>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<T>&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const Vector<RefPtr<T>>&);
-JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const String&);
 JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, const JSC::PrivateName&);
 
 JSC::JSValue toJSIterator(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSValue);
 template<typename T> JSC::JSValue toJSIterator(JSC::ExecState&, JSDOMGlobalObject&, const T&);
-
 JSC::JSValue toJSIteratorEnd(JSC::ExecState&);
-
-JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, JSC::JSValue, JSC::JSValue);
-template<typename FirstType, typename SecondType> JSC::JSValue jsPair(JSC::ExecState&, JSDOMGlobalObject*, const FirstType&, const SecondType&);
 
 RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue);
 RefPtr<JSC::Int8Array> toInt8Array(JSC::JSValue);
@@ -405,9 +396,6 @@ struct BindingCaller {
 // ExceptionOr handling.
 void propagateException(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<void>&&);
 template<typename T> JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&&);
-JSC::JSValue toJSDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<double>&&);
-JSC::JSValue toJSNullableDate(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<Optional<double>>&&);
-JSC::JSValue toJSNullableString(JSC::ExecState&, JSC::ThrowScope&, ExceptionOr<String>&&);
 template<typename T> JSC::JSValue toJSNewlyCreated(JSC::ExecState&, JSDOMGlobalObject&, JSC::ThrowScope&, ExceptionOr<T>&& value);
 
 // Inline functions and template definitions.
@@ -683,11 +671,6 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
     return array;
 }
 
-inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
-{
-    return jsStringOrNull(exec, value);
-}
-
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject*, const JSC::PrivateName& privateName)
 {
     return JSC::Symbol::create(exec->vm(), privateName.uid());
@@ -706,19 +689,6 @@ template<typename T> inline JSC::JSValue toJSIterator(JSC::ExecState& state, JSD
 inline JSC::JSValue toJSIteratorEnd(JSC::ExecState& state)
 {
     return createIteratorResultObject(&state, JSC::jsUndefined(), true);
-}
-
-inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, JSC::JSValue value1, JSC::JSValue value2)
-{
-    JSC::MarkedArgumentBuffer args;
-    args.append(value1);
-    args.append(value2);
-    return constructArray(&state, 0, globalObject, args);
-}
-
-template<typename FirstType, typename SecondType> inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject* globalObject, const FirstType& value1, const SecondType& value2)
-{
-    return jsPair(state, globalObject, toJS(&state, globalObject, value1), toJS(&state, globalObject, value2));
 }
 
 inline RefPtr<JSC::ArrayBufferView> toArrayBufferView(JSC::JSValue value)
@@ -815,15 +785,6 @@ template<typename T> inline JSC::JSValue toJSNewlyCreated(JSC::ExecState& state,
         return { };
     }
     return toJSNewlyCreated(&state, &globalObject, value.releaseReturnValue());
-}
-
-inline JSC::JSValue toJSNullableString(JSC::ExecState& state, JSC::ThrowScope& throwScope, ExceptionOr<String>&& value)
-{
-    if (UNLIKELY(value.hasException())) {
-        propagateException(state, throwScope, value.releaseException());
-        return { };
-    }
-    return jsStringOrNull(&state, value.releaseReturnValue());
 }
 
 } // namespace WebCore

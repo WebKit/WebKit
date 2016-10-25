@@ -41,10 +41,12 @@ template <typename Value> class DOMPromise;
 template<typename T>
 struct IDLType {
     using ImplementationType = T;
-    using NullableType = Optional<ImplementationType>;
-};
 
-struct IDLDummy;
+    using NullableType = Optional<ImplementationType>;
+    static NullableType nullValue() { return Nullopt; }
+    static bool isNullValue(const NullableType& value) { return !value; }
+    static ImplementationType extractValueFromNullable(const NullableType& value) { return value.value(); }
+};
 
 // IDLUnsupportedType is a special type that serves as a base class for currently unsupported types.
 struct IDLUnsupportedType : IDLType<void> { };
@@ -78,6 +80,9 @@ struct IDLUnrestrictedDouble : IDLFloatingPoint<double, true> { };
 
 struct IDLString : IDLType<String> {
     using NullableType = String;
+    static String nullValue() { return String(); }
+    static bool isNullValue(const String& value) { return value.isNull(); }
+    static const String& extractValueFromNullable(const String& value) { return value; }
 };
 struct IDLDOMString : IDLString { };
 struct IDLByteString : IDLUnsupportedType { };
@@ -87,7 +92,11 @@ struct IDLObject : IDLUnsupportedType { };
 
 template<typename T> struct IDLInterface : IDLType<RefPtr<T>> {
     using RawType = T;
+
     using NullableType = RefPtr<T>;
+    static RefPtr<T> nullValue() { return nullptr; }
+    static bool isNullValue(const RefPtr<T>& value) { return !value; }
+    static const RefPtr<T>& extractValueFromNullable(const RefPtr<T>& value) { return value; }
 };
 
 template<typename T> struct IDLDictionary : IDLType<T> { };
@@ -117,6 +126,15 @@ struct IDLDOMException : IDLUnsupportedType { };
 template<typename... Ts>
 struct IDLUnion : IDLType<Variant<typename Ts::ImplementationType...>> {
     using TypeList = brigand::list<Ts...>;
+};
+
+// Non-WebIDL extensions
+
+struct IDLDate : IDLType<double> { 
+    using NullableType = double;
+    static double nullValue() { return std::numeric_limits<double>::quiet_NaN(); }
+    static bool isNullValue(double value) { return std::isnan(value); }
+    static double extractValueFromNullable(double value) { return value; }
 };
 
 struct IDLBufferSource : IDLType<BufferSource> { };
