@@ -919,7 +919,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         if (effect.writes) {
             if (effect.writes == DOMJIT::HeapRange::top())
-                write(World);
+                write(Heap);
             else
                 write(AbstractHeap(DOMState, effect.writes.rawRepresentation()));
         }
