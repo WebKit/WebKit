@@ -1,3 +1,16 @@
+2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207783.
+
+        This change appears to have caused fast/selectors/invalid-
+        functional-pseudo-class.html to crash on iOS and macOS
+
+        Reverted changeset:
+
+        "[CSS Parser] Fix :lang argument parsing"
+        https://bugs.webkit.org/show_bug.cgi?id=163913
+        http://trac.webkit.org/changeset/207783
+
 2016-10-24  Brady Eidson  <beidson@apple.com>
 
         IndexedDB 2.0: Support new IDBKeyRange interfaces.

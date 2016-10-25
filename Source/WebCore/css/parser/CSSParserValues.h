@@ -235,7 +235,6 @@ public:
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);
-    void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
