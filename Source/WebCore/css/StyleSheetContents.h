@@ -41,6 +41,7 @@ class Node;
 class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
+class StyleRuleNamespace;
 
 class StyleSheetContents final : public RefCounted<StyleSheetContents> {
 public:
@@ -104,6 +105,7 @@ public:
     // Rules other than @charset and @import.
     const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
     const Vector<RefPtr<StyleRuleImport>>& importRules() const { return m_importRules; }
+    const Vector<RefPtr<StyleRuleNamespace>>& namespaceRules() const { return m_namespaceRules; }
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
@@ -154,6 +156,7 @@ private:
 
     String m_encodingFromCharsetRule;
     Vector<RefPtr<StyleRuleImport>> m_importRules;
+    Vector<RefPtr<StyleRuleNamespace>> m_namespaceRules;
     Vector<RefPtr<StyleRuleBase>> m_childRules;
     typedef HashMap<AtomicString, AtomicString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;

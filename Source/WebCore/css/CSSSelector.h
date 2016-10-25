@@ -244,9 +244,13 @@ namespace WebCore {
         const CSSSelectorList* selectorList() const { return m_hasRareData ? m_data.m_rareData->m_selectorList.get() : nullptr; }
 
         void setValue(const AtomicString&);
-        void setAttribute(const QualifiedName&, bool isCaseInsensitive);
-        void setArgument(const AtomicString&);
+        
+        // FIXME-NEWPARSER: These two methods can go away once the old parser is gone.
+        void setAttribute(const QualifiedName&, bool);
         void setAttributeValueMatchingIsCaseInsensitive(bool);
+        void setAttribute(const QualifiedName&, bool convertToLowercase, AttributeMatchType);
+        void setNth(int a, int b);
+        void setArgument(const AtomicString&);
         void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
         void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
@@ -585,7 +589,7 @@ inline void CSSSelector::setAttributeValueMatchingIsCaseInsensitive(bool isCaseI
     ASSERT(isAttributeSelector() && match() != CSSSelector::Set);
     m_caseInsensitiveAttributeValueMatching = isCaseInsensitive;
 }
-
+    
 inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
 {
     return m_caseInsensitiveAttributeValueMatching;

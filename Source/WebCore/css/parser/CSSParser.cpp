@@ -64,9 +64,11 @@
 #include "CSSReflectValue.h"
 #include "CSSRevertValue.h"
 #include "CSSSelector.h"
+#include "CSSSelectorParser.h"
 #include "CSSShadowValue.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTokenizer.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSUnsetValue.h"
 #include "CSSValueKeywords.h"
@@ -1411,8 +1413,14 @@ Color CSSParser::parseSystemColor(const String& string, Document* document)
 
 void CSSParser::parseSelector(const String& string, CSSSelectorList& selectorList)
 {
-    m_selectorListForParseSelector = &selectorList;
+    if (m_context.useNewParser && m_context.mode != UASheetMode) {
+        CSSTokenizer::Scope scope(string);
+        selectorList = CSSSelectorParser::parseSelector(scope.tokenRange(), m_context, nullptr);
+        return;
+    }
 
+    m_selectorListForParseSelector = &selectorList;
+    
     setupParser("@-webkit-selector{", string, "}");
 
     cssyyparse(this);

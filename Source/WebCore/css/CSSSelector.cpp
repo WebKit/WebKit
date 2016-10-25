@@ -763,6 +763,14 @@ void CSSSelector::setAttribute(const QualifiedName& value, bool isCaseInsensitiv
     m_data.m_rareData->m_attributeCanonicalLocalName = isCaseInsensitive ? value.localName().convertToASCIILowercase() : value.localName();
 }
 
+void CSSSelector::setAttribute(const QualifiedName& value, bool convertToLowercase, AttributeMatchType matchType)
+{
+    createRareData();
+    m_data.m_rareData->m_attribute = value;
+    m_data.m_rareData->m_attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
+    m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
+}
+    
 void CSSSelector::setArgument(const AtomicString& value)
 {
     createRareData();
@@ -781,6 +789,16 @@ void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
     m_data.m_rareData->m_selectorList = WTFMove(selectorList);
 }
 
+void CSSSelector::setNth(int a, int b)
+{
+    createRareData();
+    m_parsedNth = true; // FIXME-NEWPARSER: Can remove this parsed boolean once old parser is gone.
+    m_data.m_rareData->m_a = a;
+    m_data.m_rareData->m_b = b;
+}
+    
+// FIXME-NEWPARSER: All the code to parse nth-child stuff can be removed when
+// the new parser is enabled.
 bool CSSSelector::parseNth() const
 {
     if (!m_hasRareData)

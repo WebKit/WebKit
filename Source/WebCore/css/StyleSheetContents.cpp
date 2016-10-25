@@ -80,6 +80,7 @@ StyleSheetContents::StyleSheetContents(const StyleSheetContents& o)
     , m_originalURL(o.m_originalURL)
     , m_encodingFromCharsetRule(o.m_encodingFromCharsetRule)
     , m_importRules(o.m_importRules.size())
+    , m_namespaceRules(o.m_namespaceRules.size())
     , m_childRules(o.m_childRules.size())
     , m_namespaces(o.m_namespaces)
     , m_defaultNamespace(o.m_defaultNamespace)
@@ -142,6 +143,16 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
         return;
     }
 
+    if (is<StyleRuleNamespace>(rule)) {
+        // Parser enforces that @namespace rules come before all rules other than
+        // import/charset rules
+        ASSERT(m_childRules.isEmpty());
+        StyleRuleNamespace& namespaceRule = downcast<StyleRuleNamespace>(rule.get());
+        parserAddNamespace(namespaceRule.prefix(), namespaceRule.uri());
+        m_namespaceRules.append(downcast<StyleRuleNamespace>(rule.ptr()));
+        return;
+    }
+
     if (is<StyleRuleMedia>(rule))
         reportMediaQueryWarningIfNeeded(singleOwnerDocument(), downcast<StyleRuleMedia>(rule.get()).mediaQueries());
 
@@ -164,6 +175,12 @@ StyleRuleBase* StyleSheetContents::ruleAt(unsigned index) const
         return m_importRules[childVectorIndex].get();
 
     childVectorIndex -= m_importRules.size();
+    
+    if (childVectorIndex < m_namespaceRules.size())
+        return m_namespaceRules[childVectorIndex].get();
+    
+    childVectorIndex -= m_namespaceRules.size();
+    
     return m_childRules[childVectorIndex].get();
 }
 
@@ -171,6 +188,7 @@ unsigned StyleSheetContents::ruleCount() const
 {
     unsigned result = 0;
     result += m_importRules.size();
+    result += m_namespaceRules.size();
     result += m_childRules.size();
     return result;
 }
@@ -187,6 +205,7 @@ void StyleSheetContents::clearRules()
         m_importRules[i]->clearParentStyleSheet();
     }
     m_importRules.clear();
+    m_namespaceRules.clear();
     m_childRules.clear();
     clearCharsetRule();
 }
@@ -221,6 +240,31 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
         return false;
     childVectorIndex -= m_importRules.size();
 
+    
+    if (childVectorIndex < m_namespaceRules.size() || (childVectorIndex == m_namespaceRules.size() && rule->isNamespaceRule())) {
+        // Inserting non-namespace rules other than import rule before @namespace is
+        // not allowed.
+        if (!is<StyleRuleNamespace>(rule))
+            return false;
+        // Inserting @namespace rule when rules other than import/namespace/charset
+        // are present is not allowed.
+        if (!m_childRules.isEmpty())
+            return false;
+        
+        StyleRuleNamespace& namespaceRule = downcast<StyleRuleNamespace>(rule.get());
+        m_namespaceRules.insert(index, downcast<StyleRuleNamespace>(rule.ptr()));
+        
+        // For now to be compatible with IE and Firefox if a namespace rule with the same
+        // prefix is added, it overwrites previous ones.
+        // FIXME: The eventual correct behavior would be to ensure that the last value in
+        // the list wins.
+        parserAddNamespace(namespaceRule.prefix(), namespaceRule.uri());
+        return true;
+    }
+    if (is<StyleRuleNamespace>(rule))
+        return false;
+    childVectorIndex -= m_namespaceRules.size();
+
     // If the number of selectors would overflow RuleData, we drop the operation.
     if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > RuleData::maximumSelectorComponentCount)
         return false;
@@ -241,6 +285,14 @@ void StyleSheetContents::wrapperDeleteRule(unsigned index)
         return;
     }
     childVectorIndex -= m_importRules.size();
+
+    if (childVectorIndex < m_namespaceRules.size()) {
+        if (!m_childRules.isEmpty())
+            return;
+        m_namespaceRules.remove(childVectorIndex);
+        return;
+    }
+    childVectorIndex -= m_namespaceRules.size();
 
     m_childRules.remove(childVectorIndex);
 }

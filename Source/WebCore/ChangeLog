@@ -1,3 +1,40 @@
+2016-10-25  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Improvements to selector parsing
+        https://bugs.webkit.org/show_bug.cgi?id=163964
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::setAttribute):
+        (WebCore::CSSSelector::setNth):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::setAttributeValueMatchingIsCaseInsensitive):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::parserAppendRule):
+        (WebCore::StyleSheetContents::ruleAt):
+        (WebCore::StyleSheetContents::ruleCount):
+        (WebCore::StyleSheetContents::clearRules):
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+        (WebCore::StyleSheetContents::wrapperDeleteRule):
+        * css/StyleSheetContents.h:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::CSSParser::parseSelector):
+        * css/parser/CSSParserValues.h:
+        (WebCore::CSSParserSelector::setAttribute):
+        (WebCore::CSSParserSelector::setArgument):
+        (WebCore::CSSParserSelector::setNth):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeLangArgumentList):
+        (WebCore::CSSSelectorParser::consumeCompoundSelector):
+        (WebCore::CSSSelectorParser::consumeAttribute):
+        (WebCore::isPseudoClassFunction):
+        (WebCore::isPseudoElementFunction):
+        (WebCore::CSSSelectorParser::consumePseudo):
+        (WebCore::CSSSelectorParser::consumeCombinator):
+
 2016-10-25  Beth Dakin  <bdakin@apple.com>
 
         Numbered list should be represented without ‘…’

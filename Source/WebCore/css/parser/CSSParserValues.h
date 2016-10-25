@@ -222,9 +222,15 @@ public:
     std::unique_ptr<CSSSelector> releaseSelector() { return WTFMove(m_selector); }
 
     void setValue(const AtomicString& value) { m_selector->setValue(value); }
+    
+    // FIXME-NEWPARSER: These two methods can go away once old parser is gone.
     void setAttribute(const QualifiedName& value, bool isCaseInsensitive) { m_selector->setAttribute(value, isCaseInsensitive); }
-    void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
     void setAttributeValueMatchingIsCaseInsensitive(bool isCaseInsensitive) { m_selector->setAttributeValueMatchingIsCaseInsensitive(isCaseInsensitive); }
+    
+    void setAttribute(const QualifiedName& value, bool convertToLowercase, CSSSelector::AttributeMatchType type) { m_selector->setAttribute(value, convertToLowercase, type); }
+    
+    void setArgument(const AtomicString& value) { m_selector->setArgument(value); }
+    void setNth(int a, int b) { m_selector->setNth(a, b); }
     void setMatch(CSSSelector::Match value) { m_selector->setMatch(value); }
     void setRelation(CSSSelector::RelationType value) { m_selector->setRelation(value); }
     void setForPage() { m_selector->setForPage(); }
@@ -235,6 +241,7 @@ public:
 
     void adoptSelectorVector(Vector<std::unique_ptr<CSSParserSelector>>& selectorVector);
     void setLangArgumentList(const Vector<CSSParserString>& stringVector);
+    void setLangArgumentList(std::unique_ptr<Vector<AtomicString>>);
     void setSelectorList(std::unique_ptr<CSSSelectorList>);
 
     void setPseudoClassValue(const CSSParserString& pseudoClassString);
