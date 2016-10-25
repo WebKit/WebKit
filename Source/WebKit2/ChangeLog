@@ -1,3 +1,10 @@
+2016-10-25  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _fullscreenDelegate]): Removed unneeded parenthesis.
+
 2016-10-19  Jer Noble  <jer.noble@apple.com>
 
         Add WKWebView fullscreen delegate SPI
