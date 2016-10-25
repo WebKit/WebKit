@@ -39,13 +39,6 @@ public:
     void setDidSyncGCRecently() { m_didSyncGCRecently = true; }
 
 protected:
-#if USE(CF)
-    FullGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
-        : GCActivityCallback(heap, runLoop)
-    {
-    }
-#endif
-
     double lastGCLength() override;
     double gcTimeSlice(size_t bytes) override;
     double deathRate() override;

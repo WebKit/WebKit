@@ -110,6 +110,6 @@ double FullGCActivityCallback::gcTimeSlice(size_t)
     return 0;
 }
 
-#endif // USE(CF) || PLATFORM(EFL)
+#endif // USE(CF) || USE(GLIB)
 
 } // namespace JSC

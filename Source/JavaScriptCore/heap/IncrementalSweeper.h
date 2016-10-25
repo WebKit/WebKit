@@ -36,11 +36,7 @@ class MarkedAllocator;
 class IncrementalSweeper : public HeapTimer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-#if USE(CF)
-    JS_EXPORT_PRIVATE IncrementalSweeper(Heap*, CFRunLoopRef);
-#else
-    explicit IncrementalSweeper(Heap*);
-#endif
+    JS_EXPORT_PRIVATE explicit IncrementalSweeper(Heap*);
 
     void startSweeping();
 
@@ -48,14 +44,11 @@ public:
     bool sweepNextBlock();
     void willFinishSweeping();
 
-#if USE(CF) || PLATFORM(EFL) || USE(GLIB)
 private:
     void doSweep(double startTime);
     void scheduleTimer();
-    void cancelTimer();
     
     MarkedAllocator* m_currentAllocator;
-#endif
 };
 
 } // namespace JSC

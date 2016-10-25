@@ -70,8 +70,8 @@ protected:
     virtual double deathRate() = 0;
 
 #if USE(CF)
-    GCActivityCallback(VM* vm, CFRunLoopRef runLoop)
-        : HeapTimer(vm, runLoop)
+    GCActivityCallback(VM* vm)
+        : HeapTimer(vm)
         , m_enabled(true)
         , m_delay(s_decade)
     {
@@ -101,10 +101,6 @@ protected:
 
     bool m_enabled;
 
-#if USE(CF)
-protected:
-    GCActivityCallback(Heap*, CFRunLoopRef);
-#endif
 #if USE(CF) || USE(GLIB)
 protected:
     void cancelTimer();

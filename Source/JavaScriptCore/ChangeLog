@@ -1,3 +1,55 @@
+2016-10-25  Filip Pizlo  <fpizlo@apple.com>
+
+        HeapTimer should not hardcode all of its subclasses and USE(CF) shouldn't be a bizarre special case
+        https://bugs.webkit.org/show_bug.cgi?id=163947
+
+        Reviewed by Geoffrey Garen.
+        
+        I want to introduce another HeapTimer. Prior to this change, that would have meant writing
+        exact copies of that timer's logic for each platform that has a HeapTimer (CF, GLIB, and
+        EFL). That logic would in turn be a duplicate of the logic already present in
+        IncrementalSweeper and GCActivityCallback: all of the subclasses of HeapTimer have their
+        own code for scheduling timers, so a new subclass would have to duplicate that code. Then,
+        to add insult to injury, the USE(CF) version of HeapTimer would have to have an extra case
+        for that new subclass since it doesn't use virtual methods effectively.
+        
+        This changes HeapTimer on USE(CF) to know to get its runloop from Heap and to use virtual
+        methods effectively so that it doesn't have to know about all of its subclasses.
+        
+        This also moves IncrementalSweeper's code for scheduling timers into HeapTimer. This means
+        that future subclasses of HeapTimer could simply use that logic.
+        
+        This keeps changes to GCActivityCallback to a minimum. It still has a lot of
+        platform-specific code and I'm not sure that this code can be trivially deduplicated since
+        that code has more quirks. That's fine for now, since I mainly just need a sane way of
+        creating new timers that use IncrementalSweeper-like scheduling logic.
+
+        * heap/EdenGCActivityCallback.cpp:
+        * heap/EdenGCActivityCallback.h:
+        * heap/FullGCActivityCallback.cpp:
+        * heap/FullGCActivityCallback.h:
+        * heap/GCActivityCallback.cpp:
+        (JSC::GCActivityCallback::GCActivityCallback):
+        * heap/GCActivityCallback.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/Heap.h:
+        (JSC::Heap::runLoop):
+        * heap/HeapTimer.cpp:
+        (JSC::HeapTimer::HeapTimer):
+        (JSC::HeapTimer::setRunLoop):
+        (JSC::HeapTimer::~HeapTimer):
+        (JSC::HeapTimer::timerDidFire):
+        (JSC::HeapTimer::scheduleTimer):
+        (JSC::HeapTimer::cancelTimer):
+        (JSC::retainAPILock): Deleted.
+        (JSC::releaseAPILock): Deleted.
+        * heap/HeapTimer.h:
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::scheduleTimer):
+        (JSC::IncrementalSweeper::cancelTimer): Deleted.
+        * heap/IncrementalSweeper.h:
+
 2016-10-25  JF Bastien  <jfbastien@apple.com>
 
         Remove redundant argument count check

@@ -34,8 +34,9 @@ namespace WebCore {
 class WebSafeIncrementalSweeper final : public JSC::IncrementalSweeper {
 public:
     explicit WebSafeIncrementalSweeper(JSC::Heap* heap)
-        : JSC::IncrementalSweeper(heap, WebThreadRunLoop())
+        : JSC::IncrementalSweeper(heap)
     {
+        setRunLoop(WebThreadRunLoop());
     }
 
     ~WebSafeIncrementalSweeper() override { }

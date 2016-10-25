@@ -50,12 +50,7 @@ const double timerSlop = 2.0; // Fudge factor to avoid performance cost of reset
 
 #if USE(CF)
 GCActivityCallback::GCActivityCallback(Heap* heap)
-    : GCActivityCallback(heap->vm(), CFRunLoopGetCurrent())
-{
-}
-
-GCActivityCallback::GCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
-    : GCActivityCallback(heap->vm(), runLoop)
+    : GCActivityCallback(heap->vm())
 {
 }
 #elif PLATFORM(EFL)

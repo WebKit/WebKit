@@ -270,6 +270,10 @@ public:
     unsigned barrierThreshold() const { return m_barrierThreshold; }
     const unsigned* addressOfBarrierThreshold() const { return &m_barrierThreshold; }
 
+#if USE(CF)
+    CFRunLoopRef runLoop() const { return m_runLoop.get(); }
+#endif // USE(CF)
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;
@@ -444,6 +448,9 @@ private:
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
     
+#if USE(CF)
+    RetainPtr<CFRunLoopRef> m_runLoop;
+#endif // USE(CF)
     RefPtr<FullGCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     std::unique_ptr<IncrementalSweeper> m_sweeper;

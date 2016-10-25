@@ -43,8 +43,9 @@ public:
 
 private:
     WebSafeFullGCActivityCallback(JSC::Heap* heap)
-        : JSC::FullGCActivityCallback(heap, WebThreadRunLoop())
+        : JSC::FullGCActivityCallback(heap)
     {
+        setRunLoop(WebThreadRunLoop());
     }
 };
 
@@ -59,8 +60,9 @@ public:
 
 private:
     WebSafeEdenGCActivityCallback(JSC::Heap* heap)
-        : JSC::EdenGCActivityCallback(heap, WebThreadRunLoop())
+        : JSC::EdenGCActivityCallback(heap)
     {
+        setRunLoop(WebThreadRunLoop());
     }
 };
 } // namespace WebCore

@@ -36,13 +36,6 @@ public:
     void doCollection() override;
 
 protected:
-#if USE(CF)
-    EdenGCActivityCallback(Heap* heap, CFRunLoopRef runLoop)
-        : GCActivityCallback(heap, runLoop)
-    {
-    }
-#endif
-
     double lastGCLength() override;
     double gcTimeSlice(size_t bytes) override;
     double deathRate() override;
