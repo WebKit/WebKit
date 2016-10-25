@@ -130,9 +130,9 @@ PASS Parsing: <http://example.com/foo/bar/../ton> against <about:blank>
 PASS Parsing: <http://example.com/foo/bar/../ton/../../a> against <about:blank> 
 PASS Parsing: <http://example.com/foo/../../..> against <about:blank> 
 PASS Parsing: <http://example.com/foo/../../../ton> against <about:blank> 
-FAIL Parsing: <http://example.com/foo/%2e> against <about:blank> assert_equals: href expected "http://example.com/foo/" but got "http://example.com/foo/%2e"
-FAIL Parsing: <http://example.com/foo/%2e%2> against <about:blank> assert_equals: href expected "http://example.com/foo/.%2" but got "http://example.com/foo/%2e%2"
-FAIL Parsing: <http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar> against <about:blank> assert_equals: href expected "http://example.com/..bar" but got "http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar"
+PASS Parsing: <http://example.com/foo/%2e> against <about:blank> 
+PASS Parsing: <http://example.com/foo/%2e%2> against <about:blank> 
+PASS Parsing: <http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar> against <about:blank> 
 PASS Parsing: <http://example.com////../..> against <about:blank> 
 PASS Parsing: <http://example.com/foo/bar//../..> against <about:blank> 
 PASS Parsing: <http://example.com/foo/bar//..> against <about:blank> 
@@ -161,8 +161,8 @@ FAIL Parsing: <data:test# »> against <about:blank> assert_equals: href expected
 PASS Parsing: <http://[www.google.com]/> against <about:blank> 
 PASS Parsing: <http://www.google.com> against <about:blank> 
 PASS Parsing: <http://192.0x00A80001> against <about:blank> 
-FAIL Parsing: <http://www/foo%2Ehtml> against <about:blank> assert_equals: href expected "http://www/foo.html" but got "http://www/foo%2Ehtml"
-FAIL Parsing: <http://www/foo/%2E/html> against <about:blank> assert_equals: href expected "http://www/foo/html" but got "http://www/foo/%2E/html"
+PASS Parsing: <http://www/foo%2Ehtml> against <about:blank> 
+PASS Parsing: <http://www/foo/%2E/html> against <about:blank> 
 PASS Parsing: <http://user:pass@/> against <about:blank> 
 PASS Parsing: <http://%25DOMAIN:foobar@foodomain.com/> against <about:blank> 
 PASS Parsing: <http:\\www.google.com\foo> against <about:blank> 

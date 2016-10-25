@@ -891,12 +891,44 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
     ASSERT_NOT_REACHED();
 }
 
+static const char* dotASCIICode = "2e";
+
+template<typename CharacterType>
+ALWAYS_INLINE bool URLParser::isPercentEncodedDot(CodePointIterator<CharacterType> c)
+{
+    if (c.atEnd())
+        return false;
+    if (*c != '%')
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd())
+        return false;
+    if (*c != dotASCIICode[0])
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd())
+        return false;
+    return toASCIILower(*c) == dotASCIICode[1];
+}
+
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isSingleDotPathSegment(CodePointIterator<CharacterType> c)
 {
     if (c.atEnd())
         return false;
     if (*c == '.') {
+        advance<CharacterType, ReportSyntaxViolation::No>(c);
+        return c.atEnd() || isSlashQuestionOrHash(*c);
+    }
+    if (*c != '%')
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd() || *c != dotASCIICode[0])
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd())
+        return false;
+    if (toASCIILower(*c) == dotASCIICode[1]) {
         advance<CharacterType, ReportSyntaxViolation::No>(c);
         return c.atEnd() || isSlashQuestionOrHash(*c);
     }
@@ -912,6 +944,18 @@ ALWAYS_INLINE bool URLParser::isDoubleDotPathSegment(CodePointIterator<Character
         advance<CharacterType, ReportSyntaxViolation::No>(c);
         return isSingleDotPathSegment(c);
     }
+    if (*c != '%')
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd() || *c != dotASCIICode[0])
+        return false;
+    advance<CharacterType, ReportSyntaxViolation::No>(c);
+    if (c.atEnd())
+        return false;
+    if (toASCIILower(*c) == dotASCIICode[1]) {
+        advance<CharacterType, ReportSyntaxViolation::No>(c);
+        return isSingleDotPathSegment(c);
+    }
     return false;
 }
 
@@ -919,12 +963,27 @@ template<typename CharacterType>
 void URLParser::consumeSingleDotPathSegment(CodePointIterator<CharacterType>& c)
 {
     ASSERT(isSingleDotPathSegment(c));
-    advance(c);
-    if (!c.atEnd()) {
-        if (*c == '/' || *c == '\\')
-            advance(c);
-        else
-            ASSERT(*c == '?' || *c == '#');
+    if (*c == '.') {
+        advance(c);
+        if (!c.atEnd()) {
+            if (*c == '/' || *c == '\\')
+                advance(c);
+            else
+                ASSERT(*c == '?' || *c == '#');
+        }
+    } else {
+        ASSERT(*c == '%');
+        advance(c);
+        ASSERT(*c == dotASCIICode[0]);
+        advance(c);
+        ASSERT(toASCIILower(*c) == dotASCIICode[1]);
+        advance(c);
+        if (!c.atEnd()) {
+            if (*c == '/' || *c == '\\')
+                advance(c);
+            else
+                ASSERT(*c == '?' || *c == '#');
+        }
     }
 }
 
@@ -932,7 +991,16 @@ template<typename CharacterType>
 void URLParser::consumeDoubleDotPathSegment(CodePointIterator<CharacterType>& c)
 {
     ASSERT(isDoubleDotPathSegment(c));
-    advance(c);
+    if (*c == '.')
+        advance(c);
+    else {
+        ASSERT(*c == '%');
+        advance(c);
+        ASSERT(*c == dotASCIICode[0]);
+        advance(c);
+        ASSERT(toASCIILower(*c) == dotASCIICode[1]);
+        advance(c);
+    }
     consumeSingleDotPathSegment(c);
 }
 
@@ -1653,6 +1721,17 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 m_url.m_pathEnd = currentPosition(c);
                 m_url.m_queryEnd = m_url.m_pathEnd;
                 state = State::Fragment;
+                break;
+            }
+            if (UNLIKELY(isPercentEncodedDot(c))) {
+                syntaxViolation(c);
+                appendToASCIIBuffer('.');
+                ASSERT(*c == '%');
+                advance(c);
+                ASSERT(*c == dotASCIICode[0]);
+                advance(c);
+                ASSERT(toASCIILower(*c) == dotASCIICode[1]);
+                advance(c);
                 break;
             }
             utf8PercentEncode<isInDefaultEncodeSet>(c);
@@ -2789,8 +2868,6 @@ void URLParser::setEnabled(bool enabled)
 
 bool URLParser::enabled()
 {
-    return true;
-    /*
     if (urlParserEnabled == URLParserEnabled::Undetermined) {
 #if PLATFORM(MAC)
         urlParserEnabled = MacApplication::isSafari() ? URLParserEnabled::Yes : URLParserEnabled::No;
@@ -2801,7 +2878,6 @@ bool URLParser::enabled()
 #endif
     }
     return urlParserEnabled == URLParserEnabled::Yes;
-     */
 }
 
 } // namespace WebCore

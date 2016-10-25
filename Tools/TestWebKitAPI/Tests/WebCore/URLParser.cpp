@@ -596,18 +596,42 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences("http://127.0.0.01/",
         {"http", "", "", "127.0.0.1", 0, "/", "", "", "http://127.0.0.1/"},
         {"http", "", "", "127.0.0.01", 0, "/", "", "", "http://127.0.0.01/"});
-    checkURL("http://example.com/path1/.%2e", {"http", "", "", "example.com", 0, "/path1/.%2e", "", "", "http://example.com/path1/.%2e"});
-    checkURL("http://example.com/path1/.%2E", {"http", "", "", "example.com", 0, "/path1/.%2E", "", "", "http://example.com/path1/.%2E"});
-    checkURL("http://example.com/path1/.%2E/", {"http", "", "", "example.com", 0, "/path1/.%2E/", "", "", "http://example.com/path1/.%2E/"});
-    checkURL("http://example.com/path1/%2e.", {"http", "", "", "example.com", 0, "/path1/%2e.", "", "", "http://example.com/path1/%2e."});
-    checkURL("http://example.com/path1/%2E%2e", {"http", "", "", "example.com", 0, "/path1/%2E%2e", "", "", "http://example.com/path1/%2E%2e"});
-    checkURL("http://example.com/path1/%2e", {"http", "", "", "example.com", 0, "/path1/%2e", "", "", "http://example.com/path1/%2e"});
-    checkURL("http://example.com/path1/%2E", {"http", "", "", "example.com", 0, "/path1/%2E", "", "", "http://example.com/path1/%2E"});
-    checkURL("http://example.com/path1/%2E/", {"http", "", "", "example.com", 0, "/path1/%2E/", "", "", "http://example.com/path1/%2E/"});
-    checkURL("http://example.com/path1/path2/%2e?query", {"http", "", "", "example.com", 0, "/path1/path2/%2e", "query", "", "http://example.com/path1/path2/%2e?query"});
-    checkURL("http://example.com/path1/path2/%2e%2e?query", {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "query", "", "http://example.com/path1/path2/%2e%2e?query"});
-    checkURL("http://example.com/path1/path2/%2e#fragment", {"http", "", "", "example.com", 0, "/path1/path2/%2e", "", "fragment", "http://example.com/path1/path2/%2e#fragment"});
-    checkURL("http://example.com/path1/path2/%2e%2e#fragment", {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "", "fragment", "http://example.com/path1/path2/%2e%2e#fragment"});
+    checkURLDifferences("http://example.com/path1/.%2e",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2e", "", "", "http://example.com/path1/.%2e"});
+    checkURLDifferences("http://example.com/path1/.%2E",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2E", "", "", "http://example.com/path1/.%2E"});
+    checkURLDifferences("http://example.com/path1/.%2E/",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/.%2E/", "", "", "http://example.com/path1/.%2E/"});
+    checkURLDifferences("http://example.com/path1/%2e.",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/%2e.", "", "", "http://example.com/path1/%2e."});
+    checkURLDifferences("http://example.com/path1/%2E%2e",
+        {"http", "", "", "example.com", 0, "/", "", "", "http://example.com/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E%2e", "", "", "http://example.com/path1/%2E%2e"});
+    checkURLDifferences("http://example.com/path1/%2e",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2e", "", "", "http://example.com/path1/%2e"});
+    checkURLDifferences("http://example.com/path1/%2E",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E", "", "", "http://example.com/path1/%2E"});
+    checkURLDifferences("http://example.com/path1/%2E/",
+        {"http", "", "", "example.com", 0, "/path1/", "", "", "http://example.com/path1/"},
+        {"http", "", "", "example.com", 0, "/path1/%2E/", "", "", "http://example.com/path1/%2E/"});
+    checkURLDifferences("http://example.com/path1/path2/%2e?query",
+        {"http", "", "", "example.com", 0, "/path1/path2/", "query", "", "http://example.com/path1/path2/?query"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e", "query", "", "http://example.com/path1/path2/%2e?query"});
+    checkURLDifferences("http://example.com/path1/path2/%2e%2e?query",
+        {"http", "", "", "example.com", 0, "/path1/", "query", "", "http://example.com/path1/?query"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "query", "", "http://example.com/path1/path2/%2e%2e?query"});
+    checkURLDifferences("http://example.com/path1/path2/%2e#fragment",
+        {"http", "", "", "example.com", 0, "/path1/path2/", "", "fragment", "http://example.com/path1/path2/#fragment"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e", "", "fragment", "http://example.com/path1/path2/%2e#fragment"});
+    checkURLDifferences("http://example.com/path1/path2/%2e%2e#fragment",
+        {"http", "", "", "example.com", 0, "/path1/", "", "fragment", "http://example.com/path1/#fragment"},
+        {"http", "", "", "example.com", 0, "/path1/path2/%2e%2e", "", "fragment", "http://example.com/path1/path2/%2e%2e#fragment"});
     checkURLDifferences("file://[0:a:0:0:b:c:0:0]/path",
         {"file", "", "", "[0:a::b:c:0:0]", 0, "/path", "", "", "file://[0:a::b:c:0:0]/path"},
         {"file", "", "", "[0:a:0:0:b:c:0:0]", 0, "/path", "", "", "file://[0:a:0:0:b:c:0:0]/path"});
@@ -710,8 +734,9 @@ TEST_F(URLParserTest, ParserDifferences)
     checkURLDifferences(utf16String(u"http://０Ｘｃ０．０２５０．０１"),
         {"http", "", "", "192.168.0.1", 0, "/", "", "", "http://192.168.0.1/"},
         {"http", "", "", "0xc0.0250.01", 0, "/", "", "", "http://0xc0.0250.01/"});
-
-    checkURL("http://host/path%2e.%2E", {"http", "", "", "host", 0, "/path%2e.%2E", "", "", "http://host/path%2e.%2E"});
+    checkURLDifferences("http://host/path%2e.%2E",
+        {"http", "", "", "host", 0, "/path...", "", "", "http://host/path..."},
+        {"http", "", "", "host", 0, "/path%2e.%2E", "", "", "http://host/path%2e.%2E"});
 
     checkRelativeURLDifferences(utf16String(u"http://foo:💩@example.com/bar"), "http://other.com/",
         {"http", "foo", utf16String(u"💩"), "example.com", 0, "/bar", "", "", "http://foo:%F0%9F%92%A9@example.com/bar"},

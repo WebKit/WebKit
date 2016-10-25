@@ -9,7 +9,7 @@ PASS canonicalize('http://[www.google.com]/') is 'http://[www.google.com]/'
 PASS canonicalize('http://www.google.com') is 'http://www.google.com/'
 PASS canonicalize('http:////////user:@google.com:99?foo') is 'http://user@google.com:99/?foo'
 PASS canonicalize('http://192.0x00A80001') is 'http://192.168.0.1/'
-FAIL canonicalize('http://www/foo%2Ehtml') should be http://www/foo.html. Was http://www/foo%2Ehtml.
+PASS canonicalize('http://www/foo%2Ehtml') is 'http://www/foo.html'
 PASS canonicalize('http://user:pass@/') is 'http://user:pass@/'
 PASS canonicalize('http://%25DOMAIN:foobar@foodomain.com/') is 'http://%25DOMAIN:foobar@foodomain.com/'
 PASS canonicalize('http:\\\\www.google.com\\foo') is 'http://www.google.com/foo'

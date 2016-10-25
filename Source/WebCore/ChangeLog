@@ -1,3 +1,15 @@
+2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r207795.
+
+        Introduced API test failures on iOS and macOS.
+
+        Reverted changeset:
+
+        "URLParser should match old URL::parse with %2E in path"
+        https://bugs.webkit.org/show_bug.cgi?id=163929
+        http://trac.webkit.org/changeset/207795
+
 2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, attempt to fix Windows build after r207787
