@@ -2755,7 +2755,9 @@ void RenderBlock::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    updateFirstLetter();
+    // FIXME: Do not even try to reshuffle first letter renderers when we are not in layout
+    // until after webkit.org/b/163848 is fixed.
+    updateFirstLetter(view().frameView().isInRenderTreeLayout() ? RenderTreeMutationIsAllowed::Yes : RenderTreeMutationIsAllowed::No);
 
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
@@ -3305,7 +3307,7 @@ void RenderBlock::getFirstLetter(RenderObject*& firstLetter, RenderElement*& fir
         firstLetterContainer = nullptr;
 }
 
-void RenderBlock::updateFirstLetter()
+void RenderBlock::updateFirstLetter(RenderTreeMutationIsAllowed mutationAllowedOrNot)
 {
     RenderObject* firstLetterObj;
     RenderElement* firstLetterContainer;
@@ -3326,6 +3328,8 @@ void RenderBlock::updateFirstLetter()
     if (!is<RenderText>(*firstLetterObj))
         return;
 
+    if (mutationAllowedOrNot != RenderTreeMutationIsAllowed::Yes)
+        return;
     // Our layout state is not valid for the repaints we are going to trigger by
     // adding and removing children of firstLetterContainer.
     LayoutStateDisabler layoutStateDisabler(view());

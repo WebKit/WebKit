@@ -268,7 +268,7 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
     if (!m_marker)
         return;
 
-    // FIXME: Do not even try reposition the marker when we are not in layout
+    // FIXME: Do not even try to reposition the marker when we are not in layout
     // until after we fixed webkit.org/b/163789.
     if (!view().frameView().isInRenderTreeLayout())
         return;

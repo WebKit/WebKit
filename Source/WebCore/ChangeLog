@@ -1,3 +1,34 @@
+2016-10-24  Zalan Bujtas  <zalan@apple.com>
+
+        Do not update selection rect on dirty lineboxes.
+        https://bugs.webkit.org/show_bug.cgi?id=163862
+        <rdar://problem/28813156>
+
+        Reviewed by Simon Fraser.
+
+        In certain cases RenderBlock::updateFirstLetter() triggers
+        unwanted render tree mutation while the caller assumes intact renderers.
+        This patch ensures that no renderers gets destroyed while computing the preferred widths
+        when we are outside of layout context.
+
+        Test: fast/css-generated-content/dynamic-first-letter-selection-clear-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computePreferredLogicalWidths):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderBlock.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertOrMoveMarkerRendererIfNeeded):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::updateFirstLetter):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateFirstLetter):
+        * rendering/RenderTable.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::updateFirstLetter):
+        * rendering/svg/RenderSVGText.h:
+
 2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207795.
