@@ -2629,9 +2629,12 @@ static void runInteractive(GlobalObject* globalObject)
             source = source + line;
             source = source + '\n';
             checkSyntax(globalObject->vm(), makeSource(source, interpreterName), error);
-            if (!line[0])
+            if (!line[0]) {
+                free(line);
                 break;
+            }
             add_history(line);
+            free(line);
         } while (error.syntaxErrorType() == ParserError::SyntaxErrorRecoverable);
         
         if (error.isValid()) {
