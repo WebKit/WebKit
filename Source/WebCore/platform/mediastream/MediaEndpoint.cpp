@@ -57,7 +57,7 @@ class EmptyMediaEndpoint : public MediaEndpoint {
 public:
     EmptyMediaEndpoint(MediaEndpointClient&) { }
 
-    void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override { }
+    void setConfiguration(MediaEndpointConfiguration&&) override { }
 
     void generateDtlsInfo() override { }
     MediaPayloadVector getDefaultAudioPayloads() override { return MediaPayloadVector(); }

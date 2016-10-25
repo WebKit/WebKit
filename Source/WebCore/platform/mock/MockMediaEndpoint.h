@@ -38,32 +38,32 @@
 
 namespace WebCore {
 
-class MockMediaEndpoint : public MediaEndpoint {
+class MockMediaEndpoint final : public MediaEndpoint {
 public:
     WEBCORE_EXPORT static std::unique_ptr<MediaEndpoint> create(MediaEndpointClient&);
 
     MockMediaEndpoint(MediaEndpointClient&);
     ~MockMediaEndpoint();
 
-    void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override;
+    void setConfiguration(MediaEndpointConfiguration&&) final { };
 
-    void generateDtlsInfo() override;
-    MediaPayloadVector getDefaultAudioPayloads() override;
-    MediaPayloadVector getDefaultVideoPayloads() override;
-    MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) override;
+    void generateDtlsInfo() final;
+    MediaPayloadVector getDefaultAudioPayloads() final;
+    MediaPayloadVector getDefaultVideoPayloads() final;
+    MediaPayloadVector filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads) final;
 
-    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) override;
-    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool isInitiator) override;
+    UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) final;
+    UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool isInitiator) final;
 
-    void addRemoteCandidate(IceCandidate&, const String& mid, const String& ufrag, const String& password) override;
+    void addRemoteCandidate(IceCandidate&, const String& mid, const String& ufrag, const String& password) final;
 
-    Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) override;
-    void replaceSendSource(RealtimeMediaSource&, const String& mid) override;
-    void replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid) override;
+    Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) final;
+    void replaceSendSource(RealtimeMediaSource&, const String& mid) final;
+    void replaceMutedRemoteSourceMid(const String& oldMid, const String& newMid) final;
 
-    void stop() override;
+    void stop() final;
 
-    void emulatePlatformEvent(const String& action) override;
+    void emulatePlatformEvent(const String& action) final;
 
 private:
     void updateConfigurationMids(const MediaEndpointSessionConfiguration&);

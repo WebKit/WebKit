@@ -89,9 +89,9 @@ MediaEndpointOwr::~MediaEndpointOwr()
     g_regex_unref(m_helperServerRegEx);
 }
 
-void MediaEndpointOwr::setConfiguration(RefPtr<MediaEndpointConfiguration>&& configuration)
+void MediaEndpointOwr::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
-    m_configuration = configuration;
+    m_configuration = WTFMove(configuration);
 }
 
 static void cryptoDataCallback(gchar* privateKey, gchar* certificate, gchar* fingerprint, gchar* fingerprintFunction, gpointer data)
@@ -552,8 +552,9 @@ void MediaEndpointOwr::ensureTransportAgentAndTransceivers(bool isInitiator, con
     if (!m_transportAgent) {
         m_transportAgent = owr_transport_agent_new(false);
 
-        for (auto& server : m_configuration->iceServers()) {
-            for (auto& webkitUrl : server->urls()) {
+        ASSERT(m_configuration);
+        for (auto& server : m_configuration->iceServers) {
+            for (auto& webkitUrl : server.urls) {
                 HelperServerUrl url;
                 // WebKit's URL class can't handle ICE helper server urls properly
                 parseHelperServerUrl(*m_helperServerRegEx, webkitUrl, url);
@@ -570,7 +571,7 @@ void MediaEndpointOwr::ensureTransportAgentAndTransceivers(bool isInitiator, con
 
                     owr_transport_agent_add_helper_server(m_transportAgent, serverType,
                         url.host.ascii().data(), port,
-                        server->username().ascii().data(), server->credential().ascii().data());
+                        server.username.ascii().data(), server.credential.ascii().data());
                 } else
                     ASSERT_NOT_REACHED();
             }

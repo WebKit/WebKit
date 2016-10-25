@@ -28,64 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaEndpointConfiguration_h
-#define MediaEndpointConfiguration_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
 #include "PeerConnectionStates.h"
 #include "URL.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class IceServerInfo : public RefCounted<IceServerInfo> {
-public:
-    static RefPtr<IceServerInfo> create(const Vector<String>& urls, const String& credential, const String& username)
-    {
-        return adoptRef(new IceServerInfo(urls, credential, username));
-    }
-    virtual ~IceServerInfo() { }
+struct MediaEndpointConfiguration {
+    // FIXME: We might be able to remove these constructors once all compilers can handle without it (see https://bugs.webkit.org/show_bug.cgi?id=163255#c15)
+    struct IceServerInfo {
+        Vector<URL> urls;
+        String credential;
+        String username;
 
-    const Vector<URL>& urls() const { return m_urls; }
-    const String& credential() const { return m_credential; }
-    const String& username() const { return m_username; }
+        IceServerInfo(Vector<URL>&&, const String&, const String&);
+    };
 
-private:
-    IceServerInfo(const Vector<String>& urls, const String& credential, const String& username);
-
-    Vector<URL> m_urls;
-    String m_credential;
-    String m_username;
-};
-
-class MediaEndpointConfiguration : public RefCounted<MediaEndpointConfiguration> {
-public:
     using IceTransportPolicy = PeerConnectionStates::IceTransportPolicy;
     using BundlePolicy = PeerConnectionStates::BundlePolicy;
 
-    static RefPtr<MediaEndpointConfiguration> create(Vector<RefPtr<IceServerInfo>>& iceServers, IceTransportPolicy iceTransportPolicy, BundlePolicy bundlePolicy)
-    {
-        return adoptRef(new MediaEndpointConfiguration(iceServers, iceTransportPolicy, bundlePolicy));
-    }
+    MediaEndpointConfiguration(Vector<IceServerInfo>&&, IceTransportPolicy, BundlePolicy);
 
-    const Vector<RefPtr<IceServerInfo>>& iceServers() const { return m_iceServers; }
-    IceTransportPolicy iceTransportPolicy() const { return m_iceTransportPolicy; }
-    BundlePolicy bundlePolicy() const { return m_bundlePolicy; }
-
-private:
-    MediaEndpointConfiguration(Vector<RefPtr<IceServerInfo>>&, IceTransportPolicy, BundlePolicy);
-
-    Vector<RefPtr<IceServerInfo>> m_iceServers;
-    IceTransportPolicy m_iceTransportPolicy;
-    BundlePolicy m_bundlePolicy;
+    Vector<IceServerInfo> iceServers;
+    IceTransportPolicy iceTransportPolicy;
+    BundlePolicy bundlePolicy;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MediaEndpointConfiguration_h

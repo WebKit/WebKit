@@ -63,11 +63,6 @@ MockMediaEndpoint::~MockMediaEndpoint()
     stop();
 }
 
-void MockMediaEndpoint::setConfiguration(RefPtr<MediaEndpointConfiguration>&& configuration)
-{
-    UNUSED_PARAM(configuration);
-}
-
 void MockMediaEndpoint::generateDtlsInfo()
 {
     callOnMainThread([this]() {

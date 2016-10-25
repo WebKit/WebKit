@@ -63,7 +63,7 @@ public:
 
     using IceTransportState = PeerConnectionStates::IceTransportState;
 
-    virtual void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) = 0;
+    virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
     virtual void generateDtlsInfo() = 0;
     virtual MediaPayloadVector getDefaultAudioPayloads() = 0;

@@ -614,11 +614,19 @@ RefPtr<RTCSessionDescription> MediaEndpointPeerConnection::pendingRemoteDescript
 
 void MediaEndpointPeerConnection::setConfiguration(RTCConfiguration& configuration)
 {
-    Vector<RefPtr<IceServerInfo>> iceServers;
-    for (auto& server : configuration.iceServers())
-        iceServers.append(IceServerInfo::create(server->urls(), server->credential(), server->username()));
+    Vector<MediaEndpointConfiguration::IceServerInfo> iceServers;
+    if (configuration.iceServers().size()) {
+        iceServers.reserveInitialCapacity(configuration.iceServers().size());
+        for (auto& server : configuration.iceServers()) {
+            Vector<URL> urls;
+            urls.reserveInitialCapacity(server->urls().size());
+            for (auto& url : server->urls())
+                urls.uncheckedAppend(URL(URL(), url));
+            iceServers.uncheckedAppend(MediaEndpointConfiguration::IceServerInfo { WTFMove(urls), server->credential(), server->username() });
+        }
+    }
 
-    m_mediaEndpoint->setConfiguration(MediaEndpointConfiguration::create(iceServers, configuration.iceTransportPolicy(), configuration.bundlePolicy()));
+    m_mediaEndpoint->setConfiguration({ WTFMove(iceServers), configuration.iceTransportPolicy(), configuration.bundlePolicy() });
 }
 
 void MediaEndpointPeerConnection::addIceCandidate(RTCIceCandidate& rtcCandidate, PeerConnection::VoidPromise&& promise)

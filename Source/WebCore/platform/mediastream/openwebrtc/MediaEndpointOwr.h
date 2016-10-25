@@ -82,7 +82,7 @@ public:
     MediaEndpointOwr(MediaEndpointClient&);
     ~MediaEndpointOwr();
 
-    void setConfiguration(RefPtr<MediaEndpointConfiguration>&&) override;
+    void setConfiguration(MediaEndpointConfiguration&&) override;
 
     void generateDtlsInfo() override;
     MediaPayloadVector getDefaultAudioPayloads() override;
@@ -125,7 +125,7 @@ private:
     void ensureTransportAgentAndTransceivers(bool isInitiator, const Vector<TransceiverConfig>&);
     void internalAddRemoteCandidate(OwrSession*, IceCandidate&, const String& ufrag, const String& password);
 
-    RefPtr<MediaEndpointConfiguration> m_configuration;
+    Optional<MediaEndpointConfiguration> m_configuration;
     GRegex* m_helperServerRegEx;
 
     OwrTransportAgent* m_transportAgent;
