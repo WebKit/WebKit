@@ -67,7 +67,7 @@ private:
     virtual ~RenderThemeEfl();
 
 public:
-    static PassRefPtr<RenderTheme> create(Page*);
+    static Ref<RenderTheme> create(Page*);
 
     // A method asking if the theme's controls actually care about redrawing when hovered.
     bool supportsHover(const RenderStyle&) const override { return true; }

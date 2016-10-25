@@ -37,9 +37,9 @@ StyleGeneratedImage::StyleGeneratedImage(Ref<CSSImageGeneratorValue>&& value)
     m_isGeneratedImage = true;
 }
 
-PassRefPtr<CSSValue> StyleGeneratedImage::cssValue() const
+Ref<CSSValue> StyleGeneratedImage::cssValue() const
 {
-    return const_cast<CSSImageGeneratorValue*>(m_imageGeneratorValue.ptr());
+    return const_cast<CSSImageGeneratorValue&>(m_imageGeneratorValue.get());
 }
 
 bool StyleGeneratedImage::isPending() const

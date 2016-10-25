@@ -218,7 +218,7 @@ private:
 
     // PDFPlugin functions.
     void updateScrollbars();
-    PassRefPtr<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
+    Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation);
     void destroyScrollbar(WebCore::ScrollbarOrientation);
     void pdfDocumentDidLoad();
     void addArchiveResource();

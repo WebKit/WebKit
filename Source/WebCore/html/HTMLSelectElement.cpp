@@ -196,9 +196,7 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
 bool HTMLSelectElement::usesMenuList() const
 {
 #if !PLATFORM(IOS)
-    const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
-    if (renderTheme->delegatesMenuListRendering())
+    if (RenderTheme::themeForPage(document().page())->delegatesMenuListRendering())
         return true;
 
     return !m_multiple && m_size <= 1;
@@ -1092,10 +1090,7 @@ void HTMLSelectElement::reset()
 
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
-    const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
-
-    if (!renderTheme->popsMenuByArrowKeys())
+    if (!RenderTheme::themeForPage(document().page())->popsMenuByArrowKeys())
         return false;
 
     if (!isSpatialNavigationEnabled(document().frame())) {
@@ -1129,8 +1124,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
     ASSERT(renderer());
     ASSERT(renderer()->isMenuList());
 
-    const Page* page = document().page();
-    RefPtr<RenderTheme> renderTheme = page ? &page->theme() : RenderTheme::defaultTheme();
+    RefPtr<RenderTheme> renderTheme = RenderTheme::themeForPage(document().page());
 
     if (event.type() == eventNames().keydownEvent) {
         if (!is<KeyboardEvent>(event))

@@ -1303,7 +1303,7 @@ public:
     void setBackgroundSizeLength(LengthSize size) { SET_VAR(m_background, m_background.m_sizeLength, WTFMove(size)); }
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b); }
-    void setBorderImageSource(PassRefPtr<StyleImage>);
+    void setBorderImageSource(RefPtr<StyleImage>&&);
     void setBorderImageSlices(LengthBox);
     void setBorderImageWidth(LengthBox);
     void setBorderImageOutset(LengthBox);
@@ -1443,10 +1443,10 @@ public:
         }
     }
 
-    void setMaskImage(PassRefPtr<StyleImage> v) { rareNonInheritedData.access()->m_mask.setImage(v); }
+    void setMaskImage(RefPtr<StyleImage>&& v) { rareNonInheritedData.access()->m_mask.setImage(WTFMove(v)); }
 
     void setMaskBoxImage(const NinePieceImage& b) { SET_VAR(rareNonInheritedData, m_maskBoxImage, b); }
-    void setMaskBoxImageSource(PassRefPtr<StyleImage> v) { rareNonInheritedData.access()->m_maskBoxImage.setImage(v); }
+    void setMaskBoxImageSource(RefPtr<StyleImage>&& v) { rareNonInheritedData.access()->m_maskBoxImage.setImage(WTFMove(v)); }
     void setMaskXPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_xPosition, WTFMove(length)); }
     void setMaskYPosition(Length length) { SET_VAR(rareNonInheritedData, m_mask.m_yPosition, WTFMove(length)); }
     void setMaskSize(LengthSize size) { SET_VAR(rareNonInheritedData, m_mask.m_sizeLength, WTFMove(size)); }
@@ -1462,7 +1462,7 @@ public:
     void setAspectRatioNumerator(float v) { SET_VAR(rareNonInheritedData, m_aspectRatioNumerator, v); }
 
     void setListStyleType(EListStyleType v) { inherited_flags._list_style_type = v; }
-    void setListStyleImage(PassRefPtr<StyleImage>);
+    void setListStyleImage(RefPtr<StyleImage>&&);
     void setListStylePosition(EListStylePosition v) { inherited_flags._list_style_position = v; }
 
     void resetMargin() { SET_VAR(surround, margin, LengthBox(Fixed)); }
@@ -1481,8 +1481,8 @@ public:
     void setPaddingRight(Length length) { SET_VAR(surround, padding.right(), WTFMove(length)); }
 
     void setCursor(ECursor c) { inherited_flags._cursor_style = c; }
-    void addCursor(PassRefPtr<StyleImage>, const IntPoint& hotSpot = IntPoint());
-    void setCursorList(PassRefPtr<CursorList>);
+    void addCursor(RefPtr<StyleImage>&&, const IntPoint& hotSpot = IntPoint());
+    void setCursorList(RefPtr<CursorList>&&);
     void clearCursorList();
 
 #if ENABLE(CURSOR_VISIBILITY)
@@ -1529,7 +1529,7 @@ public:
     void setBoxOrient(EBoxOrient o) { SET_NESTED_VAR(rareNonInheritedData, m_deprecatedFlexibleBox, orient, o); }
     void setBoxPack(EBoxPack p) { SET_NESTED_VAR(rareNonInheritedData, m_deprecatedFlexibleBox, pack, p); }
     void setBoxShadow(std::unique_ptr<ShadowData>, bool add = false);
-    void setBoxReflect(PassRefPtr<StyleReflection> reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = reflect; }
+    void setBoxReflect(RefPtr<StyleReflection>&& reflect) { if (rareNonInheritedData->m_boxReflect != reflect) rareNonInheritedData.access()->m_boxReflect = WTFMove(reflect); }
     void setBoxSizing(EBoxSizing s) { SET_VAR(m_box, m_boxSizing, s); }
     void setFlexGrow(float f) { SET_NESTED_VAR(rareNonInheritedData, m_flexibleBox, m_flexGrow, f); }
     void setFlexShrink(float f) { SET_NESTED_VAR(rareNonInheritedData, m_flexibleBox, m_flexShrink, f); }
@@ -1793,11 +1793,11 @@ public:
     SVGLength kerning() const { return svgStyle().kerning(); }
     void setKerning(SVGLength k) { accessSVGStyle().setKerning(k); }
 
-    void setShapeOutside(PassRefPtr<ShapeValue> value)
+    void setShapeOutside(RefPtr<ShapeValue>&& value)
     {
         if (rareNonInheritedData->m_shapeOutside == value)
             return;
-        rareNonInheritedData.access()->m_shapeOutside = value;
+        rareNonInheritedData.access()->m_shapeOutside = WTFMove(value);
     }
     ShapeValue* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
@@ -1815,10 +1815,10 @@ public:
     }
     static float initialShapeImageThreshold() { return 0; }
 
-    void setClipPath(PassRefPtr<ClipPathOperation> operation)
+    void setClipPath(RefPtr<ClipPathOperation>&& operation)
     {
         if (rareNonInheritedData->m_clipPath != operation)
-            rareNonInheritedData.access()->m_clipPath = operation;
+            rareNonInheritedData.access()->m_clipPath = WTFMove(operation);
     }
     ClipPathOperation* clipPath() const { return rareNonInheritedData->m_clipPath.get(); }
 
@@ -1829,7 +1829,7 @@ public:
     bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->rareNonInheritedData); }
     void clearContent();
     void setContent(const String&, bool add = false);
-    void setContent(PassRefPtr<StyleImage>, bool add = false);
+    void setContent(RefPtr<StyleImage>&&, bool add = false);
     void setContent(std::unique_ptr<CounterContent>, bool add = false);
     void setContent(QuoteType, bool add = false);
     void setContentAltText(const String&);
@@ -1842,10 +1842,10 @@ public:
     const CounterDirectives getCounterDirectives(const AtomicString& identifier) const;
 
     QuotesData* quotes() const { return rareInheritedData->quotes.get(); }
-    void setQuotes(PassRefPtr<QuotesData>);
+    void setQuotes(RefPtr<QuotesData>&&);
 
     WillChangeData* willChange() const { return rareNonInheritedData->m_willChange.get(); }
-    void setWillChange(PassRefPtr<WillChangeData>);
+    void setWillChange(RefPtr<WillChangeData>&&);
 
     bool willChangeCreatesStackingContext() const
     {

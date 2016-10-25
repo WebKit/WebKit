@@ -118,7 +118,7 @@ bool ScrollView::setHasScrollbarInternal(RefPtr<Scrollbar>& scrollbar, Scrollbar
     return false;
 }
 
-PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
+Ref<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
     return Scrollbar::createNativeScrollbar(*this, orientation, RegularScrollbar);
 }

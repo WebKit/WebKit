@@ -29,10 +29,10 @@ static size_t sizeForQuotesDataWithQuoteCount(unsigned count)
     return sizeof(QuotesData) + sizeof(std::pair<String, String>) * count;
 }
 
-PassRefPtr<QuotesData> QuotesData::create(const Vector<std::pair<String, String>>& quotes)
+Ref<QuotesData> QuotesData::create(const Vector<std::pair<String, String>>& quotes)
 {
     void* slot = fastMalloc(sizeForQuotesDataWithQuoteCount(quotes.size()));
-    return adoptRef(new (NotNull, slot) QuotesData(quotes));
+    return adoptRef(*new (NotNull, slot) QuotesData(quotes));
 }
 
 QuotesData::QuotesData(const Vector<std::pair<String, String>>& quotes)

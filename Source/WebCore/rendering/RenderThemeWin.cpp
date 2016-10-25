@@ -188,10 +188,10 @@ Ref<RenderTheme> RenderThemeWin::create()
     return adoptRef(*new RenderThemeWin);
 }
 
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+Ref<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     static RenderTheme& winTheme = RenderThemeWin::create().leakRef();
-    return &winTheme;
+    return winTheme;
 }
 
 RenderThemeWin::RenderThemeWin()

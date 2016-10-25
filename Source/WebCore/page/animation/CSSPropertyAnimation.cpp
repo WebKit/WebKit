@@ -474,7 +474,7 @@ template <typename T>
 class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RefCountedPropertyWrapper(CSSPropertyID prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
+    RefCountedPropertyWrapper(CSSPropertyID prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<T>&&))
         : PropertyWrapperGetter<T*>(prop, getter)
         , m_setter(setter)
     {
@@ -486,7 +486,7 @@ public:
     }
 
 protected:
-    void (RenderStyle::*m_setter)(PassRefPtr<T>);
+    void (RenderStyle::*m_setter)(RefPtr<T>&&);
 };
 
 template <typename T>
@@ -511,7 +511,7 @@ protected:
 class PropertyWrapperClipPath : public RefCountedPropertyWrapper<ClipPathOperation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperClipPath(CSSPropertyID prop, ClipPathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ClipPathOperation>))
+    PropertyWrapperClipPath(CSSPropertyID prop, ClipPathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<ClipPathOperation>&&))
         : RefCountedPropertyWrapper<ClipPathOperation>(prop, getter, setter)
     {
     }
@@ -563,7 +563,7 @@ public:
 class PropertyWrapperShape : public RefCountedPropertyWrapper<ShapeValue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperShape(CSSPropertyID prop, ShapeValue* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ShapeValue>))
+    PropertyWrapperShape(CSSPropertyID prop, ShapeValue* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<ShapeValue>&&))
         : RefCountedPropertyWrapper<ShapeValue>(prop, getter, setter)
     {
     }
@@ -590,7 +590,7 @@ public:
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StyleImagePropertyWrapper(CSSPropertyID prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<StyleImage>))
+    StyleImagePropertyWrapper(CSSPropertyID prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<StyleImage>&&))
         : RefCountedPropertyWrapper<StyleImage>(prop, getter, setter)
     {
     }
@@ -1014,7 +1014,7 @@ template <typename T>
 class FillLayerRefCountedPropertyWrapper : public FillLayerPropertyWrapperGetter<T*> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerRefCountedPropertyWrapper(T* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<T>))
+    FillLayerRefCountedPropertyWrapper(T* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<T>&&))
         : FillLayerPropertyWrapperGetter<T*>(getter)
         , m_setter(setter)
     {
@@ -1026,13 +1026,13 @@ public:
     }
 
 protected:
-    void (FillLayer::*m_setter)(PassRefPtr<T>);
+    void (FillLayer::*m_setter)(RefPtr<T>&&);
 };
 
 class FillLayerStyleImagePropertyWrapper : public FillLayerRefCountedPropertyWrapper<StyleImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerStyleImagePropertyWrapper(StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<StyleImage>))
+    FillLayerStyleImagePropertyWrapper(StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(RefPtr<StyleImage>&&))
         : FillLayerRefCountedPropertyWrapper<StyleImage>(getter, setter)
     {
     }

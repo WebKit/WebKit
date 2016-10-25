@@ -1,3 +1,115 @@
+2016-10-25  Andreas Kling  <akling@apple.com>
+
+        More PassRefPtr purging in WebCore.
+        <https://webkit.org/b/163895>
+
+        Reviewed by Antti Koivisto.
+
+        Remove PassRefPtr usage in RenderStyle, RenderTheme and Scrollbar, then fix up all the fallout.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        (WebCore::shapePropertyValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertQuotes):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::usesMenuList):
+        (WebCore::HTMLSelectElement::platformHandleKeydownEvent):
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        * html/InputType.cpp:
+        (WebCore::InputType::themeSupportsDataListUI):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldHaveSpinButton):
+        (WebCore::TextFieldInputType::shouldHaveCapsLockIndicator):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * page/FrameView.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::RefCountedPropertyWrapper::RefCountedPropertyWrapper):
+        (WebCore::PropertyWrapperClipPath::PropertyWrapperClipPath):
+        (WebCore::PropertyWrapperShape::PropertyWrapperShape):
+        (WebCore::StyleImagePropertyWrapper::StyleImagePropertyWrapper):
+        (WebCore::FillLayerRefCountedPropertyWrapper::FillLayerRefCountedPropertyWrapper):
+        (WebCore::FillLayerStyleImagePropertyWrapper::FillLayerStyleImagePropertyWrapper):
+        * platform/PopupMenuClient.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::createScrollbar):
+        * platform/ScrollView.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::createNativeScrollbar):
+        * platform/Scrollbar.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * rendering/FilterEffectRenderer.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestLayerByApplyingTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::createScrollbar):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::createScrollbar):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::createCustomScrollbar):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::createScrollbar):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::defaultTheme):
+        * rendering/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::create):
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeEfl.h:
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderTheme::themeForPage):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+        * rendering/RenderWidget.h:
+        * rendering/style/CursorData.h:
+        (WebCore::CursorData::CursorData):
+        (WebCore::CursorData::setImage):
+        * rendering/style/FillLayer.h:
+        (WebCore::FillLayer::setImage):
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::create):
+        * rendering/style/QuotesData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCursor):
+        (WebCore::RenderStyle::setCursorList):
+        (WebCore::RenderStyle::setQuotes):
+        (WebCore::RenderStyle::setWillChange):
+        (WebCore::RenderStyle::setContent):
+        (WebCore::RenderStyle::setListStyleImage):
+        (WebCore::RenderStyle::setBorderImageSource):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setMaskImage):
+        (WebCore::RenderStyle::setMaskBoxImageSource):
+        (WebCore::RenderStyle::setBoxReflect):
+        (WebCore::RenderStyle::setShapeOutside):
+        (WebCore::RenderStyle::setClipPath):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::cssValue):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::cssValue):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StyleMultiColData.h:
+        * rendering/style/StyleRareInheritedData.h:
+
 2016-10-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Custom elements reactions should have a queue per element

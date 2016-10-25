@@ -147,7 +147,7 @@ private:
     void paintItem(PaintInfo&, const LayoutPoint&, PaintFunction);
 
     void setHasVerticalScrollbar(bool hasScrollbar);
-    PassRefPtr<Scrollbar> createScrollbar();
+    Ref<Scrollbar> createScrollbar();
     void destroyScrollbar();
     
     int maximumNumberOfItemsThatFitInPaddingBottomArea() const;

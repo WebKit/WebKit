@@ -42,7 +42,7 @@ class RenderStyle;
 class RenderScrollbar final : public Scrollbar {
 public:
     friend class Scrollbar;
-    static RefPtr<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
+    static Ref<Scrollbar> createCustomScrollbar(ScrollableArea&, ScrollbarOrientation, Element*, Frame* owningFrame = nullptr);
     virtual ~RenderScrollbar();
 
     RenderBox* owningRenderer() const;

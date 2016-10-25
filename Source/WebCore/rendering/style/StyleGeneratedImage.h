@@ -45,7 +45,7 @@ private:
 
     WrappedImagePtr data() const override { return m_imageGeneratorValue.ptr(); }
 
-    PassRefPtr<CSSValue> cssValue() const override;
+    Ref<CSSValue> cssValue() const override;
 
     bool isPending() const override;
     void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;

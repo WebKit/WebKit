@@ -98,7 +98,7 @@ public:
     WEBCORE_EXPORT void setCanHaveScrollbars(bool) override;
     WEBCORE_EXPORT void updateCanHaveScrollbars();
 
-    PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation) override;
+    Ref<Scrollbar> createScrollbar(ScrollbarOrientation) override;
 
     bool avoidScrollbarCreation() const override;
 

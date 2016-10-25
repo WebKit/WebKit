@@ -101,7 +101,7 @@ public:
     bool isSizeSet() const { return m_sizeType != SizeNone; }
     bool isMaskSourceTypeSet() const { return m_maskSourceTypeSet; }
 
-    void setImage(PassRefPtr<StyleImage> image) { m_image = image; m_imageSet = true; }
+    void setImage(RefPtr<StyleImage>&& image) { m_image = WTFMove(image); m_imageSet = true; }
     void setXPosition(Length length) { m_xPosition = WTFMove(length); m_xPosSet = true; }
     void setYPosition(Length length) { m_yPosition = WTFMove(length); m_yPosSet = true; }
     void setBackgroundXOrigin(Edge o) { m_backgroundXOrigin = static_cast<unsigned>(o); m_backgroundOriginSet = true; }

@@ -1,3 +1,14 @@
+2016-10-25  Andreas Kling  <akling@apple.com>
+
+        More PassRefPtr purging in WebCore.
+        <https://webkit.org/b/163895>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.h:
+        * WebProcess/Plugins/PDF/DeprecatedPDFPlugin.mm:
+        (WebKit::PDFPlugin::createScrollbar):
+
 2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         NetworkSession: switch to use subclasses for NetworkSession and NetworkDataTask implementations

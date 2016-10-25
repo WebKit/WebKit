@@ -161,7 +161,7 @@ bool RenderWidget::updateWidgetGeometry()
     return setWidgetGeometry(absoluteContentBox);
 }
 
-void RenderWidget::setWidget(PassRefPtr<Widget> widget)
+void RenderWidget::setWidget(RefPtr<Widget>&& widget)
 {
     if (widget == m_widget)
         return;

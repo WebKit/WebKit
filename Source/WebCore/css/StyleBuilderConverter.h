@@ -86,7 +86,7 @@ public:
     static EResize convertResize(StyleResolver&, CSSValue&);
     static int convertMarqueeRepetition(StyleResolver&, CSSValue&);
     static int convertMarqueeSpeed(StyleResolver&, CSSValue&);
-    static PassRefPtr<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
+    static Ref<QuotesData> convertQuotes(StyleResolver&, CSSValue&);
     static TextUnderlinePosition convertTextUnderlinePosition(StyleResolver&, CSSValue&);
     static RefPtr<StyleReflection> convertReflection(StyleResolver&, CSSValue&);
     static IntSize convertInitialLetter(StyleResolver&, CSSValue&);
@@ -585,7 +585,7 @@ inline int StyleBuilderConverter::convertMarqueeSpeed(StyleResolver&, CSSValue& 
     return speed;
 }
 
-inline PassRefPtr<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver&, CSSValue& value)
+inline Ref<QuotesData> StyleBuilderConverter::convertQuotes(StyleResolver&, CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value)) {
         ASSERT(downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone);

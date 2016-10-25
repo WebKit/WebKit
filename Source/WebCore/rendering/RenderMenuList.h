@@ -113,7 +113,7 @@ private:
     bool multiple() const override;
     FontSelector* fontSelector() const override;
     HostWindow* hostWindow() const override;
-    PassRefPtr<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
+    Ref<Scrollbar> createScrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize) override;
 
     bool hasLineIfEmpty() const override { return true; }
 

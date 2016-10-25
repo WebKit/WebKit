@@ -213,7 +213,7 @@ public:
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 
-    PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
+    Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
     void destroyScrollbar(ScrollbarOrientation);
 
     bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
@@ -830,7 +830,7 @@ private:
         const HitTestingTransformState* unflattenedTransformState,
         bool depthSortDescendants);
 
-    PassRefPtr<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
+    Ref<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState* containerTransformState,
         const LayoutSize& translationOffset = LayoutSize()) const;

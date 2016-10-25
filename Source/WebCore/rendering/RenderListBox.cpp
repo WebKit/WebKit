@@ -896,7 +896,7 @@ void RenderListBox::logMockScrollAnimatorMessage(const String& message) const
     document().addConsoleMessage(MessageSource::Other, MessageLevel::Debug, "RenderListBox: " + message);
 }
 
-PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
+Ref<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style().hasPseudoStyle(SCROLLBAR);
@@ -911,7 +911,7 @@ PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
         }
     }
     view().frameView().addChild(widget.get());
-    return WTFMove(widget);
+    return widget.releaseNonNull();
 }
 
 void RenderListBox::destroyScrollbar()

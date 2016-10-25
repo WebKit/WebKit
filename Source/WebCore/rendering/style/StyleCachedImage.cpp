@@ -96,9 +96,9 @@ CachedImage* StyleCachedImage::cachedImage() const
     return m_cachedImage.get();
 }
 
-PassRefPtr<CSSValue> StyleCachedImage::cssValue() const
+Ref<CSSValue> StyleCachedImage::cssValue() const
 {
-    return const_cast<CSSValue*>(m_cssValue.ptr());
+    return const_cast<CSSValue&>(m_cssValue.get());
 }
 
 bool StyleCachedImage::canRender(const RenderElement* renderer, float multiplier) const

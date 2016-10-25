@@ -140,7 +140,7 @@ public:
     WEBCORE_EXPORT void setDelegatesScrolling(bool);
 
     // Overridden by FrameView to create custom CSS scrollbars if applicable.
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
+    virtual Ref<Scrollbar> createScrollbar(ScrollbarOrientation);
 
     void styleDidChange();
 

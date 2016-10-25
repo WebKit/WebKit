@@ -22,7 +22,6 @@
 #ifndef QuotesData_h
 #define QuotesData_h
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +35,7 @@ namespace WebCore {
 
 class QuotesData : public RefCounted<QuotesData> {
 public:
-    static PassRefPtr<QuotesData> create(const Vector<std::pair<String, String>>& quotes);
+    static Ref<QuotesData> create(const Vector<std::pair<String, String>>& quotes);
     ~QuotesData();
 
     friend bool operator==(const QuotesData&, const QuotesData&);

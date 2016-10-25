@@ -36,7 +36,6 @@
 #include "LayoutRect.h"
 #include "SVGFilterBuilder.h"
 #include "SourceGraphic.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -108,7 +107,7 @@ public:
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
     bool build(RenderElement*, const FilterOperations&, FilterConsumer);
-    PassRefPtr<FilterEffect> buildReferenceFilter(RenderElement*, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
+    RefPtr<FilterEffect> buildReferenceFilter(RenderElement*, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation*);
     bool updateBackingStoreRect(const FloatRect& filterRect);
     void allocateBackingStoreIfNeeded(const GraphicsContext&);
     void clearIntermediateResults();

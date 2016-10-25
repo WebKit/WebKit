@@ -30,7 +30,6 @@
 #include "Length.h"
 #include "StyleCustomPropertyData.h"
 #include <wtf/RefCounted.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 #if ENABLE(TEXT_AUTOSIZING)

@@ -27,7 +27,6 @@
 #include "CSSValue.h"
 #include "FloatSize.h"
 #include "Image.h"
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
@@ -49,7 +48,7 @@ public:
 
     virtual bool operator==(const StyleImage& other) const = 0;
 
-    virtual PassRefPtr<CSSValue> cssValue() const = 0;
+    virtual Ref<CSSValue> cssValue() const = 0;
 
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
     virtual bool isPending() const = 0;

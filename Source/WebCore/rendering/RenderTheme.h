@@ -34,7 +34,7 @@
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -67,12 +67,12 @@ public:
     // This function is to be implemented in your platform-specific theme implementation to hand back the
     // appropriate platform theme. When the theme is needed in non-page dependent code, a default theme is
     // used as fallback, which is returned for a nulled page, so the platform code needs to account for this.
-    static PassRefPtr<RenderTheme> themeForPage(Page* page);
+    static Ref<RenderTheme> themeForPage(Page*);
 
     // When the theme is needed in non-page dependent code, the defaultTheme() is used as fallback.
-    static inline PassRefPtr<RenderTheme> defaultTheme()
+    static inline Ref<RenderTheme> defaultTheme()
     {
-        return themeForPage(0);
+        return themeForPage(nullptr);
     };
 
     // This method is called whenever style has been computed for an element and the appearance

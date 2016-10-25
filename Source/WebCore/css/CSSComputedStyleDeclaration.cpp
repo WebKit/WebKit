@@ -1861,7 +1861,7 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle* style)
         if (is<CounterContentData>(*contentData))
             list.get().append(cssValuePool.createValue(downcast<CounterContentData>(*contentData).counter().identifier(), CSSPrimitiveValue::CSS_COUNTER_NAME));
         else if (is<ImageContentData>(*contentData))
-            list.get().append(*downcast<ImageContentData>(*contentData).image().cssValue());
+            list.get().append(downcast<ImageContentData>(*contentData).image().cssValue());
         else if (is<TextContentData>(*contentData))
             list.get().append(cssValuePool.createValue(downcast<TextContentData>(*contentData).text(), CSSPrimitiveValue::CSS_STRING));
     }
@@ -2437,7 +2437,7 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
 
     if (shapeValue->type() == ShapeValue::Type::Image) {
         if (shapeValue->image())
-            return *shapeValue->image()->cssValue();
+            return shapeValue->image()->cssValue();
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     }
 
@@ -2584,7 +2584,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
                 if (currLayer->image())
-                    list->append(*currLayer->image()->cssValue());
+                    list->append(currLayer->image()->cssValue());
                 else
                     list->append(cssValuePool.createIdentifierValue(CSSValueNone));
             }
@@ -2837,7 +2837,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 list = CSSValueList::createCommaSeparated();
                 for (unsigned i = 0; i < cursors->size(); ++i)
                     if (StyleImage* image = cursors->at(i).image())
-                        list->append(*image->cssValue());
+                        list->append(image->cssValue());
             }
             auto value = cssValuePool.createValue(style->cursor());
             if (list) {

@@ -410,17 +410,17 @@ bool RenderThemeEfl::paintThemePart(const GraphicsContext& context, FormType typ
     return false;
 }
 
-PassRefPtr<RenderTheme> RenderThemeEfl::create(Page* page)
+Ref<RenderTheme> RenderThemeEfl::create(Page* page)
 {
-    return adoptRef(new RenderThemeEfl(page));
+    return adoptRef(*new RenderThemeEfl(page));
 }
 
-PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
+Ref<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     if (page)
         return RenderThemeEfl::create(page);
 
-    static RenderTheme* fallback = RenderThemeEfl::create(0).leakRef();
+    static RenderTheme& fallback = RenderThemeEfl::create(0).leakRef();
     return fallback;
 }
 

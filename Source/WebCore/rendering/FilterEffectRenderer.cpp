@@ -85,7 +85,7 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? &sourceImage()->context() : nullptr;
 }
 
-PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
+RefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderElement* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
     if (!renderer)
         return nullptr;
