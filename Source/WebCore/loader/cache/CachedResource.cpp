@@ -47,7 +47,6 @@
 #include "ResourceHandle.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
-#include "SecurityPolicy.h"
 #include "SubresourceLoader.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -135,9 +134,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, Sessi
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == CachedResource::MainResource);
 
-    if (m_options.mode != FetchOptions::Mode::SameOrigin && m_origin
-        && !(m_resourceRequest.url().protocolIsData() && m_options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
-        && !m_origin->canRequest(m_resourceRequest.url()))
+    if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
         setCrossOrigin();
 }
 
@@ -181,66 +178,6 @@ void CachedResource::failBeforeStarting()
     if (allowsCaching() && m_resourceToRevalidate)
         MemoryCache::singleton().revalidationFailed(*this);
     error(CachedResource::LoadError);
-}
-
-static void addAdditionalRequestHeadersToRequest(ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader, CachedResource& resource)
-{
-    if (resource.type() == CachedResource::MainResource)
-        return;
-    // In some cases we may try to load resources in frameless documents. Such loads always fail.
-    // FIXME: We shouldn't get this far.
-    if (!cachedResourceLoader.frame())
-        return;
-
-    // Note: We skip the Content-Security-Policy check here because we check
-    // the Content-Security-Policy at the CachedResourceLoader layer so we can
-    // handle different resource types differently.
-    FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
-    String outgoingReferrer;
-    String outgoingOrigin;
-    if (request.httpReferrer().isNull()) {
-        outgoingReferrer = frameLoader.outgoingReferrer();
-        outgoingOrigin = frameLoader.outgoingOrigin();
-    } else {
-        outgoingReferrer = request.httpReferrer();
-        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
-    }
-
-    // FIXME: Refactor SecurityPolicy::generateReferrerHeader to align with new terminology used in https://w3c.github.io/webappsec-referrer-policy.
-    switch (resource.options().referrerPolicy) {
-    case FetchOptions::ReferrerPolicy::EmptyString: {
-        ReferrerPolicy referrerPolicy = cachedResourceLoader.document() ? cachedResourceLoader.document()->referrerPolicy() : ReferrerPolicy::Default;
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, request.url(), outgoingReferrer);
-        break; }
-    case FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Default, request.url(), outgoingReferrer);
-        break;
-    case FetchOptions::ReferrerPolicy::NoReferrer:
-        outgoingReferrer = String();
-        break;
-    case FetchOptions::ReferrerPolicy::Origin:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, request.url(), outgoingReferrer);
-        break;
-    case FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin:
-        if (resource.isCrossOrigin())
-            outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, request.url(), outgoingReferrer);
-        break;
-    case FetchOptions::ReferrerPolicy::UnsafeUrl:
-        break;
-    };
-
-    if (outgoingReferrer.isEmpty())
-        request.clearHTTPReferrer();
-    else
-        request.setHTTPReferrer(outgoingReferrer);
-    FrameLoader::addHTTPOriginIfNeeded(request, outgoingOrigin);
-
-    frameLoader.addExtraFieldsToSubresourceRequest(request);
-}
-
-void CachedResource::addAdditionalRequestHeaders(CachedResourceLoader& loader)
-{
-    addAdditionalRequestHeadersToRequest(m_resourceRequest, loader, *this);
 }
 
 void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
@@ -311,7 +248,11 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
 #endif
     m_resourceRequest.setPriority(loadPriority());
 
-    addAdditionalRequestHeaders(cachedResourceLoader);
+    // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
+    // So no need for extra fields for MainResource.
+    if (type() != CachedResource::MainResource)
+        frameLoader.addExtraFieldsToSubresourceRequest(m_resourceRequest);
+
 
     // FIXME: It's unfortunate that the cache layer and below get to know anything about fragment identifiers.
     // We should look into removing the expectation of that knowledge from the platform network stacks.
@@ -835,15 +776,12 @@ bool CachedResource::redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot reuse
     return WebCore::redirectChainAllowsReuse(m_redirectChainCacheStatus, reuseExpiredRedirection);
 }
 
-bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request, const CachedResourceLoader& cachedResourceLoader)
+bool CachedResource::varyHeaderValuesMatch(const ResourceRequest& request)
 {
     if (m_varyingHeaderValues.isEmpty())
         return true;
 
-    ResourceRequest requestWithFullHeaders(request);
-    addAdditionalRequestHeadersToRequest(requestWithFullHeaders, cachedResourceLoader, *this);
-
-    return verifyVaryingRequestHeaders(m_varyingHeaderValues, requestWithFullHeaders, m_sessionID);
+    return verifyVaryingRequestHeaders(m_varyingHeaderValues, request, m_sessionID);
 }
 
 unsigned CachedResource::overheadSize() const

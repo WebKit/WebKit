@@ -31,8 +31,10 @@
 #include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
+#include "FrameLoader.h"
 #include "HTTPHeaderValues.h"
 #include "MemoryCache.h"
+#include "SecurityPolicy.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -102,7 +104,7 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
     ASSERT(document.securityOrigin());
 
     m_origin = document.securityOrigin();
-    WebCore::updateRequestForAccessControl(m_resourceRequest, *document.securityOrigin(), m_options.allowCredentials);
+    WebCore::updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.allowCredentials);
 }
 
 void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document)
@@ -208,5 +210,65 @@ void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedS
     ContentExtensions::applyBlockedStatusToRequest(blockedStatus, m_resourceRequest);
 }
 #endif
+
+void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader& frameLoader, ReferrerPolicy defaultPolicy)
+{
+    // Implementing step 7 to 9 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+
+    String outgoingOrigin;
+    String outgoingReferrer = m_resourceRequest.httpReferrer();
+    if (!outgoingReferrer.isNull())
+        outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
+    else {
+        outgoingReferrer = frameLoader.outgoingReferrer();
+        outgoingOrigin = frameLoader.outgoingOrigin();
+    }
+
+    // FIXME: Refactor SecurityPolicy::generateReferrerHeader to align with new terminology used in https://w3c.github.io/webappsec-referrer-policy.
+    switch (m_options.referrerPolicy) {
+    case FetchOptions::ReferrerPolicy::EmptyString: {
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(defaultPolicy, m_resourceRequest.url(), outgoingReferrer);
+        break; }
+    case FetchOptions::ReferrerPolicy::NoReferrerWhenDowngrade:
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Default, m_resourceRequest.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::NoReferrer:
+        outgoingReferrer = String();
+        break;
+    case FetchOptions::ReferrerPolicy::Origin:
+        outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, m_resourceRequest.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::OriginWhenCrossOrigin:
+        if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
+            outgoingReferrer = SecurityPolicy::generateReferrerHeader(ReferrerPolicy::Origin, m_resourceRequest.url(), outgoingReferrer);
+        break;
+    case FetchOptions::ReferrerPolicy::UnsafeUrl:
+        break;
+    };
+
+    if (outgoingReferrer.isEmpty())
+        m_resourceRequest.clearHTTPReferrer();
+    else
+        m_resourceRequest.setHTTPReferrer(outgoingReferrer);
+    FrameLoader::addHTTPOriginIfNeeded(m_resourceRequest, outgoingOrigin);
+
+    frameLoader.applyUserAgent(m_resourceRequest);
+}
+
+bool isRequestCrossOrigin(SecurityOrigin* origin, const URL& requestURL, const ResourceLoaderOptions& options)
+{
+    if (!origin)
+        return false;
+
+    // Using same origin mode guarantees the loader will not do a cross-origin load, so we let it take care of it and just return false.
+    if (options.mode == FetchOptions::Mode::SameOrigin)
+        return false;
+
+    // FIXME: We should remove options.sameOriginDataURLFlag once https://github.com/whatwg/fetch/issues/393 is fixed.
+    if (requestURL.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set)
+        return false;
+
+    return !origin->canRequest(requestURL);
+}
 
 } // namespace WebCore

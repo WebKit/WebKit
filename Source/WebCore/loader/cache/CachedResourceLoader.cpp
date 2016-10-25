@@ -65,6 +65,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicy.h"
 #include "SessionID.h"
 #include "Settings.h"
 #include "StyleSheetContents.h"
@@ -662,10 +663,18 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     // FIXME: Decide whether to support client hints
 }
 
-
-void CachedResourceLoader::updateHTTPRequestHeaders(CachedResourceRequest& request)
+void CachedResourceLoader::updateHTTPRequestHeaders(CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing steps 10 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // Implementing steps 7 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+
+    // FIXME: We should reconcile handling of MainResource with other resources.
+    if (type != CachedResource::Type::MainResource) {
+        // In some cases we may try to load resources in frameless documents. Such loads always fail.
+        // FIXME: We shouldn't need to do the check on frame.
+        if (auto* frame = this->frame())
+            request.updateReferrerOriginAndUserAgentHeaders(frame->loader(), document() ? document()->referrerPolicy() : ReferrerPolicy::Default);
+    }
+
     request.updateAccordingCacheMode();
 }
 
@@ -724,7 +733,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 #endif
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
-        updateHTTPRequestHeaders(request);
+        updateHTTPRequestHeaders(type, request);
 
     auto& memoryCache = MemoryCache::singleton();
     if (request.allowsCaching() && memoryCache.disabled()) {
@@ -921,7 +930,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
-    if (!existingResource->varyHeaderValuesMatch(request, *this))
+    if (!existingResource->varyHeaderValuesMatch(request))
         return Reload;
 
     auto* textDecoder = existingResource->textResourceDecoder();

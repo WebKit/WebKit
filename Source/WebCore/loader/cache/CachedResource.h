@@ -233,8 +233,8 @@ public:
     void increasePreloadCount() { ++m_preloadCount; }
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
 
-    void registerHandle(CachedResourceHandleBase* h);
-    WEBCORE_EXPORT void unregisterHandle(CachedResourceHandleBase* h);
+    void registerHandle(CachedResourceHandleBase*);
+    WEBCORE_EXPORT void unregisterHandle(CachedResourceHandleBase*);
 
     bool canUseCacheValidator() const;
 
@@ -243,7 +243,7 @@ public:
     bool redirectChainAllowsReuse(ReuseExpiredRedirectionOrNot) const;
     bool hasRedirections() const { return m_redirectChainCacheStatus.status != RedirectChainCacheStatus::Status::NoRedirection;  }
 
-    bool varyHeaderValuesMatch(const ResourceRequest&, const CachedResourceLoader&);
+    bool varyHeaderValuesMatch(const ResourceRequest&);
 
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }

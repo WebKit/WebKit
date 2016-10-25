@@ -41,7 +41,12 @@ namespace WebCore {
 namespace ContentExtensions {
 struct BlockedStatus;
 }
+
 class Document;
+class FrameLoader;
+enum class ReferrerPolicy;
+
+bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const ResourceLoaderOptions&);
 
 class CachedResourceRequest {
 public:
@@ -63,6 +68,7 @@ public:
     void setAsPotentiallyCrossOrigin(const String&, Document&);
     void updateForAccessControl(Document&);
 
+    void updateReferrerOriginAndUserAgentHeaders(FrameLoader&, ReferrerPolicy);
     void upgradeInsecureRequestIfNeeded(Document&);
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();
@@ -74,7 +80,7 @@ public:
     void setDomainForCachePartition(Document&);
 #endif
 
-    void setOrigin(RefPtr<SecurityOrigin>&& origin) { ASSERT(!m_origin); m_origin = WTFMove(origin); }
+    void setOrigin(RefPtr<SecurityOrigin>&& origin) { m_origin = WTFMove(origin); }
     RefPtr<SecurityOrigin> releaseOrigin() { return WTFMove(m_origin); }
     SecurityOrigin* origin() const { return m_origin.get(); }
 

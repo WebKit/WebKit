@@ -1,3 +1,40 @@
+2016-10-25  Youenn Fablet  <youenn@apple.com>
+
+        CachedResourceLoader should set headers of the HTTP request prior checking for the cache
+        https://bugs.webkit.org/show_bug.cgi?id=163103
+
+        Reviewed by Darin Adler.
+
+        No expected change of behavior.
+
+        Moved referrer, user-agent, and origin headers setting to CachedResourceRequest/CachedResourceLoader before checking the cache.
+        This allows simplifying vary header checks and is more inline with the fetch specification.
+
+        To compute the referrer value, we need to know whether the request is cross-origin.
+        A helper function isRequestCrossOrigin is added for that purpose and is also used in CachedResource to set its initial response tainting.
+
+        We should disable setting user-agent and origin headers by FrameLoader for subresources since this is now done in CachedResourceLoader.
+        This could be done as a follow-up patch.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::varyHeaderValuesMatch):
+        (WebCore::addAdditionalRequestHeadersToRequest): Deleted.
+        (WebCore::CachedResource::addAdditionalRequestHeaders): Deleted.
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateForAccessControl):
+        (WebCore::CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders):
+        (WebCore::isRequestCrossOrigin):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore::CachedResourceRequest::setOrigin):
+
 2016-10-25  Andreas Kling  <akling@apple.com>
 
         More PassRefPtr purging in WebCore.
