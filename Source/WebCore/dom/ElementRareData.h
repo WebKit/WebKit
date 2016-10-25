@@ -22,6 +22,7 @@
 #ifndef ElementRareData_h
 #define ElementRareData_h
 
+#include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "JSCustomElementInterface.h"
@@ -95,8 +96,8 @@ public:
     void setShadowRoot(RefPtr<ShadowRoot>&& shadowRoot) { m_shadowRoot = WTFMove(shadowRoot); }
 
 #if ENABLE(CUSTOM_ELEMENTS)
-    JSCustomElementInterface* customElementInterface() { return m_customElementInterface.get(); }
-    void setCustomElementInterface(JSCustomElementInterface& customElementInterface) { m_customElementInterface = &customElementInterface; }
+    CustomElementReactionQueue* customElementReactionQueue() { return m_customElementReactionQueue.get(); }
+    void setCustomElementReactionQueue(std::unique_ptr<CustomElementReactionQueue>&& queue) { m_customElementReactionQueue = WTFMove(queue); }
 #endif
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
@@ -156,7 +157,7 @@ private:
     std::unique_ptr<DOMTokenList> m_classList;
     RefPtr<ShadowRoot> m_shadowRoot;
 #if ENABLE(CUSTOM_ELEMENTS)
-    RefPtr<JSCustomElementInterface> m_customElementInterface;
+    std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
 #endif
     std::unique_ptr<NamedNodeMap> m_attributeMap;
 

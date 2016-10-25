@@ -1902,15 +1902,22 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
 {
     clearFlag(IsEditingTextOrUndefinedCustomElementFlag);
     setFlag(IsCustomElement);
-    ensureElementRareData().setCustomElementInterface(elementInterface);
+    auto& data = ensureElementRareData();
+    if (!data.customElementReactionQueue())
+        data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
 }
 
-void Element::setIsFailedCustomElement(JSCustomElementInterface& elementInterface)
+void Element::setIsFailedCustomElement(JSCustomElementInterface&)
 {
     ASSERT(isUndefinedCustomElement());
     ASSERT(getFlag(IsEditingTextOrUndefinedCustomElementFlag));
     clearFlag(IsCustomElement);
-    ensureElementRareData().setCustomElementInterface(elementInterface);
+
+    if (hasRareData()) {
+        // Clear the queue instead of deleting it since this function can be called inside CustomElementReactionQueue::invokeAll during upgrades.
+        if (auto* queue = elementRareData()->customElementReactionQueue())
+            queue->clear();
+    }
 }
 
 void Element::setIsCustomElementUpgradeCandidate()
@@ -1920,12 +1927,25 @@ void Element::setIsCustomElementUpgradeCandidate()
     setFlag(IsEditingTextOrUndefinedCustomElementFlag);
 }
 
-JSCustomElementInterface* Element::customElementInterface() const
+void Element::enqueueToUpgrade(JSCustomElementInterface& elementInterface)
 {
-    ASSERT(isDefinedCustomElement());
+    ASSERT(!isDefinedCustomElement() && !isFailedCustomElement());
+    setFlag(IsCustomElement);
+    setFlag(IsEditingTextOrUndefinedCustomElementFlag);
+
+    auto& data = ensureElementRareData();
+    ASSERT(!data.customElementReactionQueue());
+
+    data.setCustomElementReactionQueue(std::make_unique<CustomElementReactionQueue>(elementInterface));
+    data.customElementReactionQueue()->enqueueElementUpgrade(*this);
+}
+
+CustomElementReactionQueue* Element::reactionQueue() const
+{
+    ASSERT(isDefinedCustomElement() || isCustomElementUpgradeCandidate());
     if (!hasRareData())
         return nullptr;
-    return elementRareData()->customElementInterface();
+    return elementRareData()->customElementReactionQueue();
 }
 
 #endif

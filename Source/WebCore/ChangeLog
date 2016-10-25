@@ -1,3 +1,77 @@
+2016-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom elements reactions should have a queue per element
+        https://bugs.webkit.org/show_bug.cgi?id=163878
+
+        Reviewed by Antti Koivisto.
+
+        This patch splits the custom elements reaction queue into per element to match the latest HTML specifications:
+        https://html.spec.whatwg.org/multipage/scripting.html#custom-element-reaction-queue
+        and introduces the backup element queue:
+        https://html.spec.whatwg.org/multipage/scripting.html#backup-element-queue
+
+        In terms of code changes, CustomElementReactionStack now holds onto ElementQueue, an ordered list of elements,
+        and make each ElementRareData keep its own CustomElementReactionQueue. CustomElementReactionQueue is created
+        for each custom element when it is synchronously constructed or enqueued to upgrade.
+
+        Because each reaction queue is now specific to each element, CustomElementReactionQueue instead of
+        CustomElementReactionQueueItem stores JSCustomElementInterface.
+
+        The backup element queue is created as a singleton returned by CustomElementReactionStack's backupElementQueue,
+        and ensureBackupQueue() schedules a new mirotask to process the backup queue when there isn't already one.
+
+        ensureCurrentQueue() now returns a reference to CustomElementReactionQueue instead of a pointer since it can
+        fallback to the backup queue when the stack is empty as specified:
+        https://html.spec.whatwg.org/multipage/scripting.html#enqueue-an-element-on-the-appropriate-element-queue
+
+        Note that ensureCurrentQueue() may insert the same element multiple times into the element queue for now since
+        avoiding this duplication would require either doing O(n) iteration on m_elements or adding a HashSet.
+        We can revisit this in the future if the reaction queue is found to grow beyond a few entries since elements in
+        the element queue will have duplicates only when each reaction queue has more than one item.
+
+        Tests: fast/custom-elements/backup-element-queue.html
+               fast/custom-elements/custom-element-reaction-queue.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueueItem::CustomElementReactionQueueItem):
+        (WebCore::CustomElementReactionQueueItem::invoke): Removed the check for isFailedCustomElement since the queue
+        is explicitly cleared in Element::setIsFailedCustomElement.
+        (WebCore::CustomElementReactionQueue::CustomElementReactionQueue): Now takes JSCustomElementInterface since
+        each item in the queue no longer stores Element or JSCustomElementInterface.
+        (WebCore::CustomElementReactionQueue::clear):
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgrade):
+        (WebCore::CustomElementReactionQueue::enqueueElementUpgradeIfDefined):
+        (WebCore::CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAdoptedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueueAttributeChangedCallbackIfNeeded):
+        (WebCore::CustomElementReactionQueue::enqueuePostUpgradeReactions):
+        (WebCore::CustomElementReactionQueue::invokeAll):
+        (WebCore::CustomElementReactionStack::ElementQueue::add): Added.
+        (WebCore::CustomElementReactionStack::ElementQueue::invokeAll): Added.
+        (WebCore::CustomElementReactionStack::ensureCurrentQueue):
+        (WebCore::BackupElementQueueMicrotask): Added.
+        (WebCore::CustomElementReactionStack::ensureBackupQueue): Added.
+        (WebCore::CustomElementReactionStack::processBackupQueue): Added.
+        (WebCore::CustomElementReactionStack::backupElementQueue): Added.
+        * dom/CustomElementReactionQueue.h:
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::enqueueUpgradeInShadowIncludingTreeOrder):
+        * dom/Document.cpp:
+        (WebCore::createFallbackHTMLElement):
+        * dom/Element.cpp:
+        (WebCore::Element::setIsDefinedCustomElement): Create a new reaction queue if there isn't already one; when
+        this element had been upgraded, the reaction queue have already been created in Element::enqueueToUpgrade.
+        (WebCore::Element::setIsFailedCustomElement): Clear the reaction queue when the upgrading had failed.
+        (WebCore::Element::enqueueToUpgrade): Added.
+        (WebCore::Element::reactionQueue): Added.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::customElementReactionQueue): Replaced customElementInterface.
+        (WebCore::ElementRareData::setCustomElementReactionQueue): Replaced setCustomElementReactionQueue.
+
 2016-10-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::generateKey to match the latest spec

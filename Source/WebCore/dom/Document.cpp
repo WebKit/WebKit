@@ -1075,8 +1075,7 @@ static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const Qual
         if (UNLIKELY(registry)) {
             if (auto* elementInterface = registry->findInterface(name)) {
                 auto element = HTMLElement::create(name, document);
-                element->setIsCustomElementUpgradeCandidate();
-                CustomElementReactionQueue::enqueueElementUpgrade(element.get(), *elementInterface);
+                element->enqueueToUpgrade(*elementInterface);
                 return element;
             }
         }

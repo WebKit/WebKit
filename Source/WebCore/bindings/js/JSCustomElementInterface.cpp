@@ -182,7 +182,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
-    CustomElementReactionQueue::enqueuePostUpgradeReactions(element, *this);
+    CustomElementReactionQueue::enqueuePostUpgradeReactions(element);
 
     m_constructionStack.append(&element);
 

@@ -1,3 +1,18 @@
+2016-10-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Custom elements reactions should have a queue per element
+        https://bugs.webkit.org/show_bug.cgi?id=163878
+
+        Reviewed by Antti Koivisto.
+
+        Added a W3C style testharness.js test for making sure the custom element reaction queue exists per element,
+        and added a WebKit style test for making sure that the backup element queue exists.
+
+        * fast/custom-elements/backup-element-queue-expected.txt: Added.
+        * fast/custom-elements/backup-element-queue.html: Added.
+        * fast/custom-elements/custom-element-reaction-queue-expected.txt: Added.
+        * fast/custom-elements/custom-element-reaction-queue.html: Added.
+
 2016-10-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update SubtleCrypto::generateKey to match the latest spec

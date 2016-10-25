@@ -39,6 +39,7 @@ namespace WebCore {
 
 class ClientRect;
 class ClientRectList;
+class CustomElementReactionQueue;
 class DatasetDOMStringMap;
 class Dictionary;
 class DOMTokenList;
@@ -284,7 +285,8 @@ public:
     void setIsDefinedCustomElement(JSCustomElementInterface&);
     void setIsFailedCustomElement(JSCustomElementInterface&);
     void setIsCustomElementUpgradeCandidate();
-    JSCustomElementInterface* customElementInterface() const;
+    void enqueueToUpgrade(JSCustomElementInterface&);
+    CustomElementReactionQueue* reactionQueue() const;
 #endif
 
     // FIXME: this should not be virtual, do not override this.
