@@ -1,5 +1,17 @@
 2016-10-25  Konstantin Tokarev  <annulen@yandex.ru>
 
+        [cmake] Don't enable ld.gold by default on non-ELF platforms
+        https://bugs.webkit.org/show_bug.cgi?id=163946
+
+        Reviewed by Alex Christensen.
+
+        For example, MinGW toolchain may be shipped with gold, but it fails to link
+        WebKit.
+
+        * Source/cmake/OptionsCommon.cmake:
+
+2016-10-25  Konstantin Tokarev  <annulen@yandex.ru>
+
         [cmake] Don't add -fPIC flag when on Windows (MinGW)
         https://bugs.webkit.org/show_bug.cgi?id=163949
 
