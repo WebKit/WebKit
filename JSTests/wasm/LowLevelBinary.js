@@ -72,6 +72,7 @@ export default class LowLevelBinary {
     newPatchable(type) { return new PatchableLowLevelBinary(type, this); }
 
     // Utilities.
+    get() { return this._buf; }
     hexdump() { return _hexdump(this._buf, this._used); }
     _maybeGrow(bytes) {
         const allocated = this._buf.length;
