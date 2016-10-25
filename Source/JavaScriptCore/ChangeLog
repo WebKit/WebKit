@@ -1,3 +1,17 @@
+2016-10-24  Chris Dumez  <cdumez@apple.com>
+
+        Reduce special handling for typed arrays in JSDOMConvert.h
+        https://bugs.webkit.org/show_bug.cgi?id=163907
+
+        Reviewed by Sam Weinig.
+
+        Reduce special handling for typed arrays in JSDOMConvert.h by adding a toWrapped() static
+        function on JSGenericTypedArrayView, similarly to other wrapper types.
+
+        * runtime/JSGenericTypedArrayView.h:
+        (JSC::JSGenericTypedArrayView::typedImpl):
+        (JSC::JSGenericTypedArrayView<Adaptor>::toWrapped):
+
 2016-10-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT][DFG] CallDOM never writes Stack

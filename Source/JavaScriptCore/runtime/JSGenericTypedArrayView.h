@@ -225,10 +225,12 @@ public:
     // then it will have thrown an exception.
     bool set(ExecState*, unsigned offset, JSObject*, unsigned objectOffset, unsigned length, CopyType type = CopyType::Unobservable);
     
-    PassRefPtr<typename Adaptor::ViewType> typedImpl()
+    RefPtr<typename Adaptor::ViewType> typedImpl()
     {
         return Adaptor::ViewType::create(buffer(), byteOffset(), length());
     }
+
+    static RefPtr<typename Adaptor::ViewType> toWrapped(JSValue);
     
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -365,6 +367,12 @@ inline RefPtr<typename Adaptor::ViewType> toNativeTypedView(JSValue value)
     if (!wrapper)
         return nullptr;
     return wrapper->typedImpl();
+}
+
+template<typename Adaptor>
+RefPtr<typename Adaptor::ViewType> JSGenericTypedArrayView<Adaptor>::toWrapped(JSValue value)
+{
+    return JSC::toNativeTypedView<Adaptor>(value);
 }
 
 } // namespace JSC

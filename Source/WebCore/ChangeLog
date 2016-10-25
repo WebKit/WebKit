@@ -1,3 +1,18 @@
+2016-10-24  Chris Dumez  <cdumez@apple.com>
+
+        Reduce special handling for typed arrays in JSDOMConvert.h
+        https://bugs.webkit.org/show_bug.cgi?id=163907
+
+        Reviewed by Sam Weinig.
+
+        Reduce special handling for typed arrays in JSDOMConvert.h by adding a toWrapped() static
+        function on JSGenericTypedArrayView, similarly to other wrapper types.
+
+        No new tests, no web-exposed behavior change.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>>::convert): Deleted.
+
 2016-10-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r207783.

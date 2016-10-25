@@ -235,6 +235,12 @@ template<> struct JSDOMWrapperConverterTraits<JSC::ArrayBufferView> {
     using ToWrappedReturnType = RefPtr<ArrayBufferView>;
 };
 
+// Typed arrays support.
+template<typename Adaptor> struct JSDOMWrapperConverterTraits<JSC::GenericTypedArrayView<Adaptor>> {
+    using WrapperClass = JSC::JSGenericTypedArrayView<Adaptor>;
+    using ToWrappedReturnType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
+};
+
 // MARK: -
 // MARK: Interface type
 
@@ -261,27 +267,6 @@ template<typename T> struct JSConverter<IDLInterface<T>> {
     static JSC::JSValue convert(JSC::ExecState& exec, JSDOMGlobalObject& globalObject, const U& value)
     {
         return toJS(&exec, &globalObject, WTF::getPtr(value));
-    }
-};
-
-// Typed arrays support.
-
-template<typename Adaptor> struct IDLInterface<JSC::GenericTypedArrayView<Adaptor>> : IDLType<Ref<JSC::GenericTypedArrayView<Adaptor>>> {
-    using RawType = JSC::GenericTypedArrayView<Adaptor>;
-    using NullableType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
-};
-
-template<typename Adaptor> struct Converter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>> : DefaultConverter<IDLInterface<JSC::GenericTypedArrayView<Adaptor>>> {
-    using ReturnType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
-
-    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value)
-    {
-        JSC::VM& vm = state.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = JSC::toNativeTypedView<Adaptor>(value);
-        if (!object)
-            throwTypeError(&state, scope);
-        return object;
     }
 };
 
