@@ -120,7 +120,7 @@ void JSRopeString::resolveRopeInternal8(LChar* buffer) const
 {
     if (isSubstring()) {
         StringImpl::copyChars(
-            buffer, substringBase()->m_value.characters8() + substringOffset(), m_length);
+            buffer, substringBase()->m_value.characters8() + substringOffset(), length());
         return;
     }
     
@@ -143,14 +143,14 @@ void JSRopeString::resolveRopeInternal8NoSubstring(LChar* buffer) const
         StringImpl::copyChars(position, fiberString.characters8(), length);
         position += length;
     }
-    ASSERT((buffer + m_length) == position);
+    ASSERT((buffer + length()) == position);
 }
 
 void JSRopeString::resolveRopeInternal16(UChar* buffer) const
 {
     if (isSubstring()) {
         StringImpl::copyChars(
-            buffer, substringBase()->m_value.characters16() + substringOffset(), m_length);
+            buffer, substringBase()->m_value.characters16() + substringOffset(), length());
         return;
     }
     
@@ -176,12 +176,12 @@ void JSRopeString::resolveRopeInternal16NoSubstring(UChar* buffer) const
             StringImpl::copyChars(position, fiberString.characters16(), length);
         position += length;
     }
-    ASSERT((buffer + m_length) == position);
+    ASSERT((buffer + length()) == position);
 }
 
 void JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
 {
-    if (m_length > maxLengthForOnStackResolve) {
+    if (length() > maxLengthForOnStackResolve) {
         resolveRope(exec);
         m_value = AtomicString(m_value);
         setIs8Bit(m_value.impl()->is8Bit());
@@ -191,12 +191,12 @@ void JSRopeString::resolveRopeToAtomicString(ExecState* exec) const
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal8(buffer);
-        m_value = AtomicString(buffer, m_length);
+        m_value = AtomicString(buffer, length());
         setIs8Bit(m_value.impl()->is8Bit());
     } else {
         UChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal16(buffer);
-        m_value = AtomicString(buffer, m_length);
+        m_value = AtomicString(buffer, length());
         setIs8Bit(m_value.impl()->is8Bit());
     }
 
@@ -215,7 +215,7 @@ void JSRopeString::clearFibers() const
 
 RefPtr<AtomicStringImpl> JSRopeString::resolveRopeToExistingAtomicString(ExecState* exec) const
 {
-    if (m_length > maxLengthForOnStackResolve) {
+    if (length() > maxLengthForOnStackResolve) {
         resolveRope(exec);
         if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(m_value.impl())) {
             m_value = *existingAtomicString;
@@ -229,7 +229,7 @@ RefPtr<AtomicStringImpl> JSRopeString::resolveRopeToExistingAtomicString(ExecSta
     if (is8Bit()) {
         LChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal8(buffer);
-        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, m_length)) {
+        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, length())) {
             m_value = *existingAtomicString;
             setIs8Bit(m_value.impl()->is8Bit());
             clearFibers();
@@ -238,7 +238,7 @@ RefPtr<AtomicStringImpl> JSRopeString::resolveRopeToExistingAtomicString(ExecSta
     } else {
         UChar buffer[maxLengthForOnStackResolve];
         resolveRopeInternal16(buffer);
-        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, m_length)) {
+        if (RefPtr<AtomicStringImpl> existingAtomicString = AtomicStringImpl::lookUp(buffer, length())) {
             m_value = *existingAtomicString;
             setIs8Bit(m_value.impl()->is8Bit());
             clearFibers();
@@ -255,14 +255,14 @@ void JSRopeString::resolveRope(ExecState* exec) const
     
     if (isSubstring()) {
         ASSERT(!substringBase()->isRope());
-        m_value = substringBase()->m_value.substringSharingImpl(substringOffset(), m_length);
+        m_value = substringBase()->m_value.substringSharingImpl(substringOffset(), length());
         substringBase().clear();
         return;
     }
     
     if (is8Bit()) {
         LChar* buffer;
-        if (auto newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+        if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
             Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
             m_value = WTFMove(newImpl);
         } else {
@@ -276,7 +276,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
     }
 
     UChar* buffer;
-    if (auto newImpl = StringImpl::tryCreateUninitialized(m_length, buffer)) {
+    if (auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer)) {
         Heap::heap(this)->reportExtraMemoryAllocated(newImpl->cost());
         m_value = WTFMove(newImpl);
     } else {
@@ -301,7 +301,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
 // rope-of-ropes.)    
 void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
 {
-    LChar* position = buffer + m_length; // We will be working backwards over the rope.
+    LChar* position = buffer + length(); // We will be working backwards over the rope.
     Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
     
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i)
@@ -337,7 +337,7 @@ void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
 
 void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
 {
-    UChar* position = buffer + m_length; // We will be working backwards over the rope.
+    UChar* position = buffer + length(); // We will be working backwards over the rope.
     Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 
     for (size_t i = 0; i < s_maxInternalRopeLength && fiber(i); ++i)
@@ -430,12 +430,12 @@ JSValue JSString::toThis(JSCell* cell, ExecState* exec, ECMAMode ecmaMode)
 bool JSString::getStringPropertyDescriptor(ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(m_length), DontEnum | DontDelete | ReadOnly);
+        descriptor.setDescriptor(jsNumber(length()), DontEnum | DontDelete | ReadOnly);
         return true;
     }
     
     Optional<uint32_t> index = parseIndex(propertyName);
-    if (index && index.value() < m_length) {
+    if (index && index.value() < length()) {
         descriptor.setDescriptor(getIndex(exec, index.value()), DontDelete | ReadOnly);
         return true;
     }

@@ -1,3 +1,50 @@
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
+        JSStringJoiner::joinedLength() should limit joined string lengths to INT_MAX.
+        https://bugs.webkit.org/show_bug.cgi?id=163937
+        <rdar://problem/28642990>
+
+        Reviewed by Geoffrey Garen.
+
+        JSStringJoiner::joinedLength() was previously limiting it to UINT_MAX.  This is
+        inconsistent with other parts of string code which expects a max length of INT_MAX.
+        This is now fixed.
+
+        Also fixed jsMakeNontrivialString() to ensure that the resultant string length
+        is valid.  It was previously allowing lengths greater than INT_MAX.  This was
+        caught by the new assertion in JSString::setLength().
+
+        There are already pre-existing assertions in various JSString::finishCreation()
+        which do RELEASE_ASSERTs on the string length.  To be consistent, I'm making the
+        assertion in JSString::setLength() a RELEASE_ASSERT.  If this proves to be a
+        performance issue, I'll change this to a debug ASSERT later.
+
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::resolveRopeInternal8):
+        (JSC::JSRopeString::resolveRopeInternal8NoSubstring):
+        (JSC::JSRopeString::resolveRopeInternal16):
+        (JSC::JSRopeString::resolveRopeInternal16NoSubstring):
+        (JSC::JSRopeString::resolveRopeToAtomicString):
+        (JSC::JSRopeString::resolveRopeToExistingAtomicString):
+        (JSC::JSRopeString::resolveRope):
+        (JSC::JSRopeString::resolveRopeSlowCase8):
+        (JSC::JSRopeString::resolveRopeSlowCase):
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation):
+        (JSC::JSString::length):
+        (JSC::JSString::isValidLength):
+        (JSC::JSString::toBoolean):
+        (JSC::JSString::canGetIndex):
+        (JSC::JSString::setLength):
+        (JSC::JSString::getStringPropertySlot):
+        (JSC::JSRopeString::unsafeView):
+        (JSC::JSRopeString::viewWithUnderlyingString):
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::joinedLength):
+
 2016-10-25  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: fix unknown section name handling, and check for section size overflow

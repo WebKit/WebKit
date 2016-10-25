@@ -1,3 +1,13 @@
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
+        JSStringJoiner::joinedLength() should limit joined string lengths to INT_MAX.
+        https://bugs.webkit.org/show_bug.cgi?id=163937
+        <rdar://problem/28642990>
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/joined-strings-should-not-exceed-max-string-length.js: Added.
+
 2016-10-25  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly JS API: simple Module test

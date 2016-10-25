@@ -131,7 +131,7 @@ inline JSValue jsMakeNontrivialString(ExecState* exec, const StringType& string,
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     String result = WTF::tryMakeString(string, strings...);
-    if (!result)
+    if (UNLIKELY(!result || !JSString::isValidLength(result.length())))
         return throwOutOfMemoryError(exec, scope);
     return jsNontrivialString(exec, WTFMove(result));
 }
