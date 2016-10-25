@@ -619,7 +619,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         request.clearHTTPReferrer();
 
     bool isCrossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), request.url());
-    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "GET")) {
+    if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
         // Change newRequest method to GET if change was made during a previous redirection or if current redirection says so.
         if (m_soupMessage->method == SOUP_METHOD_GET || !request.url().protocolIsInHTTPFamily() || shouldRedirectAsGET(m_soupMessage.get(), isCrossOrigin)) {
             request.setHTTPMethod("GET");

@@ -1,3 +1,16 @@
+2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Network process assertion in NetworkDataTask::continueHTTPRedirection
+        https://bugs.webkit.org/show_bug.cgi?id=163941
+
+        Reviewed by Michael Catanzaro.
+
+        equalLettersIgnoringASCIICase() expects the second argument to be the letters to compare in lowercase, so use
+        "get" instead of "GET".
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+
 2016-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add "has capture device" bit to media state flags
