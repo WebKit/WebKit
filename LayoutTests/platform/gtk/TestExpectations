@@ -2723,6 +2723,36 @@ webkit.org/b/163833 svg/custom/getscreenctm-in-mixed-content2.xhtml [ Failure ]
 webkit.org/b/163857 imported/w3c/web-platform-tests/touch-events/create-touch-touchlist.html [ Skip ]
 webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
 
+webkit.org/b/163970 fast/block/positioning/fixed-container-with-relative-parent.html [ ImageOnlyFailure ]
+
+webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
+
+webkit.org/b/163972 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
+
+webkit.org/b/163973 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
+
+webkit.org/b/163974 fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
+
+webkit.org/b/163975 fast/css/image-set-unprefixed.html [ Failure ]
+
+webkit.org/b/163976 fast/css/user-drag-none.html [ Failure ]
+
+webkit.org/b/163977 fast/css/will-change/will-change-creates-stacking-context-inline.html [ ImageOnlyFailure ]
+webkit.org/b/163979 fast/css/will-change/will-change-creates-stacking-context.html [ ImageOnlyFailure ]
+
+webkit.org/b/163980 fast/css3-text/css3-text-align-last/text-align-last-with-text-align-justify.html [ ImageOnlyFailure ]
+webkit.org/b/163980 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
+
+webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
+
+webkit.org/b/163982 fast/css3-text/css3-text-indent/text-indent-each-line-hanging.html [ ImageOnlyFailure ]
+
+webkit.org/b/163984 fast/dom/Window/child-window-focus.html [ Failure ]
+
+webkit.org/b/163985 fast/dom/Window/webkitConvertPoint.html [ Failure ]
+
+webkit.org/b/163987 fast/dom/Window/window-lookup-precedence.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2924,6 +2954,14 @@ webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure ]
 # Threaded compositor failures caused by one of r203496, r203497, or r203498
 webkit.org/b/163528 media/video-object-fit.html [ ImageOnlyFailure ]
 webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 fast/block/float/float-with-anonymous-previous-sibling.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-altered.html [ ImageOnlyFailure ]
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ ImageOnlyFailure ]
+webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
+
+webkit.org/b/160119 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
