@@ -123,9 +123,9 @@ PASS Testing Request url 'http://example.com/foo/bar/../ton' with base 'about:bl
 PASS Testing Request url 'http://example.com/foo/bar/../ton/../../a' with base 'about:blank' 
 PASS Testing Request url 'http://example.com/foo/../../..' with base 'about:blank' 
 PASS Testing Request url 'http://example.com/foo/../../../ton' with base 'about:blank' 
-PASS Testing Request url 'http://example.com/foo/%2e' with base 'about:blank' 
-PASS Testing Request url 'http://example.com/foo/%2e%2' with base 'about:blank' 
-PASS Testing Request url 'http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar' with base 'about:blank' 
+FAIL Testing Request url 'http://example.com/foo/%2e' with base 'about:blank' assert_equals: expected "http://example.com/foo/" but got "http://example.com/foo/%2e"
+FAIL Testing Request url 'http://example.com/foo/%2e%2' with base 'about:blank' assert_equals: expected "http://example.com/foo/.%2" but got "http://example.com/foo/%2e%2"
+FAIL Testing Request url 'http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar' with base 'about:blank' assert_equals: expected "http://example.com/..bar" but got "http://example.com/foo/%2e./%2e%2e/.%2e/%2e.bar"
 PASS Testing Request url 'http://example.com////../..' with base 'about:blank' 
 PASS Testing Request url 'http://example.com/foo/bar//../..' with base 'about:blank' 
 PASS Testing Request url 'http://example.com/foo/bar//..' with base 'about:blank' 
@@ -154,8 +154,8 @@ FAIL Testing Request url 'data:test# »' with base 'about:blank' assert_equals: 
 PASS Testing Request url 'http://[www.google.com]/' with base 'about:blank' 
 PASS Testing Request url 'http://www.google.com' with base 'about:blank' 
 PASS Testing Request url 'http://192.0x00A80001' with base 'about:blank' 
-PASS Testing Request url 'http://www/foo%2Ehtml' with base 'about:blank' 
-PASS Testing Request url 'http://www/foo/%2E/html' with base 'about:blank' 
+FAIL Testing Request url 'http://www/foo%2Ehtml' with base 'about:blank' assert_equals: expected "http://www/foo.html" but got "http://www/foo%2Ehtml"
+FAIL Testing Request url 'http://www/foo/%2E/html' with base 'about:blank' assert_equals: expected "http://www/foo/html" but got "http://www/foo/%2E/html"
 PASS Testing Request url 'http://user:pass@/' with base 'about:blank' 
 PASS Testing Request url 'http://%25DOMAIN:foobar@foodomain.com/' with base 'about:blank' 
 PASS Testing Request url 'http:\\www.google.com\foo' with base 'about:blank' 
