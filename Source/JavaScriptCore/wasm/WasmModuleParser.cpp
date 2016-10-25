@@ -88,24 +88,6 @@ bool ModuleParser::parse()
         if (sectionByte) {
             if (sectionByte < Sections::Unknown)
                 section = static_cast<Sections::Section>(sectionByte);
-        } else {
-            uint32_t sectionNameLength;
-            if (!parseVarUInt32(sectionNameLength)) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "couldn't get section name length";
-                return false;
-            }
-
-            // Make sure we can read up to the section's size.
-            if (m_offset + sectionNameLength + WTF::LEBDecoder::max32BitLEBByteLength >= length()) {
-                // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
-                m_errorMessage = "section length is bigger than actual size";
-                return false;
-            }
-
-            // We don't support any custom sections yet.
-
-            m_offset += sectionNameLength;
         }
 
         if (!Sections::validateOrder(previousSection, section)) {
@@ -121,7 +103,13 @@ bool ModuleParser::parse()
             return false;
         }
 
-        unsigned end = m_offset + sectionLength;
+        if (sectionLength > length() - m_offset) {
+            // FIXME improve error message https://bugs.webkit.org/show_bug.cgi?id=163919
+            m_errorMessage = "section content would overflow Module's size";
+            return false;
+        }
+
+        auto end = m_offset + sectionLength;
 
         switch (section) {
 
@@ -174,6 +162,7 @@ bool ModuleParser::parse()
         default: {
             if (verbose)
                 dataLogLn("Unknown section, skipping.");
+            // Ignore section's name LEB and bytes: they're already included in sectionLength.
             m_offset += sectionLength;
             break;
         }

@@ -1,3 +1,17 @@
+2016-10-25  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: fix unknown section name handling, and check for section size overflow
+        https://bugs.webkit.org/show_bug.cgi?id=163959
+
+        See: https://github.com/WebAssembly/design/blob/master/BinaryEncoding.md#high-level-structure
+
+        Name length and name are already included in the payload length.
+
+        Reviewed by Filip Pizlo.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+
 2016-10-25  Christopher Reid  <Christopher.Reid@am.sony.com>
 
         jsc.cpp is leaking memory allocated by readline in runInteractive
