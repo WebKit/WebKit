@@ -1,3 +1,11 @@
+2016-10-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix Soup based ports debug build after r207813.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::authenticateCallback):
+        (WebKit::NetworkDataTaskSoup::requestStartedCallback):
+
 2016-10-25  Andreas Kling  <akling@apple.com>
 
         More PassRefPtr purging in WebCore.

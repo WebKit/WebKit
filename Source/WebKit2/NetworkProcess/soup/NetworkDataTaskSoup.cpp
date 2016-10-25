@@ -425,7 +425,7 @@ void NetworkDataTaskSoup::applyAuthenticationToRequest(ResourceRequest& request)
 
 void NetworkDataTaskSoup::authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == task->static_cast<NetworkSessionSoup&>(m_session.get()).soupSession());
+    ASSERT(session == static_cast<NetworkSessionSoup&>(task->m_session.get()).soupSession());
     if (soupMessage != task->m_soupMessage.get())
         return;
 
@@ -1059,7 +1059,7 @@ void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkData
 #else
 void NetworkDataTaskSoup::requestStartedCallback(SoupSession* session, SoupMessage* soupMessage, SoupSocket*, NetworkDataTaskSoup* task)
 {
-    ASSERT(session == task->static_cast<NetworkSessionSoup&>(m_session.get()).soupSession());
+    ASSERT(session == static_cast<NetworkSessionSoup&>(task->m_session.get()).soupSession());
     if (soupMessage != task->m_soupMessage.get())
         return;
 
