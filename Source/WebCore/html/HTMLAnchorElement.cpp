@@ -59,7 +59,6 @@ HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document& doc
     : HTMLElement(tagName, document)
     , m_hasRootEditableElementForSelectionOnMouseDown(false)
     , m_wasShiftKeyDownOnMouseDown(false)
-    , m_linkRelations(0)
     , m_cachedVisitedLinkHash(0)
 {
 }
@@ -250,8 +249,14 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
         // Do nothing.
     } else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
-        if (SpaceSplitString::spaceSplitStringContainsValue(value, "noreferrer", true))
-            m_linkRelations |= RelationNoReferrer;
+        static NeverDestroyed<AtomicString> noReferrer("noreferrer", AtomicString::ConstructFromLiteral);
+        static NeverDestroyed<AtomicString> noOpener("noopener", AtomicString::ConstructFromLiteral);
+        const bool shouldFoldCase = true;
+        SpaceSplitString relValue(value, shouldFoldCase);
+        if (relValue.contains(noReferrer))
+            m_linkRelations |= Relation::NoReferrer;
+        if (relValue.contains(noOpener))
+            m_linkRelations |= Relation::NoOpener;
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
     }
@@ -296,16 +301,16 @@ void HTMLAnchorElement::setHref(const AtomicString& value)
     setAttributeWithoutSynchronization(hrefAttr, value);
 }
 
-bool HTMLAnchorElement::hasRel(uint32_t relation) const
+bool HTMLAnchorElement::hasRel(Relation relation) const
 {
-    return m_linkRelations & relation;
+    return m_linkRelations.contains(relation);
 }
 
 DOMTokenList& HTMLAnchorElement::relList()
 {
     if (!m_relList) 
         m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](StringView token) {
-            return equalIgnoringASCIICase(token, "noreferrer");
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
         });
     return *m_relList;
 }
@@ -389,7 +394,9 @@ void HTMLAnchorElement::handleClick(Event& event)
     }
 #endif
 
-    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, hasRel(RelationNoReferrer) ? NeverSendReferrer : MaybeSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), downloadAttribute);
+    ShouldSendReferrer shouldSendReferrer = hasRel(Relation::NoReferrer) ? NeverSendReferrer : MaybeSendReferrer;
+    auto newFrameOpenerPolicy = hasRel(Relation::NoOpener) ? makeOptional(NewFrameOpenerPolicy::Suppress) : Nullopt;
+    frame->loader().urlSelected(completedURL, target(), &event, LockHistory::No, LockBackForwardList::No, shouldSendReferrer, document().shouldOpenExternalURLsPolicyToPropagate(), newFrameOpenerPolicy, downloadAttribute);
 
     sendPings(completedURL);
 }

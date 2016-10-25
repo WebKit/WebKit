@@ -1,3 +1,36 @@
+2016-10-25  Andy Estes  <aestes@apple.com>
+
+        Implement rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=155166
+        <rdar://problem/25193787>
+
+        Reviewed by Brent Fulgham.
+
+        Added support for rel=noopener to a and area elements.
+
+        Tests: fast/dom/Window/a-rel-noopener.html
+               fast/dom/Window/area-rel-noopener.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement): Stopped initializing m_linkRelations to 0.
+        (WebCore::HTMLAnchorElement::parseAttribute): Declared static AtomicStrings for "noreferrer"
+        and "noopener", and created a SpaceSplitString from the rel attribute value to test for these
+        two values.
+        (WebCore::HTMLAnchorElement::hasRel): Updated to use OptionSet::contains().
+        (WebCore::HTMLAnchorElement::relList): Added a check for "noopener".
+        (WebCore::HTMLAnchorElement::handleClick): Passed NewFrameOpenerPolicy::Suppress to
+        FrameLoader::urlSelected() if rel=noopener was specified.
+        * html/HTMLAnchorElement.h: Changed the Relation enum to an enum class, removed unused enum
+        values, and changed m_linkRelations from a 30-bit unsigned integer to an OptionSet<Relation>
+        (HTMLAnchorElement is still 128 bytes on 64-bit).
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Changed to only compute a NewFrameOpenerPolicy from the
+        referrer policy if an explicit NewFrameOpenerPolicy isn't specified. Removed the version of
+        urlSelected() that did not take a downloadAttribute parameter.
+        * loader/FrameLoader.h: Added an Optional<NewFrameOpenerPolicy> parameter to urlSelected(),
+        and set a default argument for downloadAttribute instead of having a second version of
+        urlSelected().
+
 2016-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add "has capture device" bit to media state flags

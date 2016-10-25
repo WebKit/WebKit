@@ -21,10 +21,14 @@ PASS link.relList.supports('unsupported') is false
 PASS anchor.relList.__proto__ is DOMTokenList.prototype
 PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
 PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
+PASS anchor.relList.supports(anchorRelSupportedValues[i]) is true
+PASS anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase()) is true
 PASS anchor.relList.supports('unsupported') is false
 
 * HTMLAreaElement.relList
 PASS area.relList.__proto__ is DOMTokenList.prototype
+PASS area.relList.supports(areaRelSupportedValues[i]) is true
+PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
 PASS area.relList.supports(areaRelSupportedValues[i]) is true
 PASS area.relList.supports(areaRelSupportedValues[i].toUpperCase()) is true
 PASS area.relList.supports('unsupported') is false

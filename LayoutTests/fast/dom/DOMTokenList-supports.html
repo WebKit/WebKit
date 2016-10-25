@@ -22,7 +22,7 @@ debug("");
 debug("* HTMLAnchorElement.relList");
 var anchor = document.createElement("a");
 shouldBe("anchor.relList.__proto__", "DOMTokenList.prototype");
-var anchorRelSupportedValues = ["noreferrer"];
+var anchorRelSupportedValues = ["noreferrer", "noopener"];
 for (var i = 0; i < anchorRelSupportedValues.length; i++) {
     shouldBeTrue("anchor.relList.supports(anchorRelSupportedValues[i])");
     shouldBeTrue("anchor.relList.supports(anchorRelSupportedValues[i].toUpperCase())");
@@ -33,7 +33,7 @@ debug("");
 debug("* HTMLAreaElement.relList");
 var area = document.createElement("area");
 shouldBe("area.relList.__proto__", "DOMTokenList.prototype");
-var areaRelSupportedValues = ["noreferrer"];
+var areaRelSupportedValues = ["noreferrer", "noopener"];
 for (var i = 0; i < areaRelSupportedValues.length; i++) {
     shouldBeTrue("area.relList.supports(areaRelSupportedValues[i])");
     shouldBeTrue("area.relList.supports(areaRelSupportedValues[i].toUpperCase())");

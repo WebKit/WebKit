@@ -1,0 +1,4 @@
+Test that window.opener is null when a new window is opened from an area element with rel='noopener'.
+
+
+PASS: window.opener is null

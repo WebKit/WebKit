@@ -1,3 +1,19 @@
+2016-10-25  Andy Estes  <aestes@apple.com>
+
+        Implement rel=noopener
+        https://bugs.webkit.org/show_bug.cgi?id=155166
+        <rdar://problem/25193787>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/dom/DOMTokenList-supports-expected.txt:
+        * fast/dom/DOMTokenList-supports.html:
+        * fast/dom/Window/a-rel-noopener-expected.txt: Added.
+        * fast/dom/Window/a-rel-noopener.html: Added.
+        * fast/dom/Window/area-rel-noopener-expected.txt: Added.
+        * fast/dom/Window/area-rel-noopener.html: Added.
+        * fast/dom/Window/resources/rel-noopener.js: Added.
+
 2016-10-25  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add "has capture device" bit to media state flags

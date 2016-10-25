@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,32 +27,16 @@
 #include "HTMLNames.h"
 #include "LinkHash.h"
 #include "URLUtils.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class DOMTokenList;
 
 // Link relation bitmask values.
-// FIXME: Uncomment as the various link relations are implemented.
-enum {
-//     RelationAlternate   = 0x00000001,
-//     RelationArchives    = 0x00000002,
-//     RelationAuthor      = 0x00000004,
-//     RelationBoomark     = 0x00000008,
-//     RelationExternal    = 0x00000010,
-//     RelationFirst       = 0x00000020,
-//     RelationHelp        = 0x00000040,
-//     RelationIndex       = 0x00000080,
-//     RelationLast        = 0x00000100,
-//     RelationLicense     = 0x00000200,
-//     RelationNext        = 0x00000400,
-//     RelationNoFolow    = 0x00000800,
-    RelationNoReferrer     = 0x00001000,
-//     RelationPrev        = 0x00002000,
-//     RelationSearch      = 0x00004000,
-//     RelationSidebar     = 0x00008000,
-//     RelationTag         = 0x00010000,
-//     RelationUp          = 0x00020000,
+enum class Relation {
+    NoReferrer = 1 << 0,
+    NoOpener = 1 << 1,
 };
 
 class HTMLAnchorElement : public HTMLElement, public URLUtils<HTMLAnchorElement> {
@@ -76,7 +60,7 @@ public:
 
     bool willRespondToMouseClickEvents() final;
 
-    bool hasRel(uint32_t relation) const;
+    bool hasRel(Relation) const;
     
     LinkHash visitedLinkHash() const;
     void invalidateCachedVisitedLinkHash() { m_cachedVisitedLinkHash = 0; }
@@ -117,9 +101,9 @@ private:
     void setRootEditableElementForSelectionOnMouseDown(Element*);
     void clearRootEditableElementForSelectionOnMouseDown();
 
-    bool m_hasRootEditableElementForSelectionOnMouseDown : 1;
-    bool m_wasShiftKeyDownOnMouseDown : 1;
-    uint32_t m_linkRelations : 30;
+    bool m_hasRootEditableElementForSelectionOnMouseDown;
+    bool m_wasShiftKeyDownOnMouseDown;
+    OptionSet<Relation> m_linkRelations;
     mutable LinkHash m_cachedVisitedLinkHash;
 
     std::unique_ptr<DOMTokenList> m_relList;
