@@ -4428,7 +4428,7 @@ sub GenerateParametersCheck
             if ($codeGenerator->IsTypedArrayType($type) and $parameter->type ne "ArrayBuffer") {
                $value = $shouldPassByReference ? "$name.releaseNonNull()" : "WTFMove($name)";
             } elsif ($codeGenerator->IsDictionaryType($type)) {
-                $value = "${name}";
+                $value = "WTFMove($name)";
             }
         }
 
@@ -5866,8 +5866,6 @@ sub GenerateConstructorDefinition
                 last if $index eq $paramIndex;
                 if (ShouldPassWrapperByReference($parameter, $interface)) {
                     push(@constructorArgList, "*" . $parameter->name);
-                } elsif ($codeGenerator->IsDictionaryType($parameter->type)) {
-                    push(@constructorArgList, $parameter->name);
                 } else {
                     push(@constructorArgList, "WTFMove(" . $parameter->name . ")");
                 }

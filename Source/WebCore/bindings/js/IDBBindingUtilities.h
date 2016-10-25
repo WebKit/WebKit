@@ -47,7 +47,6 @@ class IndexKey;
 class JSDOMGlobalObject;
 class ThreadSafeDataBuffer;
 
-IDBKeyPath idbKeyPathFromValue(JSC::ExecState&, JSC::JSValue);
 JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const IDBKeyPath&);
 
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);

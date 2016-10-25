@@ -176,16 +176,6 @@ static Ref<IDBKey> createIDBKeyFromValue(ExecState& exec, JSValue value)
     return IDBKey::createInvalid();
 }
 
-IDBKeyPath idbKeyPathFromValue(ExecState& exec, JSValue keyPathValue)
-{
-    IDBKeyPath keyPath;
-    if (isJSArray(keyPathValue))
-        keyPath = IDBKeyPath(convert<IDLSequence<IDLDOMString>>(exec, keyPathValue));
-    else
-        keyPath = IDBKeyPath(keyPathValue.toWTFString(&exec));
-    return keyPath;
-}
-
 static JSValue getNthValueOnKeyPath(ExecState& exec, JSValue rootValue, const Vector<String>& keyPathElements, size_t index)
 {
     JSValue currentValue(rootValue);

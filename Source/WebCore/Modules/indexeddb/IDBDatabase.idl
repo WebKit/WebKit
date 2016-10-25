@@ -34,7 +34,7 @@
     readonly attribute unsigned long long version;
     readonly attribute DOMStringList objectStoreNames;
 
-    [Custom, MayThrowException] IDBObjectStore createObjectStore(DOMString name, optional Dictionary options);
+    [MayThrowException] IDBObjectStore createObjectStore(DOMString name, optional IDBObjectStoreParameters parameters);
     [MayThrowException] void deleteObjectStore(DOMString name);
     [MayThrowException] IDBTransaction transaction(DOMString storeName, optional DOMString mode = "readonly");
     [MayThrowException] IDBTransaction transaction(sequence<DOMString> storeNames, optional DOMString mode = "readonly");
@@ -46,4 +46,9 @@
     attribute EventHandler onabort;
     attribute EventHandler onerror;
     attribute EventHandler onversionchange;
+};
+
+dictionary IDBObjectStoreParameters {
+    (DOMString or sequence<DOMString>)? keyPath = null;
+    boolean autoIncrement = false;
 };

@@ -41,7 +41,7 @@ inline MessageEvent::MessageEvent()
 {
 }
 
-inline MessageEvent::MessageEvent(ExecState& state, const AtomicString& type, Init& initializer, IsTrusted isTrusted)
+inline MessageEvent::MessageEvent(ExecState& state, const AtomicString& type, Init&& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
     , m_dataType(DataTypeScriptValue)
     , m_dataAsScriptValue(state.vm(), initializer.data)
@@ -126,9 +126,9 @@ Ref<MessageEvent> MessageEvent::createForBindings()
     return adoptRef(*new MessageEvent);
 }
 
-Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& type, Init& initializer, IsTrusted isTrusted)
+Ref<MessageEvent> MessageEvent::create(ExecState& state, const AtomicString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new MessageEvent(state, type, initializer, isTrusted));
+    return adoptRef(*new MessageEvent(state, type, WTFMove(initializer), isTrusted));
 }
 
 MessageEvent::~MessageEvent()

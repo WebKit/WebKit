@@ -34,6 +34,7 @@
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseInfo.h"
+#include "IDBKeyPath.h"
 
 namespace WebCore {
 
@@ -55,8 +56,13 @@ public:
     uint64_t version() const;
     RefPtr<DOMStringList> objectStoreNames() const;
 
-    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, const Dictionary&);
-    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement);
+    struct ObjectStoreParameters {
+        Optional<IDBKeyPathVariant> keyPath;
+        bool autoIncrement;
+    };
+
+    ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, ObjectStoreParameters&&);
+
     ExceptionOr<Ref<IDBTransaction>> transaction(const Vector<String>&, const String& mode);
     ExceptionOr<Ref<IDBTransaction>> transaction(const String&, const String& mode);
     ExceptionOr<void> deleteObjectStore(const String& name);

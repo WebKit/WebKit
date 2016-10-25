@@ -208,6 +208,20 @@ IDBKeyPath::IDBKeyPath(const Vector<String>& array)
 #endif
 }
 
+IDBKeyPath::IDBKeyPath(Optional<IDBKeyPathVariant>&& variant)
+{
+    if (!variant)
+        return;
+
+    if (WTF::holds_alternative<String>(*variant)) {
+        m_type = Type::String;
+        m_string = WTFMove(WTF::get<String>(*variant));
+    } else {
+        m_type = Type::Array;
+        m_array = WTFMove(WTF::get<Vector<String>>(*variant));
+    }
+}
+
 bool IDBKeyPath::isValid() const
 {
     switch (m_type) {

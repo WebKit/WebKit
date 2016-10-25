@@ -56,7 +56,7 @@ public:
         Optional<MessageEventSource> source;
         Vector<RefPtr<MessagePort>> ports;
     };
-    static Ref<MessageEvent> create(JSC::ExecState&, const AtomicString& type, Init&, IsTrusted = IsTrusted::No);
+    static Ref<MessageEvent> create(JSC::ExecState&, const AtomicString& type, Init&&, IsTrusted = IsTrusted::No);
 
     virtual ~MessageEvent();
 
@@ -91,7 +91,7 @@ public:
     
 private:
     MessageEvent();
-    MessageEvent(JSC::ExecState&, const AtomicString&, Init&, IsTrusted);
+    MessageEvent(JSC::ExecState&, const AtomicString&, Init&&, IsTrusted);
     MessageEvent(RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, Optional<MessageEventSource>&&, Vector<RefPtr<MessagePort>>&&);
     MessageEvent(const AtomicString& type, RefPtr<SerializedScriptValue>&& data, const String& origin, const String& lastEventId);
     MessageEvent(const String& data, const String& origin);

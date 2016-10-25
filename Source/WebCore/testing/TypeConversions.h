@@ -104,12 +104,12 @@ public:
     const TestUnion& testUnion() const { return m_union; }
     void setTestUnion(const TestUnion& value) { m_union = value; }
 
-    void setTypeConversionsDictionary(Dictionary& dictionary)
+    void setTypeConversionsDictionary(Dictionary&& dictionary)
     {
         m_typeConversionsDictionaryLongValue = dictionary.longValue;
-        m_typeConversionsDictionaryStringValue = dictionary.stringValue;
-        m_typeConversionsDictionarySequenceValue = dictionary.sequenceValue;
-        m_typeConversionsDictionaryUnionValue = dictionary.unionValue;
+        m_typeConversionsDictionaryStringValue = WTFMove(dictionary.stringValue);
+        m_typeConversionsDictionarySequenceValue = WTFMove(dictionary.sequenceValue);
+        m_typeConversionsDictionaryUnionValue = WTFMove(dictionary.unionValue);
     }
 
     int typeConversionsDictionaryLongValue() { return m_typeConversionsDictionaryLongValue; }

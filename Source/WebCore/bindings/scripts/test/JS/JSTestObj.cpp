@@ -8177,7 +8177,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionAttachShadowRootCall
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto init = convert<IDLDictionary<TestObj::Dictionary>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.attachShadowRoot(init);
+    impl.attachShadowRoot(WTFMove(init));
     return JSValue::encode(jsUndefined());
 }
 
@@ -8197,7 +8197,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOperationWithExterna
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
     auto dict = convert<IDLDictionary<DictionaryImplName>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.operationWithExternalDictionaryParameter(dict);
+    impl.operationWithExternalDictionaryParameter(WTFMove(dict));
     return JSValue::encode(jsUndefined());
 }
 

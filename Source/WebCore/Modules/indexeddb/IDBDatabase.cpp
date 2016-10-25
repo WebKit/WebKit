@@ -130,13 +130,7 @@ void IDBDatabase::renameIndex(IDBIndex& index, const String& newName)
     m_versionChangeTransaction->renameIndex(index, newName);
 }
 
-ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String&, const Dictionary&)
-{
-    ASSERT_NOT_REACHED();
-    return Exception { IDBDatabaseException::InvalidStateError };
-}
-
-ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
+ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& name, ObjectStoreParameters&& parameters)
 {
     LOG(IndexedDB, "IDBDatabase::createObjectStore - (%s %s)", m_info.name().utf8().data(), name.utf8().data());
 
@@ -152,14 +146,15 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     if (m_info.hasObjectStore(name))
         return Exception { IDBDatabaseException::ConstraintError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': An object store with the specified name already exists.") };
 
+    IDBKeyPath keyPath(WTFMove(parameters.keyPath));
     if (!keyPath.isNull() && !keyPath.isValid())
         return Exception { IDBDatabaseException::SyntaxError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': The keyPath option is not a valid key path.") };
 
-    if (autoIncrement && ((keyPath.type() == IDBKeyPath::Type::String && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::Type::Array))
+    if (parameters.autoIncrement && ((keyPath.type() == IDBKeyPath::Type::String && keyPath.string().isEmpty()) || keyPath.type() == IDBKeyPath::Type::Array))
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'createObjectStore' on 'IDBDatabase': The autoIncrement option was set but the keyPath option was empty or an array.") };
 
     // Install the new ObjectStore into the connection's metadata.
-    auto info = m_info.createNewObjectStore(name, keyPath, autoIncrement);
+    auto info = m_info.createNewObjectStore(name, keyPath, parameters.autoIncrement);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.
     return m_versionChangeTransaction->createObjectStore(info);

@@ -129,7 +129,7 @@ template<> EncodedJSValue JSC_HOST_CALL JSTestEventConstructorConstructor::const
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto eventInitDict = convert<IDLDictionary<TestEventConstructor::Init>>(*state, state->argument(1));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestEventConstructor::create(WTFMove(type), eventInitDict);
+    auto object = TestEventConstructor::create(WTFMove(type), WTFMove(eventInitDict));
     return JSValue::encode(toJSNewlyCreated(state, castedThis->globalObject(), WTFMove(object)));
 }
 
