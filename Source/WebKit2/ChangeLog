@@ -1,3 +1,16 @@
+2016-10-24  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r206410): Sandbox violations beneath WebProcessProxy::platformIsBeingDebugged
+        https://bugs.webkit.org/show_bug.cgi?id=163879
+        <rdar://problem/28728735>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformIsBeingDebugged): Check if the current process, which is
+          the UI process, is sandboxed before trying to find out if the Web process is being
+          debugged.
+
 2016-10-21  Alex Christensen  <achristensen@webkit.org>
 
         URL::port should return Optional<uint16_t>

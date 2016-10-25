@@ -27,6 +27,7 @@
 #import "WebProcessProxy.h"
 
 #import "ObjCObjectGraph.h"
+#import "SandboxUtilities.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
@@ -123,6 +124,10 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 
 bool WebProcessProxy::platformIsBeingDebugged() const
 {
+    // If the UI process is sandboxed, it cannot find out whether other processes are being debugged.
+    if (processIsSandboxed(getpid()))
+        return false;
+
     struct kinfo_proc info;
     int mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, processIdentifier() };
     size_t size = sizeof(info);
