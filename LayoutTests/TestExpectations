@@ -928,8 +928,10 @@ imported/w3c/WebCryptoAPI/encrypt_decrypt/test_aes_ctr.html [ Skip ]
 imported/w3c/WebCryptoAPI/encrypt_decrypt/test_aes_gcm.html [ Skip ]
 imported/w3c/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.html [ Skip ]
 # Take too long to complete, need to scale down.
-imported/w3c/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html [ Slow ]
-imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Slow ]
+imported/w3c/WebCryptoAPI/generateKey/test_failures.html [ Slow ]
+imported/w3c/WebCryptoAPI/generateKey/test_successes_RSA-OAEP.html [ Skip ]
+imported/w3c/WebCryptoAPI/generateKey/test_successes_RSASSA-PKCS1-v1_5.html [ Slow ]
+imported/w3c/WebCryptoAPI/generateKey/test_successes.html [ Skip ]
 
 editing/deleting/delete-emoji.html [ Slow ]
 
