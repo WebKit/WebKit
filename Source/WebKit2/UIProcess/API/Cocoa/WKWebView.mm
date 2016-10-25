@@ -34,6 +34,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
+#import "FullscreenClient.h"
 #import "LegacySessionStateCoding.h"
 #import "Logging.h"
 #import "NavigationState.h"
@@ -67,6 +68,7 @@
 #import "WebBackForwardList.h"
 #import "WebCertificateInfo.h"
 #import "WebFormSubmissionListenerProxy.h"
+#import "WebFullScreenManagerProxy.h"
 #import "WebKitSystemInterface.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
@@ -77,6 +79,7 @@
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKFullscreenDelegate.h"
 #import "_WKHitTestResultInternal.h"
 #import "_WKInputDelegate.h"
 #import "_WKRemoteObjectRegistryInternal.h"
@@ -549,6 +552,10 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     _uiDelegate = std::make_unique<WebKit::UIDelegate>(self);
     _page->setFindClient(std::make_unique<WebKit::FindClient>(self));
     _page->setDiagnosticLoggingClient(std::make_unique<WebKit::DiagnosticLoggingClient>(self));
+
+#if ENABLE(FULLSCREEN_API)
+    _page->setFullscreenClient(std::make_unique<WebKit::FullscreenClient>(self));
+#endif
 
     pageToViewMap().add(_page.get(), self);
 }
@@ -3920,6 +3927,31 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (BOOL)_webProcessIsResponsive
 {
     return _page->process().responsivenessTimer().isResponsive();
+}
+
+- (void)_setFullscreenDelegate:(id<_WKFullscreenDelegate>)delegate
+{
+#if ENABLE(FULLSCREEN_API)
+    static_cast<WebKit::FullscreenClient&>(_page->fullscreenClient()).setDelegate(delegate);
+#endif
+}
+
+- (id<_WKFullscreenDelegate>)_fullscreenDelegate
+{
+#if ENABLE(FULLSCREEN_API)
+    return static_cast<WebKit::FullscreenClient&>(_page->fullscreenClient()).delegate().autorelease());
+#else
+    return nullptr;
+#endif
+}
+
+- (BOOL)_isInFullscreen
+{
+#if ENABLE(FULLSCREEN_API)
+    return _page->fullScreenManager() && _page->fullScreenManager()->isFullScreen();
+#else
+    return false;
+#endif
 }
 
 #pragma mark iOS-specific methods

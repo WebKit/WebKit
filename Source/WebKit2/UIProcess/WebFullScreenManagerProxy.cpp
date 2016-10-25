@@ -28,6 +28,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 
+#include "APIFullscreenClient.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebPageProxy.h"
@@ -56,21 +57,25 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 
 void WebFullScreenManagerProxy::willEnterFullScreen()
 {
+    m_page->fullscreenClient().willEnterFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::WillEnterFullScreen(), m_page->pageID());
 }
 
 void WebFullScreenManagerProxy::didEnterFullScreen()
 {
+    m_page->fullscreenClient().didEnterFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::DidEnterFullScreen(), m_page->pageID());
 }
 
 void WebFullScreenManagerProxy::willExitFullScreen()
 {
+    m_page->fullscreenClient().willExitFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::WillExitFullScreen(), m_page->pageID());
 }
 
 void WebFullScreenManagerProxy::didExitFullScreen()
 {
+    m_page->fullscreenClient().didExitFullscreen(m_page);
     m_page->process().send(Messages::WebFullScreenManager::DidExitFullScreen(), m_page->pageID());
 }
 

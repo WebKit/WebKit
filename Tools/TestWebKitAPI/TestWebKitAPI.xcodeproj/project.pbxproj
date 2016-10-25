@@ -473,6 +473,8 @@
 		C5E1AFFE16B221F1006CC1F2 /* execCopy.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C5E1AFFD16B22179006CC1F2 /* execCopy.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
+		CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */; };
+		CD78E11E1DB7EE2A0014A2DE /* FullscreenDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD78E11B1DB7EA360014A2DE /* FullscreenDelegate.html */; };
 		CD9E292E1C90C33F000BB800 /* audio-only.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD9E292D1C90C1BA000BB800 /* audio-only.html */; };
 		CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */; };
 		CDBFCC461A9FF49E00A7B691 /* FullscreenZoomInitialFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDBFCC421A9FF44800A7B691 /* FullscreenZoomInitialFrame.html */; };
@@ -567,6 +569,7 @@
 				8349D3C41DB9728E004A9F65 /* link-with-download-attribute.html in Copy Resources */,
 				AD57AC221DA7466E00FF1BDE /* many-iframes.html in Copy Resources */,
 				F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */,
+				CD78E11E1DB7EE2A0014A2DE /* FullscreenDelegate.html in Copy Resources */,
 				F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */,
 				837A35F11D9A1E7D00663C57 /* DownloadRequestBlobURL.html in Copy Resources */,
 				2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */,
@@ -1187,6 +1190,8 @@
 		CD59F53219E910AA00CF1835 /* file-with-mse.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-mse.html"; sourceTree = "<group>"; };
 		CD59F53319E910BC00CF1835 /* test-mse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test-mse.mp4"; sourceTree = "<group>"; };
 		CD773F711C5057DB0002257C /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
+		CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenDelegate.mm; sourceTree = "<group>"; };
+		CD78E11B1DB7EA360014A2DE /* FullscreenDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenDelegate.html; sourceTree = "<group>"; };
 		CD89D0381C4EDB2A00040A04 /* WebCoreNSURLSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLSession.mm; sourceTree = "<group>"; };
 		CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RequiresUserActionForPlayback.mm; sourceTree = "<group>"; };
 		CD9E292D1C90C1BA000BB800 /* audio-only.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-only.html"; sourceTree = "<group>"; };
@@ -1393,6 +1398,7 @@
 				A1A4FE5D18DD3DB700B5EA8A /* Download.mm */,
 				2D8104CB1BEC13E70020DA46 /* FindInPage.mm */,
 				2D1FE0AF1AD465C1006CD9E6 /* FixedLayoutSize.mm */,
+				CD78E11A1DB7EA360014A2DE /* FullscreenDelegate.mm */,
 				3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */,
 				CDE195B31CFE0ADE0053D256 /* FullscreenTopContentInset.mm */,
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
@@ -1552,6 +1558,7 @@
 				9984FACD1CFFB038008D198C /* editable-body.html */,
 				93575C551D30366E000D604D /* focus-inputs.html */,
 				F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */,
+				CD78E11B1DB7EA360014A2DE /* FullscreenDelegate.html */,
 				3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */,
 				CDE195B21CFE0ADE0053D256 /* FullscreenTopContentInset.html */,
 				510477761D298E57009747EB /* IDBDeleteRecovery.html */,
@@ -2540,6 +2547,7 @@
 				51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */,
 				536770341CC8022800D425B1 /* WebScriptObjectDescription.mm in Sources */,
 				7CCE7ED41A411A7E00447C4C /* WebViewCanPasteURL.mm in Sources */,
+				CD78E11D1DB7EA660014A2DE /* FullscreenDelegate.mm in Sources */,
 				7C83E0421D0A63FD00FEBCF3 /* WebViewCloseInsideDidFinishLoadForFrame.mm in Sources */,
 				7CCE7ED51A411A7E00447C4C /* WebViewDidCreateJavaScriptContext.mm in Sources */,
 				7CCE7ED61A411A7E00447C4C /* WebViewDidRemoveFrameFromHierarchy.mm in Sources */,

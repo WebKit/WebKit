@@ -1,3 +1,20 @@
+2016-10-19  Jer Noble  <jer.noble@apple.com>
+
+        Add WKWebView fullscreen delegate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=163674
+
+        Reviewed by Anders Carlsson.
+
+        Add a new API test which verifies that the fullscreen delegate receives notifications.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/FullscreenDelegate.mm:
+        (-[FullscreenDelegateMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[FullscreenDelegateMessageHandler _webViewWillEnterFullscreen:]):
+        (-[FullscreenDelegateMessageHandler _webViewDidEnterFullscreen:]):
+        (-[FullscreenDelegateMessageHandler _webViewWillExitFullscreen:]):
+        (-[FullscreenDelegateMessageHandler _webViewDidExitFullscreen:]):
+        (TestWebKitAPI::TEST):
+
 2016-10-24  Alex Christensen  <achristensen@webkit.org>
 
         URLParser should match old URL::parse with %2E in path

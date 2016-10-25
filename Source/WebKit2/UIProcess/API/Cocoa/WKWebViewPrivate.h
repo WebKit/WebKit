@@ -63,6 +63,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @protocol _WKDiagnosticLoggingDelegate;
 @protocol _WKFindDelegate;
 @protocol _WKInputDelegate;
+@protocol _WKFullscreenDelegate;
 
 @interface WKWebView (WKPrivate)
 
@@ -243,6 +244,9 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, getter=_allowsMediaDocumentInlinePlayback, setter=_setAllowsMediaDocumentInlinePlayback:) BOOL _allowsMediaDocumentInlinePlayback;
 
 @property (nonatomic, readonly) BOOL _webProcessIsResponsive WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+
+@property (nonatomic, setter=_setFullscreenDelegate:) id<_WKFullscreenDelegate> _fullscreenDelegate WK_API_AVAILABLE(macos(10.13));
+@property (nonatomic, readonly) BOOL _isInFullscreen WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
 

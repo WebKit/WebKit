@@ -33,6 +33,7 @@
 #include "APIFindMatchesClient.h"
 #include "APIFormClient.h"
 #include "APIFrameInfo.h"
+#include "APIFullscreenClient.h"
 #include "APIGeometry.h"
 #include "APIHistoryClient.h"
 #include "APIHitTestResult.h"
@@ -340,6 +341,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_mainFrame(nullptr)
     , m_userAgent(standardUserAgent())
     , m_treatsSHA1CertificatesAsInsecure(m_configuration->treatsSHA1SignedCertificatesAsInsecure())
+#if ENABLE(FULLSCREEN_API)
+    , m_fullscreenClient(std::make_unique<API::FullscreenClient>())
+#endif
 #if PLATFORM(IOS)
     , m_hasReceivedLayerTreeTransactionAfterDidCommitLoad(true)
     , m_firstLayerTreeTransactionIdAfterDidCommitLoad(0)
@@ -4270,6 +4274,11 @@ WebInspectorProxy* WebPageProxy::inspector() const
 WebFullScreenManagerProxy* WebPageProxy::fullScreenManager()
 {
     return m_fullScreenManager.get();
+}
+
+void WebPageProxy::setFullscreenClient(std::unique_ptr<API::FullscreenClient> client)
+{
+    m_fullscreenClient = WTFMove(client);
 }
 #endif
     
