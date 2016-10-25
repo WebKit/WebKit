@@ -372,8 +372,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     if (callType == CallType::None)
         customJoinCase = true;
 
-    if (UNLIKELY(customJoinCase))
+    if (UNLIKELY(customJoinCase)) {
+        scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisObject->methodTable(vm)->className(thisObject), "]"));
+    }
 
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
     if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin)

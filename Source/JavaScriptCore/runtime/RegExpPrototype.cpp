@@ -241,6 +241,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     String flags = flagsValue.toString(exec)->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    scope.release();
     return JSValue::encode(jsMakeNontrivialString(exec, '/', source, '/', flags));
 }
 

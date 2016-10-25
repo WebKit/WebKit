@@ -1,5 +1,34 @@
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
+        Add ThrowScope::release() calls at all call sites of jsMakeNontrivialString().
+        https://bugs.webkit.org/show_bug.cgi?id=163990
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncToString):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncBig):
+        (JSC::stringProtoFuncSmall):
+        (JSC::stringProtoFuncBlink):
+        (JSC::stringProtoFuncBold):
+        (JSC::stringProtoFuncFixed):
+        (JSC::stringProtoFuncItalics):
+        (JSC::stringProtoFuncStrike):
+        (JSC::stringProtoFuncSub):
+        (JSC::stringProtoFuncSup):
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
         JSStringJoiner::joinedLength() should limit joined string lengths to INT_MAX.
         https://bugs.webkit.org/show_bug.cgi?id=163937
         <rdar://problem/28642990>

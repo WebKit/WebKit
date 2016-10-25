@@ -94,8 +94,10 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
     JSValue thisValue = exec->thisValue();
     if (thisValue.inherits(JSFunction::info())) {
         JSFunction* function = jsCast<JSFunction*>(thisValue);
-        if (function->isHostOrBuiltinFunction())
+        if (function->isHostOrBuiltinFunction()) {
+            scope.release();
             return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(vm), "() {\n    [native code]\n}"));
+        }
 
         FunctionExecutable* executable = function->jsExecutable();
         if (executable->isClass()) {
@@ -108,11 +110,13 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         StringView source = executable->source().provider()->getRange(
             executable->parametersStartOffset(),
             executable->parametersStartOffset() + executable->source().length());
+        scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
     }
 
     if (thisValue.inherits(InternalFunction::info())) {
         InternalFunction* function = asInternalFunction(thisValue);
+        scope.release();
         return JSValue::encode(jsMakeNontrivialString(exec, "function ", function->name(), "() {\n    [native code]\n}"));
     }
 
@@ -121,8 +125,10 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         if (object->inlineTypeFlags() & TypeOfShouldCallGetCallData) {
             CallData callData;
             if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
-                if (auto* classInfo = object->classInfo())
+                if (auto* classInfo = object->classInfo()) {
+                    scope.release();
                     return JSValue::encode(jsMakeNontrivialString(exec, "function ", classInfo->className, "() {\n    [native code]\n}"));
+                }
             }
         }
     }
