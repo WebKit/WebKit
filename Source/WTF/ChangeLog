@@ -1,3 +1,15 @@
+2016-10-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Non-specialized version of deleteObject should not have template argument
+        https://bugs.webkit.org/show_bug.cgi?id=163943
+
+        Reviewed by Anders Carlsson.
+
+        Fixes compilation of GDIObject.h with MinGW
+
+        * wtf/win/GDIObject.h:
+        (WTF::deleteObject):
+
 2016-10-24  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] CMake build type is not set.
