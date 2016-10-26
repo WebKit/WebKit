@@ -1,5 +1,28 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][EME] Base class for decryption support
+        https://bugs.webkit.org/show_bug.cgi?id=162915
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add common encryption base class.
+
+        This patch is authored by Philippe Normand <philn@igalia.com>.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp: Added.
+        (webkit_media_common_encryption_decrypt_class_init):
+        (webkit_media_common_encryption_decrypt_init):
+        (webKitMediaCommonEncryptionDecryptorFinalize):
+        (webkitMediaCommonEncryptionDecryptTransformCaps):
+        (webkitMediaCommonEncryptionDecryptTransformInPlace):
+        (webkitMediaCommonEncryptionDecryptSinkEventHandler):
+        (webKitMediaCommonEncryptionDecryptorChangeState):
+        (webKitMediaCommonEncryptionDecryptDefaultSetupCipher):
+        (webKitMediaCommonEncryptionDecryptDefaultReleaseCipher):
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h: Added.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][EME] Utility function to create decryptor
         https://bugs.webkit.org/show_bug.cgi?id=162914
 
