@@ -22,8 +22,8 @@
 
 #include "JSObject.h"
 #include "RegExp.h"
-#include "Reject.h"
 #include "ThrowScope.h"
+#include "TypeError.h"
 
 namespace JSC {
     
@@ -64,7 +64,7 @@ public:
             return true;
         }
 
-        return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     JSValue getLastIndex() const
     {

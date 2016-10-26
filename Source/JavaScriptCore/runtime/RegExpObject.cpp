@@ -107,16 +107,16 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
     if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
         if (descriptor.enumerablePresent() && descriptor.enumerable())
-            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
         if (!regExp->m_lastIndexIsWritable) {
             if (descriptor.writablePresent() && descriptor.writable())
-                return reject(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+                return typeError(exec, scope, shouldThrow, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
             if (!sameValue(exec, regExp->getLastIndex(), descriptor.value()))
-                return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyChangeError));
+                return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyChangeError));
             return true;
         }
         if (descriptor.value())

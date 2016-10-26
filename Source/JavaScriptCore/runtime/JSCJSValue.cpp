@@ -162,7 +162,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         for (; !obj->structure()->hasReadOnlyOrGetterSetterPropertiesExcludingProto(); obj = asObject(prototype)) {
             prototype = obj->getPrototypeDirect();
             if (prototype.isNull())
-                return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
         }
     }
 
@@ -171,7 +171,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         PropertyOffset offset = obj->structure()->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
             if (attributes & ReadOnly)
-                return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+                return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter())
@@ -191,7 +191,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             break;
     }
     
-    return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
@@ -213,7 +213,7 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult))
         return putResult;
     
-    return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 void JSValue::dump(PrintStream& out) const

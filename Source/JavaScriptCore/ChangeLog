@@ -1,3 +1,68 @@
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
+        Rename the reject() helper function to something more meaningful.
+        https://bugs.webkit.org/show_bug.cgi?id=163549
+
+        Reviewed by Saam Barati.
+
+        We'll rename reject() to typeError().  The intuition behind this is that all the
+        clients that uses this function will return typeError(..., shouldThrow, ...).
+        In a sense, they are returning a "type" of TypeError (which happened to be the
+        value false).  In addition, it may also throw a JS TypeError if the shouldThrow
+        parameter is true.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/GetterSetter.cpp:
+        (JSC::callSetter):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::put):
+        (JSC::JSArrayBuffer::defineOwnProperty):
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::put):
+        (JSC::JSDataView::defineOwnProperty):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::defineOwnProperty):
+        (JSC::JSGenericTypedArrayView<Adaptor>::deleteProperty):
+        * runtime/JSObject.cpp:
+        (JSC::ordinarySetSlow):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInline):
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::setPrototype):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::defineOwnProperty):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::setLastIndex):
+        * runtime/Reject.h: Removed.
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putEntry):
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayEntry::put):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        (JSC::StringObject::putByIndex):
+        * runtime/TypeError.h: Copied from Source/JavaScriptCore/runtime/Reject.h.
+        (JSC::typeError):
+        (JSC::reject): Deleted.
+
 2016-10-25  Filip Pizlo  <fpizlo@apple.com>
 
         HeapTimer should not hardcode all of its subclasses and USE(CF) shouldn't be a bizarre special case

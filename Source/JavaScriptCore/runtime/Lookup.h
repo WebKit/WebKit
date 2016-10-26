@@ -31,7 +31,7 @@
 #include "LazyProperty.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
-#include "Reject.h"
+#include "TypeError.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -265,11 +265,11 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
                 thisObject->putDirect(vm, propertyName, value);
             return true;
         }
-        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
 
     if (entry->attributes() & Accessor)
-        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
     if (!(entry->attributes() & ReadOnly)) {
         ASSERT_WITH_MESSAGE(!(entry->attributes() & DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
@@ -283,7 +283,7 @@ inline bool putEntry(ExecState* exec, const HashTableValue* entry, JSObject* bas
         return result;
     }
 
-    return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+    return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 }
 
 /**

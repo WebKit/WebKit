@@ -71,7 +71,7 @@ bool StringObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName,
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
     if (propertyName == vm.propertyNames->length)
-        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     if (Optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(cell, exec, index.value(), value, slot.isStrictMode());
     return JSObject::put(cell, exec, propertyName, value, slot);
@@ -84,7 +84,7 @@ bool StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNa
 
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->canGetIndex(propertyName))
-        return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     return JSObject::putByIndex(cell, exec, propertyName, value, shouldThrow);
 }
 

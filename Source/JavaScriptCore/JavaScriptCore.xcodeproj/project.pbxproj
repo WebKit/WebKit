@@ -640,7 +640,7 @@
 		0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38E15ED8E3800F167B2 /* IndexingHeaderInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F38F15ED8E3800F167B2 /* IndexingType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39C15ED8E4600F167B2 /* PropertyStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FB7F39D15ED8E4600F167B2 /* Reject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39115ED8E3800F167B2 /* Reject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FB7F39D15ED8E4600F167B2 /* TypeError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39115ED8E3800F167B2 /* TypeError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FB7F39E15ED8E4600F167B2 /* SparseArrayValueMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FBC0AE71496C7C400D4FBDD /* DFGExitProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */; };
 		0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2984,7 +2984,7 @@
 		0FB7F38E15ED8E3800F167B2 /* IndexingHeaderInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexingHeaderInlines.h; sourceTree = "<group>"; };
 		0FB7F38F15ED8E3800F167B2 /* IndexingType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexingType.h; sourceTree = "<group>"; };
 		0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyStorage.h; sourceTree = "<group>"; };
-		0FB7F39115ED8E3800F167B2 /* Reject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reject.h; sourceTree = "<group>"; };
+		0FB7F39115ED8E3800F167B2 /* TypeError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeError.h; sourceTree = "<group>"; };
 		0FB7F39215ED8E3800F167B2 /* SparseArrayValueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SparseArrayValueMap.h; sourceTree = "<group>"; };
 		0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DFGExitProfile.cpp; sourceTree = "<group>"; };
 		0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFGExitProfile.h; sourceTree = "<group>"; };
@@ -6350,7 +6350,7 @@
 				0F7C39FC1C8F659500480151 /* RegExpObjectInlines.h */,
 				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
 				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
-				0FB7F39115ED8E3800F167B2 /* Reject.h */,
+				0FB7F39115ED8E3800F167B2 /* TypeError.h */,
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */,
 				52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */,
@@ -8545,7 +8545,7 @@
 				623A37EC1B87A7C000754209 /* RegisterMap.h in Headers */,
 				0FC314121814559100033232 /* RegisterSet.h in Headers */,
 				A57D23EE1891B5540031C7FA /* RegularExpression.h in Headers */,
-				0FB7F39D15ED8E4600F167B2 /* Reject.h in Headers */,
+				0FB7F39D15ED8E4600F167B2 /* TypeError.h in Headers */,
 				A5BA15E8182340B300A82E69 /* RemoteInspector.h in Headers */,
 				A5BA15EA182340B400A82E69 /* RemoteInspectorConstants.h in Headers */,
 				A5BA15F0182345AF00A82E69 /* RemoteInspectionTarget.h in Headers */,

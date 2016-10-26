@@ -27,7 +27,7 @@
 #include "JSArrayBuffer.h"
 
 #include "JSCInlines.h"
-#include "Reject.h"
+#include "TypeError.h"
 
 namespace JSC {
 
@@ -98,7 +98,7 @@ bool JSArrayBuffer::put(
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
     
     if (propertyName == vm.propertyNames->byteLength)
-        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to a read-only array buffer property."));
+        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral("Attempting to write to a read-only array buffer property."));
     
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
@@ -112,7 +112,7 @@ bool JSArrayBuffer::defineOwnProperty(
     JSArrayBuffer* thisObject = jsCast<JSArrayBuffer*>(object);
     
     if (propertyName == vm.propertyNames->byteLength)
-        return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to define read-only array buffer property."));
+        return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to define read-only array buffer property."));
     
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }

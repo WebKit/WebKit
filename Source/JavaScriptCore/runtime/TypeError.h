@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-inline bool reject(ExecState* exec, ThrowScope& scope, bool throwException, ASCIILiteral message)
+inline bool typeError(ExecState* exec, ThrowScope& scope, bool throwException, ASCIILiteral message)
 {
     if (throwException)
         throwTypeError(exec, scope, message);

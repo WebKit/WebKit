@@ -31,7 +31,7 @@
 #include "ExceptionHelpers.h"
 #include "JSArrayBuffer.h"
 #include "JSGenericTypedArrayView.h"
-#include "Reject.h"
+#include "TypeError.h"
 #include "TypedArrays.h"
 
 namespace JSC {
@@ -366,13 +366,13 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
 
     if (parseIndex(propertyName)) {
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to store accessor indexed property on a typed array."));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to store accessor indexed property on a typed array."));
 
         if (descriptor.configurable())
-            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to configure non-configurable property."));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to configure non-configurable property."));
 
         if (!descriptor.enumerable() || !descriptor.writable())
-            return reject(exec, scope, shouldThrow, ASCIILiteral("Attempting to store non-enumerable or non-writable indexed property on a typed array."));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to store non-enumerable or non-writable indexed property on a typed array."));
 
         if (descriptor.value()) {
             PutPropertySlot unused(JSValue(thisObject), shouldThrow);
@@ -393,7 +393,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(cell);
 
     if (thisObject->isNeutered())
-        return reject(exec, scope, true, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
+        return typeError(exec, scope, true, ASCIILiteral(typedArrayBufferHasBeenDetachedErrorMessage));
 
     if (parseIndex(propertyName))
         return false;

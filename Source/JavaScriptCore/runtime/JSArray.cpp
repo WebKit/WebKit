@@ -33,7 +33,7 @@
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "PropertyNameArray.h"
-#include "Reject.h"
+#include "TypeError.h"
 #include <wtf/Assertions.h>
 
 using namespace std;
@@ -133,18 +133,18 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // All paths through length definition call the default [[DefineOwnProperty]], hence:
         // from ES5.1 8.12.9 7.a.
         if (descriptor.configurablePresent() && descriptor.configurable())
-            return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
         // from ES5.1 8.12.9 7.b.
         if (descriptor.enumerablePresent() && descriptor.enumerable())
-            return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
 
         // a. If the [[Value]] field of Desc is absent, then
         // a.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", Desc, and Throw as arguments.
         if (descriptor.isAccessorDescriptor())
-            return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
         // from ES5.1 8.12.9 10.a.
         if (!array->isLengthWritable() && descriptor.writablePresent() && descriptor.writable())
-            return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+            return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
         // This descriptor is either just making length read-only, or changing nothing!
         if (!descriptor.value()) {
             if (descriptor.writablePresent())
@@ -174,7 +174,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // f.i. Return the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing "length", newLenDesc, and Throw as arguments.
         // g. Reject if oldLenDesc.[[Writable]] is false.
         if (!array->isLengthWritable())
-            return reject(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+            return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
         
         // h. If newLenDesc.[[Writable]] is absent or has the value true, let newWritable be true.
         // i. Else,
@@ -214,7 +214,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         uint32_t index = optionalIndex.value();
         // FIXME: Nothing prevents this from being called on a RuntimeArray, and the length function will always return 0 in that case.
         if (index >= array->length() && !array->isLengthWritable())
-            return reject(exec, scope, throwException, ASCIILiteral("Attempting to define numeric property on array with non-writable length property."));
+            return typeError(exec, scope, throwException, ASCIILiteral("Attempting to define numeric property on array with non-writable length property."));
         // c. Let succeeded be the result of calling the default [[DefineOwnProperty]] internal method (8.12.9) on A passing P, Desc, and false as arguments.
         // d. Reject if succeeded is false.
         // e. If index >= oldLen
@@ -409,7 +409,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
     if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
         // Fail if the length is not writable.
         if (map->lengthIsReadOnly())
-            return reject(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyWriteError));
 
         if (newLength < length) {
             // Copy any keys we might be interested in into a vector.
@@ -434,7 +434,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
                     ASSERT(it != map->notFound());
                     if (it->value.attributes & DontDelete) {
                         storage->setLength(index + 1);
-                        return reject(exec, scope, throwException, ASCIILiteral(UnableToDeletePropertyError));
+                        return typeError(exec, scope, throwException, ASCIILiteral(UnableToDeletePropertyError));
                     }
                     map->remove(it);
                 }

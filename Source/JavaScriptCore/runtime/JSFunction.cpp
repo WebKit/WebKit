@@ -456,7 +456,7 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
             scope.release();
             return Base::put(thisObject, exec, propertyName, value, slot);
         }
-        return reject(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
     thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
     scope.release();
@@ -537,15 +537,15 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
     }
      
     if (descriptor.configurablePresent() && descriptor.configurable())
-        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
+        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeConfigurabilityError));
     if (descriptor.enumerablePresent() && descriptor.enumerable())
-        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
+        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeEnumerabilityError));
     if (descriptor.isAccessorDescriptor())
-        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
+        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
     if (descriptor.writablePresent() && descriptor.writable())
-        return reject(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
+        return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeWritabilityError));
     if (!valueCheck)
-        return reject(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
+        return typeError(exec, scope, throwException, ASCIILiteral(ReadonlyPropertyChangeError));
     return true;
 }
 

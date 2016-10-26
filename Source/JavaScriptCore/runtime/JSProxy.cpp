@@ -150,7 +150,7 @@ bool JSProxy::setPrototype(JSObject*, ExecState* exec, JSValue, bool shouldThrow
 {
     auto scope = DECLARE_THROW_SCOPE(exec->vm());
 
-    return reject(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of this object"));
+    return typeError(exec, scope, shouldThrowIfCantSet, ASCIILiteral("Cannot set prototype of this object"));
 }
 
 JSValue JSProxy::getPrototype(JSObject* object, ExecState* exec)

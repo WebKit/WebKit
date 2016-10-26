@@ -31,9 +31,9 @@
 #include "JSObject.h"
 #include "JSCInlines.h"
 #include "PropertySlot.h"
-#include "Reject.h"
 #include "SlotVisitor.h"
 #include "Structure.h"
+#include "TypeError.h"
 
 namespace JSC {
 
@@ -102,7 +102,7 @@ bool SparseArrayValueMap::putEntry(ExecState* exec, JSObject* array, unsigned i,
     // extensible, this is not the right thing to have done - so remove again.
     if (result.isNewEntry && !array->isStructureExtensible()) {
         remove(result.iterator);
-        return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+        return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     
     return entry.put(exec, array, this, value, shouldThrow);
@@ -125,10 +125,10 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
         // extensible, this is not the right thing to have done - so remove again.
         if (result.isNewEntry) {
             remove(result.iterator);
-            return reject(exec, scope, shouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
         }
         if (entry.attributes & ReadOnly)
-            return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
     }
     entry.attributes = attributes;
     entry.set(vm, this, value);
@@ -160,7 +160,7 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
 
     if (!(attributes & Accessor)) {
         if (attributes & ReadOnly)
-            return reject(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
+            return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 
         set(vm, map, value);
         return true;
