@@ -1,5 +1,25 @@
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
+        String.prototype.replace() should throw an OutOfMemoryError when using too much memory.
+        https://bugs.webkit.org/show_bug.cgi?id=163996
+        <rdar://problem/28263117>
+
+        Reviewed by Geoffrey Garen.
+
+        String.prototype.replace() uses a Vector internally for bookkeeping work.
+        Currently, if this vector gets too big, we just crash on allocation failure.
+        While this is correct behavior, it is not too friendly.
+
+        We now detect the imminent failure, and throw a OutOfMemoryError instead.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
         Rename the reject() helper function to something more meaningful.
         https://bugs.webkit.org/show_bug.cgi?id=163549
 

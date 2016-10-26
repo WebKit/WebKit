@@ -433,8 +433,15 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     return jsString(exec, WTFMove(impl));
 }
 
+#define OUT_OF_MEMORY(exec__, scope__) \
+    do { \
+        throwOutOfMemoryError(exec__, scope__); \
+        return encodedJSValue(); \
+    } while (false)
+
 static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(VM& vm, ExecState* exec, JSString* string, const String& source, RegExp* regExp)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     SuperSamplerScope superSamplerScope(false);
     
     size_t lastIndex = 0;
@@ -449,9 +456,10 @@ static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(VM& vm, ExecState* e
         if (!result)
             break;
 
-        if (lastIndex < result.start)
-            sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
-
+        if (lastIndex < result.start) {
+            if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                OUT_OF_MEMORY(exec, scope);
+        }
         lastIndex = result.end;
         startPosition = lastIndex;
 
@@ -466,9 +474,11 @@ static ALWAYS_INLINE EncodedJSValue removeUsingRegExpSearch(VM& vm, ExecState* e
     if (!lastIndex)
         return JSValue::encode(string);
 
-    if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.constructAndAppend(lastIndex, sourceLen - lastIndex);
-
+    if (static_cast<unsigned>(lastIndex) < sourceLen) {
+        if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen - lastIndex)))
+            OUT_OF_MEMORY(exec, scope);
+    }
+    scope.release();
     return JSValue::encode(jsSpliceSubstrings(exec, string, source, sourceRanges.data(), sourceRanges.size()));
 }
 
@@ -490,8 +500,10 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
         regExpObject->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        if (callType == CallType::None && !replacementString.length())
+        if (callType == CallType::None && !replacementString.length()) {
+            scope.release();
             return removeUsingRegExpSearch(vm, exec, string, source, regExp);
+        }
     }
 
     // FIXME: This is wrong because we may be called directly from the FTL.
@@ -518,7 +530,8 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 if (!result)
                     break;
 
-                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
+                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                    OUT_OF_MEMORY(exec, scope);
 
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
@@ -556,7 +569,8 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 if (!result)
                     break;
 
-                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
+                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                    OUT_OF_MEMORY(exec, scope);
 
                 unsigned i = 0;
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
@@ -596,7 +610,8 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                 break;
 
             if (callType != CallType::None) {
-                sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
+                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                    OUT_OF_MEMORY(exec, scope);
 
                 MarkedArgumentBuffer args;
 
@@ -620,7 +635,8 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
             } else {
                 int replLen = replacementString.length();
                 if (lastIndex < result.start || replLen) {
-                    sourceRanges.constructAndAppend(lastIndex, result.start - lastIndex);
+                    if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, result.start - lastIndex)))
+                        OUT_OF_MEMORY(exec, scope);
 
                     if (replLen)
                         replacements.append(substituteBackreferences(replacementString, source, ovector, regExp));
@@ -644,9 +660,10 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
     if (!lastIndex && replacements.isEmpty())
         return JSValue::encode(string);
 
-    if (static_cast<unsigned>(lastIndex) < sourceLen)
-        sourceRanges.constructAndAppend(lastIndex, sourceLen - lastIndex);
-
+    if (static_cast<unsigned>(lastIndex) < sourceLen) {
+        if (UNLIKELY(!sourceRanges.tryConstructAndAppend(lastIndex, sourceLen - lastIndex)))
+            OUT_OF_MEMORY(exec, scope);
+    }
     return JSValue::encode(jsSpliceSubstringsWithSeparators(exec, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
@@ -662,11 +679,13 @@ EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
         // ES5.1 15.5.4.10 step 8.a.
         searchValue->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        scope.release();
         return removeUsingRegExpSearch(vm, exec, thisValue, thisValue->value(exec), regExp);
     }
 
     CallData callData;
     String replacementString = emptyString();
+    scope.release();
     return replaceUsingRegExpSearch(
         vm, exec, thisValue, searchValue, callData, CallType::None, replacementString, JSValue());
 }
@@ -695,6 +714,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(VM& vm, ExecState* 
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
 
+    scope.release();
     return replaceUsingRegExpSearch(
         vm, exec, string, searchValue, callData, callType, replacementString, replaceValue);
 }
@@ -832,6 +852,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplaceUsingRegExp(ExecState* exec)
     if (!searchValue.inherits(RegExpObject::info()))
         return JSValue::encode(jsUndefined());
 
+    scope.release();
     return replaceUsingRegExpSearch(exec->vm(), exec, string, searchValue, exec->argument(1));
 }
 

@@ -1,5 +1,15 @@
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
+        String.prototype.replace() should throw an OutOfMemoryError when using too much memory.
+        https://bugs.webkit.org/show_bug.cgi?id=163996
+        <rdar://problem/28263117>
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/string-prototype-replace-should-throw-out-of-memory-error-when-using-too-much-memory.js: Added.
+
+2016-10-25  Mark Lam  <mark.lam@apple.com>
+
         JSStringJoiner::joinedLength() should limit joined string lengths to INT_MAX.
         https://bugs.webkit.org/show_bug.cgi?id=163937
         <rdar://problem/28642990>
