@@ -1,3 +1,19 @@
+2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r207623. rdar://problem/28857477
+
+    2016-10-20  Keith Miller  <keith_miller@apple.com>
+
+            Invalid assertion in arguments elimination
+            https://bugs.webkit.org/show_bug.cgi?id=163740
+            <rdar://problem/27911462>
+
+            Reviewed by Michael Saboff.
+
+            * stress/direct-arguments-osr-entry.js: Added.
+            (foo.):
+            (foo):
+
 2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r206472. rdar://problem/28545009

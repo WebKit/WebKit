@@ -1,3 +1,24 @@
+2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r207623. rdar://problem/28857477
+
+    2016-10-20  Keith Miller  <keith_miller@apple.com>
+
+            Invalid assertion in arguments elimination
+            https://bugs.webkit.org/show_bug.cgi?id=163740
+            <rdar://problem/27911462>
+
+            Reviewed by Michael Saboff.
+
+            The DFGFTL's arguments elimination phase incorrectly asserted that a GetFromArguments' first
+            child would always be a CreateDirectArguments.  While we only create the
+            op_get_from_arguments bytecode pointing to a create_direct_arguments, its possible for a
+            number of reasons that a DFG GetFromArguments may not point to a CreateDirectArguments. For
+            example, if we are OSR entering in some function with direct arguments the
+            CreateDirectArguments node might become ExtractOSREntryLocals.
+
+            * dfg/DFGArgumentsEliminationPhase.cpp:
+
 2016-10-12  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r206955. rdar://problem/28216236
