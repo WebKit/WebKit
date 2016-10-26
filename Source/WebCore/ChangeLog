@@ -1,5 +1,30 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer] Drain query support
+        https://bugs.webkit.org/show_bug.cgi?id=162872
+
+        Reviewed by Žan Doberšek.
+
+        Under some circumstances, GStreamer deadlocks completely during MSE seeks on OpenGL ES
+        systems. This is because the video sink still holds samples. Proper DRAIN support
+        fixes this issue and is also good for all the platforms, not only OpenGL ES.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerDrain):
+        (WebCore::MediaPlayerPrivateGStreamerBase::drainCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSink):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createVideoSinkGL): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/VideoSinkGStreamer.cpp:
+        (VideoRenderRequestScheduler::drain):
+        (webkitVideoSinkQuery):
+        (webkitVideoSinkEvent):
+        (webkit_video_sink_class_init):
+        (VideoRenderRequestScheduler::stop): Deleted.
+        (webkitVideoSinkProposeAllocation): Deleted.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer] Track enhancements for MSE support
         https://bugs.webkit.org/show_bug.cgi?id=162869
 
