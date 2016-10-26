@@ -1,5 +1,35 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE] Playback pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=162901
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Encapsulate the responsibility to interact with the GStreamer playback pipeline and the
+        different streams managed by the WebKitMediaSrc element into a new PlaybackPipeline class.
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp: Added.
+        (getStreamByTrackId):
+        (getStreamBySourceBufferPrivate):
+        (pushSample):
+        (WebCore::PlaybackPipeline::create):
+        (WebCore::PlaybackPipeline::PlaybackPipeline):
+        (WebCore::PlaybackPipeline::~PlaybackPipeline):
+        (WebCore::PlaybackPipeline::setWebKitMediaSrc):
+        (WebCore::PlaybackPipeline::webKitMediaSrc):
+        (WebCore::PlaybackPipeline::addSourceBuffer):
+        (WebCore::PlaybackPipeline::removeSourceBuffer):
+        (WebCore::PlaybackPipeline::attachTrack):
+        (WebCore::PlaybackPipeline::reattachTrack):
+        (WebCore::PlaybackPipeline::notifyDurationChanged):
+        (WebCore::PlaybackPipeline::markEndOfStream):
+        (WebCore::PlaybackPipeline::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::PlaybackPipeline::enqueueSample):
+        (WebCore::PlaybackPipeline::pipeline):
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h: Added.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE][EME] MSE specialization of Media Player Private for GStreamer
         https://bugs.webkit.org/show_bug.cgi?id=162900
 
