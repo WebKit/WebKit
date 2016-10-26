@@ -46,7 +46,6 @@ class CodeBlock;
 class EvalCodeBlock;
 class FunctionCodeBlock;
 class JSScope;
-class JSWasmModule;
 class LLIntOffsetsExtractor;
 class ModuleProgramCodeBlock;
 class ProgramCodeBlock;
@@ -719,9 +718,9 @@ public:
     typedef ExecutableBase Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static WebAssemblyExecutable* create(VM& vm, const SourceCode& source, JSWasmModule* module, unsigned functionIndex)
+    static WebAssemblyExecutable* create(VM& vm, const SourceCode& source, unsigned functionIndex)
     {
-        WebAssemblyExecutable* executable = new (NotNull, allocateCell<WebAssemblyExecutable>(vm.heap)) WebAssemblyExecutable(vm, source, module, functionIndex);
+        WebAssemblyExecutable* executable = new (NotNull, allocateCell<WebAssemblyExecutable>(vm.heap)) WebAssemblyExecutable(vm, source, functionIndex);
         executable->finishCreation(vm);
         return executable;
     }
@@ -744,12 +743,11 @@ public:
 
 private:
     friend class ExecutableBase;
-    WebAssemblyExecutable(VM&, const SourceCode&, JSWasmModule*, unsigned functionIndex);
+    WebAssemblyExecutable(VM&, const SourceCode&, unsigned functionIndex);
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
     SourceCode m_source;
-    WriteBarrier<JSWasmModule> m_module;
     unsigned m_functionIndex;
 
     WriteBarrier<WebAssemblyCodeBlock> m_codeBlockForCall;

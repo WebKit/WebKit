@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSWasmModule.h"
 #include "WasmFormat.h"
 #include "WasmOps.h"
 #include "WasmSections.h"

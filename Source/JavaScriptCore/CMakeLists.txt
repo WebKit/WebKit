@@ -864,7 +864,6 @@ set(JavaScriptCore_SOURCES
     tools/JSDollarVM.cpp
     tools/JSDollarVMPrototype.cpp
 
-    wasm/JSWasmModule.cpp
     wasm/JSWebAssembly.cpp
     wasm/WasmB3IRGenerator.cpp
     wasm/WasmCallingConvention.cpp

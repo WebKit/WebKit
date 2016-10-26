@@ -1,3 +1,20 @@
+2016-10-26  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: remove now-dead JSWasmModule
+        https://bugs.webkit.org/show_bug.cgi?id=164044
+
+        Reviewed by Keith Miller.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/Executable.cpp:
+        (JSC::WebAssemblyExecutable::WebAssemblyExecutable):
+        (JSC::WebAssemblyExecutable::visitChildren):
+        * runtime/Executable.h:
+        * wasm/JSWasmModule.cpp: Removed.
+        * wasm/JSWasmModule.h: Removed.
+        * wasm/WasmModuleParser.cpp:
+
 2016-10-26  Mark Lam  <mark.lam@apple.com>
 
         JSGenericTypedArrayView::set() should check for exceptions.
