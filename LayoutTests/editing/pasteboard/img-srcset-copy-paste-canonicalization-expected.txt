@@ -9,8 +9,8 @@ PASS sourceImageSegments.length is 4
 PASS destinationImageSegments.length is 4
 PASS sourceImageSegments[1] is "2x,"
 PASS destinationImageSegments[1] is "2x,"
-PASS sourceImageSegments[3] is "1x"
-PASS destinationImageSegments[3] is "1x"
+PASS sourceImageSegments[3] is "200w"
+PASS destinationImageSegments[3] is "200w"
 PASS successfullyParsed is true
 
 TEST COMPLETE

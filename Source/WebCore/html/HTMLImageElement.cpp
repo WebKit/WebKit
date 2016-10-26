@@ -475,7 +475,7 @@ String HTMLImageElement::completeURLsInAttributeValue(const URL& base, const Att
             if (candidate.resourceWidth != UninitializedDescriptor) {
                 result.append(' ');
                 result.appendNumber(candidate.resourceWidth);
-                result.append('x');
+                result.append('w');
             }
         }
         return result.toString();

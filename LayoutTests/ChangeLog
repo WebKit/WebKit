@@ -1,3 +1,17 @@
+2016-10-26  Dan Bernstein  <mitz@apple.com>
+
+        When pasting web archive, width specifiers in srcset attribute change into density specifiers
+        https://bugs.webkit.org/show_bug.cgi?id=164027
+        <rdar://problem/28964948>
+
+        Reviewed by Tim Horton.
+
+        * editing/pasteboard/img-srcset-copy-paste-canonicalization-expected.txt: Updated.
+        * editing/pasteboard/img-srcset-copy-paste-canonicalization.html: Changed to expect a 200w
+          specifier to round-trip.
+        * editing/pasteboard/resources/img-srcset-copy-paste-canonicalization-iframe.html: Changed
+          a 1x specifier to 200w.
+
 2016-10-26  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: playback support
