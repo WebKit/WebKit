@@ -1,5 +1,58 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE] WebKitMediaSourceGStreamer refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=162902
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Move WebKitMediaSourceGStreamer to the mse directory, split public and private header
+        sections, manage stream data throttling and seek synchronization, audio/video/text stream
+        counting, improve GStreamer duration query, stream initialization, remove
+        MediaSourceClientGStreamer logic (factored out to its own class in another patch) and
+        interaction with MediaPlayerPrivateGStreamerMSE, PlaybackPipeline and
+        SourceBufferPrivateGStreamer.
+
+        * platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp: Removed.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp: Added.
+        (disabledAppsrcNeedData):
+        (disabledAppsrcEnoughData):
+        (disabledAppsrcSeekData):
+        (enabledAppsrcEnoughData):
+        (enabledAppsrcSeekData):
+        (getStreamByAppsrc):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcSetProperty):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaSrcDoAsyncStart):
+        (webKitMediaSrcDoAsyncDone):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcGetSize):
+        (webKitMediaSrcQueryWithParent):
+        (webKitMediaSrcUpdatePresentationSize):
+        (webKitMediaSrcLinkStreamToSrcPad):
+        (webKitMediaSrcLinkParser):
+        (webKitMediaSrcFreeStream):
+        (webKitMediaSrcCheckAllTracksConfigured):
+        (webKitMediaSrcUriGetType):
+        (webKitMediaSrcGetProtocols):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (webKitMediaSrcUriHandlerInit):
+        (seekNeedsDataMainThread):
+        (notifyReadyForMoreSamplesMainThread):
+        (applicationMessageCallback):
+        (webKitMediaSrcSetMediaPlayerPrivate):
+        (webKitMediaSrcSetReadyForSamples):
+        (webKitMediaSrcPrepareSeek):
+        (WTF::adoptGRef):
+        (WTF::refGPtr<WebKitMediaSrc>):
+        (WTF::derefGPtr<WebKitMediaSrc>):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h: Renamed from Source/WebCore/platform/graphics/gstreamer/WebKitMediaSourceGStreamer.h.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h: Added.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE] Playback pipeline
         https://bugs.webkit.org/show_bug.cgi?id=162901
 
