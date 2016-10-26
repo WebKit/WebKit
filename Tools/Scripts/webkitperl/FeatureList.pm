@@ -80,6 +80,7 @@ my (
     $dom4EventsConstructor,
     $domIterator,
     $downloadAttributeSupport,
+    $encryptedMediaSupport,
     $fetchAPISupport,
     $fontLoadEventsSupport,
     $ftlJITSupport,
@@ -102,6 +103,7 @@ my (
     $inputTypeWeekSupport,
     $intlSupport,
     $jitSupport,
+    $legacyEncryptedMediaSupport,
     $legacyNotificationsSupport,
     $legacyVendorPrefixSupport,
     $legacyWebAudioSupport,
@@ -251,8 +253,8 @@ my @features = (
     { option => "download-attribute", desc => "Toggle Download Attribute support",
       define => "ENABLE_DOWNLOAD_ATTRIBUTE", default => (isEfl() || isGtk()), value => \$downloadAttributeSupport },
 
-    { option => "encrypted-media", desc => "Toggle EME support",
-      define => "ENABLE_ENCRYPTED_MEDIA", default => 0, value => \$fetchAPISupport },
+    { option => "encrypted-media", desc => "Toggle EME V3 support",
+      define => "ENABLE_ENCRYPTED_MEDIA", default => 0, value => \$encryptedMediaSupport },
 
     { option => "fetch-api", desc => "Toggle Fetch API support",
       define => "ENABLE_FETCH_API", default => 1, value => \$fetchAPISupport },
@@ -317,6 +319,9 @@ my @features = (
 
     { option => "jit", desc => "Enable just-in-time JavaScript support",
       define => "ENABLE_JIT", default => 1, value => \$jitSupport },
+
+    { option => "legacy-encrypted-media", desc => "Toggle Legacy EME V2 support",
+      define => "ENABLE_LEGACY_ENCRYPTED_MEDIA", default => isGtk(), value => \$legacyEncryptedMediaSupport },
 
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => 0, value => \$legacyNotificationsSupport },

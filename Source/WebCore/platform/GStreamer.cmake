@@ -23,6 +23,8 @@ endif ()
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gstreamer"
+        "${WEBCORE_DIR}/platform/graphics/gstreamer/mse"
+        "${WEBCORE_DIR}/platform/graphics/gstreamer/eme"
     )
 
     list(APPEND WebCore_SOURCES
@@ -32,15 +34,25 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
         platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
-        platform/graphics/gstreamer/MediaSourceGStreamer.cpp
-        platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp
         platform/graphics/gstreamer/TextCombinerGStreamer.cpp
         platform/graphics/gstreamer/TextSinkGStreamer.cpp
         platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
         platform/graphics/gstreamer/VideoSinkGStreamer.cpp
         platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
-        platform/graphics/gstreamer/WebKitMediaSourceGStreamer.cpp
         platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
+
+        platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp
+        platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
+
+        platform/graphics/gstreamer/mse/AppendPipeline.cpp
+        platform/graphics/gstreamer/mse/GStreamerMediaDescription.cpp
+        platform/graphics/gstreamer/mse/GStreamerMediaSample.cpp
+        platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
+        platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp
+        platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp
+        platform/graphics/gstreamer/mse/PlaybackPipeline.cpp
+        platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+        platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
     )
 
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -115,5 +127,14 @@ if (ENABLE_WEB_AUDIO)
 
     list(APPEND WebCore_LIBRARIES
         ${GSTREAMER_FFT_LIBRARIES}
+    )
+endif ()
+
+if (ENABLE_LEGACY_ENCRYPTED_MEDIA)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${LIBGCRYPT_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${LIBGCRYPT_LIBRARIES} -lgpg-error
     )
 endif ()
