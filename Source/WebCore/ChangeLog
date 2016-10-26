@@ -1,5 +1,68 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE][EME] Remove MSE code from regular player and add EME support
+        https://bugs.webkit.org/show_bug.cgi?id=162911
+
+        Now that the MSE responsibility has been refactored to the dedicated
+        MediaPlayerPrivateGStreamerMSE subclass, the regular player no longer needs the MSE code,
+        just to expose some more methods to the subclass. Float timestamps have been migrated to
+        double. Also, small changes to accomodate the EME support are needed.
+
+        This patch is co-authored with Philippe Normand <philn@igalia.com> (EME support) and
+        Žan Doberšek <zandobersek@gmail.com> (double timestamps).
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::busMessageCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::registerMediaEngine):
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::durationMediaTime):
+        (WebCore::MediaPlayerPrivateGStreamer::currentMediaTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::paused):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfText):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processMpegTsSection):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::MediaPlayerPrivateGStreamer::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::setAudioStreamProperties): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::pause): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::videoChangedCallback): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::setRate): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::processTableOfContentsEntry): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::loadStateChanged): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::timeChanged): Deleted.
+        (WebCore::mimeTypeSet): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::createAudioSink): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::configurePlaySink):
+        (WebCore::MediaPlayerPrivateGStreamer::isMediaSource):
+        (WebCore::MediaPlayerPrivateGStreamer::createWeakPtr): Deleted.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][EME] Add EME support to base private player
         https://bugs.webkit.org/show_bug.cgi?id=162908
 
