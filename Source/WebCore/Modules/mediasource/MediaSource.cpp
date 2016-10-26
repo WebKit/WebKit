@@ -147,6 +147,11 @@ MediaTime MediaSource::duration() const
     return m_duration;
 }
 
+void MediaSource::durationChanged(const MediaTime& duration)
+{
+    m_duration = duration;
+}
+
 MediaTime MediaSource::currentTime() const
 {
     return m_mediaElement ? m_mediaElement->currentMediaTime() : MediaTime::zeroTime();

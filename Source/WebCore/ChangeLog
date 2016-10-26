@@ -1,5 +1,20 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [MSE] Expose additional MediaSource methods to MediaSourcePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=162920
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The GStreamer MSE platform implementation needs to report duration changes and trigger
+        monitorSourceBuffers() calls.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::durationChanged):
+        * Modules/mediasource/MediaSource.h:
+        * platform/graphics/MediaSourcePrivateClient.h:
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][EME] ClearKey decryption support
         https://bugs.webkit.org/show_bug.cgi?id=162918
 
