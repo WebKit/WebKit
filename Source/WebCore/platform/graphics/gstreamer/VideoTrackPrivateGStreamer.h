@@ -48,12 +48,14 @@ public:
 
     int trackIndex() const override { return m_index; }
 
+    AtomicString id() const override { return m_id; }
     AtomicString label() const override { return m_label; }
     AtomicString language() const override { return m_language; }
 
 private:
     VideoTrackPrivateGStreamer(GRefPtr<GstElement> playbin, gint index, GRefPtr<GstPad>);
 
+    AtomicString m_id;
     GRefPtr<GstElement> m_playbin;
 };
 

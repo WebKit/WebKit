@@ -88,7 +88,11 @@ void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* t
 void TrackPrivateBaseGStreamer::tagsChanged()
 {
     GRefPtr<GstTagList> tags;
-    g_object_get(m_pad.get(), "tags", &tags.outPtr(), nullptr);
+    if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "tags"))
+        g_object_get(m_pad.get(), "tags", &tags.outPtr(), NULL);
+    else
+        tags = adoptGRef(gst_tag_list_new_empty());
+
     {
         LockHolder lock(m_tagMutex);
         m_tags.swap(tags);
@@ -103,7 +107,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()
         return;
 
     gboolean active = false;
-    if (m_pad)
+    if (m_pad && g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "active"))
         g_object_get(m_pad.get(), "active", &active, NULL);
 
     setActive(active);

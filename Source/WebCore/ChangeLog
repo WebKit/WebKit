@@ -1,3 +1,23 @@
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Track enhancements for MSE support
+        https://bugs.webkit.org/show_bug.cgi?id=162869
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add 'id' field to Audio/VideoTrackPrivateGStreamer. Make TrackPrivateBaseGStreamer
+        work anyway in cases where the demuxer isn't contained in a GstPlaybin.
+
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp:
+        (WebCore::AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/AudioTrackPrivateGStreamer.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        (WebCore::TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp:
+        (WebCore::VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer):
+        * platform/graphics/gstreamer/VideoTrackPrivateGStreamer.h:
+
 2016-10-26  Youenn Fablet  <youenn@apple.com>
 
         Make CachedResourceLoader originsMatch check more efficient
