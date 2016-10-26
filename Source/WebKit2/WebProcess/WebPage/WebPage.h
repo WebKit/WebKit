@@ -764,7 +764,7 @@ public:
     void removeResourceRequest(unsigned long);
 
     void setMediaVolume(float);
-    void setMuted(bool);
+    void setMuted(WebCore::MediaProducer::MutedStateFlags);
     void setMayStartMediaWhenInWindow(bool);
 
 #if ENABLE(MEDIA_SESSION)

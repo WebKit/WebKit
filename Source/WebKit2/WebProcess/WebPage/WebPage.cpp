@@ -4389,9 +4389,9 @@ void WebPage::setMediaVolume(float volume)
     m_page->setMediaVolume(volume);
 }
 
-void WebPage::setMuted(bool muted)
+void WebPage::setMuted(MediaProducer::MutedStateFlags state)
 {
-    m_page->setMuted(muted);
+    m_page->setMuted(state);
 }
 
 #if ENABLE(MEDIA_SESSION)
