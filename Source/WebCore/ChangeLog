@@ -1,5 +1,32 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][EME] Add EME support to base private player
+        https://bugs.webkit.org/show_bug.cgi?id=162908
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add encryption key management support.
+
+        This patch is authored by Philippe Normand <philn@igalia.com>.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::registerWebKitGStreamerElements):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        (WebCore::MediaPlayerPrivateGStreamerBase::needKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setCDMSession):
+        (WebCore::MediaPlayerPrivateGStreamerBase::keyAdded):
+        (WebCore::MediaPlayerPrivateGStreamerBase::createSession):
+        (WebCore::MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey):
+        (WebCore::MediaPlayerPrivateGStreamerBase::supportsKeySystem):
+        (WebCore::MediaPlayerPrivateGStreamerBase::extendedSupportsType):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setPipeline): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        (WebCore::MediaPlayerPrivateGStreamerBase::pipeline):
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE] WebKitMediaSourceGStreamer refactoring
         https://bugs.webkit.org/show_bug.cgi?id=162902
 

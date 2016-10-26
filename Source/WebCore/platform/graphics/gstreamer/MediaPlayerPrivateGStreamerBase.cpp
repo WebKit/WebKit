@@ -3,7 +3,8 @@
  * Copyright (C) 2007 Collabora Ltd.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
- * Copyright (C) 2009, 2010 Igalia S.L
+ * Copyright (C) 2009, 2010, 2015, 2016 Igalia S.L
+ * Copyright (C) 2015, 2016 Metrological Group B.V.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,12 +91,32 @@
 #include <cairo-gl.h>
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+#include "UUID.h"
+#include "WebKitClearKeyDecryptorGStreamer.h"
+#include <runtime/JSCInlines.h>
+#include <runtime/TypedArrayInlines.h>
+#include <runtime/Uint8Array.h>
+#endif
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
 using namespace std;
 
 namespace WebCore {
+
+void registerWebKitGStreamerElements()
+{
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (!webkitGstCheckVersion(1, 6, 1))
+        return;
+
+    GRefPtr<GstElementFactory> clearKeyDecryptorFactory = gst_element_factory_find("webkitclearkey");
+    if (!clearKeyDecryptorFactory)
+        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+#endif
+}
 
 static int greatestCommonDivisor(int a, int b)
 {
@@ -220,6 +241,7 @@ void MediaPlayerPrivateGStreamerBase::setPipeline(GstElement* pipeline)
 
 bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
 {
+    UNUSED_PARAM(message);
 #if USE(GSTREAMER_GL)
     if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_NEED_CONTEXT)
         return false;
@@ -236,6 +258,37 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
 #else
     UNUSED_PARAM(message);
 #endif // USE(GSTREAMER_GL)
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (GST_MESSAGE_TYPE(message) == GST_MESSAGE_ELEMENT) {
+        const GstStructure* structure = gst_message_get_structure(message);
+        if (gst_structure_has_name(structure, "drm-key-needed")) {
+            GST_DEBUG("handling drm-key-needed message");
+
+            // Here we receive the DRM init data from the pipeline: we will emit
+            // the needkey event with that data and the browser might create a
+            // CDMSession from this event handler. If such a session was created
+            // We will emit the message event from the session to provide the
+            // DRM challenge to the browser and wait for an update. If on the
+            // contrary no session was created we won't wait and let the pipeline
+            // error out by itself.
+            GRefPtr<GstBuffer> data;
+            GUniqueOutPtr<gchar> keySystemId;
+            gboolean valid = gst_structure_get(structure, "data", GST_TYPE_BUFFER, &data.outPtr(),
+                "key-system-id", G_TYPE_STRING, &keySystemId.outPtr(), nullptr);
+            GstMapInfo mapInfo;
+            if (UNLIKELY(!valid || !gst_buffer_map(data.get(), &mapInfo, GST_MAP_READ)))
+                return false;
+
+            GST_DEBUG("scheduling keyNeeded event");
+            // FIXME: Provide a somehow valid sessionId.
+            RefPtr<Uint8Array> initData = Uint8Array::create(reinterpret_cast<const unsigned char *>(mapInfo.data), mapInfo.size);
+            needKey(initData);
+            gst_buffer_unmap(data.get(), &mapInfo);
+            return true;
+        }
+    }
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
     return false;
 }
@@ -1068,6 +1121,48 @@ unsigned MediaPlayerPrivateGStreamerBase::videoDecodedByteCount() const
 
     gst_query_unref(query);
     return static_cast<unsigned>(position);
+}
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void MediaPlayerPrivateGStreamerBase::needKey(RefPtr<Uint8Array> initData)
+{
+    if (!m_player->keyNeeded(initData.get()))
+        GST_INFO("no event handler for key needed");
+}
+
+void MediaPlayerPrivateGStreamerBase::setCDMSession(CDMSession* session)
+{
+    GST_DEBUG("setting CDM session to %p", session);
+    m_cdmSession = session;
+}
+
+void MediaPlayerPrivateGStreamerBase::keyAdded()
+{
+}
+
+std::unique_ptr<CDMSession> MediaPlayerPrivateGStreamerBase::createSession(const String& keySystem, CDMSessionClient*)
+{
+    GST_INFO("Requested CDMSession for KeySystem %s: Returning null.", keySystem.utf8().data());
+    return nullptr;
+}
+
+void MediaPlayerPrivateGStreamerBase::dispatchDecryptionKey(GstBuffer* buffer)
+{
+    gst_element_send_event(m_pipeline.get(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB,
+        gst_structure_new("drm-cipher", "key", GST_TYPE_BUFFER, buffer, nullptr)));
+}
+#endif
+
+bool MediaPlayerPrivateGStreamerBase::supportsKeySystem(const String& keySystem, const String& mimeType)
+{
+    GST_INFO("Checking for KeySystem support with %s and type %s: false.", keySystem.utf8().data(), mimeType.utf8().data());
+    return false;
+}
+
+MediaPlayer::SupportsType MediaPlayerPrivateGStreamerBase::extendedSupportsType(const MediaEngineSupportParameters& parameters, MediaPlayer::SupportsType result)
+{
+    UNUSED_PARAM(parameters);
+    return result;
 }
 
 }
