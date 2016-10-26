@@ -1,0 +1,13 @@
+To manually test this, copy and paste into the first contenteditable. The following contenteditables should reflect the pasted contents.
+
+destination after pasting (text/html):
+| <b>
+|   style="color: rgb(255, 0, 0); font-family: -webkit-standard; font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0.4); -webkit-text-stroke-width: 0px;"
+|   "LayoutTests"
+|   <i>
+|     "are"
+|     <u>
+|       "fun!"
+
+destination after pasting (text/plain):
+| "LayoutTestsarefun!"

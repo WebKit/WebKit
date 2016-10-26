@@ -1,3 +1,9 @@
+2016-10-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/fast/events/input-events-paste-rich-datatransfer-expected.txt: Added.
+
 2016-10-26  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html is flaky
