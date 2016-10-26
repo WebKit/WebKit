@@ -71,7 +71,13 @@ ID2D1Factory* GraphicsContext::systemFactory()
 {
     static ID2D1Factory* direct2DFactory = nullptr;
     if (!direct2DFactory) {
+#ifndef NDEBUG
+        D2D1_FACTORY_OPTIONS options = { };
+        options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+        HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, options, &direct2DFactory);
+#else
         HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &direct2DFactory);
+#endif
         RELEASE_ASSERT(SUCCEEDED(hr));
     }
 
@@ -108,7 +114,23 @@ void GraphicsContext::platformInit(HDC hdc, bool hasAlpha)
     if (!hdc)
         return;
 
-    COMPtr<ID2D1RenderTarget> renderTarget;
+    HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
+
+    DIBPixelData pixelData(bitmap);
+
+    auto targetProperties = D2D1::RenderTargetProperties();
+    targetProperties.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+
+    COMPtr<ID2D1DCRenderTarget> renderTarget;
+    HRESULT hr = systemFactory()->CreateDCRenderTarget(&targetProperties, &renderTarget);
+    if (!SUCCEEDED(hr))
+        return;
+
+    RECT clientRect = IntRect(IntPoint(), pixelData.size());
+    hr = renderTarget->BindDC(hdc, &clientRect);
+    if (!SUCCEEDED(hr))
+        return;
+
     m_data = new GraphicsContextPlatformPrivate(renderTarget.get());
     m_data->m_hdc = hdc;
     // Make sure the context starts in sync with our state.
@@ -669,6 +691,11 @@ ID2D1StrokeStyle* GraphicsContextPlatformPrivate::strokeStyle()
 {
     recomputeStrokeStyle();
     return m_d2dStrokeStyle.get();
+}
+
+ID2D1StrokeStyle* GraphicsContext::platformStrokeStyle() const
+{
+    return m_data->strokeStyle();
 }
 
 // This is only used to draw borders.
@@ -1248,14 +1275,13 @@ IntRect GraphicsContext::clipBounds() const
         return IntRect(-2048, -2048, 4096, 4096); // FIXME: display lists.
     }
 
-    D2D1_RECT_F d2dClipBounds = D2D1::InfiniteRect();
-    FloatRect clipBounds(d2dClipBounds.left, d2dClipBounds.top, d2dClipBounds.right - d2dClipBounds.left, d2dClipBounds.bottom - d2dClipBounds.top);
+    D2D1_SIZE_F clipSize;
+    if (auto clipLayer = m_data->clipLayer())
+        clipSize = clipLayer->GetSize();
+    else
+        clipSize = platformContext()->GetSize();
 
-    if (m_data->clipLayer()) {
-        auto clipSize = m_data->clipLayer()->GetSize();
-        clipBounds.setWidth(clipSize.width);
-        clipBounds.setHeight(clipSize.height);
-    }
+    FloatRect clipBounds(IntPoint(), clipSize);
 
     return enclosingIntRect(clipBounds);
 }

@@ -42,6 +42,11 @@
 
 namespace WebCore {
 
+static inline ID2D1RenderTarget* scratchRenderTarget()
+{
+    static COMPtr<ID2D1RenderTarget> renderTarget = adoptCOM(GraphicsContext::defaultRenderTarget());
+    return renderTarget.get();
+}
 
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 {
@@ -70,8 +75,6 @@ Path::Path()
 
 Path::~Path()
 {
-    if (m_path)
-        m_path->Release();
 }
 
 PlatformPathPtr Path::ensurePlatformPath()
@@ -83,7 +86,7 @@ PlatformPathPtr Path::ensurePlatformPath()
             return nullptr;
     }
 
-    return m_path;
+    return m_path.get();
 }
 
 void Path::appendGeometry(ID2D1Geometry* geometry)
@@ -101,7 +104,7 @@ void Path::appendGeometry(ID2D1Geometry* geometry)
 
     auto fillMode = m_path ? m_path->GetFillMode() : D2D1_FILL_MODE_WINDING;
 
-    COMPtr<ID2D1GeometryGroup> protectedPath = adoptCOM(m_path);
+    COMPtr<ID2D1GeometryGroup> protectedPath = m_path;
     m_path = nullptr;
 
     HRESULT hr = GraphicsContext::systemFactory()->CreateGeometryGroup(fillMode, geometries.data(), geometries.size(), &m_path);
@@ -162,13 +165,7 @@ Path::Path(const Path& other)
 
 Path& Path::operator=(const Path& other)
 {
-    if (m_path)
-        m_path->Release();
-
     m_path = other.m_path;
-    if (m_path)
-        m_path->AddRef();
-
     m_activePath = other.m_activePath;
     m_activePathGeometry = other.m_activePathGeometry;
 
@@ -177,8 +174,6 @@ Path& Path::operator=(const Path& other)
 
 HRESULT Path::initializePathState()
 {
-    if (m_path)
-        m_path->Release();
     m_path = nullptr;
     m_activePath = nullptr;
     m_activePathGeometry = nullptr;
@@ -231,10 +226,17 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     if (isNull())
         return false;
 
-    UNUSED_PARAM(applier);
-    UNUSED_PARAM(point);
-    notImplemented();
-    return false;
+    ASSERT(applier);
+
+    GraphicsContext scratchContext(scratchRenderTarget());
+    applier->strokeStyle(&scratchContext);
+
+    BOOL containsPoint = false;
+    HRESULT hr = m_path->StrokeContainsPoint(point, scratchContext.strokeThickness(), scratchContext.platformStrokeStyle(), nullptr, 1.0f, &containsPoint);
+    if (!SUCCEEDED(hr))
+        return false;
+
+    return containsPoint;
 }
 
 void Path::translate(const FloatSize& size)
@@ -257,7 +259,7 @@ void Path::transform(const AffineTransform& transform)
 
     const D2D1_MATRIX_3X2_F& d2dTransform = static_cast<const D2D1_MATRIX_3X2_F>(transform);
     COMPtr<ID2D1TransformedGeometry> transformedPath;
-    if (!SUCCEEDED(GraphicsContext::systemFactory()->CreateTransformedGeometry(m_path, d2dTransform, &transformedPath)))
+    if (!SUCCEEDED(GraphicsContext::systemFactory()->CreateTransformedGeometry(m_path.get(), d2dTransform, &transformedPath)))
         return;
 
     Vector<ID2D1Geometry*> geometries;
@@ -271,7 +273,6 @@ void Path::transform(const AffineTransform& transform)
 
     auto fillMode = m_path->GetFillMode();
 
-    m_path->Release();
     m_path = nullptr;
 
     HRESULT hr = GraphicsContext::systemFactory()->CreateGeometryGroup(fillMode, geometries.data(), geometries.size(), &m_path);
@@ -476,7 +477,7 @@ void Path::addEllipse(FloatPoint p, float radiusX, float radiusY, float rotation
 void Path::addEllipse(const FloatRect& r)
 {
     COMPtr<ID2D1EllipseGeometry> ellipse;
-    HRESULT hr = GraphicsContext::systemFactory()->CreateEllipseGeometry(D2D1::Ellipse(D2D1::Point2F(r.center().x(), r.center().y()), r.width(), r.height()), &ellipse);
+    HRESULT hr = GraphicsContext::systemFactory()->CreateEllipseGeometry(D2D1::Ellipse(r.center(), r.width(), r.height()), &ellipse);
     RELEASE_ASSERT(SUCCEEDED(hr));
     appendGeometry(ellipse.get());
 }
@@ -497,9 +498,6 @@ void Path::clear()
 {
     if (isNull())
         return;
-
-    if (m_path)
-        m_path->Release();
 
     m_path = nullptr;
     m_activePath = nullptr;

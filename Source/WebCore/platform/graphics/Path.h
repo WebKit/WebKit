@@ -165,7 +165,11 @@ namespace WebCore {
 
         // To keep Path() cheap, it does not allocate a PlatformPath immediately
         // meaning Path::platformPath() can return null.
+#if USE(DIRECT2D)
+        PlatformPathPtr platformPath() const { return m_path.get(); }
+#else
         PlatformPathPtr platformPath() const { return m_path; }
+#endif
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
         WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
 
@@ -199,10 +203,12 @@ namespace WebCore {
 #endif
 
     private:
-        PlatformPathPtr m_path { nullptr };
 #if USE(DIRECT2D)
+        COMPtr<ID2D1GeometryGroup> m_path;
         COMPtr<ID2D1PathGeometry> m_activePathGeometry;
         COMPtr<ID2D1GeometrySink> m_activePath;
+#else
+        PlatformPathPtr m_path { nullptr };
 #endif
     };
 

@@ -1,3 +1,35 @@
+2016-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win][Direct2D] Use smart pointers for Direct2D Path types
+        https://bugs.webkit.org/show_bug.cgi?id=163994
+
+        Reviewed by Alex Christensen.
+
+        Tested by existing path tests.
+
+        * platform/graphics/Path.h:
+        (WebCore::Path::platformPath): Use a COMPtr for m_path.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::systemFactory): Present better D2D debug output
+        when running a debug build.
+        (WebCore::GraphicsContext::platformInit): Initialize a D2D device from a
+        native GDI device context.
+        (WebCore::GraphicsContext::platformStrokeStyle): Added.
+        (WebCore::GraphicsContext::clipBounds): Simplify clip boundary calculations and
+        avoid doing math on infinities.
+        * platform/graphics/win/PathDirect2D.cpp:
+        (WebCore::scratchRenderTarget): Added.
+        (WebCore::Path::~Path): Switch to COMPtr implementation.
+        (WebCore::Path::ensurePlatformPath): Ditto.
+        (WebCore::Path::appendGeometry): Ditto.
+        (WebCore::Path::operator=): Ditto.
+        (WebCore::Path::initializePathState): Ditto.
+        (WebCore::Path::strokeContains): Provide an implementation.
+        (WebCore::Path::transform): Ditto.
+        (WebCore::Path::addEllipse): No need for explicit construction of the
+        D2D1::Point2F object.
+        (WebCore::Path::clear): Switch to COMPtr implementation.
+
 2016-10-25  Nan Wang  <n_wang@apple.com>
 
         LayoutTest accessibility/mac/meter-gauge-value-description.html failing
