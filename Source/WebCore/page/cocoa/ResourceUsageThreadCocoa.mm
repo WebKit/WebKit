@@ -164,6 +164,8 @@ static float cpuUsage()
 
         if (!(threadBasicInfo->flags & TH_FLAGS_IDLE))
             usage += threadBasicInfo->cpu_usage / static_cast<float>(TH_USAGE_SCALE) * 100.0;
+
+        mach_port_deallocate(mach_task_self(), threadList[i]);
     }
 
     kr = vm_deallocate(mach_task_self(), (vm_offset_t)threadList, threadCount * sizeof(thread_t));

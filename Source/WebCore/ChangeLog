@@ -1,3 +1,15 @@
+2016-10-26  Andreas Kling  <akling@apple.com>
+
+        Fix mach port leak in ResourceUsageThread.
+        <https://webkit.org/b/164012>
+
+        Reviewed by Antti Koivisto.
+
+        The threads returned by task_threads() need to be deallocated.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::cpuUsage):
+
 2016-10-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         WebRTC: The RTCTrackEventInit dictionary needs required members
