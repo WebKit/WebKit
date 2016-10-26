@@ -20,14 +20,14 @@ PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [{
 PASS new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [1], transceiver: transceiver}) threw exception TypeError: Type error.
 
 Dictionary members receiver, track and transceiver are not nullable
-FAIL new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
-FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
-FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null}) should throw an exception. Was [object RTCTrackEvent].
+PASS new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver}) threw exception TypeError: Type error.
+PASS new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver}) threw exception TypeError: Type error.
+PASS new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null}) threw exception TypeError: Type error.
 
 Dictionary members receiver, track and transceiver are required
-FAIL new RTCTrackEvent('eventType', { track: track, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
-FAIL new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver}) should throw an exception. Was [object RTCTrackEvent].
-FAIL new RTCTrackEvent('eventType', { receiver: receiver, track: track}) should throw an exception. Was [object RTCTrackEvent].
+PASS new RTCTrackEvent('eventType', { track: track, transceiver: transceiver}) threw exception TypeError: Member RTCTrackEventInit.receiver is required and must be an instance of RTCRtpReceiver.
+PASS new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver}) threw exception TypeError: Member RTCTrackEventInit.track is required and must be an instance of MediaStreamTrack.
+PASS new RTCTrackEvent('eventType', { receiver: receiver, track: track}) threw exception TypeError: Member RTCTrackEventInit.transceiver is required and must be an instance of RTCRtpTransceiver.
 
 PASS successfullyParsed is true
 

@@ -45,23 +45,22 @@
                 shouldBe("new RTCTrackEvent('eventType', { receiver: receiver, track: track, streams: [stream], transceiver: transceiver}).streams", "[stream]");
                 debug("");
 
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [stream, null], transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [null], transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [{}], transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [1], transceiver: transceiver})");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [stream, null], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [null], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [{}], transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: track, track: track, streams: [1], transceiver: transceiver})", "TypeError");
                 debug("");
 
-                // The tests below are expected to fail (bug: webkit.org/b/158536)
                 debug("Dictionary members receiver, track and transceiver are not nullable");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null})");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: null, track: track, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: null, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: track, transceiver: null})", "TypeError");
                 debug("");
 
                 debug("Dictionary members receiver, track and transceiver are required");
-                shouldThrow("new RTCTrackEvent('eventType', { track: track, transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver})");
-                shouldThrow("new RTCTrackEvent('eventType', { receiver: receiver, track: track})");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { track: track, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, transceiver: transceiver})", "TypeError");
+                shouldThrowErrorName("new RTCTrackEvent('eventType', { receiver: receiver, track: track})", "TypeError");
                 debug("");
 
                 finishJSTest();

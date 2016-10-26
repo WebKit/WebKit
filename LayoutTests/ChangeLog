@@ -1,3 +1,14 @@
+2016-10-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+        WebRTC: The RTCTrackEventInit dictionary needs required members
+        https://bugs.webkit.org/show_bug.cgi?id=158536
+
+        Update RTCTrackEvent IDL as per specification. Rebase existing tests.
+
+        Reviewed by Chris Dumez.
+
+        * fast/mediastream/RTCTrackEvent-constructor-expected.txt:
+        * fast/mediastream/RTCTrackEvent-constructor.html:
+
 2016-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Updating attribute by textContent must create a single mutation record and custom element reaction

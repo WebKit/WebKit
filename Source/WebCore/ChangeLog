@@ -1,3 +1,16 @@
+2016-10-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        WebRTC: The RTCTrackEventInit dictionary needs required members
+        https://bugs.webkit.org/show_bug.cgi?id=158536
+
+        Reviewed by Chris Dumez.
+
+        Update RTCTrackEvent IDL as per specification.
+
+        No additional test required, rebase existing tests.
+
+        * Modules/mediastream/RTCTrackEvent.idl:
+
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][GTK+][MSE] Unreviewed debug build fix.
