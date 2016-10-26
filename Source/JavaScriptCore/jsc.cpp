@@ -616,7 +616,7 @@ public:
     class DOMJITNodeDOMJIT : public DOMJIT::GetterSetter {
     public:
         DOMJITNodeDOMJIT()
-            : DOMJIT::GetterSetter(DOMJITGetter::customGetter, nullptr, DOMJITNode::info())
+            : DOMJIT::GetterSetter(DOMJITGetter::customGetter, nullptr, DOMJITNode::info(), SpecInt32Only)
         {
         }
 
@@ -701,7 +701,7 @@ public:
     class DOMJITNodeDOMJIT : public DOMJIT::GetterSetter {
     public:
         DOMJITNodeDOMJIT()
-            : DOMJIT::GetterSetter(DOMJITGetterComplex::customGetter, nullptr, DOMJITNode::info())
+            : DOMJIT::GetterSetter(DOMJITGetterComplex::customGetter, nullptr, DOMJITNode::info(), SpecInt32Only)
         {
         }
 

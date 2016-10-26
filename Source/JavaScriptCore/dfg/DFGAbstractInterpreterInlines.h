@@ -2290,10 +2290,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
     case CallDOM: {
-        DOMJIT::CallDOMPatchpoint* patchpoint = node->callDOMData()->patchpoint;
+        CallDOMData* callDOMData = node->callDOMData();
+        DOMJIT::CallDOMPatchpoint* patchpoint = callDOMData->patchpoint;
         if (patchpoint->effect.writes)
             clobberWorld(node->origin.semantic, clobberLimit);
-        forNode(node).makeBytecodeTop();
+        forNode(node).setType(m_graph, callDOMData->domJIT->resultType());
         break;
     }
     case CheckArray: {

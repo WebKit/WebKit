@@ -1,3 +1,36 @@
+2016-10-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Tell IDL result type to DFG to drop type checks in AI
+        https://bugs.webkit.org/show_bug.cgi?id=163900
+
+        Reviewed by Sam Weinig.
+
+        The IDL tells the conservative result type. While we use the heap prediction
+        for prediction propagation phase in DOMJIT getter (it is offered by get_by_id!),
+        we leverage the type told by IDL to produce the abstract value with the proven type
+        in AI. It effectively drops unnecessary type checks followed by CallDOM operations.
+
+        For example, when you write the code like,
+
+            if (node.nodeType === 9) {
+                // document.
+            }
+
+        Previously, we inserted a Int32 check for the result of node.nodeType.
+        It is dropped now.
+
+        We annotate the DOMJIT getter in jsc.cpp to ensure that the unnecessary type checks
+        are correctly dropped when executing JSTests/stress/domjit-getter.js.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * domjit/DOMJITGetterSetter.h:
+        (JSC::DOMJIT::GetterSetter::GetterSetter):
+        (JSC::DOMJIT::GetterSetter::resultType):
+        * jsc.cpp:
+        (WTF::DOMJITGetter::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT):
+        (WTF::DOMJITGetterComplex::DOMJITNodeDOMJIT::DOMJITNodeDOMJIT):
+
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
         String.prototype.replace() should throw an OutOfMemoryError when using too much memory.

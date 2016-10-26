@@ -1,0 +1,66 @@
+/*
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary form, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+interface TestDOMJIT : Node {
+    [DOMJIT] readonly attribute any anyAttr;
+    [DOMJIT] readonly attribute boolean booleanAttr;
+    [DOMJIT] readonly attribute byte byteAttr;
+    [DOMJIT] readonly attribute octet octetAttr;
+    [DOMJIT] readonly attribute short shortAttr;
+    [DOMJIT] readonly attribute unsigned short unsignedShortAttr;
+    [DOMJIT] readonly attribute long longAttr;
+    [DOMJIT] readonly attribute unsigned long unsignedLongAttr;
+    [DOMJIT] readonly attribute long long longLongAttr;
+    [DOMJIT] readonly attribute unsigned long long unsignedLongLongAttr;
+    [DOMJIT] readonly attribute float floatAttr;
+    [DOMJIT] readonly attribute unrestricted float unrestrictedFloatAttr;
+    [DOMJIT] readonly attribute double doubleAttr;
+    [DOMJIT] readonly attribute unrestricted double unrestrictedDoubleAttr;
+    [DOMJIT] readonly attribute DOMString domStringAttr;
+    [DOMJIT] readonly attribute ByteString byteStringAttr;
+    [DOMJIT] readonly attribute USVString usvStringAttr;
+    [DOMJIT] readonly attribute Node nodeAttr;
+
+    [DOMJIT] readonly attribute boolean? booleanNullableAttr;
+    [DOMJIT] readonly attribute byte? byteNullableAttr;
+    [DOMJIT] readonly attribute octet? octetNullableAttr;
+    [DOMJIT] readonly attribute short? shortNullableAttr;
+    [DOMJIT] readonly attribute unsigned short? unsignedShortNullableAttr;
+    [DOMJIT] readonly attribute long? longNullableAttr;
+    [DOMJIT] readonly attribute unsigned long? unsignedLongNullableAttr;
+    [DOMJIT] readonly attribute long long? longLongNullableAttr;
+    [DOMJIT] readonly attribute unsigned long long? unsignedLongLongNullableAttr;
+    [DOMJIT] readonly attribute float? floatNullableAttr;
+    [DOMJIT] readonly attribute unrestricted float? unrestrictedFloatNullableAttr;
+    [DOMJIT] readonly attribute double? doubleNullableAttr;
+    [DOMJIT] readonly attribute unrestricted double? unrestrictedDoubleNullableAttr;
+    [DOMJIT] readonly attribute DOMString? domStringNullableAttr;
+    [DOMJIT] readonly attribute ByteString? byteStringNullableAttr;
+    [DOMJIT] readonly attribute USVString? usvStringNullableAttr;
+    [DOMJIT] readonly attribute Node? nodeNullableAttr;
+};

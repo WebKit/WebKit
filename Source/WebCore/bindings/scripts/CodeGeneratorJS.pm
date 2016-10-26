@@ -2491,6 +2491,42 @@ sub addUnscopableProperties
     push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, DontEnum | ReadOnly);\n");
 }
 
+sub GetResultTypeFilter
+{
+    my ($signature) = @_;
+    my $idlType = $signature->idlType;
+
+    my %TypeFilters = (
+        "any" => "SpecHeapTop",
+        "boolean" => "SpecBoolean",
+        "byte" => "SpecInt32Only",
+        "octet" => "SpecInt32Only",
+        "short" => "SpecInt32Only",
+        "unsigned short" => "SpecInt32Only",
+        "long" => "SpecInt32Only",
+        "unsigned long" => "SpecBytecodeNumber",
+        "long long" => "SpecBytecodeNumber",
+        "unsigned long long" => "SpecBytecodeNumber",
+        "float" => "SpecBytecodeNumber",
+        "unrestricted float" => "SpecBytecodeNumber",
+        "double" => "SpecBytecodeNumber",
+        "unrestricted double" => "SpecBytecodeNumber",
+        "DOMString" => "SpecString",
+        "ByteString" => "SpecString",
+        "USVString" => "SpecString",
+    );
+
+    if (exists $TypeFilters{$idlType->name}) {
+        my $resultType = "JSC::$TypeFilters{$idlType->name}";
+        if ($idlType->isNullable) {
+            die "\"any\" type must not become nullable." if $idlType->name eq "any";
+            $resultType = "($resultType | JSC::SpecOther)";
+        }
+        return $resultType;
+    }
+    return "SpecHeapTop";
+}
+
 sub GenerateImplementation
 {
     my ($object, $interface, $enumerations, $dictionaries) = @_;
@@ -3268,8 +3304,9 @@ sub GenerateImplementation
                 my $domJITClassName = $generatorName . "DOMJIT";
                 my $getter = GetAttributeGetterName($interface, $generatorName, $attribute);
                 my $setter = IsReadonly($attribute) ? "nullptr" : GetAttributeSetterName($interface, $generatorName, $attribute);
+                my $resultType = GetResultTypeFilter($attribute->signature);
                 push(@implContent, "$domJITClassName::$domJITClassName()\n");
-                push(@implContent, "    : JSC::DOMJIT::GetterSetter($getter, $setter, ${className}::info())\n");
+                push(@implContent, "    : JSC::DOMJIT::GetterSetter($getter, $setter, ${className}::info(), $resultType)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "}\n\n");
 

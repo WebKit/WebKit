@@ -1,3 +1,177 @@
+2016-10-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Tell IDL result type to DFG to drop type checks in AI
+        https://bugs.webkit.org/show_bug.cgi?id=163900
+
+        Reviewed by Sam Weinig.
+
+        Add TestDOMJIT.idl for bindings generation tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetResultTypeFilter):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp: Added.
+        (WebCore::JSTestDOMJITPrototype::create):
+        (WebCore::JSTestDOMJITPrototype::createStructure):
+        (WebCore::JSTestDOMJITPrototype::JSTestDOMJITPrototype):
+        (WebCore::JSTestDOMJITConstructor::prototypeForStructure):
+        (WebCore::JSTestDOMJITConstructor::initializeProperties):
+        (WebCore::JSTestDOMJITPrototype::finishCreation):
+        (WebCore::JSTestDOMJIT::JSTestDOMJIT):
+        (WebCore::JSTestDOMJIT::createPrototype):
+        (WebCore::JSTestDOMJIT::prototype):
+        (WebCore::BindingCaller<JSTestDOMJIT>::castForAttribute):
+        (WebCore::jsTestDOMJITAnyAttr):
+        (WebCore::jsTestDOMJITAnyAttrGetter):
+        (WebCore::TestDOMJITAnyAttrDOMJIT::TestDOMJITAnyAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITAnyAttr):
+        (WebCore::jsTestDOMJITBooleanAttr):
+        (WebCore::jsTestDOMJITBooleanAttrGetter):
+        (WebCore::TestDOMJITBooleanAttrDOMJIT::TestDOMJITBooleanAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITBooleanAttr):
+        (WebCore::jsTestDOMJITByteAttr):
+        (WebCore::jsTestDOMJITByteAttrGetter):
+        (WebCore::TestDOMJITByteAttrDOMJIT::TestDOMJITByteAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITByteAttr):
+        (WebCore::jsTestDOMJITOctetAttr):
+        (WebCore::jsTestDOMJITOctetAttrGetter):
+        (WebCore::TestDOMJITOctetAttrDOMJIT::TestDOMJITOctetAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITOctetAttr):
+        (WebCore::jsTestDOMJITShortAttr):
+        (WebCore::jsTestDOMJITShortAttrGetter):
+        (WebCore::TestDOMJITShortAttrDOMJIT::TestDOMJITShortAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITShortAttr):
+        (WebCore::jsTestDOMJITUnsignedShortAttr):
+        (WebCore::jsTestDOMJITUnsignedShortAttrGetter):
+        (WebCore::TestDOMJITUnsignedShortAttrDOMJIT::TestDOMJITUnsignedShortAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedShortAttr):
+        (WebCore::jsTestDOMJITLongAttr):
+        (WebCore::jsTestDOMJITLongAttrGetter):
+        (WebCore::TestDOMJITLongAttrDOMJIT::TestDOMJITLongAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongAttrGetter):
+        (WebCore::TestDOMJITUnsignedLongAttrDOMJIT::TestDOMJITUnsignedLongAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongAttr):
+        (WebCore::jsTestDOMJITLongLongAttr):
+        (WebCore::jsTestDOMJITLongLongAttrGetter):
+        (WebCore::TestDOMJITLongLongAttrDOMJIT::TestDOMJITLongLongAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITLongLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongAttrGetter):
+        (WebCore::TestDOMJITUnsignedLongLongAttrDOMJIT::TestDOMJITUnsignedLongLongAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongLongAttr):
+        (WebCore::jsTestDOMJITFloatAttr):
+        (WebCore::jsTestDOMJITFloatAttrGetter):
+        (WebCore::TestDOMJITFloatAttrDOMJIT::TestDOMJITFloatAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITFloatAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatAttrGetter):
+        (WebCore::TestDOMJITUnrestrictedFloatAttrDOMJIT::TestDOMJITUnrestrictedFloatAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedFloatAttr):
+        (WebCore::jsTestDOMJITDoubleAttr):
+        (WebCore::jsTestDOMJITDoubleAttrGetter):
+        (WebCore::TestDOMJITDoubleAttrDOMJIT::TestDOMJITDoubleAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITDoubleAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleAttrGetter):
+        (WebCore::TestDOMJITUnrestrictedDoubleAttrDOMJIT::TestDOMJITUnrestrictedDoubleAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedDoubleAttr):
+        (WebCore::jsTestDOMJITDomStringAttr):
+        (WebCore::jsTestDOMJITDomStringAttrGetter):
+        (WebCore::TestDOMJITDomStringAttrDOMJIT::TestDOMJITDomStringAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITDomStringAttr):
+        (WebCore::jsTestDOMJITByteStringAttr):
+        (WebCore::jsTestDOMJITByteStringAttrGetter):
+        (WebCore::TestDOMJITByteStringAttrDOMJIT::TestDOMJITByteStringAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITByteStringAttr):
+        (WebCore::jsTestDOMJITUsvStringAttr):
+        (WebCore::jsTestDOMJITUsvStringAttrGetter):
+        (WebCore::TestDOMJITUsvStringAttrDOMJIT::TestDOMJITUsvStringAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUsvStringAttr):
+        (WebCore::jsTestDOMJITNodeAttr):
+        (WebCore::jsTestDOMJITNodeAttrGetter):
+        (WebCore::TestDOMJITNodeAttrDOMJIT::TestDOMJITNodeAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITNodeAttr):
+        (WebCore::jsTestDOMJITBooleanNullableAttr):
+        (WebCore::jsTestDOMJITBooleanNullableAttrGetter):
+        (WebCore::TestDOMJITBooleanNullableAttrDOMJIT::TestDOMJITBooleanNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITBooleanNullableAttr):
+        (WebCore::jsTestDOMJITByteNullableAttr):
+        (WebCore::jsTestDOMJITByteNullableAttrGetter):
+        (WebCore::TestDOMJITByteNullableAttrDOMJIT::TestDOMJITByteNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITByteNullableAttr):
+        (WebCore::jsTestDOMJITOctetNullableAttr):
+        (WebCore::jsTestDOMJITOctetNullableAttrGetter):
+        (WebCore::TestDOMJITOctetNullableAttrDOMJIT::TestDOMJITOctetNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITOctetNullableAttr):
+        (WebCore::jsTestDOMJITShortNullableAttr):
+        (WebCore::jsTestDOMJITShortNullableAttrGetter):
+        (WebCore::TestDOMJITShortNullableAttrDOMJIT::TestDOMJITShortNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITShortNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedShortNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedShortNullableAttrGetter):
+        (WebCore::TestDOMJITUnsignedShortNullableAttrDOMJIT::TestDOMJITUnsignedShortNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedShortNullableAttr):
+        (WebCore::jsTestDOMJITLongNullableAttr):
+        (WebCore::jsTestDOMJITLongNullableAttrGetter):
+        (WebCore::TestDOMJITLongNullableAttrDOMJIT::TestDOMJITLongNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongNullableAttrGetter):
+        (WebCore::TestDOMJITUnsignedLongNullableAttrDOMJIT::TestDOMJITUnsignedLongNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongNullableAttr):
+        (WebCore::jsTestDOMJITLongLongNullableAttr):
+        (WebCore::jsTestDOMJITLongLongNullableAttrGetter):
+        (WebCore::TestDOMJITLongLongNullableAttrDOMJIT::TestDOMJITLongLongNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITLongLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongNullableAttr):
+        (WebCore::jsTestDOMJITUnsignedLongLongNullableAttrGetter):
+        (WebCore::TestDOMJITUnsignedLongLongNullableAttrDOMJIT::TestDOMJITUnsignedLongLongNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnsignedLongLongNullableAttr):
+        (WebCore::jsTestDOMJITFloatNullableAttr):
+        (WebCore::jsTestDOMJITFloatNullableAttrGetter):
+        (WebCore::TestDOMJITFloatNullableAttrDOMJIT::TestDOMJITFloatNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITFloatNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedFloatNullableAttrGetter):
+        (WebCore::TestDOMJITUnrestrictedFloatNullableAttrDOMJIT::TestDOMJITUnrestrictedFloatNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedFloatNullableAttr):
+        (WebCore::jsTestDOMJITDoubleNullableAttr):
+        (WebCore::jsTestDOMJITDoubleNullableAttrGetter):
+        (WebCore::TestDOMJITDoubleNullableAttrDOMJIT::TestDOMJITDoubleNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITDoubleNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleNullableAttr):
+        (WebCore::jsTestDOMJITUnrestrictedDoubleNullableAttrGetter):
+        (WebCore::TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT::TestDOMJITUnrestrictedDoubleNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUnrestrictedDoubleNullableAttr):
+        (WebCore::jsTestDOMJITDomStringNullableAttr):
+        (WebCore::jsTestDOMJITDomStringNullableAttrGetter):
+        (WebCore::TestDOMJITDomStringNullableAttrDOMJIT::TestDOMJITDomStringNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITDomStringNullableAttr):
+        (WebCore::jsTestDOMJITByteStringNullableAttr):
+        (WebCore::jsTestDOMJITByteStringNullableAttrGetter):
+        (WebCore::TestDOMJITByteStringNullableAttrDOMJIT::TestDOMJITByteStringNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITByteStringNullableAttr):
+        (WebCore::jsTestDOMJITUsvStringNullableAttr):
+        (WebCore::jsTestDOMJITUsvStringNullableAttrGetter):
+        (WebCore::TestDOMJITUsvStringNullableAttrDOMJIT::TestDOMJITUsvStringNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITUsvStringNullableAttr):
+        (WebCore::jsTestDOMJITNodeNullableAttr):
+        (WebCore::jsTestDOMJITNodeNullableAttrGetter):
+        (WebCore::TestDOMJITNodeNullableAttrDOMJIT::TestDOMJITNodeNullableAttrDOMJIT):
+        (WebCore::domJITGetterSetterForTestDOMJITNodeNullableAttr):
+        (WebCore::jsTestDOMJITConstructor):
+        (WebCore::setJSTestDOMJITConstructor):
+        (WebCore::JSTestDOMJIT::getConstructor):
+        (WebCore::JSTestDOMJIT::visitChildren):
+        * bindings/scripts/test/JS/JSTestDOMJIT.h: Added.
+        (WebCore::JSTestDOMJIT::create):
+        (WebCore::JSTestDOMJIT::createStructure):
+        (WebCore::JSTestDOMJIT::wrapped):
+        (WebCore::JSTestDOMJIT::finishCreation):
+        * bindings/scripts/test/TestDOMJIT.idl: Added.
+
 2016-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed build fix.
