@@ -1,5 +1,39 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE] SourceBufferPrivateGStreamer refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=162898
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Moved SourceBufferPrivateGStreamer to an mse directory and added unimplemented features (abort, enqueueing and sample flow control).
+
+        * platform/graphics/gstreamer/SourceBufferPrivateGStreamer.cpp: Removed.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp: Added.
+        (WebCore::SourceBufferPrivateGStreamer::create):
+        (WebCore::SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::~SourceBufferPrivateGStreamer):
+        (WebCore::SourceBufferPrivateGStreamer::setClient):
+        (WebCore::SourceBufferPrivateGStreamer::append):
+        (WebCore::SourceBufferPrivateGStreamer::abort):
+        (WebCore::SourceBufferPrivateGStreamer::resetParserState):
+        (WebCore::SourceBufferPrivateGStreamer::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateGStreamer::readyState):
+        (WebCore::SourceBufferPrivateGStreamer::setReadyState):
+        (WebCore::SourceBufferPrivateGStreamer::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample):
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::setReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::setActive):
+        (WebCore::SourceBufferPrivateGStreamer::stopAskingForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveInitializationSegment):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveSample):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveAllPendingSamples):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h: Renamed from Source/WebCore/platform/graphics/gstreamer/SourceBufferPrivateGStreamer.h.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE] MediaSourceClientGStreamerMSE
         https://bugs.webkit.org/show_bug.cgi?id=162896
 

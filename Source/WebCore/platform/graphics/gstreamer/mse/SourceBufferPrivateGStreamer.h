@@ -2,6 +2,8 @@
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
  * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
+ * Copyright (C) 2015, 2016 Metrological Group B.V.
+ * Copyright (C) 2015, 2016 Igalia, S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,49 +32,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceBufferPrivateGStreamer_h
-#define SourceBufferPrivateGStreamer_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
 #include "ContentType.h"
+#include "MediaPlayerPrivateGStreamerMSE.h"
 #include "SourceBufferPrivate.h"
+#include "SourceBufferPrivateClient.h"
 #include "WebKitMediaSourceGStreamer.h"
 
 namespace WebCore {
 
+class MediaSourceGStreamer;
+
 class SourceBufferPrivateGStreamer final : public SourceBufferPrivate {
+
 public:
-    static Ref<SourceBufferPrivateGStreamer> create(MediaSourceClientGStreamer&, const ContentType&);
-    virtual ~SourceBufferPrivateGStreamer();
+    static Ref<SourceBufferPrivateGStreamer> create(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
+    virtual ~SourceBufferPrivateGStreamer() = default;
 
-    virtual void setClient(SourceBufferPrivateClient*);
+    void clearMediaSource() { m_mediaSource = nullptr; }
 
-    virtual void append(const unsigned char* data, unsigned length);
-    virtual void abort();
-    virtual void resetParserState();
-    virtual void removedFromMediaSource();
+    void setClient(SourceBufferPrivateClient*) override;
+    void append(const unsigned char*, unsigned) override;
+    void abort() override;
+    void resetParserState() override;
+    void removedFromMediaSource() override;
+    MediaPlayer::ReadyState readyState() const override;
+    void setReadyState(MediaPlayer::ReadyState) override;
 
-    virtual MediaPlayer::ReadyState readyState() const;
-    virtual void setReadyState(MediaPlayer::ReadyState);
+    void flush(AtomicString) override;
+    void enqueueSample(PassRefPtr<MediaSample>, AtomicString) override;
+    bool isReadyForMoreSamples(AtomicString) override;
+    void setActive(bool) override;
+    void stopAskingForMoreSamples(AtomicString) override;
+    void notifyClientWhenReadyForMoreSamples(AtomicString) override;
 
-    virtual void flushAndEnqueueNonDisplayingSamples(Vector<RefPtr<MediaSample>>, AtomicString);
-    virtual void enqueueSample(PassRefPtr<MediaSample>, AtomicString);
-    virtual bool isReadyForMoreSamples(AtomicString);
-    virtual void setActive(bool);
-    virtual void stopAskingForMoreSamples(AtomicString);
-    virtual void notifyClientWhenReadyForMoreSamples(AtomicString);
+    void setReadyForMoreSamples(bool);
+    void notifyReadyForMoreSamples();
+
+    void didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
+    void didReceiveSample(PassRefPtr<MediaSample>);
+    void didReceiveAllPendingSamples();
 
 private:
-    SourceBufferPrivateGStreamer(MediaSourceClientGStreamer&, const ContentType&);
+    SourceBufferPrivateGStreamer(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);
+    friend class MediaSourceClientGStreamerMSE;
 
+    MediaSourceGStreamer* m_mediaSource;
     ContentType m_type;
-    RefPtr<MediaSourceClientGStreamer> m_client;
+    Ref<MediaSourceClientGStreamerMSE> m_client;
     SourceBufferPrivateClient* m_sourceBufferPrivateClient;
-    MediaPlayer::ReadyState m_readyState;
+    bool m_isReadyForMoreSamples = true;
+    bool m_notifyWhenReadyForMoreSamples = false;
+    AtomicString m_trackId;
 };
 
 }
 
-#endif
 #endif
