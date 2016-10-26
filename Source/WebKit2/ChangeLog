@@ -1,3 +1,18 @@
+2016-10-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r206505) [GTK] Build broken with GTK+ 3.14
+        https://bugs.webkit.org/show_bug.cgi?id=162776
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Do not use gtk_widget_get_action_group() when GTK+ < 3.16, use g_object_set instead to attach the action group
+        to the menu widget.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+
 2016-10-25  Alex Christensen  <achristensen@webkit.org>
 
         CMake build fix.

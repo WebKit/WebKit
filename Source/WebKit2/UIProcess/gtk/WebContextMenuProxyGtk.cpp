@@ -66,7 +66,11 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGtk& me
     GRefPtr<GMenuItem> gMenuItem;
     GAction* action = menuItem.gAction();
     ASSERT(action);
+#if GTK_CHECK_VERSION(3, 16, 0)
     g_action_map_add_action(G_ACTION_MAP(gtk_widget_get_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup)), action);
+#else
+    g_action_map_add_action(G_ACTION_MAP(g_object_get_data(G_OBJECT(m_menu), gContextMenuItemGroup)), action);
+#endif
 
     switch (menuItem.type()) {
     case ActionType:
@@ -179,6 +183,9 @@ WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy&
 {
     GRefPtr<GSimpleActionGroup> group = adoptGRef(g_simple_action_group_new());
     gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, G_ACTION_GROUP(group.get()));
+#if !GTK_CHECK_VERSION(3, 16, 0)
+    g_object_set_data(G_OBJECT(m_menu), gContextMenuItemGroup, group.get());
+#endif
     webkitWebViewBaseSetActiveContextMenuProxy(WEBKIT_WEB_VIEW_BASE(m_webView), this);
 }
 
@@ -190,7 +197,10 @@ WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
         g_signal_handler_disconnect(handler.value, handler.key);
     m_signalHandlers.clear();
 
-    gtk_widget_insert_action_group(GTK_WIDGET(m_menu), "webkitContextMenu", nullptr);
+    gtk_widget_insert_action_group(GTK_WIDGET(m_menu), gContextMenuItemGroup, nullptr);
+#if !GTK_CHECK_VERSION(3, 16, 0)
+    g_object_set_data(G_OBJECT(m_menu), gContextMenuItemGroup, nullptr);
+#endif
     gtk_widget_destroy(GTK_WIDGET(m_menu));
 }
 
