@@ -110,7 +110,7 @@ MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBuf
 
     GST_DEBUG_OBJECT(m_webKitMediaSrc.get(), "State %d", int(GST_STATE(m_webKitMediaSrc.get())));
 
-    Stream* stream = new Stream { 0 };
+    Stream* stream = new Stream{ };
     stream->parent = m_webKitMediaSrc.get();
     stream->appsrc = gst_element_factory_make("appsrc", nullptr);
     stream->appsrcNeedDataFlag = false;
@@ -223,7 +223,7 @@ void PlaybackPipeline::attachTrack(RefPtr<SourceBufferPrivateGStreamer> sourceBu
         gint mpegversion = -1;
         gst_structure_get_int(structure, "mpegversion", &mpegversion);
 
-        GstElement* parser;
+        GstElement* parser = nullptr;
         if (mpegversion == 1)
             parser = gst_element_factory_make("mpegaudioparse", nullptr);
         else if (mpegversion == 2 || mpegversion == 4)

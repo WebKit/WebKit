@@ -1,3 +1,12 @@
+2016-10-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed. Fixing compiler warnings in PlaybackPipeline
+        that are popping up in GTK+ builds.
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::addSourceBuffer):
+        (WebCore::PlaybackPipeline::attachTrack):
+
 2016-10-26  Youenn Fablet  <youennf@gmail.com>
 
         IceCandidate does not need to be refcounted
