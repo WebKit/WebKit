@@ -2,6 +2,8 @@
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
  * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
+ * Copyright (C) 2015, 2016 Metrological Group B.V.
+ * Copyright (C) 2015, 2016 Igalia, S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,41 +32,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaSourceGStreamer_h
-#define MediaSourceGStreamer_h
+#pragma once
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
-#include "MediaSource.h"
-#include "WebKitMediaSourceGStreamer.h"
+#include "MediaSourcePrivate.h"
+
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+
+typedef struct _WebKitMediaSrc WebKitMediaSrc;
 
 namespace WebCore {
+
+class SourceBufferPrivateGStreamer;
+class MediaSourceClientGStreamerMSE;
+class MediaPlayerPrivateGStreamerMSE;
+class PlatformTimeRanges;
 
 // FIXME: Should this be called MediaSourcePrivateGStreamer?
 class MediaSourceGStreamer final : public MediaSourcePrivate {
 public:
-    static void open(MediaSourcePrivateClient*, WebKitMediaSrc*);
+    static void open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourceGStreamer();
 
-    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&);
-    virtual void durationChanged();
-    virtual void markEndOfStream(EndOfStreamStatus);
-    virtual void unmarkEndOfStream();
+    MediaSourceClientGStreamerMSE& client() { return m_client.get(); }
+    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
+    void removeSourceBuffer(SourceBufferPrivate*);
 
-    virtual MediaPlayer::ReadyState readyState() const;
-    virtual void setReadyState(MediaPlayer::ReadyState);
+    void durationChanged() override;
+    void markEndOfStream(EndOfStreamStatus) override;
+    void unmarkEndOfStream() override;
 
-    virtual void waitForSeekCompleted();
-    virtual void seekCompleted();
+    MediaPlayer::ReadyState readyState() const override;
+    void setReadyState(MediaPlayer::ReadyState) override;
+
+    void waitForSeekCompleted() override;
+    void seekCompleted() override;
+
+    void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
+
+    std::unique_ptr<PlatformTimeRanges> buffered();
 
 private:
-    MediaSourceGStreamer(MediaSourcePrivateClient*, WebKitMediaSrc*);
+    MediaSourceGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
 
-    RefPtr<MediaSourceClientGStreamer> m_client;
-    MediaSourcePrivateClient* m_mediaSource;
-    MediaPlayer::ReadyState m_readyState;
+    HashSet<RefPtr<SourceBufferPrivateGStreamer>> m_sourceBuffers;
+    HashSet<SourceBufferPrivateGStreamer*> m_activeSourceBuffers;
+    Ref<MediaSourceClientGStreamerMSE> m_client;
+    Ref<MediaSourcePrivateClient> m_mediaSource;
+    MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
 };
 
 }
 
-#endif
 #endif

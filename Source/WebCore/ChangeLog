@@ -1,5 +1,31 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE] MediaSourceGStreamer refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=162899
+
+        Reviewed by Žan Doberšek.
+
+        Move MediaSourceGStreamer to the mse directory, manage SourceBufferPrivates and delegate WebKitMediaSrc operations to the MSE private player.
+
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.cpp: Renamed from Source/WebCore/platform/graphics/gstreamer/MediaSourceGStreamer.cpp.
+        (WebCore::MediaSourceGStreamer::open):
+        (WebCore::MediaSourceGStreamer::MediaSourceGStreamer):
+        (WebCore::MediaSourceGStreamer::~MediaSourceGStreamer):
+        (WebCore::MediaSourceGStreamer::addSourceBuffer):
+        (WebCore::MediaSourceGStreamer::removeSourceBuffer):
+        (WebCore::MediaSourceGStreamer::durationChanged):
+        (WebCore::MediaSourceGStreamer::markEndOfStream):
+        (WebCore::MediaSourceGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourceGStreamer::readyState):
+        (WebCore::MediaSourceGStreamer::setReadyState):
+        (WebCore::MediaSourceGStreamer::waitForSeekCompleted):
+        (WebCore::MediaSourceGStreamer::seekCompleted):
+        (WebCore::MediaSourceGStreamer::sourceBufferPrivateDidChangeActiveState):
+        (WebCore::MediaSourceGStreamer::buffered):
+        * platform/graphics/gstreamer/mse/MediaSourceGStreamer.h: Renamed from Source/WebCore/platform/graphics/gstreamer/MediaSourceGStreamer.h.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE] SourceBufferPrivateGStreamer refactoring
         https://bugs.webkit.org/show_bug.cgi?id=162898
 
