@@ -1,5 +1,20 @@
 2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r207804. rdar://problem/28849628
+
+    2016-10-24  Zalan Bujtas  <zalan@apple.com>
+
+            Do not update selection rect on dirty lineboxes.
+            https://bugs.webkit.org/show_bug.cgi?id=163862
+            <rdar://problem/28813156>
+
+            Reviewed by Simon Fraser.
+
+            * fast/css-generated-content/dynamic-first-letter-selection-clear-crash-expected.txt: Added.
+            * fast/css-generated-content/dynamic-first-letter-selection-clear-crash.html: Added.
+
+2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r207692. rdar://problem/28810751
 
     2016-10-20  Dean Jackson  <dino@apple.com>
