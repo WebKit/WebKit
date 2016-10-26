@@ -1757,13 +1757,23 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
     if (!sawNonInstancedAttrib && sawEnabledAttrib)
         return false;
 
+    bool usingSimulatedArrayBuffer = m_currentProgram->isUsingVertexAttrib0();
+
     // Guard against access into non-existent buffers.
-    if (elementCount && !sawEnabledAttrib && !m_currentProgram->isUsingVertexAttrib0())
+    if (elementCount && !sawEnabledAttrib && !usingSimulatedArrayBuffer)
         return false;
 
     if (elementCount && sawEnabledAttrib) {
-        if (!m_boundArrayBuffer && !m_boundVertexArrayObject->getElementArrayBuffer())
+        if (!m_boundArrayBuffer && !m_boundVertexArrayObject->getElementArrayBuffer()) {
+            if (usingSimulatedArrayBuffer) {
+                auto& state = m_boundVertexArrayObject->getVertexAttribState(0);
+                if (state.enabled && state.isBound()) {
+                    if (state.bufferBinding->getTarget() == GraphicsContext3D::ARRAY_BUFFER || state.bufferBinding->getTarget() == GraphicsContext3D::ELEMENT_ARRAY_BUFFER)
+                        return !!state.bufferBinding->byteLength();
+                }
+            }
             return false;
+        }
     }
     
     return true;
