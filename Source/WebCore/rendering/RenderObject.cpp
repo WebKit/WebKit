@@ -1172,7 +1172,11 @@ void RenderObject::showRenderObject(bool mark, int depth) const
                 fprintf(stderr, " \"%s\"", value.utf8().data());
         }
     }
-
+    if (is<RenderBoxModelObject>(*this)) {
+        auto& renderer = downcast<RenderBoxModelObject>(*this);
+        if (renderer.hasContinuation())
+            fprintf(stderr, " continuation->(%p)", renderer.continuation());
+    }
     showRegionsInformation();
     fprintf(stderr, "\n");
 }
