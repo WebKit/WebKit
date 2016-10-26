@@ -1,5 +1,62 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE][EME] MSE specialization of Media Player Private for GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=162900
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Refactor MSE-specific logic to its own GStreamer player. This new MSE player coordinates
+        data appending, media playback and interaction with MediaSource by delegating to
+        AppendPipeline (one instance per SourceBuffer), PlaybackPipeline and
+        MediaSourceClientGStreamerMSE/MediaSourcePrivateClient respectively.
+
+        This patch is co-authored with Philippe Normand <philn@igalia.com> (EME support).
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp: Added.
+        (dumpReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::registerMediaEngine):
+        (WebCore::initializeGStreamerAndRegisterWebKitMSEElement):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::isAvailable):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::pause):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationMediaTime):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::configurePlaySink):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::changePipelineState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::notifySeekNeedsDataForTime):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maybeFinishSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seeking):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::waitForSeekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seekCompleted):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setRate):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::buffered):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceChanged):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::isTimeBuffered):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setMediaSourceClient):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::mediaSourceClient):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::supportsType):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::dispatchDecryptionKey):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::markEndOfStream):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maxTimeSeekable):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h: Added.
+        (WebCore::MediaPlayerPrivateGStreamerMSE::mediaSourcePrivateClient):
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE] MediaSourceGStreamer refactoring
         https://bugs.webkit.org/show_bug.cgi?id=162899
 

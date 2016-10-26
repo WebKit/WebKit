@@ -57,7 +57,10 @@
 #include "MediaPlayerPrivateGStreamerOwr.h"
 #endif
 #define PlatformMediaEngineClassName MediaPlayerPrivateGStreamer
+#if ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+#include "MediaPlayerPrivateGStreamerMSE.h"
 #endif
+#endif // USE(GSTREAMER)
 
 #if USE(MEDIA_FOUNDATION)
 #include "MediaPlayerPrivateMediaFoundation.h"
@@ -227,6 +230,10 @@ static void buildMediaEnginesVector()
 
 #if defined(PlatformMediaEngineClassName)
     PlatformMediaEngineClassName::registerMediaEngine(addMediaEngine);
+#endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE) && ENABLE(VIDEO_TRACK)
+    MediaPlayerPrivateGStreamerMSE::registerMediaEngine(addMediaEngine);
 #endif
 
     haveMediaEnginesVector() = true;
