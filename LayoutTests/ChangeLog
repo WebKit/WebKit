@@ -1,3 +1,18 @@
+2016-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=164013
+
+        Unreviewed.
+
+        Make the test more robust by only responding to "canplaythrough" once, since it might have fired again
+        after seeking, and registering for "seeked" events only after we've reached "canplaythrough", and accounting
+        for the first seek to 50s.
+
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click-expected.txt:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * platform/mac-yosemite/http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click-expected.txt: Added.
+
 2016-10-26  Youenn Fablet  <youenn@apple.com>
 
         Enable SDPProcessor for Mac bots

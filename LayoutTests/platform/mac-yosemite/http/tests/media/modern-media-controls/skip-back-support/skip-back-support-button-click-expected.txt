@@ -9,7 +9,7 @@ Dispatching click event to the skip back button
 Media seeked to currentTime = 20
 
 Dispatching click event to the skip back button
-Media seeked to currentTime = 0
+Media seeked to currentTime = 0.04789115646258504
 
 PASS successfullyParsed is true
 
