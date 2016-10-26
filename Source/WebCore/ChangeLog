@@ -1,5 +1,68 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE][EME] Append Pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=162874
+
+        Reviewed by Žan Doberšek.
+
+        This patch is co-authored with Xabier Rodriguez-Calvar <calvaris@igalia.com> (data starve
+        and last sample detection, debug features) and Philippe Normand <philn@igalia.com> (EME
+        support).
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp: Added.
+        (WebCore::dumpAppendState):
+        (WebCore::appendPipelineElementMessageCallback):
+        (WebCore::appendPipelineApplicationMessageCallback):
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::~AppendPipeline):
+        (WebCore::AppendPipeline::clearPlayerPrivate):
+        (WebCore::AppendPipeline::handleElementMessage):
+        (WebCore::AppendPipeline::handleApplicationMessage):
+        (WebCore::AppendPipeline::handleAppsrcNeedDataReceived):
+        (WebCore::AppendPipeline::handleAppsrcAtLeastABufferLeft):
+        (WebCore::AppendPipeline::id):
+        (WebCore::AppendPipeline::setAppendState):
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::checkEndOfAppend):
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::AppendPipeline::appsinkEOS):
+        (WebCore::AppendPipeline::didReceiveInitializationSegment):
+        (WebCore::AppendPipeline::trackId):
+        (WebCore::AppendPipeline::resetPipeline):
+        (WebCore::AppendPipeline::setAppsrcDataLeavingProbe):
+        (WebCore::AppendPipeline::removeAppsrcDataLeavingProbe):
+        (WebCore::AppendPipeline::abort):
+        (WebCore::AppendPipeline::pushNewBuffer):
+        (WebCore::AppendPipeline::reportAppsrcAtLeastABufferLeft):
+        (WebCore::AppendPipeline::reportAppsrcNeedDataReceived):
+        (WebCore::AppendPipeline::handleNewAppsinkSample):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromAnyThread):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        (WebCore::AppendPipeline::disconnectDemuxerSrcPadFromAppsinkFromAnyThread):
+        (WebCore::appendPipelineAppsinkCapsChanged):
+        (WebCore::appendPipelineAppsrcDataLeaving):
+        (WebCore::appendPipelinePadProbeDebugInformation):
+        (WebCore::appendPipelineAppsrcNeedData):
+        (WebCore::appendPipelineDemuxerPadAdded):
+        (WebCore::appendPipelineDemuxerPadRemoved):
+        (WebCore::appendPipelineAppsinkNewSample):
+        (WebCore::appendPipelineAppsinkEOS):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h: Added.
+        (WebCore::AppendPipeline::appendState):
+        (WebCore::AppendPipeline::mediaSourceClient):
+        (WebCore::AppendPipeline::sourceBufferPrivate):
+        (WebCore::AppendPipeline::bus):
+        (WebCore::AppendPipeline::pipeline):
+        (WebCore::AppendPipeline::appsrc):
+        (WebCore::AppendPipeline::appsink):
+        (WebCore::AppendPipeline::demuxerSrcPadCaps):
+        (WebCore::AppendPipeline::appsinkCaps):
+        (WebCore::AppendPipeline::track):
+        (WebCore::AppendPipeline::streamType):
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer] Drain query support
         https://bugs.webkit.org/show_bug.cgi?id=162872
 
