@@ -1888,6 +1888,12 @@ static RenderObject* rendererForView(WAKView* view)
             // webkit.org/b/162041 Taking focus onto elements inside a details node will cause VO focusing onto random items.
             if ([self detailParentForObject:object])
                 break;
+            
+            // webkit.org/b/162322 When a dialog is focusable, allowing focusing onto the dialog node will cause VO cursor jumping
+            // back and forward while navigating its children.
+            if ([object->wrapper() accessibilityIsDialog])
+                break;
+            
             object->setFocused(true);
             break;
         }
