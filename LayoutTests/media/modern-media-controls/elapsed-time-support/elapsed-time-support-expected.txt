@@ -1,0 +1,12 @@
+Testing the ElapsedTimeSupport behavior.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+timeupdate event was dispatched
+PASS mediaController.controls.timeControl.elapsedTimeLabel.value is media.currentTime
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

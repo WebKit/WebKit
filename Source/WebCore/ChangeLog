@@ -1,3 +1,32 @@
+2016-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: elapsed and remaining time support
+        https://bugs.webkit.org/show_bug.cgi?id=163679
+        <rdar://problem/28851675>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the ElapsedTimeSupport and RemainingTimeSupport classes which bring
+        support for displaying the elapsed and remaining time in the time control.
+
+        Tests: media/modern-media-controls/elapsed-time-support/elapsed-time-support.html
+               media/modern-media-controls/remaining-time-support/remaining-time-support.html
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/elapsed-time-support.js: Added.
+        (ElapsedTimeSupport.prototype.get control):
+        (ElapsedTimeSupport.prototype.get mediaEvents):
+        (ElapsedTimeSupport.prototype.syncControl):
+        (ElapsedTimeSupport):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/remaining-time-support.js: Added.
+        (RemainingTimeSupport.prototype.get control):
+        (RemainingTimeSupport.prototype.get mediaEvents):
+        (RemainingTimeSupport.prototype.syncControl):
+        (RemainingTimeSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-10-26  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Unify CSSCustomPropertyValue and CSSCustomPropertyDeclaration

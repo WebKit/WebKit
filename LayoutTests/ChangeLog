@@ -1,3 +1,32 @@
+2016-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: elapsed and remaining time support
+        https://bugs.webkit.org/show_bug.cgi?id=163679
+        <rdar://problem/28851675>
+
+        Reviewed by Dean Jackson.
+
+        New tests for the ElapsedTimeSupport and RemainingTimeSupport classes and adding the
+        new resources to other MediaController tests.
+
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * media/modern-media-controls/elapsed-time-support/elapsed-time-support-expected.txt: Added.
+        * media/modern-media-controls/elapsed-time-support/elapsed-time-support.html: Added.
+        * media/modern-media-controls/media-controller/media-controller-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/mute-support/mute-support-button-click.html:
+        * media/modern-media-controls/mute-support/mute-support-media-api.html:
+        * media/modern-media-controls/mute-support/mute-support-muted.html:
+        * media/modern-media-controls/remaining-time-support/remaining-time-support-expected.txt: Added.
+        * media/modern-media-controls/remaining-time-support/remaining-time-support.html: Added.
+        * media/modern-media-controls/start-support/start-support-audio.html:
+        * media/modern-media-controls/start-support/start-support-autoplay.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/start-support/start-support-error.html:
+        * media/modern-media-controls/start-support/start-support-fullscreen.html:
+        * media/modern-media-controls/start-support/start-support-manual-play.html:
+        * media/modern-media-controls/start-support/start-support-no-source.html:
+
 2016-10-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK test gardening

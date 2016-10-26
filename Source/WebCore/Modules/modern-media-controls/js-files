@@ -28,7 +28,9 @@ controls/placard.js
 controls/airplay-placard.js
 controls/pip-placard.js
 media/media-controller-support.js
+media/elapsed-time-support.js
 media/mute-support.js
+media/remaining-time-support.js
 media/skip-back-support.js
 media/start-support.js
 media/media-controller.js
