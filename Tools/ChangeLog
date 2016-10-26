@@ -1,3 +1,15 @@
+2016-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK] JSC test wasm.yaml/wasm/js-api/test_basic_api.js.default-wasm and wasm.yaml/wasm/js-api/test_Module.js.default-wasm fail with Exception: ReferenceError: Can't find variable: WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=163846
+
+        Reviewed by Michael Catanzaro.
+
+        WebAssembly is now developed for Darwin right now.
+        Disable WASM tests in the other platforms.
+
+        * Scripts/run-jsc-stress-tests:
+
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         [cmake][GStreamer][MSE][EME] Build MSE and EME code after refactoring
