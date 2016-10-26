@@ -502,6 +502,16 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 
     std::unique_ptr<CSSParserSelector> selector;
     StringView value = token.value();
+    
+    // FIXME-NEWPARSER: We can't change the pseudoclass/element maps that the old parser
+    // uses without breaking it; this hack allows function selectors to work. When the new
+    // parser turns on, we can patch the map and remove this code.
+    String newValue;
+    if (token.type() == FunctionToken) {
+        newValue = value.toString() + "(";
+        value = newValue;
+    }
+
     if (colons == 1)
         selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePseudoClassSelectorFromStringView(value));
     else

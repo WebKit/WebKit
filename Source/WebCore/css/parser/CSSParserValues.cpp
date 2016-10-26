@@ -348,9 +348,6 @@ CSSParserSelector* CSSParserSelector::parsePseudoClassAndCompatibilityElementSel
 
 CSSParserSelector* CSSParserSelector::parsePseudoClassSelectorFromStringView(StringView& pseudoTypeString)
 {
-    if (pseudoTypeString.length() && pseudoTypeString[pseudoTypeString.length() - 1] == '(')
-        return nullptr;
-    
     PseudoClassOrCompatibilityPseudoElement pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
     if (pseudoType.pseudoClass != CSSSelector::PseudoClassUnknown) {
         auto selector = std::make_unique<CSSParserSelector>();
