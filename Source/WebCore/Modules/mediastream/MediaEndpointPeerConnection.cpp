@@ -676,20 +676,18 @@ void MediaEndpointPeerConnection::addIceCandidateTask(RTCIceCandidate& rtcCandid
         return;
     }
 
-    RefPtr<IceCandidate> candidate;
-    SDPProcessor::Result result = m_sdpProcessor->parseCandidateLine(rtcCandidate.candidate(), candidate);
-    if (result != SDPProcessor::Result::Success) {
-        if (result == SDPProcessor::Result::ParseError)
+    auto result = m_sdpProcessor->parseCandidateLine(rtcCandidate.candidate());
+    if (result.parsingStatus() != SDPProcessor::Result::Success) {
+        if (result.parsingStatus() == SDPProcessor::Result::ParseError)
             promise.reject(OperationError, "Invalid candidate content");
         else
             LOG_ERROR("SDPProcessor internal error");
         return;
     }
 
-    targetMediaDescription->addIceCandidate(candidate.copyRef());
+    m_mediaEndpoint->addRemoteCandidate(result.candidate(), targetMediaDescription->mid(), targetMediaDescription->iceUfrag(), targetMediaDescription->icePassword());
 
-    m_mediaEndpoint->addRemoteCandidate(*candidate, targetMediaDescription->mid(), targetMediaDescription->iceUfrag(),
-        targetMediaDescription->icePassword());
+    targetMediaDescription->addIceCandidate(WTFMove(result.candidate()));
 
     promise.resolve(nullptr);
 }
@@ -835,7 +833,7 @@ void MediaEndpointPeerConnection::gotDtlsFingerprint(const String& fingerprint, 
     startRunningTasks();
 }
 
-void MediaEndpointPeerConnection::gotIceCandidate(const String& mid, RefPtr<IceCandidate>&& candidate)
+void MediaEndpointPeerConnection::gotIceCandidate(const String& mid, IceCandidate&& candidate)
 {
     ASSERT(isMainThread());
 
@@ -850,19 +848,18 @@ void MediaEndpointPeerConnection::gotIceCandidate(const String& mid, RefPtr<IceC
     }
     ASSERT(mediaDescriptionIndex != notFound);
 
-    PeerMediaDescription& mediaDescription = *mediaDescriptions[mediaDescriptionIndex];
-    mediaDescription.addIceCandidate(candidate.copyRef());
-
     String candidateLine;
-    SDPProcessor::Result result = m_sdpProcessor->generateCandidateLine(*candidate, candidateLine);
+    auto result = m_sdpProcessor->generateCandidateLine(candidate, candidateLine);
     if (result != SDPProcessor::Result::Success) {
         LOG_ERROR("SDPProcessor internal error");
         return;
     }
 
-    RefPtr<RTCIceCandidate> iceCandidate = RTCIceCandidate::create(candidateLine, mid, mediaDescriptionIndex);
+    auto& mediaDescription = mediaDescriptions[mediaDescriptionIndex];
+    ASSERT(mediaDescription);
+    mediaDescription->addIceCandidate(WTFMove(candidate));
 
-    m_client->fireEvent(RTCIceCandidateEvent::create(false, false, WTFMove(iceCandidate)));
+    m_client->fireEvent(RTCIceCandidateEvent::create(false, false, RTCIceCandidate::create(candidateLine, mid, mediaDescriptionIndex)));
 }
 
 void MediaEndpointPeerConnection::doneGatheringCandidates(const String& mid)

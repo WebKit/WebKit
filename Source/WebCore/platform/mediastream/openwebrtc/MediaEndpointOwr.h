@@ -92,7 +92,7 @@ public:
     UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) override;
     UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool isInitiator) override;
 
-    void addRemoteCandidate(IceCandidate&, const String& mid, const String& ufrag, const String& password) override;
+    void addRemoteCandidate(const IceCandidate&, const String& mid, const String& ufrag, const String& password) override;
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) override;
     void replaceMutedRemoteSourceMid(const String&, const String&) final;
@@ -104,7 +104,7 @@ public:
     const String& sessionMid(OwrSession*) const;
     OwrTransceiver* matchTransceiverByMid(const String& mid) const;
 
-    void dispatchNewIceCandidate(const String& mid, RefPtr<IceCandidate>&&);
+    void dispatchNewIceCandidate(const String& mid, IceCandidate&&);
     void dispatchGatheringDone(const String& mid);
     void processIceTransportStateChange(OwrSession*);
     void dispatchDtlsFingerprint(gchar* privateKey, gchar* certificate, const String& fingerprint, const String& fingerprintFunction);
@@ -123,7 +123,7 @@ private:
     void prepareMediaSession(OwrMediaSession*, PeerMediaDescription*, bool isInitiator);
 
     void ensureTransportAgentAndTransceivers(bool isInitiator, const Vector<TransceiverConfig>&);
-    void internalAddRemoteCandidate(OwrSession*, IceCandidate&, const String& ufrag, const String& password);
+    void internalAddRemoteCandidate(OwrSession*, const IceCandidate&, const String& ufrag, const String& password);
 
     Optional<MediaEndpointConfiguration> m_configuration;
     GRegex* m_helperServerRegEx;

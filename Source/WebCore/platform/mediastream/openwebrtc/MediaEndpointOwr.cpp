@@ -267,7 +267,7 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
 
         if (mdesc.iceCandidates().size()) {
             for (auto& candidate : mdesc.iceCandidates())
-                internalAddRemoteCandidate(session, *candidate, mdesc.iceUfrag(), mdesc.icePassword());
+                internalAddRemoteCandidate(session, candidate, mdesc.iceUfrag(), mdesc.icePassword());
         }
 
         if (i < m_numberOfSendPreparedSessions)
@@ -311,7 +311,7 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
     return UpdateResult::Success;
 }
 
-void MediaEndpointOwr::addRemoteCandidate(IceCandidate& candidate, const String& mid, const String& ufrag, const String& password)
+void MediaEndpointOwr::addRemoteCandidate(const IceCandidate& candidate, const String& mid, const String& ufrag, const String& password)
 {
     for (auto& transceiver : m_transceivers) {
         if (transceiver->mid() == mid) {
@@ -394,7 +394,7 @@ OwrTransceiver* MediaEndpointOwr::matchTransceiverByMid(const String& mid) const
     return nullptr;
 }
 
-void MediaEndpointOwr::dispatchNewIceCandidate(const String& mid, RefPtr<IceCandidate>&& iceCandidate)
+void MediaEndpointOwr::dispatchNewIceCandidate(const String& mid, IceCandidate&& iceCandidate)
 {
     m_client.gotIceCandidate(mid, WTFMove(iceCandidate));
 }
@@ -590,35 +590,35 @@ void MediaEndpointOwr::ensureTransportAgentAndTransceivers(bool isInitiator, con
     }
 }
 
-void MediaEndpointOwr::internalAddRemoteCandidate(OwrSession* session, IceCandidate& candidate, const String& ufrag, const String& password)
+void MediaEndpointOwr::internalAddRemoteCandidate(OwrSession* session, const IceCandidate& candidate, const String& ufrag, const String& password)
 {
     gboolean rtcpMux;
     g_object_get(session, "rtcp-mux", &rtcpMux, nullptr);
 
-    if (rtcpMux && candidate.componentId() == OWR_COMPONENT_TYPE_RTCP)
+    if (rtcpMux && candidate.componentId == OWR_COMPONENT_TYPE_RTCP)
         return;
 
-    ASSERT(candidateTypes.find(candidate.type()) != notFound);
+    ASSERT(candidateTypes.find(candidate.type) != notFound);
 
-    OwrCandidateType candidateType = static_cast<OwrCandidateType>(candidateTypes.find(candidate.type()));
-    OwrComponentType componentId = static_cast<OwrComponentType>(candidate.componentId());
+    OwrCandidateType candidateType = static_cast<OwrCandidateType>(candidateTypes.find(candidate.type));
+    OwrComponentType componentId = static_cast<OwrComponentType>(candidate.componentId);
     OwrTransportType transportType;
 
-    if (candidate.transport().convertToASCIIUppercase() == "UDP")
+    if (candidate.transport.convertToASCIIUppercase() == "UDP")
         transportType = OWR_TRANSPORT_TYPE_UDP;
     else {
-        ASSERT(candidateTcpTypes.find(candidate.tcpType()) != notFound);
-        transportType = static_cast<OwrTransportType>(candidateTcpTypes.find(candidate.tcpType()));
+        ASSERT(candidateTcpTypes.find(candidate.tcpType) != notFound);
+        transportType = static_cast<OwrTransportType>(candidateTcpTypes.find(candidate.tcpType));
     }
 
     OwrCandidate* owrCandidate = owr_candidate_new(candidateType, componentId);
     g_object_set(owrCandidate, "transport-type", transportType,
-        "address", candidate.address().ascii().data(),
-        "port", candidate.port(),
-        "base-address", candidate.relatedAddress().ascii().data(),
-        "base-port", candidate.relatedPort(),
-        "priority", candidate.priority(),
-        "foundation", candidate.foundation().ascii().data(),
+        "address", candidate.address.ascii().data(),
+        "port", candidate.port,
+        "base-address", candidate.relatedAddress.ascii().data(),
+        "base-port", candidate.relatedPort,
+        "priority", candidate.priority,
+        "foundation", candidate.foundation.ascii().data(),
         "ufrag", ufrag.ascii().data(),
         "password", password.ascii().data(),
         nullptr);
@@ -652,24 +652,24 @@ static void gotCandidate(OwrSession* session, OwrCandidate* candidate, MediaEndp
     ASSERT(candidateType >= 0 && candidateType < candidateTypes.size());
     ASSERT(transportType >= 0 && transportType < candidateTcpTypes.size());
 
-    RefPtr<IceCandidate> iceCandidate = IceCandidate::create();
-    iceCandidate->setType(candidateTypes[candidateType]);
-    iceCandidate->setFoundation(foundation);
-    iceCandidate->setComponentId(componentId);
-    iceCandidate->setPriority(priority);
-    iceCandidate->setAddress(address);
-    iceCandidate->setPort(port ? port : candidateDefaultPort);
+    IceCandidate iceCandidate;
+    iceCandidate.type = candidateTypes[candidateType];
+    iceCandidate.foundation = foundation;
+    iceCandidate.componentId = componentId;
+    iceCandidate.priority = priority;
+    iceCandidate.address = address;
+    iceCandidate.port = port ? port : candidateDefaultPort;
 
     if (transportType == OWR_TRANSPORT_TYPE_UDP)
-        iceCandidate->setTransport("UDP");
+        iceCandidate.transport = "UDP";
     else {
-        iceCandidate->setTransport("TCP");
-        iceCandidate->setTcpType(candidateTcpTypes[transportType]);
+        iceCandidate.transport = "TCP";
+        iceCandidate.tcpType = candidateTcpTypes[transportType];
     }
 
     if (candidateType != OWR_CANDIDATE_TYPE_HOST) {
-        iceCandidate->setRelatedAddress(relatedAddress);
-        iceCandidate->setRelatedPort(relatedPort ? relatedPort : candidateDefaultPort);
+        iceCandidate.relatedAddress = relatedAddress;
+        iceCandidate.relatedPort = relatedPort ? relatedPort : candidateDefaultPort;
     }
 
     g_object_set(G_OBJECT(candidate), "ufrag", g_object_get_data(G_OBJECT(session), "ice-ufrag"),

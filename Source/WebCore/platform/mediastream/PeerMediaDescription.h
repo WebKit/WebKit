@@ -106,8 +106,8 @@ public:
     const String& icePassword() const { return m_icePassword; }
     void setIcePassword(const String& icePassword) { m_icePassword = icePassword; }
 
-    const Vector<RefPtr<IceCandidate>>& iceCandidates() const { return m_iceCandidates; }
-    void addIceCandidate(RefPtr<IceCandidate>&& candidate) { m_iceCandidates.append(WTFMove(candidate)); }
+    const Vector<IceCandidate>& iceCandidates() const { return m_iceCandidates; }
+    void addIceCandidate(IceCandidate&& candidate) { m_iceCandidates.append(WTFMove(candidate)); }
 
     RefPtr<PeerMediaDescription> clone() const
     {
@@ -141,8 +141,7 @@ public:
         copy->m_iceUfrag = String(m_iceUfrag);
         copy->m_icePassword = String(m_icePassword);
 
-        for (auto& candidate : m_iceCandidates)
-            copy->m_iceCandidates.append(candidate->clone());
+        copy->m_iceCandidates = m_iceCandidates;
 
         return copy;
     }
@@ -174,7 +173,7 @@ private:
 
     String m_iceUfrag;
     String m_icePassword;
-    Vector<RefPtr<IceCandidate>> m_iceCandidates;
+    Vector<IceCandidate> m_iceCandidates;
 };
 
 } // namespace WebCore

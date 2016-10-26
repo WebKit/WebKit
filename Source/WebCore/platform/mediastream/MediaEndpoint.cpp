@@ -67,7 +67,7 @@ public:
     UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool) override { return UpdateResult::Failed; }
     UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool) override { return UpdateResult::Failed; }
 
-    void addRemoteCandidate(IceCandidate&, const String&, const String&, const String&) override { }
+    void addRemoteCandidate(const IceCandidate&, const String&, const String&, const String&) override { }
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String&, RealtimeMediaSource::Type) override { return EmptyRealtimeMediaSource::create(); }
     void replaceSendSource(RealtimeMediaSource&, const String&) override { }

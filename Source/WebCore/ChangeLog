@@ -1,3 +1,47 @@
+2016-10-26  Youenn Fablet  <youennf@gmail.com>
+
+        IceCandidate does not need to be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=163944
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        Simplifying IceCandidate class into a simple structure, no longer refcounted.
+        Updated call sites accordingly.
+        Updated SDP parsing of candidates to return a Variant instead of having both a return and an out parameter.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::addIceCandidateTask):
+        (WebCore::MediaEndpointPeerConnection::gotIceCandidate):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::createCandidateObject):
+        (WebCore::createCandidate):
+        (WebCore::iceCandidateFromJSON):
+        (WebCore::configurationToJSON):
+        (WebCore::SDPProcessor::parseCandidateLine):
+        * Modules/mediastream/SDPProcessor.h:
+        (WebCore::SDPProcessor::ParsingResult::parsingStatus):
+        (WebCore::SDPProcessor::ParsingResult::candidate):
+        * platform/mediastream/IceCandidate.h:
+        * platform/mediastream/MediaEndpoint.cpp:
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/PeerMediaDescription.h:
+        (WebCore::PeerMediaDescription::iceCandidates):
+        (WebCore::PeerMediaDescription::addIceCandidate):
+        (WebCore::PeerMediaDescription::clone):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::updateSendConfiguration):
+        (WebCore::MediaEndpointOwr::addRemoteCandidate):
+        (WebCore::MediaEndpointOwr::dispatchNewIceCandidate):
+        (WebCore::MediaEndpointOwr::internalAddRemoteCandidate):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::addRemoteCandidate):
+        (WebCore::MockMediaEndpoint::dispatchFakeIceCandidates):
+        * platform/mock/MockMediaEndpoint.h:
+
 2016-10-26  Andreas Kling  <akling@apple.com>
 
         Fix mach port leak in ResourceUsageThread.

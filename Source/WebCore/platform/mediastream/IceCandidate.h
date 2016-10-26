@@ -28,90 +28,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IceCandidate_h
-#define IceCandidate_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class IceCandidate : public RefCounted<IceCandidate> {
-public:
-    static RefPtr<IceCandidate> create()
-    {
-        return adoptRef(new IceCandidate());
-    }
-    virtual ~IceCandidate() { }
+struct IceCandidate {
+    String type;
+    String foundation;
+    unsigned componentId { 0 };
+    String transport;
+    unsigned long priority { 0 };
+    String address;
+    unsigned port { 0 };
+    String tcpType;
+    String relatedAddress;
+    unsigned relatedPort { 0 };
 
-    const String& type() const { return m_type; }
-    void setType(const String& type) { m_type = type; }
-
-    const String& foundation() const { return m_foundation; }
-    void setFoundation(const String& foundation) { m_foundation = foundation; }
-
-    unsigned componentId() const { return m_componentId; }
-    void setComponentId(unsigned componentId) { m_componentId = componentId; }
-
-    const String& transport() const { return m_transport; }
-    void setTransport(const String& transport) { m_transport = transport; }
-
-    int priority() const { return m_priority; }
-    void setPriority(int priority) { m_priority = priority; }
-
-    const String& address() const { return m_address; }
-    void setAddress(const String& address) { m_address = address; }
-
-    unsigned port() const { return m_port; }
-    void setPort(unsigned port) { m_port = port; }
-
-    const String& tcpType() const { return m_tcpType; }
-    void setTcpType(const String& tcpType) { m_tcpType = tcpType; }
-
-    const String& relatedAddress() const { return m_relatedAddress; }
-    void setRelatedAddress(const String& relatedAddress) { m_relatedAddress = relatedAddress; }
-
-    unsigned relatedPort() const { return m_relatedPort; }
-    void setRelatedPort(unsigned relatedPort) { m_relatedPort = relatedPort; }
-
-    RefPtr<IceCandidate> clone() const
-    {
-        RefPtr<IceCandidate> copy = create();
-
-        copy->m_type = String(m_type);
-        copy->m_foundation = String(m_foundation);
-        copy->m_componentId = m_componentId;
-        copy->m_transport = String(m_transport);
-        copy->m_priority = m_priority;
-        copy->m_address = String(m_address);
-        copy->m_port = m_port;
-        copy->m_tcpType = String(m_tcpType);
-        copy->m_relatedAddress = String(m_relatedAddress);
-        copy->m_relatedPort = m_relatedPort;
-
-        return copy;
-    }
-
-private:
-    IceCandidate() { }
-
-    String m_type;
-    String m_foundation;
-    unsigned m_componentId { 0 };
-    String m_transport;
-    int m_priority { 0 };
-    String m_address;
-    unsigned m_port { 0 };
-    String m_tcpType;
-    String m_relatedAddress;
-    unsigned m_relatedPort { 0 };
+    IceCandidate() = default;
+    IceCandidate(String&& type, String&& foundation, unsigned componentId, String&& transport, unsigned long priority, String&& address, unsigned port, String&& tcpType, String&& relatedAddress, unsigned relatedPort)
+        : type(WTFMove(type))
+        , foundation(WTFMove(foundation))
+        , componentId(componentId)
+        , transport(WTFMove(transport))
+        , priority(priority)
+        , address(WTFMove(address))
+        , port(port)
+        , tcpType(WTFMove(tcpType))
+        , relatedAddress(WTFMove(relatedAddress))
+        , relatedPort(relatedPort)
+    { }
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // IceCandidate_h

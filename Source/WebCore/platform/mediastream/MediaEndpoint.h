@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class IceCandidate;
+struct IceCandidate;
 class MediaEndpoint;
 class MediaEndpointClient;
 class MediaEndpointSessionConfiguration;
@@ -73,7 +73,7 @@ public:
     virtual UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) = 0;
     virtual UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool isInitiator) = 0;
 
-    virtual void addRemoteCandidate(IceCandidate&, const String& mid, const String& ufrag, const String& password) = 0;
+    virtual void addRemoteCandidate(const IceCandidate&, const String& mid, const String& ufrag, const String& password) = 0;
 
     virtual Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) = 0;
     virtual void replaceSendSource(RealtimeMediaSource&, const String& mid) = 0;
@@ -87,7 +87,7 @@ public:
 class MediaEndpointClient {
 public:
     virtual void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) = 0;
-    virtual void gotIceCandidate(const String& mid, RefPtr<IceCandidate>&&) = 0;
+    virtual void gotIceCandidate(const String& mid, IceCandidate&&) = 0;
     virtual void doneGatheringCandidates(const String& mid) = 0;
     virtual void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) = 0;
 

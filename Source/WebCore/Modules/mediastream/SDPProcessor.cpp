@@ -111,58 +111,58 @@ static RefPtr<InspectorObject> createCandidateObject(const IceCandidate& candida
 {
     RefPtr<InspectorObject> candidateObject = InspectorObject::create();
 
-    candidateObject->setString(typeString(), candidate.type());
-    candidateObject->setString(foundationString(), candidate.foundation());
-    candidateObject->setInteger(componentIdString(), candidate.componentId());
-    candidateObject->setString(transportString(), candidate.transport());
-    candidateObject->setInteger(priorityString(), candidate.priority());
-    candidateObject->setString(addressString(), candidate.address());
-    candidateObject->setInteger(portString(), candidate.port());
-    if (!candidate.tcpType().isEmpty())
-        candidateObject->setString(tcpTypeString(), candidate.tcpType());
-    if (candidate.type().convertToASCIIUppercase() != "HOST") {
-        candidateObject->setString(relatedAddressString(), candidate.relatedAddress());
-        candidateObject->setInteger(relatedPortString(), candidate.relatedPort());
+    candidateObject->setString(typeString(), candidate.type);
+    candidateObject->setString(foundationString(), candidate.foundation);
+    candidateObject->setInteger(componentIdString(), candidate.componentId);
+    candidateObject->setString(transportString(), candidate.transport);
+    candidateObject->setInteger(priorityString(), candidate.priority);
+    candidateObject->setString(addressString(), candidate.address);
+    candidateObject->setInteger(portString(), candidate.port);
+    if (!candidate.tcpType.isEmpty())
+        candidateObject->setString(tcpTypeString(), candidate.tcpType);
+    if (candidate.type.convertToASCIIUppercase() != "HOST") {
+        candidateObject->setString(relatedAddressString(), candidate.relatedAddress);
+        candidateObject->setInteger(relatedPortString(), candidate.relatedPort);
     }
 
     return candidateObject;
 }
 
-static RefPtr<IceCandidate> createCandidate(const InspectorObject& candidateObject)
+static IceCandidate createCandidate(const InspectorObject& candidateObject)
 {
-    RefPtr<IceCandidate> candidate = IceCandidate::create();
+    IceCandidate candidate;
     String stringValue;
     unsigned intValue;
 
     if (candidateObject.getString(typeString(), stringValue))
-        candidate->setType(stringValue);
+        candidate.type = stringValue;
 
     if (candidateObject.getString(foundationString(), stringValue))
-        candidate->setFoundation(stringValue);
+        candidate.foundation = stringValue;
 
     if (candidateObject.getInteger(componentIdString(), intValue))
-        candidate->setComponentId(intValue);
+        candidate.componentId = intValue;
 
     if (candidateObject.getString(transportString(), stringValue))
-        candidate->setTransport(stringValue);
+        candidate.transport = stringValue;
 
     if (candidateObject.getInteger(priorityString(), intValue))
-        candidate->setPriority(intValue);
+        candidate.priority = intValue;
 
     if (candidateObject.getString(addressString(), stringValue))
-        candidate->setAddress(stringValue);
+        candidate.address = stringValue;
 
     if (candidateObject.getInteger(portString(), intValue))
-        candidate->setPort(intValue);
+        candidate.port = intValue;
 
     if (candidateObject.getString(tcpTypeString(), stringValue))
-        candidate->setTcpType(stringValue);
+        candidate.tcpType = stringValue;
 
     if (candidateObject.getString(relatedAddressString(), stringValue))
-        candidate->setRelatedAddress(stringValue);
+        candidate.relatedAddress = stringValue;
 
     if (candidateObject.getInteger(relatedPortString(), intValue))
-        candidate->setRelatedPort(intValue);
+        candidate.relatedPort = intValue;
 
     return candidate;
 }
@@ -327,15 +327,15 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
     return configuration;
 }
 
-static RefPtr<IceCandidate> iceCandidateFromJSON(const String& json)
+static Optional<IceCandidate> iceCandidateFromJSON(const String& json)
 {
     RefPtr<InspectorValue> value;
     if (!InspectorValue::parseJSON(json, value))
-        return nullptr;
+        return Nullopt;
 
     RefPtr<InspectorObject> candidateObject;
     if (!value->asObject(candidateObject))
-        return nullptr;
+        return Nullopt;
 
     return createCandidate(*candidateObject);
 }
@@ -415,8 +415,8 @@ static String configurationToJSON(const MediaEndpointSessionConfiguration& confi
 
         RefPtr<InspectorArray> candidatesArray = InspectorArray::create();
 
-        for (RefPtr<IceCandidate> candidate : mediaDescription->iceCandidates())
-            candidatesArray->pushObject(createCandidateObject(*candidate));
+        for (auto& candidate : mediaDescription->iceCandidates())
+            candidatesArray->pushObject(createCandidateObject(candidate));
 
         iceObject->setArray(candidatesString(), candidatesArray);
         mediaDescriptionObject->setObject(iceString(), iceObject);
@@ -470,21 +470,19 @@ SDPProcessor::Result SDPProcessor::generateCandidateLine(const IceCandidate& can
     return Result::Success;
 }
 
-SDPProcessor::Result SDPProcessor::parseCandidateLine(const String& candidateLine, RefPtr<IceCandidate>& outCandidate) const
+SDPProcessor::ParsingResult SDPProcessor::parseCandidateLine(const String& candidateLine) const
 {
     String scriptOutput;
     if (!callScript("parseCandidateLine", candidateLine, scriptOutput))
-        return Result::InternalError;
+        return { Result::InternalError };
 
     if (scriptOutput == "ParseError")
-        return Result::ParseError;
+        return { Result::ParseError };
 
-    RefPtr<IceCandidate> candidate = iceCandidateFromJSON(scriptOutput);
+    auto candidate = iceCandidateFromJSON(scriptOutput);
     if (!candidate)
-        return Result::InternalError;
-
-    outCandidate = candidate;
-    return Result::Success;
+        return { Result::InternalError };
+    return { WTFMove(candidate.value()) };
 }
 
 bool SDPProcessor::callScript(const String& functionName, const String& argument, String& outResult) const

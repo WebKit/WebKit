@@ -108,7 +108,7 @@ private:
 
     // MediaEndpointClient
     void gotDtlsFingerprint(const String& fingerprint, const String& fingerprintFunction) override;
-    void gotIceCandidate(const String& mid, RefPtr<IceCandidate>&&) override;
+    void gotIceCandidate(const String& mid, IceCandidate&&) override;
     void doneGatheringCandidates(const String& mid) override;
     void iceTransportStateChanged(const String& mid, MediaEndpoint::IceTransportState) override;
 

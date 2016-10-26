@@ -55,7 +55,7 @@ public:
     UpdateResult updateReceiveConfiguration(MediaEndpointSessionConfiguration*, bool isInitiator) final;
     UpdateResult updateSendConfiguration(MediaEndpointSessionConfiguration*, const RealtimeMediaSourceMap&, bool isInitiator) final;
 
-    void addRemoteCandidate(IceCandidate&, const String& mid, const String& ufrag, const String& password) final;
+    void addRemoteCandidate(const IceCandidate&, const String& mid, const String& ufrag, const String& password) final;
 
     Ref<RealtimeMediaSource> createMutedRemoteSource(const String& mid, RealtimeMediaSource::Type) final;
     void replaceSendSource(RealtimeMediaSource&, const String& mid) final;
@@ -81,7 +81,7 @@ private:
     Vector<String> m_mids;
     HashMap<String, RefPtr<RealtimeMediaSource>> m_mutedRemoteSources;
 
-    Vector<RefPtr<IceCandidate>> m_fakeIceCandidates;
+    Vector<IceCandidate> m_fakeIceCandidates;
     Timer m_iceCandidateTimer;
 
     Vector<std::pair<String, MediaEndpoint::IceTransportState>> m_iceTransportStateChanges;
