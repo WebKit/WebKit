@@ -1,5 +1,25 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][EME] ClearKey decryption support
+        https://bugs.webkit.org/show_bug.cgi?id=162918
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch is authored by Philippe Normand <philn@igalia.com>.
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp: Added.
+        (webkit_media_clear_key_decrypt_class_init):
+        (webkit_media_clear_key_decrypt_init):
+        (webKitMediaClearKeyDecryptorFinalize):
+        (webKitMediaClearKeyDecryptorRequestDecryptionKey):
+        (webKitMediaClearKeyDecryptorHandleKeyResponse):
+        (webKitMediaClearKeyDecryptorSetupCipher):
+        (webKitMediaClearKeyDecryptorDecrypt):
+        (webKitMediaClearKeyDecryptorReleaseCipher):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.h: Added.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][EME] Base class for decryption support
         https://bugs.webkit.org/show_bug.cgi?id=162915
 
