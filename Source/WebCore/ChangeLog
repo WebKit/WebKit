@@ -1,5 +1,37 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer] GStreamer Media Sample
+        https://bugs.webkit.org/show_bug.cgi?id=162894
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the MediaSample interface for the GStreamer platform.
+
+        * platform/graphics/gstreamer/mse/GStreamerMediaSample.cpp: Added.
+        (WebCore::GStreamerMediaSample::GStreamerMediaSample):
+        (WebCore::GStreamerMediaSample::create):
+        (WebCore::GStreamerMediaSample::createFakeSample):
+        (WebCore::GStreamerMediaSample::applyPtsOffset):
+        (WebCore::GStreamerMediaSample::offsetTimestampsBy):
+        (WebCore::GStreamerMediaSample::~GStreamerMediaSample):
+        * platform/graphics/gstreamer/mse/GStreamerMediaSample.h: Added.
+        (WebCore::GStreamerMediaSample::presentationTime):
+        (WebCore::GStreamerMediaSample::decodeTime):
+        (WebCore::GStreamerMediaSample::duration):
+        (WebCore::GStreamerMediaSample::trackID):
+        (WebCore::GStreamerMediaSample::setTrackID):
+        (WebCore::GStreamerMediaSample::sizeInBytes):
+        (WebCore::GStreamerMediaSample::sample):
+        (WebCore::GStreamerMediaSample::presentationSize):
+        (WebCore::GStreamerMediaSample::setTimestamps):
+        (WebCore::GStreamerMediaSample::isDivisable):
+        (WebCore::GStreamerMediaSample::divide):
+        (WebCore::GStreamerMediaSample::flags):
+        (WebCore::GStreamerMediaSample::platformSample):
+        (WebCore::GStreamerMediaSample::dump):
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer] GStreamer Media Description
         https://bugs.webkit.org/show_bug.cgi?id=162893
 
