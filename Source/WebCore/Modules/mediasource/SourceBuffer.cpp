@@ -1381,8 +1381,12 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         // 1.5 Let track buffer equal the track buffer that the coded frame will be added to.
         AtomicString trackID = sample->trackID();
         auto it = m_trackBufferMap.find(trackID);
-        if (it == m_trackBufferMap.end())
-            it = m_trackBufferMap.add(trackID, TrackBuffer()).iterator;
+        if (it == m_trackBufferMap.end()) {
+            // The client managed to append a sample with a trackID not present in the initialization
+            // segment. This would be a good place to post an message to the developer console.
+            didDropSample();
+            return;
+        }
         TrackBuffer& trackBuffer = it->value;
 
         // 1.6 ↳ If last decode timestamp for track buffer is set and decode timestamp is less than last
