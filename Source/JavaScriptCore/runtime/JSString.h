@@ -219,7 +219,7 @@ private:
     String& string() { ASSERT(!isRope()); return m_value; }
     StringView unsafeView(ExecState&) const;
 
-    friend JSValue jsString(ExecState*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, JSString*, JSString*);
     friend JSString* jsSubstring(ExecState*, JSString*, unsigned offset, unsigned length);
 };
 
@@ -277,6 +277,7 @@ private:
     void finishCreation(VM& vm, JSString* s1, JSString* s2)
     {
         Base::finishCreation(vm);
+        ASSERT(!sumOverflows<int32_t>(s1->length(), s2->length()));
         m_length = s1->length() + s2->length();
         setIs8Bit(s1->is8Bit() && s2->is8Bit());
         setIsSubstring(false);
@@ -288,6 +289,7 @@ private:
     void finishCreation(VM& vm, JSString* s1, JSString* s2, JSString* s3)
     {
         Base::finishCreation(vm);
+        ASSERT(!sumOverflows<int32_t>(s1->length(), s2->length(), s3->length()));
         m_length = s1->length() + s2->length() + s3->length();
         setIs8Bit(s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
         setIsSubstring(false);
@@ -357,19 +359,6 @@ private:
     }
 
 public:
-    static JSString* create(VM& vm, JSString* s1, JSString* s2)
-    {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
-        newString->finishCreation(vm, s1, s2);
-        return newString;
-    }
-    static JSString* create(VM& vm, JSString* s1, JSString* s2, JSString* s3)
-    {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
-        newString->finishCreation(vm, s1, s2, s3);
-        return newString;
-    }
-
     static JSString* create(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
     {
         JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
@@ -391,6 +380,19 @@ public:
     static const unsigned s_maxInternalRopeLength = 3;
 
 private:
+    static JSString* create(VM& vm, JSString* s1, JSString* s2)
+    {
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        newString->finishCreation(vm, s1, s2);
+        return newString;
+    }
+    static JSString* create(VM& vm, JSString* s1, JSString* s2, JSString* s3)
+    {
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm);
+        newString->finishCreation(vm, s1, s2, s3);
+        return newString;
+    }
+
     friend JSValue jsStringFromRegisterArray(ExecState*, Register*, unsigned);
     friend JSValue jsStringFromArguments(ExecState*, JSValue);
 
@@ -449,6 +451,11 @@ private:
         uintptr_t number;
         WriteBarrierBase<JSString> string;
     } u[s_maxInternalRopeLength];
+
+
+    friend JSString* jsString(ExecState*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, JSString*, JSString*, JSString*);
+    friend JSString* jsString(ExecState*, const String&, const String&, const String&);
 };
 
 class JSString::SafeView {

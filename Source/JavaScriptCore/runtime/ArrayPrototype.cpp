@@ -42,6 +42,7 @@
 #include "Lookup.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
+#include "Operations.h"
 #include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
@@ -535,7 +536,9 @@ static JSValue slowJoin(ExecState& exec, JSObject* thisObject, JSString* separat
 
         // a. Let S be the String value produced by concatenating R and sep.
         // d. Let R be a String value produced by concatenating S and next.
-        r = JSRopeString::create(vm, r, separator, next);
+        r = jsString(&exec, r, separator, next);
+        if (UNLIKELY(vm.exception()))
+            return JSValue();
     }
     // 10. Return R.
     return r;

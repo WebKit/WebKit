@@ -1,5 +1,27 @@
 2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r206281. rdar://problem/28870938
+
+    2016-09-22  Mark Lam  <mark.lam@apple.com>
+
+            Array.prototype.join should do overflow checks on string joins.
+            https://bugs.webkit.org/show_bug.cgi?id=162459
+
+            Reviewed by Saam Barati.
+
+            Change the 2 JSRopeString::create() functions that do joins to be private, and
+            force all clients of it to go through the jsString() utility functions that do
+            overflow checks before creating the ropes.
+
+            * dfg/DFGOperations.cpp:
+            * runtime/ArrayPrototype.cpp:
+            (JSC::slowJoin):
+            * runtime/JSString.h:
+            * runtime/Operations.h:
+            (JSC::jsString):
+
+2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r207623. rdar://problem/28857477
 
     2016-10-20  Keith Miller  <keith_miller@apple.com>
