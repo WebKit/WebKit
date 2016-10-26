@@ -1,7 +1,7 @@
 
 PASS nodeValue on Node must enqueue an attributeChanged reaction when replacing an existing attribute 
 PASS nodeValue on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
-FAIL textContent on Node must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected 1 got 2
+PASS textContent on Node must enqueue an attributeChanged reaction when replacing an existing attribute 
 PASS textContent on Node must not enqueue an attributeChanged reaction when replacing an existing unobserved attribute 
 PASS cloneNode on Node must enqueue an attributeChanged reaction when cloning an element with an observed attribute 
 PASS cloneNode on Node must not enqueue an attributeChanged reaction when cloning an element with an unobserved attribute 

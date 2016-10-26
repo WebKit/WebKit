@@ -1475,26 +1475,26 @@ String Node::textContent(bool convertBRsToNewlines) const
 void Node::setTextContent(const String& text, ExceptionCode& ec)
 {           
     switch (nodeType()) {
-        case TEXT_NODE:
-        case CDATA_SECTION_NODE:
-        case COMMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-            setNodeValue(text, ec);
-            return;
-        case ELEMENT_NODE:
-        case ATTRIBUTE_NODE:
-        case DOCUMENT_FRAGMENT_NODE: {
-            auto container = makeRef(downcast<ContainerNode>(*this));
-            ChildListMutationScope mutation(container);
-            container->removeChildren();
-            if (!text.isEmpty())
-                container->appendChild(document().createTextNode(text), ec);
-            return;
-        }
-        case DOCUMENT_NODE:
-        case DOCUMENT_TYPE_NODE:
-            // Do nothing.
-            return;
+    case ATTRIBUTE_NODE:
+    case TEXT_NODE:
+    case CDATA_SECTION_NODE:
+    case COMMENT_NODE:
+    case PROCESSING_INSTRUCTION_NODE:
+        setNodeValue(text, ec);
+        return;
+    case ELEMENT_NODE:
+    case DOCUMENT_FRAGMENT_NODE: {
+        auto container = makeRef(downcast<ContainerNode>(*this));
+        ChildListMutationScope mutation(container);
+        container->removeChildren();
+        if (!text.isEmpty())
+            container->appendChild(document().createTextNode(text), ec);
+        return;
+    }
+    case DOCUMENT_NODE:
+    case DOCUMENT_TYPE_NODE:
+        // Do nothing.
+        return;
     }
     ASSERT_NOT_REACHED();
 }

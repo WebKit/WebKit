@@ -1,3 +1,18 @@
+2016-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Updating attribute by textContent must create a single mutation record and custom element reaction
+        https://bugs.webkit.org/show_bug.cgi?id=164003
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by setTextContent not invoking setNodeValue for Attr nodes.
+        Use setNodeValue to match the specification: https://dom.spec.whatwg.org/#dom-node-textcontent
+
+        Test: fast/dom/MutationObserver/text-content-on-attr.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent):
+
 2016-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Use smart pointers for Direct2D Path types

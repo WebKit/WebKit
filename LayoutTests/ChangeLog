@@ -1,3 +1,16 @@
+2016-10-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Updating attribute by textContent must create a single mutation record and custom element reaction
+        https://bugs.webkit.org/show_bug.cgi?id=164003
+
+        Reviewed by Chris Dumez.
+
+        Added a test for ensuring mutating the attribute by nodeValue and textContent creates exactly one mutation record.
+
+        * fast/custom-elements/reactions-for-webkit-extensions.html: Updated the description.
+        * fast/dom/MutationObserver/text-content-on-attr-expected.txt: Added.
+        * fast/dom/MutationObserver/text-content-on-attr.html: Added.
+
 2016-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix duplicate GTK expectations
