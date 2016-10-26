@@ -560,6 +560,7 @@ public:
     ID2D1Brush* solidFillBrush() const;
     ID2D1Brush* patternStrokeBrush() const;
     ID2D1Brush* patternFillBrush() const;
+    ID2D1StrokeStyle* platformStrokeStyle() const;
 
     ID2D1SolidColorBrush* brushWithColor(const Color&);
 #endif

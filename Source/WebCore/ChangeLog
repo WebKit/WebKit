@@ -1,3 +1,9 @@
+2016-10-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed build fix.
+
+        * platform/graphics/GraphicsContext.h: Add missing declaration.
+
 2016-10-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Updating attribute by textContent must create a single mutation record and custom element reaction
