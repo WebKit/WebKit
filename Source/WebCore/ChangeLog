@@ -1,3 +1,19 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        The URLSearchParams constructor should take a union in parameter
+        https://bugs.webkit.org/show_bug.cgi?id=163906
+
+        Reviewed by Darin Adler.
+
+        The URLSearchParams constructor should take a union in parameter:
+        - https://url.spec.whatwg.org/#urlsearchparams
+
+        No new tests, no web-exposed behavior change.
+
+        * html/URLSearchParams.h:
+        (WebCore::URLSearchParams::create):
+        * html/URLSearchParams.idl:
+
 2016-10-26  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move more string conversions over to JSDOMConvert

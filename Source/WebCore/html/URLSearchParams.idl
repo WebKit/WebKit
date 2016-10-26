@@ -24,9 +24,7 @@
  */
 
 [
-    // FIXME: This should use unions once they are supported
-    Constructor(optional USVString arg = ""),
-    Constructor(URLSearchParams init),
+    Constructor(optional (USVString or URLSearchParams) init = ""),
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
 ] interface URLSearchParams {

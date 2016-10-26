@@ -25,6 +25,7 @@
 #pragma once
 
 #include "DOMURL.h"
+#include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -32,8 +33,8 @@ namespace WebCore {
 
 class URLSearchParams : public RefCounted<URLSearchParams> {
 public:
-    static Ref<URLSearchParams> create(const String& string, DOMURL* associatedURL = nullptr) { return adoptRef(*new URLSearchParams(string, associatedURL)); }
-    static Ref<URLSearchParams> create(const Vector<std::pair<String, String>>& pairs) { return adoptRef(*new URLSearchParams(pairs)); }
+    using StringOrURLSearchParams = WTF::Variant<String, RefPtr<URLSearchParams>>;
+    static Ref<URLSearchParams> create(const StringOrURLSearchParams&, DOMURL* associatedURL = nullptr);
 
     void associatedURLDestroyed() { m_associatedURL = nullptr; }
     void append(const String& name, const String& value);
@@ -55,4 +56,14 @@ private:
     Vector<std::pair<String, String>> m_pairs;
 };
 
+inline Ref<URLSearchParams> URLSearchParams::create(const StringOrURLSearchParams& variant, DOMURL* associatedURL)
+{
+    auto visitor = WTF::makeVisitor([&](const String& string) {
+        return adoptRef(*new URLSearchParams(string, associatedURL));
+    }, [&](const RefPtr<URLSearchParams>& params) {
+        return adoptRef(*new URLSearchParams(static_cast<const Vector<std::pair<String, String>>&>(*params)));
+    });
+    return WTF::visit(visitor, variant);
 }
+
+} // namespace WebCore
