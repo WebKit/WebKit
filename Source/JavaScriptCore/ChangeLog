@@ -1,3 +1,14 @@
+2016-10-26  Mark Lam  <mark.lam@apple.com>
+
+        JSGenericTypedArrayView::set() should check for exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=164007
+        <rdar://problem/28853775>
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+
 2016-10-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Tell IDL result type to DFG to drop type checks in AI

@@ -1,3 +1,13 @@
+2016-10-26  Mark Lam  <mark.lam@apple.com>
+
+        JSGenericTypedArrayView::set() should check for exceptions.
+        https://bugs.webkit.org/show_bug.cgi?id=164007
+        <rdar://problem/28853775>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/typed-array-view-set-should-not-crash-on-exception.js: Added.
+
 2016-10-25  Mark Lam  <mark.lam@apple.com>
 
         String.prototype.replace() should throw an OutOfMemoryError when using too much memory.
