@@ -1,3 +1,12 @@
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GTK][GStreamer] Disable MEDIA_SOURCE and ENCRYPTED_MEDIA_V2 by default
+        https://bugs.webkit.org/show_bug.cgi?id=162623
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-10-25  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Don't enable ld.gold by default on non-ELF platforms
