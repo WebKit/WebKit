@@ -2860,11 +2860,6 @@ webkit.org/b/160119 fast/block/positioning/fixed-position-stacking-context.html 
 
 webkit.org/b/160119 fast/css/text-input-with-webkit-border-radius.html [ Crash Pass ]
 
-webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect-removed.html [ Failure ]
-webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ Failure ]
-
-webkit.org/b/160119 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ Failure ]
-
 webkit.org/b/160119 fast/dynamic/012.html [ Failure ]
 webkit.org/b/160119 fast/dynamic/layer-hit-test-crash.html [ Failure ]
 

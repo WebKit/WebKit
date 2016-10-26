@@ -1,3 +1,9 @@
+2016-10-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix duplicate GTK expectations
+
+        * platform/gtk/TestExpectations:
+
 2016-10-25  Nan Wang  <n_wang@apple.com>
 
         LayoutTest accessibility/mac/meter-gauge-value-description.html failing
