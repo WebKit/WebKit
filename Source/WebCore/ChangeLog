@@ -1,3 +1,43 @@
+2016-10-26  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Unify CSSCustomPropertyValue and CSSCustomPropertyDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=164019
+
+        Reviewed by Zalan Bujtas.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCustomPropertyDeclaration.cpp: Removed.
+        * css/CSSCustomPropertyDeclaration.h: Removed.
+        Get rid of CSSCustomPropertyDeclaration.
+
+        * css/CSSCustomPropertyValue.h:
+        Add new constructors to handle the new variable data format (either a CSSValueId or a
+        CSSVariableData object that holds parser tokens).
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCustomPropertyDeclaration): Deleted.
+        Get rid of CSSCustomPropertyDeclaration cases.
+
+        * css/CSSVariableData.h:
+        Switch to CSSCustomPropertyValue.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        We've renamed the old parser variable data to deprecatedValue to make it clear it's going
+        to be removed eventually.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::filterProperties):
+        (WebCore::CSSParserImpl::consumeVariableValue):
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::CSSVariableParser::parseDeclarationValue):
+        * css/parser/CSSVariableParser.h:
+        Switch to CSSCustomPropertyValue.
+
 2016-10-26  Youenn Fablet  <youenn@apple.com>
 
         Enable SDPProcessor for Mac bots

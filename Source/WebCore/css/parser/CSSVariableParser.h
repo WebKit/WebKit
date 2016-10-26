@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-class CSSCustomPropertyDeclaration;
+class CSSCustomPropertyValue;
 
 class CSSVariableParser {
 public:
     static bool containsValidVariableReferences(CSSParserTokenRange);
 
-    static RefPtr<CSSCustomPropertyDeclaration> parseDeclarationValue(const AtomicString&, CSSParserTokenRange);
+    static RefPtr<CSSCustomPropertyValue> parseDeclarationValue(const AtomicString&, CSSParserTokenRange);
 
     static bool isValidVariableName(const CSSParserToken&);
     static bool isValidVariableName(const String&);

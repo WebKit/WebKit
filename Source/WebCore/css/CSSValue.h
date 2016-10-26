@@ -126,7 +126,6 @@ public:
     bool isAnimationTriggerScrollValue() const { return m_classType == AnimationTriggerScrollClass; }
 #endif
 
-    bool isCustomPropertyDeclaration() const { return m_classType == CustomPropertyDeclarationClass; }
     bool isCustomIdentValue() const { return m_classType == CustomIdentClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
@@ -202,14 +201,14 @@ protected:
 
         CSSContentDistributionClass,
         
-        // FIXME-NEWPARSER: Remove in favor of new variables implementation.
+        CustomIdentClass,
+
+        // FIXME-NEWPARSER: Unify variables implementation.
         CustomPropertyClass,
         VariableDependentClass,
         VariableClass,
 
         // New variables implementation.
-        CustomPropertyDeclarationClass,
-        CustomIdentClass,
         VariableReferenceClass,
         PendingSubstitutionValueClass,
 

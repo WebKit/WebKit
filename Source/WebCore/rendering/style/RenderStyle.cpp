@@ -2066,7 +2066,7 @@ void RenderStyle::checkVariablesInCustomProperties()
     // With all results computed, we can now mutate our table to eliminate the variables and
     // hold the final values. This way when we inherit, we don't end up resubstituting variables, etc.
     for (auto& resolvedValue : resolvedValues)
-        customProperties.set(resolvedValue->name(), resolvedValue->value());
+        customProperties.set(resolvedValue->name(), resolvedValue->deprecatedValue());
 
     rareInheritedData.access()->m_customProperties.access()->setContainsVariables(false);
 }

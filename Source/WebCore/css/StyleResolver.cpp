@@ -1607,7 +1607,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     
     if (id == CSSPropertyCustom) {
         customPropertyValue = &downcast<CSSCustomPropertyValue>(*valueToApply);
-        valueToCheckForInheritInitial = customPropertyValue->value().get();
+        valueToCheckForInheritInitial = customPropertyValue->deprecatedValue().get();
     }
 
     bool isInherit = state.parentStyle() && valueToCheckForInheritInitial->isInheritedValue();
@@ -1673,7 +1673,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
         } else if (isInitial)
             state.style()->setCustomPropertyValue(customProperty->name(), CSSCustomPropertyValue::createInvalid());
         else
-            state.style()->setCustomPropertyValue(customProperty->name(), customProperty->value());
+            state.style()->setCustomPropertyValue(customProperty->name(), customProperty->deprecatedValue());
         return;
     }
 

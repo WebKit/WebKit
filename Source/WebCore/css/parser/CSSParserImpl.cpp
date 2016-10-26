@@ -31,7 +31,7 @@
 #include "CSSParserImpl.h"
 
 #include "CSSAtRuleID.h"
-#include "CSSCustomPropertyDeclaration.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
 #include "CSSParserObserver.h"
@@ -97,7 +97,7 @@ static inline void filterProperties(bool important, const ParsedPropertyVector& 
         const unsigned propertyIDIndex = property.id() - firstCSSProperty;
         
         if (property.id() == CSSPropertyCustom) {
-            CSSCustomPropertyDeclaration* customValue = downcast<CSSCustomPropertyDeclaration>(property.value());
+            CSSCustomPropertyValue* customValue = downcast<CSSCustomPropertyValue>(property.value());
             const AtomicString& name = customValue->name();
             if (seenCustomProperties.contains(name))
                 continue;
@@ -827,7 +827,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRule::Typ
 
 void CSSParserImpl::consumeVariableValue(CSSParserTokenRange range, const AtomicString& variableName, bool important)
 {
-    if (RefPtr<CSSCustomPropertyDeclaration> value = CSSVariableParser::parseDeclarationValue(variableName, range))
+    if (RefPtr<CSSCustomPropertyValue> value = CSSVariableParser::parseDeclarationValue(variableName, range))
         m_parsedProperties.append(CSSProperty(CSSPropertyCustom, WTFMove(value), important));
 }
 
