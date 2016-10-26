@@ -1,5 +1,21 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][EME] Utility function to create decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=162914
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add a utility function to find a suitable GStreamer decryptor element.
+
+        This patch is authored by Philippe Normand <philn@igalia.com>.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::createGstDecryptor):
+        (WebCore::gstRegistryHasElementForMediaType): Deleted.
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer][MSE][EME] Remove MSE code from regular player and add EME support
         https://bugs.webkit.org/show_bug.cgi?id=162911
 
