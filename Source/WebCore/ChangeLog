@@ -1,5 +1,18 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [MSE][GStreamer] Enable QUOTA_EXCEEDED_ERR support for GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=162922
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        QUOTA_EXCEEDED_ERR should be reported by SourceBuffer when appropriate, at least on the
+        GStreamer implementation.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal):
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [MSE] Expose additional MediaSource methods to MediaSourcePrivate
         https://bugs.webkit.org/show_bug.cgi?id=162920
 
