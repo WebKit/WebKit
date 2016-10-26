@@ -290,11 +290,8 @@ TextTrackCueList* TextTrack::activeCues() const
     return m_cues->activeCues();
 }
 
-ExceptionOr<void> TextTrack::addCue(RefPtr<TextTrackCue>&& cue)
+ExceptionOr<void> TextTrack::addCue(Ref<TextTrackCue>&& cue)
 {
-    if (!cue)
-        return { };
-
     // 4.7.10.12.6 Text tracks exposing in-band metadata
     // The UA will use DataCue to expose only text track cue objects that belong to a text track that has a text
     // track kind of metadata.
@@ -320,35 +317,32 @@ ExceptionOr<void> TextTrack::addCue(RefPtr<TextTrackCue>&& cue)
 
     // 2. Add cue to the method's TextTrack object's text track's text track list of cues.
     cue->setTrack(this);
-    ensureTextTrackCueList().add(cue);
+    ensureTextTrackCueList().add(cue.ptr());
     
     if (m_client)
-        m_client->textTrackAddCue(this, *cue);
+        m_client->textTrackAddCue(this, cue);
 
     return { };
 }
 
-ExceptionOr<void> TextTrack::removeCue(TextTrackCue* cue)
+ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
 {
-    if (!cue)
-        return { };
-
     // 4.8.10.12.5 Text track API
 
     // The removeCue(cue) method of TextTrack objects, when invoked, must run the following steps:
 
     // 1. If the given cue is not currently listed in the method's TextTrack 
     // object's text track's text track list of cues, then throw a NotFoundError exception.
-    if (cue->track() != this)
+    if (cue.track() != this)
         return Exception { NOT_FOUND_ERR };
 
     // 2. Remove cue from the method's TextTrack object's text track's text track list of cues.
-    if (!m_cues || !m_cues->remove(cue))
+    if (!m_cues || !m_cues->remove(&cue))
         return Exception { INVALID_STATE_ERR };
 
-    cue->setTrack(nullptr);
+    cue.setTrack(nullptr);
     if (m_client)
-        m_client->textTrackRemoveCue(this, *cue);
+        m_client->textTrackRemoveCue(this, cue);
 
     return { };
 }

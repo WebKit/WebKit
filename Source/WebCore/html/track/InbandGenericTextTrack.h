@@ -65,7 +65,7 @@ private:
     void addGenericCue(InbandTextTrackPrivate*, PassRefPtr<GenericCueData>) final;
     void updateGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
     void removeGenericCue(InbandTextTrackPrivate*, GenericCueData*) final;
-    ExceptionOr<void> removeCue(TextTrackCue*) final;
+    ExceptionOr<void> removeCue(TextTrackCue&) final;
 
     PassRefPtr<TextTrackCueGeneric> createCue(PassRefPtr<GenericCueData>);
     void updateCueFromCueData(TextTrackCueGeneric*, GenericCueData*);

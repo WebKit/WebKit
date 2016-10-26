@@ -1,3 +1,15 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to TextTrack.addCue() / removeCue() should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=164020
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * media/track/texttrack-addCue-null-expected.txt: Added.
+        * media/track/texttrack-addCue-null.html: Added.
+
 2016-10-26  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: elapsed and remaining time support

@@ -1,3 +1,32 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        First parameter to TextTrack.addCue() / removeCue() should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=164020
+
+        Reviewed by Eric Carlson.
+
+        First parameter to TextTrack.addCue() / removeCue() should not be nullable:
+        - https://html.spec.whatwg.org/#texttrack
+
+        Firefox and Chrome agree with the specification.
+
+        Test: media/track/texttrack-addCue-null.html
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::removeDataCue):
+        (WebCore::InbandDataTextTrack::removeCue):
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue):
+        (WebCore::InbandGenericTextTrack::removeGenericCue):
+        (WebCore::InbandGenericTextTrack::removeCue):
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue):
+        (WebCore::TextTrack::removeCue):
+        * html/track/TextTrack.h:
+        * html/track/TextTrack.idl:
+
 2016-10-26  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Media Controller: elapsed and remaining time support
