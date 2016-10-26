@@ -84,9 +84,9 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    String protocol() const { return m_protocol; }
-    String host() const { return m_host; }
-    String domain() const { return m_domain; }
+    const String& protocol() const { return m_protocol; }
+    const String& host() const { return m_host; }
+    const String& domain() const { return m_domain; }
     Optional<uint16_t> port() const { return m_port; }
 
     // Returns true if a given URL is secure, based either directly on its
@@ -234,5 +234,9 @@ private:
     bool m_enforceFilePathSeparation;
     bool m_needsDatabaseIdentifierQuirkForFiles;
 };
+
+// Returns true if the Origin header values serialized from these two origins would be the same.
+bool originsMatch(const SecurityOrigin&, const SecurityOrigin&);
+bool originsMatch(const SecurityOrigin*, const SecurityOrigin*);
 
 } // namespace WebCore

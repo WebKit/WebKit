@@ -1,3 +1,23 @@
+2016-10-26  Youenn Fablet  <youenn@apple.com>
+
+        Make CachedResourceLoader originsMatch check more efficient
+        https://bugs.webkit.org/show_bug.cgi?id=163938
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+        (WebCore::originsMatch): Moved to SecurityOrigin.cpp.
+        * page/SecurityOrigin.cpp:
+        (WebCore::areOriginsMatching): Helper routine to check whether origins are matching.
+        (WebCore::originsMatch): Ensuring string comparison provides the same result as this function.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::protocol):
+        (WebCore::SecurityOrigin::host):
+        (WebCore::SecurityOrigin::domain):
+
 2016-10-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Tell IDL result type to DFG to drop type checks in AI

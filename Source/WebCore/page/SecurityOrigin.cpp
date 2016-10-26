@@ -462,6 +462,42 @@ String SecurityOrigin::toRawString() const
     return result.toString();
 }
 
+static inline bool areOriginsMatching(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
+{
+    if (origin1.isUnique() || origin2.isUnique())
+        return origin1.isUnique() == origin2.isUnique();
+
+    if (origin1.protocol() != origin2.protocol())
+        return false;
+
+    if (origin1.protocol() == "file")
+        return true;
+
+    if (origin1.host() != origin2.host())
+        return false;
+
+    return origin1.port() == origin2.port();
+}
+
+// This function mimics the result of string comparison of serialized origins
+bool originsMatch(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
+{
+    if (&origin1 == &origin2)
+        return true;
+
+    bool result = areOriginsMatching(origin1, origin2);
+    ASSERT(result == (origin1.toString() == origin2.toString()));
+    return result;
+}
+
+bool originsMatch(const SecurityOrigin* origin1, const SecurityOrigin* origin2)
+{
+    if (!origin1 || !origin2)
+        return origin1 == origin2;
+
+    return originsMatch(*origin1, *origin2);
+}
+
 Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 {
     return SecurityOrigin::create(URL(URL(), originString));
@@ -470,12 +506,12 @@ Ref<SecurityOrigin> SecurityOrigin::createFromString(const String& originString)
 static const char separatorCharacter = '_';
 
 RefPtr<SecurityOrigin> SecurityOrigin::maybeCreateFromDatabaseIdentifier(const String& databaseIdentifier)
-{ 
+{
     // Make sure there's a first separator
     size_t separator1 = databaseIdentifier.find(separatorCharacter);
     if (separator1 == notFound)
         return nullptr;
-        
+
     // Make sure there's a second separator
     size_t separator2 = databaseIdentifier.reverseFind(separatorCharacter);
     if (separator2 == notFound)
