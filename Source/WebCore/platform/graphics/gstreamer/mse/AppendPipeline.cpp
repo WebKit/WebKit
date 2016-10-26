@@ -42,14 +42,6 @@
 
 namespace WebCore {
 
-#if !LOG_DISABLED
-struct PadProbeInformation {
-    AppendPipeline* appendPipeline;
-    const char* description;
-    gulong probeId;
-};
-#endif
-
 static const char* dumpAppendState(AppendPipeline::AppendState appendState)
 {
     switch (appendState) {
@@ -762,8 +754,9 @@ void AppendPipeline::resetPipeline()
         gst_element_get_state(m_pipeline.get(), nullptr, nullptr, 0);
     }
 
-#if (!(LOG_DISABLED || GST_DISABLE_GST_DEBUG))
+#if (!(LOG_DISABLED || defined(GST_DISABLE_GST_DEBUG)))
     {
+        static unsigned i = 0;
         // This is here for debugging purposes. It does not make sense to have it as class member.
         WTF::String  dotFileName = String::format("reset-pipeline-%d", ++i);
         gst_debug_bin_to_dot_file(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());

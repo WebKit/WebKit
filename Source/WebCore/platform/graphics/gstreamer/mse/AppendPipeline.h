@@ -32,6 +32,14 @@
 
 namespace WebCore {
 
+#if !LOG_DISABLED
+struct PadProbeInformation {
+    AppendPipeline* appendPipeline;
+    const char* description;
+    gulong probeId;
+};
+#endif
+
 class AppendPipeline : public ThreadSafeRefCounted<AppendPipeline> {
 public:
     enum class AppendState { Invalid, NotStarted, Ongoing, KeyNegotiation, DataStarve, Sampling, LastSample, Aborting };

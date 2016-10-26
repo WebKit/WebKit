@@ -1,5 +1,13 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][GTK+][MSE] Unreviewed debug build fix.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::resetPipeline):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [cmake][GStreamer][MSE][EME] Build MSE and EME code after refactoring
         https://bugs.webkit.org/show_bug.cgi?id=162928
 
