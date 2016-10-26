@@ -31,7 +31,7 @@
 
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "JSDOMBinding.h"
+#include "JSDOMConvert.h"
 #include "SerializedScriptValue.h"
 #include <runtime/JSFunction.h>
 
@@ -66,12 +66,12 @@ JSValue JSHistory::pushState(ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     // FIXME: title should not be nullable.
-    String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
+    String title = convert<IDLNullable<IDLDOMString>>(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     String url;
     if (argCount > 2) {
-        url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
+        url = convert<IDLNullable<IDLUSVString>>(state, state.uncheckedArgument(2));
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 
@@ -95,12 +95,12 @@ JSValue JSHistory::replaceState(ExecState& state)
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     // FIXME: title should not be nullable.
-    String title = valueToStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(1));
+    String title = convert<IDLNullable<IDLDOMString>>(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     String url;
     if (argCount > 2) {
-        url = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(2));
+        url = convert<IDLNullable<IDLUSVString>>(state, state.uncheckedArgument(2));
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
 

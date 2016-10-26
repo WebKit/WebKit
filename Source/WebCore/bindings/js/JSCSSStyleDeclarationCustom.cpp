@@ -326,7 +326,7 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* state, PropertyName propertyN
     if (!propertyInfo.propertyID)
         return false;
 
-    auto propertyValue = valueToStringTreatingNullAsEmptyString(state, value);
+    auto propertyValue = convert<IDLDOMString>(*state, value, StringConversionConfiguration::TreatNullAsEmptyString);
     if (propertyInfo.hadPixelOrPosPrefix)
         propertyValue.append("px");
 

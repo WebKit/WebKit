@@ -24,6 +24,7 @@
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
+#include "JSDOMConvert.h"
 #include "wtf/text/AtomicString.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
@@ -206,7 +207,7 @@ static inline JSC::EncodedJSValue jsTestCustomNamedGetterPrototypeFunctionAnothe
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(state->argumentCount() < 1))
         return throwVMError(state, throwScope, createNotEnoughArgumentsError(state));
-    auto str = state->uncheckedArgument(0).toWTFString(state);
+    auto str = convert<IDLDOMString>(*state, state->uncheckedArgument(0), StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.anotherFunction(WTFMove(str));
     return JSValue::encode(jsUndefined());

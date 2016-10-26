@@ -61,7 +61,7 @@ void JSMockContentFilterSettings::setDecisionPoint(ExecState& state, JSValue val
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint8_t nativeValue { convert<IDLOctet>(state, value, EnforceRange) };
+    uint8_t nativeValue { convert<IDLOctet>(state, value, IntegerConversionConfiguration::EnforceRange) };
     RETURN_IF_EXCEPTION(scope, void());
 
     DecisionPoint decisionPoint { static_cast<DecisionPoint>(nativeValue) };
@@ -96,7 +96,7 @@ static inline Decision toDecision(ExecState& state, JSValue value)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint8_t nativeValue { convert<IDLOctet>(state, value, EnforceRange) };
+    uint8_t nativeValue { convert<IDLOctet>(state, value, IntegerConversionConfiguration::EnforceRange) };
     RETURN_IF_EXCEPTION(scope, Decision::Allow);
 
     Decision decision { static_cast<Decision>(nativeValue) };

@@ -423,12 +423,12 @@ JSValue JSDOMWindow::open(ExecState& state)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String urlString = valueToUSVStringWithUndefinedOrNullCheck(&state, state.argument(0));
+    String urlString = convert<IDLNullable<IDLUSVString>>(state, state.argument(0));
     RETURN_IF_EXCEPTION(scope, JSValue());
     JSValue targetValue = state.argument(1);
     AtomicString target = targetValue.isUndefinedOrNull() ? AtomicString("_blank", AtomicString::ConstructFromLiteral) : targetValue.toString(&state)->toAtomicString(&state);
     RETURN_IF_EXCEPTION(scope, JSValue());
-    String windowFeaturesString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
+    String windowFeaturesString = convert<IDLNullable<IDLDOMString>>(state, state.argument(2));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     RefPtr<DOMWindow> openedWindow = wrapped().open(urlString, target, windowFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state));
@@ -483,9 +483,9 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 1))
         return throwException(&state, scope, createNotEnoughArgumentsError(&state));
 
-    String urlString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
+    String urlString = convert<IDLNullable<IDLDOMString>>(state, state.argument(0));
     RETURN_IF_EXCEPTION(scope, JSValue());
-    String dialogFeaturesString = valueToStringWithUndefinedOrNullCheck(&state, state.argument(2));
+    String dialogFeaturesString = convert<IDLNullable<IDLDOMString>>(state, state.argument(2));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     DialogHandler handler(state);
@@ -528,7 +528,7 @@ static JSValue handlePostMessage(DOMWindow& impl, ExecState& state)
     auto message = SerializedScriptValue::create(state, state.uncheckedArgument(0), messagePorts, WTFMove(arrayBuffers));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    String targetOrigin = valueToUSVStringWithUndefinedOrNullCheck(&state, state.uncheckedArgument(targetOriginArgIndex));
+    String targetOrigin = convert<IDLNullable<IDLUSVString>>(state, state.uncheckedArgument(targetOriginArgIndex));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     propagateException(state, scope, impl.postMessage(message.releaseNonNull(), WTFMove(messagePorts), targetOrigin, callerDOMWindow(&state)));

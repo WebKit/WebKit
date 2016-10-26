@@ -192,7 +192,7 @@ static inline bool setJSTestCEReactionsStringifierValueFunction(ExecState& state
     CustomElementReactionStack customElementReactionStack;
 #endif
     auto& impl = thisObject.wrapped();
-    auto nativeValue = value.toWTFString(&state);
+    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;

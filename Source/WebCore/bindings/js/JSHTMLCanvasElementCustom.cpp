@@ -107,7 +107,7 @@ JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
     HTMLCanvasElement& canvas = wrapped();
     ExceptionCode ec = 0;
 
-    const String& type = valueToStringWithUndefinedOrNullCheck(&state, state.argument(0));
+    auto type = convert<IDLNullable<IDLDOMString>>(state, state.argument(0));
     double quality;
     double* qualityPtr = 0;
     if (state.argumentCount() > 1) {

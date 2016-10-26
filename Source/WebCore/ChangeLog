@@ -1,3 +1,99 @@
+2016-10-26  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move more string conversions over to JSDOMConvert
+        https://bugs.webkit.org/show_bug.cgi?id=164021
+
+        Reviewed by Tim Horton.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::open):
+        (WebCore::JSDOMWindow::showModalDialog):
+        (WebCore::handlePostMessage):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::toDataURL):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::pushState):
+        (WebCore::JSHistory::replaceState):
+        Switch to convert functions.
+
+        * bindings/js/JSApplePaySessionCustom.cpp:
+        (WebCore::JSApplePaySession::completeShippingMethodSelection):
+        (WebCore::JSApplePaySession::completeShippingContactSelection):
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        (WebCore::createAesKeyGenParams):
+        (WebCore::createRsaKeyGenParams):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::getCSSCanvasContext):
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        (WebCore::JSMockContentFilterSettings::setDecisionPoint):
+        (WebCore::toDecision):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toSmallerInt):
+        (WebCore::toSmallerUInt):
+        (WebCore::toInt8EnforceRange):
+        (WebCore::toUInt8EnforceRange):
+        (WebCore::toInt8Clamp):
+        (WebCore::toUInt8Clamp):
+        (WebCore::toInt8):
+        (WebCore::toUInt8):
+        (WebCore::toInt16EnforceRange):
+        (WebCore::toUInt16EnforceRange):
+        (WebCore::toInt16Clamp):
+        (WebCore::toUInt16Clamp):
+        (WebCore::toInt16):
+        (WebCore::toUInt16):
+        Use updated IntegerConversionConfiguration naming.
+
+        (WebCore::valueToStringTreatingNullAsEmptyString): Deleted.
+        (WebCore::valueToStringWithUndefinedOrNullCheck): Deleted.
+        (WebCore::valueToUSVStringTreatingNullAsEmptyString): Deleted.
+        (WebCore::valueToUSVStringWithUndefinedOrNullCheck): Deleted.
+        * bindings/js/JSDOMBinding.h:
+        Remove unused functions.
+
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::convert):
+        Add StringConversionConfiguration, to match IntegerConversionConfiguration which moved here,
+        and make them both enum classes. Remove SFINAE based overloading of convert<>, which is not
+        needed if we get rid of the default parameter, which we can, since the two parameter convert
+        routes to the right place.
+
+        (WebCore::Converter<IDLNullable<T>>::convert):
+        Add overloads converts that take a Integer/String configuration.
+
+        (WebCore::Converter<IDLByte>::convert):
+        (WebCore::Converter<IDLOctet>::convert):
+        (WebCore::Converter<IDLShort>::convert):
+        (WebCore::Converter<IDLUnsignedShort>::convert):
+        (WebCore::Converter<IDLLong>::convert):
+        (WebCore::Converter<IDLUnsignedLong>::convert):
+        (WebCore::Converter<IDLLongLong>::convert):
+        (WebCore::Converter<IDLUnsignedLongLong>::convert):
+        Use updated IntegerConversionConfiguration naming.
+
+        (WebCore::Converter<IDLDOMString>::convert):
+        (WebCore::Converter<IDLUSVString>::convert):
+        Add a configuration parameter, similar to the one used for integers
+        that changes the behavior of string conversions to return an empty
+        string for null.
+
+        * bindings/js/JSDOMIterator.h:
+        (WebCore::iteratorCreate):
+        (WebCore::IteratorTraits>::asJS):
+        (WebCore::appendForEachArguments):
+        Simplify a bit by extracting the SFINAE helpers into a EnableIfMap and EnableIfSet.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GetIntegerConversionConfiguration):
+        (GetStringConversionConfiguration):
+        (JSValueToNativeIsHandledByDOMConvert):
+        (JSValueToNative):
+        Add support for converting more string types and passing the StringConversionConfiguration.
+
 2016-10-26  Dan Bernstein  <mitz@apple.com>
 
         When pasting web archive, width specifiers in srcset attribute change into density specifiers

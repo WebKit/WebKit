@@ -53,7 +53,7 @@ JSValue JSApplePaySession::completeShippingMethodSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 3))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), NormalConversion);
+    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), IntegerConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     Dictionary newTotal = { &state, state.argument(1) };
@@ -81,7 +81,7 @@ JSValue JSApplePaySession::completeShippingContactSelection(ExecState& state)
     if (UNLIKELY(state.argumentCount() < 4))
         return JSValue::decode(throwVMError(&state, scope, createNotEnoughArgumentsError(&state)));
 
-    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), NormalConversion);
+    uint16_t status = convert<IDLUnsignedShort>(state, state.argument(0), IntegerConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     ArrayValue newShippingMethods { &state, state.argument(1) };

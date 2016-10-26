@@ -43,6 +43,9 @@ enum class JSDOMIteratorType { Set, Map };
 //     using ValueType = [IDLType];
 // };
 
+template<typename T, typename U = void> using EnableIfMap = typename std::enable_if<T::type == JSDOMIteratorType::Map, U>::type;
+template<typename T, typename U = void> using EnableIfSet = typename std::enable_if<T::type == JSDOMIteratorType::Set, U>::type;
+
 template<typename JSWrapper, typename IteratorTraits> class JSDOMIteratorPrototype : public JSC::JSNonFinalObject {
 public:
     using Base = JSC::JSNonFinalObject;
@@ -111,8 +114,8 @@ private:
     {
     }
 
-    template<typename IteratorValue, typename T = Traits> typename std::enable_if<T::type == JSDOMIteratorType::Map, JSC::JSValue>::type asJS(JSC::ExecState&, IteratorValue&);
-    template<typename IteratorValue, typename T = Traits> typename std::enable_if<T::type == JSDOMIteratorType::Set, JSC::JSValue>::type asJS(JSC::ExecState&, IteratorValue&);
+    template<typename IteratorValue, typename T = Traits> EnableIfMap<T, JSC::JSValue> asJS(JSC::ExecState&, IteratorValue&);
+    template<typename IteratorValue, typename T = Traits> EnableIfSet<T, JSC::JSValue> asJS(JSC::ExecState&, IteratorValue&);
 
     static void destroy(JSC::JSCell*);
 
@@ -134,13 +137,10 @@ inline JSC::JSValue jsPair(JSC::ExecState& state, JSDOMGlobalObject& globalObjec
     return jsPair(state, globalObject, toJS<FirstType>(state, globalObject, value1), toJS<SecondType>(state, globalObject, value2));
 }
 
-template<typename JSIterator>
-JSC::JSValue iteratorCreate(typename JSIterator::Wrapper&, IterationKind);
-template<typename JSIterator>
-JSC::JSValue iteratorForEach(JSC::ExecState&, typename JSIterator::Wrapper&, JSC::ThrowScope&);
+template<typename JSIterator> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper&, IterationKind);
+template<typename JSIterator> JSC::JSValue iteratorForEach(JSC::ExecState&, typename JSIterator::Wrapper&, JSC::ThrowScope&);
 
-template<typename JSIterator>
-JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, IterationKind kind)
+template<typename JSIterator> JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, IterationKind kind)
 {
     ASSERT(thisObject.globalObject());
     JSDOMGlobalObject& globalObject = *thisObject.globalObject();
@@ -148,8 +148,7 @@ JSC::JSValue iteratorCreate(typename JSIterator::Wrapper& thisObject, IterationK
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-template<typename IteratorValue, typename T> 
-inline typename std::enable_if<T::type == JSDOMIteratorType::Map, JSC::JSValue>::type JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::ExecState& state, IteratorValue& value)
+template<typename IteratorValue, typename T> inline EnableIfMap<T, JSC::JSValue> JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::ExecState& state, IteratorValue& value)
 {
     ASSERT(value);
     
@@ -167,8 +166,7 @@ inline typename std::enable_if<T::type == JSDOMIteratorType::Map, JSC::JSValue>:
 }
 
 template<typename JSWrapper, typename IteratorTraits>
-template<typename IteratorValue, typename T>
-inline typename std::enable_if<T::type == JSDOMIteratorType::Set, JSC::JSValue>::type JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::ExecState& state, IteratorValue& value)
+template<typename IteratorValue, typename T> inline EnableIfSet<T, JSC::JSValue> JSDOMIterator<JSWrapper, IteratorTraits>::asJS(JSC::ExecState& state, IteratorValue& value)
 {
     ASSERT(value);
 
@@ -187,16 +185,14 @@ inline typename std::enable_if<T::type == JSDOMIteratorType::Set, JSC::JSValue>:
     return { };
 }
 
-template<typename JSIterator, typename IteratorValue>
-typename std::enable_if<JSIterator::Traits::type == JSDOMIteratorType::Map, void>::type appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value)
+template<typename JSIterator, typename IteratorValue> EnableIfMap<typename JSIterator::Traits> appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value)
 {
     ASSERT(value);
     arguments.append(toJS<typename JSIterator::Traits::ValueType>(state, globalObject, value->value));
     arguments.append(toJS<typename JSIterator::Traits::KeyType>(state, globalObject, value->key));
 }
 
-template<typename JSIterator, typename IteratorValue> 
-typename std::enable_if<JSIterator::Traits::type == JSDOMIteratorType::Set, void>::type appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value)
+template<typename JSIterator, typename IteratorValue> EnableIfSet<typename JSIterator::Traits> appendForEachArguments(JSC::ExecState& state, JSDOMGlobalObject& globalObject, JSC::MarkedArgumentBuffer& arguments, IteratorValue& value)
 {
     ASSERT(value);
     auto argument = toJS<typename JSIterator::Traits::ValueType>(state, globalObject, value);

@@ -213,20 +213,13 @@ String propertyNameToString(JSC::PropertyName);
 
 AtomicString propertyNameToAtomicString(JSC::PropertyName);
 
-String valueToStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
-String valueToStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue); // null if the value is null or undefined
-
 WEBCORE_EXPORT String valueToUSVString(JSC::ExecState*, JSC::JSValue);
-String valueToUSVStringTreatingNullAsEmptyString(JSC::ExecState*, JSC::JSValue);
-String valueToUSVStringWithUndefinedOrNullCheck(JSC::ExecState*, JSC::JSValue);
 
 int32_t finiteInt32Value(JSC::JSValue, JSC::ExecState*, bool& okay);
 
 // The following functions convert values to integers as per the WebIDL specification.
 // The conversion fails if the value cannot be converted to a number or, if EnforceRange is specified,
 // the value is outside the range of the destination integer type.
-
-enum IntegerConversionConfiguration { NormalConversion, EnforceRange, Clamp };
 
 WEBCORE_EXPORT int8_t toInt8EnforceRange(JSC::ExecState&, JSC::JSValue);
 WEBCORE_EXPORT uint8_t toUInt8EnforceRange(JSC::ExecState&, JSC::JSValue);

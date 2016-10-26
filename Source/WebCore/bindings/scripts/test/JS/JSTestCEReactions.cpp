@@ -232,7 +232,7 @@ static inline bool setJSTestCEReactionsAttributeWithCEReactionsFunction(ExecStat
     CustomElementReactionStack customElementReactionStack;
 #endif
     auto& impl = thisObject.wrapped();
-    auto nativeValue = value.toWTFString(&state);
+    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithCEReactions(WTFMove(nativeValue));
     return true;
@@ -254,7 +254,7 @@ static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsFunction(E
     CustomElementReactionStack customElementReactionStack;
 #endif
     auto& impl = thisObject.wrapped();
-    auto nativeValue = value.toWTFString(&state);
+    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
     return true;
@@ -277,7 +277,7 @@ static inline bool setJSTestCEReactionsStringifierAttributeFunction(ExecState& s
 #endif
     Ref<TestCEReactionsStringifier> forwardedImpl = thisObject.wrapped().stringifierAttribute();
     auto& impl = forwardedImpl.get();
-    auto nativeValue = value.toWTFString(&state);
+    auto nativeValue = convert<IDLDOMString>(state, value, StringConversionConfiguration::Normal);
     RETURN_IF_EXCEPTION(throwScope, false);
     impl.setValue(WTFMove(nativeValue));
     return true;

@@ -5225,14 +5225,24 @@ sub GetIntegerConversionConfiguration
 {
     my $signature = shift;
 
-    return "EnforceRange" if $signature->extendedAttributes->{EnforceRange};
-    return "Clamp" if $signature->extendedAttributes->{Clamp};
-    return "NormalConversion";
+    return "IntegerConversionConfiguration::EnforceRange" if $signature->extendedAttributes->{EnforceRange};
+    return "IntegerConversionConfiguration::Clamp" if $signature->extendedAttributes->{Clamp};
+    return "IntegerConversionConfiguration::Normal";
+}
+
+sub GetStringConversionConfiguration
+{
+    my $signature = shift;
+
+    return "StringConversionConfiguration::TreatNullAsEmptyString" if $signature->extendedAttributes->{TreatNullAs} && $signature->extendedAttributes->{TreatNullAs} eq "EmptyString";
+    return "StringConversionConfiguration::Normal";
 }
 
 sub JSValueToNativeIsHandledByDOMConvert
 {
-    my $idlType = shift;
+    my ($idlType, $signature) = @_;
+
+    return 0 if $idlType->name eq "DOMString" && ($signature->extendedAttributes->{RequiresExistingAtomicString} || $signature->extendedAttributes->{AtomicString});
 
     return 1 if $idlType->isUnion;
     return 1 if $idlType->name eq "any";
@@ -5243,6 +5253,7 @@ sub JSValueToNativeIsHandledByDOMConvert
     return 1 if $codeGenerator->IsFloatingPointType($idlType->name);
     return 1 if $codeGenerator->IsSequenceOrFrozenArrayType($idlType->name);
     return 1 if $codeGenerator->IsDictionaryType($idlType->name);
+    return 1 if $codeGenerator->IsStringType($idlType->name);
     return 0;
 }
 
@@ -5260,34 +5271,25 @@ sub JSValueToNative
     $stateReference = "*state" unless $stateReference;
     $thisObjectReference = "*castedThis" unless $thisObjectReference;
 
-    if (JSValueToNativeIsHandledByDOMConvert($idlType)) {
+    if (JSValueToNativeIsHandledByDOMConvert($idlType, $signature)) {
         AddToImplIncludes("JSDOMConvert.h");
         AddToImplIncludesForIDLType($idlType, $conditional);
 
         my $IDLType = GetIDLType($interface, $idlType);
 
-        if ($codeGenerator->IsIntegerType($type)) {
-            my $conversionType = GetIntegerConversionConfiguration($signature);
-            return ("convert<$IDLType>($stateReference, $value, $conversionType)", 1);
-        }
+        my @conversionArguments = ();
+        push(@conversionArguments, "$stateReference");
+        push(@conversionArguments, "$value");
+        push(@conversionArguments, GetIntegerConversionConfiguration($signature)) if $codeGenerator->IsIntegerType($type);
+        push(@conversionArguments, GetStringConversionConfiguration($signature)) if $codeGenerator->IsStringType($type);
 
-        return ("convert<$IDLType>($stateReference, $value)", 1);
+        return ("convert<$IDLType>(" . join(", ", @conversionArguments) . ")", 1);
     }
 
     if ($type eq "DOMString") {
         return ("AtomicString($value.toString($statePointer)->toExistingAtomicString($statePointer))", 1) if $signature->extendedAttributes->{RequiresExistingAtomicString};
-
-        my $treatNullAs = $signature->extendedAttributes->{TreatNullAs};
-        return ("valueToStringTreatingNullAsEmptyString($statePointer, $value)", 1) if $treatNullAs && $treatNullAs eq "EmptyString";
-        return ("valueToStringWithUndefinedOrNullCheck($statePointer, $value)", 1) if $signature->isNullable;
         return ("$value.toString($statePointer)->toAtomicString($statePointer)", 1) if $signature->extendedAttributes->{AtomicString};
-        return ("$value.toWTFString($statePointer)", 1);
-    }
-    if ($type eq "USVString") {
-        my $treatNullAs = $signature->extendedAttributes->{TreatNullAs};
-        return ("valueToUSVStringTreatingNullAsEmptyString($statePointer, $value)", 1) if $treatNullAs && $treatNullAs eq "EmptyString";
-        return ("valueToUSVStringWithUndefinedOrNullCheck($statePointer, $value)", 1) if $signature->isNullable;
-        return ("valueToUSVString($statePointer, $value)", 1);
+        assert("Unhandled string conversion.");
     }
 
     if ($type eq "SerializedScriptValue") {
