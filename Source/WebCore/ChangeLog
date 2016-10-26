@@ -1,3 +1,26 @@
+2016-10-26  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: playback support
+        https://bugs.webkit.org/show_bug.cgi?id=163678
+        <rdar://problem/27989479>
+
+        Reviewed by Dean Jackson.
+
+        We introduce the PlaybackSupport class which brings support for playing and pausing
+        the media by clicking on the play/pause button in the media controls and correctly
+        reflecting the media's playback state as the media is played or paused via the media API.
+
+        * Modules/modern-media-controls/js-files:
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController):
+        * Modules/modern-media-controls/media/playback-support.js: Copied from Source/WebCore/Modules/modern-media-controls/media/media-controller.js.
+        (PlaybackSupport.prototype.get control):
+        (PlaybackSupport.prototype.get mediaEvents):
+        (PlaybackSupport.prototype.buttonWasClicked):
+        (PlaybackSupport.prototype.syncControl):
+        (PlaybackSupport):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2016-10-26  Chris Dumez  <cdumez@apple.com>
 
         Regression(r203848): 百度糯米 app fails to load content due to a JavaScript error
