@@ -1,3 +1,23 @@
+2016-10-26  Youenn Fablet  <youenn@apple.com>
+
+        Enable SDPProcessor for Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=163940
+
+        Reviewed by Eric Carlson.
+
+        Covered by activated tests.
+
+        Activating processing of SDPProcessor scripts for Mac bots.
+        Moving platform/mediastream/openwebrtc/SDPProcessorScriptResource.cpp to platform/mediastream/SDPProcessorScriptResource.cpp.
+        This file is not tied to openwebrtc and allows retrieving the SDPProcessor script resource file content.
+
+        * DerivedSources.make:
+        * PlatformGTK.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/SDPProcessorScriptResource.cpp:
+        (WebCore::SDPProcessorScriptResource::scriptString):
+        * platform/mediastream/openwebrtc/SDPProcessorScriptResource.cpp: Removed.
+
 2016-10-26  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Get functional pseudos parsing

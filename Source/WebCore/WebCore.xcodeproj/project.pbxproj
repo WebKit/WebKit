@@ -5759,6 +5759,7 @@
 		CDAB6D2E17C814EE00C60B34 /* JSMediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2C17C814EE00C60B34 /* JSMediaControlsHost.h */; };
 		CDAB6D3117C9259500C60B34 /* UserAgentScripts.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2F17C9259500C60B34 /* UserAgentScripts.h */; };
 		CDAB6D3217C9259500C60B34 /* UserAgentScriptsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */; };
+		CDAB6D3217C9259500C60B35 /* SDPProcessorScriptsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D3017C9259500C60B35 /* SDPProcessorScriptsData.cpp */; };
 		CDAE8C091746B95700532D78 /* PlatformMediaSessionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAE8C071746B95700532D78 /* PlatformMediaSessionManager.cpp */; };
 		CDBEAEAC19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDBEAEAA19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm */; };
 		CDBEAEAD19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDBEAEAB19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.h */; };
@@ -13518,6 +13519,7 @@
 		CDAB6D2C17C814EE00C60B34 /* JSMediaControlsHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaControlsHost.h; sourceTree = "<group>"; };
 		CDAB6D2F17C9259500C60B34 /* UserAgentScripts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgentScripts.h; sourceTree = "<group>"; };
 		CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentScriptsData.cpp; sourceTree = "<group>"; };
+		CDAB6D3017C9259500C60B35 /* SDPProcessorScriptsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDPProcessorScriptsData.cpp; sourceTree = "<group>"; };
 		CDAE8C071746B95700532D78 /* PlatformMediaSessionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformMediaSessionManager.cpp; sourceTree = "<group>"; };
 		CDAE8C081746B95700532D78 /* PlatformMediaSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformMediaSessionManager.h; sourceTree = "<group>"; };
 		CDBEAEAA19D92B6C00BEBA88 /* MediaSelectionGroupAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSelectionGroupAVFObjC.mm; sourceTree = "<group>"; };
@@ -17242,6 +17244,7 @@
 				656581E909D1508D000E61D7 /* SVGNames.h */,
 				CDAB6D2F17C9259500C60B34 /* UserAgentScripts.h */,
 				CDAB6D3017C9259500C60B34 /* UserAgentScriptsData.cpp */,
+				CDAB6D3017C9259500C60B35 /* SDPProcessorScriptsData.cpp */,
 				656581AE09D14EE6000E61D7 /* UserAgentStyleSheets.h */,
 				656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */,
 				1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */,
@@ -31008,6 +31011,7 @@
 				26255F0018878DFF0006E1FD /* UserAgentIOS.mm in Sources */,
 				26255F0418878E110006E1FD /* UserAgentMac.mm in Sources */,
 				CDAB6D3217C9259500C60B34 /* UserAgentScriptsData.cpp in Sources */,
+				CDAB6D3217C9259500C60B35 /* SDPProcessorScriptsData.cpp in Sources */,
 				65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */,
 				1AE79D42188DB61F002239C2 /* UserContentController.cpp in Sources */,
 				7C3F01C21C8E5AC200ADD962 /* UserContentProvider.cpp in Sources */,

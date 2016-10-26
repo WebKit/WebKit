@@ -1,3 +1,24 @@
+2016-10-26  Youenn Fablet  <youenn@apple.com>
+
+        Enable SDPProcessor for Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=163940
+
+        Reviewed by Eric Carlson.
+
+        This is the first time the tests are activated since a long time.
+        Further patches should make the tests pass and/or update them according latest spec.
+
+        * fast/mediastream/RTCPeerConnection-createAnswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-createOffer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-local-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-local-pranswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-remote-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-have-remote-pranswer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-localDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-remoteDescription-expected.txt:
+        * fast/mediastream/RTCPeerConnection-stable-expected.txt:
+        * platform/mac/TestExpectations:
+
 2016-10-26  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
         WebRTC: The RTCTrackEventInit dictionary needs required members
         https://bugs.webkit.org/show_bug.cgi?id=158536

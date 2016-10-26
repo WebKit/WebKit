@@ -33,13 +33,17 @@
 #if ENABLE(WEB_RTC)
 #include "SDPProcessorScriptResource.h"
 
+#include "SDPProcessorScriptsData.h"
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 namespace SDPProcessorScriptResource {
 
 const String& scriptString()
 {
-    return emptyString();
+    static NeverDestroyed<const String> script = String(sdpJavaScript);
+    return script;
 }
 
 } // namespace SDPProcessorScriptResource
