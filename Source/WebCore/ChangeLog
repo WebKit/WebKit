@@ -1,5 +1,32 @@
 2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [GStreamer][MSE] MediaSourceClientGStreamerMSE
+        https://bugs.webkit.org/show_bug.cgi?id=162896
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This class encapsulates the MediaSource interaction responsibility for the
+        GStreamer platform.
+
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp: Added.
+        (WebCore::MediaSourceClientGStreamerMSE::create):
+        (WebCore::MediaSourceClientGStreamerMSE::MediaSourceClientGStreamerMSE):
+        (WebCore::MediaSourceClientGStreamerMSE::~MediaSourceClientGStreamerMSE):
+        (WebCore::MediaSourceClientGStreamerMSE::addSourceBuffer):
+        (WebCore::MediaSourceClientGStreamerMSE::duration):
+        (WebCore::MediaSourceClientGStreamerMSE::durationChanged):
+        (WebCore::MediaSourceClientGStreamerMSE::abort):
+        (WebCore::MediaSourceClientGStreamerMSE::append):
+        (WebCore::MediaSourceClientGStreamerMSE::markEndOfStream):
+        (WebCore::MediaSourceClientGStreamerMSE::removedFromMediaSource):
+        (WebCore::MediaSourceClientGStreamerMSE::flushAndEnqueueNonDisplayingSamples):
+        (WebCore::MediaSourceClientGStreamerMSE::enqueueSample):
+        (WebCore::MediaSourceClientGStreamerMSE::webKitMediaSrc):
+        (WebCore::MediaSourceClientGStreamerMSE::clearPlayerPrivate):
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.h: Added.
+
+2016-10-26  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer] GStreamer Media Sample
         https://bugs.webkit.org/show_bug.cgi?id=162894
 
