@@ -1,3 +1,17 @@
+2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r206102. rdar://problem/28744106
+
+    2016-09-19  Nan Wang  <n_wang@apple.com>
+
+            AX: Add accessibility support for details element on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=162041
+
+            Reviewed by Chris Fleizach.
+
+            * accessibility/ios-simulator/detail-summary-ios-expected.txt: Added.
+            * accessibility/ios-simulator/detail-summary-ios.html: Added.
+
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207486. rdar://problem/28409742

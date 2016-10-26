@@ -1,3 +1,19 @@
+2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r206102. rdar://problem/28744106
+
+    2016-09-19  Nan Wang  <n_wang@apple.com>
+
+            AX: Add accessibility support for details element on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=162041
+
+            Reviewed by Chris Fleizach.
+
+            * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+            (AccessibilityUIElement::isExpanded):
+            * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+            (WTR::AccessibilityUIElement::isExpanded):
+
 2016-10-20  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207220. rdar://problem/28811939
