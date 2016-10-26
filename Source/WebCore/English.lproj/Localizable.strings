@@ -935,7 +935,7 @@
 "length required" = "length required";
 
 /* The less good value description for a meter element. */
-"less good" = "less good";
+"critical value" = "critical value";
 
 /* accessibility role description for link */
 "link" = "link";
@@ -1022,7 +1022,7 @@
 "number of seconds of movie remaining" = "number of seconds of movie remaining";
 
 /* The optimum value description for a meter element. */
-"optimum" = "optimum";
+"optimal value" = "optimal value";
 
 /* accessibility role description for an output element */
 "output" = "output";
@@ -1130,7 +1130,7 @@
 "stop displaying closed captions" = "stop displaying closed captions";
 
 /* The suboptimal value description for a meter element. */
-"suboptimal" = "suboptimal";
+"suboptimal value" = "suboptimal value";
 
 /* HTTP result code string */
 "success" = "success";

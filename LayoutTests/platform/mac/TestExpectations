@@ -1486,5 +1486,3 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size-iframe.html [ S
 webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
-
-webkit.org/b/163997 accessibility/mac/meter-gauge-value-description.html [ Failure ]

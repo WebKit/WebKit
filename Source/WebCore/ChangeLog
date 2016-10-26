@@ -1,3 +1,23 @@
+2016-10-25  Nan Wang  <n_wang@apple.com>
+
+        LayoutTest accessibility/mac/meter-gauge-value-description.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=163997
+        <rdar://problem/28948637>
+
+        Reviewed by Chris Fleizach.
+
+        I hand-edited the Localizable.strings file in a previous patch and my changes
+        were replaced by running update-webkit-localizable-strings script. Changed the
+        key to be the same as the value to keep consistency with other entries.
+
+        Re-enabled the failing test.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXMeterGaugeRegionOptimumText):
+        (WebCore::AXMeterGaugeRegionSuboptimalText):
+        (WebCore::AXMeterGaugeRegionLessGoodText):
+
 2016-10-25  Filip Pizlo  <fpizlo@apple.com>
 
         HeapTimer should not hardcode all of its subclasses and USE(CF) shouldn't be a bizarre special case
