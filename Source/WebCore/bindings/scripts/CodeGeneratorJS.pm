@@ -1859,6 +1859,10 @@ sub GeneratePropertiesHashTable
         push(@$hashValue1, $functionName);
 
         my $functionLength = GetFunctionLength($function);
+
+        # FIXME: Remove this once we can get rid of the quirk introduced in https://bugs.webkit.org/show_bug.cgi?id=163967.
+        $functionLength = 3 if $interfaceName eq "Event" and $function->signature->name eq "initEvent";
+
         push(@$hashValue2, $functionLength);
 
         push(@$hashSpecials, ComputeFunctionSpecial($interface, $function));

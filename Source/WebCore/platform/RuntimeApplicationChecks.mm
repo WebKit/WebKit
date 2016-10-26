@@ -252,7 +252,13 @@ bool IOSApplication::isTheSecretSocietyHiddenMystery()
     static bool isTheSecretSocietyHiddenMystery = applicationBundleIsEqualTo("com.g5e.secretsociety");
     return isTheSecretSocietyHiddenMystery;
 }
-    
+
+bool IOSApplication::isBaiduNuomi()
+{
+    static bool isBaiduNuomi = applicationBundleIsEqualTo("com.renren-inc.nuomi");
+    return isBaiduNuomi;
+}
+
 #endif
 
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #include "EventNames.h"
 #include "EventPath.h"
 #include "EventTarget.h"
+#include "RuntimeApplicationChecks.h"
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>
 
@@ -87,6 +88,23 @@ void Event::initEvent(const AtomicString& eventTypeArg, bool canBubbleArg, bool 
     m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
+}
+
+ExceptionOr<void> Event::initEventForBindings(ScriptExecutionContext& scriptExecutionContext, const AtomicString& type, bool bubbles)
+{
+#if PLATFORM(IOS)
+    // FIXME: Temporary quirk for Baidu Nuomi App which calls initEvent() with too few parameters (rdar://problem/28707838).
+    if (IOSApplication::isBaiduNuomi()) {
+        scriptExecutionContext.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Calling Event.prototype.initEvent() with less than 3 parameters is deprecated."));
+        initEvent(type, bubbles, false);
+        return { };
+    }
+#else
+    UNUSED_PARAM(scriptExecutionContext);
+    UNUSED_PARAM(type);
+    UNUSED_PARAM(bubbles);
+#endif
+    return Exception { TypeError, ASCIILiteral("Not enough arguments") };
 }
 
 bool Event::composed() const
