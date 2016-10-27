@@ -58,7 +58,7 @@ public:
 
     virtual Type type() const = 0;
 
-#if !PLATFORM(EFL)
+#if !PLATFORM(EFL) && (USE(EGL) || USE(GLX))
     // FIXME: This should not have any platform ifdef, but EFL has its own EGLContext class
     // instead of using the GLContext common API.
     GLContext* sharingGLContext();
@@ -80,7 +80,9 @@ protected:
     EGLDisplay m_eglDisplay;
 #endif
 
+#if USE(EGL) || USE(GLX)
     std::unique_ptr<GLContext> m_sharingGLContext;
+#endif
 
 private:
     static std::unique_ptr<PlatformDisplay> createPlatformDisplay();

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(WAYLAND) && USE(EGL)
 
 #include "WebPageProxy.h"
 #include <WebCore/RefPtrCairo.h>
@@ -126,4 +126,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(WAYLAND)
+#endif // PLATFORM(WAYLAND) && USE(EGL)

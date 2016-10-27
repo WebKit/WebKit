@@ -1,3 +1,15 @@
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Configures but fails to link with ENABLE_OPENGL=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=163449
+
+        Reviewed by Michael Catanzaro.
+
+        Remove wrong dependency of Wayland on OpenGL introduced in r190615, it should be possible to build for Wayland
+        without GL.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2016-10-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Private/unsupported build options should be marked as advanced

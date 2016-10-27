@@ -645,7 +645,7 @@ WebProcessProxy& WebProcessPool::createNewWebProcess()
         parameters.memoryPressureMonitorHandle = MemoryPressureMonitor::singleton().createHandle();
 #endif
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(WAYLAND) && USE(EGL)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
 #endif

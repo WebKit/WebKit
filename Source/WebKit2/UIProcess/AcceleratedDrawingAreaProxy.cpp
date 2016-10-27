@@ -139,7 +139,7 @@ void AcceleratedDrawingAreaProxy::didUpdateBackingStoreState(uint64_t backingSto
     else {
         m_hasReceivedFirstUpdate = true;
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
         if (m_pendingNativeSurfaceHandleForCompositing) {
             setNativeSurfaceHandleForCompositing(m_pendingNativeSurfaceHandleForCompositing);
             m_pendingNativeSurfaceHandleForCompositing = 0;
@@ -223,7 +223,7 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
     if (!m_webPageProxy.isViewVisible())
         return;
 
-#if PLATFORM(WAYLAND)
+#if PLATFORM(WAYLAND) && USE(EGL)
     // Never block the UI process in Wayland when waiting for DidUpdateBackingStoreState after a resize,
     // because the nested compositor needs to handle the web process requests that happens while resizing.
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && WaylandCompositor::singleton().isRunning())
@@ -263,7 +263,7 @@ void AcceleratedDrawingAreaProxy::updateAcceleratedCompositingMode(const LayerTr
     m_webPageProxy.updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-#if USE(TEXTURE_MAPPER) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
+#if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
 void AcceleratedDrawingAreaProxy::setNativeSurfaceHandleForCompositing(uint64_t handle)
 {
     if (!m_hasReceivedFirstUpdate) {

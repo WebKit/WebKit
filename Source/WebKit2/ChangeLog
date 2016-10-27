@@ -1,5 +1,37 @@
 2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Configures but fails to link with ENABLE_OPENGL=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=163449
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize): Check TEXTURE_MAPPER_GL instead of TEXTURE_MAPPER and also ensure the current
+        display is X11.
+        (webkitWebViewBaseUnrealize): Ditto.
+        (webkitWebViewBaseDidRelaunchWebProcess): Check TEXTURE_MAPPER_GL instead of TEXTURE_MAPPER.
+        (webkitWebViewBasePageClosed): Ditto.
+        * UIProcess/AcceleratedDrawingAreaProxy.cpp:
+        (WebKit::AcceleratedDrawingAreaProxy::didUpdateBackingStoreState): Ditto.
+        (WebKit::AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState): Check EGL is enabled before
+        trying to use the WaylandCompositor.
+        * UIProcess/AcceleratedDrawingAreaProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createNewWebProcess): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStore.cpp:
+        (WebKit::AcceleratedBackingStore::create): Ditto.
+        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        * UIProcess/gtk/WaylandCompositor.h:
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::enterAcceleratedCompositingMode): Check TEXTURE_MAPPER_GL instead of TEXTURE_MAPPER.
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Avoid strstr() when checking (E)GL extensions
         https://bugs.webkit.org/show_bug.cgi?id=161958
 
