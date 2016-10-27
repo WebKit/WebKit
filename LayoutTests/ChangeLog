@@ -1,3 +1,18 @@
+2016-10-07  Zalan Bujtas  <zalan@apple.com>
+
+        https://vuldb.com/?cvssv3.2012 takes long time to load.
+        https://bugs.webkit.org/show_bug.cgi?id=162994
+        <rdar://problem/28593746>
+
+        Reviewed by Darin Adler.
+
+        It takes ~100 seconds to run this test case without the fix (300ms with the fix).
+        Surely it will timeout if it gets regressed. 
+
+        * fast/selectors/slow-style-sharing-with-long-cousin-list-expected.txt: Added.
+        * fast/selectors/slow-style-sharing-with-long-cousin-list.html: Added.
+        * platform/mac/TestExpectations: Skip perf test in debug.
+
 2016-10-06  Youenn Fablet  <youenn@apple.com>
 
         [WK2] 304 revalidation on the network process does not update the validated response
