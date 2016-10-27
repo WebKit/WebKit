@@ -599,7 +599,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             Vector<char> keyPathBuffer;
             sql.getColumnBlobAsVector(2, keyPathBuffer);
 
-            IDBKeyPath objectStoreKeyPath;
+            Optional<IDBKeyPath> objectStoreKeyPath;
             if (!deserializeIDBKeyPath(reinterpret_cast<const uint8_t*>(keyPathBuffer.data()), keyPathBuffer.size(), objectStoreKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
@@ -607,7 +607,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
             bool autoIncrement = sql.getColumnInt(3);
 
-            databaseInfo->addExistingObjectStore({ objectStoreID, objectStoreName, objectStoreKeyPath, autoIncrement });
+            databaseInfo->addExistingObjectStore({ objectStoreID, objectStoreName, WTFMove(objectStoreKeyPath), autoIncrement });
 
             result = sql.step();
         }
@@ -632,8 +632,12 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             Vector<char> keyPathBuffer;
             sql.getColumnBlobAsVector(3, keyPathBuffer);
 
-            IDBKeyPath indexKeyPath;
+            Optional<IDBKeyPath> indexKeyPath;
             if (!deserializeIDBKeyPath(reinterpret_cast<const uint8_t*>(keyPathBuffer.data()), keyPathBuffer.size(), indexKeyPath)) {
+                LOG_ERROR("Unable to extract key path from database");
+                return nullptr;
+            }
+            if (!indexKeyPath) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
             }
@@ -647,7 +651,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
                 return nullptr;
             }
 
-            objectStore->addExistingIndex({ indexID, objectStoreID, indexName, indexKeyPath, unique, multiEntry });
+            objectStore->addExistingIndex({ indexID, objectStoreID, indexName, WTFMove(indexKeyPath.value()), unique, multiEntry });
 
             result = sql.step();
         }

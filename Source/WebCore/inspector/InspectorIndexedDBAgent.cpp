@@ -162,39 +162,24 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
 }
 
 
-static RefPtr<KeyPath> keyPathFromIDBKeyPath(const IDBKeyPath& idbKeyPath)
+static RefPtr<KeyPath> keyPathFromIDBKeyPath(const Optional<IDBKeyPath>& idbKeyPath)
 {
-    RefPtr<KeyPath> keyPath;
-    switch (idbKeyPath.type()) {
-    case IDBKeyPath::Type::Null:
-        keyPath = KeyPath::create()
-            .setType(KeyPath::Type::Null)
-            .release();
-        break;
+    if (!idbKeyPath)
+        return KeyPath::create().setType(KeyPath::Type::Null).release();
 
-    case IDBKeyPath::Type::String:
-        keyPath = KeyPath::create()
-            .setType(KeyPath::Type::String)
-            .release();
-        keyPath->setString(idbKeyPath.string());
-        break;
-
-    case IDBKeyPath::Type::Array: {
+    auto visitor = WTF::makeVisitor([](const String& string) {
+        RefPtr<KeyPath> keyPath = KeyPath::create().setType(KeyPath::Type::String).release();
+        keyPath->setString(string);
+        return keyPath;
+    }, [](const Vector<String>& vector) {
         auto array = Inspector::Protocol::Array<String>::create();
-        for (auto& string : idbKeyPath.array())
+        for (auto& string : vector)
             array->addItem(string);
-        keyPath = KeyPath::create()
-            .setType(KeyPath::Type::Array)
-            .release();
+        RefPtr<KeyPath> keyPath = KeyPath::create().setType(KeyPath::Type::Array).release();
         keyPath->setArray(WTFMove(array));
-        break;
-    }
-
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    return keyPath;
+        return keyPath;
+    });
+    return WTF::visit(visitor, idbKeyPath.value());
 }
 
 static RefPtr<IDBTransaction> transactionForDatabase(IDBDatabase* idbDatabase, const String& objectStoreName, const String& mode = IDBTransaction::modeReadOnly())

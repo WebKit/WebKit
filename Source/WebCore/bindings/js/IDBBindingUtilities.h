@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyPath.h"
 #include <wtf/Forward.h>
 
 namespace JSC {
@@ -41,13 +42,13 @@ namespace WebCore {
 class IDBIndexInfo;
 class IDBKey;
 class IDBKeyData;
-class IDBKeyPath;
 class IDBValue;
 class IndexKey;
 class JSDOMGlobalObject;
 class ThreadSafeDataBuffer;
 
-JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const IDBKeyPath&);
+// FIXME: Remove this once we support returning union types.
+JSC::JSValue toJS(JSC::ExecState&, JSDOMGlobalObject&, const Optional<IDBKeyPath>&);
 
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);
 bool canInjectIDBKeyIntoScriptValue(JSC::ExecState&, const JSC::JSValue&, const IDBKeyPath&);

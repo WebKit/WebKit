@@ -33,20 +33,65 @@
 
 namespace WebCore {
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath& keyPath)
+enum class KeyPathType { Null, String, Array };
+
+RefPtr<SharedBuffer> serializeIDBKeyPath(const Optional<IDBKeyPath>& keyPath)
 {
     auto encoder = KeyedEncoder::encoder();
-    keyPath.encode(*encoder);
+
+    if (keyPath) {
+        auto visitor = WTF::makeVisitor([&](const String& string) {
+            encoder->encodeEnum("type", KeyPathType::String);
+            encoder->encodeString("string", string);
+        }, [&](const Vector<String>& vector) {
+            encoder->encodeEnum("type", KeyPathType::Array);
+            encoder->encodeObjects("array", vector.begin(), vector.end(), [](WebCore::KeyedEncoder& encoder, const String& string) {
+                encoder.encodeString("string", string);
+            });
+        });
+        WTF::visit(visitor, keyPath.value());
+    } else
+        encoder->encodeEnum("type", KeyPathType::Null);
+
     return encoder->finishEncoding();
 }
 
-bool deserializeIDBKeyPath(const uint8_t* data, size_t size, IDBKeyPath& result)
+bool deserializeIDBKeyPath(const uint8_t* data, size_t size, Optional<IDBKeyPath>& result)
 {
     if (!data || !size)
         return false;
 
     auto decoder = KeyedDecoder::decoder(data, size);
-    return IDBKeyPath::decode(*decoder, result);
+
+    KeyPathType type;
+    bool succeeded = decoder->decodeEnum("type", type, [](KeyPathType value) {
+        return value == KeyPathType::Null || value == KeyPathType::String || value == KeyPathType::Array;
+    });
+    if (!succeeded)
+        return false;
+
+    switch (type) {
+    case KeyPathType::Null:
+        break;
+    case KeyPathType::String: {
+        String string;
+        if (!decoder->decodeString("string", string))
+            return false;
+        result = IDBKeyPath(WTFMove(string));
+        break;
+    }
+    case KeyPathType::Array: {
+        Vector<String> vector;
+        succeeded = decoder->decodeObjects("array", vector, [](KeyedDecoder& decoder, String& result) {
+            return decoder.decodeString("string", result);
+        });
+        if (!succeeded)
+            return false;
+        result = IDBKeyPath(WTFMove(vector));
+        break;
+    }
+    }
+    return true;
 }
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)

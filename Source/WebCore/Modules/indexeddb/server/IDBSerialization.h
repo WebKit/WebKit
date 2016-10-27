@@ -28,15 +28,15 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBKeyPath.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
 
 class IDBKeyData;
-class IDBKeyPath;
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const IDBKeyPath&);
-bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, IDBKeyPath&);
+RefPtr<SharedBuffer> serializeIDBKeyPath(const Optional<IDBKeyPath>&);
+bool deserializeIDBKeyPath(const uint8_t* buffer, size_t bufferSize, Optional<IDBKeyPath>&);
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData&);
 bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, IDBKeyData&);

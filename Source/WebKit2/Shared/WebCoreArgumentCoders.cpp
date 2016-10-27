@@ -2303,5 +2303,35 @@ bool ArgumentCoder<CaptureDevice>::decode(Decoder& decoder, WebCore::CaptureDevi
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPath)
+{
+    bool isString = WTF::holds_alternative<String>(keyPath);
+    encoder << isString;
+    if (isString)
+        encoder << WTF::get<String>(keyPath);
+    else
+        encoder << WTF::get<Vector<String>>(keyPath);
+}
+
+bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
+{
+    bool isString;
+    if (!decoder.decode(isString))
+        return false;
+    if (isString) {
+        String string;
+        if (!decoder.decode(string))
+            return false;
+        keyPath = string;
+    } else {
+        Vector<String> vector;
+        if (!decoder.decode(vector))
+            return false;
+        keyPath = vector;
+    }
+    return true;
+}
+#endif
 
 } // namespace IPC

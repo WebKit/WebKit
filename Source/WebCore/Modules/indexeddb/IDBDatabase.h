@@ -57,7 +57,7 @@ public:
     RefPtr<DOMStringList> objectStoreNames() const;
 
     struct ObjectStoreParameters {
-        Optional<IDBKeyPathVariant> keyPath;
+        Optional<IDBKeyPath> keyPath;
         bool autoIncrement;
     };
 

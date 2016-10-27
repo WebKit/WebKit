@@ -1,3 +1,19 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Replace IDBKeyPath with a WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=163909
+
+        Reviewed by Darin Adler.
+
+        Add coders to encode / decode IDBKeyPath type for IPC.
+
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IDBKeyPath>::encode):
+        (IPC::ArgumentCoder<IDBKeyPath>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+
 2016-10-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend

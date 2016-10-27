@@ -242,11 +242,11 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
 {
     LOG(IndexedDB, "injectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
+    ASSERT(WTF::holds_alternative<String>(keyPath));
 
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
-    IDBParseKeyPath(keyPath.string(), keyPathElements, error);
+    IDBParseKeyPath(WTF::get<String>(keyPath), keyPathElements, error);
     ASSERT(error == IDBKeyPathParseError::None);
 
     if (keyPathElements.isEmpty())
@@ -269,10 +269,8 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
 
 RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(ExecState& exec, const JSValue& value, const IDBKeyPath& keyPath)
 {
-    ASSERT(!keyPath.isNull());
-
-    if (keyPath.type() == IDBKeyPath::Type::Array) {
-        const Vector<String>& array = keyPath.array();
+    if (WTF::holds_alternative<Vector<String>>(keyPath)) {
+        auto& array = WTF::get<Vector<String>>(keyPath);
         Vector<RefPtr<IDBKey>> result;
         result.reserveInitialCapacity(array.size());
         for (auto& string : array) {
@@ -284,18 +282,17 @@ RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(ExecState& exec, const
         return IDBKey::createArray(WTFMove(result));
     }
 
-    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
-    return internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, keyPath.string());
+    return internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, WTF::get<String>(keyPath));
 }
 
 bool canInjectIDBKeyIntoScriptValue(ExecState& exec, const JSValue& scriptValue, const IDBKeyPath& keyPath)
 {
     LOG(StorageAPI, "canInjectIDBKeyIntoScriptValue");
 
-    ASSERT(keyPath.type() == IDBKeyPath::Type::String);
+    ASSERT(WTF::holds_alternative<String>(keyPath));
     Vector<String> keyPathElements;
     IDBKeyPathParseError error;
-    IDBParseKeyPath(keyPath.string(), keyPathElements, error);
+    IDBParseKeyPath(WTF::get<String>(keyPath), keyPathElements, error);
     ASSERT(error == IDBKeyPathParseError::None);
 
     if (!keyPathElements.size())
@@ -339,35 +336,30 @@ JSC::JSValue idbKeyDataToScriptValue(JSC::ExecState& exec, const IDBKeyData& key
 
 static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)
 {
-    Vector<IDBKeyData> keys;
-
-    switch (info.keyPath().type()) {
-    case IDBKeyPath::Type::Array:
-        for (auto& entry : info.keyPath().array()) {
-            auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, entry);
-            if (!key)
-                return { };
-            keys.append(key.get());
-        }
-        break;
-    case IDBKeyPath::Type::String: {
-        auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, info.keyPath().string());
+    auto visitor = WTF::makeVisitor([&](const String& string) -> Vector<IDBKeyData> {
+        auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, string);
         if (!idbKey)
             return { };
 
+        Vector<IDBKeyData> keys;
         if (info.multiEntry() && idbKey->type() == IndexedDB::Array) {
             for (auto& key : idbKey->array())
                 keys.append(key.get());
         } else
             keys.append(idbKey.get());
+        return keys;
+    }, [&](const Vector<String>& vector) -> Vector<IDBKeyData> {
+        Vector<IDBKeyData> keys;
+        for (auto& entry : vector) {
+            auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, entry);
+            if (!key)
+                return { };
+            keys.append(key.get());
+        }
+        return keys;
+    });
 
-        break;
-    }
-    case IDBKeyPath::Type::Null:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    return keys;
+    return WTF::visit(visitor, info.keyPath());
 }
 
 void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue value, IndexKey& outKey)
@@ -380,22 +372,17 @@ void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue
     outKey = IndexKey(WTFMove(keyDatas));
 }
 
-JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, const IDBKeyPath& value)
+JSValue toJS(ExecState& state, JSDOMGlobalObject& globalObject, const Optional<IDBKeyPath>& keyPath)
 {
-    switch (value.type()) {
-    case IDBKeyPath::Type::Null:
+    if (!keyPath)
         return jsNull();
-    case IDBKeyPath::Type::String:
-        return jsStringWithCache(&state, value.string());
-    case IDBKeyPath::Type::Array:
-        auto keyPaths = DOMStringList::create();
-        for (auto& path : value.array())
-            keyPaths->append(path);
-        return toJS(&state, &globalObject, keyPaths);
-    }
 
-    ASSERT_NOT_REACHED();
-    return jsNull();
+    auto visitor = WTF::makeVisitor([&](const String& string) -> JSValue {
+        return toJS<IDLDOMString>(state, globalObject, string);
+    }, [&](const Vector<String>& vector) -> JSValue {
+        return toJS<IDLSequence<IDLDOMString>>(state, globalObject, vector);
+    });
+    return WTF::visit(visitor, keyPath.value());
 }
 
 } // namespace WebCore

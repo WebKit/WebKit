@@ -62,7 +62,7 @@ public:
 
     const String& name() const;
     ExceptionOr<void> setName(const String&);
-    const IDBKeyPath& keyPath() const;
+    const Optional<IDBKeyPath>& keyPath() const;
     RefPtr<DOMStringList> indexNames() const;
     IDBTransaction& transaction();
     bool autoIncrement() const;
@@ -83,7 +83,7 @@ public:
     ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&, IDBKeyRange*);
     ExceptionOr<Ref<IDBRequest>> deleteFunction(JSC::ExecState&, JSC::JSValue key);
     ExceptionOr<Ref<IDBRequest>> clear(JSC::ExecState&);
-    ExceptionOr<Ref<IDBIndex>> createIndex(JSC::ExecState&, const String& name, IDBKeyPathVariant&&, const IndexParameters&);
+    ExceptionOr<Ref<IDBIndex>> createIndex(JSC::ExecState&, const String& name, IDBKeyPath&&, const IndexParameters&);
     ExceptionOr<Ref<IDBIndex>> index(const String& name);
     ExceptionOr<void> deleteIndex(const String& name);
     ExceptionOr<Ref<IDBRequest>> count(JSC::ExecState&, IDBKeyRange*);

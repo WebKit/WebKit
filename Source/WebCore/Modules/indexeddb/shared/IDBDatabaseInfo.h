@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class IDBKeyPath;
-
 class IDBDatabaseInfo {
 public:
     IDBDatabaseInfo(const String& name, uint64_t version);
@@ -50,7 +48,7 @@ public:
     uint64_t version() const { return m_version; }
 
     bool hasObjectStore(const String& name) const;
-    IDBObjectStoreInfo createNewObjectStore(const String& name, const IDBKeyPath&, bool autoIncrement);
+    IDBObjectStoreInfo createNewObjectStore(const String& name, Optional<IDBKeyPath>&&, bool autoIncrement);
     void addExistingObjectStore(const IDBObjectStoreInfo&);
     IDBObjectStoreInfo* infoForExistingObjectStore(uint64_t objectStoreIdentifier);
     IDBObjectStoreInfo* infoForExistingObjectStore(const String& objectStoreName);

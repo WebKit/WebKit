@@ -41,13 +41,13 @@ true
 TestIndex6
 [object IDBObjectStore]
 TestObjectStore
-[object DOMStringList]
+foo
 false
 false
 TestIndex7
 [object IDBObjectStore]
 TestObjectStore
-[object DOMStringList]
+foo,bar
 false
 false
 Initial upgrade versionchange transaction complete
@@ -84,13 +84,13 @@ true
 TestIndex6
 [object IDBObjectStore]
 TestObjectStore
-[object DOMStringList]
+foo
 false
 false
 TestIndex7
 [object IDBObjectStore]
 TestObjectStore
-[object DOMStringList]
+foo,bar
 false
 false
 readonly transaction complete

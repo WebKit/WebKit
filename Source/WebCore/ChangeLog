@@ -1,3 +1,72 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Replace IDBKeyPath with a WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=163909
+
+        Reviewed by Darin Adler.
+
+        Replace IDBKeyPath class with the IDBKeyPathVariant type entirely
+        and rename IDBKeyPathVariant to IDBKeyPath.
+
+        Unfortunately, IDBKeyPath still needs some special handling when
+        returned to the JavaScript because we do not have a toJS() accepting
+        a WTF::Variant as input yet.
+
+        There should be no significant behavior change except that
+        IDBIndex.keyPath / IDBObjectStore.keyPath now returns an array of
+        Strings instead of a DOMStringList object when the IDBKeyPath
+        contains a vector. This is a progression and matches the
+        specification:
+        - https://www.w3.org/TR/IndexedDB/#widl-IDBIndex-keyPath
+        - https://www.w3.org/TR/IndexedDB/#widl-IDBObjectStore-keyPath
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::isolatedCopy):
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        (WebCore::isIDBKeyPathValid):
+        (WebCore::IDBKeyPathIsolatedCopy):
+        * Modules/indexeddb/IDBKeyPath.h:
+        (WebCore::IDBKeyPathIsolatedCopy):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::keyPath):
+        (WebCore::IDBObjectStore::putOrAdd):
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::serializeIDBKeyPath):
+        (WebCore::deserializeIDBKeyPath):
+        * Modules/indexeddb/server/IDBSerialization.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        (WebCore::IDBDatabaseInfo::createNewObjectStore):
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::IDBIndexInfo):
+        (WebCore::IDBIndexInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::IDBObjectStoreInfo):
+        (WebCore::IDBObjectStoreInfo::createNewIndex):
+        (WebCore::IDBObjectStoreInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        (WebCore::IDBObjectStoreInfo::keyPath):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::canInjectIDBKeyIntoScriptValue):
+        (WebCore::createKeyPathArray):
+        (WebCore::toJS):
+        * bindings/js/IDBBindingUtilities.h:
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2016-10-26  Zalan Bujtas  <zalan@apple.com>
 
         Ignore out-of-flow siblings when searching for a spanner candidate.

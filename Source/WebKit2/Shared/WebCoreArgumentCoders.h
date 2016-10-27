@@ -134,6 +134,12 @@ struct MediaConstraintsData;
 }
 #endif
 
+#if ENABLE(INDEXED_DATABASE)
+namespace WebCore {
+using IDBKeyPath = Variant<String, Vector<String>>;
+}
+#endif
+
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -545,6 +551,15 @@ template<> struct ArgumentCoder<WebCore::CaptureDevice> {
     static void encode(Encoder&, const WebCore::CaptureDevice&);
     static bool decode(Decoder&, WebCore::CaptureDevice&);
 };
+#endif
+
+#if ENABLE(INDEXED_DATABASE)
+
+template<> struct ArgumentCoder<WebCore::IDBKeyPath> {
+    static void encode(Encoder&, const WebCore::IDBKeyPath&);
+    static bool decode(Decoder&, WebCore::IDBKeyPath&);
+};
+
 #endif
 
 } // namespace IPC

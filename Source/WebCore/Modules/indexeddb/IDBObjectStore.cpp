@@ -120,7 +120,7 @@ ExceptionOr<void> IDBObjectStore::setName(const String& name)
     return { };
 }
 
-const IDBKeyPath& IDBObjectStore::keyPath() const
+const Optional<IDBKeyPath>& IDBObjectStore::keyPath() const
 {
     ASSERT(currentThread() == m_transaction->database().originThreadID());
     return m_info.keyPath();
@@ -311,20 +311,20 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
     if (key && !key->isValid())
         return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to store record in an IDBObjectStore: The parameter is not a valid key.") };
 
-    bool usesInlineKeys = !m_info.keyPath().isNull();
+    bool usesInlineKeys = !!m_info.keyPath();
     bool usesKeyGenerator = autoIncrement();
     if (usesInlineKeys && inlineKeyCheck == InlineKeyCheck::Perform) {
         if (key)
             return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to store record in an IDBObjectStore: The object store uses in-line keys and the key parameter was provided.") };
 
-        RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, m_info.keyPath());
+        RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, m_info.keyPath().value());
         if (keyPathKey && !keyPathKey->isValid())
             return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to store record in an IDBObjectStore: Evaluating the object store's key path yielded a value that is not a valid key.") };
 
         if (!keyPathKey) {
             if (!usesKeyGenerator)
                 return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to store record in an IDBObjectStore: Evaluating the object store's key path did not yield a value.") };
-            if (!canInjectIDBKeyIntoScriptValue(state, value, m_info.keyPath()))
+            if (!canInjectIDBKeyIntoScriptValue(state, value, m_info.keyPath().value()))
                 return Exception { IDBDatabaseException::DataError };
         }
 
@@ -399,7 +399,7 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::clear(ExecState& execState)
     return m_transaction->requestClearObjectStore(execState, *this);
 }
 
-ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, IDBKeyPathVariant&& keyPath, const IndexParameters& parameters)
+ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String& name, IDBKeyPath&& keyPath, const IndexParameters& parameters)
 {
     LOG(IndexedDB, "IDBObjectStore::createIndex %s", name.utf8().data());
     ASSERT(currentThread() == m_transaction->database().originThreadID());
@@ -426,7 +426,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String&
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'createIndex' on 'IDBObjectStore': The keyPath argument was an array and the multiEntry option is true.") };
 
     // Install the new Index into the ObjectStore's info.
-    IDBIndexInfo info = m_info.createNewIndex(name, Optional<IDBKeyPathVariant>(WTFMove(keyPath)), parameters.unique, parameters.multiEntry);
+    IDBIndexInfo info = m_info.createNewIndex(name, WTFMove(keyPath), parameters.unique, parameters.multiEntry);
     m_transaction->database().didCreateIndexInfo(info);
 
     // Create the actual IDBObjectStore from the transaction, which also schedules the operation server side.

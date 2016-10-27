@@ -194,10 +194,10 @@ ExceptionOr<Ref<IDBRequest>> IDBCursor::update(ExecState& state, JSValue value)
         return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The cursor is a key cursor.") };
 
     auto& objectStore = effectiveObjectStore();
-    auto& keyPath = objectStore.info().keyPath();
-    const bool usesInLineKeys = !keyPath.isNull();
+    auto& optionalKeyPath = objectStore.info().keyPath();
+    const bool usesInLineKeys = !!optionalKeyPath;
     if (usesInLineKeys) {
-        RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, keyPath);
+        RefPtr<IDBKey> keyPathKey = maybeCreateIDBKeyFromScriptValueAndKeyPath(state, value, optionalKeyPath.value());
         IDBKeyData keyPathKeyData(keyPathKey.get());
         if (!keyPathKey || keyPathKeyData != m_currentPrimaryKeyData)
             return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to execute 'update' on 'IDBCursor': The effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key.") };

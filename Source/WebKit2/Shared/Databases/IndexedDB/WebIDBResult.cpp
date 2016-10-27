@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "ArgumentCoders.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 

@@ -1,3 +1,17 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        Replace IDBKeyPath with a WTF::Variant
+        https://bugs.webkit.org/show_bug.cgi?id=163909
+
+        Reviewed by Darin Adler.
+
+        Rebaseline a few tests now that IDBIndex.keyPath / IDBObjectStore.keyPath
+        no longer incorrectly return DOMStringList objects and return regular
+        arrays instead.
+
+        * storage/indexeddb/modern/idbindex-properties-basic-expected.txt:
+        * storage/indexeddb/modern/idbindex-properties-basic-private-expected.txt:
+
 2016-10-26  Zalan Bujtas  <zalan@apple.com>
 
         Ignore out-of-flow siblings when searching for a spanner candidate.

@@ -35,16 +35,14 @@
 
 namespace WebCore {
 
-class IDBKeyPath;
-
 class IDBObjectStoreInfo {
 public:
     WEBCORE_EXPORT IDBObjectStoreInfo();
-    IDBObjectStoreInfo(uint64_t identifier, const String& name, const IDBKeyPath&, bool autoIncrement);
+    IDBObjectStoreInfo(uint64_t identifier, const String& name, Optional<IDBKeyPath>&&, bool autoIncrement);
 
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
-    const IDBKeyPath& keyPath() const { return m_keyPath; }
+    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     bool autoIncrement() const { return m_autoIncrement; }
     uint64_t maxIndexID() const { return m_maxIndexID; }
 
@@ -52,7 +50,7 @@ public:
 
     IDBObjectStoreInfo isolatedCopy() const;
 
-    IDBIndexInfo createNewIndex(const String& name, const IDBKeyPath&, bool unique, bool multiEntry);
+    IDBIndexInfo createNewIndex(const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
     bool hasIndex(const String& name) const;
     bool hasIndex(uint64_t indexIdentifier) const;
@@ -75,7 +73,7 @@ public:
 private:
     uint64_t m_identifier { 0 };
     String m_name;
-    IDBKeyPath m_keyPath;
+    Optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
     uint64_t m_maxIndexID { 0 };
 

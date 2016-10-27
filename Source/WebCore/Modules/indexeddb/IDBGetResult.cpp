@@ -53,7 +53,7 @@ void IDBGetResult::isolatedCopy(const IDBGetResult& source, IDBGetResult& destin
     destination.m_value = source.m_value.isolatedCopy();
     destination.m_keyData = source.m_keyData.isolatedCopy();
     destination.m_primaryKeyData = source.m_primaryKeyData.isolatedCopy();
-    destination.m_keyPath = source.m_keyPath.isolatedCopy();
+    destination.m_keyPath = WebCore::isolatedCopy(source.m_keyPath);
     destination.m_isDefined = source.m_isDefined;
 }
 

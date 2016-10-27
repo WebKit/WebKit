@@ -33,11 +33,8 @@
 
 namespace WebCore {
 
-using IDBKeyPathVariant = WTF::Variant<String, Vector<String>>;
-bool isIDBKeyPathValid(const IDBKeyPathVariant&);
-
-class KeyedDecoder;
-class KeyedEncoder;
+using IDBKeyPath = WTF::Variant<String, Vector<String>>;
+bool isIDBKeyPathValid(const IDBKeyPath&);
 
 enum class IDBKeyPathParseError {
     None,
@@ -47,95 +44,12 @@ enum class IDBKeyPathParseError {
 };
 
 void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
-
-// FIXME: We should be able to replace IDBKeyPath with IDBKeyPathVariant.
-class IDBKeyPath {
-public:
-    IDBKeyPath() { }
-    WEBCORE_EXPORT IDBKeyPath(const String&);
-    WEBCORE_EXPORT IDBKeyPath(const Vector<String>& array);
-    WEBCORE_EXPORT IDBKeyPath(Optional<IDBKeyPathVariant>&&);
-
-    enum class Type { Null, String, Array };
-    Type type() const { return m_type; }
-
-    const Vector<String>& array() const
-    {
-        ASSERT(m_type == Type::Array);
-        return m_array;
-    }
-
-    const String& string() const
-    {
-        ASSERT(m_type == Type::String);
-        return m_string;
-    }
-
-    bool isNull() const { return m_type == Type::Null; }
-    bool operator==(const IDBKeyPath& other) const;
-
-    IDBKeyPath isolatedCopy() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBKeyPath&);
-    
-    WEBCORE_EXPORT void encode(KeyedEncoder&) const;
-    WEBCORE_EXPORT static bool decode(KeyedDecoder&, IDBKeyPath&);
-
-private:
-    Type m_type { Type::Null };
-    String m_string;
-    Vector<String> m_array;
-};
-
-template<class Encoder> void IDBKeyPath::encode(Encoder& encoder) const
+IDBKeyPath isolatedCopy(const IDBKeyPath&);
+inline Optional<IDBKeyPath> isolatedCopy(const Optional<IDBKeyPath>& variant)
 {
-    encoder.encodeEnum(m_type);
-
-    switch (m_type) {
-    case Type::Null:
-        break;
-    case Type::String:
-        encoder << m_string;
-        break;
-    case Type::Array:
-        encoder << m_array;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-template<class Decoder> bool IDBKeyPath::decode(Decoder& decoder, IDBKeyPath& keyPath)
-{
-    Type type;
-    if (!decoder.decodeEnum(type))
-        return false;
-
-    switch (type) {
-    case Type::Null:
-        keyPath = IDBKeyPath();
-        return true;
-
-    case Type::String: {
-        String string;
-        if (!decoder.decode(string))
-            return false;
-
-        keyPath = IDBKeyPath(string);
-        return true;
-    }
-    case Type::Array: {
-        Vector<String> array;
-        if (!decoder.decode(array))
-            return false;
-
-        keyPath = IDBKeyPath(array);
-        return true;
-    }
-    default:
-        return true;
-    }
+    if (!variant)
+        return { };
+    return isolatedCopy(variant.value());
 }
 
 } // namespace WebCore
