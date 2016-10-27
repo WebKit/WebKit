@@ -1,3 +1,10 @@
+2016-10-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed. Build fix for gcc.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maxTimeSeekable):
+
 2016-10-27  Youenn Fablet  <youenn@apple.com>
 
         MediaPayload does not need to be refcounted

@@ -822,7 +822,7 @@ float MediaPlayerPrivateGStreamerMSE::maxTimeSeekable() const
     GST_DEBUG("maxTimeSeekable");
     float result = durationMediaTime().toFloat();
     // Infinite duration means live stream.
-    if (isinf(result)) {
+    if (std::isinf(result)) {
         MediaTime maxBufferedTime = buffered()->maximumBufferedTime();
         // Return the highest end time reported by the buffered attribute.
         result = maxBufferedTime.isValid() ? maxBufferedTime.toFloat() : 0;
