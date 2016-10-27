@@ -1,5 +1,12 @@
 2016-10-27  Dan Bernstein  <mitz@apple.com>
 
+        Reapplied the configuration changes from r207934 without breaking iOS builds.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitLegacy.xcconfig:
+
+2016-10-27  Dan Bernstein  <mitz@apple.com>
+
         Reverted the configuration changes from r207934 because they broke iOS builds not using the Apple-internal SDK.
 
         * Configurations/Base.xcconfig:
