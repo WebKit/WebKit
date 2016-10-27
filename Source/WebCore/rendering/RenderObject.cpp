@@ -1421,7 +1421,7 @@ void RenderObject::insertedIntoTree()
         parent()->dirtyLinesFromChangedChild(*this);
 
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
-        flowThread->flowThreadDescendantInserted(this);
+        flowThread->flowThreadDescendantInserted(*this);
 }
 
 void RenderObject::willBeRemovedFromTree()

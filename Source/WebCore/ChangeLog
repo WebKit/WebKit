@@ -1,3 +1,31 @@
+2016-10-27  Zalan Bujtas  <zalan@apple.com>
+
+        RenderMultiColumnFlowThread::processPossibleSpannerDescendant should take RenderObject& instead of RenderObject*
+        https://bugs.webkit.org/show_bug.cgi?id=164072
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::findSetRendering):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted):
+        (WebCore::RenderMultiColumnFlowThread::findSetRendering): Deleted.
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::precedesRenderer):
+        (WebCore::RenderMultiColumnSet::containsRendererInFlowThread):
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+
 2016-10-27  Brent Fulgham  <bfulgham@apple.com>
 
         Prevent hit tests from being performed on an invalid render tree

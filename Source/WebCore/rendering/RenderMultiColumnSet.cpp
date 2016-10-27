@@ -91,7 +91,7 @@ RenderObject* RenderMultiColumnSet::lastRendererInFlowThread() const
     return flowThread()->lastLeafChild();
 }
 
-static bool precedesRenderer(RenderObject* renderer, RenderObject* boundary)
+static bool precedesRenderer(const RenderObject* renderer, const RenderObject* boundary)
 {
     for (; renderer; renderer = renderer->nextInPreOrder()) {
         if (renderer == boundary)
@@ -100,11 +100,11 @@ static bool precedesRenderer(RenderObject* renderer, RenderObject* boundary)
     return false;
 }
 
-bool RenderMultiColumnSet::containsRendererInFlowThread(RenderObject* renderer) const
+bool RenderMultiColumnSet::containsRendererInFlowThread(const RenderObject& renderer) const
 {
     if (!previousSiblingMultiColumnSet() && !nextSiblingMultiColumnSet()) {
         // There is only one set. This is easy, then.
-        return renderer->isDescendantOf(m_flowThread);
+        return renderer.isDescendantOf(m_flowThread);
     }
 
     RenderObject* firstRenderer = firstRendererInFlowThread();
@@ -113,7 +113,7 @@ bool RenderMultiColumnSet::containsRendererInFlowThread(RenderObject* renderer) 
     ASSERT(lastRenderer);
 
     // This is SLOW! But luckily very uncommon.
-    return precedesRenderer(firstRenderer, renderer) && precedesRenderer(renderer, lastRenderer);
+    return precedesRenderer(firstRenderer, &renderer) && precedesRenderer(&renderer, lastRenderer);
 }
 
 void RenderMultiColumnSet::setLogicalTopInFlowThread(LayoutUnit logicalTop)
