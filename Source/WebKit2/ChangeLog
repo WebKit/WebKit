@@ -1,3 +1,28 @@
+2016-10-17  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] PendingFrameLoad objects are sometimes leaked
+        https://bugs.webkit.org/show_bug.cgi?id=163569
+        <rdar://problem/28810836>
+
+        Reviewed by Antti Koivisto.
+
+        PendingFrameLoad objects are created to track frame loads and added to
+        the m_pendingFrameLoads hash map. These objects are supposed to remove
+        themselves from the hash map once they detect that the page load has
+        finished by calling PendingFrameLoad::m_loadCompletionHandler().
+
+        PendingFrameLoad::m_loadCompletionHandler() is called from
+        markLoadAsCompleted() when we detect that the page load has finished
+        via the m_loadHysteresisActivity HysteresisActivity. We call impulse()
+        on the HysteresisActivity every time a subresource is loaded in the
+        frame. The issue is that if no subresource is ever loaded, then we
+        never call impulse() on the HysteresisActivity, which is therefore
+        never started. If it nevers starts, then it nevers stops and never
+        calls markLoadAsCompleted(). To address the problem, we now call
+        impulse() on the HysteresisActivity as soon as we construct it.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+
 2016-10-17  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Disable CSS Grid Layout runtime flag by default

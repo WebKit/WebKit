@@ -204,7 +204,9 @@ private:
         , m_mainResourceKey(mainResourceKey)
         , m_loadCompletionHandler(WTFMove(loadCompletionHandler))
         , m_loadHysteresisActivity([this](HysteresisState state) { if (state == HysteresisState::Stopped) markLoadAsCompleted(); })
-    { }
+    {
+        m_loadHysteresisActivity.impulse();
+    }
 
     void saveToDiskIfReady()
     {
