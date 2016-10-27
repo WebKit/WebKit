@@ -132,7 +132,7 @@ bool ScriptValue::isEqual(ExecState* scriptState, const ScriptValue& anotherValu
 {
     if (hasNoValue())
         return anotherValue.hasNoValue();
-    return JSValueIsEqual(toRef(scriptState), toRef(scriptState, jsValue()), toRef(scriptState, anotherValue.jsValue()), nullptr);
+    return JSValueIsStrictEqual(toRef(scriptState), toRef(scriptState, jsValue()), toRef(scriptState, anotherValue.jsValue()));
 }
 
 bool ScriptValue::isNull() const
