@@ -25,12 +25,35 @@
 
 #pragma once
 
+#include <runtime/ArrayBuffer.h>
+#include <runtime/ArrayBufferView.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Variant.h>
+
 namespace WebCore {
 
 class BufferSource {
 public:
-    const uint8_t* data;
-    size_t length;
+    BufferSource(WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>>&& variant)
+        : m_variant(WTFMove(variant))
+    { }
+
+    const uint8_t* data() const
+    {
+        return WTF::visit([](auto& buffer) -> const uint8_t* {
+            return static_cast<const uint8_t*>(buffer->data());
+        }, m_variant);
+    }
+
+    size_t length() const
+    {
+        return WTF::visit([](auto& buffer) -> size_t {
+            return buffer->byteLength();
+        }, m_variant);
+    }
+
+private:
+    WTF::Variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>> m_variant;
 };
 
 } // namespace WebCore

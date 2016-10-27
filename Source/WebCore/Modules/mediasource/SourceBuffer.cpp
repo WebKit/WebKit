@@ -234,7 +234,7 @@ ExceptionOr<void> SourceBuffer::setAppendWindowEnd(double newValue)
 
 ExceptionOr<void> SourceBuffer::appendBuffer(const BufferSource& data)
 {
-    return appendBufferInternal(static_cast<const unsigned char*>(data.data), data.length);
+    return appendBufferInternal(static_cast<const unsigned char*>(data.data()), data.length());
 }
 
 void SourceBuffer::resetParserState()

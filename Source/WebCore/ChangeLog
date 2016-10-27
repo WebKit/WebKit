@@ -1,3 +1,34 @@
+2016-10-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        BufferSource should behave as an union
+        https://bugs.webkit.org/show_bug.cgi?id=164056
+
+        Reviewed by Chris Dumez.
+
+        WebIDL typedefs BufferSource as (ArrayBufferView or ArrayBuffer).
+        To follow that definition, IDLBufferSource is now type-aliased
+        to IDLUnion<IDLInterface<ArrayBufferView>, IDLInterface<ArrayBuffer>>.
+
+        Converter<IDLBufferSource> template specialization can now be
+        removed since the default specialization for IDLUnion will be
+        used.
+
+        C++ implementations still work through a BufferSource object.
+        That class now has an implicit constructor that consumes the
+        Variant object. The data() and length() methods on the class
+        now iterate the variant to find an existing object that can
+        provide a pointer to the data or the length of it.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBuffer):
+        * bindings/generic/IDLTypes.h:
+        * bindings/js/BufferSource.h:
+        (WebCore::BufferSource::BufferSource):
+        (WebCore::BufferSource::data):
+        (WebCore::BufferSource::length):
+        * bindings/js/JSDOMConvert.h:
+        (WebCore::Converter<IDLBufferSource>::convert): Deleted.
+
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
         Merge Element::ShadowRootMode and ShadowRoot::Mode enumerations

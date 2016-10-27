@@ -30,12 +30,13 @@
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
+class ArrayBuffer;
+class ArrayBufferView;
 class JSValue;
 }
 
 namespace WebCore {
 
-class BufferSource;
 template <typename Value> class DOMPromise;
 
 template<typename T>
@@ -137,7 +138,7 @@ struct IDLDate : IDLType<double> {
     static double extractValueFromNullable(double value) { return value; }
 };
 
-struct IDLBufferSource : IDLType<BufferSource> { };
+using IDLBufferSource = IDLUnion<IDLInterface<JSC::ArrayBufferView>, IDLInterface<JSC::ArrayBuffer>>;
 
 // Helper predicates
 
