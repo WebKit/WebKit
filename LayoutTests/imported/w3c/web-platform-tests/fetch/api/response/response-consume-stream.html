@@ -44,7 +44,7 @@ promise_test(function(test) {
 promise_test(function(test) {
     var response = new Response(urlSearchParams);
     return validateStreamFromString(response.body.getReader(), urlSearchParamsData);
-}, "Read text response's body as readableStream");
+}, "Read URLSearchParams response's body as readableStream");
 
 promise_test(function(test) {
     var arrayBuffer = new ArrayBuffer(textData.length);

@@ -9,7 +9,7 @@ function runTest(config, qualifier) {
             _access,
             _mediaKeys1,
             _mediaKeys2,
-            fail;
+            _usingMediaKeys2 = false;;
 
         // Test MediaKeys assignment.
         assert_equals(_video.mediaKeys, null);
@@ -50,35 +50,47 @@ function runTest(config, qualifier) {
         })).then(function(source) {
             // Set src attribute on Video Element
             _video.src = URL.createObjectURL(source);
-            // Set mediaKeys2 on video element (switching MediaKeys) need not
-            // fail after src attribute is set.
+            // According to the specification, support for changing the Media Keys object after
+            // the src attribute on the video element has been set is optional. The following operation
+            // may therefore either succeed or fail. We handle both cases.
             return _video.setMediaKeys(_mediaKeys2);
-        })).then(test.step_func(function() {
-            // Switching setMediaKeys after setting src attribute on video element
-            // is not required to fail.
-            assert_equals(_video2.mediaKeys, _mediaKeys2);
-            fail = false;
+        }).then(test.step_func(function() {
+            // Changing the Media Keys object succeeded
+            _usingMediaKeys2 = true;
+            assert_equals(_video.mediaKeys, _mediaKeys2);
+            // Return something so the promise resolves properly.
             return Promise.resolve();
-        }, test.step_func(function(error) {
-            fail = true;
+        }), test.step_func(function(error) {
+            // Changing the Media Keys object failed
+            _usingMediaKeys2 = false;
             assert_equals(_video.mediaKeys, _mediaKeys1);
+            // The specification allows either NotSupportedError or InvalidStateError depending on
+            // whether the failure was because changing Media Keys object is not supported
+            // or just not allowed at this time, respectively.
             assert_in_array(error.name, ['InvalidStateError','NotSupportedError']);
             assert_not_equals(error.message, '');
             // Return something so the promise resolves properly.
             return Promise.resolve();
         })).then(function() {
-            // Set null mediaKeys on video (clearing MediaKeys) not
-            // supported after src attribute is set.
+            // According to the specification, support for clearing the Media Keys object associated
+            // with the video element is optional. The following operation
+            // may therefore either succeed or fail. We handle both cases.
             return _video.setMediaKeys(null);
         }).then(test.step_func(function() {
-            assert_unreached('Clearing mediaKeys after setting src should have failed.');
+            // Clearing the media keys succeeded
+            assert_equals(_video.mediaKeys, null);
+            test.done();
         }), test.step_func(function(error) {
-            if(fail) {
+            // Clearing the media keys failed
+            if(!_usingMediaKeys2) {
                 assert_equals(_video.mediaKeys, _mediaKeys1);
             } else {
                 assert_equals(_video.mediaKeys, _mediaKeys2);
             }
-            assert_is_array(error.name, ['InvalidStateError','ReferenceError']);
+            // The specification allows either NotSupportedError or InvalidStateError depending on
+            // whether the failure was because changing Media Keys object is not supported
+            // or just not allowed at this time, respectively.
+            assert_in_array(error.name, ['InvalidStateError','NotSupportedError']);
             assert_not_equals(error.message, '');
             test.done();
         })).catch(onFailure);

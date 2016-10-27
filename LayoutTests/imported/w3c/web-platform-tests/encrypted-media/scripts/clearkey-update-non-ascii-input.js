@@ -38,7 +38,7 @@ function runTest(config, qualifier)
             assert_unreached('Error: update() should fail because the processed message has non-ASCII character.');
         }).catch(function (error) {
             if(messageEventFired){
-                assert_equals(error.name, 'InvalidAccessError');
+                assert_equals(error.name, 'TypeError');
             }
             else {
                 assert_unreached('Error: ' + error.name);

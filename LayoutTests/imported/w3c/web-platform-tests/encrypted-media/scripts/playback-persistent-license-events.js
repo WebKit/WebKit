@@ -49,22 +49,17 @@ function runTest(config,qualifier) {
             }).then(test.step_func(function() {
                 _events.push('updated');
                 if (event.messageType === 'license-release') {
-                    assert_array_equals(_events,
-                                [
-                                    'generaterequest',
-                                    'license-request',
-                                    'license-request-response',
-                                    'updated',
-                                    'keystatuseschange',
-                                    'playing',
-                                    'remove',
-                                    'keystatuseschange',
-                                    'license-release',
-                                    'license-release-response',
-                                    'closed-promise',
-                                    'updated'
-                                ],
-                                "Expected events sequence" );
+                    checkEventSequence( _events,
+                                    ['generaterequest',
+                                        ['license-request', 'license-request-response', 'updated'], // potentially repeating
+                                        'keystatuseschange',
+                                        'playing',
+                                        'remove',
+                                        'keystatuseschange',
+                                        'license-release',
+                                        'license-release-response',
+                                        'closed-promise',
+                                        'updated' ]);
                     test.done();
                 }
             })).catch(onFailure);
@@ -122,6 +117,8 @@ function runTest(config,qualifier) {
         }).then(function(source) {
             _mediaSource = source;
             _video.src = URL.createObjectURL(_mediaSource);
+            return source.done;
+        }).then(function(){
             _video.play();
         }).catch(onFailure);
     }, testname);

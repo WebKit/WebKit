@@ -1,0 +1,28 @@
+Blocked access to external URL http://some.nonexistant.test/fail
+Blocked access to external URL http://some.nonexistant.test/fail
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: undefinedfn
+
+Harness Error (TIMEOUT), message = null
+
+PASS Script parse-inline 
+PASS Script parse-ext 
+PASS Script dom-inline 
+PASS Script dom-ext 
+PASS Script nested 
+NOTRUN Script script-exec 
+PASS Script script-load-error 
+PASS Script script-window-error 
+PASS Script timeout 
+PASS Script eval 
+PASS Script xhr-test 
+FAIL Script script-svg assert_array_equals: property 0, expected Element node <script id="script-svg">
+    verify('script-svg');
+    fi... but got null
+PASS Script script-async 
+PASS Script script-defer 
+PASS Script script-async-false 
+PASS Script iframe-src 
+PASS Script cross-origin 
+PASS Script document-write 
+

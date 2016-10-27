@@ -8,7 +8,7 @@ function runTest(config, qualifier) {
             videoCapabilities = configurations.length ? configurations[0].videoCapabilities : undefined,
             audiocontenttypes = audioCapabilities ? audioCapabilities.map( function(ac) { return "'" + ac.contentType + "'"; } ).join(',') : '',
             videocontenttypes = videoCapabilities ? videoCapabilities.map( function(ac) { return "'" + ac.contentType + "'"; } ).join(',') : '',
-            modifiedtestname = testname.replace( '%ks', keySystem ).replace( '%audiocontenttype', audiocontenttypes ).replace( '%videocontenttype', videocontenttypes );
+            modifiedtestname = testname.replace( '%audiocontenttype', audiocontenttypes ).replace( '%videocontenttype', videocontenttypes );
 
         promise_test(function(test) {
             return navigator.requestMediaKeySystemAccess(keySystem, configurations).then(function(a) {
@@ -41,17 +41,17 @@ function runTest(config, qualifier) {
     }
 
     // Tests for Key System.
-    expect_error('', [{}], 'InvalidAccessError', 'Empty Key System (%ks)');
-    expect_error('com.example.unsupported', [{}], 'NotSupportedError', 'Unsupported Key System (%ks)');
-    expect_error(config.keysystem + '.', [{}], 'NotSupportedError', 'Key System ending in "." (%ks)');
-    expect_error(config.keysystem.toUpperCase(), [{}], 'NotSupportedError', 'Capitalized Key System (%ks)');
-    expect_error(config.keysystem + '\u028F', [{}], 'NotSupportedError', 'Non-ASCII Key System (%ks)');
+    expect_error('', [{}], 'TypeError', 'Empty Key System');
+    expect_error('com.example.unsupported', [{}], 'NotSupportedError', 'Unsupported Key System');
+    expect_error(config.keysystem + '.', [{}], 'NotSupportedError', 'Key System ending in "."');
+    expect_error(config.keysystem.toUpperCase(), [{}], 'NotSupportedError', 'Capitalized Key System');
+    expect_error(config.keysystem + '\u028F', [{}], 'NotSupportedError', 'Non-ASCII Key System');
 
     // Parent of Clear Key not supported.
-    expect_error(config.keysystem.match(/^(.*?)\./)[1], [{}], 'NotSupportedError', 'Root domain of Key System alone (%ks)');
-    expect_error(config.keysystem.match(/^(.*?)\./)[0], [{}], 'NotSupportedError', 'Root domain of Key System, with dot (%ks)');
-    expect_error(config.keysystem.match(/^(.*?\..*?)\./)[1], [{}], 'NotSupportedError', 'Domain of Key System along (%ks)');
-    expect_error(config.keysystem.match(/^(.*?\..*?)\./)[0], [{}], 'NotSupportedError', 'Domain of Key System, with dot (%ks)');
+    expect_error(config.keysystem.match(/^(.*?)\./)[1], [{}], 'NotSupportedError', 'Root domain of Key System alone');
+    expect_error(config.keysystem.match(/^(.*?)\./)[0], [{}], 'NotSupportedError', 'Root domain of Key System, with dot');
+    expect_error(config.keysystem.match(/^(.*?\..*?)\./)[1], [{}], 'NotSupportedError', 'Domain of Key System along');
+    expect_error(config.keysystem.match(/^(.*?\..*?)\./)[0], [{}], 'NotSupportedError', 'Domain of Key System, with dot');
 
     // Child of Clear Key not supported.
     expect_error(config.keysystem+'.foo', [{}], 'NotSupportedError', 'Child of Key System');
@@ -60,30 +60,30 @@ function runTest(config, qualifier) {
     expect_error('webkit-'+config.keysystem, [{}], 'NotSupportedError', 'Prefixed Key System');
 
     // Incomplete names.
-    expect_error(config.keysystem.substr(0,7)+config.keysystem.substr(8), [{}], 'NotSupportedError', 'Incomplete Key System name (%ks)');
-    expect_error(config.keysystem.substr(0,config.keysystem.length-1), [{}], 'NotSupportedError', 'Incomplete Key System name (%ks)');
+    expect_error(config.keysystem.substr(0,7)+config.keysystem.substr(8), [{}], 'NotSupportedError', 'Missing characters in middle of Key System name');
+    expect_error(config.keysystem.substr(0,config.keysystem.length-1), [{}], 'NotSupportedError', 'Missing characters at end of Key System name');
 
     // Spaces in key system name not supported.
-    expect_error(' '+config.keysystem, [{}], 'NotSupportedError', 'Leading space in Key System name (%ks)');
-    expect_error(config.keysystem.substr(0,6) + ' ' + config.keysystem.substr(6), [{}], 'NotSupportedError', 'Extra space in Key System name (%ks)');
-    expect_error(config.keysystem + ' ', [{}], 'NotSupportedError', 'Trailing space in Key System name (%ks)');
+    expect_error(' '+config.keysystem, [{}], 'NotSupportedError', 'Leading space in Key System name');
+    expect_error(config.keysystem.substr(0,6) + ' ' + config.keysystem.substr(6), [{}], 'NotSupportedError', 'Extra space in Key System name');
+    expect_error(config.keysystem + ' ', [{}], 'NotSupportedError', 'Trailing space in Key System name');
 
     // Extra dots in key systems names not supported.
-    expect_error('.' + config.keysystem, [{}], 'NotSupportedError', 'Leading dot in Key System name (%ks)');
-    expect_error(config.keysystem.substr(0,6) + '.' + config.keysystem.substr(6), [{}], 'NotSupportedError', 'Trailing dot in Key System name (%ks)');
-    expect_error(config.keysystem + '.', [{}], 'NotSupportedError', 'Trailing dot in Key System name (%ks)');
+    expect_error('.' + config.keysystem, [{}], 'NotSupportedError', 'Leading dot in Key System name');
+    expect_error(config.keysystem.substr(0,6) + '.' + config.keysystem.substr(6), [{}], 'NotSupportedError', 'Extra dot in middle of Key System name');
+    expect_error(config.keysystem + '.', [{}], 'NotSupportedError', 'Trailing dot in Key System name');
 
     // Key system name is case sensitive.
     if (config.keysystem !== config.keysystem.toUpperCase()) {
-        expect_error(config.keysystem.toUpperCase(), [{}], 'NotSupportedError', 'Key System name is case sensitive (%ks)');
+        expect_error(config.keysystem.toUpperCase(), [{}], 'NotSupportedError', 'Key System name is case sensitive');
     }
 
     if (config.keysystem !== config.keysystem.toLowerCase()) {
-        expect_error(config.keysystem.toLowerCase(), [{}], 'NotSupportedError', 'Key System name is case sensitive (%ks)');
+        expect_error(config.keysystem.toLowerCase(), [{}], 'NotSupportedError', 'Key System name is case sensitive');
     }
 
     // Tests for trivial configurations.
-    expect_error(config.keysystem, [], 'InvalidAccessError', 'Empty supportedConfigurations');
+    expect_error(config.keysystem, [], 'TypeError', 'Empty supportedConfigurations');
     expect_config(config.keysystem, [{}], {}, 'Empty configuration');
 
     // Various combinations of supportedConfigurations.

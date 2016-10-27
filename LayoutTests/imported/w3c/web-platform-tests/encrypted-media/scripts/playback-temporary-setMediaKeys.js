@@ -90,14 +90,16 @@ function runTest(config,qualifier) {
             waitForEventAndRunStep('playing', _video, onPlaying, test);
 
             return testmediasource(config);
-        }).then(test.step_func(function(source) {
+        }).then(function(source) {
             _mediaSource = source;
             _video.src = URL.createObjectURL(_mediaSource);
+            return source.done;
+        }).then(function(){
             _video.play();
 
             if (config.testcase === SETMEDIAKEYS_AFTER_SRC) {
                 return _video.setMediaKeys(_mediaKeys);
             }
-        })).catch(onFailure);
+        }).catch(onFailure);
     }, testname);
 }

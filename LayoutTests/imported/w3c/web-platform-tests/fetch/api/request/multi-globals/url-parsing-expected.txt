@@ -1,0 +1,4 @@
+
+
+PASS should parse the URL relative to the current settings object 
+

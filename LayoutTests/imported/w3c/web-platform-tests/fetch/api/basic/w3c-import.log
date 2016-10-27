@@ -18,6 +18,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/accept-header.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/conditional-get.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/integrity.js
@@ -41,6 +44,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-referrer.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/request-upload.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/basic/response-url.js

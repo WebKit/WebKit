@@ -44,6 +44,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystate-sync-open.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-timeout.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/folder.txt
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/formdata-blob.htm
@@ -146,7 +147,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-no-response-event-loadend.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-no-response-event-loadstart.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-no-response-event-order.htm
-/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-non-same-origin.sub.htm
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-non-same-origin.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-receive-utf16.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus-sync.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/send-redirect-bogus.htm

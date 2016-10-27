@@ -50,8 +50,10 @@ function runTest(config) {
                 return mk5.createSession().generateRequest(type, 1);
             }
         },
+        // (new Uint8Array(0)) returns empty array. So 'TypeError' should
+        // be returned.
         {
-            exception: 'InvalidAccessError',
+            exception: 'TypeError',
             func: function (mk6, type) {
                 return mk6.createSession().generateRequest(type, new Uint8Array(0));
             }
@@ -178,12 +180,15 @@ function runTest(config) {
     // allows for an NotSupportedError to be generated and treated as a
     // success, if allowed. See comment above kCreateSessionTestCases.
     function test_generateRequest(testCase, mediaKeys, type, initData) {
+        var mediaKeySession;
         try {
-            var mediaKeySession = testCase.func.call(null, mediaKeys);
-            return mediaKeySession.generateRequest(type, initData);
+            mediaKeySession = testCase.func.call(null, mediaKeys);
         } catch (e) {
             assert_true(testCase.isNotSupportedAllowed);
+            assert_equals(e.name, 'NotSupportedError');
+            return Promise.resolve('not supported');
         }
+        return mediaKeySession.generateRequest(type, initData);
     }
     function generateRequestForVariousSessions(){
         return new Promise(function(resolve, reject){
@@ -247,8 +252,10 @@ function runTest(config) {
                 return s.update(1);
             }
         },
+        // (new Uint8Array(0)) returns empty array. So 'TypeError' should
+        // be returned.
         {
-            exception: 'InvalidAccessError',
+            exception: 'TypeError',
             func: function (s) {
                 return s.update(new Uint8Array(0));
             }
@@ -319,14 +326,6 @@ function runTest(config) {
                 assert_unreached('remove() should not succeed if session uninitialized');
             }, function (error) {
                 assert_equals(error.name, 'InvalidStateError');
-                // remove() on a temporary session should fail.
-                return mediaKeySession.generateRequest(type, initData);
-            }).then(function (result) {
-                return mediaKeySession.remove();
-            }).then(function () {
-                assert_unreached('remove() should not succeed for temporary sessions');
-            }, function (error) {
-                assert_equals(error.name, 'InvalidAccessError');
             });
     }
     function removeTestException(){

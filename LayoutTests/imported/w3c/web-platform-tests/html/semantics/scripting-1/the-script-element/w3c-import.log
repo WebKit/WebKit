@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_010.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_011.htm
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/contains.json
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/data-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-utf8.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/external-script-windows1250.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/historical.html

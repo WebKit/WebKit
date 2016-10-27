@@ -15,7 +15,14 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-default-conditional.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-no-cache.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-no-store.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-cache.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-clone.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-consume-empty.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/request/request-consume.html

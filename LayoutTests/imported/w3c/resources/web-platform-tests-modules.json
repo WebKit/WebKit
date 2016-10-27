@@ -3,8 +3,8 @@
         "path": [
             "resources"
         ], 
-        "url": "https://github.com/w3c/testharness.js/archive/e810600306d0612c609c8daab606229a11061627.tar.gz", 
-        "url_subpath": "testharness.js-e810600306d0612c609c8daab606229a11061627"
+        "url": "https://github.com/w3c/testharness.js/archive/873f9680aff66553f84d38f21a038c4534cc2789.tar.gz", 
+        "url_subpath": "testharness.js-873f9680aff66553f84d38f21a038c4534cc2789"
     }, 
     {
         "path": [
@@ -28,8 +28,8 @@
         "path": [
             "tools"
         ], 
-        "url": "https://github.com/w3c/wpt-tools/archive/5b4013ffae79602a0a633b6551d247bccb49ac8a.tar.gz", 
-        "url_subpath": "wpt-tools-5b4013ffae79602a0a633b6551d247bccb49ac8a"
+        "url": "https://github.com/w3c/wpt-tools/archive/cf9748586c2bca14998eda5956be6cf4d6d221d9.tar.gz", 
+        "url_subpath": "wpt-tools-cf9748586c2bca14998eda5956be6cf4d6d221d9"
     }, 
     {
         "path": [

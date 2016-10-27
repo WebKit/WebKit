@@ -973,6 +973,15 @@
                 "href": "http://example.net/..%c3%89t%C3%A9",
                 "pathname": "/..%c3%89t%C3%A9"
             }
+        },
+        {
+            "comment": "? needs to be encoded",
+            "href": "http://example.net",
+            "new_value": "?",
+            "expected": {
+                "href": "http://example.net/%3F",
+                "pathname": "/%3F"
+            }
         }
     ],
     "search": [

@@ -47,19 +47,22 @@ function runTest(config) {
         {
             exception: 'NotSupportedError',
             func: function () {
-                return navigator.requestMediaKeySystemAccess(new Uint8Array(0), [{}]);
+                return navigator.requestMediaKeySystemAccess('unsupported', [{}]);
             }
         },
+        // Empty keysystem string should be rejected with TypeError.
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess('', [{}]);
             }
         },
+        // (new Uint8Array(0)).toString() should return ''. So this case should be the same
+        // as the above.
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
-                return navigator.requestMediaKeySystemAccess('unsupported', [{}]);
+                return navigator.requestMediaKeySystemAccess(new Uint8Array(0), [{}]);
             }
         },
         // Non-ASCII names.
@@ -71,32 +74,32 @@ function runTest(config) {
         },
         // Empty sequence of MediaKeySystemConfiguration.
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess(keysystem, []);
             }
         },
-        // Invalid sequences of MediaKeySystemConfigurations.
+        // Things that don't convert to valid sequences of MediaKeySystemConfigurations.
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess(keysystem, {});
             }
         },
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess(keysystem, "invalid");
             }
         },
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess(keysystem, [{}, 6]);
             }
         },
         {
-            exception: 'NotSupportedError',
+            exception: 'TypeError',
             func: function () {
                 return navigator.requestMediaKeySystemAccess(keysystem, ["invalid", "upsupported"]);
             }

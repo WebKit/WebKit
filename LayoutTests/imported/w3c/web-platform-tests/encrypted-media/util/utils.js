@@ -118,16 +118,7 @@ function consoleWrite(text)
 
 function forceTestFailureFromPromise(test, error, message)
 {
-    // Promises convert exceptions into rejected Promises. Since there is
-    // currently no way to report a failed test in the test harness, errors
-    // are reported using force_timeout().
-    if (message)
-        consoleWrite(message + ': ' + error.message);
-    else if (error)
-        consoleWrite(error);
-
-    test.force_timeout();
-    test.done();
+    test.step_func(assert_unreached)(message ? message + ': ' + error.message : error);
 }
 
 // Returns an array of audioCapabilities that includes entries for a set of
@@ -266,6 +257,29 @@ function test_exception(testCase /*...*/) {
         assert_equals('TypeError', exception, format_value(func));
         assert_equals(e.name, exception, format_value(func));
     }
+}
+
+// Check that the events sequence (array of strings) matches the pattern (array of either strings, or
+// arrays of strings, with the latter representing a possibly repeating sub-sequence)
+function checkEventSequence(events,pattern) {
+    function th(i) { return i + (i < 4 ? ["th", "st", "nd", "rd"][i] : "th"); }
+    var i = 0, j=0, k=0;
+    while(i < events.length && j < pattern.length) {
+        if (!Array.isArray(pattern[j])) {
+            assert_equals(events[i], pattern[j], "Expected " + th(i+1) + " event to be '" + pattern[j] + "'");
+            ++i;
+            ++j;
+        } else {
+            assert_equals(events[i], pattern[j][k], "Expected " + th(i+1) + " event to be '" + pattern[j][k] + "'");
+            ++i;
+            k = (k+1)%pattern[j].length;
+            if (k === 0 && events[i] !== pattern[j][0]) {
+                ++j;
+            }
+        }
+    }
+    assert_equals(i,events.length,"Received more events than expected");
+    assert_equals(j,pattern.length,"Expected more events than received");
 }
 
 

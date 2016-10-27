@@ -24,7 +24,7 @@ function runTest(config)
             assert_unreached('Error: update() should fail because of an invalid license.');
         }).catch(function (error) {
             if(messageEventFired) {
-                assert_equals(error.name, 'InvalidAccessError');
+                assert_equals(error.name, 'TypeError');
             } else {
                 assert_unreached('Error: ' + error.name);
             }

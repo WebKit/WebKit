@@ -44,16 +44,18 @@ function checkRequest(request, ExpectedValuesDict) {
   }
 }
 
-function encode_utf8(str)
-{
-    return unescape(encodeURIComponent(str));
-}
-
 function stringToArray(str) {
   var array = new Uint8Array(str.length);
   for (var i=0, strLen = str.length; i < strLen; i++)
     array[i] = str.charCodeAt(i);
   return array;
+}
+
+function encode_utf8(str)
+{
+    if (self.TextEncoder)
+        return (new TextEncoder).encode(str);
+    return stringToArray(unescape(encodeURIComponent(str)));
 }
 
 function validateBufferFromString(buffer, expectedValue, message)

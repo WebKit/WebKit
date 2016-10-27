@@ -5,10 +5,10 @@ function runTest(config,qualifier) {
                                     + /video\/([^;]*)/.exec(config.videoType)[1]
                                     + ', playback, check events';
 
-    var configuration = {   initDataTypes: [ config.initDataType ],
-                            audioCapabilities: [ { contentType: config.audioType } ],
-                            videoCapabilities: [ { contentType: config.videoType } ],
-                            sessionTypes: [ 'persistent-usage-record' ] };
+    var configuration = {   initDataTypes: [config.initDataType ],
+                            audioCapabilities: [{contentType: config.audioType}],
+                            videoCapabilities: [{contentType: config.videoType}],
+                            sessionTypes: ['persistent-usage-record']};
 
 
     async_test(function(test) {
@@ -28,37 +28,31 @@ function runTest(config,qualifier) {
         }
 
         function onMessage(event) {
-            assert_equals( event.target, _mediaKeySession );
-            assert_true( event instanceof window.MediaKeyMessageEvent );
-            assert_equals( event.type, 'message');
+            assert_equals(event.target, _mediaKeySession);
+            assert_true(event instanceof window.MediaKeyMessageEvent);
+            assert_equals(event.type, 'message');
 
-            if ( event.messageType !== 'individualization-request' ) {
-                _events.push( event.messageType );
+            if (event.messageType !== 'individualization-request') {
+                _events.push(event.messageType);
             }
 
             config.messagehandler(event.messageType, event.message).then(function(response) {
                 _events.push(event.messageType + '-response');
                 return _mediaKeySession.update(response);
             }).then(test.step_func(function() {
-                _events.push('update-done');
+                _events.push('updated');
                 if (event.messageType === 'license-release') {
-                    consoleWrite(_events);
-                    assert_array_equals(_events,
-                                    [   'encrypted',
-                                        'generaterequest-done',
-                                        'license-request',
-                                        'license-request-response',
-                                        'update-done',
+                    checkEventSequence( _events,
+                                    ['encrypted','generaterequest-done',
+                                        ['license-request', 'license-request-response', 'updated'], // potentially repeating
                                         'keystatuseschange',
                                         'playing',
-                                        'remove-done',
+                                        'removed',
                                         'keystatuseschange',
                                         'license-release',
                                         'license-release-response',
                                         'closed-promise',
-                                        'update-done'
-                                    ],
-                                    "Expected events sequence" );
+                                        'updated' ]);
                     test.done();
                 }
 
@@ -83,7 +77,7 @@ function runTest(config,qualifier) {
             if (_video.currentTime > (config.duration || 1) && !_timeupdateEvent) {
                 _timeupdateEvent = true;
                 _video.pause();
-                _mediaKeySession.remove().then(recordEventFunc('remove-done')).catch(onFailure);
+                _mediaKeySession.remove().then(recordEventFunc('removed')).catch(onFailure);
             }
         }
 
@@ -107,6 +101,8 @@ function runTest(config,qualifier) {
             return testmediasource(config);
         }).then(function(source) {
             _video.src = URL.createObjectURL(source);
+            return source.done;
+        }).then(function(){
             _video.play();
         }).catch(onFailure);
     }, testname);

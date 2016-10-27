@@ -11,4 +11,3 @@ def main(request, response):
         response.writer.write_content("a\r\nTEST_CHUNK\r\n")
         time.sleep(delay)
     response.writer.write_content("garbage")
-

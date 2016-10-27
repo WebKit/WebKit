@@ -1,0 +1,16 @@
+
+PASS basic with click() 
+PASS basic with dispatchEvent() 
+PASS basic with wrong event class 
+PASS look at parents only when event bubbles 
+FAIL look at parents when event bubbles assert_true: expected true got false
+FAIL pick the first with activation behavior <input type=checkbox> assert_true: child pre-click must be triggered expected true got false
+PASS pick the first with activation behavior <a href> 
+PASS event state during post-click handling 
+PASS redispatch during post-click handling 
+PASS disabled checkbox still has activation behavior 
+PASS disabled checkbox still has activation behavior, part 2 
+PASS disconnected checkbox should be checked 
+PASS disconnected radio should be checked 
+FAIL disconnected form should not submit assert_false: expected false got true
+

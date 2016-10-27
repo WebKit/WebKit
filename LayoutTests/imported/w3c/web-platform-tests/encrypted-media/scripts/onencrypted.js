@@ -8,7 +8,7 @@ function runTest(config) {
     var currentData;
 
     async_test(function (test) {
-          var video = config.video,
+        var video = config.video,
             mediaSource,
             onEncrypted = function (event) {
                 currentData = new Uint8Array(event.initData);
@@ -24,14 +24,15 @@ function runTest(config) {
                 }
             };
 
-          waitForEventAndRunStep('encrypted', video, onEncrypted, test);
-          return testmediasource(config).then(test.step_func(function (source) {
-              mediaSource = source;
-              config.video.src = URL.createObjectURL(mediaSource);
-              video.play();
-          }));
-      }, 'encrypted fired on encrypted media file.'
-    );
+        waitForEventAndRunStep('encrypted', video, onEncrypted, test);
+        return testmediasource(config).then(function (source) {
+            mediaSource = source;
+            config.video.src = URL.createObjectURL(mediaSource);
+            return source.done;
+        }).then(function(){
+            video.play();
+        });
+    }, 'encrypted fired on encrypted media file.');
 }
 
 function checkInitData(data, expectedData) {

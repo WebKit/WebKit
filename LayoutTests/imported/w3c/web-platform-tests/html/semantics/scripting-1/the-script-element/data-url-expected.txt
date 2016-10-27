@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: 1
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+
+FAIL data URL and scripts assert_not_equals: got disallowed value "Script error."
+

@@ -25,6 +25,11 @@
         "web-platform-tests/dom/nodes/ParentNode-querySelector-All-content.xht",
         "web-platform-tests/dom/nodes/getElementsByClassNameFrame.htm",
         "web-platform-tests/dom/ranges/Range-test-iframe.html",
+        "web-platform-tests/fetch/api/request/multi-globals/current/current.html",
+        "web-platform-tests/fetch/api/request/multi-globals/incumbent/incumbent.html",
+        "web-platform-tests/fetch/api/response/multi-globals/current/current.html",
+        "web-platform-tests/fetch/api/response/multi-globals/incumbent/incumbent.html",
+        "web-platform-tests/fetch/api/response/multi-globals/relevant/relevant.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-1.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/001-2.html",
         "web-platform-tests/html/browsers/browsing-the-web/history-traversal/browsing_context_name-1.html",
@@ -231,6 +236,7 @@
         "web-platform-tests/html/syntax/parsing/foreign_content_011.html",
         "web-platform-tests/html/syntax/parsing/foreign_content_013.html",
         "web-platform-tests/html/webappapis/scripting/events/onerroreventhandler-frame.html",
+        "web-platform-tests/mathml/relations/html5-tree/unique-identifier-1-iframe.html",
         "web-platform-tests/resource-timing/iframe-setdomain.sub.html"
     ]
 }

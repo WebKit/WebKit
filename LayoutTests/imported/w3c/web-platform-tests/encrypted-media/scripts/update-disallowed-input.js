@@ -39,7 +39,7 @@ function runTest(config)
         }).then(function () {
             assert_unreached('update() with a response longer than 64Kb succeed');
         }).catch(function (error) {
-            assert_equals(error.name, 'InvalidAccessError');
+            assert_equals(error.name, 'TypeError');
         });
     }, 'update() with invalid response (longer than 64Kb characters) should fail.');
 }

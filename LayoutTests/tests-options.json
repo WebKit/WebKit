@@ -119,6 +119,36 @@
     "imported/w3c/web-platform-tests/dom/ranges/Range-isPointInRange.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendChild.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendData.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-dataChange.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-deleteData.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertBefore.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-insertData.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-removeChild.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceChild.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-replaceData.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/dom/ranges/Range-mutations-splitText.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html": [
         "slow"
     ],
@@ -162,6 +192,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-events.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-expired.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/encrypted-media/drm-mp4-playback-temporary-multikey-sequential-readyState.html": [

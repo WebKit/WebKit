@@ -35,14 +35,20 @@ function runTest(config,qualifier) {
         }
 
         function onMessage(event) {
+            var firstMessage = !_video.src;
             config.messagehandler(event.messageType, event.message, {variantId: event.target.variantId}).then(function(response) {
                 return event.target.update(response);
             }).then(function(){
-                if (!video.src) {
+                if (firstMessage) {
                     _video.src = URL.createObjectURL(_mediaSource);
-                    _video.play();
+                    return _mediaSource.done;
                 } else if (event.target.keyStatuses.size > 0){
                     _waitingForKey = false;
+                    return Promise.resolve();
+                }
+            }).then(function(){
+                if (firstMessage) {
+                    _video.play();
                 }
             }).catch(onFailure);
         }
@@ -50,7 +56,11 @@ function runTest(config,qualifier) {
         function onWaitingForKey(event) {
             _waitingForKey = true;
             if (config.checkReadyState) {
-                assert_equals(_video.readyState, _video.HAVE_METADATA, "Video readyState should be HAVE_METADATA on watingforkey event");
+                // This test does not start playing until the first license has been provided,
+                // so this event should occur when transitioning between keys.
+                // Thus, the frame at the current playback position is available and readyState
+                // should be HAVE_CURRENT_DATA.
+                assert_equals(_video.readyState, _video.HAVE_CURRENT_DATA, "Video readyState should be HAVE_CURRENT_DATA on watingforkey event");
             }
             startNewSession();
         }

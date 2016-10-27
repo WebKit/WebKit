@@ -79,13 +79,13 @@
     var urlSearchParams = new URLSearchParams(urlSearchParamsData);
 
     checkResponseBody(textData, "text", "text", checkBodyText);
-    checkResponseBody(textData, "text", "blob", function(response, body) { checkBodyBlob(response, body, true); });
+    checkResponseBody(textData, "text", "blob", function(response, body) { return checkBodyBlob(response, body, true); });
     checkResponseBody(textData, "text", "arrayBuffer", checkBodyArrayBuffer);
     checkResponseBody(textData, "text", "json", checkBodyJSON);
     checkResponseBody(formData, "formdata", "formData", checkBodyFormData);
-    checkResponseBody(urlSearchParams, "URLSearchParams", "text", function(response) { checkBodyText(response, urlSearchParams); });
-    checkResponseBody(urlSearchParams, "URLSearchParams", "blob", function(response, body) { checkBodyBlob(response, urlSearchParamsData, false); });
-    checkResponseBody(urlSearchParams, "URLSearchParams", "arrayBuffer", function(response) { checkBodyArrayBuffer(response, urlSearchParamsData); });
+    checkResponseBody(urlSearchParams, "URLSearchParams", "text", function(response) { return checkBodyText(response, urlSearchParamsData); });
+    checkResponseBody(urlSearchParams, "URLSearchParams", "blob", function(response, body) { return checkBodyBlob(response, urlSearchParamsData, false); });
+    checkResponseBody(urlSearchParams, "URLSearchParams", "arrayBuffer", function(response) { return checkBodyArrayBuffer(response, urlSearchParamsData); });
 
     function checkBlobResponseBody(blobBody, blobData, bodyType, checkFunction) {
       promise_test(function(test) {

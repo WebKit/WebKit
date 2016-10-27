@@ -55,7 +55,7 @@ function runTest(config,qualifier) {
             promise_test(function(test) {
                 // Create a "temporary" session for |keysystem| and call generateRequest()
                 // with the provided initData. generateRequest() should fail with an
-                // InvalidAccessError. Returns a promise that is resolved
+                // TypeError. Returns a promise that is resolved
                 // if the error occurred and rejected otherwise.
                 return navigator.requestMediaKeySystemAccess(testspec.keysystem, getSimpleConfigurationForInitDataType(testspec.initDataType)).then(function(access) {
                     return access.createMediaKeys();

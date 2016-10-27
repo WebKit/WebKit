@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-defaultPrevented.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubbles-false.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-bubbles-true.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-detached-click.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-handlers-changed.html
 /LayoutTests/imported/w3c/web-platform-tests/dom/events/Event-dispatch-multiple-stopPropagation.html

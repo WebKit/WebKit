@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: upload progress event for cross-origin requests 
+
