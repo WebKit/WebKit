@@ -1,3 +1,17 @@
+2016-10-27  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] forbid lexical redeclaration of generator formal parameters
+        https://bugs.webkit.org/show_bug.cgi?id=163930
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-await-syntax.js:
+        * stress/generator-syntax.js:
+        (testSyntaxError.gen):
+        (testSyntaxError.arguments):
+        (testSyntaxError.eval):
+        * test262.yaml:
+
 2016-10-26  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly API: implement Instance

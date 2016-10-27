@@ -852,7 +852,7 @@ bool Parser<LexerType>::declareRestOrNormalParameter(const Identifier& name, con
         if (m_parserState.lastFunctionName && name == *m_parserState.lastFunctionName)
             semanticFail("Cannot declare a parameter named '", name.impl(), "' as it shadows the name of a strict mode function");
         semanticFailureDueToKeyword("parameter name");
-        if (hasDeclaredParameter(name))
+        if (!m_lexer->isReparsingFunction() && hasDeclaredParameter(name))
             semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode as it has already been declared");
         semanticFail("Cannot declare a parameter named '", name.impl(), "' in strict mode");
     }

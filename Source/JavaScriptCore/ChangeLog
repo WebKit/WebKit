@@ -1,3 +1,19 @@
+2016-10-27  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] forbid lexical redeclaration of generator formal parameters
+        https://bugs.webkit.org/show_bug.cgi?id=163930
+
+        Reviewed by Yusuke Suzuki.
+
+        Also forbids "arguments" and "eval" as generator argument names in strict mode.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::declareRestOrNormalParameter):
+        * parser/Parser.h:
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::hasDeclaredParameter):
+        (JSC::Parser::isValidStrictMode):
+
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include ConsoleAgent in Workers - real console.log support

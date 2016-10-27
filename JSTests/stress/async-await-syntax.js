@@ -355,3 +355,39 @@ function testSyntaxError(script, message) {
         testSyntaxError(`"use strict"; ${nested}`);
     }
 })();
+
+testSyntaxError(`
+async function fn(arguments) {
+    "use strict";
+}
+`, `SyntaxError: Invalid parameters or function name in strict mode.`);
+
+testSyntaxError(`
+async function fn(eval) {
+    "use strict";
+}
+`, `SyntaxError: Invalid parameters or function name in strict mode.`);
+
+testSyntaxError(`
+async function arguments() {
+    "use strict";
+}
+`, `SyntaxError: 'arguments' is not a valid function name in strict mode.`);
+
+testSyntaxError(`
+async function eval() {
+    "use strict";
+}
+`, `SyntaxError: 'eval' is not a valid function name in strict mode.`);
+
+testSyntaxError(`
+async function fn(a) {
+    let a = 1;
+}
+`, `SyntaxError: Cannot declare a let variable twice: 'a'.`);
+
+testSyntaxError(`
+async function fn(b) {
+    const b = 1;
+}
+`, `SyntaxError: Cannot declare a const variable twice: 'b'.`);

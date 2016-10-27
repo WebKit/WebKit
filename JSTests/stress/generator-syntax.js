@@ -128,3 +128,39 @@ testSyntax(`
 function *gen(g = function *() { yield  }) {
 }
 `);
+
+testSyntaxError(`
+function* gen(arguments) {
+    "use strict";
+}
+`, `SyntaxError: Invalid parameters or function name in strict mode.`);
+
+testSyntaxError(`
+function* gen(eval) {
+    "use strict";
+}
+`, `SyntaxError: Invalid parameters or function name in strict mode.`);
+
+testSyntaxError(`
+function* arguments() {
+    "use strict";
+}
+`, `SyntaxError: 'arguments' is not a valid function name in strict mode.`);
+
+testSyntaxError(`
+function* eval() {
+    "use strict";
+}
+`, `SyntaxError: 'eval' is not a valid function name in strict mode.`);
+
+testSyntaxError(`
+function* gen(a) {
+    let a = 1;
+}
+`, `SyntaxError: Cannot declare a let variable twice: 'a'.`);
+
+testSyntaxError(`
+function* gen(b) {
+    const b = 1;
+}
+`, `SyntaxError: Cannot declare a const variable twice: 'b'.`);
