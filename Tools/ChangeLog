@@ -1,3 +1,21 @@
+2016-10-27  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] Bump glib to 2.50.1 (or find alternative solution to Gtk+ CUPS build issue)
+        https://bugs.webkit.org/show_bug.cgi?id=163689
+
+        Reviewed by Michael Catanzaro.
+
+        In order to fix bug #163591, we need to apply an upstream patch to GTK+.
+        But GTK+ won't build with that patch due to the following error:
+
+            m4_copy: won't overwrite defined macro: glib_DEFUN
+
+        There is an upstream GLib patch which solves that issue. We should apply
+        that patch as well, until we bump GLib to 2.50.1 or later.
+
+        * gtk/jhbuild.modules: Apply upstream GLib patch.
+        * gtk/patches/glib-deprecate-am-glib-gnu-gettext.patch: Added.
+
 2016-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed fix of GTK and EFL test bots.

@@ -1,0 +1,36 @@
+From d11545b206f14638c3e3f880a11c4da5477954e7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Javier=20Jard=C3=B3n?= <jjardon@gnome.org>
+Date: Mon, 12 Jul 2010 19:16:53 +0200
+Subject: [PATCH] Deprecate GLIB_GNU_GETTEXT macro, use upstream instead
+
+https://bugzilla.gnome.org/show_bug.cgi?id=624186
+---
+ m4macros/glib-gettext.m4 |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/m4macros/glib-gettext.m4 b/m4macros/glib-gettext.m4
+index 68b08b3..0179cbc 100644
+--- a/m4macros/glib-gettext.m4
++++ b/m4macros/glib-gettext.m4
+@@ -309,7 +309,7 @@ msgstr ""
+ # on various variables needed by the Makefile.in.in installed by 
+ # glib-gettextize.
+ dnl
+-glib_DEFUN([GLIB_GNU_GETTEXT],
++AU_DEFUN([GLIB_GNU_GETTEXT],
+   [AC_REQUIRE([AC_PROG_CC])dnl
+    AC_REQUIRE([AC_HEADER_STDC])dnl
+    
+@@ -380,7 +380,8 @@ glib_DEFUN([GLIB_GNU_GETTEXT],
+    rm -f po/POTFILES
+    sed -e "/^#/d" -e "/^\$/d" -e "s,.*,	$posrcprefix& \\\\," -e "\$s/\(.*\) \\\\/\1/" \
+ 	< $srcdir/po/POTFILES.in > po/POTFILES
+-  ])
++  ],
++  [[$0: This macro is deprecated. You should use upstream gettext instead.]])
+ 
+ # AM_GLIB_DEFINE_LOCALEDIR(VARIABLE)
+ # -------------------------------
+-- 
+1.7.1
+
