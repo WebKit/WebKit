@@ -165,8 +165,7 @@ using namespace WebCore;
         
         if (pos == start || pos < start) {
             start.setAffinity(UPSTREAM);
-            //result = start.next().absoluteCaretBounds();
-            result = start.absoluteCaretBounds(); //<rdar://problem/6716185>: Allow placing the caaret to the left of the first character.
+            result = start.absoluteCaretBounds();
         } else if (pos > end) {
             end.setAffinity(DOWNSTREAM);
             result = end.absoluteCaretBounds();

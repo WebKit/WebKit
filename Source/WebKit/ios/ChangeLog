@@ -1,3 +1,11 @@
+2016-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build after r207934.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame closestCaretRectInMarkedTextRangeForPoint:]): Removed commented-out code and
+          a comment that had a typo in it and looked like a bad Doxygen trailing comment.
+
 2016-08-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Migrate line breaking code from ints to Optional<unsigned>s
