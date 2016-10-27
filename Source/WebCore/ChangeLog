@@ -1,3 +1,23 @@
+2016-10-26  Zalan Bujtas  <zalan@apple.com>
+
+        Ignore out-of-flow siblings when searching for a spanner candidate.
+        https://bugs.webkit.org/show_bug.cgi?id=164042.
+        <rdar://problem/28758456>
+
+        Reviewed by Simon Fraser.
+
+        While searching for the spanner candidates in a flow thread, we have to take into account
+        whether renderers are in- or out-of-flow.
+        What it means is that while traversing the renderer tree to find the the candidate
+        renderer (next sibling/ancestor's next child in pre-order traversal), we have to check if the candidate
+        is in the same layout context too.
+
+        Test: fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html
+
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::spannerPlacehoderCandidate):
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant):
+
 2016-10-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend

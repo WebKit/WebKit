@@ -270,10 +270,34 @@ static bool isValidColumnSpanner(RenderMultiColumnFlowThread* flowThread, Render
     return false;
 }
 
+static RenderObject* spannerPlacehoderCandidate(const RenderObject& renderer, const RenderMultiColumnFlowThread& stayWithin)
+{
+    // Spanner candidate is a next sibling/ancestor's next child within the flow thread and
+    // it is in the same inflow/out-of-flow layout context.
+    if (renderer.isOutOfFlowPositioned())
+        return nullptr;
+
+    ASSERT(renderer.isDescendantOf(&stayWithin));
+    auto* current = &renderer;
+    while (true) {
+        // Skip to the first in-flow sibling.
+        auto* nextSibling = current->nextSibling();
+        while (nextSibling && nextSibling->isOutOfFlowPositioned())
+            nextSibling = nextSibling->nextSibling();
+        if (nextSibling)
+            return nextSibling;
+        // No sibling candidate, jump to the parent and check its siblings.
+        current = current->parent();
+        if (!current || current == &stayWithin || current->isOutOfFlowPositioned())
+            return nullptr;
+    }
+    return nullptr;
+}
+
 RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject* descendant)
 {
     RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
-    RenderObject* nextRendererInFlowThread = descendant->nextInPreOrderAfterChildren(this);
+    RenderObject* nextRendererInFlowThread = spannerPlacehoderCandidate(*descendant, *this);
     RenderObject* insertBeforeMulticolChild = nullptr;
     RenderObject* nextDescendant = descendant;
 
