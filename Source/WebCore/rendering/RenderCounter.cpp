@@ -304,8 +304,8 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
     if (!planCounter(renderer, identifier, isReset, value) && !alwaysCreateCounter)
         return nullptr;
 
-    RefPtr<CounterNode> newParent = 0;
-    RefPtr<CounterNode> newPreviousSibling = 0;
+    RefPtr<CounterNode> newParent;
+    RefPtr<CounterNode> newPreviousSibling;
     RefPtr<CounterNode> newNode = CounterNode::create(renderer, isReset, value);
     if (findPlaceForCounter(renderer, identifier, isReset, newParent, newPreviousSibling))
         newParent->insertAfter(newNode.get(), newPreviousSibling.get(), identifier);
@@ -345,8 +345,6 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomicString&
 RenderCounter::RenderCounter(Document& document, const CounterContent& counter)
     : RenderText(document, emptyString())
     , m_counter(counter)
-    , m_counterNode(nullptr)
-    , m_nextForSameCounter(0)
 {
     view().addRenderCounter();
 }
@@ -356,7 +354,7 @@ RenderCounter::~RenderCounter()
     view().removeRenderCounter();
 
     if (m_counterNode) {
-        m_counterNode->removeRenderer(this);
+        m_counterNode->removeRenderer(*this);
         ASSERT(!m_counterNode);
     }
 }
@@ -385,7 +383,7 @@ String RenderCounter::originalText() const
                 break;
             beforeAfterContainer = beforeAfterContainer->parent();
         }
-        makeCounterNode(*beforeAfterContainer, m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter*>(this));
+        makeCounterNode(*beforeAfterContainer, m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter&>(*this));
         ASSERT(m_counterNode);
     }
     CounterNode* child = m_counterNode;
@@ -425,15 +423,6 @@ void RenderCounter::computePreferredLogicalWidths(float lead)
     setRenderedText(originalText());
 
     RenderText::computePreferredLogicalWidths(lead);
-}
-
-void RenderCounter::invalidate()
-{
-    m_counterNode->removeRenderer(this);
-    ASSERT(!m_counterNode);
-    if (documentBeingDestroyed())
-        return;
-    setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 static void destroyCounterNodeWithoutMapRemoval(const AtomicString& identifier, CounterNode* node)
@@ -522,8 +511,8 @@ static void updateCounters(RenderElement& renderer)
             makeCounterNode(renderer, it->key, false);
             continue;
         }
-        RefPtr<CounterNode> newParent = 0;
-        RefPtr<CounterNode> newPreviousSibling = 0;
+        RefPtr<CounterNode> newParent;
+        RefPtr<CounterNode> newPreviousSibling;
         
         findPlaceForCounter(renderer, it->key, node->hasResetType(), newParent, newPreviousSibling);
         if (node != counterMap->get(it->key))
