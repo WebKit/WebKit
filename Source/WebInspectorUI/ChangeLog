@@ -1,3 +1,56 @@
+2016-10-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Create general model object Collection class
+        https://bugs.webkit.org/show_bug.cgi?id=163995
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Collection.js: Added.
+        (WebInspector.Collection):
+        (WebInspector.Collection.prototype.get items):
+        (WebInspector.Collection.prototype.get typeVerifier):
+        (WebInspector.Collection.prototype.add):
+        (WebInspector.Collection.prototype.remove):
+        (WebInspector.Collection.prototype.clear):
+        (WebInspector.Collection.prototype.toArray):
+        (WebInspector.Collection.prototype.toJSON):
+        (WebInspector.Collection.prototype.itemAdded):
+        (WebInspector.Collection.prototype.itemRemoved):
+        (WebInspector.Collection.prototype.itemsCleared):
+        Class that holds multiple model objects.  It can be limited to a specific type by supplying
+        a "typeVerifier", which is a function that accepts a single argument (the model object) and
+        returns true/false depending on if that argument matches the "type" of the collection.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Models/Frame.js:
+        * UserInterface/Views/CookieStorageContentView.js:
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        * UserInterface/Views/FrameTreeElement.js:
+        * UserInterface/Views/OpenResourceDialog.js:
+        Add support for WebInspector.Collection.
+        
+        * UserInterface/Models/ResourceCollection.js:
+        (WebInspector.ResourceCollection):
+        (WebInspector.ResourceCollection.verifierForType):
+        (WebInspector.ResourceCollection.prototype.resourceCollectionForType):
+        (WebInspector.ResourceCollection.prototype.clear):
+        (WebInspector.ResourceCollection.prototype.itemAdded):
+        (WebInspector.ResourceCollection.prototype.itemRemoved):
+        (WebInspector.ResourceCollection.prototype.itemsCleared):
+        (WebInspector.ResourceCollection.prototype._associateWithResource):
+        (WebInspector.ResourceCollection.prototype._disassociateWithResource):
+        (WebInspector.ResourceCollection.prototype._resourceURLDidChange):
+        (WebInspector.ResourceCollection.prototype._resourceTypeDidChange):
+        (WebInspector.ResourceCollection.prototype.get resources): Deleted.
+        (WebInspector.ResourceCollection.prototype.resourcesWithType): Deleted.
+        (WebInspector.ResourceCollection.prototype.addResource): Deleted.
+        (WebInspector.ResourceCollection.prototype.removeResource): Deleted.
+        (WebInspector.ResourceCollection.prototype.removeAllResources): Deleted.
+        Now a subclass of WebInspector.Collection.  Retrieving WebInspector.Resource objects by type
+        and URL is still supported, but requesting by type now returns another instance of
+        WebInspector.ResourceCollection that is configured to only accept the requested type.
+
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include ConsoleAgent in Workers - real console.log support

@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("ResourceCollection");
+
+    function createResource(url, type) {
+        return new WebInspector.Resource(url, null, type);
+    }
+
+    function logResourceNames(collection) {
+        let items = Array.from(collection.items);
+        InspectorTest.log(items.map((resource) => resource.displayName));
+    }
+
+    suite.addTestCase({
+        name: "WebInspector.ResourceCollection.verifierForType",
+        test(resolve, reject) {
+            let collection = new WebInspector.ResourceCollection(WebInspector.Resource.Type.Image);
+            collection.add(createResource("one"));
+            collection.add(createResource("two", WebInspector.Resource.Type.Image));
+            collection.add(3);
+
+            logResourceNames(collection);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.ResourceCollection.prototype.resourceCollectionForType",
+        test(resolve, reject) {
+            let collection = new WebInspector.ResourceCollection;
+            collection.add(createResource("one", WebInspector.Resource.Type.Image));
+            collection.add(createResource("two", WebInspector.Resource.Type.Stylesheet));
+            collection.add(createResource("three", WebInspector.Resource.Type.Image));
+            collection.add(createResource("four", WebInspector.Resource.Type.Document));
+            collection.add(createResource("five", WebInspector.Resource.Type.Stylesheet));
+
+            logResourceNames(collection.resourceCollectionForType(WebInspector.Resource.Type.Image));
+
+            let typedCollection = new WebInspector.ResourceCollection(WebInspector.Resource.Type.Image);
+            typedCollection.add(createResource("one", WebInspector.Resource.Type.Image));
+            typedCollection.add(createResource("two", WebInspector.Resource.Type.Stylesheet));
+            typedCollection.add(createResource("three", WebInspector.Resource.Type.Image));
+
+            logResourceNames(typedCollection);
+            InspectorTest.expectEqual(typedCollection.resourceCollectionForType(WebInspector.Resource.Type.Image), typedCollection, "resourceCollectionForType will return `this` if a type is specified.")
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.ResourceCollection.prototype._resourceTypeDidChange",
+        test(resolve, reject) {
+            let imageResource = createResource("one");
+
+            let collection = new WebInspector.ResourceCollection;
+            collection.add(imageResource);
+
+            logResourceNames(collection);
+            logResourceNames(collection.resourceCollectionForType(WebInspector.Resource.Type.Image));
+            logResourceNames(collection.resourceCollectionForType(WebInspector.Resource.Type.Other));
+
+            // Dispatch a type change.
+            imageResource._type = WebInspector.Resource.Type.Image;
+            imageResource.dispatchEventToListeners(WebInspector.Resource.Event.TypeDidChange, {oldType: WebInspector.Resource.Type.Image});
+
+            logResourceNames(collection);
+            logResourceNames(collection.resourceCollectionForType(WebInspector.Resource.Type.Image));
+            logResourceNames(collection.resourceCollectionForType(WebInspector.Resource.Type.Other));
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of ResourceCollection.</p>
+</body>
+</html>

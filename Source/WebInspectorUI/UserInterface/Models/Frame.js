@@ -41,7 +41,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         this._extraScripts = [];
 
         this._childFrames = [];
-        this._childFrameIdentifierMap = {};
+        this._childFrameIdentifierMap = new Map;
 
         this._parentFrame = null;
         this._isMainFrame = false;
@@ -55,6 +55,8 @@ WebInspector.Frame = class Frame extends WebInspector.Object
     }
 
     // Public
+
+    get resourceCollection() { return this._resourceCollection; }
 
     initialize(name, securityOrigin, loaderIdentifier, mainResource)
     {
@@ -99,7 +101,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
         this._provisionalLoaderIdentifier = provisionalMainResource.loaderIdentifier;
 
-        this._provisionalResourceCollection.removeAllResources();
+        this._provisionalResourceCollection.clear();
 
         this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalLoadStarted);
     }
@@ -150,7 +152,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
         this._provisionalLoaderIdentifier = null;
         this._provisionalMainResource = null;
-        this._provisionalResourceCollection.removeAllResources();
+        this._provisionalResourceCollection.clear();
 
         if (!skipProvisionalLoadClearedEvent)
             this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalLoadCleared);
@@ -289,7 +291,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
     childFrameForIdentifier(frameId)
     {
-        return this._childFrameIdentifierMap[frameId] || null;
+        return this._childFrameIdentifierMap.get(frameId) || null;
     }
 
     addChildFrame(frame)
@@ -305,7 +307,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
             frame._parentFrame.removeChildFrame(frame);
 
         this._childFrames.push(frame);
-        this._childFrameIdentifierMap[frame._id] = frame;
+        this._childFrameIdentifierMap.set(frame._id, frame);
 
         frame._parentFrame = this;
 
@@ -332,7 +334,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         console.assert(childFrame.parentFrame === this);
 
         this._childFrames.remove(childFrame);
-        delete this._childFrameIdentifierMap[childFrame._id];
+        this._childFrameIdentifierMap.delete(childFrame._id);
 
         childFrame._detachFromParentFrame();
 
@@ -347,14 +349,9 @@ WebInspector.Frame = class Frame extends WebInspector.Object
             childFrame.removeAllChildFrames();
 
         this._childFrames = [];
-        this._childFrameIdentifierMap = {};
+        this._childFrameIdentifierMap.clear();
 
         this.dispatchEventToListeners(WebInspector.Frame.Event.AllChildFramesRemoved);
-    }
-
-    get resources()
-    {
-        return this._resourceCollection.resources;
     }
 
     resourceForURL(url, recursivelySearchChildFrames)
@@ -383,9 +380,9 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         return null;
     }
 
-    resourcesWithType(type)
+    resourceCollectionForType(type)
     {
-        return this._resourceCollection.resourcesWithType(type);
+        return this._resourceCollection.resourceCollectionForType(type);
     }
 
     addResource(resource)
@@ -398,15 +395,15 @@ WebInspector.Frame = class Frame extends WebInspector.Object
             return;
 
         if (resource.parentFrame)
-            resource.parentFrame.removeResource(resource);
+            resource.parentFrame.remove(resource);
 
         this._associateWithResource(resource);
 
         if (this._isProvisionalResource(resource)) {
-            this._provisionalResourceCollection.addResource(resource);
+            this._provisionalResourceCollection.add(resource);
             this.dispatchEventToListeners(WebInspector.Frame.Event.ProvisionalResourceWasAdded, {resource});
         } else {
-            this._resourceCollection.addResource(resource);
+            this._resourceCollection.add(resource);
             this.dispatchEventToListeners(WebInspector.Frame.Event.ResourceWasAdded, {resource});
         }
     }
@@ -415,7 +412,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
     {
         // This does not remove provisional resources.
 
-        var resource = this._resourceCollection.removeResource(resourceOrURL);
+        var resource = this._resourceCollection.remove(resourceOrURL);
         if (!resource)
             return;
 
@@ -428,14 +425,14 @@ WebInspector.Frame = class Frame extends WebInspector.Object
     {
         // This does not remove provisional resources, use clearProvisionalLoad for that.
 
-        var resources = this.resources;
-        if (!resources.length)
+        let resources = this._resourceCollection.items;
+        if (!resources.size)
             return;
 
-        for (var i = 0; i < resources.length; ++i)
-            this._disassociateWithResource(resources[i]);
+        for (let resource of resources)
+            this._disassociateWithResource(resource);
 
-        this._resourceCollection.removeAllResources();
+        this._resourceCollection.clear();
 
         this.dispatchEventToListeners(WebInspector.Frame.Event.AllResourcesRemoved);
     }

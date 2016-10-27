@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Collection");
+
+    suite.addTestCase({
+        name: "WebInspector.Collection.prototype.add",
+        test(resolve, reject) {
+            let collection = new WebInspector.Collection;
+            collection.add("one");
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.add(3);
+
+            InspectorTest.log(collection);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Collection.prototype.remove",
+        test(resolve, reject) {
+            let item = "one";
+
+            let collection = new WebInspector.Collection;
+            collection.add(item);
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.remove(item);
+
+            InspectorTest.log(collection);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Collection.prototype.clear",
+        test(resolve, reject) {
+            let collection = new WebInspector.Collection;
+            collection.add("one");
+            collection.add("two");
+            collection.add(3);
+
+            InspectorTest.log(collection);
+
+            collection.clear();
+
+            InspectorTest.log(collection);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WebInspector.Collection.prototype.get typeVerifier",
+        test(resolve, reject) {
+            function stringVerifier(object) {
+                return typeof object === "string";
+            }
+
+            let collection = new WebInspector.Collection(stringVerifier);
+            collection.add("one");
+            collection.add("two");
+
+            InspectorTest.log(collection);
+
+            collection.add(3);
+
+            InspectorTest.log(collection);
+            InspectorTest.expectEqual(collection.typeVerifier, stringVerifier, "typeVerifier is the given function.");
+
+            resolve();
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of Collection.</p>
+</body>
+</html>

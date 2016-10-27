@@ -160,7 +160,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
         for (let frame of WebInspector.frameResourceManager.frames) {
             // The main resource isn't in the list of resources, so add it as a candidate.
             allResources.push(frame.mainResource);
-            allResources = allResources.concat(frame.resources);
+            allResources = allResources.concat(frame.resourceCollection.toArray());
         }
 
         let resourcesForDomain = allResources.filter(resourceMatchesStorageDomain);

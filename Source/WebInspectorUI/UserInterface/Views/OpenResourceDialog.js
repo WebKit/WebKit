@@ -268,7 +268,7 @@ WebInspector.OpenResourceDialog = class OpenResourceDialog extends WebInspector.
         let frames = [frame];
         while (frames.length) {
             let currentFrame = frames.shift();
-            let resources = [currentFrame.mainResource].concat(currentFrame.resources);
+            let resources = [currentFrame.mainResource].concat(Array.from(currentFrame.resourceCollection.items));
             for (let resource of resources)
                 this._addResource(resource, suppressFilterUpdate);
 

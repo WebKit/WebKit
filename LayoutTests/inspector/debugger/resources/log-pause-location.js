@@ -16,7 +16,7 @@ TestPage.registerInitializer(() => {
     }
 
     window.findScript = function(regex) {
-        let resources = WebInspector.frameResourceManager.mainFrame.resources;
+        let resources = WebInspector.frameResourceManager.mainFrame.resourceCollection.items;
         for (let resource of resources) {
             if (regex.test(resource.url))
                 return resource.scripts[0];

@@ -1,3 +1,20 @@
+2016-10-27  Devin Rousso  <dcrousso+webkit@gmail.com>
+
+        Web Inspector: Create general model object Collection class
+        https://bugs.webkit.org/show_bug.cgi?id=163995
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/debugger/resources/log-pause-location.js:
+        (TestPage.registerInitializer.window.findScript):
+        Change name of getter to support WebInspector.Collection.
+
+        * inspector/unit-tests/collection-expected.txt: Added.
+        * inspector/unit-tests/collection.html: Added.
+        * inspector/unit-tests/resource-collection-expected.txt: Added.
+        * inspector/unit-tests/resource-collection.html: Added.
+        Created tests for WebInspector.Collection and WebInspector.ResourceCollection.
+
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker should recover if Inspector is closed and never sent Worker.initialized command

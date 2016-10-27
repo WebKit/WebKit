@@ -1,0 +1,21 @@
+Testing all methods of Collection.
+
+
+== Running test suite: Collection
+-- Running test case: WebInspector.Collection.prototype.add
+["one","two"]
+["one","two",3]
+
+-- Running test case: WebInspector.Collection.prototype.remove
+["one","two"]
+["two"]
+
+-- Running test case: WebInspector.Collection.prototype.clear
+["one","two",3]
+[]
+
+-- Running test case: WebInspector.Collection.prototype.get typeVerifier
+["one","two"]
+["one","two"]
+PASS: typeVerifier is the given function.
+

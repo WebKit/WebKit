@@ -419,7 +419,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
     {
         this._addResource(frame.mainResource);
 
-        for (var resource of frame.resources)
+        for (let resource of frame.resourceCollection.items)
             this._addResource(resource);
 
         for (var childFrame of frame.childFrames)
