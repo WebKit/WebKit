@@ -1,3 +1,14 @@
+2016-10-19  Zalan Bujtas  <zalan@apple.com>
+
+        Use anonymous table row for new child at RenderTableRow::addChild() if available.
+        https://bugs.webkit.org/show_bug.cgi?id=163651
+        <rdar://problem/28705022>
+
+        Reviewed by David Hyatt.
+
+        * fast/table/crash-when-table-has-continuation-and-content-inserted-expected.txt: Added.
+        * fast/table/crash-when-table-has-continuation-and-content-inserted.html: Added.
+
 2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property
