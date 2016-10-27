@@ -74,11 +74,11 @@ static bool hasSGISwapControlExtension(Display* display)
     return !!glXSwapIntervalSGI;
 }
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(XID window, PlatformDisplay& platformDisplay, GLXContext sharingContext)
+std::unique_ptr<GLContextGLX> GLContextGLX::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, GLXContext sharingContext)
 {
     Display* display = downcast<PlatformDisplayX11>(platformDisplay).native();
     XWindowAttributes attributes;
-    if (!XGetWindowAttributes(display, window, &attributes))
+    if (!XGetWindowAttributes(display, static_cast<Window>(window), &attributes))
         return nullptr;
 
     XVisualInfo visualInfo;
@@ -157,7 +157,7 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createPixmapContext(PlatformDisplay&
     return std::unique_ptr<GLContextGLX>(new GLContextGLX(platformDisplay, WTFMove(context), WTFMove(pixmap), WTFMove(glxPixmap)));
 }
 
-std::unique_ptr<GLContextGLX> GLContextGLX::createContext(XID window, PlatformDisplay& platformDisplay)
+std::unique_ptr<GLContextGLX> GLContextGLX::createContext(GLNativeWindowType window, PlatformDisplay& platformDisplay)
 {
     GLXContext glxSharingContext = platformDisplay.sharingGLContext() ? static_cast<GLContextGLX*>(platformDisplay.sharingGLContext())->m_context.get() : nullptr;
     auto context = window ? createWindowContext(window, platformDisplay, glxSharingContext) : nullptr;
@@ -177,11 +177,11 @@ std::unique_ptr<GLContextGLX> GLContextGLX::createSharingContext(PlatformDisplay
     return context;
 }
 
-GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, XID window)
+GLContextGLX::GLContextGLX(PlatformDisplay& display, XUniqueGLXContext&& context, GLNativeWindowType window)
     : GLContext(display)
     , m_x11Display(downcast<PlatformDisplayX11>(m_display).native())
     , m_context(WTFMove(context))
-    , m_window(window)
+    , m_window(static_cast<Window>(window))
 {
     activeContexts().add(this);
 }

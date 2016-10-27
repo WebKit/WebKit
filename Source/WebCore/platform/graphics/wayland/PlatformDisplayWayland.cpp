@@ -30,7 +30,10 @@
 
 #include "GLContextEGL.h"
 #include <cstring>
+// These includes need to be in this order because wayland-egl.h defines WL_EGL_PLATFORM
+// and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-egl.h>
+#include <EGL/egl.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {

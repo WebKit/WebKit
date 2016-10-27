@@ -17,8 +17,7 @@
  *  Boston, MA 02110-1301 USA
  */
 
-#ifndef GLContextGLX_h
-#define GLContextGLX_h
+#pragma once
 
 #if USE(GLX)
 
@@ -27,7 +26,7 @@
 #include "XUniqueResource.h"
 
 typedef unsigned char GLubyte;
-typedef unsigned long XID;
+typedef unsigned long Window;
 typedef void* ContextKeyType;
 typedef struct _XDisplay Display;
 
@@ -36,11 +35,14 @@ namespace WebCore {
 class GLContextGLX final : public GLContext {
     WTF_MAKE_NONCOPYABLE(GLContextGLX);
 public:
-    static std::unique_ptr<GLContextGLX> createContext(XID window, PlatformDisplay&);
+    static std::unique_ptr<GLContextGLX> createContext(GLNativeWindowType, PlatformDisplay&);
     static std::unique_ptr<GLContextGLX> createSharingContext(PlatformDisplay&);
 
     virtual ~GLContextGLX();
 
+    void clear();
+
+private:
     bool makeContextCurrent() override;
     void swapBuffers() override;
     void waitNative() override;
@@ -54,20 +56,17 @@ public:
     PlatformGraphicsContext3D platformContext() override;
 #endif
 
-    void clear();
-
-private:
-    GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XID);
+    GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, GLNativeWindowType);
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniqueGLXPbuffer&&);
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniquePixmap&&, XUniqueGLXPixmap&&);
 
-    static std::unique_ptr<GLContextGLX> createWindowContext(XID window, PlatformDisplay&, GLXContext sharingContext = nullptr);
+    static std::unique_ptr<GLContextGLX> createWindowContext(GLNativeWindowType, PlatformDisplay&, GLXContext sharingContext = nullptr);
     static std::unique_ptr<GLContextGLX> createPbufferContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
     static std::unique_ptr<GLContextGLX> createPixmapContext(PlatformDisplay&, GLXContext sharingContext = nullptr);
 
     Display* m_x11Display { nullptr };
     XUniqueGLXContext m_context;
-    XID m_window { 0 };
+    Window m_window { 0 };
     XUniqueGLXPbuffer m_pbuffer;
     XUniquePixmap m_pixmap;
     XUniqueGLXPixmap m_glxPixmap;
@@ -78,4 +77,3 @@ private:
 
 #endif // USE(GLX)
 
-#endif // GLContextGLX_h
