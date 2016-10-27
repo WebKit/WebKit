@@ -75,7 +75,7 @@ typedef struct WKContextClientV1 {
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
 
     // Version 1.
-    WKContextCopyWebCryptoMasterKeyCallback                             copyWebCryptoMasterKey;
+    void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 } WKContextClientV1;
 
 typedef struct WKContextClientV2 {
@@ -87,7 +87,7 @@ typedef struct WKContextClientV2 {
     WKContextPlugInInformationBecameAvailableCallback                   plugInInformationBecameAvailable;
 
     // Version 1.
-    WKContextCopyWebCryptoMasterKeyCallback                             copyWebCryptoMasterKey;
+    void                                                                (*copyWebCryptoMasterKey_unavailable)(void);
 
     // Version 2.
     WKContextDatabaseProcessDidCrashCallback                            databaseProcessDidCrash;

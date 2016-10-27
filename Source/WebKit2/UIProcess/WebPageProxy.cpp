@@ -6064,9 +6064,7 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Ve
     if (m_navigationClient) {
         if (RefPtr<API::Data> keyData = m_navigationClient->webCryptoMasterKey(*this))
             masterKey = keyData->dataReference().vector();
-    } else if (RefPtr<API::Data> keyData = m_loaderClient->webCryptoMasterKey(*this))
-        masterKey = keyData->dataReference().vector();
-    else if (!getDefaultWebCryptoMasterKey(masterKey)) {
+    } else if (!getDefaultWebCryptoMasterKey(masterKey)) {
         succeeded = false;
         return;
     }
@@ -6083,9 +6081,7 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succ
     if (m_navigationClient) {
         if (RefPtr<API::Data> keyData = m_navigationClient->webCryptoMasterKey(*this))
             masterKey = keyData->dataReference().vector();
-    } else if (RefPtr<API::Data> keyData = m_loaderClient->webCryptoMasterKey(*this))
-        masterKey = keyData->dataReference().vector();
-    else if (!getDefaultWebCryptoMasterKey(masterKey)) {
+    } else if (!getDefaultWebCryptoMasterKey(masterKey)) {
         succeeded = false;
         return;
     }

@@ -63,6 +63,7 @@
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import <WebCore/Credential.h>
 #import <WebCore/SecurityOriginData.h>
+#import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/URL.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -715,8 +716,13 @@ void NavigationState::NavigationClient::processDidBecomeUnresponsive(WebKit::Web
 
 RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebKit::WebPageProxy&)
 {
-    if (!m_navigationState.m_navigationDelegateMethods.webCryptoMasterKeyForWebView)
-        return nullptr;
+    if (!m_navigationState.m_navigationDelegateMethods.webCryptoMasterKeyForWebView) {
+        Vector<uint8_t> masterKey;
+        if (!getDefaultWebCryptoMasterKey(masterKey))
+            return nullptr;
+
+        return API::Data::create(masterKey.data(), masterKey.size());
+    }
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)

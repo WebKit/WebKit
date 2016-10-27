@@ -1,3 +1,42 @@
+2016-10-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r206684. rdar://problem/28545011
+
+    2016-09-30  Brady Eidson  <beidson@apple.com>
+
+            REGRESSION (Safari 10 combined with WK changes): Unable to store WebCrypto keys in IndexedDB database.
+            <rdar://problem/28334440> and https://bugs.webkit.org/show_bug.cgi?id=162554
+
+            Reviewed by Alexey Proskuryakov.
+
+            Safari 10 has a WKPageNavigation client but does not implement the "copyWebCryptoMasterKey" callback.
+
+            WebKit just fails in this case, instead of falling back to "getDefaultWebCryptoMasterKey".
+            It should fall back.
+
+            Additionally there's a WKContextClient callback to get the crypto key, also, but it is completely unused.
+            So it should be pulled.
+
+            * UIProcess/API/APILoaderClient.h:
+            (API::LoaderClient::webCryptoMasterKey): Deleted.
+            * UIProcess/API/C/WKContext.h:
+
+            * UIProcess/API/C/WKPage.cpp:
+            (WKPageSetPageLoaderClient):
+            (WKPageSetPageNavigationClient): If the client doesn't implement this method, fallback to getDefaultWebCryptoMasterKey.
+
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::NavigationClient::webCryptoMasterKey): If the client doesn't implement this method,
+              fallback to getDefaultWebCryptoMasterKey.
+
+            * UIProcess/WebContextClient.cpp:
+            (WebKit::WebContextClient::copyWebCryptoMasterKey): Deleted.
+            * UIProcess/WebContextClient.h:
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::wrapCryptoKey): Only ask the NavigationClient before falling back. Don't ask the loader client.
+            (WebKit::WebPageProxy::unwrapCryptoKey): Ditto.
+
 2016-10-26  David Kilzer  <ddkilzer@apple.com>
 
         Merge r207708. rdar://problem/28962914

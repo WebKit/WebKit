@@ -71,6 +71,7 @@
 #include "WebProtectionSpace.h"
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WindowFeatures.h>
 
 #ifdef __BLOCKS__
@@ -1214,11 +1215,6 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.willGoToBackForwardListItem(toAPI(&page), toAPI(item), toAPI(userData), m_client.base.clientInfo);
         }
 
-        RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
-        {
-            return page.process().processPool().client().copyWebCryptoMasterKey(&page.process().processPool());
-        }
-
         void navigationGestureDidBegin(WebPageProxy& page) override
         {
             if (m_client.navigationGestureDidBegin)
@@ -2326,9 +2322,14 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
 
         RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
         {
-            if (!m_client.copyWebCryptoMasterKey)
+            if (m_client.copyWebCryptoMasterKey)
+                return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
+
+            Vector<uint8_t> masterKey;
+            if (!getDefaultWebCryptoMasterKey(masterKey))
                 return nullptr;
-            return adoptRef(toImpl(m_client.copyWebCryptoMasterKey(toAPI(&page), m_client.base.clientInfo)));
+
+            return API::Data::create(masterKey.data(), masterKey.size());
         }
 
         void didBeginNavigationGesture(WebPageProxy& page) override
