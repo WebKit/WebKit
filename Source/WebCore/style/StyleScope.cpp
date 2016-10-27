@@ -79,7 +79,7 @@ bool Scope::shouldUseSharedUserAgentShadowTreeStyleResolver() const
 {
     if (!m_shadowRoot)
         return false;
-    if (m_shadowRoot->mode() != ShadowRoot::Mode::UserAgent)
+    if (m_shadowRoot->mode() != ShadowRootMode::UserAgent)
         return false;
     // If we have stylesheets in the user agent shadow tree use per-scope resolver.
     if (!m_styleSheetCandidateNodes.isEmpty())
@@ -520,7 +520,7 @@ void Scope::didChangeStyleSheetEnvironment()
     if (!m_shadowRoot) {
         for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
             // Stylesheets is author shadow roots are are potentially affected.
-            if (descendantShadowRoot->mode() != ShadowRoot::Mode::UserAgent)
+            if (descendantShadowRoot->mode() != ShadowRootMode::UserAgent)
                 descendantShadowRoot->styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
         }
     }

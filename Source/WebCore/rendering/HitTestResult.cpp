@@ -127,7 +127,7 @@ static Node* moveOutOfUserAgentShadowTree(Node& node)
 {
     if (node.isInShadowTree()) {
         if (ShadowRoot* root = node.containingShadowRoot()) {
-            if (root->mode() == ShadowRoot::Mode::UserAgent)
+            if (root->mode() == ShadowRootMode::UserAgent)
                 return root->host();
         }
     }

@@ -180,8 +180,6 @@
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
 };
 
-enum ShadowRootMode { "open", "closed" };
-
 dictionary ShadowRootInit {
     required ShadowRootMode mode;
 };

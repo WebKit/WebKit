@@ -32,6 +32,7 @@
 #include "DocumentFragment.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "ShadowRootMode.h"
 #include "TreeScope.h"
 
 namespace WebCore {
@@ -41,13 +42,7 @@ class SlotAssignment;
 
 class ShadowRoot final : public DocumentFragment, public TreeScope {
 public:
-    enum class Mode : uint8_t {
-        UserAgent = 0,
-        Closed,
-        Open,
-    };
-
-    static Ref<ShadowRoot> create(Document& document, Mode type)
+    static Ref<ShadowRoot> create(Document& document, ShadowRootMode type)
     {
         return adoptRef(*new ShadowRoot(document, type));
     }
@@ -74,7 +69,7 @@ public:
 
     Element* activeElement() const;
 
-    Mode mode() const { return m_type; }
+    ShadowRootMode mode() const { return m_type; }
 
     void removeAllEventListeners() override;
 
@@ -92,7 +87,7 @@ public:
     const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
 
 protected:
-    ShadowRoot(Document&, Mode);
+    ShadowRoot(Document&, ShadowRootMode);
 
     ShadowRoot(Document&, std::unique_ptr<SlotAssignment>&&);
 
@@ -108,7 +103,7 @@ private:
     void removedFrom(ContainerNode& insertionPoint) override;
 
     bool m_resetStyleInheritance { false };
-    Mode m_type { Mode::UserAgent };
+    ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
     Element* m_host { nullptr };
 

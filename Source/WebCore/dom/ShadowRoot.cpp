@@ -48,7 +48,7 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
 
 COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
 
-ShadowRoot::ShadowRoot(Document& document, Mode type)
+ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
     , m_type(type)
@@ -60,7 +60,7 @@ ShadowRoot::ShadowRoot(Document& document, Mode type)
 ShadowRoot::ShadowRoot(Document& document, std::unique_ptr<SlotAssignment>&& slotAssignment)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(*this, document)
-    , m_type(Mode::UserAgent)
+    , m_type(ShadowRootMode::UserAgent)
     , m_styleScope(std::make_unique<Style::Scope>(*this))
     , m_slotAssignment(WTFMove(slotAssignment))
 {

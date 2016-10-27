@@ -32,6 +32,7 @@
 #include "RegionOversetState.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
+#include "ShadowRootMode.h"
 #include "SimulatedClickOptions.h"
 #include "StyleChange.h"
 
@@ -270,7 +271,6 @@ public:
     WEBCORE_EXPORT ShadowRoot* shadowRoot() const;
     WEBCORE_EXPORT ShadowRoot* createShadowRoot(ExceptionCode&);
 
-    enum class ShadowRootMode { Open, Closed };
     struct ShadowRootInit {
         ShadowRootMode mode;
     };

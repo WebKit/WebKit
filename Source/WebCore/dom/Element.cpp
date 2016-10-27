@@ -852,7 +852,7 @@ Element* Element::bindingsOffsetParent()
     Element* element = offsetParent();
     if (!element || !element->isInShadowTree())
         return element;
-    return element->containingShadowRoot()->mode() == ShadowRoot::Mode::UserAgent ? nullptr : element;
+    return element->containingShadowRoot()->mode() == ShadowRootMode::UserAgent ? nullptr : element;
 }
 
 Element* Element::offsetParent()
@@ -1778,7 +1778,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
 
     InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 
-    if (shadowRoot.mode() == ShadowRoot::Mode::UserAgent)
+    if (shadowRoot.mode() == ShadowRootMode::UserAgent)
         didAddUserAgentShadowRoot(&shadowRoot);
 }
 
@@ -1857,7 +1857,12 @@ RefPtr<ShadowRoot> Element::attachShadow(const ShadowRootInit& init, ExceptionCo
         return nullptr;
     }
 
-    auto shadow = ShadowRoot::create(document(), init.mode == ShadowRootMode::Open ? ShadowRoot::Mode::Open : ShadowRoot::Mode::Closed);
+    if (init.mode == ShadowRootMode::UserAgent) {
+        ec = TypeError;
+        return nullptr;
+    }
+
+    auto shadow = ShadowRoot::create(document(), init.mode);
     addShadowRoot(shadow.copyRef());
     return WTFMove(shadow);
 }
@@ -1868,7 +1873,7 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
     if (!root)
         return nullptr;
 
-    if (root->mode() != ShadowRoot::Mode::Open) {
+    if (root->mode() != ShadowRootMode::Open) {
         if (!JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->world().shadowRootIsAlwaysOpen())
             return nullptr;
     }
@@ -1879,7 +1884,7 @@ ShadowRoot* Element::shadowRootForBindings(JSC::ExecState& state) const
 ShadowRoot* Element::userAgentShadowRoot() const
 {
     if (ShadowRoot* shadowRoot = this->shadowRoot()) {
-        ASSERT(shadowRoot->mode() == ShadowRoot::Mode::UserAgent);
+        ASSERT(shadowRoot->mode() == ShadowRootMode::UserAgent);
         return shadowRoot;
     }
     return nullptr;
@@ -1889,7 +1894,7 @@ ShadowRoot& Element::ensureUserAgentShadowRoot()
 {
     ShadowRoot* shadowRoot = userAgentShadowRoot();
     if (!shadowRoot) {
-        addShadowRoot(ShadowRoot::create(document(), ShadowRoot::Mode::UserAgent));
+        addShadowRoot(ShadowRoot::create(document(), ShadowRootMode::UserAgent));
         shadowRoot = userAgentShadowRoot();
     }
     return *shadowRoot;

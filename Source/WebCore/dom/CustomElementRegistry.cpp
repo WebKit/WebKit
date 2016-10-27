@@ -62,7 +62,7 @@ static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCust
         if (element->isCustomElementUpgradeCandidate() && element->tagQName() == elementInterface.name())
             element->enqueueToUpgrade(elementInterface);
         if (auto* shadowRoot = element->shadowRoot()) {
-            if (shadowRoot->mode() != ShadowRoot::Mode::UserAgent)
+            if (shadowRoot->mode() != ShadowRootMode::UserAgent)
                 enqueueUpgradeInShadowIncludingTreeOrder(*shadowRoot, elementInterface);
         }
     }

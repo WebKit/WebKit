@@ -817,11 +817,11 @@ ExceptionOr<String> Internals::shadowRootType(const Node& root) const
         return Exception { INVALID_ACCESS_ERR };
 
     switch (downcast<ShadowRoot>(root).mode()) {
-    case ShadowRoot::Mode::UserAgent:
+    case ShadowRootMode::UserAgent:
         return String("UserAgentShadowRoot");
-    case ShadowRoot::Mode::Closed:
+    case ShadowRootMode::Closed:
         return String("ClosedShadowRoot");
-    case ShadowRoot::Mode::Open:
+    case ShadowRootMode::Open:
         return String("OpenShadowRoot");
     default:
         ASSERT_NOT_REACHED();

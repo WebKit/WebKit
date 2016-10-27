@@ -1289,14 +1289,14 @@ static bool pseudoElementType(PseudoId pseudoId, Inspector::Protocol::DOM::Pseud
     }
 }
 
-static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRoot::Mode mode)
+static Inspector::Protocol::DOM::ShadowRootType shadowRootType(ShadowRootMode mode)
 {
     switch (mode) {
-    case ShadowRoot::Mode::UserAgent:
+    case ShadowRootMode::UserAgent:
         return Inspector::Protocol::DOM::ShadowRootType::UserAgent;
-    case ShadowRoot::Mode::Closed:
+    case ShadowRootMode::Closed:
         return Inspector::Protocol::DOM::ShadowRootType::Closed;
-    case ShadowRoot::Mode::Open:
+    case ShadowRootMode::Open:
         return Inspector::Protocol::DOM::ShadowRootType::Open;
     }
 

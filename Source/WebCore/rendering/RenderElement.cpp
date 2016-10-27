@@ -1619,7 +1619,7 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
         return nullptr;
 
     if (ShadowRoot* root = element()->containingShadowRoot()) {
-        if (root->mode() == ShadowRoot::Mode::UserAgent) {
+        if (root->mode() == ShadowRootMode::UserAgent) {
             if (Element* shadowHost = element()->shadowHost())
                 return shadowHost->renderer()->getUncachedPseudoStyle(PseudoStyleRequest(SELECTION));
         }

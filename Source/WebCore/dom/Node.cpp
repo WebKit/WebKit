@@ -1086,7 +1086,7 @@ bool Node::isUnclosedNode(const Node& otherNode) const
                 return true; // treeScopeThatCanAccessOtherNode is a shadow-including inclusive ancestor of this node.
         }
         auto& root = treeScopeThatCanAccessOtherNode->rootNode();
-        if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).mode() != ShadowRoot::Mode::Open)
+        if (is<ShadowRoot>(root) && downcast<ShadowRoot>(root).mode() != ShadowRootMode::Open)
             break;
     }
 
@@ -1110,7 +1110,7 @@ HTMLSlotElement* Node::assignedSlot() const
 HTMLSlotElement* Node::assignedSlotForBindings() const
 {
     auto* shadowRoot = parentShadowRoot(*this);
-    if (shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::Open)
+    if (shadowRoot && shadowRoot->mode() == ShadowRootMode::Open)
         return shadowRoot->findAssignedSlot(*this);
     return nullptr;
 }
@@ -1128,7 +1128,7 @@ ContainerNode* Node::parentInComposedTree() const
 bool Node::isInUserAgentShadowTree() const
 {
     auto* shadowRoot = containingShadowRoot();
-    return shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent;
+    return shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent;
 }
 
 Node* Node::nonBoundaryShadowTreeRootNode()

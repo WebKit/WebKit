@@ -1,5 +1,70 @@
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
+        Merge Element::ShadowRootMode and ShadowRoot::Mode enumerations
+        https://bugs.webkit.org/show_bug.cgi?id=164063
+
+        Reviewed by Sam Weinig.
+
+        Merge Element::ShadowRootMode and ShadowRoot::Mode enumerations now
+        that we support having IDL string enumerations in their own IDL file.
+
+        No new tests, no Web-exposed behavior change.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::collectMatchingRules):
+        (WebCore::ElementRuleCollector::matchAuthorShadowPseudoElementRules):
+        (WebCore::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively):
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::enqueueUpgradeInShadowIncludingTreeOrder):
+        * dom/Element.cpp:
+        (WebCore::Element::bindingsOffsetParent):
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::attachShadow):
+        (WebCore::Element::shadowRootForBindings):
+        (WebCore::Element::userAgentShadowRoot):
+        (WebCore::Element::ensureUserAgentShadowRoot):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/InlineStyleSheetOwner.cpp:
+        (WebCore::parserContextForElement):
+        * dom/Node.cpp:
+        (WebCore::Node::isUnclosedNode):
+        (WebCore::Node::assignedSlotForBindings):
+        (WebCore::Node::isInUserAgentShadowTree):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/ShadowRoot.h:
+        * dom/ShadowRoot.idl:
+        * dom/ShadowRootMode.h: Added.
+        * dom/ShadowRootMode.idl: Copied from Source/WebCore/dom/ShadowRoot.idl.
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::didChangeSlot):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::create):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::shadowRootType):
+        * rendering/HitTestResult.cpp:
+        (WebCore::moveOutOfUserAgentShadowTree):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionPseudoStyle):
+        * rendering/RenderLayer.cpp:
+        (WebCore::rendererForScrollbar):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::shouldUseSharedUserAgentShadowTreeStyleResolver):
+        (WebCore::Style::Scope::didChangeStyleSheetEnvironment):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::correspondingUseElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::shadowRootType):
+
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
         Element parameter to CanvasRenderingContext2D.drawFocusIfNeeded() should not be nullable
         https://bugs.webkit.org/show_bug.cgi?id=164062
 

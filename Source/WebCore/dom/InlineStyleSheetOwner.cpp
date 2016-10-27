@@ -48,10 +48,10 @@ static CSSParserContext parserContextForElement(const Element& element)
 {
     auto* shadowRoot = element.containingShadowRoot();
     // User agent shadow trees can't contain document-relative URLs. Use blank URL as base allowing cross-document sharing.
-    auto& baseURL = shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent ? blankURL() : element.document().baseURL();
+    auto& baseURL = shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent ? blankURL() : element.document().baseURL();
 
     CSSParserContext result = CSSParserContext { element.document(), baseURL, element.document().encoding() };
-    if (shadowRoot && shadowRoot->mode() == ShadowRoot::Mode::UserAgent)
+    if (shadowRoot && shadowRoot->mode() == ShadowRootMode::UserAgent)
         result.mode = UASheetMode;
     return result;
 }

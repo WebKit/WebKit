@@ -581,6 +581,7 @@
 #include "JSSVGZoomAndPan.cpp"
 #include "JSSVGZoomEvent.cpp"
 #include "JSShadowRoot.cpp"
+#include "JSShadowRootMode.cpp"
 #include "JSStorage.cpp"
 #if ENABLE(QUOTA)
 #include "JSStorageErrorCallback.cpp"
