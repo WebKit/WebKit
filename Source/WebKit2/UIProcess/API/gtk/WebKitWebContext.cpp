@@ -278,7 +278,7 @@ static void webkitWebContextConstructed(GObject* object)
     priv->processPool = WebProcessPool::create(configuration);
 
     if (!priv->websiteDataManager)
-        priv->websiteDataManager = webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration));
+        priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration)));
 
     priv->requestManager = priv->processPool->supplement<WebSoupCustomProtocolRequestManager>();
 
