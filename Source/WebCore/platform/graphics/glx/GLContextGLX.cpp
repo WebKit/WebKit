@@ -67,8 +67,7 @@ static bool hasSGISwapControlExtension(Display* display)
         return !!glXSwapIntervalSGI;
 
     initialized = true;
-    const char* extensions = glXQueryExtensionsString(display, 0);
-    if (!strstr(extensions, "GLX_SGI_swap_control"))
+    if (!GLContext::isExtensionSupported(glXQueryExtensionsString(display, 0), "GLX_SGI_swap_control"))
         return false;
 
     glXSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXSwapIntervalSGI")));
