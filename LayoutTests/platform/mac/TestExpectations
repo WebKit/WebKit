@@ -1455,3 +1455,5 @@ webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size-iframe.html [ S
 webkit.org/b/163307 [ Debug ] loader/stateobjects/pushstate-size.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size-iframe.html [ Skip ]
 webkit.org/b/163307 [ Debug ] loader/stateobjects/replacestate-size.html [ Skip ]
+
+webkit.org/b/163922 http/tests/security/svg-image-with-css-cross-domain.html [ Pass ImageOnlyFailure ]
