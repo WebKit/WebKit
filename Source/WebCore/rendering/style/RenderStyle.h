@@ -527,8 +527,8 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
-    void setCustomPropertyValue(const AtomicString& name, const RefPtr<CSSValue>& value) { rareInheritedData.access()->m_customProperties.access()->setCustomPropertyValue(name, value); }
-    RefPtr<CSSValue> getCustomPropertyValue(const AtomicString& name) const { return rareInheritedData->m_customProperties->getCustomPropertyValue(name); }
+    void setCustomPropertyValue(const AtomicString& name, const RefPtr<CSSCustomPropertyValue>& value) { rareInheritedData.access()->m_customProperties.access()->setCustomPropertyValue(name, value); }
+    RefPtr<CSSCustomPropertyValue> getCustomPropertyValue(const AtomicString& name) const { return rareInheritedData->m_customProperties->getCustomPropertyValue(name); }
     bool hasCustomProperty(const AtomicString& name) const { return rareInheritedData->m_customProperties->hasCustomProperty(name); }
     const CustomPropertyValueMap& customProperties() const { return rareInheritedData->m_customProperties->m_values; }
 

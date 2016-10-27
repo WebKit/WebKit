@@ -245,6 +245,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return compareCSSValues<CSSContentDistributionValue>(*this, other);
         case CustomPropertyClass:
             return compareCSSValues<CSSCustomPropertyValue>(*this, other);
+        case VariableReferenceClass:
+            return compareCSSValues<CSSVariableReferenceValue>(*this, other);
+        case PendingSubstitutionValueClass:
+            return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
         case VariableDependentClass:
             return compareCSSValues<CSSVariableDependentValue>(*this, other);
         case VariableClass:
@@ -550,11 +554,6 @@ RefPtr<CSSValue> CSSValue::cloneForCSSOM() const
         ASSERT(!isSubtypeExposedToCSSOM());
         return TextCloneCSSValue::create(classType(), cssText());
     }
-}
-
-bool CSSValue::isInvalidCustomPropertyValue() const
-{
-    return isCustomPropertyValue() && downcast<CSSCustomPropertyValue>(*this).isInvalid();
 }
 
 bool CSSValue::treatAsInheritedValue(CSSPropertyID propertyID) const

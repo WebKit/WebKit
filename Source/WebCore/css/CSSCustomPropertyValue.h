@@ -28,6 +28,7 @@
 
 #include "CSSValue.h"
 #include "CSSVariableData.h"
+#include "CSSVariableDependentValue.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -73,13 +74,17 @@ public:
 
     const AtomicString& name() const { return m_name; }
     
-    // FIXME: Should arguably implement equals on our internal values, but serialization to compare is probably fine.
-    bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && customCSSText() == other.customCSSText(); }
+    bool equals(const CSSCustomPropertyValue& other) const { return m_name == other.m_name && m_deprecatedValue == other.m_deprecatedValue && m_value == other.m_value && m_valueId == other.m_valueId; }
 
-    bool isInvalid() const { return !m_value; }
     bool containsVariables() const { return m_containsVariables; }
+    bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+
+    void resolveVariableReferences(const CustomPropertyValueMap&, Vector<Ref<CSSCustomPropertyValue>>&) const;
 
     const RefPtr<CSSValue> deprecatedValue() const { return m_deprecatedValue.get(); }
+    
+    CSSValueID valueID() const { return m_valueId; }
+    CSSVariableData* value() const { return m_value.get(); }
 
 private:
     CSSCustomPropertyValue(const AtomicString& name, Ref<CSSValue>&& value)
@@ -87,7 +92,6 @@ private:
         , m_name(name)
         , m_deprecatedValue(WTFMove(value))
         , m_containsVariables(m_deprecatedValue->isVariableDependentValue())
-        , m_serialized(false)
     {
     }
     
@@ -124,7 +128,7 @@ private:
     
     mutable String m_stringValue;
     bool m_containsVariables { false };
-    mutable bool m_serialized;
+    mutable bool m_serialized { false };
 };
 
 } // namespace WebCore

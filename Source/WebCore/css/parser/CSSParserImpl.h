@@ -83,14 +83,11 @@ public:
     };
 
     static bool parseValue(MutableStyleProperties*, CSSPropertyID, const String&, bool important, const CSSParserContext&);
-    static bool parseVariableValue(MutableStyleProperties*, const AtomicString& propertyName, const String&, bool important, const CSSParserContext&);
     static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRulesType);
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents*);
     static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
-
-    static RefPtr<ImmutableStyleProperties> parseCustomPropertySet(CSSParserTokenRange);
 
     static std::unique_ptr<Vector<double>> parseKeyframeKeyList(const String&);
 

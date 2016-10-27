@@ -494,7 +494,7 @@ public:
 
     void setCustomPropertyName(const AtomicString& propertyName) { m_customPropertyName = propertyName; }
 
-    RefPtr<CSSValue> parseVariableDependentValue(CSSPropertyID, const CSSVariableDependentValue&, const CustomPropertyValueMap& customProperties, TextDirection, WritingMode);
+    RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, const CustomPropertyValueMap& customProperties, TextDirection, WritingMode);
 
 private:
     bool is8BitSource() { return m_is8BitSource; }

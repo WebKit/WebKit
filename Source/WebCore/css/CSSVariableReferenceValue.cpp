@@ -34,8 +34,17 @@ namespace WebCore {
 
 String CSSVariableReferenceValue::customCSSText() const
 {
-    // We may want to consider caching this value.
-    return m_data->tokenRange().serialize();
+    if (!m_serialized) {
+        m_serialized = true;
+        m_stringValue = m_data->tokenRange().serialize();
+    }
+    return m_stringValue;
+}
+    
+bool CSSVariableReferenceValue::checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap& customProperties, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const
+{
+    ASSERT(m_data);
+    return m_data->checkVariablesForCycles(name, customProperties, seenProperties, invalidProperties);
 }
 
 } // namespace WebCore

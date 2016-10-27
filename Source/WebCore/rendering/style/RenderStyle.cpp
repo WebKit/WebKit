@@ -2036,10 +2036,10 @@ void RenderStyle::checkVariablesInCustomProperties()
     auto& customProperties = rareInheritedData.access()->m_customProperties.access()->values();
     HashSet<AtomicString> invalidProperties;
     for (auto entry : customProperties) {
-        if (!entry.value->isVariableDependentValue())
+        if (!entry.value->containsVariables())
             continue;
         HashSet<AtomicString> seenProperties;
-        downcast<CSSVariableDependentValue>(*entry.value).checkVariablesForCycles(entry.key, customProperties, seenProperties, invalidProperties);
+        entry.value->checkVariablesForCycles(entry.key, customProperties, seenProperties, invalidProperties);
     }
     
     // Now insert invalid values.
@@ -2053,20 +2053,15 @@ void RenderStyle::checkVariablesInCustomProperties()
     // invalid values if they failed, we can perform variable substitution on the valid values.
     Vector<Ref<CSSCustomPropertyValue>> resolvedValues;
     for (auto entry : customProperties) {
-        if (!entry.value->isVariableDependentValue())
+        if (!entry.value->containsVariables())
             continue;
-        
-        CSSParserValueList parserList;
-        if (!downcast<CSSVariableDependentValue>(*entry.value).valueList().buildParserValueListSubstitutingVariables(&parserList, customProperties))
-            resolvedValues.append(CSSCustomPropertyValue::create(entry.key, CSSCustomPropertyValue::createInvalid()));
-        else
-            resolvedValues.append(CSSCustomPropertyValue::create(entry.key, CSSValueList::createFromParserValueList(parserList)));
+        entry.value->resolveVariableReferences(customProperties, resolvedValues);
     }
     
     // With all results computed, we can now mutate our table to eliminate the variables and
     // hold the final values. This way when we inherit, we don't end up resubstituting variables, etc.
     for (auto& resolvedValue : resolvedValues)
-        customProperties.set(resolvedValue->name(), resolvedValue->deprecatedValue());
+        customProperties.set(resolvedValue->name(), resolvedValue.copyRef());
 
     rareInheritedData.access()->m_customProperties.access()->setContainsVariables(false);
 }

@@ -26,6 +26,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
+#include "CSSPendingSubstitutionValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -125,6 +126,17 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     RefPtr<CSSValue> value = getPropertyCSSValue(propertyID);
     if (value)
         return value->cssText();
+
+    const StylePropertyShorthand& shorthand = shorthandForProperty(propertyID);
+    if (shorthand.length()) {
+        RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[0]);
+        if (!value)
+            return String();
+        if (value->isVariableDependentValue())
+            return value->cssText();
+        if (value->isPendingSubstitutionValue())
+            return downcast<CSSPendingSubstitutionValue>(*value).shorthandValue()->cssText();
+    }
 
     // Shorthand and 4-values properties
     switch (propertyID) {
@@ -232,9 +244,6 @@ String StyleProperties::getCustomPropertyValue(const String& propertyName) const
 String StyleProperties::borderSpacingValue(const StylePropertyShorthand& shorthand) const
 {
     RefPtr<CSSValue> horizontalValue = getPropertyCSSValueInternal(shorthand.properties()[0]);
-    if (horizontalValue && horizontalValue->isVariableDependentValue())
-        return horizontalValue->cssText();
-    
     RefPtr<CSSValue> verticalValue = getPropertyCSSValueInternal(shorthand.properties()[1]);
 
     // While standard border-spacing property does not allow specifying border-spacing-vertical without
@@ -385,8 +394,6 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
             // http://www.w3.org/TR/cssom-1/#serialize-a-css-declaration-block.
             return String();
         }
-        if (values[i]->isVariableDependentValue())
-            return values[i]->cssText();
         if (values[i]->isBaseValueList())
             numLayers = std::max(downcast<CSSValueList>(*values[i]).length(), numLayers);
         else
@@ -525,8 +532,6 @@ String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthan
             RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[i]);
             if (!value)
                 return String();
-            if (value->isVariableDependentValue())
-                return value->cssText();
             String valueText = value->cssText();
             if (!i)
                 commonValue = valueText;
@@ -554,11 +559,9 @@ String StyleProperties::getCommonValue(const StylePropertyShorthand& shorthand) 
     bool lastPropertyWasImportant = false;
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         RefPtr<CSSValue> value = getPropertyCSSValueInternal(shorthand.properties()[i]);
-        // FIXME: CSSInitialValue::cssText should generate the right value.
         if (!value)
             return String();
-        if (value->isVariableDependentValue())
-            return value->cssText();
+        // FIXME: CSSInitialValue::cssText should generate the right value.
         String text = value->cssText();
         if (text.isNull())
             return String();
@@ -611,6 +614,7 @@ RefPtr<CSSValue> StyleProperties::getPropertyCSSValue(CSSPropertyID propertyID) 
         if (dependentValue.propertyID() != propertyID)
             return CSSCustomPropertyValue::createInvalid(); // Have to return special "pending-substitution" value.
     }
+
     return value;
 }
 
@@ -868,6 +872,10 @@ String StyleProperties::asText() const
             auto& dependentValue = downcast<CSSVariableDependentValue>(*property.value());
             if (dependentValue.propertyID() != propertyID)
                 shorthandPropertyID = dependentValue.propertyID();
+        } else if (property.value() && property.value()->isPendingSubstitutionValue()) {
+            auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
+            shorthandPropertyID = substitutionValue.shorthandPropertyId();
+            value = substitutionValue.shorthandValue()->cssText();
         } else {
             switch (propertyID) {
             case CSSPropertyAnimationName:

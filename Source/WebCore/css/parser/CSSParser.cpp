@@ -58,8 +58,10 @@
 #include "CSSPageRule.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
+#include "CSSPendingSubstitutionValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSRevertValue.h"
@@ -75,6 +77,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CSSVariableDependentValue.h"
+#include "CSSVariableReferenceValue.h"
 #include "Counter.h"
 #include "Document.h"
 #include "FloatConversion.h"
@@ -1432,6 +1435,10 @@ Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const Strin
 {
     CSSParserContext context(element->document());
     context.mode = strictToCSSParserMode(element->isHTMLElement() && !element->document().inQuirksMode());
+
+    if (context.useNewParser)
+        return CSSParserImpl::parseInlineStyleDeclaration(string, element);
+
     return CSSParser(context).parseDeclaration(string, nullptr);
 }
 
@@ -1796,23 +1803,68 @@ void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&
         addProperty(longhands[i], value.copyRef(), important);
 }
 
-RefPtr<CSSValue> CSSParser::parseVariableDependentValue(CSSPropertyID propID, const CSSVariableDependentValue& dependentValue, const CustomPropertyValueMap& customProperties, TextDirection direction, WritingMode writingMode)
+RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propID, const CSSValue& value, const CustomPropertyValueMap& customProperties, TextDirection direction, WritingMode writingMode)
 {
-    m_valueList.reset(new CSSParserValueList());
-    if (!dependentValue.valueList().buildParserValueListSubstitutingVariables(m_valueList.get(), customProperties))
+    if (value.isVariableDependentValue()) {
+        const CSSVariableDependentValue& dependentValue = downcast<CSSVariableDependentValue>(value);
+        m_valueList.reset(new CSSParserValueList());
+        if (!dependentValue.valueList().buildParserValueListSubstitutingVariables(m_valueList.get(), customProperties))
+            return nullptr;
+
+        CSSPropertyID dependentValuePropertyID = dependentValue.propertyID();
+        if (CSSProperty::isDirectionAwareProperty(dependentValuePropertyID))
+            dependentValuePropertyID = CSSProperty::resolveDirectionAwareProperty(dependentValuePropertyID, direction, writingMode);
+
+        if (!parseValue(dependentValuePropertyID, false))
+            return nullptr;
+
+        for (auto& property : m_parsedProperties) {
+            if (property.id() == propID)
+                return property.value();
+        }
+        
         return nullptr;
-
-    CSSPropertyID dependentValuePropertyID = dependentValue.propertyID();
-    if (CSSProperty::isDirectionAwareProperty(dependentValuePropertyID))
-        dependentValuePropertyID = CSSProperty::resolveDirectionAwareProperty(dependentValuePropertyID, direction, writingMode);
-
-    if (!parseValue(dependentValuePropertyID, false))
-        return nullptr;
-
-    for (auto& property : m_parsedProperties) {
-        if (property.id() == propID)
-            return property.value();
     }
+    
+    if (value.isPendingSubstitutionValue()) {
+        // FIXME: Should have a resolvedShorthands cache to stop this from being done
+        // over and over for each longhand value.
+        const CSSPendingSubstitutionValue& pendingSubstitution = downcast<CSSPendingSubstitutionValue>(value);
+        CSSPropertyID shorthandID = pendingSubstitution.shorthandPropertyId();
+        if (CSSProperty::isDirectionAwareProperty(shorthandID))
+            shorthandID = CSSProperty::resolveDirectionAwareProperty(shorthandID, direction, writingMode);
+        CSSVariableReferenceValue* shorthandValue = pendingSubstitution.shorthandValue();
+        const CSSVariableData* variableData = shorthandValue->variableDataValue();
+        ASSERT(variableData);
+        
+        Vector<CSSParserToken> resolvedTokens;
+        if (!variableData->resolveTokenRange(customProperties, variableData->tokens(), resolvedTokens))
+            return nullptr;
+        
+        ParsedPropertyVector parsedProperties;
+        if (!CSSPropertyParser::parseValue(shorthandID, false, resolvedTokens, m_context, parsedProperties, StyleRule::Style))
+            return nullptr;
+        
+        for (auto& property : parsedProperties) {
+            if (property.id() == propID)
+                return property.value();
+        }
+        
+        return nullptr;
+    }
+
+    if (value.isVariableReferenceValue()) {
+        const CSSVariableReferenceValue& valueWithReferences = downcast<CSSVariableReferenceValue>(value);
+        const CSSVariableData* variableData = valueWithReferences.variableDataValue();
+        ASSERT(variableData);
+        
+        Vector<CSSParserToken> resolvedTokens;
+        if (!variableData->resolveTokenRange(customProperties, variableData->tokens(), resolvedTokens))
+            return nullptr;
+        
+        return CSSPropertyParser::parseSingleValue(propID, resolvedTokens, m_context);
+    }
+    
     return nullptr;
 }
 

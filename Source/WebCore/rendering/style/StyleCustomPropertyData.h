@@ -22,7 +22,7 @@
 #ifndef StyleCustomPropertyData_h
 #define StyleCustomPropertyData_h
 
-#include "CSSValue.h"
+#include "CSSCustomPropertyValue.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -44,8 +44,8 @@ public:
         if (m_values.size() != o.m_values.size())
             return false;
         
-        for (WTF::KeyValuePair<AtomicString, RefPtr<CSSValue>> entry : m_values) {
-            RefPtr<CSSValue> other = o.m_values.get(entry.key);
+        for (WTF::KeyValuePair<AtomicString, RefPtr<CSSCustomPropertyValue>> entry : m_values) {
+            RefPtr<CSSCustomPropertyValue> other = o.m_values.get(entry.key);
             if (!other || !entry.value->equals(*other))
                 return false;
         }
@@ -54,14 +54,14 @@ public:
 
     bool operator!=(const StyleCustomPropertyData &o) const { return !(*this == o); }
     
-    void setCustomPropertyValue(const AtomicString& name, const RefPtr<CSSValue>& value)
+    void setCustomPropertyValue(const AtomicString& name, const RefPtr<CSSCustomPropertyValue>& value)
     {
         m_values.set(name, value);
-        if (value->isVariableDependentValue())
+        if (value->containsVariables())
             m_containsVariables = true;
     }
 
-    RefPtr<CSSValue> getCustomPropertyValue(const AtomicString& name) const { return m_values.get(name); }
+    RefPtr<CSSCustomPropertyValue> getCustomPropertyValue(const AtomicString& name) const { return m_values.get(name); }
     CustomPropertyValueMap& values() { return m_values; }
     
     bool hasCustomProperty(const AtomicString& name) const { return m_values.contains(name); }

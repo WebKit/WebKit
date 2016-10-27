@@ -26,6 +26,7 @@
 
 namespace WebCore {
 
+class CSSCustomPropertyValue;
 struct CSSParserValue;
 class CSSParserValueList;
 

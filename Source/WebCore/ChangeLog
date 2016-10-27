@@ -1,3 +1,128 @@
+2016-10-27  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Implement CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=164075
+
+        Reviewed by Dean Jackson.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add CSSCustomPropertyValue.cpp to the project.
+
+        * css/CSSCustomPropertyValue.cpp: Added.
+        (WebCore::CSSCustomPropertyValue::checkVariablesForCycles):
+        (WebCore::CSSCustomPropertyValue::resolveVariableReferences):
+        * css/CSSCustomPropertyValue.h:
+        These functions abstract the old and new implementations of CSS
+        variables so that the callers don't have to worry about it.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::equals):
+        Make sure CSSVariableReferenceValue and CSSPendingSubstitutionValue
+        have equals implemented.
+
+        (WebCore::CSSValue::isInvalidCustomPropertyValue): Deleted.
+        This code was dead and never called.
+
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isCustomPropertyValue):
+        (WebCore::CSSValue::hasVariableReferences):
+        Add a helper function for asking if a CSSValue has variable references.
+        This abstracts the old and new implementations so that callers can
+        ask if the value has variables without caring which implementation is
+        being used.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::checkVariablesForCycles):
+        * css/CSSValueList.h:
+        In order to abstract the old and new variables implementations, custom
+        properties now store CSSCustomPropertyValue as their values instead of
+        raw values. The old implementation needs to be patched to deal with this
+        wrapper being present now.
+
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::checkVariablesForCycles):
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange):
+        (WebCore::CSSVariableData::resolveVariableFallback):
+        (WebCore::CSSVariableData::resolveVariableReference):
+        (WebCore::CSSVariableData::resolveVariableReferences):
+        (WebCore::CSSVariableData::resolveTokenRange):
+        * css/CSSVariableData.h:
+        Implementation of cycle checking and variable resolution. The logic of
+        this implementation is the same as the old. It walks CSSParserTokens
+        instead of the old CSSParser structures.
+
+        * css/CSSVariableReferenceValue.cpp:
+        (WebCore::CSSVariableReferenceValue::customCSSText):
+        Add support for serialization caching, just like the old implementation
+        had in CSSVariableDependentValue.
+
+        (WebCore::CSSVariableReferenceValue::checkVariablesForCycles):
+        * css/CSSVariableReferenceValue.h:
+        Add cycle checking and variable resolution helper functions.
+
+        * css/CSSVariableValue.cpp:
+        (WebCore::CSSVariableValue::buildParserValueListSubstitutingVariables):
+        Patched to account for the change in storage of custom properties to
+        have custom property value wrappers.
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue):
+        (WebCore::StyleProperties::borderSpacingValue):
+        (WebCore::StyleProperties::getLayeredShorthandValue):
+        (WebCore::StyleProperties::getShorthandValue):
+        (WebCore::StyleProperties::getCommonValue):
+        (WebCore::StyleProperties::getPropertyCSSValue):
+        (WebCore::StyleProperties::asText):
+        Clean up the resolution of pending substitution values. Instead of hacking
+        it into every possible StyleShorthandProperty crawling function, obtain
+        the shorthand for the property up front, access the first longhand, and
+        if we see a pending substitution value, perform the substitution.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::MatchResult::addMatchedProperties):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::resolvedVariableValue):
+        * css/StyleResolver.h:
+        Add support for the new implementation in all the same places as the old.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseInlineStyleDeclaration):
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        (WebCore::CSSParser::parseVariableDependentValue): Deleted.
+        * css/parser/CSSParser.h:
+        Rename parseVariableDependentValue to parseValueWithVariableReferences,
+        since it is operating on three distinct value types now. Turn on new
+        parser support for parseInlineStyleDeclaration.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::filterProperties):
+        (WebCore::CSSParserImpl::parseVariableValue): Deleted.
+        (WebCore::CSSParserImpl::parseCustomPropertySet): Deleted.
+        * css/parser/CSSParserImpl.h:
+        Remove parser functions that aren't relevant to our implementation
+        of CSS variables.
+
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::classifyVariableRange):
+        Add support for the CSS4 'revert' keyword to the new variable parser.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::checkVariablesInCustomProperties):
+        Modified to store CSSCustomPropertyValues as the values always now and
+        to use the method abstractions on CSSCustomPropertyValue to resolve
+        cycles and perform substitutions.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setCustomPropertyValue):
+        (WebCore::RenderStyle::getCustomPropertyValue):
+        * rendering/style/StyleCustomPropertyData.h:
+        (WebCore::StyleCustomPropertyData::operator==):
+        (WebCore::StyleCustomPropertyData::setCustomPropertyValue):
+        (WebCore::StyleCustomPropertyData::getCustomPropertyValue):
+        Tighten up the map to store CSSCustomPropertyValue instead of just
+        CSSValue.
+
 2016-10-27  Zalan Bujtas  <zalan@apple.com>
 
         RenderMultiColumnFlowThread::processPossibleSpannerDescendant should take RenderObject& instead of RenderObject*

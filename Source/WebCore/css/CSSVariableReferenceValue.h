@@ -50,6 +50,8 @@ public:
     bool equals(const CSSVariableReferenceValue& other) const { return m_data == other.m_data; }
     String customCSSText() const;
 
+    bool checkVariablesForCycles(const AtomicString& name, CustomPropertyValueMap&, HashSet<AtomicString>& seenProperties, HashSet<AtomicString>& invalidProperties) const;
+
 private:
     CSSVariableReferenceValue(Ref<CSSVariableData>&& data)
         : CSSValue(VariableReferenceClass)
@@ -58,6 +60,8 @@ private:
     }
 
     RefPtr<CSSVariableData> m_data;
+    mutable String m_stringValue;
+    mutable bool m_serialized { false };
 };
 
 } // namespace WebCore

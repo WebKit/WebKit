@@ -69,10 +69,11 @@ bool CSSVariableValue::equals(const CSSVariableValue& other) const
 
 bool CSSVariableValue::buildParserValueListSubstitutingVariables(CSSParserValueList* resultList, const CustomPropertyValueMap& customProperties) const
 {
-    if (RefPtr<CSSValue> value = customProperties.get(m_name)) {
-        if (value->isValueList())
+    if (RefPtr<CSSCustomPropertyValue> customPropertyValue = customProperties.get(m_name)) {
+        auto value = customPropertyValue->deprecatedValue();
+        if (value && value->isValueList())
             return downcast<CSSValueList>(*value).buildParserValueListSubstitutingVariables(resultList, customProperties);
-        if (value->isVariableDependentValue())
+        if (value && value->isVariableDependentValue())
             return downcast<CSSVariableDependentValue>(*value).valueList().buildParserValueListSubstitutingVariables(resultList, customProperties);
     }
 

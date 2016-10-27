@@ -130,7 +130,7 @@ static CSSValueID classifyVariableRange(CSSParserTokenRange range, bool& hasRefe
     range.consumeWhitespace();
     if (range.peek().type() == IdentToken) {
         CSSValueID id = range.consumeIncludingWhitespace().id();
-        if (range.atEnd() && (id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset))
+        if (range.atEnd() && (id == CSSValueInherit || id == CSSValueInitial || id == CSSValueUnset || id == CSSValueRevert))
             return id;
     }
 
