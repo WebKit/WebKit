@@ -96,7 +96,6 @@ static Ref<JSC::DOMJIT::Patchpoint> checkNode()
     return patchpoint;
 }
 
-// Node#firstChild.
 Ref<JSC::DOMJIT::Patchpoint> NodeFirstChildDOMJIT::checkDOM()
 {
     return checkNode();
@@ -110,7 +109,6 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeFirstChildDOMJIT::callDOM()
     return patchpoint;
 }
 
-// Node#lastChild.
 Ref<JSC::DOMJIT::Patchpoint> NodeLastChildDOMJIT::checkDOM()
 {
     return checkNode();
@@ -124,7 +122,6 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeLastChildDOMJIT::callDOM()
     return patchpoint;
 }
 
-// Node#nextSibling.
 Ref<JSC::DOMJIT::Patchpoint> NodeNextSiblingDOMJIT::checkDOM()
 {
     return checkNode();
@@ -138,7 +135,6 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeNextSiblingDOMJIT::callDOM()
     return patchpoint;
 }
 
-// Node#previousSibling.
 Ref<JSC::DOMJIT::Patchpoint> NodePreviousSiblingDOMJIT::checkDOM()
 {
     return checkNode();
@@ -152,7 +148,6 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodePreviousSiblingDOMJIT::callDOM()
     return patchpoint;
 }
 
-// Node#parentNode.
 Ref<JSC::DOMJIT::Patchpoint> NodeParentNodeDOMJIT::checkDOM()
 {
     return checkNode();
@@ -166,7 +161,6 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeParentNodeDOMJIT::callDOM()
     return patchpoint;
 }
 
-// Node#nodeType.
 Ref<JSC::DOMJIT::Patchpoint> NodeNodeTypeDOMJIT::checkDOM()
 {
     return checkNode();
@@ -185,6 +179,41 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeNodeTypeDOMJIT::callDOM()
         jit.boxInt32(result.payloadGPR(), result);
         return CCallHelpers::JumpList();
     });
+    return patchpoint;
+}
+
+Ref<JSC::DOMJIT::Patchpoint> NodeOwnerDocumentDOMJIT::checkDOM()
+{
+    return checkNode();
+}
+
+Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeOwnerDocumentDOMJIT::callDOM()
+{
+    const auto& heap = DOMJIT::AbstractHeapRepository::shared();
+    Ref<JSC::DOMJIT::CallDOMPatchpoint> patchpoint = JSC::DOMJIT::CallDOMPatchpoint::create();
+    patchpoint->numGPScratchRegisters = 1;
+    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
+        JSValueRegs result = params[0].jsValueRegs();
+        GPRReg node = params[1].gpr();
+        GPRReg globalObject = params[2].gpr();
+        JSValue globalObjectValue = params[2].value();
+        GPRReg scratch = params.gpScratch(0);
+
+        // If the given node is a Document, Node#ownerDocument returns null.
+        auto notDocument = DOMJIT::branchIfNotDocumentWrapper(jit, node);
+        jit.moveValue(jsNull(), result);
+        auto done = jit.jump();
+
+        notDocument.link(&jit);
+        jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, Node::treeScopeMemoryOffset()), scratch);
+        jit.loadPtr(CCallHelpers::Address(scratch, TreeScope::documentScopeMemoryOffset()), scratch);
+
+        DOMJIT::toWrapper<Document>(jit, params, scratch, globalObject, result, toWrapperSlow<Document>, globalObjectValue);
+        done.link(&jit);
+        return CCallHelpers::JumpList();
+    });
+    patchpoint->effect = JSC::DOMJIT::Effect::forDef(heap.Node_ownerDocument);
     return patchpoint;
 }
 

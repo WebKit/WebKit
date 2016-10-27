@@ -1,3 +1,38 @@
+2016-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Node::ownerDocument
+        https://bugs.webkit.org/show_bug.cgi?id=164004
+
+        Reviewed by Darin Adler.
+
+        Test: js/dom/domjit-accessor-owner-document.html
+
+        Implement Node.ownerDocument DOMJIT accessor.
+        According to the result of the profiler, jQuery's prop()
+        function is frequently called in Ember.js SpeedoMeter.
+        And this function calls jQuery.isXMLDoc(). And this isXMLDoc()
+        function calls element.ownerDocument accessor. And our WebKit
+        inspector also uses ownerDocument accessor frequently.
+
+        Interesting thing is this ownerDocument functionality is used
+        in CSSJIT, so CSSJIT has similar helper function to look up the
+        owner document of the element. As a result, all the necessary
+        functionality is already implemented, DOMJIT just utilizes it.
+        For example, Node::treeScopeMemoryOffset() and
+        TreeScope::documentScopeMemoryOffset() is implemented before this
+        patch.
+
+        In the future, we will convert CSSJIT's Assembler& to CCallHelpers&
+        and share the code with DOMJIT[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=164006
+
+        * dom/Node.idl:
+        * domjit/DOMJITAbstractHeapRepository.h:
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::NodeOwnerDocumentDOMJIT::checkDOM):
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOM):
+
 2016-10-26  Chris Dumez  <cdumez@apple.com>
 
         Replace IDBKeyPath with a WTF::Variant

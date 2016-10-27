@@ -42,6 +42,7 @@ namespace WebCore { namespace DOMJIT {
     V(Node_parentNode, Node) \
     V(Node_nextSibling, Node) \
     V(Node_previousSibling, Node) \
+    V(Node_ownerDocument, Node) \
 
 
 class AbstractHeapRepository {
