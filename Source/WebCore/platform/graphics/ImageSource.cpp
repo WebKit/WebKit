@@ -103,7 +103,7 @@ SubsamplingLevel ImageSource::calculateMaximumSubsamplingLevel() const
     const SubsamplingLevel maxSubsamplingLevel = 3;
     
     for (SubsamplingLevel level = 0; level < maxSubsamplingLevel; ++level) {
-        if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
+        if (frameSizeAtIndex(0, level).area().unsafeGet() < maximumImageAreaBeforeSubsampling)
             return level;
     }
     
