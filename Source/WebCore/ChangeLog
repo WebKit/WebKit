@@ -1,3 +1,38 @@
+2016-10-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Prevent hit tests from being performed on an invalid render tree
+        https://bugs.webkit.org/show_bug.cgi?id=163877
+        <rdar://problem/28675761>
+
+        Reviewed by Simon Fraser.
+
+        Changeset r200971 added code to ensure that layout is up-to-date before hit testing, but did
+        so only for the main frame. It was still possible to enter cross-frame hit testing with a
+        subframe needing style recalc. In that situation, the subframe's updateLayout() would get
+        called, which could trigger a compositing change that marked the parent frame as needing style
+        recalc. A subsequent layout on the parent frame (for example by hit testing traversing into
+        a second subframe) could then mutate the parent frame's layer tree while hit testing was
+        traversing it.
+        
+        This patch modifies the hit test logic to ensure that a recursive layout is performed so that
+        we always perform hit tests on a clean set of frames. It also adds some assertions to warn
+        us if we encounter this invalid state.
+
+        Tested by fast/layers/prevent-hit-test-during-layout.html.
+
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc): Assert that we are not hit testing
+        during style recalculation.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint): Ensure that we have a clean render tree
+        when hit testing.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setNeedsLayout): Assert that we are not in the process of hit testing
+        when we schedule a layout.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::hitTest): Mark RenderView as in an active hit test.
+        * rendering/RenderView.h:
+
 2016-10-27  Zan Dobersek  <zdobersek@igalia.com>
 
         BufferSource should behave as an union
