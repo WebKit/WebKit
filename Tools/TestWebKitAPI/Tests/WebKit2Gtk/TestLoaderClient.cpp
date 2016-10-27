@@ -405,6 +405,20 @@ public:
         g_dbus_connection_signal_unsubscribe(bus->connection(), m_uriChangedSignalID);
     }
 
+    void loadURI(const char* uri)
+    {
+        m_webPageURIs.clear();
+        m_webViewURIs.clear();
+        WebViewTest::loadURI(uri);
+    }
+
+    void checkViewAndPageURIsMatch() const
+    {
+        g_assert_cmpint(m_webPageURIs.size(), ==, m_webViewURIs.size());
+        for (size_t i = 0; i < m_webPageURIs.size(); ++i)
+            ASSERT_CMP_CSTRING(m_webPageURIs[i], ==, m_webViewURIs[i]);
+    }
+
     unsigned m_uriChangedSignalID;
     Vector<CString> m_webPageURIs;
     Vector<CString> m_webViewURIs;
@@ -412,17 +426,37 @@ public:
 
 static void testWebPageURI(WebPageURITest* test, gconstpointer)
 {
+    // Normal load.
+    test->loadURI(kServer->getURIForPath("/normal1").data());
+    test->waitUntilLoadFinished();
+    test->checkViewAndPageURIsMatch();
+    g_assert_cmpint(test->m_webPageURIs.size(), ==, 1);
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/normal1"));
+
+    // Redirect
     test->loadURI(kServer->getURIForPath("/redirect").data());
     test->waitUntilLoadFinished();
-
-    g_assert_cmpint(test->m_webPageURIs.size(), ==, test->m_webViewURIs.size());
-    for (size_t i = 0; i < test->m_webPageURIs.size(); ++i)
-        ASSERT_CMP_CSTRING(test->m_webPageURIs[i], ==, test->m_webViewURIs[i]);
-
+    test->checkViewAndPageURIsMatch();
     g_assert_cmpint(test->m_webPageURIs.size(), ==, 2);
     ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/redirect"));
     ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/normal"));
 
+    // Normal load, URL changed by WebKitPage::send-request.
+    test->loadURI(kServer->getURIForPath("/normal-change-request").data());
+    test->waitUntilLoadFinished();
+    test->checkViewAndPageURIsMatch();
+    g_assert_cmpint(test->m_webPageURIs.size(), ==, 2);
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/normal-change-request"));
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/request-changed"));
+
+    // Redirect, URL changed by WebKitPage::send-request.
+    test->loadURI(kServer->getURIForPath("/redirect-to-change-request").data());
+    test->waitUntilLoadFinished();
+    test->checkViewAndPageURIsMatch();
+    g_assert_cmpint(test->m_webPageURIs.size(), ==, 3);
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/redirect-to-change-request"));
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/normal-change-request"));
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[2], ==, kServer->getURIForPath("/request-changed-on-redirect"));
 }
 
 static void testURIRequestHTTPHeaders(WebViewTest* test, gconstpointer)
