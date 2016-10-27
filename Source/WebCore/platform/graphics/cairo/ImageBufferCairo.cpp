@@ -74,12 +74,15 @@ ImageBufferData::ImageBufferData(const IntSize& size, RenderingMode renderingMod
     , m_renderingMode(renderingMode)
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxy))
     , m_compositorTexture(0)
 #endif
     , m_texture(0)
 #endif
 {
+#if ENABLE(ACCELERATED_2D_CANVAS) && USE(COORDINATED_GRAPHICS_THREADED)
+    if (m_renderingMode == RenderingMode::Accelerated)
+        m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxy);
+#endif
 }
 
 ImageBufferData::~ImageBufferData()
