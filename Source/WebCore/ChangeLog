@@ -1,3 +1,24 @@
+2016-10-27  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r207753-207755): ASSERTION FAILED: m_parsedStyleSheetCache->isInMemoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=163905
+
+        Reviewed by Antti Koivisto.
+
+        Covered by existing tests and http/tests/security/cached-cross-origin-shared-css-stylesheet.html
+
+        Small refactoring to do more member fields initialization in StyleSheetContents header.
+        Refactored StyleSheetContents::m_isInMemoryCache to be a counter instead of a boolean.
+        This allows StyleSheetContents to be linked to several CachedCSSStyleSheets.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::addedToMemoryCache):
+        (WebCore::StyleSheetContents::removedFromMemoryCache):
+        * css/StyleSheetContents.h:
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::setBodyDataFrom): Making reuse of saveParsedStyleSheet to handle update of StyleSheetContents cache count.
+
 2016-10-27  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed. Build fix for gcc.
