@@ -587,9 +587,9 @@ bool HTMLPlugInImageElement::isTopLevelFullPagePlugin(const RenderEmbeddedObject
     auto& style = renderer.style();
     IntSize visibleSize = frame.view()->visibleSize();
     LayoutRect contentRect = renderer.contentBoxRect();
-    int contentWidth = contentRect.width();
-    int contentHeight = contentRect.height();
-    return is100Percent(style.width()) && is100Percent(style.height()) && contentWidth * contentHeight > visibleSize.area() * sizingFullPageAreaRatioThreshold;
+    float contentWidth = contentRect.width();
+    float contentHeight = contentRect.height();
+    return is100Percent(style.width()) && is100Percent(style.height()) && contentWidth * contentHeight > visibleSize.area().unsafeGet() * sizingFullPageAreaRatioThreshold;
 }
     
 void HTMLPlugInImageElement::checkSnapshotStatus()

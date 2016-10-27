@@ -125,9 +125,10 @@ public:
 
     IntSize constrainedBetween(const IntSize& min, const IntSize& max) const;
 
-    unsigned area() const
+    template <typename T = WTF::CrashOnOverflow>
+    Checked<unsigned, T> area() const
     {
-        return abs(m_width) * abs(m_height);
+        return Checked<unsigned, T>(abs(m_width)) * abs(m_height);
     }
 
     int diagonalLengthSquared() const

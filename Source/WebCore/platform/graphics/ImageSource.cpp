@@ -206,7 +206,7 @@ IntSize ImageSource::frameSizeAtIndex(size_t index, SubsamplingLevel subsampling
 
 unsigned ImageSource::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
-    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
+    return (frameSizeAtIndex(index, subsamplingLevel).area() * 4).unsafeGet();
 }
 
 float ImageSource::frameDurationAtIndex(size_t index)

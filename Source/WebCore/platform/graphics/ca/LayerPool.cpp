@@ -56,7 +56,7 @@ HashSet<LayerPool*>& LayerPool::allLayerPools()
 
 unsigned LayerPool::backingStoreBytesForSize(const IntSize& size)
 {
-    return size.width() * size.height() * 4;
+    return (size.area() * 4).unsafeGet();
 }
 
 LayerPool::LayerList& LayerPool::listOfLayersWithSize(const IntSize& size, AccessType accessType)

@@ -1,3 +1,29 @@
+2016-10-26  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r207708. rdar://problem/28962914
+
+    2016-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 163762: IntSize::area() should used checked arithmetic
+        <https://webkit.org/b/163762>
+
+        Reviewed by Darin Adler.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create): Add overflow check and return
+        nullptr on overflow.
+        (WebKit::ShareableBitmap::createShareable): Ditto.
+        (WebKit::ShareableBitmap::create): Change debug assert for
+        adequate buffer size check into release check.
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::numBytesForSize): Change to return a
+        Checked<unsigned, RecordOverflow> value.
+        (WebKit::ShareableBitmap::sizeInBytes):
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::numBytesForSize): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _takeViewSnapshot]): Call unsafeGet().
+
 2016-10-26  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r207171. rdar://problem/28857503

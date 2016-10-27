@@ -86,7 +86,7 @@ public:
     int width() const { return m_size.width(); }
     int height() const { return m_size.height(); }
     
-    unsigned area() const { return m_size.area(); }
+    unsigned area() const { return m_size.area().unsafeGet(); }
 
     void setX(int x) { m_location.setX(x); }
     void setY(int y) { m_location.setY(y); }
