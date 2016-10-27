@@ -1,3 +1,18 @@
+2016-10-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r207930. rdar://problem/28811881
+
+    2016-10-26  Zalan Bujtas  <zalan@apple.com>
+
+            Ignore out-of-flow siblings when searching for a spanner candidate.
+            https://bugs.webkit.org/show_bug.cgi?id=164042.
+            <rdar://problem/28758456>
+
+            Reviewed by Simon Fraser.
+
+            * fast/multicol/crash-when-spanner-candidate-is-out-of-flow-expected.txt: Added.
+            * fast/multicol/crash-when-spanner-candidate-is-out-of-flow.html: Added.
+
 2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207523. rdar://problem/28718748
