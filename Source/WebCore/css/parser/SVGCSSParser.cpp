@@ -31,6 +31,8 @@
 #include "RenderTheme.h"
 #include "SVGPaint.h"
 
+#include <wtf/TemporaryChange.h>
+
 namespace WebCore {
 
 static bool isValidSystemControlColorValue(CSSValueID id)
@@ -291,7 +293,7 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
     case CSSPropertyMarker:
     {
         ShorthandScope scope(this, propId);
-        m_implicitShorthand = true;
+        TemporaryChange<bool> change(m_implicitShorthand, true);
         if (!parseValue(CSSPropertyMarkerStart, important))
             return false;
         if (m_valueList->current()) {
@@ -301,7 +303,6 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
         CSSValue* value = m_parsedProperties.last().value();
         addProperty(CSSPropertyMarkerMid, value, important);
         addProperty(CSSPropertyMarkerEnd, value, important);
-        m_implicitShorthand = false;
         return true;
     }
     case CSSPropertyCx:

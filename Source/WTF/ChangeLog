@@ -1,3 +1,15 @@
+2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=116470
+
+        Reviewed by Simon Fraser.
+
+        * wtf/TemporaryChange.h:
+        (WTF::TemporaryChange::TemporaryChange):
+        Add a new constructor to make TemporaryChange work as a restorer. The
+        temporary change will happen after we construct the object.
+
 2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         std::unique_ptr deleter functions should not check if pointer is null

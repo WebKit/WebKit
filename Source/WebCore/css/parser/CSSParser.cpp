@@ -106,6 +106,7 @@
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
@@ -134,33 +135,6 @@ extern int cssyydebug;
 extern int cssyyparse(WebCore::CSSParser*);
 
 using namespace WTF;
-
-namespace {
-
-enum PropertyType {
-    PropertyExplicit,
-    PropertyImplicit
-};
-
-class ImplicitScope {
-    WTF_MAKE_NONCOPYABLE(ImplicitScope);
-public:
-    ImplicitScope(WebCore::CSSParser& parser, PropertyType propertyType)
-        : m_parser(parser)
-    {
-        m_parser.m_implicitShorthand = propertyType == PropertyImplicit;
-    }
-
-    ~ImplicitScope()
-    {
-        m_parser.m_implicitShorthand = false;
-    }
-
-private:
-    WebCore::CSSParser& m_parser;
-};
-
-} // namespace
 
 namespace WebCore {
 
@@ -2229,7 +2203,6 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 addProperty(propId2, val2.releaseNonNull(), important);
             result = true;
         }
-        m_implicitShorthand = false;
         return result;
     }
     case CSSPropertyListStyleImage:     // <uri> | none | inherit
@@ -3622,6 +3595,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
         return false;
 
     ShorthandScope scope(this, propId);
+    TemporaryChange<bool> change(m_implicitShorthand);
 
     bool parsedProperty[cMaxFillProperties] = { false };
     RefPtr<CSSValue> values[cMaxFillProperties];
@@ -4036,7 +4010,7 @@ bool CSSParser::parseShorthand(CSSPropertyID propId, const StylePropertyShorthan
 
     // Fill in any remaining properties with the initial value.
     auto& cssValuePool = CSSValuePool::singleton();
-    ImplicitScope implicitScope(*this, PropertyImplicit);
+    TemporaryChange<bool> change(m_implicitShorthand, true);
     const StylePropertyShorthand* propertiesForInitialization = shorthand.propertiesForInitialization();
     for (unsigned i = 0; i < shorthand.length(); ++i) {
         if (propertyFound[i])
@@ -4073,7 +4047,7 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
             if (!parseValue(properties[0], important))
                 return false;
             CSSValue* value = m_parsedProperties.last().value();
-            ImplicitScope implicitScope(*this, PropertyImplicit);
+            TemporaryChange<bool> change(m_implicitShorthand, true);
             addProperty(properties[1], value, important);
             addProperty(properties[2], value, important);
             addProperty(properties[3], value, important);
@@ -4083,7 +4057,7 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
             CSSValue* value = m_parsedProperties[m_parsedProperties.size() - 2].value();
-            ImplicitScope implicitScope(*this, PropertyImplicit);
+            TemporaryChange<bool> change(m_implicitShorthand, true);
             addProperty(properties[2], value, important);
             value = m_parsedProperties[m_parsedProperties.size() - 2].value();
             addProperty(properties[3], value, important);
@@ -4093,7 +4067,7 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important) || !parseValue(properties[2], important))
                 return false;
             CSSValue* value = m_parsedProperties[m_parsedProperties.size() - 2].value();
-            ImplicitScope implicitScope(*this, PropertyImplicit);
+            TemporaryChange<bool> change(m_implicitShorthand, true);
             addProperty(properties[3], value, important);
             break;
         }
@@ -8730,7 +8704,7 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
     } else
         completeBorderRadii(radii[1]);
 
-    ImplicitScope implicitScope(*this, PropertyImplicit);
+    TemporaryChange<bool> change(m_implicitShorthand, true);
     addProperty(CSSPropertyBorderTopLeftRadius, createPrimitiveValuePair(WTFMove(radii[0][0]), WTFMove(radii[1][0])), important);
     addProperty(CSSPropertyBorderTopRightRadius, createPrimitiveValuePair(WTFMove(radii[0][1]), WTFMove(radii[1][1])), important);
     addProperty(CSSPropertyBorderBottomRightRadius, createPrimitiveValuePair(WTFMove(radii[0][2]), WTFMove(radii[1][2])), important);

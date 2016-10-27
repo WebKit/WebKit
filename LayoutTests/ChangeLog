@@ -1,3 +1,18 @@
+2016-10-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGCSSParser: m_implicitShorthand value is not reset after adding the shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=116470
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/implicit-property-restore-expected.txt: Added.
+        * fast/css/implicit-property-restore.html: Added.
+
+        * fast/css/remove-shorthand-expected.txt:
+        Rebase-line the test expected results because of fixing the leak of
+        m_implicitShorthand. The bug was happening because "background: ..." property
+        comes immediately before the "list-style: ...." property.
+
 2016-10-14  Antti Koivisto  <antti@apple.com>
 
         100% CPU on homedepot.com page
