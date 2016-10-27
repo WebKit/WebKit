@@ -316,18 +316,12 @@ PASS Testing Request url 'http://127.0.0.1:10100/relative_import.html' with base
 PASS Testing Request url 'http://facebook.com/?foo=%7B%22abc%22' with base 'about:blank' 
 PASS Testing Request url 'https://localhost:3000/jqueryui@1.2.3' with base 'about:blank' 
 PASS Testing Request url 'h	t
-t
-p://h	o
-s
-t:9	0
-0
-0/p	a
-t
-h?q	u
-e
-ry#f	r
-a
-g' with base 'about:blank' 
+t\rp://h	o
+s\rt:9	0
+0\r0/p	a
+t\rh?q	u
+e\rry#f	r
+a\rg' with base 'about:blank' 
 PASS Testing Request url '?a=b&c=d' with base 'http://example.org/foo/bar' 
 PASS Testing Request url '??a=b&c=d' with base 'http://example.org/foo/bar' 
 PASS Testing Request url 'http:' with base 'http://example.org/foo/bar' 

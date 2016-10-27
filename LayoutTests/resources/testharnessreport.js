@@ -55,11 +55,22 @@ if (self.testRunner) {
             var results = document.createElement("pre");
             var resultStr = "\n";
 
+            // Sanitizes the given text for display in test results.
+            function sanitize(text) {
+                if (!text) {
+                    return "";
+                }
+                // Escape null characters, otherwise diff will think the file is binary.
+                text = text.replace(/\0/g, "\\0");
+                // Escape carriage returns as they break rietveld's difftools.
+                return text.replace(/\r/g, "\\r");
+            }
+
             if(harness_status.status != 0)
                 resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
 
             for (var i = 0; i < tests.length; i++) {
-                var message = (tests[i].message != null) ? tests[i].message : "";
+                var message = sanitize(tests[i].message);
                 if (tests[i].status == 1 && !tests[i].dumpStack) {
                     // Remove stack for failed tests for proper string comparison without file paths.
                     // For a test to dump the stack set its dumpStack attribute to true.
@@ -67,7 +78,7 @@ if (self.testRunner) {
                     if (stackIndex > 0)
                         message = message.substr(0, stackIndex);
                 }
-                resultStr += convertResult(tests[i].status) + " " +  (tests[i].name != null ? tests[i].name : "") + " " + message + "\n";
+                resultStr += convertResult(tests[i].status) + " " + sanitize(tests[i].name) + " " + message + "\n";
             }
 
             results.innerText = resultStr;

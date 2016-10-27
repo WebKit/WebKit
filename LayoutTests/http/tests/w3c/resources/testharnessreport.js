@@ -47,6 +47,18 @@ add_completion_callback(function (tests, harness_status){
 	
 	// Declare result string
 	var resultStr = "\n";
+
+        // Sanitizes the given text for display in test results.
+        function sanitize(text) {
+            if (!text) {
+                return "";
+            }
+            // Escape null characters, otherwise diff will think the file is binary.
+            text = text.replace(/\0/g, "\\0");
+            // Escape carriage returns as they break rietveld's difftools.
+            return text.replace(/\r/g, "\\r");
+        }
+
 	
 	// Check harness_status.  If it is not 0, tests did not
 	// execute correctly, output the error code and message
@@ -61,9 +73,8 @@ add_completion_callback(function (tests, harness_status){
 		// results for all tests
 		for(var i=0; i<tests.length; i++){				 
 			resultStr += convertResult(tests[i].status) + " " + 
-						( (tests[i].name!=null) ? tests[i].name : "" ) + " " +
-						( (tests[i].message!=null) ? tests[i].message : "" ) + 
-						"\n";
+					sanitize(tests[i].name) + " " +
+					sanitize(tests[i].message) + "\n";
 		}			
 	}
 

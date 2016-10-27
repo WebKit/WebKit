@@ -63,4 +63,301 @@ PASS <area>: Setting <http://me@example.net>.username = ''
 PASS URL: Setting <http://me:secret@example.net>.username = '' 
 PASS <a>: Setting <http://me:secret@example.net>.username = '' 
 PASS <area>: Setting <http://me:secret@example.net>.username = '' 
-PASS URL: Setting <http://example.net>.username = '
+PASS URL: Setting <http://example.net>.username = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS <a>: Setting <http://example.net>.username = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS <area>: Setting <http://example.net>.username = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS URL: Setting <http://example.net>.username = '%c3%89té' Bytes already percent-encoded are left as-is. 
+PASS <a>: Setting <http://example.net>.username = '%c3%89té' Bytes already percent-encoded are left as-is. 
+PASS <area>: Setting <http://example.net>.username = '%c3%89té' Bytes already percent-encoded are left as-is. 
+FAIL URL: Setting <file:///home/me/index.html>.password = 'secret' No host means no password assert_equals: expected "file:///home/me/index.html" but got "file://:secret@/home/me/index.html"
+FAIL <a>: Setting <file:///home/me/index.html>.password = 'secret' No host means no password assert_equals: expected "file:///home/me/index.html" but got "file://:secret@/home/me/index.html"
+FAIL <area>: Setting <file:///home/me/index.html>.password = 'secret' No host means no password assert_equals: expected "file:///home/me/index.html" but got "file://:secret@/home/me/index.html"
+FAIL URL: Setting <unix:/run/foo.socket>.password = 'secret' No host means no password assert_equals: expected "unix:/run/foo.socket" but got "unix://:secret@/run/foo.socket"
+FAIL <a>: Setting <unix:/run/foo.socket>.password = 'secret' No host means no password assert_equals: expected "unix:/run/foo.socket" but got "unix://:secret@/run/foo.socket"
+FAIL <area>: Setting <unix:/run/foo.socket>.password = 'secret' No host means no password assert_equals: expected "unix:/run/foo.socket" but got "unix://:secret@/run/foo.socket"
+FAIL URL: Setting <mailto:me@example.net>.password = 'secret' Cannot-be-a-base means no password assert_equals: expected "mailto:me@example.net" but got "mailto://:secret%40me@example.net"
+FAIL <a>: Setting <mailto:me@example.net>.password = 'secret' Cannot-be-a-base means no password assert_equals: expected "mailto:me@example.net" but got "mailto://:secret%40me@example.net"
+FAIL <area>: Setting <mailto:me@example.net>.password = 'secret' Cannot-be-a-base means no password assert_equals: expected "mailto:me@example.net" but got "mailto://:secret%40me@example.net"
+PASS URL: Setting <http://example.net>.password = 'secret' 
+PASS <a>: Setting <http://example.net>.password = 'secret' 
+PASS <area>: Setting <http://example.net>.password = 'secret' 
+PASS URL: Setting <http://me@example.net>.password = 'secret' 
+PASS <a>: Setting <http://me@example.net>.password = 'secret' 
+PASS <area>: Setting <http://me@example.net>.password = 'secret' 
+PASS URL: Setting <http://:secret@example.net>.password = '' 
+PASS <a>: Setting <http://:secret@example.net>.password = '' 
+PASS <area>: Setting <http://:secret@example.net>.password = '' 
+PASS URL: Setting <http://me:secret@example.net>.password = '' 
+PASS <a>: Setting <http://me:secret@example.net>.password = '' 
+PASS <area>: Setting <http://me:secret@example.net>.password = '' 
+PASS URL: Setting <http://example.net>.password = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS <a>: Setting <http://example.net>.password = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS <area>: Setting <http://example.net>.password = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the userinfo encode set. 
+PASS URL: Setting <http://example.net>.password = '%c3%89té' Bytes already percent-encoded are left as-is. 
+PASS <a>: Setting <http://example.net>.password = '%c3%89té' Bytes already percent-encoded are left as-is. 
+PASS <area>: Setting <http://example.net>.password = '%c3%89té' Bytes already percent-encoded are left as-is. 
+PASS URL: Setting <mailto:me@example.net>.host = 'example.com' Cannot-be-a-base means no host 
+PASS <a>: Setting <mailto:me@example.net>.host = 'example.com' Cannot-be-a-base means no host 
+PASS <area>: Setting <mailto:me@example.net>.host = 'example.com' Cannot-be-a-base means no host 
+PASS URL: Setting <data:text/plain,Stuff>.host = 'example.net' Cannot-be-a-base means no password 
+PASS <a>: Setting <data:text/plain,Stuff>.host = 'example.net' Cannot-be-a-base means no password 
+PASS <area>: Setting <data:text/plain,Stuff>.host = 'example.net' Cannot-be-a-base means no password 
+PASS URL: Setting <http://example.net>.host = 'example.com:8080' 
+PASS <a>: Setting <http://example.net>.host = 'example.com:8080' 
+PASS <area>: Setting <http://example.net>.host = 'example.com:8080' 
+FAIL URL: Setting <http://example.net:8080>.host = 'example.com' Port number is unchanged if not specified in the new value assert_equals: expected "http://example.com:8080/" but got "http://example.com/"
+FAIL <a>: Setting <http://example.net:8080>.host = 'example.com' Port number is unchanged if not specified in the new value assert_equals: expected "http://example.com:8080/" but got "http://example.com/"
+FAIL <area>: Setting <http://example.net:8080>.host = 'example.com' Port number is unchanged if not specified in the new value assert_equals: expected "http://example.com:8080/" but got "http://example.com/"
+FAIL URL: Setting <http://example.net:8080>.host = 'example.com:' Port number is unchanges if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.com:8080/" but got "http://example.com:0/"
+FAIL <a>: Setting <http://example.net:8080>.host = 'example.com:' Port number is unchanges if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.com:8080/" but got "http://example.com:0/"
+FAIL <area>: Setting <http://example.net:8080>.host = 'example.com:' Port number is unchanges if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.com:8080/" but got "http://example.com:0/"
+PASS URL: Setting <http://example.net>.host = '' The empty host is not valid for special schemes 
+PASS <a>: Setting <http://example.net>.host = '' The empty host is not valid for special schemes 
+PASS <area>: Setting <http://example.net>.host = '' The empty host is not valid for special schemes 
+FAIL URL: Setting <view-source+http://example.net/foo>.host = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+FAIL <a>: Setting <view-source+http://example.net/foo>.host = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+FAIL <area>: Setting <view-source+http://example.net/foo>.host = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+PASS URL: Setting <a:/foo>.host = 'example.net' Path-only URLs can gain a host 
+PASS <a>: Setting <a:/foo>.host = 'example.net' Path-only URLs can gain a host 
+PASS <area>: Setting <a:/foo>.host = 'example.net' Path-only URLs can gain a host 
+PASS URL: Setting <http://example.net>.host = '0x7F000001:8080' IPv4 address syntax is normalized 
+PASS <a>: Setting <http://example.net>.host = '0x7F000001:8080' IPv4 address syntax is normalized 
+PASS <area>: Setting <http://example.net>.host = '0x7F000001:8080' IPv4 address syntax is normalized 
+FAIL URL: Setting <http://example.net>.host = '[::0:01]:2' IPv6 address syntax is normalized assert_equals: expected "http://[::1]:2/" but got "http://[:0/"
+FAIL <a>: Setting <http://example.net>.host = '[::0:01]:2' IPv6 address syntax is normalized assert_equals: expected "http://[::1]:2/" but got "http://[:0/"
+FAIL <area>: Setting <http://example.net>.host = '[::0:01]:2' IPv6 address syntax is normalized assert_equals: expected "http://[::1]:2/" but got "http://[:0/"
+PASS URL: Setting <http://example.net>.host = 'example.com:80' Default port number is removed 
+PASS <a>: Setting <http://example.net>.host = 'example.com:80' Default port number is removed 
+PASS <area>: Setting <http://example.net>.host = 'example.com:80' Default port number is removed 
+PASS URL: Setting <https://example.net>.host = 'example.com:443' Default port number is removed 
+PASS <a>: Setting <https://example.net>.host = 'example.com:443' Default port number is removed 
+PASS <area>: Setting <https://example.net>.host = 'example.com:443' Default port number is removed 
+PASS URL: Setting <https://example.net>.host = 'example.com:80' Default port number is only removed for the relevant scheme 
+PASS <a>: Setting <https://example.net>.host = 'example.com:80' Default port number is only removed for the relevant scheme 
+PASS <area>: Setting <https://example.net>.host = 'example.com:80' Default port number is only removed for the relevant scheme 
+FAIL URL: Setting <http://example.net/path>.host = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <a>: Setting <http://example.net/path>.host = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <area>: Setting <http://example.net/path>.host = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080/stuff' Stuff after a / delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080/stuff' Stuff after a / delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080/stuff' Stuff after a / delimiter is ignored 
+FAIL URL: Setting <http://example.net/path>.host = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+FAIL <a>: Setting <http://example.net/path>.host = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+FAIL <area>: Setting <http://example.net/path>.host = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080?stuff' Stuff after a ? delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080?stuff' Stuff after a ? delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080?stuff' Stuff after a ? delimiter is ignored 
+FAIL URL: Setting <http://example.net/path>.host = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+FAIL <a>: Setting <http://example.net/path>.host = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+FAIL <area>: Setting <http://example.net/path>.host = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080#stuff' Stuff after a # delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080#stuff' Stuff after a # delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080#stuff' Stuff after a # delimiter is ignored 
+FAIL URL: Setting <http://example.net/path>.host = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <a>: Setting <http://example.net/path>.host = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <area>: Setting <http://example.net/path>.host = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+FAIL URL: Setting <view-source+http://example.net/path>.host = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+FAIL <a>: Setting <view-source+http://example.net/path>.host = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+FAIL <area>: Setting <view-source+http://example.net/path>.host = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+PASS URL: Setting <view-source+http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <view-source+http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <view-source+http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.host = 'example.com:8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.host = 'example.com:65535' Port numbers are 16 bit integers 
+PASS <a>: Setting <http://example.net/path>.host = 'example.com:65535' Port numbers are 16 bit integers 
+PASS <area>: Setting <http://example.net/path>.host = 'example.com:65535' Port numbers are 16 bit integers 
+FAIL URL: Setting <http://example.net/path>.host = 'example.com:65536' Port numbers are 16 bit integers, overflowing is an error. Hostname is still set, though. assert_equals: expected "http://example.com/path" but got "http://example.com:65536/path"
+FAIL <a>: Setting <http://example.net/path>.host = 'example.com:65536' Port numbers are 16 bit integers, overflowing is an error. Hostname is still set, though. assert_equals: expected "http://example.com/path" but got "http://example.com:65536/path"
+FAIL <area>: Setting <http://example.net/path>.host = 'example.com:65536' Port numbers are 16 bit integers, overflowing is an error. Hostname is still set, though. assert_equals: expected "http://example.com/path" but got "http://example.com:65536/path"
+PASS URL: Setting <mailto:me@example.net>.hostname = 'example.com' Cannot-be-a-base means no host 
+PASS <a>: Setting <mailto:me@example.net>.hostname = 'example.com' Cannot-be-a-base means no host 
+PASS <area>: Setting <mailto:me@example.net>.hostname = 'example.com' Cannot-be-a-base means no host 
+PASS URL: Setting <data:text/plain,Stuff>.hostname = 'example.net' Cannot-be-a-base means no password 
+PASS <a>: Setting <data:text/plain,Stuff>.hostname = 'example.net' Cannot-be-a-base means no password 
+PASS <area>: Setting <data:text/plain,Stuff>.hostname = 'example.net' Cannot-be-a-base means no password 
+PASS URL: Setting <http://example.net:8080>.hostname = 'example.com' 
+PASS <a>: Setting <http://example.net:8080>.hostname = 'example.com' 
+PASS <area>: Setting <http://example.net:8080>.hostname = 'example.com' 
+PASS URL: Setting <http://example.net>.hostname = '' The empty host is not valid for special schemes 
+PASS <a>: Setting <http://example.net>.hostname = '' The empty host is not valid for special schemes 
+PASS <area>: Setting <http://example.net>.hostname = '' The empty host is not valid for special schemes 
+FAIL URL: Setting <view-source+http://example.net/foo>.hostname = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+FAIL <a>: Setting <view-source+http://example.net/foo>.hostname = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+FAIL <area>: Setting <view-source+http://example.net/foo>.hostname = '' The empty host is OK for non-special schemes assert_equals: expected "view-source+http:///foo" but got "view-source+http://example.net/foo"
+PASS URL: Setting <a:/foo>.hostname = 'example.net' Path-only URLs can gain a host 
+PASS <a>: Setting <a:/foo>.hostname = 'example.net' Path-only URLs can gain a host 
+PASS <area>: Setting <a:/foo>.hostname = 'example.net' Path-only URLs can gain a host 
+PASS URL: Setting <http://example.net:8080>.hostname = '0x7F000001' IPv4 address syntax is normalized 
+PASS <a>: Setting <http://example.net:8080>.hostname = '0x7F000001' IPv4 address syntax is normalized 
+PASS <area>: Setting <http://example.net:8080>.hostname = '0x7F000001' IPv4 address syntax is normalized 
+FAIL URL: Setting <http://example.net>.hostname = '[::0:01]' IPv6 address syntax is normalized assert_equals: expected "http://[::1]/" but got "http://example.net/"
+FAIL <a>: Setting <http://example.net>.hostname = '[::0:01]' IPv6 address syntax is normalized assert_equals: expected "http://[::1]/" but got "http://example.net/"
+FAIL <area>: Setting <http://example.net>.hostname = '[::0:01]' IPv6 address syntax is normalized assert_equals: expected "http://[::1]/" but got "http://example.net/"
+FAIL URL: Setting <http://example.net/path>.hostname = 'example.com:8080' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.net/path"
+FAIL <a>: Setting <http://example.net/path>.hostname = 'example.com:8080' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.net/path"
+FAIL <area>: Setting <http://example.net/path>.hostname = 'example.com:8080' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.net/path"
+FAIL URL: Setting <http://example.net:8080/path>.hostname = 'example.com:' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com:8080/path" but got "http://example.net:8080/path"
+FAIL <a>: Setting <http://example.net:8080/path>.hostname = 'example.com:' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com:8080/path" but got "http://example.net:8080/path"
+FAIL <area>: Setting <http://example.net:8080/path>.hostname = 'example.com:' Stuff after a : delimiter is ignored assert_equals: expected "http://example.com:8080/path" but got "http://example.net:8080/path"
+FAIL URL: Setting <http://example.net/path>.hostname = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <a>: Setting <http://example.net/path>.hostname = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <area>: Setting <http://example.net/path>.hostname = 'example.com/stuff' Stuff after a / delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL URL: Setting <http://example.net/path>.hostname = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+FAIL <a>: Setting <http://example.net/path>.hostname = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+FAIL <area>: Setting <http://example.net/path>.hostname = 'example.com?stuff' Stuff after a ? delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/?stuff/path"
+FAIL URL: Setting <http://example.net/path>.hostname = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+FAIL <a>: Setting <http://example.net/path>.hostname = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+FAIL <area>: Setting <http://example.net/path>.hostname = 'example.com#stuff' Stuff after a # delimiter is ignored assert_equals: expected "http://example.com/path" but got "http://example.com/#stuff/path"
+FAIL URL: Setting <http://example.net/path>.hostname = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <a>: Setting <http://example.net/path>.hostname = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL <area>: Setting <http://example.net/path>.hostname = 'example.com\stuff' Stuff after a \ delimiter is ignored for special schemes assert_equals: expected "http://example.com/path" but got "http://example.com/stuff/path"
+FAIL URL: Setting <view-source+http://example.net/path>.hostname = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+FAIL <a>: Setting <view-source+http://example.net/path>.hostname = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+FAIL <area>: Setting <view-source+http://example.net/path>.hostname = 'example.com\stuff' \ is not a delimiter for non-special schemes, and it’s invalid in a domain assert_equals: expected "view-source+http://example.net/path" but got "view-source+http://example.com\\stuff/path"
+PASS URL: Setting <http://example.net>.port = '8080' 
+PASS <a>: Setting <http://example.net>.port = '8080' 
+PASS <area>: Setting <http://example.net>.port = '8080' 
+FAIL URL: Setting <http://example.net:8080>.port = '' Port number is unchanged if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.net:8080/" but got "http://example.net:0/"
+FAIL <a>: Setting <http://example.net:8080>.port = '' Port number is unchanged if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.net:8080/" but got "http://example.net:0/"
+FAIL <area>: Setting <http://example.net:8080>.port = '' Port number is unchanged if empty in the new value. Note: this may change, see https://github.com/whatwg/url/pull/113 assert_equals: expected "http://example.net:8080/" but got "http://example.net:0/"
+PASS URL: Setting <http://example.net:8080>.port = '80' Default port number is removed 
+PASS <a>: Setting <http://example.net:8080>.port = '80' Default port number is removed 
+PASS <area>: Setting <http://example.net:8080>.port = '80' Default port number is removed 
+PASS URL: Setting <https://example.net:4433>.port = '443' Default port number is removed 
+PASS <a>: Setting <https://example.net:4433>.port = '443' Default port number is removed 
+PASS <area>: Setting <https://example.net:4433>.port = '443' Default port number is removed 
+PASS URL: Setting <https://example.net>.port = '80' Default port number is only removed for the relevant scheme 
+PASS <a>: Setting <https://example.net>.port = '80' Default port number is only removed for the relevant scheme 
+PASS <area>: Setting <https://example.net>.port = '80' Default port number is only removed for the relevant scheme 
+PASS URL: Setting <http://example.net/path>.port = '8080/stuff' Stuff after a / delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.port = '8080/stuff' Stuff after a / delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.port = '8080/stuff' Stuff after a / delimiter is ignored 
+PASS URL: Setting <http://example.net/path>.port = '8080?stuff' Stuff after a ? delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.port = '8080?stuff' Stuff after a ? delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.port = '8080?stuff' Stuff after a ? delimiter is ignored 
+PASS URL: Setting <http://example.net/path>.port = '8080#stuff' Stuff after a # delimiter is ignored 
+PASS <a>: Setting <http://example.net/path>.port = '8080#stuff' Stuff after a # delimiter is ignored 
+PASS <area>: Setting <http://example.net/path>.port = '8080#stuff' Stuff after a # delimiter is ignored 
+PASS URL: Setting <http://example.net/path>.port = '8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+PASS <a>: Setting <http://example.net/path>.port = '8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+PASS <area>: Setting <http://example.net/path>.port = '8080\stuff' Stuff after a \ delimiter is ignored for special schemes 
+PASS URL: Setting <view-source+http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <view-source+http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <view-source+http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <http://example.net/path>.port = '8080stuff2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.port = '8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <a>: Setting <http://example.net/path>.port = '8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS <area>: Setting <http://example.net/path>.port = '8080+2' Anything other than ASCII digit stops the port parser in a setter but is not an error 
+PASS URL: Setting <http://example.net/path>.port = '65535' Port numbers are 16 bit integers 
+PASS <a>: Setting <http://example.net/path>.port = '65535' Port numbers are 16 bit integers 
+PASS <area>: Setting <http://example.net/path>.port = '65535' Port numbers are 16 bit integers 
+FAIL URL: Setting <http://example.net:8080/path>.port = '65536' Port numbers are 16 bit integers, overflowing is an error assert_equals: expected "http://example.net:8080/path" but got "http://example.net:0/path"
+FAIL <a>: Setting <http://example.net:8080/path>.port = '65536' Port numbers are 16 bit integers, overflowing is an error assert_equals: expected "http://example.net:8080/path" but got "http://example.net:0/path"
+FAIL <area>: Setting <http://example.net:8080/path>.port = '65536' Port numbers are 16 bit integers, overflowing is an error assert_equals: expected "http://example.net:8080/path" but got "http://example.net:0/path"
+PASS URL: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path 
+PASS <a>: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path 
+PASS <area>: Setting <mailto:me@example.net>.pathname = '/foo' Cannot-be-a-base don’t have a path 
+PASS URL: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket' 
+PASS <a>: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket' 
+PASS <area>: Setting <unix:/run/foo.socket?timeout=10>.pathname = '/var/log/../run/bar.socket' 
+PASS URL: Setting <https://example.net#nav>.pathname = 'home' 
+PASS <a>: Setting <https://example.net#nav>.pathname = 'home' 
+PASS <area>: Setting <https://example.net#nav>.pathname = 'home' 
+PASS URL: Setting <https://example.net#nav>.pathname = '../home' 
+PASS <a>: Setting <https://example.net#nav>.pathname = '../home' 
+PASS <area>: Setting <https://example.net#nav>.pathname = '../home' 
+FAIL URL: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/%252E/b/%252e./c?lang=fr#nav"
+FAIL <a>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/%252E/b/%252e./c?lang=fr#nav"
+FAIL <area>: Setting <http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is a segment delimiter for 'special' URLs assert_equals: expected "http://example.net/a/c?lang=fr#nav" but got "http://example.net//a/%252E/b/%252e./c?lang=fr#nav"
+FAIL URL: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs assert_equals: expected "view-source+http://example.net/\\a\.\b\..\c?lang=fr#nav" but got "view-source+http://example.net/\\a\%252E\b\%252e.\c?lang=fr#nav"
+FAIL <a>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs assert_equals: expected "view-source+http://example.net/\\a\.\b\..\c?lang=fr#nav" but got "view-source+http://example.net/\\a\%252E\b\%252e.\c?lang=fr#nav"
+FAIL <area>: Setting <view-source+http://example.net/home?lang=fr#nav>.pathname = '\a\%2E\b\%2e.\c' \ is *not* a segment delimiter for non-'special' URLs assert_equals: expected "view-source+http://example.net/\\a\.\b\..\c?lang=fr#nav" but got "view-source+http://example.net/\\a\%252E\b\%252e.\c?lang=fr#nav"
+FAIL URL: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%09%0A%0D%1F%20!%22%23$%25&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL <a>: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%09%0A%0D%1F%20!%22%23$%25&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL <area>: Setting <a:/>.pathname = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the default encode set. Tabs and newlines are removed. assert_equals: expected "a:/%00%01%1F%20!%22%23$%&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9" but got "a:/%00%01%09%0A%0D%1F%20!%22%23$%25&'()*+,-./09:;%3C=%3E%3F@AZ[\\]^_%60az%7B|%7D~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL URL: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, except %2E. assert_equals: expected "http://example.net/..%c3%89t%C3%A9" but got "http://example.net/%252e%252E%25c3%2589t%C3%A9"
+FAIL <a>: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, except %2E. assert_equals: expected "http://example.net/..%c3%89t%C3%A9" but got "http://example.net/%252e%252E%25c3%2589t%C3%A9"
+FAIL <area>: Setting <http://example.net>.pathname = '%2e%2E%c3%89té' Bytes already percent-encoded are left as-is, except %2E. assert_equals: expected "http://example.net/..%c3%89t%C3%A9" but got "http://example.net/%252e%252E%25c3%2589t%C3%A9"
+PASS URL: Setting <http://example.net>.pathname = '?' ? needs to be encoded 
+PASS <a>: Setting <http://example.net>.pathname = '?' ? needs to be encoded 
+PASS <area>: Setting <http://example.net>.pathname = '?' ? needs to be encoded 
+PASS URL: Setting <https://example.net#nav>.search = 'lang=fr' 
+PASS <a>: Setting <https://example.net#nav>.search = 'lang=fr' 
+PASS <area>: Setting <https://example.net#nav>.search = 'lang=fr' 
+PASS URL: Setting <https://example.net?lang=en-US#nav>.search = 'lang=fr' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = 'lang=fr' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = 'lang=fr' 
+PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '?lang=fr' 
+FAIL URL: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
+FAIL <a>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
+FAIL <area>: Setting <https://example.net?lang=en-US#nav>.search = '??lang=fr' assert_equals: expected "https://example.net/??lang=fr#nav" but got "https://example.net/?lang=fr#nav"
+PASS URL: Setting <https://example.net?lang=en-US#nav>.search = '?' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.search = '?' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.search = '?' 
+FAIL URL: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
+FAIL <a>: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
+FAIL <area>: Setting <https://example.net?lang=en-US#nav>.search = '' assert_equals: expected "https://example.net/#nav" but got "https://example.net/?#nav"
+FAIL URL: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+FAIL <a>: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+FAIL <area>: Setting <https://example.net?lang=en-US>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+FAIL URL: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+FAIL <a>: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+FAIL <area>: Setting <https://example.net>.search = '' assert_equals: expected "https://example.net/" but got "https://example.net/?"
+PASS URL: Setting <a:/>.search = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the query encode set. Tabs and newlines are removed. 
+PASS <a>: Setting <a:/>.search = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the query encode set. Tabs and newlines are removed. 
+PASS <area>: Setting <a:/>.search = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' UTF-8 percent encoding with the query encode set. Tabs and newlines are removed. 
+PASS URL: Setting <http://example.net>.search = '%c3%89té' Bytes already percent-encoded are left as-is 
+PASS <a>: Setting <http://example.net>.search = '%c3%89té' Bytes already percent-encoded are left as-is 
+PASS <area>: Setting <http://example.net>.search = '%c3%89té' Bytes already percent-encoded are left as-is 
+PASS URL: Setting <https://example.net>.hash = 'main' 
+PASS <a>: Setting <https://example.net>.hash = 'main' 
+PASS <area>: Setting <https://example.net>.hash = 'main' 
+PASS URL: Setting <https://example.net#nav>.hash = 'main' 
+PASS <a>: Setting <https://example.net#nav>.hash = 'main' 
+PASS <area>: Setting <https://example.net#nav>.hash = 'main' 
+PASS URL: Setting <https://example.net?lang=en-US>.hash = '##nav' 
+PASS <a>: Setting <https://example.net?lang=en-US>.hash = '##nav' 
+PASS <area>: Setting <https://example.net?lang=en-US>.hash = '##nav' 
+PASS URL: Setting <https://example.net?lang=en-US#nav>.hash = '#main' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.hash = '#main' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.hash = '#main' 
+FAIL URL: Setting <https://example.net?lang=en-US#nav>.hash = '#' assert_equals: expected "https://example.net/?lang=en-US#" but got "https://example.net/?lang=en-US"
+FAIL <a>: Setting <https://example.net?lang=en-US#nav>.hash = '#' assert_equals: expected "https://example.net/?lang=en-US#" but got "https://example.net/?lang=en-US"
+FAIL <area>: Setting <https://example.net?lang=en-US#nav>.hash = '#' assert_equals: expected "https://example.net/?lang=en-US#" but got "https://example.net/?lang=en-US"
+PASS URL: Setting <https://example.net?lang=en-US#nav>.hash = '' 
+PASS <a>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
+PASS <area>: Setting <https://example.net?lang=en-US#nav>.hash = '' 
+FAIL URL: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' No percent-encoding at all (!); nuls, tabs, and newlines are removed assert_equals: expected "a:/#\x01\x1f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~Éé" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL <a>: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' No percent-encoding at all (!); nuls, tabs, and newlines are removed assert_equals: expected "a:/#\x01\x1f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~Éé" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL <area>: Setting <a:/>.hash = '\0	
+\r !"#$%&'()*+,-./09:;<=>?@AZ[\]^_`az{|}~Éé' No percent-encoding at all (!); nuls, tabs, and newlines are removed assert_equals: expected "a:/#\x01\x1f !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~Éé" but got "a:/#%00%01%1F !\"#$%&'()*+,-./09:;<=>?@AZ[\\]^_`az{|}~%7F%C2%80%C2%81%C3%89%C3%A9"
+FAIL URL: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is assert_equals: expected "http://example.net/#%c3%89té" but got "http://example.net/#%c3%89t%C3%A9"
+FAIL <a>: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is assert_equals: expected "http://example.net/#%c3%89té" but got "http://example.net/#%c3%89t%C3%A9"
+FAIL <area>: Setting <http://example.net>.hash = '%c3%89té' Bytes already percent-encoded are left as-is assert_equals: expected "http://example.net/#%c3%89té" but got "http://example.net/#%c3%89t%C3%A9"
+

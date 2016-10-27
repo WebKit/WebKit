@@ -325,18 +325,12 @@ PASS Parsing: <http://127.0.0.1:10100/relative_import.html> against <about:blank
 PASS Parsing: <http://facebook.com/?foo=%7B%22abc%22> against <about:blank> 
 PASS Parsing: <https://localhost:3000/jqueryui@1.2.3> against <about:blank> 
 PASS Parsing: <h	t
-t
-p://h	o
-s
-t:9	0
-0
-0/p	a
-t
-h?q	u
-e
-ry#f	r
-a
-g> against <about:blank> 
+t\rp://h	o
+s\rt:9	0
+0\r0/p	a
+t\rh?q	u
+e\rry#f	r
+a\rg> against <about:blank> 
 PASS Parsing: <?a=b&c=d> against <http://example.org/foo/bar> 
 PASS Parsing: <??a=b&c=d> against <http://example.org/foo/bar> 
 PASS Parsing: <http:> against <http://example.org/foo/bar> 

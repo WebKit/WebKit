@@ -1,3 +1,23 @@
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
+        testharnessreport.js should sanitize the results before printing them
+        https://bugs.webkit.org/show_bug.cgi?id=164064
+
+        Reviewed by Youenn Fablet.
+
+        testharnessreport.js should sanitize the results before printing them. We
+        currently have 3 copies of this script and only 1 does the sanitization.
+        Short term, let do the sanitization in all of them. Longer term, we should
+        merge these and have a way to keep them in sync.
+
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-setters-expected.txt:
+
 2016-10-26  Youenn Fablet  <youennf@gmail.com>
 
         Refresh WPT tests up to 0acd8f6

@@ -1,3 +1,24 @@
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
+        testharnessreport.js should sanitize the results before printing them
+        https://bugs.webkit.org/show_bug.cgi?id=164064
+
+        Reviewed by Youenn Fablet.
+
+        testharnessreport.js should sanitize the results before printing them. We
+        currently have 3 copies of this script and only 1 does the sanitization.
+        Short term, let do the sanitization in all of them. Longer term, we should
+        merge these and have a way to keep them in sync.
+
+        * fast/media/w3c/test_media_queries-expected.txt:
+        * fetch/fetch-url-serialization-expected.txt:
+        * http/tests/w3c/resources/testharnessreport.js:
+        (add_completion_callback.sanitize):
+        (add_completion_callback):
+        * resources/testharnessreport.js:
+        (self.testRunner.add_completion_callback.):
+        (self.testRunner.add_completion_callback):
+
 2016-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed fix of GTK and EFL test bots.

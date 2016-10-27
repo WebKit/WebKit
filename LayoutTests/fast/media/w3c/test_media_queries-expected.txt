@@ -216,8 +216,7 @@ PASS expression max-aspect-ratio: 1/1 should be parseable
 PASS expression max-aspect-ratio: 1  /1 should be parseable 
 PASS expression max-aspect-ratio: 1  / 	
 1 should be parseable 
-PASS expression max-aspect-ratio: 1/
-1 should be parseable 
+PASS expression max-aspect-ratio: 1/\r1 should be parseable 
 PASS expression max-aspect-ratio: 1 should not be parseable 
 PASS expression max-aspect-ratio: 0.5 should not be parseable 
 PASS expression max-aspect-ratio: 1.0/1 should not be parseable 
@@ -233,8 +232,7 @@ PASS expression device-aspect-ratio: 1/1 should be parseable
 PASS expression device-aspect-ratio: 1  /1 should be parseable 
 PASS expression device-aspect-ratio: 1  / 	
 1 should be parseable 
-PASS expression device-aspect-ratio: 1/
-1 should be parseable 
+PASS expression device-aspect-ratio: 1/\r1 should be parseable 
 PASS expression device-aspect-ratio: 1 should not be parseable 
 PASS expression device-aspect-ratio: 0.5 should not be parseable 
 PASS expression device-aspect-ratio: 1.0/1 should not be parseable 
