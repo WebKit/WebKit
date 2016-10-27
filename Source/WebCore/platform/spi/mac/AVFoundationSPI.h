@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #import "SoftLinking.h"
 #import <objc/runtime.h>
 
@@ -144,6 +146,7 @@ NS_ASSUME_NONNULL_END
 #endif // !PLATFORM(IOS)
 
 // FIXME: Wrap in a #if USE(APPLE_INTERNAL_SDK) once these SPI land
+#import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -152,6 +155,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) id<NSURLSessionDataDelegate> URLSessionDataDelegate;
 @property (nonatomic, readonly) NSOperationQueue *URLSessionDataDelegateQueue;
 @property (nonatomic, nullable, retain) NSURLSession *URLSession;
+@end
+
+@interface AVAsset (AVAssetFragmentsPrivate)
+@property (nonatomic, readonly) CMTime overallDurationHint;
 @end
 
 NS_ASSUME_NONNULL_END

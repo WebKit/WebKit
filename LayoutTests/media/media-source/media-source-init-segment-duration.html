@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-init-segment-duration</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+        loader.onerror = mediaDataLoadingFailed;
+    }
+
+    function mediaDataLoadingFailed() {
+        failTest('Media data loading failed');
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        waitForEventAndFail('error');
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
+        run('sourceBuffer.appendBuffer(loader.initSegment())');
+    }
+
+    function sourceInitialized() {
+        testExpected('video.duration', 10);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>
+        This tests the ability of the SourceBuffer to detect the movie fragment duration from a 'mvex' header.
+    </div>
+    <video controls></video>
+</body>
+</html>

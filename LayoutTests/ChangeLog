@@ -1,3 +1,18 @@
+2016-10-26  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r207523. rdar://problem/28718748
+
+    2016-10-19  Jer Noble  <jer.noble@apple.com>
+
+            [Mac][MSE] Movies with a 'mvex' box have a zero-duration
+            https://bugs.webkit.org/show_bug.cgi?id=163641
+
+            Reviewed by Darin Adler.
+
+            * media/media-source/content/test-fragmented-manifest.json:
+            * media/media-source/content/test-fragmented.mp4:
+            * platform/mac/TestExpectations:
+
 2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207229. rdar://problem/28718809

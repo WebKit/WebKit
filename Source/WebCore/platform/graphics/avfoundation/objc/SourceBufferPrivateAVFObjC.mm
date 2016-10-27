@@ -611,7 +611,12 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
     m_audioTracks.clear();
 
     SourceBufferPrivateClient::InitializationSegment segment;
-    segment.duration = toMediaTime([m_asset duration]);
+
+    if ([m_asset respondsToSelector:@selector(overallDurationHint)])
+        segment.duration = toMediaTime([m_asset overallDurationHint]);
+
+    if (segment.duration.isInvalid() || segment.duration == MediaTime::zeroTime())
+        segment.duration = toMediaTime([m_asset duration]);
 
     for (AVAssetTrack* track in [m_asset tracks]) {
         if ([track hasMediaCharacteristic:AVMediaCharacteristicLegible]) {
