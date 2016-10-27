@@ -15,7 +15,7 @@ log("Tests that making other frame window a prototype doesn't expose that window
 targetWindow = frames[0];
 
 window.onload = function() {
-  __proto__ = targetWindow;
+  this.__proto__ = targetWindow;
   shouldBeUndefined('targetWindow.myinput');
 }
 </script>

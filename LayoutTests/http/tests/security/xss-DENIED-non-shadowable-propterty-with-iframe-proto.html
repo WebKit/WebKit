@@ -16,7 +16,7 @@ targetWindow = frames[0];
 window.onload = function() {
   originalLocation = location;
 
-  __proto__ = targetWindow;
+  this.__proto__ = targetWindow;
 
   shouldBeTrue('location === originalLocation');
   shouldBeTrue('this.location === originalLocation');

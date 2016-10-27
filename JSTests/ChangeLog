@@ -1,3 +1,17 @@
+2016-10-27  Mark Lam  <mark.lam@apple.com>
+
+        Merge r207518. rdar://problem/28216050, rdar://problem/28216232
+
+    2016-10-18  Mark Lam  <mark.lam@apple.com>
+
+            Invoking Object.prototype.__proto__ accessors directly should throw a TypeError.
+            https://bugs.webkit.org/show_bug.cgi?id=154377
+            <rdar://problem/27330808>
+
+            Reviewed by Filip Pizlo and Saam Barati.
+
+            * stress/object-prototype-proto-accessors-should-throw-on-undefined-this.js: Added.
+
 2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r206281. rdar://problem/28870938

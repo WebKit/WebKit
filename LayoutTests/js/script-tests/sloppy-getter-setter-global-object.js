@@ -25,12 +25,12 @@ shouldThrow("Object.prototype.valueOf.call(null);");
 shouldNotThrow("Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get()");
 shouldNotThrow("Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set(['foo'])");
 
-shouldThrow("(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get)()", "\"TypeError: Can't convert undefined or null to object\"");
-shouldThrow("(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set)(['foo'])", "\"TypeError: Can't convert undefined or null to object\"");
+shouldThrow("(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get)()", "\"TypeError: Object.prototype.__proto__ called on null or undefined\"");
+shouldThrow("(0,Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set)(['foo'])", "\"TypeError: Object.prototype.__proto__ called on null or undefined\"");
 
 
 var top_level_sloppy_getter = Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').get;
-shouldNotThrow("top_level_sloppy_getter();");
+shouldThrow("top_level_sloppy_getter();", "\"TypeError: Object.prototype.__proto__ called on null or undefined\"");
 
 var top_level_sloppy_setter = Object.getOwnPropertyDescriptor(Object.prototype,'__proto__').set;
-shouldNotThrow("top_level_sloppy_setter(['foo']);");
+shouldThrow("top_level_sloppy_setter(['foo']);", "\"TypeError: Object.prototype.__proto__ called on null or undefined\"");

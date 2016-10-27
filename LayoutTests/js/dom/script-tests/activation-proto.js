@@ -4,4 +4,4 @@ description(
 
 );
 
-shouldBe("(function() { __proto__.testVariable = 'found'; return window.testVariable; })()", "'found'");
+shouldBe("(function() { this.__proto__.testVariable = 'found'; return window.testVariable; })()", "'found'");

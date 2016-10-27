@@ -1,3 +1,43 @@
+2016-10-27  Mark Lam  <mark.lam@apple.com>
+
+        Merge r207518. rdar://problem/28216050, rdar://problem/28216232
+
+    2016-10-18  Mark Lam  <mark.lam@apple.com>
+
+            Invoking Object.prototype.__proto__ accessors directly should throw a TypeError.
+            https://bugs.webkit.org/show_bug.cgi?id=154377
+            <rdar://problem/27330808>
+
+            Reviewed by Filip Pizlo and Saam Barati.
+
+            In a scenario where we cache the __proto__ accessors in global variables, and
+            later explicitly invoke those accessors as functions, the spec for Function Calls
+            (see https://tc39.github.io/ecma262/#sec-function-calls) states that the function
+            ref value is of type Reference, and base of ref is an Environment Record.  Then,
+            it follows that the thisValue should be set to refEnv.WithBaseObject()
+            (see section 4.b.ii of 12.3.4.1 at
+            https://tc39.github.io/ecma262/#sec-function-calls-runtime-semantics-evaluation).
+
+            refEnv in this case is the environment record that the cached accessors were
+            found in i.e. the global object.  The WithBaseObject() of the global object is
+            undefined (see details about WithBaseObject at
+            https://tc39.github.io/ecma262/#sec-environment-records).
+
+            Hence, the __proto__ accessors should see a thisValue of undefined, and throw
+            TypeErrors.  See https://tc39.github.io/ecma262/#sec-get-object.prototype.__proto__,
+            https://tc39.github.io/ecma262/#sec-set-object.prototype.__proto__,
+            https://tc39.github.io/ecma262/#sec-toobject, and
+            https://tc39.github.io/ecma262/#sec-requireobjectcoercible.
+
+            In JSC's implementation, the callee needs to do a ToThis operation on the
+            incoming "this" argument in order to get the specified thisValue.  The
+            implementations of the __proto__ accessors were not doing this correctly.  This
+            has now been fixed.
+
+            * runtime/JSGlobalObjectFunctions.cpp:
+            (JSC::globalFuncProtoGetter):
+            (JSC::globalFuncProtoSetter):
+
 2016-10-24  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r207229. rdar://problem/28718809

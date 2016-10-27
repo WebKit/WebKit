@@ -30,7 +30,7 @@ function check() {
 window.onload = function() {
   originalSetTimeout = setTimeout;
 
-  __proto__ = targetWindow;
+  this.__proto__ = targetWindow;
 
   var needsCheck = false;
   try {
