@@ -331,6 +331,7 @@ enum UserInterfaceLayoutDirection {
 
     [RaisesException] void startTrackingStyleRecalcs();
     [RaisesException] unsigned long styleRecalcCount();
+    readonly attribute unsigned long lastStyleUpdateSize;
 
     [RaisesException] void startTrackingCompositingUpdates();
     [RaisesException] unsigned long compositingUpdateCount();

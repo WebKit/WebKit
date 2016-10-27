@@ -2366,6 +2366,14 @@ unsigned Internals::styleRecalcCount(ExceptionCode& ec)
     return document->styleRecalcCount();
 }
 
+unsigned Internals::lastStyleUpdateSize() const
+{
+    Document* document = contextDocument();
+    if (!document)
+        return 0;
+    return document->lastStyleUpdateSizeForTesting();
+}
+
 void Internals::startTrackingCompositingUpdates(ExceptionCode& ec)
 {
     Document* document = contextDocument();

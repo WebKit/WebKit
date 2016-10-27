@@ -328,6 +328,7 @@ public:
     
     void startTrackingStyleRecalcs(ExceptionCode&);
     unsigned styleRecalcCount(ExceptionCode&);
+    unsigned lastStyleUpdateSize() const;
 
     void startTrackingCompositingUpdates(ExceptionCode&);
     unsigned compositingUpdateCount(ExceptionCode&);

@@ -234,7 +234,7 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
             update.change = Detach;
     }
 
-    if (update.change != Detach && (parent().change == Force || element.styleChangeType() >= FullStyleChange))
+    if (update.change != Detach && (parent().change == Force || element.styleChangeType() == FullStyleChange))
         update.change = Force;
 
     return update;

@@ -1,0 +1,25 @@
+<script>
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+</script>
+<style>
+body {
+    animation: testframes infinite 1s;
+}
+
+@keyframes testframes {
+    from { padding: 0 }
+    to { padding: 120px }
+}
+</style>
+<body>
+<div>Test that animation on an element doesn't invalidate the entire subtree for style resolution.</div>
+<log></log>
+<script>
+
+document.body.addEventListener("animationiteration", () => {
+    document.querySelector("log").textContent = "Animation frame resolved style for " + internals.lastStyleUpdateSize + " element(s)";
+    testRunner.notifyDone();
+});
+
+</script>

@@ -1921,6 +1921,8 @@ void Document::recalcStyle(Style::Change change)
         Style::TreeResolver resolver(*this);
         auto styleUpdate = resolver.resolve(change);
 
+        m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
+
         clearNeedsStyleRecalc();
         clearChildNeedsStyleRecalc();
         unscheduleStyleRecalc();
