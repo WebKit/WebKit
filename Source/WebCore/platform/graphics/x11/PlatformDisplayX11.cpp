@@ -76,8 +76,11 @@ void PlatformDisplayX11::initializeEGLDisplay()
 bool PlatformDisplayX11::supportsXComposite() const
 {
     if (!m_supportsXComposite) {
-        int eventBase, errorBase;
-        m_supportsXComposite = XCompositeQueryExtension(m_display, &eventBase, &errorBase);
+        if (m_display) {
+            int eventBase, errorBase;
+            m_supportsXComposite = XCompositeQueryExtension(m_display, &eventBase, &errorBase);
+        } else
+            m_supportsXComposite = false;
     }
     return m_supportsXComposite.value();
 }
@@ -85,13 +88,14 @@ bool PlatformDisplayX11::supportsXComposite() const
 bool PlatformDisplayX11::supportsXDamage(Optional<int>& damageEventBase) const
 {
     if (!m_supportsXDamage) {
-#if PLATFORM(GTK)
-        int eventBase, errorBase;
-        m_supportsXDamage = XDamageQueryExtension(m_display, &eventBase, &errorBase);
-        if (m_supportsXDamage.value())
-            m_damageEventBase = eventBase;
-#else
         m_supportsXDamage = false;
+#if PLATFORM(GTK)
+        if (m_display) {
+            int eventBase, errorBase;
+            m_supportsXDamage = XDamageQueryExtension(m_display, &eventBase, &errorBase);
+            if (m_supportsXDamage.value())
+                m_damageEventBase = eventBase;
+        }
 #endif
     }
 
