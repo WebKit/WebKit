@@ -1,3 +1,18 @@
+2016-10-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r207992.
+        https://bugs.webkit.org/show_bug.cgi?id=164070
+
+        triggered aclocal version conflict (Requested by mcatanzaro on
+        #webkit).
+
+        Reverted changeset:
+
+        "[GTK] Bump glib to 2.50.1 (or find alternative solution to
+        Gtk+ CUPS build issue)"
+        https://bugs.webkit.org/show_bug.cgi?id=163689
+        http://trac.webkit.org/changeset/207992
+
 2016-10-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] Bump glib to 2.50.1 (or find alternative solution to Gtk+ CUPS build issue)
