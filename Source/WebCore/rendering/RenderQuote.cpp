@@ -47,6 +47,12 @@ RenderQuote::~RenderQuote()
     ASSERT(!m_previous);
 }
 
+void RenderQuote::insertedIntoTree()
+{
+    RenderInline::insertedIntoTree();
+    attachQuote();
+}
+
 void RenderQuote::willBeRemovedFromTree()
 {
     RenderInline::willBeRemovedFromTree();

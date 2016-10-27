@@ -1,3 +1,15 @@
+2016-10-05  Zalan Bujtas  <zalan@apple.com>
+
+        Missing quotation mark when <q> gets reparented.
+        https://bugs.webkit.org/show_bug.cgi?id=162940
+
+        Reviewed by Darin Adler.
+
+        The position of the closing quotation mark is driven by the multicolumn code hence the cover div.
+
+        * fast/css-generated-content/missing-quotes-with-dynamic-content-expected.html: Added.
+        * fast/css-generated-content/missing-quotes-with-dynamic-content.html: Added.
+
 2016-10-03  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid null dereference when changing focus in design mode.
