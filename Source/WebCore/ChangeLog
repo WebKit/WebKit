@@ -1,3 +1,54 @@
+2016-10-27  Youenn Fablet  <youenn@apple.com>
+
+        MediaPayload does not need to be refcounted
+        https://bugs.webkit.org/show_bug.cgi?id=164015
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+        Making MediaPayload a struct and no-longer ref-counted.
+        Small performance improvements in MediaEndpointOwr.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::configurationFromJSON):
+        (WebCore::configurationToJSON):
+        * platform/mediastream/MediaEndpoint.h:
+        * platform/mediastream/MediaPayload.h:
+        (WebCore::MediaPayload::addParameter):
+        (WebCore::MediaPayload::create): Deleted.
+        (WebCore::MediaPayload::~MediaPayload): Deleted.
+        (WebCore::MediaPayload::type): Deleted.
+        (WebCore::MediaPayload::setType): Deleted.
+        (WebCore::MediaPayload::encodingName): Deleted.
+        (WebCore::MediaPayload::setEncodingName): Deleted.
+        (WebCore::MediaPayload::clockRate): Deleted.
+        (WebCore::MediaPayload::setClockRate): Deleted.
+        (WebCore::MediaPayload::channels): Deleted.
+        (WebCore::MediaPayload::setChannels): Deleted.
+        (WebCore::MediaPayload::ccmfir): Deleted.
+        (WebCore::MediaPayload::setCcmfir): Deleted.
+        (WebCore::MediaPayload::nackpli): Deleted.
+        (WebCore::MediaPayload::setNackpli): Deleted.
+        (WebCore::MediaPayload::nack): Deleted.
+        (WebCore::MediaPayload::setNack): Deleted.
+        (WebCore::MediaPayload::parameters): Deleted.
+        (WebCore::MediaPayload::clone): Deleted.
+        (WebCore::MediaPayload::MediaPayload): Deleted.
+        * platform/mediastream/PeerMediaDescription.h:
+        (WebCore::PeerMediaDescription::payloads):
+        (WebCore::PeerMediaDescription::addPayload):
+        (WebCore::PeerMediaDescription::setPayloads):
+        (WebCore::PeerMediaDescription::clone):
+        * platform/mediastream/openwebrtc/MediaEndpointOwr.cpp:
+        (WebCore::MediaEndpointOwr::getDefaultAudioPayloads):
+        (WebCore::MediaEndpointOwr::getDefaultVideoPayloads):
+        (WebCore::MediaEndpointOwr::filterPayloads):
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::getDefaultAudioPayloads):
+        (WebCore::MockMediaEndpoint::getDefaultVideoPayloads):
+        (WebCore::MockMediaEndpoint::filterPayloads):
+
 2016-10-26  Dan Bernstein  <mitz@apple.com>
 
         Improved the last build fix.

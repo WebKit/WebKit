@@ -64,10 +64,10 @@ public:
     const String& mid() const { return m_mid; }
     void setMid(const String& mid) { m_mid = mid; }
 
-    const Vector<RefPtr<MediaPayload>>& payloads() const { return m_payloads; }
-    void addPayload(RefPtr<MediaPayload>&& payload) { m_payloads.append(WTFMove(payload)); }
-    void setPayloads(Vector<RefPtr<MediaPayload>>&& payloads) { m_payloads = payloads; }
-    void setPayloads(const Vector<RefPtr<MediaPayload>>& payloads) { m_payloads = payloads; }
+    const Vector<MediaPayload>& payloads() const { return m_payloads; }
+    void addPayload(MediaPayload&& payload) { m_payloads.append(WTFMove(payload)); }
+    void setPayloads(Vector<MediaPayload>&& payloads) { m_payloads = payloads; }
+    void setPayloads(const Vector<MediaPayload>& payloads) { m_payloads = payloads; }
 
     bool rtcpMux() const { return m_rtcpMux; }
     void setRtcpMux(bool rtcpMux) { m_rtcpMux = rtcpMux; }
@@ -119,8 +119,7 @@ public:
         copy->m_mode = String(m_mode);
         copy->m_mid = String(m_mid);
 
-        for (auto& payload : m_payloads)
-            copy->m_payloads.append(payload->clone());
+        copy->m_payloads = m_payloads;
 
         copy->m_rtcpMux = m_rtcpMux;
         copy->m_rtcpAddress = String(m_rtcpAddress);
@@ -155,7 +154,7 @@ private:
     String m_mode { "sendrecv" };
     String m_mid;
 
-    Vector<RefPtr<MediaPayload>> m_payloads;
+    Vector<MediaPayload> m_payloads;
 
     bool m_rtcpMux { true };
     String m_rtcpAddress;

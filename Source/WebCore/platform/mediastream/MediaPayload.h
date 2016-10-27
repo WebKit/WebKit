@@ -28,90 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaPayload_h
-#define MediaPayload_h
+#pragma once
 
 #if ENABLE(WEB_RTC)
 
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class MediaPayload : public RefCounted<MediaPayload> {
+struct MediaPayload {
 public:
-    static RefPtr<MediaPayload> create()
-    {
-        return adoptRef(new MediaPayload());
-    }
-    virtual ~MediaPayload() { }
+    void addParameter(const String& name, unsigned value) { parameters.set(name, value); }
 
-    unsigned type() const { return m_type; }
-    void setType(unsigned type) { m_type = type; }
-
-    const String& encodingName() const { return m_encodingName; }
-    void setEncodingName(const String & encodingName) { m_encodingName = encodingName; }
-
-    unsigned clockRate() const { return m_clockRate; }
-    void setClockRate(unsigned clockRate) { m_clockRate = clockRate; }
-
-    unsigned channels() const { return m_channels; }
-    void setChannels(unsigned channels) { m_channels = channels; }
-
-    bool ccmfir() const { return m_ccmfir; }
-    void setCcmfir(bool ccmfir) { m_ccmfir = ccmfir; }
-
-    bool nackpli() const { return m_nackpli; }
-    void setNackpli(bool nackpli) { m_nackpli = nackpli; }
-
-    bool nack() const { return m_nack; }
-    void setNack(bool nack) { m_nack = nack; }
-
-    const HashMap<String, unsigned>& parameters() const { return m_parameters; }
-    void addParameter(const String& name, unsigned value) { m_parameters.set(name, value); }
-
-    RefPtr<MediaPayload> clone() const
-    {
-        RefPtr<MediaPayload> copy = create();
-
-        copy->m_type = m_type;
-        copy->m_encodingName = String(m_encodingName);
-        copy->m_clockRate = m_clockRate;
-
-        copy->m_channels = m_channels;
-
-        copy->m_ccmfir = m_ccmfir;
-        copy->m_nackpli = m_nackpli;
-        copy->m_nack = m_nack;
-
-        for (auto& key : m_parameters.keys())
-            copy->m_parameters.add(key, m_parameters.get(key));
-
-        return copy;
-    }
-
-private:
-    MediaPayload() { }
-
-    unsigned m_type { 0 };
-    String m_encodingName;
-    unsigned m_clockRate { 0 };
+    unsigned type { 0 };
+    String encodingName;
+    unsigned clockRate { 0 };
 
     // audio
-    unsigned m_channels { 0 };
+    unsigned channels { 0 };
 
     // video
-    bool m_ccmfir { false };
-    bool m_nackpli { false };
-    bool m_nack { false };
+    bool ccmfir { false };
+    bool nackpli { false };
+    bool nack { false };
 
-    HashMap<String, unsigned> m_parameters;
+    HashMap<String, unsigned> parameters;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)
-
-#endif // MediaPayload_h

@@ -74,26 +74,26 @@ MediaPayloadVector MockMediaEndpoint::getDefaultAudioPayloads()
 {
     MediaPayloadVector payloads;
 
-    RefPtr<MediaPayload> payload = MediaPayload::create();
-    payload->setType(111);
-    payload->setEncodingName("OPUS");
-    payload->setClockRate(48000);
-    payload->setChannels(2);
-    payloads.append(payload);
+    MediaPayload payload1;
+    payload1.type = 111;
+    payload1.encodingName = "OPUS";
+    payload1.clockRate = 48000;
+    payload1.channels = 2;
+    payloads.append(WTFMove(payload1));
 
-    payload = MediaPayload::create();
-    payload->setType(8);
-    payload->setEncodingName("PCMA");
-    payload->setClockRate(8000);
-    payload->setChannels(1);
-    payloads.append(payload);
+    MediaPayload payload2;
+    payload2.type = 8;
+    payload2.encodingName = "PCMA";
+    payload2.clockRate = 8000;
+    payload2.channels = 1;
+    payloads.append(WTFMove(payload2));
 
-    payload = MediaPayload::create();
-    payload->setType(0);
-    payload->setEncodingName("PCMU");
-    payload->setClockRate(8000);
-    payload->setChannels(1);
-    payloads.append(payload);
+    MediaPayload payload3;
+    payload3.type = 0;
+    payload3.encodingName = "PCMU";
+    payload3.clockRate = 8000;
+    payload3.channels = 1;
+    payloads.append(WTFMove(payload3));
 
     return payloads;
 }
@@ -102,31 +102,31 @@ MediaPayloadVector MockMediaEndpoint::getDefaultVideoPayloads()
 {
     MediaPayloadVector payloads;
 
-    RefPtr<MediaPayload> payload = MediaPayload::create();
-    payload->setType(103);
-    payload->setEncodingName("H264");
-    payload->setClockRate(90000);
-    payload->setCcmfir(true);
-    payload->setNackpli(true);
-    payload->addParameter("packetizationMode", 1);
-    payloads.append(payload);
+    MediaPayload payload1;
+    payload1.type = 103;
+    payload1.encodingName = "H264";
+    payload1.clockRate = 90000;
+    payload1.ccmfir = true;
+    payload1.nackpli = true;
+    payload1.addParameter("packetizationMode", 1);
+    payloads.append(WTFMove(payload1));
 
-    payload = MediaPayload::create();
-    payload->setType(100);
-    payload->setEncodingName("VP8");
-    payload->setClockRate(90000);
-    payload->setCcmfir(true);
-    payload->setNackpli(true);
-    payload->setNack(true);
-    payloads.append(payload);
+    MediaPayload payload2;
+    payload2.type = 100;
+    payload2.encodingName = "VP8";
+    payload2.clockRate = 90000;
+    payload2.ccmfir = true;
+    payload2.nackpli = true;
+    payload2.nack = true;
+    payloads.append(WTFMove(payload2));
 
-    payload = MediaPayload::create();
-    payload->setType(120);
-    payload->setEncodingName("RTX");
-    payload->setClockRate(90000);
-    payload->addParameter("apt", 100);
-    payload->addParameter("rtxTime", 200);
-    payloads.append(payload);
+    MediaPayload payload3;
+    payload3.type = 120;
+    payload3.encodingName = "RTX";
+    payload3.clockRate = 90000;
+    payload3.addParameter("apt", 100);
+    payload3.addParameter("rtxTime", 200);
+    payloads.append(WTFMove(payload3));
 
     return payloads;
 }
@@ -136,18 +136,18 @@ MediaPayloadVector MockMediaEndpoint::filterPayloads(const MediaPayloadVector& r
     MediaPayloadVector filteredPayloads;
 
     for (auto& remotePayload : remotePayloads) {
-        MediaPayload* defaultPayload = nullptr;
+        const MediaPayload* defaultPayload = nullptr;
         for (auto& payload : defaultPayloads) {
-            if (payload->encodingName() == remotePayload->encodingName().convertToASCIIUppercase()) {
-                defaultPayload = payload.get();
+            if (payload.encodingName == remotePayload.encodingName.convertToASCIIUppercase()) {
+                defaultPayload = &payload;
                 break;
             }
         }
         if (!defaultPayload)
             continue;
 
-        if (defaultPayload->parameters().contains("packetizationMode") && remotePayload->parameters().contains("packetizationMode")
-            && (defaultPayload->parameters().get("packetizationMode") != defaultPayload->parameters().get("packetizationMode")))
+        if (defaultPayload->parameters.contains("packetizationMode") && remotePayload.parameters.contains("packetizationMode")
+            && (defaultPayload->parameters.get("packetizationMode") != defaultPayload->parameters.get("packetizationMode")))
             continue;
 
         filteredPayloads.append(remotePayload);

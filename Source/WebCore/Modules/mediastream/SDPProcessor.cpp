@@ -223,39 +223,39 @@ static RefPtr<MediaEndpointSessionConfiguration> configurationFromJSON(const Str
             RefPtr<InspectorObject> payloadsObject = InspectorObject::create();
             payloadsArray->get(j)->asObject(payloadsObject);
 
-            RefPtr<MediaPayload> payload = MediaPayload::create();
+            MediaPayload payload;
 
             if (payloadsObject->getInteger(typeString(), intValue))
-                payload->setType(intValue);
+                payload.type = intValue;
 
             if (payloadsObject->getString(encodingNameString(), stringValue))
-                payload->setEncodingName(stringValue);
+                payload.encodingName = stringValue;
 
             if (payloadsObject->getInteger(clockRateString(), intValue))
-                payload->setClockRate(intValue);
+                payload.clockRate = intValue;
 
             if (payloadsObject->getInteger(channelsString(), intValue))
-                payload->setChannels(intValue);
+                payload.channels = intValue;
 
             if (payloadsObject->getBoolean(ccmfirString(), boolValue))
-                payload->setCcmfir(boolValue);
+                payload.ccmfir = boolValue;
 
             if (payloadsObject->getBoolean(nackpliString(), boolValue))
-                payload->setNackpli(boolValue);
+                payload.nackpli = boolValue;
 
             if (payloadsObject->getBoolean(nackString(), boolValue))
-                payload->setNack(boolValue);
+                payload.nack = boolValue;
 
             RefPtr<InspectorObject> parametersObject = InspectorObject::create();
             if (payloadsObject->getObject(parametersString(), parametersObject)) {
                 if (parametersObject->getInteger(packetizationModeString(), intValue))
-                    payload->addParameter("packetizationMode", intValue);
+                    payload.addParameter("packetizationMode", intValue);
 
                 if (parametersObject->getInteger(aptString(), intValue))
-                    payload->addParameter("apt", intValue);
+                    payload.addParameter("apt", intValue);
 
                 if (parametersObject->getInteger(rtxTimeString(), intValue))
-                    payload->addParameter("rtxTime", intValue);
+                    payload.addParameter("rtxTime", intValue);
             }
 
             mediaDescription->addPayload(WTFMove(payload));
@@ -362,22 +362,22 @@ static String configurationToJSON(const MediaEndpointSessionConfiguration& confi
 
         RefPtr<InspectorArray> payloadsArray = InspectorArray::create();
 
-        for (RefPtr<MediaPayload> payload : mediaDescription->payloads()) {
+        for (auto& payload : mediaDescription->payloads()) {
             RefPtr<InspectorObject> payloadObject = InspectorObject::create();
 
-            payloadObject->setInteger(typeString(), payload->type());
-            payloadObject->setString(encodingNameString(), payload->encodingName());
-            payloadObject->setInteger(clockRateString(), payload->clockRate());
-            payloadObject->setInteger(channelsString(), payload->channels());
-            payloadObject->setBoolean(ccmfirString(), payload->ccmfir());
-            payloadObject->setBoolean(nackpliString(), payload->nackpli());
-            payloadObject->setBoolean(nackString(), payload->nack());
+            payloadObject->setInteger(typeString(), payload.type);
+            payloadObject->setString(encodingNameString(), payload.encodingName);
+            payloadObject->setInteger(clockRateString(), payload.clockRate);
+            payloadObject->setInteger(channelsString(), payload.channels);
+            payloadObject->setBoolean(ccmfirString(), payload.ccmfir);
+            payloadObject->setBoolean(nackpliString(), payload.nackpli);
+            payloadObject->setBoolean(nackString(), payload.nack);
 
-            if (!payload->parameters().isEmpty()) {
+            if (!payload.parameters.isEmpty()) {
                 RefPtr<InspectorObject> parametersObject = InspectorObject::create();
 
-                for (auto& name : payload->parameters().keys())
-                    parametersObject->setInteger(name, payload->parameters().get(name));
+                for (auto& name : payload.parameters.keys())
+                    parametersObject->setInteger(name, payload.parameters.get(name));
 
                 payloadObject->setObject(parametersString(), parametersObject);
             }

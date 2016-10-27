@@ -110,26 +110,26 @@ MediaPayloadVector MediaEndpointOwr::getDefaultAudioPayloads()
     MediaPayloadVector payloads;
 
     // FIXME: This list should be based on what is available in the platform (bug: http://webkit.org/b/163723)
-    RefPtr<MediaPayload> payload = MediaPayload::create();
-    payload->setType(111);
-    payload->setEncodingName("OPUS");
-    payload->setClockRate(48000);
-    payload->setChannels(2);
-    payloads.append(payload);
+    MediaPayload payload1;
+    payload1.type = 111;
+    payload1.encodingName = "OPUS";
+    payload1.clockRate = 48000;
+    payload1.channels = 2;
+    payloads.append(WTFMove(payload1));
 
-    payload = MediaPayload::create();
-    payload->setType(8);
-    payload->setEncodingName("PCMA");
-    payload->setClockRate(8000);
-    payload->setChannels(1);
-    payloads.append(payload);
+    MediaPayload payload2;
+    payload2.type = 8;
+    payload2.encodingName = "PCMA";
+    payload2.clockRate = 8000;
+    payload2.channels = 1;
+    payloads.append(WTFMove(payload2));
 
-    payload = MediaPayload::create();
-    payload->setType(0);
-    payload->setEncodingName("PCMU");
-    payload->setClockRate(8000);
-    payload->setChannels(1);
-    payloads.append(payload);
+    MediaPayload payload3;
+    payload3.type = 0;
+    payload3.encodingName = "PCMU";
+    payload3.clockRate = 8000;
+    payload3.channels = 1;
+    payloads.append(WTFMove(payload3));
 
     return payloads;
 }
@@ -139,39 +139,40 @@ MediaPayloadVector MediaEndpointOwr::getDefaultVideoPayloads()
     MediaPayloadVector payloads;
 
     // FIXME: This list should be based on what is available in the platform (bug: http://webkit.org/b/163723)
-    RefPtr<MediaPayload> payload = MediaPayload::create();
-    payload->setType(103);
-    payload->setEncodingName("H264");
-    payload->setClockRate(90000);
-    payload->setCcmfir(true);
-    payload->setNackpli(true);
-    payload->addParameter("packetizationMode", 1);
-    payloads.append(payload);
+    MediaPayload payload1;
+    payload1.type = 103;
+    payload1.encodingName = "H264";
+    payload1.clockRate = 90000;
+    payload1.ccmfir = true;
+    payload1.nackpli = true;
+    payload1.addParameter("packetizationMode", 1);
+    payloads.append(WTFMove(payload1));
 
-    payload = MediaPayload::create();
-    payload->setType(100);
-    payload->setEncodingName("VP8");
-    payload->setClockRate(90000);
-    payload->setCcmfir(true);
-    payload->setNackpli(true);
-    payload->setNack(true);
-    payloads.append(payload);
+    MediaPayload payload2;
+    payload2.type = 100;
+    payload2.encodingName = "VP8";
+    payload2.clockRate = 90000;
+    payload2.ccmfir = true;
+    payload2.nackpli = true;
+    payload2.nack = true;
+    payloads.append(WTFMove(payload2));
 
-    payload = MediaPayload::create();
-    payload->setType(120);
-    payload->setEncodingName("RTX");
-    payload->setClockRate(90000);
-    payload->addParameter("apt", 100);
-    payload->addParameter("rtxTime", 200);
-    payloads.append(payload);
+    MediaPayload payload3;
+    payload3.type = 120;
+    payload3.encodingName = "RTX";
+    payload3.clockRate = 90000;
+    payload1.addParameter("apt", 100);
+    payload1.addParameter("rtxTime", 200);
+    payloads.append(WTFMove(payload3));
 
     return payloads;
 }
 
-static bool payloadsContainType(MediaPayloadVector payloads, unsigned payloadType)
+static bool payloadsContainType(const Vector<const MediaPayload*>& payloads, unsigned payloadType)
 {
-    for (auto& payload : payloads) {
-        if (payload->type() == payloadType)
+    for (auto payload : payloads) {
+        ASSERT(payload);
+        if (payload->type == payloadType)
             return true;
     }
     return false;
@@ -179,32 +180,32 @@ static bool payloadsContainType(MediaPayloadVector payloads, unsigned payloadTyp
 
 MediaPayloadVector MediaEndpointOwr::filterPayloads(const MediaPayloadVector& remotePayloads, const MediaPayloadVector& defaultPayloads)
 {
-    MediaPayloadVector filteredPayloads;
+    Vector<const MediaPayload*> filteredPayloads;
 
     for (auto& remotePayload : remotePayloads) {
-        MediaPayload* defaultPayload = nullptr;
+        const MediaPayload* defaultPayload = nullptr;
         for (auto& p : defaultPayloads) {
-            if (p->encodingName() == remotePayload->encodingName().convertToASCIIUppercase()) {
-                defaultPayload = p.get();
+            if (p.encodingName == remotePayload.encodingName.convertToASCIIUppercase()) {
+                defaultPayload = &p;
                 break;
             }
         }
         if (!defaultPayload)
             continue;
 
-        if (defaultPayload->parameters().contains("packetizationMode") && remotePayload->parameters().contains("packetizationMode")
-            && (defaultPayload->parameters().get("packetizationMode") != defaultPayload->parameters().get("packetizationMode")))
+        if (defaultPayload->parameters.contains("packetizationMode") && remotePayload.parameters.contains("packetizationMode")
+            && (defaultPayload->parameters.get("packetizationMode") != defaultPayload->parameters.get("packetizationMode")))
             continue;
 
-        filteredPayloads.append(remotePayload);
+        filteredPayloads.append(&remotePayload);
     }
 
     MediaPayloadVector filteredAptPayloads;
 
-    for (auto& filteredPayload : filteredPayloads) {
-        if (filteredPayload->parameters().contains("apt") && (!payloadsContainType(filteredPayloads, filteredPayload->parameters().get("apt"))))
+    for (auto filteredPayload : filteredPayloads) {
+        if (filteredPayload->parameters.contains("apt") && (!payloadsContainType(filteredPayloads, filteredPayload->parameters.get("apt"))))
             continue;
-        filteredAptPayloads.append(filteredPayload);
+        filteredAptPayloads.append(*filteredPayload);
     }
 
     return filteredAptPayloads;
@@ -235,12 +236,12 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateReceiveConfiguration(MediaEn
     return UpdateResult::Success;
 }
 
-static RefPtr<MediaPayload> findRtxPayload(MediaPayloadVector payloads, unsigned apt)
+static const MediaPayload* findRtxPayload(const MediaPayloadVector& payloads, unsigned apt)
 {
     for (auto& payload : payloads) {
-        if (payload->encodingName().convertToASCIIUppercase() == "RTX" && payload->parameters().contains("apt")
-            && (payload->parameters().get("apt") == apt))
-            return payload;
+        if (payload.encodingName.convertToASCIIUppercase() == "RTX" && payload.parameters.contains("apt")
+            && (payload.parameters.get("apt") == apt))
+            return &payload;
     }
     return nullptr;
 }
@@ -276,10 +277,10 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
         if (!sendSourceMap.contains(mdesc.mid()))
             continue;
 
-        MediaPayload* payload = nullptr;
+        const MediaPayload* payload = nullptr;
         for (auto& p : mdesc.payloads()) {
-            if (p->encodingName().convertToASCIIUppercase() != "RTX") {
-                payload = p.get();
+            if (p.encodingName.convertToASCIIUppercase() != "RTX") {
+                payload = &p;
                 break;
             }
         }
@@ -287,19 +288,19 @@ MediaEndpoint::UpdateResult MediaEndpointOwr::updateSendConfiguration(MediaEndpo
         if (!payload)
             return UpdateResult::Failed;
 
-        RefPtr<MediaPayload> rtxPayload = findRtxPayload(mdesc.payloads(), payload->type());
-        RealtimeMediaSourceOwr* source = static_cast<RealtimeMediaSourceOwr*>(sendSourceMap.get(mdesc.mid()));
+        auto* rtxPayload = findRtxPayload(mdesc.payloads(), payload->type);
+        auto* source = static_cast<RealtimeMediaSourceOwr*>(sendSourceMap.get(mdesc.mid()));
 
-        ASSERT(codecTypes.find(payload->encodingName().convertToASCIIUppercase()) != notFound);
-        OwrCodecType codecType = static_cast<OwrCodecType>(codecTypes.find(payload->encodingName().convertToASCIIUppercase()));
+        ASSERT(codecTypes.find(payload->encodingName.convertToASCIIUppercase()) != notFound);
+        auto codecType = static_cast<OwrCodecType>(codecTypes.find(payload->encodingName.convertToASCIIUppercase()));
 
         OwrPayload* sendPayload;
         if (mdesc.type() == "audio")
-            sendPayload = owr_audio_payload_new(codecType, payload->type(), payload->clockRate(), payload->channels());
+            sendPayload = owr_audio_payload_new(codecType, payload->type, payload->clockRate, payload->channels);
         else {
-            sendPayload = owr_video_payload_new(codecType, payload->type(), payload->clockRate(), payload->ccmfir(), payload->nackpli());
-            g_object_set(sendPayload, "rtx-payload-type", rtxPayload ? rtxPayload->type() : -1,
-                "rtx-time", rtxPayload && rtxPayload->parameters().contains("rtxTime") ? rtxPayload->parameters().get("rtxTime") : 0, nullptr);
+            sendPayload = owr_video_payload_new(codecType, payload->type, payload->clockRate, payload->ccmfir, payload->nackpli);
+            g_object_set(sendPayload, "rtx-payload-type", rtxPayload ? rtxPayload->type : -1,
+                "rtx-time", rtxPayload && rtxPayload->parameters.contains("rtxTime") ? rtxPayload->parameters.get("rtxTime") : 0, nullptr);
         }
 
         owr_media_session_set_send_payload(OWR_MEDIA_SESSION(session), sendPayload);
@@ -489,21 +490,21 @@ void MediaEndpointOwr::prepareMediaSession(OwrMediaSession* mediaSession, PeerMe
     g_signal_connect(mediaSession, "on-incoming-source", G_CALLBACK(gotIncomingSource), this);
 
     for (auto& payload : mediaDescription->payloads()) {
-        if (payload->encodingName().convertToASCIIUppercase() == "RTX")
+        if (payload.encodingName.convertToASCIIUppercase() == "RTX")
             continue;
 
-        RefPtr<MediaPayload> rtxPayload = findRtxPayload(mediaDescription->payloads(), payload->type());
+        auto* rtxPayload = findRtxPayload(mediaDescription->payloads(), payload.type);
 
-        ASSERT(codecTypes.find(payload->encodingName()) != notFound);
-        OwrCodecType codecType = static_cast<OwrCodecType>(codecTypes.find(payload->encodingName().convertToASCIIUppercase()));
+        ASSERT(codecTypes.find(payload.encodingName) != notFound);
+        OwrCodecType codecType = static_cast<OwrCodecType>(codecTypes.find(payload.encodingName.convertToASCIIUppercase()));
 
         OwrPayload* receivePayload;
         if (mediaDescription->type() == "audio")
-            receivePayload = owr_audio_payload_new(codecType, payload->type(), payload->clockRate(), payload->channels());
+            receivePayload = owr_audio_payload_new(codecType, payload.type, payload.clockRate, payload.channels);
         else {
-            receivePayload = owr_video_payload_new(codecType, payload->type(), payload->clockRate(), payload->ccmfir(), payload->nackpli());
-            g_object_set(receivePayload, "rtx-payload-type", rtxPayload ? rtxPayload->type() : -1,
-                "rtx-time", rtxPayload && rtxPayload->parameters().contains("rtxTime") ? rtxPayload->parameters().get("rtxTime") : 0, nullptr);
+            receivePayload = owr_video_payload_new(codecType, payload.type, payload.clockRate, payload.ccmfir, payload.nackpli);
+            g_object_set(receivePayload, "rtx-payload-type", rtxPayload ? rtxPayload->type : -1,
+                "rtx-time", rtxPayload && rtxPayload->parameters.contains("rtxTime") ? rtxPayload->parameters.get("rtxTime") : 0, nullptr);
         }
 
         owr_media_session_add_receive_payload(mediaSession, receivePayload);

@@ -119,8 +119,8 @@ private:
 
     std::unique_ptr<SDPProcessor> m_sdpProcessor;
 
-    Vector<RefPtr<MediaPayload>> m_defaultAudioPayloads;
-    Vector<RefPtr<MediaPayload>> m_defaultVideoPayloads;
+    Vector<MediaPayload> m_defaultAudioPayloads;
+    Vector<MediaPayload> m_defaultVideoPayloads;
 
     String m_cname;
     String m_iceUfrag;

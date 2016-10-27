@@ -43,11 +43,11 @@ struct IceCandidate;
 class MediaEndpoint;
 class MediaEndpointClient;
 class MediaEndpointSessionConfiguration;
-class MediaPayload;
+struct MediaPayload;
 class RealtimeMediaSource;
 
 typedef std::unique_ptr<MediaEndpoint> (*CreateMediaEndpoint)(MediaEndpointClient&);
-typedef Vector<RefPtr<MediaPayload>> MediaPayloadVector;
+typedef Vector<MediaPayload> MediaPayloadVector;
 typedef HashMap<String, RealtimeMediaSource*> RealtimeMediaSourceMap;
 
 class MediaEndpoint {
