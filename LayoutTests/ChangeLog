@@ -1,3 +1,14 @@
+2016-10-20  Zalan Bujtas  <zalan@apple.com>
+
+        Stop searching for first-letter containers at multi-column boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=163739
+        <rdar://problem/28810750>
+
+        Reviewed by David Hyatt.
+
+        * fast/css-generated-content/first-letter-move-to-multicolumn-crash-expected.txt: Added.
+        * fast/css-generated-content/first-letter-move-to-multicolumn-crash.html: Added.
+
 2016-10-19  Zalan Bujtas  <zalan@apple.com>
 
         Use anonymous table row for new child at RenderTableRow::addChild() if available.

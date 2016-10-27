@@ -2529,9 +2529,11 @@ void RenderBoxModelObject::moveChildrenTo(RenderBoxModelObject* toBoxModelObject
         // Save our next sibling as moveChildTo will clear it.
         RenderObject* nextSibling = child->nextSibling();
         
+        // FIXME: This logic here fails to detect the first letter in certain cases
+        // and skips a valid sibling renderer (see webkit.org/b/163737).
         // Check to make sure we're not saving the firstLetter as the nextSibling.
         // When the |child| object will be moved, its firstLetter will be recreated,
-        // so saving it now in nextSibling would let us with a destroyed object.
+        // so saving it now in nextSibling would leave us with a stale object.
         if (is<RenderTextFragment>(*child) && is<RenderText>(nextSibling)) {
             RenderObject* firstLetterObj = nullptr;
             if (RenderBlock* block = downcast<RenderTextFragment>(*child).blockForAccompanyingFirstLetter()) {
