@@ -2041,21 +2041,21 @@ void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData& data, float dx, f
     putImageData(data, ImageBuffer::BackingStoreCoordinateSystem, dx, dy, dirtyX, dirtyY, dirtyWidth, dirtyHeight);
 }
 
-void CanvasRenderingContext2D::drawFocusIfNeeded(Element* element)
+void CanvasRenderingContext2D::drawFocusIfNeeded(Element& element)
 {
     drawFocusIfNeededInternal(m_path, element);
 }
 
-void CanvasRenderingContext2D::drawFocusIfNeeded(DOMPath& path, Element* element)
+void CanvasRenderingContext2D::drawFocusIfNeeded(DOMPath& path, Element& element)
 {
     drawFocusIfNeededInternal(path.path(), element);
 }
 
-void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Element* element)
+void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Element& element)
 {
     GraphicsContext* context = drawingContext();
 
-    if (!element || !element->focused() || !state().hasInvertibleTransform || path.isEmpty() || !element->isDescendantOf(canvas()) || !context)
+    if (!element.focused() || !state().hasInvertibleTransform || path.isEmpty() || !element.isDescendantOf(canvas()) || !context)
         return;
 
     context->drawFocusRing(path, 1, 1, RenderTheme::focusRingColor());

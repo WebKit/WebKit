@@ -176,8 +176,8 @@ enum CanvasWindingRule { "nonzero", "evenodd" };
     [MayThrowException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
     
     // Focus rings
-    void drawFocusIfNeeded(Element? element); // FIXME: The element parameter should not be nullable.
-    void drawFocusIfNeeded(DOMPath path, Element? element); // FIXME: The element parameter should not be nullable.
+    void drawFocusIfNeeded(Element element);
+    void drawFocusIfNeeded(DOMPath path, Element element);
 
     readonly attribute float webkitBackingStorePixelRatio;
 

@@ -1,5 +1,17 @@
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
+        Element parameter to CanvasRenderingContext2D.drawFocusIfNeeded() should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=164062
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/canvas/draw-focus-if-needed-null-element-expected.txt: Added.
+        * fast/canvas/draw-focus-if-needed-null-element.html: Added.
+
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
         testharnessreport.js should sanitize the results before printing them
         https://bugs.webkit.org/show_bug.cgi?id=164064
 

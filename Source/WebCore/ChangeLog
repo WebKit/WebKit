@@ -1,3 +1,23 @@
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Element parameter to CanvasRenderingContext2D.drawFocusIfNeeded() should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=164062
+
+        Reviewed by Darin Adler.
+
+        Element parameter to CanvasRenderingContext2D.drawFocusIfNeeded() should not be nullable:
+        - https://html.spec.whatwg.org/#canvasuserinterface
+
+        Firefox and Chrome agree with the specification.
+
+        Test: fast/canvas/draw-focus-if-needed-null-element.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeeded):
+        (WebCore::CanvasRenderingContext2D::drawFocusIfNeededInternal):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2016-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT][CSSJIT] Share code with DOMJIT
