@@ -306,9 +306,8 @@ auto NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded) {
-            NetworkCache::singleton().update(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, *m_cacheEntryForValidation, m_response);
-            // If the request was conditional then this revalidation was not triggered by the network cache and we pass the
-            // 304 response to WebCore.
+            m_cacheEntryForValidation = NetworkCache::singleton().update(originalRequest(), { m_parameters.webPageID, m_parameters.webFrameID }, *m_cacheEntryForValidation, m_response);
+            // If the request was conditional then this revalidation was not triggered by the network cache and we pass the 304 response to WebCore.
             if (originalRequest().isConditional())
                 m_cacheEntryForValidation = nullptr;
         } else

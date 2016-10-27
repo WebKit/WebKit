@@ -1,3 +1,15 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        [WK2] 304 revalidation on the network process does not update the validated response
+        https://bugs.webkit.org/show_bug.cgi?id=162973
+
+        Reviewed by Darin Adler.
+
+        * http/tests/cache/disk-cache/disk-cache-revalidation-new-expire-header-expected.txt:
+        Rebasing expectation as memory cache revalidation is no longer needed now that the disk cache is updating the response passed to the memory cache.
+        The disk cache is doing revalidation on the second load. It receives the updated response with longer validity.
+        As the extended validity response is now passed to the memory cache, the memory cache revalidation no longer happens.
+
 2016-10-05  Zalan Bujtas  <zalan@apple.com>
 
         Missing quotation mark when <q> gets reparented.

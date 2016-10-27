@@ -1,3 +1,14 @@
+2016-10-06  Youenn Fablet  <youenn@apple.com>
+
+        [WK2] 304 revalidation on the network process does not update the validated response
+        https://bugs.webkit.org/show_bug.cgi?id=162973
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/basic/conditional-get-expected.txt: Added.
+        * web-platform-tests/fetch/api/basic/conditional-get.html: Added.
+        * web-platform-tests/fetch/api/resources/cache.py: Added.
+
 2016-09-19  Chris Dumez  <cdumez@apple.com>
 
         Update XHTMLParser to recognize "-//W3C//DTD MathML 2.0//EN" public identifier
