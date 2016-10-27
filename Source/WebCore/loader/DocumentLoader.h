@@ -213,7 +213,8 @@ namespace WebCore {
 
         void startLoadingMainResource();
         WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&);
-        
+        void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
+
         // Support iconDatabase in synchronous mode.
         void iconLoadDecisionAvailable();
         

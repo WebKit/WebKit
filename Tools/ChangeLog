@@ -1,3 +1,21 @@
+2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Document request not updated after willSendRequest is called for a redirect
+        https://bugs.webkit.org/show_bug.cgi?id=163436
+
+        Reviewed by Michael Catanzaro.
+
+        Update /webkit2/WebKitWebView/active-uri test to check the active URI also when modified by
+        WebKitPage::send-request signal in a web extension.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp:
+        (testWebViewActiveURI):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp:
+        (sendRequestCallback):
+        * TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp:
+        (loadChangedCallback):
+
 2016-10-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebView and WebPage URLs not updated after URL is modified by InjectedBundlePageResourceLoadClient::willSendRequestForFrame

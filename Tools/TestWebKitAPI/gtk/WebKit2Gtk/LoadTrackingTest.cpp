@@ -39,7 +39,7 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
         break;
     case WEBKIT_LOAD_COMMITTED: {
         g_assert(webkit_web_view_is_loading(webView));
-        g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+        test->m_activeURI = webkit_web_view_get_uri(webView);
 
         // Check that on committed we always have a main resource with a response.
         WebKitWebResource* resource = webkit_web_view_get_main_resource(webView);

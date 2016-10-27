@@ -226,10 +226,15 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
         return;
 
     ResourceLoader::willSendRequestInternal(newRequest, redirectResponse);
-    if (newRequest.isNull())
+    if (newRequest.isNull()) {
         cancel();
+        return;
+    }
 
     ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
+
+    if (m_resource->type() == CachedResource::MainResource && !redirectResponse.isNull())
+        m_documentLoader->willContinueMainResourceLoadAfterRedirect(newRequest);
 }
 
 void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)

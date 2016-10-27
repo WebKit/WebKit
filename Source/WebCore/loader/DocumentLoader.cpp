@@ -1586,6 +1586,11 @@ void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
     mainReceivedError(error);
 }
 
+void DocumentLoader::willContinueMainResourceLoadAfterRedirect(const ResourceRequest& newRequest)
+{
+    setRequest(newRequest);
+}
+
 void DocumentLoader::clearMainResource()
 {
     if (m_mainResource && m_mainResource->hasClient(this))
