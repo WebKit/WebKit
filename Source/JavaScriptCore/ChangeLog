@@ -1,3 +1,17 @@
+2016-10-25  Christopher Reid  <Christopher.Reid@am.sony.com>
+
+        jsc.cpp is leaking memory allocated by readline in runInteractive
+        https://bugs.webkit.org/show_bug.cgi?id=163958
+
+        According to http://web.mit.edu/gnu/doc/html/rlman_2.html,
+        "The line readline returns is allocated with malloc ();
+        you should free () the line when you are done with it."
+        The memory allocated by readline is not being freed when it should.
+
+        Reviewed by Mark Lam.
+
+        * jsc.cpp:
+
 2016-10-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Fix JSC cast-align compiler warnings on ARMv7
