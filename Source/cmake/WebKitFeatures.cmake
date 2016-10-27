@@ -268,7 +268,7 @@ macro(WEBKIT_OPTION_END)
         endif ()
 
         option(${_name} "${_WEBKIT_AVAILABLE_OPTIONS_DESCRIPTION_${_name}}" ${_WEBKIT_AVAILABLE_OPTIONS_INITIAL_VALUE_${_name}})
-        if (NOT _WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name})
+        if (NOT ${_WEBKIT_AVAILABLE_OPTIONS_IS_PUBLIC_${_name}})
             mark_as_advanced(FORCE ${_name})
         endif ()
     endforeach ()
