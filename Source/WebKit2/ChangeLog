@@ -1,3 +1,17 @@
+2016-10-17  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Disable CSS Grid Layout runtime flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=163432
+
+        Reviewed by Darin Adler.
+
+        It was enabled in r201042, but now Safari Technology Preview
+        has a UI to switch runtime flags so it doesn't need to be enabled
+        by default anymore.
+
+        * Shared/WebPreferencesDefinitions.h: Disable grid layout runtime flag
+        by default.
+
 2016-10-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Default WebKitWebsiteDataManager is always leaked in WebKitWebContext
