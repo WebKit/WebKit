@@ -1,7 +1,5 @@
 /*
- * THIS FILE INTENTIONALLY LEFT BLANK
- *
- * More specifically, this file is intended for vendors to implement
+ * This file is intended for vendors to implement
  * code needed to integrate testharness.js tests with their own test systems.
  *
  * Typically such integration will attach callbacks when each test is
@@ -17,12 +15,17 @@ if (self.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.setCanOpenWindows();
-    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    // Let's restrict calling testharness timeout() to wptserve tests for the moment.
+    // That will limit the impact to a small number of tests.
+    // The risk is that testharness timeout() might be called to late on slow bots to finish properly.
+    if (testRunner.timeout && location.port == 8800)
+        setTimeout(timeout, testRunner.timeout * 0.9);
 }
 
 // Function used to convert the test status code into
 // the corresponding string
-function convertResult(resultStatus) {
+function convertResult(resultStatus)
+{
     if(resultStatus == 0)
         return("PASS");
     else if(resultStatus == 1)
@@ -33,99 +36,58 @@ function convertResult(resultStatus) {
         return("NOTRUN");
 }
 
-/* Disable the default output of testharness.js.  The default output formats
-*  test results into an HTML table.  When that table is dumped as text, no
-*  spacing between cells is preserved, and it is therefore not readable. By
-*  setting output to false, the HTML table will not be created
-*/
-setup({"output":false});
+if (self.testRunner) {
+    /* Disable the default output of testharness.js.  The default output formats
+    *  test results into an HTML table.  When that table is dumped as text, no
+    *  spacing between cells is preserved, and it is therefore not readable. By
+    *  setting output to false, the HTML table will not be created
+    */
+    setup({"output": false, "explicit_timeout": true});
 
-/* If the test has a meta tag named flags and the content contains "dom", then it's a CSSWG test.
- */
-function isCSSWGTest() {
-    var flags = document.querySelector('meta[name=flags]'),
-        content = flags ? flags.getAttribute('content') : null;
+    /*  Using a callback function, test results will be added to the page in a 
+    *   manner that allows dumpAsText to produce readable test results
+    */
+    add_completion_callback(function (tests, harness_status) {
+        // Wait for any other completion callbacks
+        setTimeout(function() {
+            var results = document.createElement("pre");
+            var resultStr = "\n";
 
-    return content && content.match(/\bdom\b/);
-}
-
-function isJSTest() {
-    return !!document.querySelector('script[src*="/resources/testharness"]');
-}
-
-/*  Using a callback function, test results will be added to the page in a
-*   manner that allows dumpAsText to produce readable test results
-*/
-add_completion_callback(function (tests, harness_status) {
-
-    // Create element to hold results
-    var results = document.createElement("pre");
-
-    // Declare result string
-    var resultStr = "This is a testharness.js-based test.\n";
-
-    // Sanitizes the given text for display in test results.
-    function sanitize(text) {
-        if (!text) {
-            return "";
-        }
-        // Escape null characters, otherwise diff will think the file is binary.
-        text = text.replace(/\0/g, "\\0");
-        // Escape carriage returns as they break rietveld's difftools.
-        return text.replace(/\r/g, "\\r");
-    }
-
-    // Check harness_status.  If it is not 0, tests did not
-    // execute correctly, output the error code and message
-    if (harness_status.status != 0) {
-        resultStr += "Harness Error. harness_status.status = " +
-                     harness_status.status +
-                     " , harness_status.message = " +
-                     harness_status.message +
-                     "\n";
-    } else {
-        // Iterate through tests array and build string that contains
-        // results for all tests
-        for (var i = 0; i < tests.length; i++) {
-            resultStr += convertResult(tests[i].status) + " " +
-                         sanitize(tests[i].name) + " " +
-                         sanitize(tests[i].message) + "\n";
-        }
-    }
-    resultStr += "Harness: the test ran to completion.\n";
-
-    // Set results element's textContent to the results string
-    results.textContent = resultStr;
-
-    function done() {
-        if (self.testRunner) {
-            var logDiv = document.getElementById('log');
-            if ((isCSSWGTest() || isJSTest()) && logDiv) {
-                // Assume it's a CSSWG style test, and anything other than the log div isn't
-                // material to the testrunner output, so should be hidden from the text dump
-                var next = null;
-                for (var child = document.body.firstChild; child; child = next) {
-                    next = child.nextSibling;
-                    if (child.nodeType == Node.ELEMENT_NODE)
-                        child.style.visibility = "hidden";
-                    else if (child.nodeType == Node.TEXT_NODE)
-                        document.body.removeChild(child);
+            // Sanitizes the given text for display in test results.
+            function sanitize(text) {
+                if (!text) {
+                    return "";
                 }
+                text = text.replace(/\0/g, "\\0");
+                return text.replace(/\r/g, "\\r");
             }
-        }
 
-        // Add results element to document.
-        if (!document.body)
-            document.documentElement.appendChild(document.createElement("body"));
-        document.body.appendChild(results);
+            if(harness_status.status != 0)
+                resultStr += "Harness Error (" + convertResult(harness_status.status) + "), message = " + harness_status.message + "\n\n";
 
-        if (self.testRunner)
+            for (var i = 0; i < tests.length; i++) {
+                var message = sanitize(tests[i].message);
+                if (tests[i].status == 1 && !tests[i].dumpStack) {
+                    // Remove stack for failed tests for proper string comparison without file paths.
+                    // For a test to dump the stack set its dumpStack attribute to true.
+                    var stackIndex = message.indexOf("(stack:");
+                    if (stackIndex > 0)
+                        message = message.substr(0, stackIndex);
+                }
+                resultStr += convertResult(tests[i].status) + " " + sanitize(tests[i].name) + " " + message + "\n";
+            }
+
+            results.innerText = resultStr;
+            var log = document.getElementById("log");
+            if (log)
+                log.appendChild(results);
+            else
+                document.body.appendChild(results);
+
             testRunner.notifyDone();
-    }
+        }, 0);
+    });
 
-    if (document.readyState === 'loading') {
-        window.addEventListener('load', done);
-    } else {
-        setTimeout(done, 0);
-    }
-});
+    if (window.internals)
+        window.internals.setResourceTimingSupport(true);
+}

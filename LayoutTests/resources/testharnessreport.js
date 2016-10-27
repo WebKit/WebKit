@@ -1,7 +1,5 @@
 /*
- * THIS FILE INTENTIONALLY LEFT BLANK
- *
- * More specifically, this file is intended for vendors to implement
+ * This file is intended for vendors to implement
  * code needed to integrate testharness.js tests with their own test systems.
  *
  * Typically such integration will attach callbacks when each test is
@@ -60,9 +58,7 @@ if (self.testRunner) {
                 if (!text) {
                     return "";
                 }
-                // Escape null characters, otherwise diff will think the file is binary.
                 text = text.replace(/\0/g, "\\0");
-                // Escape carriage returns as they break rietveld's difftools.
                 return text.replace(/\r/g, "\\r");
             }
 
