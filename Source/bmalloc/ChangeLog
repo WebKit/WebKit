@@ -1,3 +1,22 @@
+2016-10-20  Mark Lam  <mark.lam@apple.com>
+
+        bmalloc api should crash on failure to allocate when !isBmallocEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=163766
+
+        Reviewed by Keith Miller and Filip Pizlo.
+
+        We want to crash in bmalloc on failure to allocate even when !isBmallocEnabled.
+        This is so that failures to allocate memory will manifest as crashes with a
+        unique signature (i.e. as a SIGTRAP on release builds, or as a write to illegal
+        address 0xbbadbeef on debug builds) and the crash will manifest inside bmalloc.
+        This distinguishes allocation failures from other crashing bugs that manifest as
+        SIGSEGVs due to random pointer dereferences in the clients of bmalloc.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::allocateImpl):
+        (bmalloc::Allocator::reallocate):
+        (bmalloc::Allocator::allocateSlowCase):
+
 2016-09-26  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         Avoid implicit conversion from iterator to pointer
