@@ -161,7 +161,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @discussion This method is called to decide what to do with an targetted nagivation that would open a new window.
     @param actionInformation Dictionary that describes the action that triggered this navigation.
     @param request The request for the proposed navigation
-    @param frame The frame in which the navigation is taking place
+    @param frameName The frame in which the navigation is taking place
     @param listener The object to call when the decision is made
     @discussion This method is provided so that modified clicks on a targetted link which
     opens a new frame can prevent the new window from being opened if they decide to
@@ -194,9 +194,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 /*!
     @method webView:unableToImplementPolicy:error:forURL:inFrame:
     @discussion Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
-    @param policy The policy that could not be implemented.
     @param error The error that caused the policy to not be implemented.
-    @param URL The URL of the resource for which a particular action was requested but failed.
     @param frame The frame in which the policy could not be implemented.
 */
 - (void)webView:(WebView *)webView unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame;

@@ -79,7 +79,7 @@
 #if !TARGET_OS_IPHONE
 /*!
     @method _setCustomScrollViewClass:
-    @result Switches the WebFrameView's scroll view class, this class needs to be a subclass of WebDynamicScrollBarsView.
+    @abstract Switches the WebFrameView's scroll view class, this class needs to be a subclass of WebDynamicScrollBarsView.
     Passing nil will switch back to the default WebDynamicScrollBarsView class.
  */
 - (void)_setCustomScrollViewClass:(Class)scrollViewClass;

@@ -82,8 +82,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 /*!
     @method iconForURL:withSize:
     @discussion Calls iconForURL:withSize:cache: with YES for cache.
-    @param URL
-    @param size
 */
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size;
 
@@ -92,8 +90,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @discussion Returns an icon for a web site URL from memory or disk. nil if none is found.
     Usually called by a UI element to determine if a site URL has an associated icon.
     Often called by the observer of WebIconChangedNotification after the notification is sent.
-    @param URL
-    @param size
     @param cache If yes, caches the returned image in memory if not already cached
 */
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
@@ -102,14 +98,12 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 /*!
     @method iconURLForURL:withSize:cache:
     @discussion Returns an icon URL for a web site URL from memory or disk. nil if none is found.
-    @param URL
 */
 - (NSString *)iconURLForURL:(NSString *)URL;
 
 #if !TARGET_OS_IPHONE
 /*!
     @method defaultIconWithSize:
-    @param size
 */
 - (NSImage *)defaultIconWithSize:(NSSize)size;
 - (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size;
@@ -118,14 +112,12 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 /*!
     @method retainIconForURL:
     @abstract Increments the retain count of the icon.
-    @param URL
 */
 - (void)retainIconForURL:(NSString *)URL;
 
 /*!
     @method releaseIconForURL:
     @abstract Decrements the retain count of the icon.
-    @param URL
 */
 - (void)releaseIconForURL:(NSString *)URL;
 

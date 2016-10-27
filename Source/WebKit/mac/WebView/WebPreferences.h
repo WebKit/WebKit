@@ -93,7 +93,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (instancetype)initWithIdentifier:(NSString *)anIdentifier;
 
 /*!
-    @method identifier
+    @property identifier
     @result Returns the identifier for this WebPreferences.
 */
 @property (nonatomic, readonly, copy) NSString *identifier;
@@ -144,7 +144,7 @@ extern NSString *WebPreferencesChangedNotification;
 @property (nonatomic) int minimumFontSize;
 
 /*!
-    @method minimumLogicalFontSize
+    @property minimumLogicalFontSize
 */
 @property (nonatomic) int minimumLogicalFontSize;
 

@@ -33,7 +33,7 @@
 
 /*!
     @method initWithOrigin:
-    @param The security origin this will manage.
+    @param origin The security origin this will manage.
     @result A new WebQuotaManager object.
 */
 - (id)initWithOrigin:(WebSecurityOrigin *)origin;
@@ -58,7 +58,7 @@
 
 /*!
     @method setQuota:
-    @param Sets a new quota, in bytes, on this security origin.
+    @param quota a new quota, in bytes, to set on this security origin.
 */
 - (void)setQuota:(unsigned long long)quota;
 

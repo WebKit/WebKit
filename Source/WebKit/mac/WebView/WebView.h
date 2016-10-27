@@ -362,7 +362,7 @@ extern NSString *WebViewProgressFinishedNotification;
 @property (nonatomic, copy) NSString *customTextEncodingName;
 
 /*!
-    @method mediaStyle
+    @property mediaStyle
     @abstract The media style for the WebView.
     @discussion The mediaStyle will override the normal value
     of the CSS media property. Setting the value to nil will restore the normal value. The value will be nil unless explicitly set.
@@ -516,7 +516,7 @@ extern NSString *WebViewProgressFinishedNotification;
 @property (nonatomic) BOOL drawsBackground;
 
 /*!
-    @method shouldUpdateWhileOffscreen
+    @property shouldUpdateWhileOffscreen
     @abstract Whether the WebView is always updated even when it is not in a window that is currently visible.
     @discussion If set to NO, then whenever the web view is not in a visible window, updates to the web page will not necessarily be rendered in the view.
     However, when the window is made visible, the view will be updated automatically. Not updating while hidden can improve performance. If set to is YES,

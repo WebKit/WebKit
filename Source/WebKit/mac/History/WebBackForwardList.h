@@ -48,7 +48,7 @@
 /*!
     @method addItem:
     @abstract Adds an entry to the list.
-    @param entry The entry to add.
+    @param item The entry to add.
     @discussion The added entry is inserted immediately after the current entry.
     If the current position in the list is not at the end of the list, elements in the
     forward list will be dropped at this point.  In addition, entries may be dropped to keep

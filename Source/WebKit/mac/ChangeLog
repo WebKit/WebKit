@@ -1,3 +1,29 @@
+2016-10-26  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] WebKit fails to build when CLANG_WARN_DOCUMENTATION_COMMENTS is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=164048
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig: Enabled CLANG_WARN_DOCUMENTATION_COMMENTS.
+        * Configurations/WebKitLegacy.xcconfig: Made the compiler treat the icu headers as system
+          headers.
+
+        * History/WebBackForwardList.h: Fixed parameter name in @param entry.
+        * Misc/WebDownload.h: Removed empty entries.
+        * Misc/WebIconDatabase.h: Remove incorrect @param entries.
+        * Misc/WebQuotaManager.h: Added missing parameter names in @param entries.
+        * WebView/WebFrameLoadDelegate.h: Corrected parameter names in @param entries.
+        * WebView/WebFrameViewPrivate.h: Changed incorrect @result to @abstract.
+        * WebView/WebPolicyDelegate.h: Fixed parameter name and removed incorrect @param entries.
+        * WebView/WebPreferences.h: Changed @method to @property in a couple of places.
+        * WebView/WebResourceLoadDelegate.h: Fixed parameter names.
+        * WebView/WebUIDelegate.h: Filled in two empty @param entries. Added missing parameter name,
+          Fixed a typo and removed empty @discussion entry. Fixed some parameter names.
+        * WebView/WebUIDelegatePrivate.h: Fixed parameter names.
+        * WebView/WebView.h: Changed @method to @property in a couple of places.
+        * WebView/WebViewPrivate.h: Fixed parameter names, changed incorrect @result to @abstract.
+
 2016-10-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend

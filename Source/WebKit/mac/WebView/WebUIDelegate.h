@@ -125,14 +125,14 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 /*!
     @method chooseFilename:
     @abstract Call this method to return a filename from the file open panel.
-    @param fileName
+    @param fileName the path of the selected file
 */
 - (void)chooseFilename:(NSString *)fileName;
 
 /*!
     @method chooseFilenames:
     @abstract Call this method to return an array of filenames from the file open panel.
-    @param fileNames
+    @param fileNames an array of paths of selected files
 */
 - (void)chooseFilenames:(NSArray *)fileNames WEBKIT_AVAILABLE_MAC(10_6);
 
@@ -220,7 +220,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 /*!
     @method webViewFocus:
     @abstract Focus the current window (i.e. makeKeyAndOrderFront:).
-    @param The WebView sending the delegate method.
+    @param sender The WebView sending the delegate method.
     @discussion Clients showing multiple views in one window may want to
     also do something to focus the one corresponding to this WebView.
 */
@@ -353,8 +353,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 /*!
     @method webViewFrame:
     @param sender The WebView sending the delegate method.
-    @abstract REturn the window's frame rect
-    @discussion 
+    @abstract Return the window's frame rect
 */
 - (NSRect)webViewFrame:(WebView *)sender;
 
@@ -387,7 +386,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
     @method webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:
     @abstract Display a JavaScript text input panel.
     @param sender The WebView sending the delegate method.
-    @param message The message to display.
+    @param prompt The message to display.
     @param defaultText The initial text for the text entry area.
     @param frame The WebFrame whose JavaScript initiated this call.
     @result The typed text if the user hit OK, otherwise nil.
@@ -528,7 +527,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 /*!
     @method webView:printFrameView:
     @abstract Informs that a WebFrameView needs to be printed
-    @param webView The WebView sending the delegate method
+    @param sender The WebView sending the delegate method
     @param frameView The WebFrameView needing to be printed
     @discussion This method is called when a script or user requests the page to be printed.
     In this method the delegate can prepare the WebFrameView to be printed. Some content that WebKit
@@ -542,7 +541,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 
 /*!
     @method webViewHeaderHeight:
-    @param webView The WebView sending the delegate method
+    @param sender The WebView sending the delegate method
     @abstract Reserve a height for the printed page header.
     @result The height to reserve for the printed page header, return 0.0 to not reserve any space for a header.
     @discussion The height returned will be used to calculate the rect passed to webView:drawHeaderInRect:.
@@ -551,7 +550,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 
 /*!
     @method webViewFooterHeight:
-    @param webView The WebView sending the delegate method
+    @param sender The WebView sending the delegate method
     @abstract Reserve a height for the printed page footer.
     @result The height to reserve for the printed page footer, return 0.0 to not reserve any space for a footer.
     @discussion The height returned will be used to calculate the rect passed to webView:drawFooterInRect:.
@@ -560,7 +559,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 
 /*!
     @method webView:drawHeaderInRect:
-    @param webView The WebView sending the delegate method
+    @param sender The WebView sending the delegate method
     @param rect The NSRect reserved for the header of the page
     @abstract The delegate should draw a header for the sender in the supplied rect.
 */
@@ -568,7 +567,7 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 
 /*!
     @method webView:drawFooterInRect:
-    @param webView The WebView sending the delegate method
+    @param sender The WebView sending the delegate method
     @param rect The NSRect reserved for the footer of the page
     @abstract The delegate should draw a footer for the sender in the supplied rect.
 */

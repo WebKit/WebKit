@@ -49,7 +49,7 @@
 
 /*!
     @method webView:identifierForInitialRequest:fromDataSource:
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param request The request about to be sent.
     @param dataSource The datasource that initiated the load.
     @discussion An implementor of WebResourceLoadDelegate should provide an identifier
@@ -66,7 +66,7 @@
     @method webView:resource:willSendRequest:redirectResponse:fromDataSource:
     @discussion This message is sent before a load is initiated.  The request may be modified
     as necessary by the receiver.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param request The request about to be sent.
@@ -99,7 +99,7 @@
 /*!
     @method webView:resource:didReceiveResponse:fromDataSource:
     @abstract This message is sent after a response has been received for this load.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param response The response for the request.
@@ -114,7 +114,7 @@
 /*!
     @method webView:resource:didReceiveContentLength:fromDataSource:
     @discussion Multiple of these messages may be sent as data arrives.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param length The amount of new data received.  This is not the total amount, just the new amount received.
@@ -125,7 +125,7 @@
 /*!
     @method webView:resource:didFinishLoadingFromDataSource:
     @discussion This message is sent after a load has successfully completed.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param dataSource The dataSource that initiated the load.
@@ -135,7 +135,7 @@
 /*!
     @method webView:resource:didFailLoadingWithError:fromDataSource:
     @discussion This message is sent after a load has failed to load due to an error.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param identifier An identifier that can be used to track the progress of a resource load across
     multiple call backs.
     @param error The error associated with this load.
@@ -146,7 +146,7 @@
 /*!
     @method webView:plugInFailedWithError:dataSource:
     @discussion Called when a plug-in is not found, fails to load or is not available for some reason.
-    @param webView The WebView sending the message.
+    @param sender The WebView sending the message.
     @param error The plug-in error. In the userInfo dictionary of the error, the object for the
     NSErrorFailingURLKey key is a URL string of the SRC attribute, the object for the WebKitErrorPlugInNameKey
     key is a string of the plug-in's name, the object for the WebKitErrorPlugInPageURLStringKey key is a URL string
