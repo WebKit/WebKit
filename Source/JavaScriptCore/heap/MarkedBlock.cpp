@@ -148,7 +148,7 @@ FreeList MarkedBlock::Handle::specializedSweep()
             static_cast<JSCell*>(cell)->callDestructor(*vm());
 
         if (sweepMode == SweepToFreeList) {
-            FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
+            FreeCell* freeCell = reinterpret_cast_ptr<FreeCell*>(cell);
             if (scribbleMode == Scribble)
                 scribble(freeCell, cellSize());
             freeCell->next = head;

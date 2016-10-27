@@ -1541,7 +1541,7 @@ class Zombify : public MarkedBlock::VoidFunctor {
 public:
     inline void visit(HeapCell* cell) const
     {
-        void** current = reinterpret_cast<void**>(cell);
+        void** current = reinterpret_cast_ptr<void**>(cell);
 
         // We want to maintain zapped-ness because that's how we know if we've called 
         // the destructor.
