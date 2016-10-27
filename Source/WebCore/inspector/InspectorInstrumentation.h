@@ -1,6 +1,6 @@
 /*
 * Copyright (C) 2010 Google Inc. All rights reserved.
-* Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+* Copyright (C) 2014-2016 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -41,6 +41,7 @@
 #include "ScriptExecutionContext.h"
 #include "StorageArea.h"
 #include "WebSocketFrame.h"
+#include "WorkerGlobalScope.h"
 #include <runtime/ConsoleTypes.h>
 #include <wtf/RefPtr.h>
 
@@ -94,7 +95,7 @@ class StyleResolver;
 class StyleRule;
 class ThreadableLoaderClient;
 class URL;
-class WorkerGlobalScope;
+class WorkerInspectorProxy;
 class XMLHttpRequest;
 
 struct ReplayPosition;
@@ -219,6 +220,9 @@ public:
     static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
+
+    static void workerStarted(ScriptExecutionContext*, WorkerInspectorProxy*, const URL&);
+    static void workerTerminated(ScriptExecutionContext*, WorkerInspectorProxy*);
 
 #if ENABLE(WEB_REPLAY)
     static void sessionCreated(Page&, RefPtr<ReplaySession>&&);
@@ -389,6 +393,9 @@ private:
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
+    static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy*, const URL&);
+    static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy*);
+
 #if ENABLE(WEB_REPLAY)
     static void sessionCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
     static void sessionLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
@@ -435,6 +442,7 @@ private:
     static InstrumentingAgents* instrumentingAgentsForDocument(Document&);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
     static InstrumentingAgents* instrumentingAgentsForRenderer(RenderObject*);
+    static InstrumentingAgents* instrumentingAgentsForWorkerGlobalScope(WorkerGlobalScope*);
 
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
@@ -1051,6 +1059,20 @@ inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& k
         didDispatchDOMStorageEventImpl(*instrumentingAgents, key, oldValue, newValue, storageType, securityOrigin, page);
 }
 
+inline void InspectorInstrumentation::workerStarted(ScriptExecutionContext* context, WorkerInspectorProxy* proxy, const URL& url)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        workerStartedImpl(*instrumentingAgents, proxy, url);
+}
+
+inline void InspectorInstrumentation::workerTerminated(ScriptExecutionContext* context, WorkerInspectorProxy* proxy)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        workerTerminatedImpl(*instrumentingAgents, proxy);
+}
+
 #if ENABLE(WEB_SOCKETS)
 inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const URL& requestURL)
 {
@@ -1251,6 +1273,8 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
         return nullptr;
     if (is<Document>(*context))
         return instrumentingAgentsForPage(downcast<Document>(context)->page());
+    if (is<WorkerGlobalScope>(*context))
+        return instrumentingAgentsForWorkerGlobalScope(downcast<WorkerGlobalScope>(context));
     return nullptr;
 }
 

@@ -1894,6 +1894,7 @@ set(WebCore_SOURCES
     inspector/InspectorPageAgent.cpp
     inspector/InspectorStyleSheet.cpp
     inspector/InspectorTimelineAgent.cpp
+    inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
@@ -1906,6 +1907,8 @@ set(WebCore_SOURCES
     inspector/WebDebuggerAgent.cpp
     inspector/WebInjectedScriptHost.cpp
     inspector/WebInjectedScriptManager.cpp
+    inspector/WorkerInspectorController.cpp
+    inspector/WorkerScriptDebugServer.cpp
 
     loader/ContentFilter.cpp
     loader/CookieJar.cpp
@@ -2848,6 +2851,7 @@ set(WebCore_SOURCES
     workers/WorkerConsoleClient.cpp
     workers/WorkerEventQueue.cpp
     workers/WorkerGlobalScope.cpp
+    workers/WorkerInspectorProxy.cpp
     workers/WorkerLocation.cpp
     workers/WorkerMessagingProxy.cpp
     workers/WorkerRunLoop.cpp

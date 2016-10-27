@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (c) 2011 Google Inc. All rights reserved.
+ * Copyright (c) 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,43 +30,54 @@
  */
 
 #include "config.h"
-#include "InstrumentingAgents.h"
+#include "WorkerScriptDebugServer.h"
+
+#include "JSDOMBinding.h"
+#include "Timer.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerRunLoop.h"
+#include "WorkerThread.h"
+#include <runtime/VM.h>
 
 using namespace Inspector;
 
 namespace WebCore {
 
-InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment)
-    : m_environment(environment)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context)
+    : ScriptDebugServer(context.script()->vm())
+    , m_workerGlobalScope(context)
 {
 }
 
-void InstrumentingAgents::reset()
+void WorkerScriptDebugServer::attachDebugger()
 {
-    m_inspectorAgent = nullptr;
-    m_inspectorPageAgent = nullptr;
-    m_inspectorCSSAgent = nullptr;
-    m_inspectorLayerTreeAgent = nullptr;
-    m_inspectorWorkerAgent = nullptr;
-    m_webConsoleAgent = nullptr;
-    m_inspectorDOMAgent = nullptr;
-    m_inspectorNetworkAgent = nullptr;
-    m_pageRuntimeAgent = nullptr;
-    m_inspectorTimelineAgent = nullptr;
-    m_persistentInspectorTimelineAgent = nullptr;
-    m_inspectorDOMStorageAgent = nullptr;
-#if ENABLE(WEB_REPLAY)
-    m_inspectorReplayAgent = nullptr;
-#endif
-#if ENABLE(RESOURCE_USAGE)
-    m_inspectorMemoryAgent = nullptr;
-#endif
-    m_inspectorDatabaseAgent = nullptr;
-    m_inspectorApplicationCacheAgent = nullptr;
-    m_inspectorDebuggerAgent = nullptr;
-    m_pageDebuggerAgent = nullptr;
-    m_pageHeapAgent = nullptr;
-    m_inspectorDOMDebuggerAgent = nullptr;
+    m_workerGlobalScope.script()->attachDebugger(this);
+}
+
+void WorkerScriptDebugServer::detachDebugger(bool isBeingDestroyed)
+{
+    if (m_workerGlobalScope.script())
+        m_workerGlobalScope.script()->detachDebugger(this);
+    if (!isBeingDestroyed)
+        recompileAllJSFunctions();
+}
+
+void WorkerScriptDebugServer::recompileAllJSFunctions()
+{
+    JSC::JSLockHolder lock(vm());
+    JSC::Debugger::recompileAllJSFunctions();
+}
+
+void WorkerScriptDebugServer::runEventLoopWhilePaused()
+{
+    TimerBase::fireTimersInNestedEventLoop();
+
+    // FIXME: Implement Worker Debugger Run Loop.
+}
+
+void WorkerScriptDebugServer::reportException(JSC::ExecState* exec, JSC::Exception* exception) const
+{
+    WebCore::reportException(exec, exception);
 }
 
 } // namespace WebCore

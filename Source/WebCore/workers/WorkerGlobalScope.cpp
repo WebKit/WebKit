@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
 #include "SocketProvider.h"
+#include "WorkerInspectorController.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerNavigator.h"
@@ -53,8 +54,9 @@ namespace WebCore {
 WorkerGlobalScope::WorkerGlobalScope(const URL& url, const String& userAgent, WorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, RefPtr<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : m_url(url)
     , m_userAgent(userAgent)
-    , m_script(std::make_unique<WorkerScriptController>(this))
     , m_thread(thread)
+    , m_script(std::make_unique<WorkerScriptController>(this))
+    , m_inspectorController(std::make_unique<WorkerInspectorController>(*this))
     , m_shouldBypassMainWorldContentSecurityPolicy(shouldBypassMainWorldContentSecurityPolicy)
     , m_eventQueue(*this)
     , m_topOrigin(topOrigin)

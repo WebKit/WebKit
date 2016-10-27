@@ -105,6 +105,8 @@ public:
 
     WEBCORE_EXPORT Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::NodeHighlightData>> buildObjectForHighlightedNodes() const;
 
+    WEBCORE_EXPORT void didComposite(Frame&);
+
     bool isUnderTest() const { return m_isUnderTest; }
     WEBCORE_EXPORT void setIsUnderTest(bool);
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
@@ -113,6 +115,7 @@ public:
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
     InspectorPageAgent* pageAgent() const { return m_pageAgent; }
 
+    // InspectorEnvironment
     bool developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::ExecState*) const override;
     Inspector::InspectorFunctionCallHandler functionCallHandler() const override;
@@ -121,8 +124,6 @@ public:
     Ref<WTF::Stopwatch> executionStopwatch() override;
     PageScriptDebugServer& scriptDebugServer() override;
     JSC::VM& vm() override;
-
-    WEBCORE_EXPORT void didComposite(Frame&);
 
 private:
     friend class InspectorInstrumentation;

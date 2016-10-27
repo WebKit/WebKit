@@ -35,6 +35,7 @@
 #include "ThreadGlobalData.h"
 #include "URL.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerInspectorController.h"
 #include <utility>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -217,6 +218,8 @@ void WorkerThread::stop()
 #endif
 
             workerGlobalScope.stopActiveDOMObjects();
+
+            workerGlobalScope.inspectorController().workerTerminating();
 
             // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,
             // which become dangling once Heap is destroyed.

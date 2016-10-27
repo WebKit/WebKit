@@ -46,6 +46,7 @@ WebInspector.loaded = function()
     InspectorBackend.registerTimelineDispatcher(new WebInspector.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
+    InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerObserver);
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
 
@@ -62,6 +63,7 @@ WebInspector.loaded = function()
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
+    this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
 
     document.addEventListener("DOMContentLoaded", this.contentLoaded);

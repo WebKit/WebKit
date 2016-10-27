@@ -1,3 +1,164 @@
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=163817
+        <rdar://problem/28899063>
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/worker/worker-create-and-terminate.html
+
+        From the perspective of an Inspector frontend, Workers are
+        like a special JavaScript context, separate from the page, that
+        may have its own set of Agents. This patch adds the necessary
+        backend infrastructure to provide WorkerGlobalObject with an
+        InspectorController and the means to communicate with a frontend
+        through a Page's WorkerAgent.
+
+        Pages now get a WorkerAgent. This informs the frontend about
+        created and terminated Workers. It also provides a communication
+        channel to dispatch and return inspector protocol messages to
+        each of the Workers. The Page side always interacts with the
+        WorkerInspectorProxy on the main thread. The Page's Worker Agent
+        can sends and receives messages to WorkerInspectorControllers.
+
+        WorkerGlobalScopes now get a WorkerInspectorController which
+        will eventually contain its own set of agents. There are no
+        agents yet, but they will be added individually in follow-up
+        patches. The Worker side always interacts with the
+        WorkerGlobalScope on the worker thread. WorkerInspectorController
+        dispatches messages on its agents.
+
+        All communication with Worker agents goes through Worker.sendMessageToWorker,
+        which tunnels the command request to the Worker's InspectorController
+        and agents. At the protocol level, worker agent command responses and
+        worker agent events are sent as events through Worker.dispatchMessageFromWorker.
+        On the frontend, the message dispatcher code will pair up replies with
+        their commands, and no-reply messages as events, like normal. So calling
+        worker agent methods in the frontend will be no different from the
+        existing callback/promise-based ways.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        Add new files.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/js/WorkerScriptController.h:
+        Some cleanup.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorWorkerAgent):
+        (WebCore::InstrumentingAgents::setInspectorWorkerAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::workerStartedImpl):
+        (WebCore::InspectorInstrumentation::workerTerminatedImpl):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForWorkerGlobalScope):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::workerStarted):
+        (WebCore::InspectorInstrumentation::workerTerminated):
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForContext):
+        Give the Page a WorkerAgent and Instrumentation methods for
+        Worker creation and termination.
+
+        * inspector/InspectorWorkerAgent.h: Added.
+        * inspector/InspectorWorkerAgent.cpp: Added.
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorWorkerAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorWorkerAgent::enable):
+        (WebCore::InspectorWorkerAgent::disable):
+        (WebCore::InspectorWorkerAgent::workerStarted):
+        (WebCore::InspectorWorkerAgent::workerTerminated):
+        (WebCore::InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage):
+        (WebCore::InspectorWorkerAgent::disconnectFromAllWorkerInspectorProxies):
+        (WebCore::InspectorWorkerAgent::connectToWorkerInspectorProxy):
+        (WebCore::InspectorWorkerAgent::disconnectFromWorkerInspectorProxy):
+        Handle connecting to Workers. This performs the "connectFrontend"
+        and "disconnectFrontend" dance with each Worker's InspectorController.
+        We only connect to workers when the Worker domain is enabled.
+
+        (WebCore::InspectorWorkerAgent::sendMessageToWorker):
+        (WebCore::InspectorWorkerAgent::sendMessageFromWorkerToFrontend):
+        Proxying messages to individual messages happens through the
+        WorkerInspectorProxy. That takes care of passing messages
+        across threads for us.
+
+        * workers/WorkerInspectorProxy.cpp: Added.
+        (WebCore::WorkerInspectorProxy::allWorkerInspectorProxies):
+        (WebCore::WorkerInspectorProxy::WorkerInspectorProxy):
+        (WebCore::WorkerInspectorProxy::~WorkerInspectorProxy):
+        (WebCore::WorkerInspectorProxy::workerStarted):
+        (WebCore::WorkerInspectorProxy::workerTerminated):
+        (WebCore::WorkerInspectorProxy::connectToWorkerInspector):
+        (WebCore::WorkerInspectorProxy::disconnectFromWorkerInspector):
+        (WebCore::WorkerInspectorProxy::sendMessageToWorkerInspector):
+        (WebCore::WorkerInspectorProxy::sendMessageFromWorkerToFrontend):
+        * workers/WorkerInspectorProxy.h: Added.
+        (WebCore::WorkerInspectorProxy::PageChannel::~PageChannel):
+        (WebCore::WorkerInspectorProxy::url):
+        (WebCore::WorkerInspectorProxy::identifier):
+        (WebCore::WorkerInspectorProxy::scriptExecutionContext):
+        The WorkerInspectorProxy simplifies the cross thread communication
+        between the Page Inspector and Worker Inspector. It also provides
+        a clean interface between the two sides.
+
+        * inspector/WorkerToPageFrontendChannel.h: Added.
+        * inspector/WorkerInspectorController.h: Added.
+        * inspector/WorkerInspectorController.cpp: Added.
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::~WorkerInspectorController):
+        (WebCore::WorkerInspectorController::workerTerminating):
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        (WebCore::WorkerInspectorController::dispatchMessageFromFrontend):
+        (WebCore::WorkerInspectorController::functionCallHandler):
+        (WebCore::WorkerInspectorController::evaluateHandler):
+        (WebCore::WorkerInspectorController::vm):
+        A basic InspectorController for a WorkerGlobalScope.
+        No agents yet, they will come soon.
+
+        * inspector/WorkerScriptDebugServer.h:
+        * inspector/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::attachDebugger):
+        (WebCore::WorkerScriptDebugServer::detachDebugger):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::WorkerScriptDebugServer::reportException):
+        (WebCore::WorkerScriptDebugServer::interruptAndRunTask):
+        A basic WorkerScriptDebug server for a WorkerGlobalScope.
+        Not really used until we implement DebuggerAgent, but needed for InspectorEnvironment.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        * workers/WorkerGlobalScope.h:
+        (WebCore::WorkerGlobalScope::inspectorController):
+        Give the WorkerGlobalScope an InspectorController.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::stop):
+        Ensure the Worker InspectorController is immediately on
+        the WorkerThread when it is about to be closed.
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::WorkerMessagingProxy):
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postMessageToPageInspector):
+        (WebCore::WorkerMessagingProxy::workerGlobalScopeDestroyedInternal):
+        (WebCore::WorkerMessagingProxy::terminateWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerReportingProxy.h:
+        Call into the WorkerInspectorProxy for any inspector related logic,
+        such as creation, termination, and messages received from the Worker.
+
 2016-10-27  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Implement CSS variables

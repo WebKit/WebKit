@@ -41,6 +41,7 @@
 #include "PageGroup.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
+#include "WorkerInspectorProxy.h"
 #include <inspector/ScriptCallStack.h>
 #include <runtime/ConsoleTypes.h>
 #include <wtf/MainThread.h>
@@ -54,6 +55,7 @@ WorkerGlobalScopeProxy* WorkerGlobalScopeProxy::create(Worker* worker)
 
 WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     : m_scriptExecutionContext(workerObject->scriptExecutionContext())
+    , m_inspectorProxy(std::make_unique<WorkerInspectorProxy>())
     , m_workerObject(workerObject)
     , m_mayBeDestroyed(false)
     , m_unconfirmedMessageCount(0)
@@ -94,6 +96,8 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, const St
 
     workerThreadCreated(thread);
     thread->start();
+
+    m_inspectorProxy->workerStarted(m_scriptExecutionContext.get(), thread.get(), scriptURL);
 }
 
 void WorkerMessagingProxy::postMessageToWorkerObject(RefPtr<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray> channels)
@@ -170,6 +174,13 @@ void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source
     });
 }
 
+void WorkerMessagingProxy::postMessageToPageInspector(const String& message)
+{
+    m_scriptExecutionContext->postTask([this, message = message.isolatedCopy()] (ScriptExecutionContext&) {
+        m_inspectorProxy->sendMessageFromWorkerToFrontend(message);
+    });
+}
+
 void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread> workerThread)
 {
     m_workerThread = workerThread;
@@ -234,6 +245,8 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     m_askedToTerminate = true;
     m_workerThread = nullptr;
 
+    m_inspectorProxy->workerTerminated();
+
     if (m_mayBeDestroyed)
         delete this;
 }
@@ -243,6 +256,8 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
     if (m_askedToTerminate)
         return;
     m_askedToTerminate = true;
+
+    m_inspectorProxy->workerTerminated();
 
     if (m_workerThread)
         m_workerThread->stop();

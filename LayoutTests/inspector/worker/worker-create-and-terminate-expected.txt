@@ -1,0 +1,28 @@
+Tests for Worker.workerCreated and Worker.workerTerminated events.
+
+
+== Running test suite: Worker.CreateAndTerminate
+-- Running test case: Worker.enable
+PASS: Should be informed of two existing Workers.
+Worker - inspector/worker/resources/worker-1.js
+Worker - inspector/worker/resources/worker-2.js
+
+-- Running test case: Worker.workerCreated
+PASS: Worker.workerCreated
+Worker - inspector/worker/resources/worker-1.js
+Worker - inspector/worker/resources/worker-2.js
+Worker - inspector/worker/resources/worker-3.js
+
+-- Running test case: Worker.workerTerminated.Page
+PASS: Worker.workerTerminated
+Worker - inspector/worker/resources/worker-1.js
+Worker - inspector/worker/resources/worker-3.js
+
+-- Running test case: Worker.workerTerminated.Worker
+PASS: Worker.workerTerminated
+Worker - inspector/worker/resources/worker-1.js
+
+-- Running test case: Worker.workerTerminated.GC
+PASS: Worker.workerTerminated
+No Workers
+

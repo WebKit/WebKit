@@ -43,6 +43,7 @@ namespace WebCore {
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
 class ScheduledAction;
+class WorkerInspectorController;
 class WorkerLocation;
 class WorkerNavigator;
 class WorkerThread;
@@ -66,6 +67,8 @@ public:
 
     WorkerScriptController* script() { return m_script.get(); }
     void clearScript() { m_script = nullptr; }
+
+    WorkerInspectorController& inspectorController() const { return *m_inspectorController; }
 
     WorkerThread& thread() const { return m_thread; }
 
@@ -150,8 +153,9 @@ private:
     mutable RefPtr<WorkerLocation> m_location;
     mutable RefPtr<WorkerNavigator> m_navigator;
 
-    std::unique_ptr<WorkerScriptController> m_script;
     WorkerThread& m_thread;
+    std::unique_ptr<WorkerScriptController> m_script;
+    std::unique_ptr<WorkerInspectorController> m_inspectorController;
 
     bool m_closing { false };
     bool m_shouldBypassMainWorldContentSecurityPolicy;

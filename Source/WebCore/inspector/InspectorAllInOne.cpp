@@ -50,6 +50,7 @@
 #include "InspectorPageAgent.cpp"
 #include "InspectorStyleSheet.cpp"
 #include "InspectorTimelineAgent.cpp"
+#include "InspectorWorkerAgent.cpp"
 #include "InstrumentingAgents.cpp"
 #include "NetworkResourcesData.cpp"
 #include "PageConsoleAgent.cpp"
@@ -62,3 +63,5 @@
 #include "WebDebuggerAgent.cpp"
 #include "WebInjectedScriptHost.cpp"
 #include "WebInjectedScriptManager.cpp"
+#include "WorkerInspectorController.cpp"
+#include "WorkerScriptDebugServer.cpp"

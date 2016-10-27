@@ -1,3 +1,16 @@
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=163817
+        <rdar://problem/28899063>
+
+        Reviewed by Brian Burg.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/protocol/Worker.json: Added.
+        New Worker domain.
+
 2016-10-26  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly API: implement Instance

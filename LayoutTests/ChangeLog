@@ -1,3 +1,20 @@
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=163817
+        <rdar://problem/28899063>
+
+        Reviewed by Brian Burg.
+
+        * inspector/worker/resources/worker-1.js: Added.
+        * inspector/worker/resources/worker-2.js: Added.
+        * inspector/worker/resources/worker-3.js: Added.
+        * inspector/worker/worker-create-and-terminate-expected.txt: Added.
+        * inspector/worker/worker-create-and-terminate.html: Added.
+        Tests for the new Worker domain events.
+        The rest of the Worker domain will be tested as soon as
+        we add the first Agent in Workers.
+
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
         Sync up all copies of testharnessreport.js

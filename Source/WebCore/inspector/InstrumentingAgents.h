@@ -50,6 +50,7 @@ class InspectorDOMDebuggerAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorLayerTreeAgent;
+class InspectorWorkerAgent;
 class InspectorMemoryAgent;
 class InspectorNetworkAgent;
 class InspectorPageAgent;
@@ -137,6 +138,9 @@ public:
     InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
     void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
 
+    InspectorWorkerAgent* inspectorWorkerAgent() const { return m_inspectorWorkerAgent; }
+    void setInspectorWorkerAgent(InspectorWorkerAgent* agent) { m_inspectorWorkerAgent = agent; }
+
 private:
     InstrumentingAgents(Inspector::InspectorEnvironment&);
 
@@ -146,6 +150,7 @@ private:
     InspectorPageAgent* m_inspectorPageAgent { nullptr };
     InspectorCSSAgent* m_inspectorCSSAgent { nullptr };
     InspectorLayerTreeAgent* m_inspectorLayerTreeAgent { nullptr };
+    InspectorWorkerAgent* m_inspectorWorkerAgent { nullptr };
     WebConsoleAgent* m_webConsoleAgent { nullptr };
     InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
     InspectorNetworkAgent* m_inspectorNetworkAgent { nullptr };
