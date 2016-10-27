@@ -1,3 +1,14 @@
+2016-10-21  Zalan Bujtas  <zalan@apple.com>
+
+        Do not mutate the render tree while collecting selection repaint rects.
+        https://bugs.webkit.org/show_bug.cgi?id=163800
+        <rdar://problem/28806886>
+
+        Reviewed by David Hyatt.
+
+        * fast/lists/crash-when-list-marker-is-moved-during-selection-expected.txt: Added.
+        * fast/lists/crash-when-list-marker-is-moved-during-selection.html: Added.
+
 2016-10-20  Zalan Bujtas  <zalan@apple.com>
 
         Stop searching for first-letter containers at multi-column boundary.
