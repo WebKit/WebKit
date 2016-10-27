@@ -1,3 +1,137 @@
+2016-10-27  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r206119. rdar://problem/28964589
+
+    2016-09-19  Daniel Bates  <dabates@apple.com>
+
+            Remove ENABLE(TEXT_AUTOSIZING) automatic text size adjustment code
+            https://bugs.webkit.org/show_bug.cgi?id=162167
+
+            Reviewed by Simon Fraser.
+
+            * TestExpectations:
+            * fast/text-autosizing/cluster-inline-block-or-table-expected.html: Removed.
+            * fast/text-autosizing/cluster-inline-block-or-table.html: Removed.
+            * fast/text-autosizing/cluster-inline-grid-flex-box-expected.html: Removed.
+            * fast/text-autosizing/cluster-inline-grid-flex-box.html: Removed.
+            * fast/text-autosizing/cluster-list-item-expected.html: Removed.
+            * fast/text-autosizing/cluster-list-item.html: Removed.
+            * fast/text-autosizing/cluster-narrow-in-wide-expected.html: Removed.
+            * fast/text-autosizing/cluster-narrow-in-wide-ohidden-expected.html: Removed.
+            * fast/text-autosizing/cluster-narrow-in-wide-ohidden.html: Removed.
+            * fast/text-autosizing/cluster-narrow-in-wide.html: Removed.
+            * fast/text-autosizing/cluster-wide-in-narrow-expected.html: Removed.
+            * fast/text-autosizing/cluster-wide-in-narrow.html: Removed.
+            * fast/text-autosizing/cluster-with-narrow-lca-and-cluster-expected.html: Removed.
+            * fast/text-autosizing/cluster-with-narrow-lca-and-cluster.html: Removed.
+            * fast/text-autosizing/cluster-with-narrow-lca-expected.html: Removed.
+            * fast/text-autosizing/cluster-with-narrow-lca.html: Removed.
+            * fast/text-autosizing/cluster-with-wide-lca-expected.html: Removed.
+            * fast/text-autosizing/cluster-with-wide-lca.html: Removed.
+            * fast/text-autosizing/clusters-insufficient-text-expected.html: Removed.
+            * fast/text-autosizing/clusters-insufficient-text.html: Removed.
+            * fast/text-autosizing/clusters-insufficient-width-expected.html: Removed.
+            * fast/text-autosizing/clusters-insufficient-width.html: Removed.
+            * fast/text-autosizing/clusters-sufficient-text-except-in-root-expected.html: Removed.
+            * fast/text-autosizing/clusters-sufficient-text-except-in-root.html: Removed.
+            * fast/text-autosizing/clusters-sufficient-width-expected.html: Removed.
+            * fast/text-autosizing/clusters-sufficient-width.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-auto-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-auto-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-hidden-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-hidden-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-paged-x-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-paged-x-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-scroll-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-and-overflow-scroll-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-height-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-height-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-height-body-expected.html: Removed.
+            * fast/text-autosizing/constrained-height-body.html: Removed.
+            * fast/text-autosizing/constrained-maxheight-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-maxheight-ancestor.html: Removed.
+            * fast/text-autosizing/constrained-maxheight-expected.html: Removed.
+            * fast/text-autosizing/constrained-maxheight.html: Removed.
+            * fast/text-autosizing/constrained-out-of-flow-expected.html: Removed.
+            * fast/text-autosizing/constrained-out-of-flow.html: Removed.
+            * fast/text-autosizing/constrained-percent-maxheight-expected.html: Removed.
+            * fast/text-autosizing/constrained-percent-maxheight.html: Removed.
+            * fast/text-autosizing/constrained-percent-of-viewport-maxheight-expected.html: Removed.
+            * fast/text-autosizing/constrained-percent-of-viewport-maxheight.html: Removed.
+            * fast/text-autosizing/constrained-then-float-ancestors-expected.html: Removed.
+            * fast/text-autosizing/constrained-then-float-ancestors.html: Removed.
+            * fast/text-autosizing/constrained-then-overflow-ancestors-expected.html: Removed.
+            * fast/text-autosizing/constrained-then-overflow-ancestors.html: Removed.
+            * fast/text-autosizing/constrained-then-position-absolute-ancestors-expected.html: Removed.
+            * fast/text-autosizing/constrained-then-position-absolute-ancestors.html: Removed.
+            * fast/text-autosizing/constrained-then-position-fixed-ancestors-expected.html: Removed.
+            * fast/text-autosizing/constrained-then-position-fixed-ancestors.html: Removed.
+            * fast/text-autosizing/constrained-within-overflow-ancestor-expected.html: Removed.
+            * fast/text-autosizing/constrained-within-overflow-ancestor.html: Removed.
+            * fast/text-autosizing/em-margin-border-padding-expected.html: Removed.
+            * fast/text-autosizing/em-margin-border-padding.html: Removed.
+            * fast/text-autosizing/font-scale-factor-expected.html: Removed.
+            * fast/text-autosizing/font-scale-factor.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-button-input-elements-expected.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-button-input-elements.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-checkbox-input-element-expected.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-checkbox-input-element.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-radio-input-element-expected.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-radio-input-element.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-select-element-expected.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-select-element.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-textfield-input-elements-expected.html: Removed.
+            * fast/text-autosizing/form-controls-autosizing-textfield-input-elements.html: Removed.
+            * fast/text-autosizing/header-li-links-autosizing-expected.html: Removed.
+            * fast/text-autosizing/header-li-links-autosizing.html: Removed.
+            * fast/text-autosizing/header-links-autosizing-different-fontsize-expected.html: Removed.
+            * fast/text-autosizing/header-links-autosizing-different-fontsize.html: Removed.
+            * fast/text-autosizing/header-links-autosizing-expected.html: Removed.
+            * fast/text-autosizing/header-links-autosizing.html: Removed.
+            * fast/text-autosizing/narrow-child-expected.html: Removed.
+            * fast/text-autosizing/narrow-child.html: Removed.
+            * fast/text-autosizing/narrow-descendants-combined-expected.html: Removed.
+            * fast/text-autosizing/narrow-descendants-combined.html: Removed.
+            * fast/text-autosizing/narrow-iframe-expected.html: Removed.
+            * fast/text-autosizing/narrow-iframe-flattened-expected.html: Removed.
+            * fast/text-autosizing/narrow-iframe-flattened.html: Removed.
+            * fast/text-autosizing/narrow-iframe.html: Removed.
+            * fast/text-autosizing/nested-child-expected.html: Removed.
+            * fast/text-autosizing/nested-child.html: Removed.
+            * fast/text-autosizing/nested-em-line-height-expected.html: Removed.
+            * fast/text-autosizing/nested-em-line-height.html: Removed.
+            * fast/text-autosizing/oscillation-javascript-fontsize-change-expected.html: Removed.
+            * fast/text-autosizing/oscillation-javascript-fontsize-change.html: Removed.
+            * fast/text-autosizing/simple-paragraph-expected.html: Removed.
+            * fast/text-autosizing/simple-paragraph.html: Removed.
+            * fast/text-autosizing/span-child-expected.html: Removed.
+            * fast/text-autosizing/span-child.html: Removed.
+            * fast/text-autosizing/unwrappable-blocks-expected.html: Removed.
+            * fast/text-autosizing/unwrappable-blocks.html: Removed.
+            * fast/text-autosizing/unwrappable-inlines-expected.html: Removed.
+            * fast/text-autosizing/unwrappable-inlines.html: Removed.
+            * fast/text-autosizing/various-font-sizes-expected.html: Removed.
+            * fast/text-autosizing/various-font-sizes.html: Removed.
+            * fast/text-autosizing/wide-block-expected.html: Removed.
+            * fast/text-autosizing/wide-block.html: Removed.
+            * fast/text-autosizing/wide-child-expected.html: Removed.
+            * fast/text-autosizing/wide-child.html: Removed.
+            * fast/text-autosizing/wide-iframe-expected.html: Removed.
+            * fast/text-autosizing/wide-iframe.html: Removed.
+            * fast/text-autosizing/wide-in-narrow-overflow-scroll-expected.html: Removed.
+            * fast/text-autosizing/wide-in-narrow-overflow-scroll.html: Removed.
+            * platform/efl/TestExpectations:
+            * platform/gtk/TestExpectations:
+            * platform/ios-simulator-wk1/TestExpectations: Move Failure entry for test
+            fast/text-autosizing/ios/line-height-text-autosizing.html from here to platform/ios-simulator/TestExpectations.
+            * platform/ios-simulator-wk2/TestExpectations: Ditto.
+            * platform/ios-simulator/TestExpectations: Associated failure of test
+            fast/text-autosizing/ios/line-height-text-autosizing.html with <https://bugs.webkit.org/show_bug.cgi?id=162236>.
+            * platform/mac-wk2/TestExpectations:
+            * platform/mac/TestExpectations:
+            * platform/win/TestExpectations:
+            * platform/wk2/TestExpectations:
+
 2016-10-27  Daniel Bates  <dabates@apple.com>
 
         Merge r207848. rdar://problem/28216276

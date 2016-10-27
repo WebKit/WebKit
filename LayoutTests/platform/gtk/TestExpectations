@@ -360,9 +360,6 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-remove-tracks.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/mock-media-source.html [ Skip ]
 
-# Text Autosizing is not yet enabled.
-webkit.org/b/99063 fast/text-autosizing [ Skip ]
-
 # Proximity Events is not supported.
 webkit.org/b/99060 proximity [ Failure ]
 webkit.org/b/99060 proximity/event-after-navigation.html [ Timeout ]

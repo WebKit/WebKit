@@ -384,9 +384,6 @@ fullscreen/ [ Skip ]
 # viewport meta tag support
 fast/viewport/ [ Skip ]
 
-# TODO Text Autosizing is not enabled
-webkit.org/b/84186 fast/text-autosizing [ Skip ]
-
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html [ Skip ]
 
@@ -2494,7 +2491,6 @@ fast/images/animated-gif-zooming.html [ Skip ] # Timeout
 webkit.org/b/140211 fast/xsl/sort-locale.xml [ Failure ]
 
 # Image Only Failures
-fast/text-autosizing/narrow-iframe-flattened.html [ ImageOnlyFailure ]
 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
 webkit.org/b/97026 scrollbars/corner-resizer-window-inactive.html [ ImageOnlyFailure ]

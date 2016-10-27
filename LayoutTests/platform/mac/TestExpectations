@@ -17,8 +17,7 @@ fast/forms/search/search-results-hidden-crash.html [ Pass ]
 
 fast/url/user-visible [ Pass ]
 
-fast/text-autosizing/ios [ Pass ]
-fast/text-autosizing/mac [ Pass ]
+fast/text-autosizing [Pass]
 fast/text-autosizing/ios/ipad/programmatic-text-size-adjust.html [ Skip ]
 fast/text-autosizing/ios/ipad/text-size-adjust-inline-style.html [ Skip ]
 fast/text-autosizing/ios/programmatic-text-size-adjust.html [ Skip ]
@@ -611,9 +610,6 @@ webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailur
 webaudio/mediastreamaudiosourcenode.html [ Skip ]
 webaudio/codec-tests/vorbis/ [ WontFix ]
 webkit.org/b/119467 webaudio/audiobuffersource-loop-points.html [ Skip ]
-
-# Text Autosizing is not enabled.
-webkit.org/b/84186 fast/text-autosizing
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping

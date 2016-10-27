@@ -494,9 +494,6 @@ Bug(EFL) fast/events/option-tab.html
 # Implementing copy{En,De}codedHostName only to test them does not make sense
 webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 
-# Text Autosizing is not yet enabled.
-webkit.org/b/84186 fast/text-autosizing
-
 # HIGH_DPI_CANVAS is not enabled.
 webkit.org/b/101809 fast/canvas/canvas-resize-reset-pixelRatio.html [ Skip ]
 
