@@ -327,8 +327,12 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 static bool shouldRequireUserGestureToLoadVideo()
 {
+#if PLATFORM(IOS)
     static bool shouldRequireUserGestureToLoadVideo = dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_10_0;
     return shouldRequireUserGestureToLoadVideo;
+#else
+    return true;
+#endif
 }
 
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS)
