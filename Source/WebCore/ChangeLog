@@ -1,3 +1,14 @@
+2016-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Improved the last build fix.
+
+        Darin pointed out I could have kept the function inline and just removed the WEBCORE_EXPORT.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::document): Deleted.
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::document):
+
 2016-10-26  Chris Dumez  <cdumez@apple.com>
 
         [Web IDL] Add support for having string enumerations in their own IDL file
