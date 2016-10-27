@@ -197,6 +197,10 @@ static bool urlRequiresMacintoshPlatform(const URL& url)
 {
     String baseDomain = topPrivatelyControlledDomain(url.host());
 
+    // At least finance.yahoo.com displays a mobile version with our standard user agent.
+    if (baseDomain == "yahoo.com")
+        return true;
+
     // taobao.com displays a mobile version with our standard user agent.
     if (baseDomain == "taobao.com")
         return true;
