@@ -36,6 +36,8 @@
 
 #if PLATFORM(X11)
 #include "PlatformDisplayX11.h"
+#include "XErrorTrapper.h"
+#include "XUniquePtr.h"
 #include <X11/Xlib.h>
 #endif
 
@@ -175,19 +177,37 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createPixmapContext(PlatformDisplay&
     if (context == EGL_NO_CONTEXT)
         return nullptr;
 
-    EGLint depth;
-    if (!eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &depth)) {
+    EGLint visualId;
+    if (!eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &visualId)) {
         eglDestroyContext(display, context);
         return nullptr;
     }
 
     Display* x11Display = downcast<PlatformDisplayX11>(platformDisplay).native();
-    XUniquePixmap pixmap = XCreatePixmap(x11Display, DefaultRootWindow(x11Display), 1, 1, depth);
+
+    XVisualInfo visualInfo;
+    visualInfo.visualid = visualId;
+    int numVisuals = 0;
+    XUniquePtr<XVisualInfo> visualInfoList(XGetVisualInfo(x11Display, VisualIDMask, &visualInfo, &numVisuals));
+    if (!visualInfoList || !numVisuals) {
+        eglDestroyContext(display, context);
+        return nullptr;
+    }
+
+    // We are using VisualIDMask so there must be only one.
+    ASSERT(numVisuals == 1);
+    XUniquePixmap pixmap = XCreatePixmap(x11Display, DefaultRootWindow(x11Display), 1, 1, visualInfoList.get()[0].depth);
     if (!pixmap) {
         eglDestroyContext(display, context);
         return nullptr;
     }
 
+    // Some drivers fail to create the surface producing BadDrawable X error and the default XError handler normally aborts.
+    // However, if the X error is ignored, eglCreatePixmapSurface() ends up returning a surface and we can continue creating
+    // the context. Since this is an offscreen context, it doesn't matter if the pixmap used is not valid because we never do
+    // swap buffers. So, we use a custom XError handler here that ignores BadDrawable errors and only warns about any other
+    // errors without aborting in any case.
+    XErrorTrapper trapper(x11Display, XErrorTrapper::Policy::Warn, { BadDrawable });
     EGLSurface surface = eglCreatePixmapSurface(display, config, reinterpret_cast<EGLNativePixmapType>(pixmap.get()), 0);
     if (surface == EGL_NO_SURFACE) {
         eglDestroyContext(display, context);

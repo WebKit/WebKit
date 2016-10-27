@@ -1,3 +1,15 @@
+2016-10-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Wrong use of EGL_DEPTH_SIZE
+        https://bugs.webkit.org/show_bug.cgi?id=155536
+
+        Reviewed by Michael Catanzaro.
+
+        Use XErrorTrapper class instead of the custom XErrorHandler.
+
+        * PluginProcess/unix/PluginProcessMainUnix.cpp:
+        (WebKit::PluginProcessMainUnix):
+
 2016-10-17  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] PendingFrameLoad objects are sometimes leaked
