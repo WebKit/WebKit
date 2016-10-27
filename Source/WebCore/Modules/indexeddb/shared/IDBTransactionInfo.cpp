@@ -41,7 +41,7 @@ IDBTransactionInfo::IDBTransactionInfo(const IDBResourceIdentifier& identifier)
 {
 }
 
-IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IndexedDB::TransactionMode mode)
+IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBConnectionProxy& connectionProxy, const Vector<String>& objectStores, IDBTransactionMode mode)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connectionProxy)));
     result.m_mode = mode;
@@ -53,7 +53,7 @@ IDBTransactionInfo IDBTransactionInfo::clientTransaction(const IDBClient::IDBCon
 IDBTransactionInfo IDBTransactionInfo::versionChange(const IDBServer::IDBConnectionToClient& connection, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion)
 {
     IDBTransactionInfo result((IDBResourceIdentifier(connection)));
-    result.m_mode = IndexedDB::TransactionMode::VersionChange;
+    result.m_mode = IDBTransactionMode::Versionchange;
     result.m_newVersion = newVersion;
     result.m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(originalDatabaseInfo);
 
@@ -99,14 +99,14 @@ String IDBTransactionInfo::loggingString() const
 {
     String modeString;
     switch (m_mode) {
-    case IndexedDB::TransactionMode::ReadOnly:
-        modeString = IDBTransaction::modeReadOnly();
+    case IDBTransactionMode::Readonly:
+        modeString = ASCIILiteral("readonly");
         break;
-    case IndexedDB::TransactionMode::ReadWrite:
-        modeString = IDBTransaction::modeReadWrite();
+    case IDBTransactionMode::Readwrite:
+        modeString = ASCIILiteral("readwrite");
         break;
-    case IndexedDB::TransactionMode::VersionChange:
-        modeString = IDBTransaction::modeVersionChange();
+    case IDBTransactionMode::Versionchange:
+        modeString = ASCIILiteral("versionchange");
         break;
     default:
         ASSERT_NOT_REACHED();

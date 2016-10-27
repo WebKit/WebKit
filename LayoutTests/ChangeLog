@@ -1,3 +1,19 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for having string enumerations in their own IDL file
+        https://bugs.webkit.org/show_bug.cgi?id=164025
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existign tests as the exception messages differ slightly.
+
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/exceptions-private-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-expected.txt:
+        * storage/indexeddb/modern/idbdatabase-transaction-failures-private-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-basics-private-expected.txt:
+
 2016-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node::ownerDocument

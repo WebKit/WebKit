@@ -148,7 +148,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(const IDBResultData& resultData)
     Ref<IDBDatabase> database = IDBDatabase::create(*scriptExecutionContext(), connectionProxy(), resultData);
     Ref<IDBTransaction> transaction = database->startVersionChangeTransaction(resultData.transactionInfo(), *this);
 
-    ASSERT(transaction->info().mode() == IndexedDB::TransactionMode::VersionChange);
+    ASSERT(transaction->info().mode() == IDBTransactionMode::Versionchange);
     ASSERT(transaction->originalDatabaseInfo());
 
     uint64_t oldVersion = transaction->originalDatabaseInfo()->version();

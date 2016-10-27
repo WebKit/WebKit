@@ -778,7 +778,7 @@ IDBError SQLiteIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     addResult.iterator->value = std::make_unique<SQLiteIDBTransaction>(*this, info);
 
     auto error = addResult.iterator->value->begin(*m_sqliteDB);
-    if (error.isNull() && info.mode() == IndexedDB::TransactionMode::VersionChange) {
+    if (error.isNull() && info.mode() == IDBTransactionMode::Versionchange) {
         m_originalDatabaseInfoBeforeVersionChange = std::make_unique<IDBDatabaseInfo>(*m_databaseInfo);
 
         SQLiteStatement sql(*m_sqliteDB, ASCIILiteral("UPDATE IDBDatabaseInfo SET value = ? where key = 'DatabaseVersion';"));
@@ -805,7 +805,7 @@ IDBError SQLiteIDBBackingStore::abortTransaction(const IDBResourceIdentifier& id
     }
 
 
-    if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() == IDBTransactionMode::Versionchange) {
         ASSERT(m_originalDatabaseInfoBeforeVersionChange);
         m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
     }
@@ -828,7 +828,7 @@ IDBError SQLiteIDBBackingStore::commitTransaction(const IDBResourceIdentifier& i
 
     auto error = transaction->commit();
     if (!error.isNull()) {
-        if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
+        if (transaction->mode() == IDBTransactionMode::Versionchange) {
             ASSERT(m_originalDatabaseInfoBeforeVersionChange);
             m_databaseInfo = WTFMove(m_originalDatabaseInfoBeforeVersionChange);
         }
@@ -850,7 +850,7 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
         LOG_ERROR("Attempt to create an object store without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an object store without an in-progress transaction") };
     }
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an object store in a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an object store in a non-version-change transaction") };
     }
@@ -902,7 +902,7 @@ IDBError SQLiteIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
         LOG_ERROR("Attempt to delete an object store without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete an object store without an in-progress transaction") };
     }
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete an object store in a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete an object store in a non-version-change transaction") };
     }
@@ -994,7 +994,7 @@ IDBError SQLiteIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
         LOG_ERROR("Attempt to rename an object store without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an object store without an in-progress transaction") };
     }
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an object store in a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an object store in a non-version-change transaction") };
     }
@@ -1027,7 +1027,7 @@ IDBError SQLiteIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
         LOG_ERROR("Attempt to clear an object store without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to clear an object store without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to clear an object store in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to clear an object store in a read-only transaction") };
     }
@@ -1068,7 +1068,7 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         LOG_ERROR("Attempt to create an index without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an index without an in-progress transaction") };
     }
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to create an index in a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to create an index in a non-version-change transaction") };
     }
@@ -1245,7 +1245,7 @@ IDBError SQLiteIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete index without an in-progress transaction") };
     }
 
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to delete index during a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete index during a non-version-change transaction") };
     }
@@ -1300,7 +1300,7 @@ IDBError SQLiteIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an index without an in-progress transaction") };
     }
 
-    if (transaction->mode() != IndexedDB::TransactionMode::VersionChange) {
+    if (transaction->mode() != IDBTransactionMode::Versionchange) {
         LOG_ERROR("Attempt to rename an index in a non-version-change transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to rename an index in a non-version-change transaction") };
     }
@@ -1414,7 +1414,7 @@ IDBError SQLiteIDBBackingStore::deleteRecord(SQLiteIDBTransaction& transaction, 
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
     ASSERT(transaction.inProgress());
-    ASSERT(transaction.mode() != IndexedDB::TransactionMode::ReadOnly);
+    ASSERT(transaction.mode() != IDBTransactionMode::Readonly);
     UNUSED_PARAM(transaction);
 
     RefPtr<SharedBuffer> keyBuffer = serializeIDBKeyData(keyData);
@@ -1511,7 +1511,7 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
         LOG_ERROR("Attempt to delete range from database without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete range from database without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to delete records from an object store in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to delete records from an object store in a read-only transaction") };
     }
@@ -1630,7 +1630,7 @@ IDBError SQLiteIDBBackingStore::addRecord(const IDBResourceIdentifier& transacti
         LOG_ERROR("Attempt to store a record in an object store without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to store a record in an object store without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to store a record in an object store in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to store a record in an object store in a read-only transaction") };
     }
@@ -1989,7 +1989,7 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
         LOG_ERROR("Attempt to generate key in database without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to generate key in database without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to generate key in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to generate key in a read-only transaction") };
     }
@@ -2018,7 +2018,7 @@ IDBError SQLiteIDBBackingStore::revertGeneratedKeyNumber(const IDBResourceIdenti
         LOG_ERROR("Attempt to revert key generator value in database without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to revert key generator value in database without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to revert key generator value in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to revert key generator value in a read-only transaction") };
     }
@@ -2039,7 +2039,7 @@ IDBError SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber(const IDBResourceI
         LOG_ERROR("Attempt to update key generator value in database without an in-progress transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to update key generator value in database without an in-progress transaction") };
     }
-    if (transaction->mode() == IndexedDB::TransactionMode::ReadOnly) {
+    if (transaction->mode() == IDBTransactionMode::Readonly) {
         LOG_ERROR("Attempt to update key generator value in a read-only transaction");
         return { IDBDatabaseException::UnknownError, ASCIILiteral("Attempt to update key generator value in a read-only transaction") };
     }

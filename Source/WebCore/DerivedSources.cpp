@@ -308,6 +308,7 @@
 #include "JSIDBOpenDBRequest.cpp"
 #include "JSIDBRequest.cpp"
 #include "JSIDBTransaction.cpp"
+#include "JSIDBTransactionMode.cpp"
 #include "JSIDBVersionChangeEvent.cpp"
 #endif
 #include "JSImageData.cpp"

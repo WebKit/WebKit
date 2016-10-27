@@ -46,7 +46,7 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     : m_databaseConnection(connection)
     , m_transactionInfo(info)
 {
-    if (m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange)
+    if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
         m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(m_databaseConnection->database().info());
 
     m_databaseConnection->database().server().registerTransaction(*this);
@@ -60,7 +60,7 @@ UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
 
 IDBDatabaseInfo* UniqueIDBDatabaseTransaction::originalDatabaseInfo() const
 {
-    ASSERT(m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange);
+    ASSERT(m_transactionInfo.mode() == IDBTransactionMode::Versionchange);
     return m_originalDatabaseInfo.get();
 }
 
@@ -84,12 +84,12 @@ void UniqueIDBDatabaseTransaction::abortWithoutCallback()
 
 bool UniqueIDBDatabaseTransaction::isVersionChange() const
 {
-    return m_transactionInfo.mode() == IndexedDB::TransactionMode::VersionChange;
+    return m_transactionInfo.mode() == IDBTransactionMode::Versionchange;
 }
 
 bool UniqueIDBDatabaseTransaction::isReadOnly() const
 {
-    return m_transactionInfo.mode() == IndexedDB::TransactionMode::ReadOnly;
+    return m_transactionInfo.mode() == IDBTransactionMode::Readonly;
 }   
 
 void UniqueIDBDatabaseTransaction::commit()

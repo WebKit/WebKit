@@ -229,7 +229,7 @@ PASS all stores present in transaction
 Verify that specifying an invalid mode raises an exception
 Expecting TypeError exception from db.transaction(['storeName'], 'lsakjdf')
 PASS Exception was thrown.
-PASS db.transaction(['storeName'], 'lsakjdf') threw TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('lsakjdf') is not one of 'readonly' or 'readwrite'.
+PASS db.transaction(['storeName'], 'lsakjdf') threw TypeError: Argument 2 ('mode') to IDBDatabase.transaction must be one of: "readonly", "readwrite", "versionchange"
 
 Test that null and undefined are treated as strings
 Expecting exception from db.transaction(null)

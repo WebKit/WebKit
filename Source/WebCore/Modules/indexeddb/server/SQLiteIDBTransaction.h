@@ -66,7 +66,7 @@ public:
     void closeCursor(SQLiteIDBCursor&);
     void notifyCursorsOfChanges(int64_t objectStoreID);
 
-    IndexedDB::TransactionMode mode() const { return m_info.mode(); }
+    IDBTransactionMode mode() const { return m_info.mode(); }
     bool inProgress() const;
 
     SQLiteTransaction* sqliteTransaction() const { return m_sqliteTransaction.get(); }

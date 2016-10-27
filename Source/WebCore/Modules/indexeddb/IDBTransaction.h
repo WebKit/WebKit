@@ -34,6 +34,7 @@
 #include "IDBKeyRangeData.h"
 #include "IDBOpenDBRequest.h"
 #include "IDBTransactionInfo.h"
+#include "IDBTransactionMode.h"
 #include "IndexedDB.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -64,15 +65,6 @@ class TransactionOperation;
 
 class IDBTransaction : public ThreadSafeRefCounted<IDBTransaction>, public EventTargetWithInlineData, public IDBActiveDOMObject {
 public:
-    static const AtomicString& modeReadOnly();
-    static const AtomicString& modeReadWrite();
-    static const AtomicString& modeVersionChange();
-    static const AtomicString& modeReadOnlyLegacy();
-    static const AtomicString& modeReadWriteLegacy();
-
-    static Optional<IndexedDB::TransactionMode> stringToMode(const String&);
-    static const AtomicString& modeToString(IndexedDB::TransactionMode);
-
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);
 
@@ -80,7 +72,7 @@ public:
 
     // IDBTransaction IDL
     Ref<DOMStringList> objectStoreNames() const;
-    const String& mode() const;
+    IDBTransactionMode mode() const { return m_info.mode(); }
     IDBDatabase* db();
     DOMError* error() const;
     ExceptionOr<Ref<IDBObjectStore>> objectStore(const String& name);
@@ -110,8 +102,8 @@ public:
     void didAbort(const IDBError&);
     void didCommit(const IDBError&);
 
-    bool isVersionChange() const { return m_info.mode() == IndexedDB::TransactionMode::VersionChange; }
-    bool isReadOnly() const { return m_info.mode() == IndexedDB::TransactionMode::ReadOnly; }
+    bool isVersionChange() const { return mode() == IDBTransactionMode::Versionchange; }
+    bool isReadOnly() const { return mode() == IDBTransactionMode::Readonly; }
     bool isActive() const;
 
     Ref<IDBObjectStore> createObjectStore(const IDBObjectStoreInfo&);

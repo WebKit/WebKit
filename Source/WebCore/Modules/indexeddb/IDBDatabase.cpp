@@ -160,7 +160,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBDatabase::createObjectStore(const String& na
     return m_versionChangeTransaction->createObjectStore(info);
 }
 
-ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfStrings&& storeNames, const String& modeString)
+ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode mode)
 {
     LOG(IndexedDB, "IDBDatabase::transaction");
 
@@ -178,11 +178,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
     if (objectStores.isEmpty())
         return Exception { IDBDatabaseException::InvalidAccessError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.") };
 
-    auto mode = IDBTransaction::stringToMode(modeString);
-    if (!mode)
-        return Exception { TypeError, "Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('" + modeString + "') is not one of 'readonly' or 'readwrite'." };
-
-    if (mode.value() != IndexedDB::TransactionMode::ReadOnly && mode.value() != IndexedDB::TransactionMode::ReadWrite)
+    if (mode != IDBTransactionMode::Readonly && mode != IDBTransactionMode::Readwrite)
         return Exception { TypeError };
 
     if (m_versionChangeTransaction && !m_versionChangeTransaction->isFinishedOrFinishing())
@@ -194,7 +190,7 @@ ExceptionOr<Ref<IDBTransaction>> IDBDatabase::transaction(StringOrVectorOfString
         return Exception { IDBDatabaseException::NotFoundError, ASCIILiteral("Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.") };
     }
 
-    auto info = IDBTransactionInfo::clientTransaction(m_connectionProxy.get(), objectStores, mode.value());
+    auto info = IDBTransactionInfo::clientTransaction(m_connectionProxy.get(), objectStores, mode);
     auto transaction = IDBTransaction::create(*this, info);
 
     LOG(IndexedDB, "IDBDatabase::transaction - Added active transaction %s", info.identifier().loggingString().utf8().data());
@@ -326,7 +322,7 @@ Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransact
 
     ASSERT(currentThread() == originThreadID());
     ASSERT(!m_versionChangeTransaction);
-    ASSERT(info.mode() == IndexedDB::TransactionMode::VersionChange);
+    ASSERT(info.mode() == IDBTransactionMode::Versionchange);
     ASSERT(!m_closePending);
     ASSERT(scriptExecutionContext());
 

@@ -72,10 +72,7 @@ my %webCoreTypeHash = (
     "SerializedScriptValue" => 1,
 );
 
-my %dictionaryTypes = ();
 my %dictionaryTypeImplementationNameOverrides = ();
-
-my %enumTypeHash = ();
 my %enumTypeImplementationNameOverrides = ();
 
 
@@ -141,6 +138,7 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
 my $idlFiles;
 my $cachedInterfaces = {};
 my $cachedExternalDictionaries = {};
+my $cachedExternalEnumerations = {};
 
 sub assert
 {
@@ -181,14 +179,12 @@ sub ProcessDocument
     require $ifaceName . ".pm";
 
     foreach my $dictionary (@{$useDocument->dictionaries}) {
-        $dictionaryTypes{$dictionary->name} = 1;
         if ($dictionary->extendedAttributes->{"ImplementedAs"}) {
             $dictionaryTypeImplementationNameOverrides{$dictionary->name} = $dictionary->extendedAttributes->{"ImplementedAs"};
         }
     }
 
     foreach my $enumeration (@{$useDocument->enumerations}) {
-        $enumTypeHash{$enumeration->name} = $enumeration->values;
         if ($enumeration->extendedAttributes->{"ImplementedAs"}) {
             $enumTypeImplementationNameOverrides{$enumeration->name} = $enumeration->extendedAttributes->{"ImplementedAs"};
         }
@@ -223,6 +219,17 @@ sub ProcessDocument
         print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
         $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
+        return;
+    }
+    
+    my $enumerations = $useDocument->enumerations;
+    if (@$enumerations) {
+        die "Multiple standalone enumerations per document are not supported" if @$enumerations > 1;
+
+        my $enumeration = @$enumerations[0];
+        print "Generating $useGenerator bindings code for IDL enumeration \"" . $enumeration->name . "\"...\n" if $verbose;
+        $codeGenerator->GenerateEnumeration($enumeration);
+        $codeGenerator->WriteData($enumeration, $useOutputDir, $useOutputHeadersDir);
         return;
     }
 
@@ -444,15 +451,60 @@ sub IsEnumType
 {
     my ($object, $type) = @_;
 
-    return 1 if exists $enumTypeHash{$type};
-    return 0;
+    return defined($object->GetEnumByName($type));
+}
+
+sub GetEnumByName
+{
+    my ($object, $name) = @_;
+    
+    die "GetEnumByName() was called with an undefined enumeration name" unless defined($name);
+
+    for my $enumeration (@{$useDocument->enumerations}) {
+        return $enumeration if $enumeration->name eq $name;
+    }
+
+    return $cachedExternalEnumerations->{$name} if exists($cachedExternalEnumerations->{$name});
+
+    # Find the IDL file associated with the dictionary.
+    my $filename = $object->IDLFileForInterface($name) or return;
+
+    # Do a fast check to see if it seems to contain a dictionary.
+    my $fileContents = slurp($filename);
+
+    if ($fileContents =~ /\benum\s+$name/gs) {
+        # Parse the IDL.
+        my $parser = IDLParser->new(1);
+        my $document = $parser->Parse($filename, $defines, $preprocessor);
+
+        foreach my $enumeration (@{$document->enumerations}) {
+            next unless $enumeration->name eq $name;
+
+            $cachedExternalEnumerations->{$name} = $enumeration;
+            my $implementedAs = $enumeration->extendedAttributes->{ImplementedAs};
+            $enumTypeImplementationNameOverrides{$enumeration->name} = $implementedAs if $implementedAs;
+            return $enumeration;
+        }
+    }
+    $cachedExternalEnumerations->{$name} = undef;
+}
+
+# An enumeration defined in its own IDL file.
+sub IsExternalEnumType
+{
+    my ($object, $type) = @_;
+
+    return $object->IsEnumType($type) && defined($cachedExternalEnumerations->{$type});
 }
 
 sub ValidEnumValues
 {
     my ($object, $type) = @_;
 
-    return @{$enumTypeHash{$type}};
+    my $enumeration = $object->GetEnumByName($type);
+    die "ValidEnumValues() was with a type that is not an enumeration: " . $type unless defined($enumeration);
+
+    return $enumeration->values;
 }
 
 sub HasEnumImplementationNameOverride

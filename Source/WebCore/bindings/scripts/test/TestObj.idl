@@ -135,6 +135,7 @@ enum TestConfidence { "high", "kinda-low" };
     getter DOMString? nullableStringSpecialMethod(unsigned long index);
 
     void methodWithEnumArg(TestEnumType enumArg);
+    void methodWithStandaloneEnumArg(TestStandaloneEnumeration enumArg);
     void methodWithOptionalEnumArg(optional TestEnumType enumArg);
     void methodWithOptionalEnumArgAndDefaultValue(optional TestEnumType enumArg = "EnumValue1");
     [MayThrowLegacyException] TestObj methodThatRequiresAllArgsAndThrows(DOMString strArg, TestObj objArg);

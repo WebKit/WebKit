@@ -132,6 +132,15 @@ sub new
     return $reference;
 }
 
+sub GenerateEnumeration
+{
+    my ($object, $enumeration) = @_;
+
+    my $className = GetEnumerationClassName($enumeration->name);
+    $object->GenerateEnumerationHeader($enumeration, $className);
+    $object->GenerateEnumerationImplementation($enumeration, $className);
+}
+
 sub GenerateDictionary
 {
     my ($object, $dictionary, $enumerations) = @_;
@@ -288,7 +297,7 @@ sub AddToImplIncludesForIDLType
         return;
     }
 
-    if ($codeGenerator->IsExternalDictionaryType($idlType->name)) {
+    if ($codeGenerator->IsExternalDictionaryType($idlType->name) || $codeGenerator->IsExternalEnumType($idlType->name)) {
         AddToImplIncludes("JS" . $idlType->name . ".h", $conditional);
         return;
     }
@@ -852,7 +861,9 @@ sub GetEnumerationClassName
         return $codeGenerator->GetEnumImplementationNameOverride($name);
     }
 
+    return $name if $codeGenerator->IsExternalEnumType($name);
     return $name unless defined($interface);
+
     return GetNestedClassName($interface, $name);
 }
 
@@ -866,89 +877,149 @@ sub GetEnumerationValueName
     return $name;
 }
 
+sub GenerateEnumerationHeader
+{
+    my ($object, $enumeration, $className) = @_;
+ 
+    # - Add default header template and header protection.
+    push(@headerContentHeader, GenerateHeaderContentHeader($enumeration));
+ 
+    $headerIncludes{"$className.h"} = 1;
+    $headerIncludes{"JSDOMConvert.h"} = 1;
+ 
+    push(@headerContent, "\nnamespace WebCore {\n\n");
+    push(@headerContent, GenerateEnumerationHeaderContent($enumeration, $className));
+    push(@headerContent, "} // namespace WebCore\n");
+     
+    my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
+    push(@headerContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+ 
+sub GenerateEnumerationImplementation
+{
+    my ($object, $enumeration, $className) = @_;
+ 
+    # - Add default header template
+    push(@implContentHeader, GenerateImplementationContentHeader($enumeration));
+    
+    # FIXME: A little ugly to have this be a side effect instead of a return value.
+    AddToImplIncludes("<runtime/JSString.h>");
+    AddToImplIncludes("JSDOMConvert.h");
+ 
+    push(@implContent, "\nusing namespace JSC;\n\n");
+    push(@implContent, "namespace WebCore {\n\n");
+    push(@implContent, GenerateEnumerationImplementationContent($enumeration, $className));
+    push(@implContent, "} // namespace WebCore\n");
+     
+    my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
+    push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+}
+
+sub GenerateEnumerationImplementationContent
+{
+    my ($enumeration, $className, $interface, $conditionalString) = @_;
+    
+    my $result = "";
+    $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+
+    # FIXME: Change to take VM& instead of ExecState*.
+    $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
+    $result .= "{\n";
+    # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
+    # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
+    AddToImplIncludes("<wtf/NeverDestroyed.h>");
+    $result .= "    static NeverDestroyed<const String> values[] = {\n";
+    foreach my $value (@{$enumeration->values}) {
+        if ($value eq "") {
+            $result .= "        emptyString(),\n";
+        } else {
+            $result .= "        ASCIILiteral(\"$value\"),\n";
+        }
+    }
+    $result .= "    };\n";
+    my $index = 0;
+    foreach my $value (@{$enumeration->values}) {
+        my $enumerationValueName = GetEnumerationValueName($value);
+        $result .= "    static_assert(static_cast<size_t>(${className}::$enumerationValueName) == $index, \"${className}::$enumerationValueName is not $index as expected\");\n";
+        $index++;
+    }
+    $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
+    $result .= "    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);\n";
+    $result .= "}\n\n";
+
+    # FIXME: Change to take VM& instead of ExecState&.
+    # FIXME: Consider using toStringOrNull to make exception checking faster.
+    # FIXME: Consider finding a more efficient way to match against all the strings quickly.
+    $result .= "template<> Optional<$className> parseEnumeration<$className>(ExecState& state, JSValue value)\n";
+    $result .= "{\n";
+    $result .= "    auto stringValue = value.toWTFString(&state);\n";
+    foreach my $value (@{$enumeration->values}) {
+        my $enumerationValueName = GetEnumerationValueName($value);
+        if ($value eq "") {
+            $result .= "    if (stringValue.isEmpty())\n";
+        } else {
+            $result .= "    if (stringValue == \"$value\")\n";
+        }
+        $result .= "        return ${className}::${enumerationValueName};\n";
+    }
+    $result .= "    return Nullopt;\n";
+    $result .= "}\n\n";
+
+    $result .= "template<> $className convertEnumeration<$className>(ExecState& state, JSValue value)\n";
+    $result .= "{\n";
+    $result .= "    VM& vm = state.vm();\n";
+    $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
+    $result .= "    auto result = parseEnumeration<$className>(state, value);\n";
+    $result .= "    if (UNLIKELY(!result)) {\n";
+    $result .= "        throwTypeError(&state, throwScope);\n";
+    $result .= "        return { };\n";
+    $result .= "    }\n";
+    $result .= "    return result.value();\n";
+    $result .= "}\n\n";
+
+    $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
+    $result .= "{\n";
+    $result .= "    return \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n";
+    $result .= "}\n\n";
+
+    $result .= "#endif\n\n" if $conditionalString;
+
+    return $result;
+}
+
 sub GenerateEnumerationsImplementationContent
 {
     my ($interface, $enumerations) = @_;
 
     return "" unless @$enumerations;
+    
+    # FIXME: A little ugly to have this be a side effect instead of a return value.
+    AddToImplIncludes("<runtime/JSString.h>");
+    AddToImplIncludes("JSDOMConvert.h");
 
     my $result = "";
     foreach my $enumeration (@$enumerations) {
         my $name = $enumeration->name;
 
         my $className = GetEnumerationClassName($name, $interface);
-
-        # FIXME: A little ugly to have this be a side effect instead of a return value.
-        AddToImplIncludes("<runtime/JSString.h>");
-
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
-        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-
-        # FIXME: Change to take VM& instead of ExecState*.
-        $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
-        $result .= "{\n";
-        # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
-        # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
-        AddToImplIncludes("<wtf/NeverDestroyed.h>");
-        $result .= "    static NeverDestroyed<const String> values[] = {\n";
-        foreach my $value (@{$enumeration->values}) {
-            if ($value eq "") {
-                $result .= "        emptyString(),\n";
-            } else {
-                $result .= "        ASCIILiteral(\"$value\"),\n";
-            }
-        }
-        $result .= "    };\n";
-        my $index = 0;
-        foreach my $value (@{$enumeration->values}) {
-            my $enumerationValueName = GetEnumerationValueName($value);
-            $result .= "    static_assert(static_cast<size_t>(${className}::$enumerationValueName) == $index, \"${className}::$enumerationValueName is not $index as expected\");\n";
-            $index++;
-        }
-        $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
-        $result .= "    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);\n";
-        $result .= "}\n\n";
-
-        # FIXME: Change to take VM& instead of ExecState&.
-        # FIXME: Consider using toStringOrNull to make exception checking faster.
-        # FIXME: Consider finding a more efficient way to match against all the strings quickly.
-        $result .= "template<> Optional<$className> parseEnumeration<$className>(ExecState& state, JSValue value)\n";
-        $result .= "{\n";
-        $result .= "    auto stringValue = value.toWTFString(&state);\n";
-        foreach my $value (@{$enumeration->values}) {
-            my $enumerationValueName = GetEnumerationValueName($value);
-            if ($value eq "") {
-                $result .= "    if (stringValue.isEmpty())\n";
-            } else {
-                $result .= "    if (stringValue == \"$value\")\n";
-            }
-            $result .= "        return ${className}::${enumerationValueName};\n";
-        }
-        $result .= "    return Nullopt;\n";
-        $result .= "}\n\n";
-
-        # FIXME: A little ugly to have this be a side effect instead of a return value.
-        AddToImplIncludes("JSDOMConvert.h");
-
-        $result .= "template<> $className convertEnumeration<$className>(ExecState& state, JSValue value)\n";
-        $result .= "{\n";
-        $result .= "    VM& vm = state.vm();\n";
-        $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n";
-        $result .= "    auto result = parseEnumeration<$className>(state, value);\n";
-        $result .= "    if (UNLIKELY(!result)) {\n";
-        $result .= "        throwTypeError(&state, throwScope);\n";
-        $result .= "        return { };\n";
-        $result .= "    }\n";
-        $result .= "    return result.value();\n";
-        $result .= "}\n\n";
-
-        $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
-        $result .= "{\n";
-        $result .= "    return \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n";
-        $result .= "}\n\n";
-
-        $result .= "#endif\n\n" if $conditionalString;
+        $result .= GenerateEnumerationImplementationContent($enumeration, $className, $interface, $conditionalString);
     }
+    return $result;
+}
+
+sub GenerateEnumerationHeaderContent
+{
+    my ($enumeration, $className, $conditionalString) = @_;
+
+    my $result = "";
+    $result .= "#if ${conditionalString}\n\n" if $conditionalString;
+    $result .= "template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
+    $result .= "template<> Optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
+    $result .= "template<> $className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
+    $result .= "template<> const char* expectedEnumerationValues<$className>();\n\n";
+    $result .= "#endif\n\n" if $conditionalString;
+    
     return $result;
 }
 
@@ -964,22 +1035,10 @@ sub GenerateEnumerationsHeaderContent
     $headerIncludes{"JSDOMConvert.h"} = 1;
 
     my $result = "";
-
     foreach my $enumeration (@$enumerations) {
-        my $name = $enumeration->name;
-
-        my $className = GetEnumerationClassName($name, $interface);
-
+        my $className = GetEnumerationClassName($enumeration->name, $interface);
         my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
-        $result .= "#if ${conditionalString}\n\n" if $conditionalString;
-
-        $result .= "template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
-
-        $result .= "template<> Optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
-        $result .= "template<> $className convertEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
-        $result .= "template<> const char* expectedEnumerationValues<$className>();\n\n";
-
-        $result .= "#endif\n\n" if $conditionalString;
+        $result .= GenerateEnumerationHeaderContent($enumeration, $className, $conditionalString);
     }
     return $result;
 }
@@ -4395,6 +4454,7 @@ sub GenerateParametersCheck
                 $indent = "    ";
             }
 
+            $implIncludes{"JS$className.h"} = 1 if $codeGenerator->IsExternalEnumType($type);
             push(@$outputArray, "$indent    $defineOptionalValue = parseEnumeration<$className>(*state, ${name}Value);\n");
             push(@$outputArray, "$indent    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
             push(@$outputArray, "$indent    if (UNLIKELY(!$optionalValue))\n");
@@ -5303,8 +5363,12 @@ sub JSValueToNative
     }
 
     return ("to$type($value)", 1) if $codeGenerator->IsTypedArrayType($type);
-    return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1) if $codeGenerator->IsEnumType($type);
-
+    
+    if ($codeGenerator->IsEnumType($type)) {
+        AddToImplIncludes("JS$type.h", $conditional) if $codeGenerator->IsExternalEnumType($type);
+        return ("parseEnumeration<" . GetEnumerationClassName($type, $interface) . ">($stateReference, $value)", 1);
+    }
+    
     AddToImplIncludes("JS$type.h", $conditional);
 
     # FIXME: EventListener should be a callback interface.

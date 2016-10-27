@@ -1,3 +1,113 @@
+2016-10-26  Chris Dumez  <cdumez@apple.com>
+
+        [Web IDL] Add support for having string enumerations in their own IDL file
+        https://bugs.webkit.org/show_bug.cgi?id=164025
+
+        Reviewed by Darin Adler.
+
+        Add support for having string enumerations in their own IDL file to facilitate
+        sharing them. Use this new support to implement IDBTransactionMode enumeration
+        for IndexedDB:
+        - https://www.w3.org/TR/IndexedDB/#idl-def-IDBTransactionMode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::startVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::mode):
+        (WebCore::IDBTransaction::isVersionChange):
+        (WebCore::IDBTransaction::isReadOnly):
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBTransactionMode.h: Added.
+        * Modules/indexeddb/IDBTransactionMode.idl: Copied from Source/WebCore/Modules/indexeddb/IDBTransaction.idl.
+        * Modules/indexeddb/IndexedDB.h:
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::MemoryBackingStoreTransaction):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::objectStoreRenamed):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::indexRenamed):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::isVersionChange):
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::isWriting):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::begin):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.h:
+        (WebCore::IDBServer::SQLiteIDBTransaction::mode):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::enqueueTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::takeNextRunnableTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::establishTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::originalDatabaseInfo):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::isVersionChange):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::isReadOnly):
+        * Modules/indexeddb/shared/IDBTransactionInfo.cpp:
+        (WebCore::IDBTransactionInfo::clientTransaction):
+        (WebCore::IDBTransactionInfo::versionChange):
+        (WebCore::IDBTransactionInfo::loggingString):
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        (WebCore::IDBTransactionInfo::mode):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGenerator.pm:
+        (ProcessDocument):
+        (IsEnumType):
+        (GetEnumByName):
+        (IsExternalEnumType):
+        (ValidEnumValues):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumeration):
+        (AddToImplIncludesForIDLType):
+        (GetEnumerationClassName):
+        (GenerateEnumerationHeader):
+        (GenerateEnumerationImplementation):
+        (GenerateEnumerationImplementationContent):
+        (GenerateEnumerationsImplementationContent):
+        (GenerateEnumerationHeaderContent):
+        (GenerateEnumerationsHeaderContent):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithEnumArgCaller):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithStandaloneEnumArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithStandaloneEnumArgCaller):
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp: Added.
+        (WebCore::convertEnumerationToJS):
+        (WebCore::parseEnumeration<TestStandaloneEnumeration>):
+        (WebCore::convertEnumeration<TestStandaloneEnumeration>):
+        (WebCore::expectedEnumerationValues<TestStandaloneEnumeration>):
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.h: Added.
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestStandaloneEnumeration.idl: Copied from Source/WebCore/Modules/indexeddb/IDBTransaction.idl.
+        * inspector/InspectorIndexedDBAgent.cpp:
+
 2016-10-26  Dan Bernstein  <mitz@apple.com>
 
         Fixed the WebKit2 build.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,76 +23,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if ENABLE(INDEXED_DATABASE)
-
-namespace WebCore {
-
-namespace IndexedDB {
-
-enum class TransactionState {
-    Active,
-    Inactive,
-    Committing,
-    Aborting,
-    Finished,
+[
+    Conditional=INDEXED_DATABASE,
+] enum IDBTransactionMode {
+    "readonly",
+    "readwrite",
+    "versionchange"
 };
-
-enum class CursorDirection {
-    Next = 0,
-    NextNoDuplicate = 1,
-    Prev = 2,
-    PrevNoDuplicate = 3,
-};
-const unsigned CursorDirectionMaximum = 3;
-
-enum class CursorType {
-    KeyAndValue = 0,
-    KeyOnly = 1,
-};
-const unsigned CursorTypeMaximum = 1;
-
-enum class CursorSource {
-    Index,
-    ObjectStore,
-};
-
-enum class VersionNullness {
-    Null,
-    NonNull,
-};
-
-enum class ObjectStoreOverwriteMode {
-    Overwrite,
-    OverwriteForCursor,
-    NoOverwrite,
-};
-
-enum class IndexRecordType {
-    Key,
-    Value,
-};
-
-// In order of the least to the highest precedent in terms of sort order.
-enum KeyType {
-    Max = -1,
-    Invalid = 0,
-    Array,
-    String,
-    Date,
-    Number,
-    Min,
-};
-
-enum class RequestType {
-    Open,
-    Delete,
-    Other,
-};
-
-} // namespace IndexedDB
-
-} // namespace WebCore
-
-#endif // ENABLED(INDEXED_DATABASE)

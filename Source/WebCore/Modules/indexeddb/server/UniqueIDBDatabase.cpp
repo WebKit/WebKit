@@ -1412,7 +1412,7 @@ void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& t
     LOG(IndexedDB, "UniqueIDBDatabase::enqueueTransaction - %s", transaction->info().loggingString().utf8().data());
     ASSERT(!m_hardClosedForUserDelete);
 
-    ASSERT(transaction->info().mode() != IndexedDB::TransactionMode::VersionChange);
+    ASSERT(transaction->info().mode() != IDBTransactionMode::Versionchange);
 
     m_pendingTransactions.append(WTFMove(transaction));
 
@@ -1548,7 +1548,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
         currentTransaction = m_pendingTransactions.takeFirst();
 
         switch (currentTransaction->info().mode()) {
-        case IndexedDB::TransactionMode::ReadOnly: {
+        case IDBTransactionMode::Readonly: {
             bool hasOverlappingScopes = scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
             hasOverlappingScopes |= scopesOverlap(m_objectStoreWriteTransactions, currentTransaction->objectStoreIdentifiers());
 
@@ -1557,7 +1557,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
 
             break;
         }
-        case IndexedDB::TransactionMode::ReadWrite: {
+        case IDBTransactionMode::Readwrite: {
             bool hasOverlappingScopes = scopesOverlap(m_objectStoreTransactionCounts, currentTransaction->objectStoreIdentifiers());
             hasOverlappingScopes |= scopesOverlap(deferredReadWriteScopes, currentTransaction->objectStoreIdentifiers());
 
@@ -1569,7 +1569,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
 
             break;
         }
-        case IndexedDB::TransactionMode::VersionChange:
+        case IDBTransactionMode::Versionchange:
             // Version change transactions should never be scheduled in the traditional manner.
             RELEASE_ASSERT_NOT_REACHED();
         }

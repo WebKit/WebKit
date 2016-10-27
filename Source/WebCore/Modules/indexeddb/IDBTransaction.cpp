@@ -59,63 +59,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-const AtomicString& IDBTransaction::modeReadOnly()
-{
-    static NeverDestroyed<AtomicString> readonly("readonly", AtomicString::ConstructFromLiteral);
-    return readonly;
-}
-
-const AtomicString& IDBTransaction::modeReadWrite()
-{
-    static NeverDestroyed<AtomicString> readwrite("readwrite", AtomicString::ConstructFromLiteral);
-    return readwrite;
-}
-
-const AtomicString& IDBTransaction::modeVersionChange()
-{
-    static NeverDestroyed<AtomicString> versionchange("versionchange", AtomicString::ConstructFromLiteral);
-    return versionchange;
-}
-
-const AtomicString& IDBTransaction::modeReadOnlyLegacy()
-{
-    static NeverDestroyed<AtomicString> readonly("0", AtomicString::ConstructFromLiteral);
-    return readonly;
-}
-
-const AtomicString& IDBTransaction::modeReadWriteLegacy()
-{
-    static NeverDestroyed<AtomicString> readwrite("1", AtomicString::ConstructFromLiteral);
-    return readwrite;
-}
-
-Optional<IndexedDB::TransactionMode> IDBTransaction::stringToMode(const String& modeString)
-{
-    if (modeString.isNull() || modeString == IDBTransaction::modeReadOnly())
-        return IndexedDB::TransactionMode::ReadOnly;
-    if (modeString == IDBTransaction::modeReadWrite())
-        return IndexedDB::TransactionMode::ReadWrite;
-
-    return Nullopt;
-}
-
-const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode)
-{
-    switch (mode) {
-    case IndexedDB::TransactionMode::ReadOnly:
-        return IDBTransaction::modeReadOnly();
-
-    case IndexedDB::TransactionMode::ReadWrite:
-        return IDBTransaction::modeReadWrite();
-
-    case IndexedDB::TransactionMode::VersionChange:
-        return IDBTransaction::modeVersionChange();
-    }
-
-    ASSERT_NOT_REACHED();
-    return IDBTransaction::modeReadOnly();
-}
-
 Ref<IDBTransaction> IDBTransaction::create(IDBDatabase& database, const IDBTransactionInfo& info)
 {
     return adoptRef(*new IDBTransaction(database, info, nullptr));
@@ -137,7 +80,7 @@ IDBTransaction::IDBTransaction(IDBDatabase& database, const IDBTransactionInfo& 
     LOG(IndexedDB, "IDBTransaction::IDBTransaction - %s", m_info.loggingString().utf8().data());
     ASSERT(currentThread() == m_database->originThreadID());
 
-    if (m_info.mode() == IndexedDB::TransactionMode::VersionChange) {
+    if (m_info.mode() == IDBTransactionMode::Versionchange) {
         ASSERT(m_openDBRequest);
         m_openDBRequest->setVersionChangeTransaction(*this);
         m_startedOnServer = true;
@@ -181,22 +124,6 @@ Ref<DOMStringList> IDBTransaction::objectStoreNames() const
 
     objectStoreNames->sort();
     return objectStoreNames;
-}
-
-const String& IDBTransaction::mode() const
-{
-    ASSERT(currentThread() == m_database->originThreadID());
-
-    switch (m_info.mode()) {
-    case IndexedDB::TransactionMode::ReadOnly:
-        return IDBTransaction::modeReadOnly();
-    case IndexedDB::TransactionMode::ReadWrite:
-        return IDBTransaction::modeReadWrite();
-    case IndexedDB::TransactionMode::VersionChange:
-        return IDBTransaction::modeVersionChange();
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
 IDBDatabase* IDBTransaction::db()

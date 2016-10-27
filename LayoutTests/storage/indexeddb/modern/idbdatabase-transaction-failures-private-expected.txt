@@ -12,8 +12,8 @@ Failed to start a transaction while a versionChange transaction was in progress 
 versionchange transaction completed
 Failed to start a transaction with an empty set of object stores - InvalidAccessError (DOM IDBDatabase Exception 15): Failed to execute 'transaction' on 'IDBDatabase': The storeNames parameter was empty.
 Failed to start a transaction to a nonexistent object store - NotFoundError (DOM IDBDatabase Exception 8): Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
-Failed to start a transaction with an invalid mode - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('blahblah') is not one of 'readonly' or 'readwrite'.
-Failed to explicitly start a versionchange transaction - TypeError: Failed to execute 'transaction' on 'IDBDatabase': The mode provided ('versionchange') is not one of 'readonly' or 'readwrite'.
+Failed to start a transaction with an invalid mode - TypeError: Argument 2 ('mode') to IDBDatabase.transaction must be one of: "readonly", "readwrite", "versionchange"
+Failed to explicitly start a versionchange transaction - TypeError: Type error
 Failed to explicitly start a transaction with the close pending flag set - InvalidStateError (DOM IDBDatabase Exception 11): Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
 PASS successfullyParsed is true
 

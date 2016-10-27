@@ -35,6 +35,7 @@
 #include "IDBConnectionToServer.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBKeyPath.h"
+#include "IDBTransactionMode.h"
 
 namespace WebCore {
 
@@ -64,7 +65,7 @@ public:
     ExceptionOr<Ref<IDBObjectStore>> createObjectStore(const String& name, ObjectStoreParameters&&);
 
     using StringOrVectorOfStrings = WTF::Variant<String, Vector<String>>;
-    ExceptionOr<Ref<IDBTransaction>> transaction(StringOrVectorOfStrings&& storeNames, const String& mode);
+    ExceptionOr<Ref<IDBTransaction>> transaction(StringOrVectorOfStrings&& storeNames, IDBTransactionMode);
     ExceptionOr<void> deleteObjectStore(const String& name);
     void close();
 
