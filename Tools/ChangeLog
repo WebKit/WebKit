@@ -1,3 +1,28 @@
+2016-10-07  Andreas Kling  <akling@apple.com>
+
+        [WK2] didRemoveFrameFromHierarchy callback doesn't fire for subframes when evicting from PageCache.
+        <https://webkit.org/b/163098>
+        <rdar://problem/28663488>
+
+        Reviewed by Antti Koivisto.
+
+        Add an API test that puts a 10-subframe page into the page cache, then loads other pages
+        until the first page gets kicked out. The test succeeds if we receive didRemoveFrameFromHierarchy
+        callbacks for all the subframes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/DidRemoveFrameFromHiearchyInPageCache.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::didReceivePageMessageFromInjectedBundle):
+        (TestWebKitAPI::setInjectedBundleClient):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp: Added.
+        (TestWebKitAPI::didRemoveFrameFromHierarchyCallback):
+        (TestWebKitAPI::DidRemoveFrameFromHiearchyInPageCacheTest::DidRemoveFrameFromHiearchyInPageCacheTest):
+        (TestWebKitAPI::DidRemoveFrameFromHiearchyInPageCacheTest::didCreatePage):
+        * TestWebKitAPI/Tests/WebKit2/many-iframes.html: Added.
+
 2016-09-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add Chrome UA quirk

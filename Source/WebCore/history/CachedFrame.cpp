@@ -248,8 +248,8 @@ void CachedFrame::destroy()
     m_document->domWindow()->willDestroyCachedFrame();
 
     if (!m_isMainFrame) {
-        m_view->frame().detachFromPage();
         m_view->frame().loader().detachViewsAndDocumentLoader();
+        m_view->frame().detachFromPage();
     }
     
     for (int i = m_childFrames.size() - 1; i >= 0; --i)
