@@ -287,6 +287,11 @@ void RenderListItem::insertOrMoveMarkerRendererIfNeeded()
         // Removing and adding the marker can trigger repainting in
         // containers other than ourselves, so we need to disable LayoutState.
         LayoutStateDisabler layoutStateDisabler(view());
+        // Mark the parent dirty so that when the marker gets inserted into the tree
+        // and dirties ancestors, it stops at the parent.
+        newParent->setChildNeedsLayout(MarkOnlyThis);
+        m_marker->setNeedsLayout(MarkOnlyThis);
+
         m_marker->removeFromParent();
         newParent->addChild(m_marker, firstNonMarkerChild(*newParent));
         m_marker->updateMarginsAndContent();
