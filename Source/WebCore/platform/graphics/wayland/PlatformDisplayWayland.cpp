@@ -34,6 +34,7 @@
 // and egl.h checks that to decide whether it's Wayland platform.
 #include <wayland-egl.h>
 #include <EGL/egl.h>
+#include <EGL/eglext.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -65,7 +66,16 @@ void PlatformDisplayWayland::initialize(wl_display* display)
     wl_registry_add_listener(m_registry.get(), &s_registryListener, this);
     wl_display_roundtrip(m_display);
 
-    m_eglDisplay = eglGetDisplay(m_display);
+    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base")) {
+        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplay")))
+            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr);
+    } else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base")) {
+        if (auto* getPlatformDisplay = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT")))
+            m_eglDisplay = getPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, m_display, nullptr);
+    } else
+        m_eglDisplay = eglGetDisplay(m_display);
+
     PlatformDisplay::initializeEGLDisplay();
 }
 
