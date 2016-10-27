@@ -119,7 +119,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
         function evaluated(result, wasThrown)
         {
             if (wasThrown || !result || result.type === "undefined" || (result.type === "object" && result.subtype === "null")) {
-                RuntimeAgent.releaseObjectGroup("completion");
+                WebInspector.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
                 updateLastPropertyNames.call(this, {});
                 completionController.updateCompletions(defaultCompletions);
@@ -219,7 +219,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
 
             updateLastPropertyNames.call(this, propertyNames);
 
-            RuntimeAgent.releaseObjectGroup("completion");
+            WebInspector.runtimeManager.activeExecutionContext.target.RuntimeAgent.releaseObjectGroup("completion");
 
             if (!base) {
                 var commandLineAPI = ["$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners", "$0", "$_"];

@@ -31,6 +31,7 @@
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
 #include "WorkerGlobalScope.h"
+#include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "WorkerToPageFrontendChannel.h"
 #include <inspector/InspectorAgentBase.h>
@@ -53,7 +54,26 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_scriptDebugServer(workerGlobalScope)
     , m_workerGlobalScope(workerGlobalScope)
 {
-    // FIXME: RuntimeAgent
+    AgentContext baseContext = {
+        *this,
+        *m_injectedScriptManager,
+        m_frontendRouter.get(),
+        m_backendDispatcher.get(),
+    };
+
+    WebAgentContext webContext = {
+        baseContext,
+        m_instrumentingAgents.get(),
+    };
+
+    WorkerAgentContext workerContext = {
+        webContext,
+        workerGlobalScope,
+    };
+
+    auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(workerContext);
+    m_agents.append(WTFMove(runtimeAgent));
+
     // FIXME: ConsoleAgent
     // FIXME: DebuggerAgent
 }

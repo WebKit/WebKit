@@ -13,7 +13,6 @@ ENTRIES:
       "_type": "object",
       "_objectId": "<filtered>",
       "_description": "Object",
-      "_hasChildren": true,
       "_preview": {
         "_type": "object",
         "_description": "Object",
@@ -32,7 +31,6 @@ ENTRIES:
     "_value": {
       "_type": "number",
       "_description": "1",
-      "_hasChildren": false,
       "_value": 1
     }
   },
@@ -41,7 +39,6 @@ ENTRIES:
       "_type": "object",
       "_objectId": "<filtered>",
       "_description": "Object",
-      "_hasChildren": true,
       "_preview": {
         "_type": "object",
         "_description": "Object",
@@ -60,7 +57,6 @@ ENTRIES:
     "_value": {
       "_type": "number",
       "_description": "2",
-      "_hasChildren": false,
       "_value": 2
     }
   }
@@ -75,7 +71,6 @@ ENTRIES:
       "_type": "object",
       "_objectId": "<filtered>",
       "_description": "Object",
-      "_hasChildren": true,
       "_preview": {
         "_type": "object",
         "_description": "Object",
@@ -94,7 +89,6 @@ ENTRIES:
     "_value": {
       "_type": "number",
       "_description": "2",
-      "_hasChildren": false,
       "_value": 2
     }
   }
@@ -109,7 +103,6 @@ ENTRIES:
       "_type": "object",
       "_objectId": "<filtered>",
       "_description": "Object",
-      "_hasChildren": true,
       "_preview": {
         "_type": "object",
         "_description": "Object",
@@ -128,7 +121,6 @@ ENTRIES:
     "_value": {
       "_type": "number",
       "_description": "2",
-      "_hasChildren": false,
       "_value": 2
     }
   }

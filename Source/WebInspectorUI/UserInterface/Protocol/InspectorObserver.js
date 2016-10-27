@@ -39,7 +39,7 @@ WebInspector.InspectorObserver = class InspectorObserver
 
     inspect(payload, hints)
     {
-        var remoteObject = WebInspector.RemoteObject.fromPayload(payload);
+        var remoteObject = WebInspector.RemoteObject.fromPayload(payload, WebInspector.mainTarget);
         if (remoteObject.subtype === "node") {
             WebInspector.domTreeManager.inspectNodeObject(remoteObject);
             return;

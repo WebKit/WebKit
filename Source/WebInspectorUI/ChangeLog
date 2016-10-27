@@ -1,5 +1,230 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
+        https://bugs.webkit.org/show_bug.cgi?id=163835
+        <rdar://problem/28901465>
+
+        Reviewed by Brian Burg.
+
+        This introduces the idea that the frontend may communication with multiple
+        backend "Targets" which each have their own set of Agents.
+
+            - WebInspector.Target
+              - has its own list of Agents
+              - has a InspectorBackend.Connection to communicate with the backend
+
+            - WebInspector.mainTarget
+              - always exists and represents the thing we are debugging (Page or JSContext)
+
+            - WebInspector.targets / WebInspector.targetManager
+              - management of all Targets
+              - create new Targets for Workers
+
+        This also slowly introduces the concept that Model objects may be tied to
+        a specific Target:
+
+            - WebInspector.RemoteObject
+              - in order to evaluate JS and interact with this object we must know the target (Page or Worker)
+              - when fetching PropertyDescriptors and other RemoteObjects we must continue to pass on the target
+
+        Finally this makes the QuickConsole list Worker execution contexts in
+        the context picker so that users can choose a Worker context and
+        evaluate JavaScript in that context using the console.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded):
+        New files, strings, and managers.
+        New global WebInspector.mainTarget.
+        New convenience WebInspector.targets.
+
+        * UserInterface/Protocol/Target.js: Added.
+        (WebInspector.Target):
+        (WebInspector.Target.prototype.get RuntimeAgent):
+        (WebInspector.Target.prototype.get name):
+        (WebInspector.Target.prototype.get type):
+        (WebInspector.Target.prototype.get connection):
+        (WebInspector.Target.prototype.get executionContext):
+        (WebInspector.Target.prototype.get displayName):
+        (WebInspector.Target.prototype._intializeMainTarget):
+        (WebInspector.Target.prototype._initializeNonMainTarget):
+        Target has some basic properties.
+
+        * UserInterface/Controllers/TargetManager.js:
+        (WebInspector.TargetManager):
+        (WebInspector.TargetManager.prototype.get targets):
+        (WebInspector.TargetManager.prototype.addTarget):
+        (WebInspector.TargetManager.prototype.removeTarget):
+        Holds the list of Targets and events when created / removed.
+        Each target with a RuntimeAgent has an ExecutionContext.
+
+        * UserInterface/Controllers/WorkerManager.js:
+        (WebInspector.WorkerManager):
+        (WebInspector.WorkerManager.prototype.workerCreated):
+        (WebInspector.WorkerManager.prototype.workerTerminated):
+        (WebInspector.WorkerManager.prototype.dispatchMessageFromWorker):
+        Create / remove / dispatch on a Worker Target.
+
+        * UserInterface/Protocol/InspectorBackend.js:
+        (InspectorBackendClass):
+        (InspectorBackendClass.prototype.registerCommand):
+        (InspectorBackendClass.prototype.dispatch):
+        (InspectorBackendClass.prototype.runAfterPendingDispatches):
+        (InspectorBackendClass.prototype._agentForDomain):
+        Keep the original implementations and just dispatch to the main connection.
+
+        (InspectorBackend.Agent):
+        (InspectorBackend.Agent.prototype.get connection):
+        (InspectorBackend.Agent.prototype.set connection):
+        (InspectorBackend.Agent.prototype.get dispatcher):
+        We will share Agent implementations but just give new "copies" a different
+        connection and dispatcher.
+
+        (InspectorBackend.Command):
+        (InspectorBackend.Command.create):
+        (InspectorBackend.Command.prototype.invoke):
+        (InspectorBackend.Command.prototype.supports):
+        We continue to have a single Command instance on the Agent. However instead
+        of using the hardcoded Agent on the Instance when evaluated as a function
+        it uses the `this` object which should be an agent. This way:
+
+            target1.RuntimeAgent.evaluate
+                - `this` is target1 and we use the connection for that target
+            target2.RuntimeAgent.evaluate
+                - `this` is target2 and we use the connection for that target
+
+        Unfortunately this breaks `RuntimeAgent.evaluate.invoke`. Currently this
+        is solved by providing an extra parameter. In the case where we need to
+        invoke on a particular agent we must provide the agent.
+
+            target.RuntimeAgent.evaluate.invoke({options}, target.RuntimeAgent)
+
+        This is unfortunate but only needed in a handful of places right now.
+
+        (InspectorBackendClass.prototype._sendCommandToBackendWithCallback): Deleted.
+        (InspectorBackendClass.prototype._sendCommandToBackendExpectingPromise): Deleted.
+        (InspectorBackendClass.prototype._sendMessageToBackend): Deleted.
+        (InspectorBackendClass.prototype._dispatchResponse): Deleted.
+        (InspectorBackendClass.prototype._dispatchResponseToCallback): Deleted.
+        (InspectorBackendClass.prototype._dispatchResponseToPromise): Deleted.
+        (InspectorBackendClass.prototype._dispatchEvent): Deleted.
+        (InspectorBackendClass.prototype._flushPendingScripts): Deleted.
+        (InspectorBackend.Agent.prototype.get currentDispatchState): Deleted.
+        (InspectorBackend.Command.prototype.deliverFailure): Deleted.
+        * UserInterface/Protocol/Connection.js: Added.
+        (InspectorBackend.Connection):
+        (InspectorBackend.Connection.prototype.get target):
+        (InspectorBackend.Connection.prototype.set target):
+        (InspectorBackend.Connection.prototype.dispatch):
+        (InspectorBackend.Connection.prototype.runAfterPendingDispatches):
+        (InspectorBackend.Connection.prototype.sendMessageToBackend):
+        (InspectorBackend.Connection.prototype._dispatchResponse):
+        (InspectorBackend.Connection.prototype._dispatchResponseToCallback):
+        (InspectorBackend.Connection.prototype._dispatchResponseToPromise):
+        (InspectorBackend.Connection.prototype._dispatchEvent):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendWithCallback):
+        (InspectorBackend.Connection.prototype._sendCommandToBackendExpectingPromise):
+        (InspectorBackend.Connection.prototype._sendMessageToBackend):
+        (InspectorBackend.Connection.prototype._flushPendingScripts):
+        This extracts the Connection details into its own class.
+        Although we make it appear as though a Target has a list of
+        Agents, we actually have the Connection hold the list of Agents.
+        Instead of cloning the entire Agent we just create a new object
+        extended from the original Agent instance. This allows us to keep
+        the same interface but just change the connection / dispatcher
+        properties within the Agent.
+
+        (InspectorBackend.MainConnection):
+        (InspectorBackend.MainConnection.prototype.sendMessageToBackend):
+        (InspectorBackend.WorkerConnection):
+        (InspectorBackend.WorkerConnection.sendMessageToBackend):
+        Two different kinds of connections. One for the Main connection
+        and one for Workers. Currently the list of agents we expose
+        on a Worker Target/Connection is hardcoded.
+
+        * UserInterface/Models/ExecutionContext.js:
+        (WebInspector.ExecutionContext):
+        (WebInspector.ExecutionContext.prototype.get target):
+        We may now have ExecutionContexts that mean a Page, Frames, and Workers.
+        To do this we include the (target, executionContextId) tuple in this object.
+        With this we have everything we need to evaluate JavaScript.
+
+        * UserInterface/Controllers/RuntimeManager.js:
+        (WebInspector.RuntimeManager):
+        (WebInspector.RuntimeManager.prototype.get activeExecutionContext):
+        (WebInspector.RuntimeManager.prototype.set activeExecutionContext):
+        (WebInspector.RuntimeManager.prototype.get defaultExecutionContextIdentifier): Deleted.
+        (WebInspector.RuntimeManager.prototype.set defaultExecutionContextIdentifier): Deleted.
+        Update from contextId to a full ExecutionContext object.
+
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow.evalCallback):
+        (WebInspector.RuntimeManager.prototype.evaluateInInspectedWindow):
+        (WebInspector.RuntimeManager.prototype.saveResult):
+        (WebInspector.RuntimeManager.prototype.getPropertiesForRemoteObject):
+        (WebInspector.RuntimeManager.prototype._frameExecutionContextsCleared):
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.executionContextCreated):
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.consolePromptShouldCommitText):
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        Anywhere that wants to use the "activeExecutionContext" must use the
+        specific RuntimeAgent tied to that ExecutionContext's Target.
+
+        * UserInterface/Models/PropertyDescriptor.js:
+        (WebInspector.PropertyDescriptor.fromPayload):
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.createFakeRemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.getDisplayablePropertyDescriptors):
+        (WebInspector.RemoteObject.prototype.deprecatedGetDisplayableProperties):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.getCollectionEntries):
+        (WebInspector.RemoteObject.prototype.releaseWeakCollectionEntries):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.RemoteObject.prototype.callFunctionJSON):
+        (WebInspector.RemoteObject.prototype.getOwnPropertyDescriptor.wrappedCallback):
+        (WebInspector.RemoteObject.prototype.getOwnPropertyDescriptor):
+        (WebInspector.RemoteObject.prototype.release):
+        (WebInspector.RemoteObject.prototype._getPropertyDescriptors):
+        (WebInspector.RemoteObject.prototype._getPropertyDescriptorsResolver):
+        (WebInspector.RemoteObject.prototype._deprecatedGetProperties):
+        RemoteObject and related Model Objects now must be tied to a specific
+        Target, because we need to know which Target it belongs to in order to
+        interact with it further.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole):
+        (WebInspector.QuickConsole.prototype.get selectedExecutionContext):
+        (WebInspector.QuickConsole.prototype.set selectedExecutionContext):
+        (WebInspector.QuickConsole.prototype._executionContextPathComponentsToDisplay):
+        (WebInspector.QuickConsole.prototype._rebuildExecutionContextPathComponents):
+        (WebInspector.QuickConsole.prototype._framePageExecutionContextsChanged):
+        (WebInspector.QuickConsole.prototype._frameExecutionContextsCleared):
+        (WebInspector.QuickConsole.prototype._createExecutionContextPathComponent):
+        (WebInspector.QuickConsole.prototype._createExecutionContextPathComponentFromFrame):
+        (WebInspector.QuickConsole.prototype._compareExecutionContextPathComponents):
+        (WebInspector.QuickConsole.prototype._insertOtherExecutionContextPathComponent):
+        (WebInspector.QuickConsole.prototype._removeOtherExecutionContextPathComponent):
+        (WebInspector.QuickConsole.prototype._insertExecutionContextPathComponentForFrame):
+        (WebInspector.QuickConsole.prototype._removeExecutionContextPathComponentForFrame):
+        (WebInspector.QuickConsole.prototype._targetAdded):
+        (WebInspector.QuickConsole.prototype._targetRemoved):
+        (WebInspector.QuickConsole.prototype._pathComponentSelected):
+        (WebInspector.QuickConsole.prototype.get selectedExecutionContextIdentifier): Deleted.
+        (WebInspector.QuickConsole.prototype.set selectedExecutionContextIdentifier): Deleted.
+        (WebInspector.QuickConsole.prototype._defaultExecutionContextChanged): Deleted.
+        Update the code from executionContextId to ExecutionContext objects.
+        Update the picker with ExecutionContextPathComponent for Workers (new Targets).
+        Generalize and cleanup the code to make it easier to follow.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
         https://bugs.webkit.org/show_bug.cgi?id=163817
         <rdar://problem/28899063>

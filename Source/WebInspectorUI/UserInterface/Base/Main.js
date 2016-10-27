@@ -93,6 +93,9 @@ WebInspector.loaded = function()
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
 
+    // Main backend target.
+    WebInspector.mainTarget = new WebInspector.MainTarget;
+
     // Enable agents.
     InspectorAgent.enable();
 
@@ -123,6 +126,7 @@ WebInspector.loaded = function()
     this.layerTreeManager = new WebInspector.LayerTreeManager;
     this.dashboardManager = new WebInspector.DashboardManager;
     this.probeManager = new WebInspector.ProbeManager;
+    this.targetManager = new WebInspector.TargetManager;
     this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
 
@@ -163,9 +167,8 @@ WebInspector.loaded = function()
 
     // COMPATIBILITY (iOS 8): Page.enableTypeProfiler did not exist.
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
-    if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler) {
+    if (this.showJavaScriptTypeInformationSetting.value && window.RuntimeAgent && RuntimeAgent.enableTypeProfiler)
         RuntimeAgent.enableTypeProfiler();
-    }
 
     this.enableControlFlowProfilerSetting = new WebInspector.Setting("enable-control-flow-profiler", false);
     if (this.enableControlFlowProfilerSetting.value && window.RuntimeAgent && RuntimeAgent.enableControlFlowProfiler)
@@ -2505,6 +2508,11 @@ WebInspector.reportInternalError = function(errorOrString, details={})
     } else
         console.error(error);
 };
+
+Object.defineProperty(WebInspector, "targets",
+{
+    get() { return this.targetManager.targets; }
+});
 
 // OpenResourceDialog delegate
 

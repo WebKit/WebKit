@@ -31,11 +31,13 @@
 
 WebInspector.RemoteObject = class RemoteObject
 {
-    constructor(objectId, type, subtype, value, description, size, classPrototype, className, preview)
+    constructor(target, objectId, type, subtype, value, description, size, classPrototype, className, preview)
     {
         console.assert(type);
         console.assert(!preview || preview instanceof WebInspector.ObjectPreview);
+        console.assert(!target || target instanceof WebInspector.Target);
 
+        this._target = target || WebInspector.mainTarget;
         this._type = type;
         this._subtype = subtype;
 
@@ -71,15 +73,15 @@ WebInspector.RemoteObject = class RemoteObject
 
     static createFakeRemoteObject()
     {
-        return new WebInspector.RemoteObject(WebInspector.RemoteObject.FakeRemoteObjectId, "object");
+        return new WebInspector.RemoteObject(undefined, WebInspector.RemoteObject.FakeRemoteObjectId, "object");
     }
 
     static fromPrimitiveValue(value)
     {
-        return new WebInspector.RemoteObject(undefined, typeof value, undefined, value, undefined, undefined, undefined, undefined);
+        return new WebInspector.RemoteObject(undefined, undefined, typeof value, undefined, value, undefined, undefined, undefined, undefined);
     }
 
-    static fromPayload(payload)
+    static fromPayload(payload, target)
     {
         console.assert(typeof payload === "object", "Remote object payload should only be an object");
 
@@ -94,7 +96,7 @@ WebInspector.RemoteObject = class RemoteObject
         }
 
         if (payload.classPrototype)
-            payload.classPrototype = WebInspector.RemoteObject.fromPayload(payload.classPrototype);
+            payload.classPrototype = WebInspector.RemoteObject.fromPayload(payload.classPrototype, target);
 
         if (payload.preview) {
             // COMPATIBILITY (iOS 8): iOS 7 and 8 did not have type/subtype/description on
@@ -109,7 +111,7 @@ WebInspector.RemoteObject = class RemoteObject
             payload.preview = WebInspector.ObjectPreview.fromPayload(payload.preview);
         }
 
-        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.className, payload.preview);
+        return new WebInspector.RemoteObject(target, payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.size, payload.classPrototype, payload.className, payload.preview);
     }
 
     static createCallArgument(valueOrObject)
@@ -132,7 +134,7 @@ WebInspector.RemoteObject = class RemoteObject
             if (error || !object)
                 callback(null);
             else
-                callback(WebInspector.RemoteObject.fromPayload(object));
+                callback(WebInspector.RemoteObject.fromPayload(object, WebInspector.mainTarget));
         });
     }
 
@@ -232,7 +234,7 @@ WebInspector.RemoteObject = class RemoteObject
         // COMPATIBILITY (iOS 8): RuntimeAgent.getDisplayableProperties did not exist.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
         if (!RuntimeAgent.getDisplayableProperties) {
-            RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
+            this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
                     for (var property of allProperties) {
@@ -255,7 +257,7 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        RuntimeAgent.getDisplayableProperties(this._objectId, true, this._getPropertyDescriptorsResolver.bind(this, callback));
+        this._target.RuntimeAgent.getDisplayableProperties(this._objectId, true, this._getPropertyDescriptorsResolver.bind(this, callback));
     }
 
     // FIXME: Phase out these deprecated functions. They return DeprecatedRemoteObjectProperty instead of PropertyDescriptors.
@@ -279,7 +281,7 @@ WebInspector.RemoteObject = class RemoteObject
         // COMPATIBILITY (iOS 8): RuntimeAgent.getProperties did not support ownerAndGetterProperties.
         // Here we do our best to reimplement it by getting all properties and reducing them down.
         if (!RuntimeAgent.getDisplayableProperties) {
-            RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
+            this._target.RuntimeAgent.getProperties(this._objectId, function(error, allProperties) {
                 var ownOrGetterPropertiesList = [];
                 if (allProperties) {
                     for (var property of allProperties) {
@@ -301,7 +303,7 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        RuntimeAgent.getDisplayableProperties(this._objectId, this._deprecatedGetPropertiesResolver.bind(this, callback));
+        this._target.RuntimeAgent.getDisplayableProperties(this._objectId, this._deprecatedGetPropertiesResolver.bind(this, callback));
     }
 
     setPropertyValue(name, value, callback)
@@ -312,7 +314,7 @@ WebInspector.RemoteObject = class RemoteObject
         }
 
         // FIXME: It doesn't look like setPropertyValue is used yet. This will need to be tested when it is again (editable ObjectTrees).
-        RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole: true}, evaluatedCallback.bind(this));
+        this._target.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL(value), doNotPauseOnExceptionsAndMuteConsole: true}, evaluatedCallback.bind(this), this._target.RuntimeAgent);
 
         function evaluatedCallback(error, result, wasThrown)
         {
@@ -328,10 +330,10 @@ WebInspector.RemoteObject = class RemoteObject
 
             delete result.description; // Optimize on traffic.
 
-            RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(setPropertyValue.toString()), [{value: name}, result], true, undefined, propertySetCallback.bind(this));
+            this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(setPropertyValue.toString()), [{value: name}, result], true, undefined, propertySetCallback.bind(this));
 
             if (result._objectId)
-                RuntimeAgent.releaseObject(result._objectId);
+                this._target.RuntimeAgent.releaseObject(result._objectId);
         }
 
         function propertySetCallback(error, result, wasThrown)
@@ -388,10 +390,10 @@ WebInspector.RemoteObject = class RemoteObject
         console.assert((this._subtype === "weakmap" && start === 0) || this._subtype !== "weakmap");
         console.assert((this._subtype === "weakset" && start === 0) || this._subtype !== "weakset");
 
-        var objectGroup = this.isWeakCollection() ? this._weakCollectionObjectGroup() : "";
+        let objectGroup = this.isWeakCollection() ? this._weakCollectionObjectGroup() : "";
 
-        RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, start, numberToFetch, function(error, entries) {
-            entries = entries.map(WebInspector.CollectionEntry.fromPayload);
+        this._target.RuntimeAgent.getCollectionEntries(this._objectId, objectGroup, start, numberToFetch, (error, entries) => {
+            entries = entries.map((x) => WebInspector.CollectionEntry.fromPayload(x, this._target));
             callback(entries);
         });
     }
@@ -400,7 +402,7 @@ WebInspector.RemoteObject = class RemoteObject
     {
         console.assert(this.isWeakCollection());
 
-        RuntimeAgent.releaseObjectGroup(this._weakCollectionObjectGroup());
+        this._target.RuntimeAgent.releaseObjectGroup(this._weakCollectionObjectGroup());
     }
 
     pushNodeToFrontend(callback)
@@ -415,7 +417,7 @@ WebInspector.RemoteObject = class RemoteObject
     {
         function mycallback(error, result, wasThrown)
         {
-            result = result ? WebInspector.RemoteObject.fromPayload(result) : null;
+            result = result ? WebInspector.RemoteObject.fromPayload(result, this._target) : null;
 
             if (callback && typeof callback === "function")
                 callback(error, result, wasThrown);
@@ -424,7 +426,7 @@ WebInspector.RemoteObject = class RemoteObject
         if (args)
             args = args.map(WebInspector.RemoteObject.createCallArgument);
 
-        RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, !!generatePreview, mycallback);
+        this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, !!generatePreview, mycallback.bind(this));
     }
 
     callFunctionJSON(functionDeclaration, args, callback)
@@ -434,7 +436,7 @@ WebInspector.RemoteObject = class RemoteObject
             callback((error || wasThrown) ? null : result.value);
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, mycallback);
+        this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, true, mycallback);
     }
 
     invokeGetter(getterRemoteObject, callback)
@@ -469,13 +471,13 @@ WebInspector.RemoteObject = class RemoteObject
         }
 
         // FIXME: Implement a real RuntimeAgent.getOwnPropertyDescriptor?
-        this.callFunction(backendGetOwnPropertyDescriptor, [propertyName], false, wrappedCallback);
+        this.callFunction(backendGetOwnPropertyDescriptor, [propertyName], false, wrappedCallback.bind(this));
     }
 
     release()
     {
         if (this._objectId && !this._isFakeObject())
-            RuntimeAgent.releaseObject(this._objectId);
+            this._target.RuntimeAgent.releaseObject(this._objectId);
     }
 
     arrayLength()
@@ -554,7 +556,7 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        RuntimeAgent.getProperties(this._objectId, ownProperties, true, this._getPropertyDescriptorsResolver.bind(this, callback));
+        this._target.RuntimeAgent.getProperties(this._objectId, ownProperties, true, this._getPropertyDescriptorsResolver.bind(this, callback));
     }
 
     getOwnPropertyDescriptorsAsObject(callback)
@@ -577,13 +579,13 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        var descriptors = properties.map(function(payload) {
-            return WebInspector.PropertyDescriptor.fromPayload(payload);
+        let descriptors = properties.map((payload) => {
+            return WebInspector.PropertyDescriptor.fromPayload(payload, false, this._target);
         });
 
         if (internalProperties) {
-            descriptors = descriptors.concat(internalProperties.map(function(payload) {
-                return WebInspector.PropertyDescriptor.fromPayload(payload, true);
+            descriptors = descriptors.concat(internalProperties.map((payload) => {
+                return WebInspector.PropertyDescriptor.fromPayload(payload, true, this._target);
             }));
         }
 
@@ -598,7 +600,7 @@ WebInspector.RemoteObject = class RemoteObject
             return;
         }
 
-        RuntimeAgent.getProperties(this._objectId, ownProperties, this._deprecatedGetPropertiesResolver.bind(this, callback));
+        this._target.RuntimeAgent.getProperties(this._objectId, ownProperties, this._deprecatedGetPropertiesResolver.bind(this, callback));
     }
 
     _deprecatedGetPropertiesResolver(callback, error, properties, internalProperties)
@@ -623,11 +625,11 @@ WebInspector.RemoteObject = class RemoteObject
             var property = properties[i];
             if (property.get || property.set) {
                 if (property.get)
-                    result.push(new WebInspector.DeprecatedRemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get), property));
+                    result.push(new WebInspector.DeprecatedRemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get, this._target), property));
                 if (property.set)
-                    result.push(new WebInspector.DeprecatedRemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set), property));
+                    result.push(new WebInspector.DeprecatedRemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set, this._target), property));
             } else
-                result.push(new WebInspector.DeprecatedRemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
+                result.push(new WebInspector.DeprecatedRemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value, this._target), property));
         }
 
         callback(result);

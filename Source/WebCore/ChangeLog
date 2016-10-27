@@ -1,5 +1,37 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
+        https://bugs.webkit.org/show_bug.cgi?id=163835
+        <rdar://problem/28901465>
+
+        Reviewed by Brian Burg.
+
+        Tests: inspector/unit-tests/target-manager.html
+               inspector/worker/runtime-basic.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        New file.
+
+        * inspector/InspectorWebAgentBase.h:
+        (WebCore::WorkerAgentContext::WorkerAgentContext):
+        New agent context creation struct for Workers.
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Create a RuntimeAgent for Workers.
+
+        * inspector/WorkerRuntimeAgent.cpp: Added.
+        (WebCore::WorkerRuntimeAgent::WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::didCreateFrontendAndBackend):
+        (WebCore::WorkerRuntimeAgent::willDestroyFrontendAndBackend):
+        (WebCore::WorkerRuntimeAgent::injectedScriptForEval):
+        * inspector/WorkerRuntimeAgent.h: Added.
+        Workers currently only ever have a single execution context.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
         https://bugs.webkit.org/show_bug.cgi?id=163817
         <rdar://problem/28899063>

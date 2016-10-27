@@ -23,44 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
+WebInspector.TargetManager = class TargetManager extends WebInspector.Object
 {
     constructor()
     {
         super();
 
-        this._connections = new Map;
+        console.assert(WebInspector.mainTarget);
 
-        if (window.WorkerAgent)
-            WorkerAgent.enable();
+        this._targets = new Set([WebInspector.mainTarget]);
     }
 
     // Public
 
-    workerCreated(workerId, url)
+    get targets()
     {
-        let connection = new InspectorBackend.WorkerConnection(workerId);
-        let workerTarget = new WebInspector.WorkerTarget(url, connection);
-        WebInspector.targetManager.addTarget(workerTarget);
-
-        this._connections.set(workerId, connection);
+        return this._targets;
     }
 
-    workerTerminated(workerId)
+    addTarget(target)
     {
-        let connection = this._connections.take(workerId);
+        this._targets.add(target);
 
-        WebInspector.targetManager.removeTarget(connection.target);
+        this.dispatchEventToListeners(WebInspector.TargetManager.Event.TargetAdded, {target});
     }
 
-    dispatchMessageFromWorker(workerId, message)
+    removeTarget(target)
     {
-        let connection = this._connections.get(workerId);
+        this._targets.delete(target);
 
-        console.assert(connection);
-        if (!connection)
-            return;
-
-        connection.dispatch(message);
+        this.dispatchEventToListeners(WebInspector.TargetManager.Event.TargetRemoved, {target});
     }
+};
+
+WebInspector.TargetManager.Event = {
+    TargetAdded: Symbol("target-manager-target-added"),
+    TargetRemoved: Symbol("target-manager-target-removed"),
 };

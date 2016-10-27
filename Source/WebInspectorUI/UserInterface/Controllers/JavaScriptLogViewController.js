@@ -212,7 +212,7 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
             handler(result !== RuntimeAgent.SyntaxErrorType.Recoverable);
         }
 
-        RuntimeAgent.parse(text, parseFinished.bind(this));
+        WebInspector.runtimeManager.activeExecutionContext.target.RuntimeAgent.parse(text, parseFinished.bind(this));
     }
 
     consolePromptTextCommitted(prompt, text)

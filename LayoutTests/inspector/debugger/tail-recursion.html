@@ -10,6 +10,14 @@ function test()
 {
     var scriptObject;
 
+    function remoteObjectJSONFilter(key, value) {
+        if (key === "_target" || key === "_listeners")
+            return undefined;
+        if (key === "_objectId" || key === "_stackTrace")
+            return "<filtered>";
+        return value;
+    }
+
     function startTest() {
         InspectorTest.log("Starting Test");
         // 0 based indices.
@@ -56,7 +64,7 @@ function test()
                     if (propertyDescriptor.name === 'i') {
                         found = true;
                         InspectorTest.log("Looking at frame number: " + i);
-                        InspectorTest.log("    variable 'i': " + JSON.stringify(propertyDescriptor.value));
+                        InspectorTest.log("    variable 'i': " + JSON.stringify(propertyDescriptor.value, remoteObjectJSONFilter));
                         InspectorTest.assert(propertyDescriptor.value.type === 'number');
                         if (numBreakpointHits === 2 && i === 0)
                             InspectorTest.assert(propertyDescriptor.value.value === i + 1); // this tests the i++ inside tail-recurse.js

@@ -10,6 +10,14 @@ function test()
 {
     var scriptObject;
 
+    function remoteObjectJSONFilter(key, value) {
+        if (key === "_target" || key === "_listeners")
+            return undefined;
+        if (key === "_objectId" || key === "_stackTrace")
+            return "<filtered>";
+        return value;
+    }
+
     function startTest() {
         InspectorTest.log("Starting Test");
         // 0 based indices.
@@ -58,7 +66,7 @@ function test()
                     if (propertyDescriptor.name === variableName) {
                         found = true;
                         InspectorTest.log("Looking at frame number: " + i);
-                        InspectorTest.log(`    variable '${variableName}': ${JSON.stringify(propertyDescriptor.value)}`);
+                        InspectorTest.log(`    variable '${variableName}': ${JSON.stringify(propertyDescriptor.value, remoteObjectJSONFilter)}`);
                         InspectorTest.assert(propertyDescriptor.value.type === 'number');
                         InspectorTest.assert(propertyDescriptor.value.value === variableValue);
                     }

@@ -137,8 +137,8 @@ WebInspector.ErrorObjectView = class ErrorObjectView extends WebInspector.Object
 
     _buildStackTrace(stackString)
     {
-        var stackTrace = WebInspector.StackTrace.fromString(stackString);
-        var stackTraceElement = new WebInspector.StackTraceView(stackTrace).element;
+        let stackTrace = WebInspector.StackTrace.fromString(this._object.target, stackString);
+        let stackTraceElement = new WebInspector.StackTraceView(stackTrace).element;
         this._outlineElement.appendChild(stackTraceElement);
     }
 };

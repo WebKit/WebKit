@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+passphrase = "page-passphrase";
+let worker = new Worker("resources/worker-1.js");
+
+function test()
+{
+    function sanitizeURL(url) {
+        return url.replace(/^.*?LayoutTests\//, "");
+    }
+
+    let mainTarget = WebInspector.mainTarget;
+    let workerTarget = Array.from(WebInspector.targets).find((target) => target.type === WebInspector.Target.Type.Worker);
+    if (!workerTarget) {
+        InspectorTest.fail("Missing Worker Target");
+        InspectorTest.completeTest();
+        return;
+    }
+
+    let suite = InspectorTest.createAsyncSuite("Worker.Runtime.basic");
+
+    suite.addTestCase({
+        name: "Main.Runtime.evaluate",
+        description: "Main target evaluation.",
+        test(resolve, reject) {
+            mainTarget.RuntimeAgent.evaluate("passphrase").then((payload) => {
+                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, mainTarget);
+                InspectorTest.log(`Target - ${mainTarget.displayName} - passphrase - ${remoteObject.description}`);
+                resolve();
+            }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Runtime.evaluate",
+        description: "Worker target evaluation.",
+        test(resolve, reject) {
+            workerTarget.RuntimeAgent.evaluate("passphrase").then((payload) => {
+                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, workerTarget);
+                InspectorTest.log(`Target - ${workerTarget.displayName} - passphrase - ${remoteObject.description}`);
+                resolve();
+            }).catch(reject);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Main.Runtime.RemoteObjectAndPropertyDescriptor.",
+        description: "Should be able to dig further into RemoteObjects.",
+        test(resolve, reject) {
+            mainTarget.RuntimeAgent.evaluate("location").then((payload) => {
+                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, mainTarget);
+                remoteObject.getDisplayablePropertyDescriptors((propertyDescriptors) => {
+                    let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
+                    let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);
+                    InspectorTest.log(`Target - ${mainTarget.displayName} - location and href - ${remoteObject.description}: ${hrefValue}`);
+                    resolve();
+               });
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "Worker.Runtime.RemoteObjectAndPropertyDescriptor.",
+        description: "Should be able to dig further into RemoteObjects.",
+        test(resolve, reject) {
+            workerTarget.RuntimeAgent.evaluate("location").then((payload) => {
+                let remoteObject = WebInspector.RemoteObject.fromPayload(payload.result, workerTarget);
+                remoteObject.getDisplayablePropertyDescriptors((propertyDescriptors) => {
+                    let hrefPropertyDescriptor = propertyDescriptors.find((p) => p.name === "href");
+                    let hrefValue = sanitizeURL(hrefPropertyDescriptor.value.description);
+                    InspectorTest.log(`Target - ${workerTarget.displayName} - location and href - ${remoteObject.description}: ${hrefValue}`);
+                    resolve();
+               });
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test for RuntimeAgent in a Worker.</p>
+</body>
+</html>

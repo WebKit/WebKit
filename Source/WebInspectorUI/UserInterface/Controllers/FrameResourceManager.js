@@ -372,7 +372,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             return;
 
         var displayName = contextPayload.name || frame.mainResource.displayName;
-        var executionContext = new WebInspector.ExecutionContext(contextPayload.id, displayName, contextPayload.isPageContext, frame);
+        var executionContext = new WebInspector.ExecutionContext(WebInspector.mainTarget, contextPayload.id, displayName, contextPayload.isPageContext, frame);
         frame.addExecutionContext(executionContext);
     }
 

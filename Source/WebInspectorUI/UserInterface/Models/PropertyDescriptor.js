@@ -56,17 +56,17 @@ WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.
     // Static
 
     // Runtime.PropertyDescriptor or Runtime.InternalPropertyDescriptor (second argument).
-    static fromPayload(payload, internal)
+    static fromPayload(payload, internal, target)
     {
         if (payload.value)
-            payload.value = WebInspector.RemoteObject.fromPayload(payload.value);
+            payload.value = WebInspector.RemoteObject.fromPayload(payload.value, target);
         if (payload.get)
-            payload.get = WebInspector.RemoteObject.fromPayload(payload.get);
+            payload.get = WebInspector.RemoteObject.fromPayload(payload.get, target);
         if (payload.set)
-            payload.set = WebInspector.RemoteObject.fromPayload(payload.set);
+            payload.set = WebInspector.RemoteObject.fromPayload(payload.set, target);
 
         if (payload.symbol)
-            payload.symbol = WebInspector.RemoteObject.fromPayload(payload.symbol);
+            payload.symbol = WebInspector.RemoteObject.fromPayload(payload.symbol, target);
 
         if (internal) {
             console.assert(payload.value);

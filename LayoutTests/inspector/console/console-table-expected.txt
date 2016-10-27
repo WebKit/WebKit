@@ -8,7 +8,6 @@ CONSOLE MESSAGE: line 3: [object Object],[object Object],[object Object]
 
 STEP: console.table([])
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "",
@@ -26,7 +25,6 @@ STEP: console.table([])
       "_hasChildren": true,
       "_size": 0,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -44,7 +42,6 @@ STEP: console.table([])
 
 STEP: console.table(['apple', 'orange', 'banana'])
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "apple,orange,banana",
@@ -62,7 +59,6 @@ STEP: console.table(['apple', 'orange', 'banana'])
       "_hasChildren": true,
       "_size": 3,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -71,19 +67,16 @@ STEP: console.table(['apple', 'orange', 'banana'])
         "_size": 3,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "0",
             "_type": "string",
             "_value": "apple"
           },
           {
-            "_listeners": null,
             "_name": "1",
             "_type": "string",
             "_value": "orange"
           },
           {
-            "_listeners": null,
             "_name": "2",
             "_type": "string",
             "_value": "banana"
@@ -99,7 +92,6 @@ STEP: console.table(['apple', 'orange', 'banana'])
 
 STEP: console.table({firstName: 'John', lastName: 'Smith'})
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object]",
@@ -115,20 +107,17 @@ STEP: console.table({firstName: 'John', lastName: 'Smith'})
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "firstName",
             "_type": "string",
             "_value": "John"
           },
           {
-            "_listeners": null,
             "_name": "lastName",
             "_type": "string",
             "_value": "Smith"
@@ -144,7 +133,6 @@ STEP: console.table({firstName: 'John', lastName: 'Smith'})
 
 STEP: console.table({f: function(){}, x: 10})
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object]",
@@ -160,18 +148,15 @@ STEP: console.table({f: function(){}, x: 10})
       "_description": "Object",
       "_hasChildren": true,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_description": "Object",
         "_lossless": true,
         "_overflow": false,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "f",
             "_type": "function",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "function",
               "_description": "function (){}",
               "_lossless": true,
@@ -181,7 +166,6 @@ STEP: console.table({f: function(){}, x: 10})
             }
           },
           {
-            "_listeners": null,
             "_name": "x",
             "_type": "number",
             "_value": "10"
@@ -197,7 +181,6 @@ STEP: console.table({f: function(){}, x: 10})
 
 STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "John,Smith,Jane,Doe,Emily,Jones",
@@ -215,7 +198,6 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
       "_hasChildren": true,
       "_size": 3,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -224,12 +206,10 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
         "_size": 3,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "0",
             "_type": "object",
             "_subtype": "array",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_subtype": "array",
               "_description": "Array",
@@ -238,13 +218,11 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
               "_size": 2,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "0",
                   "_type": "string",
                   "_value": "John"
                 },
                 {
-                  "_listeners": null,
                   "_name": "1",
                   "_type": "string",
                   "_value": "Smith"
@@ -254,12 +232,10 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
             }
           },
           {
-            "_listeners": null,
             "_name": "1",
             "_type": "object",
             "_subtype": "array",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_subtype": "array",
               "_description": "Array",
@@ -268,13 +244,11 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
               "_size": 2,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "0",
                   "_type": "string",
                   "_value": "Jane"
                 },
                 {
-                  "_listeners": null,
                   "_name": "1",
                   "_type": "string",
                   "_value": "Doe"
@@ -284,12 +258,10 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
             }
           },
           {
-            "_listeners": null,
             "_name": "2",
             "_type": "object",
             "_subtype": "array",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_subtype": "array",
               "_description": "Array",
@@ -298,13 +270,11 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
               "_size": 2,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "0",
                   "_type": "string",
                   "_value": "Emily"
                 },
                 {
-                  "_listeners": null,
                   "_name": "1",
                   "_type": "string",
                   "_value": "Jones"
@@ -324,7 +294,6 @@ STEP: console.table([['John', 'Smith'], ['Jane', 'Doe'], ['Emily', 'Jones']])
 
 STEP: console.table([john, jane, emily])
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object],[object Object],[object Object]",
@@ -342,7 +311,6 @@ STEP: console.table([john, jane, emily])
       "_hasChildren": true,
       "_size": 3,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -351,24 +319,20 @@ STEP: console.table([john, jane, emily])
         "_size": 3,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "0",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "John"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Smith"
@@ -378,24 +342,20 @@ STEP: console.table([john, jane, emily])
             }
           },
           {
-            "_listeners": null,
             "_name": "1",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "Jane"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Doe"
@@ -405,24 +365,20 @@ STEP: console.table([john, jane, emily])
             }
           },
           {
-            "_listeners": null,
             "_name": "2",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "Emily"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Jones"
@@ -442,7 +398,6 @@ STEP: console.table([john, jane, emily])
 
 STEP: console.table([john, jane, emily], ['firstName'])
 {
-  "_listeners": null,
   "_source": "console-api",
   "_level": "log",
   "_messageText": "[object Object],[object Object],[object Object]",
@@ -460,7 +415,6 @@ STEP: console.table([john, jane, emily], ['firstName'])
       "_hasChildren": true,
       "_size": 3,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -469,24 +423,20 @@ STEP: console.table([john, jane, emily], ['firstName'])
         "_size": 3,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "0",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "John"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Smith"
@@ -496,24 +446,20 @@ STEP: console.table([john, jane, emily], ['firstName'])
             }
           },
           {
-            "_listeners": null,
             "_name": "1",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "Jane"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Doe"
@@ -523,24 +469,20 @@ STEP: console.table([john, jane, emily], ['firstName'])
             }
           },
           {
-            "_listeners": null,
             "_name": "2",
             "_type": "object",
             "_valuePreview": {
-              "_listeners": null,
               "_type": "object",
               "_description": "Person",
               "_lossless": false,
               "_overflow": false,
               "_properties": [
                 {
-                  "_listeners": null,
                   "_name": "firstName",
                   "_type": "string",
                   "_value": "Emily"
                 },
                 {
-                  "_listeners": null,
                   "_name": "lastName",
                   "_type": "string",
                   "_value": "Jones"
@@ -561,7 +503,6 @@ STEP: console.table([john, jane, emily], ['firstName'])
       "_hasChildren": true,
       "_size": 1,
       "_preview": {
-        "_listeners": null,
         "_type": "object",
         "_subtype": "array",
         "_description": "Array",
@@ -570,7 +511,6 @@ STEP: console.table([john, jane, emily], ['firstName'])
         "_size": 1,
         "_properties": [
           {
-            "_listeners": null,
             "_name": "0",
             "_type": "string",
             "_value": "firstName"

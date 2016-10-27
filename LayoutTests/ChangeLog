@@ -1,5 +1,43 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
+        https://bugs.webkit.org/show_bug.cgi?id=163835
+        <rdar://problem/28901465>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/target-manager-expected.txt: Added.
+        * inspector/unit-tests/target-manager.html: Added.
+        Unit test for TargetManager and its events with Worker creation.
+
+        * inspector/worker/resources/worker-1.js:
+        * inspector/worker/runtime-basic-expected.txt: Added.
+        * inspector/worker/runtime-basic.html: Added.
+        Test comparing RuntimeAgent between Main target and Worker target.
+
+        * inspector/runtime/change-execution-context-identifier-expected.txt:
+        * inspector/runtime/change-execution-context-identifier.html:
+        RuntimeManager has been updated to have a full ExecutionContext object
+        containing a Target + ContextId instead of just a ContextId.
+
+        * inspector/console/console-api-expected.txt:
+        * inspector/console/console-api.html:
+        * inspector/console/console-table-expected.txt:
+        * inspector/console/console-table.html:
+        * inspector/debugger/tail-deleted-frames-from-vm-entry.html:
+        * inspector/debugger/tail-deleted-frames.html:
+        * inspector/debugger/tail-recursion.html:
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object-weak-collection-expected.txt:
+        * inspector/model/remote-object-weak-collection.html:
+        * inspector/model/remote-object.html:
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        Introduce a better JSON Filter for RemoteObject in more tests.
+        It is important that we filter the _target, because otherwise
+        JSON.stringify would throw an error about cycles.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
         https://bugs.webkit.org/show_bug.cgi?id=163817
         <rdar://problem/28899063>

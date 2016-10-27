@@ -263,7 +263,6 @@ EXPRESSION: / /
   "_objectId": "<filtered>",
   "_description": "/ /",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/ /",
@@ -271,7 +270,6 @@ EXPRESSION: / /
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -289,7 +287,6 @@ EXPRESSION: /(?:)/
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/(?:)/",
@@ -297,7 +294,6 @@ EXPRESSION: /(?:)/
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -315,7 +311,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/^r(e)g[e]{1,}x+/",
@@ -323,7 +318,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -341,7 +335,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
   "_objectId": "<filtered>",
   "_description": "/^r(e)g[e]{1,}x+/gi",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/^r(e)g[e]{1,}x+/gi",
@@ -349,7 +342,6 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -367,7 +359,6 @@ EXPRESSION: new RegExp('')
   "_objectId": "<filtered>",
   "_description": "/(?:)/",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/(?:)/",
@@ -375,7 +366,6 @@ EXPRESSION: new RegExp('')
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -393,7 +383,6 @@ EXPRESSION: new RegExp('test', 'i')
   "_objectId": "<filtered>",
   "_description": "/test/i",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "regexp",
     "_description": "/test/i",
@@ -401,7 +390,6 @@ EXPRESSION: new RegExp('test', 'i')
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "lastIndex",
         "_type": "number",
         "_value": "0"
@@ -420,7 +408,6 @@ EXPRESSION: []
   "_description": "Array",
   "_size": 0,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -441,7 +428,6 @@ EXPRESSION: [0, -0, 1, 2]
   "_description": "Array",
   "_size": 4,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -450,25 +436,21 @@ EXPRESSION: [0, -0, 1, 2]
     "_size": 4,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "-0"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "number",
         "_value": "2"
@@ -487,7 +469,6 @@ EXPRESSION: [[1],[2],[3]]
   "_description": "Array",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -496,12 +477,10 @@ EXPRESSION: [[1],[2],[3]]
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -510,7 +489,6 @@ EXPRESSION: [[1],[2],[3]]
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
@@ -520,12 +498,10 @@ EXPRESSION: [[1],[2],[3]]
         }
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -534,7 +510,6 @@ EXPRESSION: [[1],[2],[3]]
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "2"
@@ -544,12 +519,10 @@ EXPRESSION: [[1],[2],[3]]
         }
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -558,7 +531,6 @@ EXPRESSION: [[1],[2],[3]]
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "3"
@@ -581,7 +553,6 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
   "_description": "Array",
   "_size": 5,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -590,31 +561,26 @@ EXPRESSION: [true, 1, 1.234, 'string', /regex/]
     "_size": 5,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "boolean",
         "_value": "true"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "1.234"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "string",
         "_value": "string"
       },
       {
-        "_listeners": null,
         "_name": "4",
         "_type": "object",
         "_subtype": "regexp",
@@ -634,7 +600,6 @@ EXPRESSION: [[null]]
   "_description": "Array",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -643,12 +608,10 @@ EXPRESSION: [[null]]
     "_size": 1,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -657,7 +620,6 @@ EXPRESSION: [[null]]
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "object",
               "_subtype": "null",
@@ -681,7 +643,6 @@ EXPRESSION: [[undefined]]
   "_description": "Array",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -690,12 +651,10 @@ EXPRESSION: [[undefined]]
     "_size": 1,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -704,7 +663,6 @@ EXPRESSION: [[undefined]]
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "undefined",
               "_value": "undefined"
@@ -727,7 +685,6 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
   "_description": "Array",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -736,18 +693,15 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "a",
               "_type": "number",
               "_value": "1"
@@ -757,18 +711,15 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
         }
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "b",
               "_type": "number",
               "_value": "2"
@@ -778,18 +729,15 @@ EXPRESSION: [{a:1}, {b:2}, {c:2}]
         }
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "c",
               "_type": "number",
               "_value": "2"
@@ -812,7 +760,6 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
   "_description": "Array",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -821,12 +768,10 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
     "_size": 1,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -835,18 +780,15 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
           "_size": 3,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "object",
               "_valuePreview": {
-                "_listeners": null,
                 "_type": "object",
                 "_description": "Object",
                 "_lossless": true,
                 "_overflow": false,
                 "_properties": [
                   {
-                    "_listeners": null,
                     "_name": "a",
                     "_type": "number",
                     "_value": "1"
@@ -856,18 +798,15 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
               }
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "object",
               "_valuePreview": {
-                "_listeners": null,
                 "_type": "object",
                 "_description": "Object",
                 "_lossless": true,
                 "_overflow": false,
                 "_properties": [
                   {
-                    "_listeners": null,
                     "_name": "b",
                     "_type": "number",
                     "_value": "2"
@@ -877,18 +816,15 @@ EXPRESSION: [[{a:1}, {b:2}, {c:2}]]
               }
             },
             {
-              "_listeners": null,
               "_name": "2",
               "_type": "object",
               "_valuePreview": {
-                "_listeners": null,
                 "_type": "object",
                 "_description": "Object",
                 "_lossless": true,
                 "_overflow": false,
                 "_properties": [
                   {
-                    "_listeners": null,
                     "_name": "c",
                     "_type": "number",
                     "_value": "2"
@@ -915,7 +851,6 @@ EXPRESSION: arr = []; arr[0] = arr; arr
   "_description": "Array",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -924,7 +859,6 @@ EXPRESSION: arr = []; arr[0] = arr; arr
     "_size": 1,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "array",
@@ -944,7 +878,6 @@ EXPRESSION: arr = []; arr.length = 100; arr
   "_description": "Array",
   "_size": 100,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -965,7 +898,6 @@ EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
   "_description": "Array",
   "_size": 100,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -974,61 +906,51 @@ EXPRESSION: arr = []; arr.length = 100; arr.fill(1)
     "_size": 100,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "4",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "5",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "6",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "7",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "8",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "9",
         "_type": "number",
         "_value": "1"
@@ -1047,7 +969,6 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
   "_description": "Array",
   "_size": 100,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -1056,7 +977,6 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
     "_size": 100,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "10",
         "_type": "number",
         "_value": "1"
@@ -1075,7 +995,6 @@ EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
   "_description": "Arguments",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Arguments",
@@ -1084,19 +1003,16 @@ EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "string",
         "_value": "2"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "regexp",
@@ -1116,7 +1032,6 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
   "_description": "Int32Array",
   "_size": 4,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
@@ -1125,25 +1040,21 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
     "_size": 4,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "number",
         "_value": "0"
@@ -1162,7 +1073,6 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
   "_description": "Int32Array",
   "_size": 4,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
@@ -1171,25 +1081,21 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
     "_size": 4,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "2"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "number",
         "_value": "3"
@@ -1208,7 +1114,6 @@ EXPRESSION: var buffer = new ArrayBuffer(10000000); var int8View = new Int8Array
   "_description": "Int8Array",
   "_size": 10000000,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Int8Array",
@@ -1217,61 +1122,51 @@ EXPRESSION: var buffer = new ArrayBuffer(10000000); var int8View = new Int8Array
     "_size": 10000000,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "4",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "5",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "6",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "7",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "8",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "9",
         "_type": "number",
         "_value": "0"
@@ -1288,7 +1183,6 @@ EXPRESSION: ({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,
@@ -1305,14 +1199,12 @@ EXPRESSION: ({a: 1})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "a",
         "_type": "number",
         "_value": "1"
@@ -1329,26 +1221,22 @@ EXPRESSION: ({a: 1, b: 0, c: -0})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "a",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "b",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "c",
         "_type": "number",
         "_value": "-0"
@@ -1365,33 +1253,28 @@ EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol('sym')})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "a",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "b",
         "_type": "string",
         "_value": "string"
       },
       {
-        "_listeners": null,
         "_name": "c",
         "_type": "object",
         "_subtype": "regexp",
         "_value": "/regex/"
       },
       {
-        "_listeners": null,
         "_name": "d",
         "_type": "symbol",
         "_value": "Symbol(sym)"
@@ -1408,20 +1291,17 @@ EXPRESSION: o = {a:1}; o.b = o; o
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "a",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "b",
         "_type": "object",
         "_value": "Object"
@@ -1438,31 +1318,26 @@ EXPRESSION: ({a:function a(){}, b:function b(){}, get getter(){}, set setter(v){
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "a",
         "_type": "function",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "b",
         "_type": "function",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "getter",
         "_type": "accessor"
       },
       {
-        "_listeners": null,
         "_name": "setter",
         "_type": "accessor"
       }
@@ -1478,7 +1353,6 @@ EXPRESSION: function Foo() {}; new Foo
   "_objectId": "<filtered>",
   "_description": "Foo",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Foo",
     "_lossless": true,
@@ -1495,7 +1369,6 @@ EXPRESSION: var Foo2 = function() {}; new Foo2
   "_objectId": "<filtered>",
   "_description": "Foo2",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Foo2",
     "_lossless": true,
@@ -1512,7 +1385,6 @@ EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Fo
   "_objectId": "<filtered>",
   "_description": "Foo3",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Foo3",
     "_lossless": true,
@@ -1529,26 +1401,22 @@ EXPRESSION: function Bar() { this._x = 5 }; Bar.prototype = {constructor: Bar, g
   "_objectId": "<filtered>",
   "_description": "Bar",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Bar",
     "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "_x",
         "_type": "number",
         "_value": "5"
       },
       {
-        "_listeners": null,
         "_name": "constructor",
         "_type": "function",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "x",
         "_type": "accessor"
       }
@@ -1564,14 +1432,12 @@ EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return th
   "_objectId": "<filtered>",
   "_description": "Bar2",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Bar2",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "_x",
         "_type": "number",
         "_value": "5"
@@ -1588,39 +1454,33 @@ EXPRESSION: window.loadEvent
   "_objectId": "<filtered>",
   "_description": "Event",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Event",
     "_lossless": false,
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "clipboardData",
         "_type": "undefined",
         "_value": "undefined"
       },
       {
-        "_listeners": null,
         "_name": "type",
         "_type": "string",
         "_value": "load"
       },
       {
-        "_listeners": null,
         "_name": "target",
         "_type": "object",
         "_subtype": "node",
         "_value": "#document"
       },
       {
-        "_listeners": null,
         "_name": "currentTarget",
         "_type": "object",
         "_value": "Window"
       },
       {
-        "_listeners": null,
         "_name": "eventPhase",
         "_type": "number",
         "_value": "2"
@@ -1637,14 +1497,12 @@ EXPRESSION: new ArrayBuffer(16)
   "_objectId": "<filtered>",
   "_description": "ArrayBuffer",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "ArrayBuffer",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "byteLength",
         "_type": "number",
         "_value": "16"
@@ -1661,26 +1519,22 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
   "_objectId": "<filtered>",
   "_description": "DataView",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "DataView",
     "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "byteOffset",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "byteLength",
         "_type": "number",
         "_value": "16"
       },
       {
-        "_listeners": null,
         "_name": "buffer",
         "_type": "object",
         "_value": "ArrayBuffer"
@@ -1697,38 +1551,32 @@ EXPRESSION: obj = {}; obj['prop'] = 1; obj[Symbol()] = 2; obj[Symbol('sym')] = 3
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "prop",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "Symbol()",
         "_type": "number",
         "_value": "2"
       },
       {
-        "_listeners": null,
         "_name": "Symbol(sym)",
         "_type": "number",
         "_value": "3"
       },
       {
-        "_listeners": null,
         "_name": "Symbol(sym)",
         "_type": "number",
         "_value": "4"
       },
       {
-        "_listeners": null,
         "_name": "Symbol(Symbol.iterator)",
         "_type": "symbol",
         "_value": "Symbol()"
@@ -1746,7 +1594,6 @@ EXPRESSION: document.body
   "_objectId": "<filtered>",
   "_description": "body",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "body",
@@ -1754,31 +1601,26 @@ EXPRESSION: document.body
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "aLink",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "background",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "bgColor",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "link",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "text",
         "_type": "string",
         "_value": ""
@@ -1796,7 +1638,6 @@ EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
   "_objectId": "<filtered>",
   "_description": "div.foo.bar",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "div.foo.bar",
@@ -1804,31 +1645,26 @@ EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "align",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "title",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "lang",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "translate",
         "_type": "boolean",
         "_value": "true"
       },
       {
-        "_listeners": null,
         "_name": "dir",
         "_type": "string",
         "_value": ""
@@ -1846,7 +1682,6 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
   "_objectId": "<filtered>",
   "_description": "span#foo",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "span#foo",
@@ -1854,31 +1689,26 @@ EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "title",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "lang",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "translate",
         "_type": "boolean",
         "_value": "true"
       },
       {
-        "_listeners": null,
         "_name": "dir",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "tabIndex",
         "_type": "number",
         "_value": "-1"
@@ -1896,7 +1726,6 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
   "_objectId": "<filtered>",
   "_description": "input",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "input",
@@ -1904,31 +1733,26 @@ EXPRESSION: input = document.createElement('input'); input.type = 'password'; in
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "selectionStart",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "selectionEnd",
         "_type": "number",
         "_value": "0"
       },
       {
-        "_listeners": null,
         "_name": "selectionDirection",
         "_type": "string",
         "_value": "none"
       },
       {
-        "_listeners": null,
         "_name": "accept",
         "_type": "string",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "alt",
         "_type": "string",
         "_value": ""
@@ -1946,7 +1770,6 @@ EXPRESSION: text = document.createTextNode('text content'); text
   "_objectId": "<filtered>",
   "_description": "#text",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "#text",
@@ -1954,31 +1777,26 @@ EXPRESSION: text = document.createTextNode('text content'); text
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "wholeText",
         "_type": "string",
         "_value": "text content"
       },
       {
-        "_listeners": null,
         "_name": "splitText",
         "_type": "function",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "replaceWholeText",
         "_type": "function",
         "_value": ""
       },
       {
-        "_listeners": null,
         "_name": "data",
         "_type": "string",
         "_value": "text content"
       },
       {
-        "_listeners": null,
         "_name": "length",
         "_type": "number",
         "_value": "12"
@@ -1996,7 +1814,6 @@ EXPRESSION: comment = document.createComment('comment content'); comment
   "_objectId": "<filtered>",
   "_description": "#comment",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "#comment",
@@ -2004,33 +1821,28 @@ EXPRESSION: comment = document.createComment('comment content'); comment
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "data",
         "_type": "string",
         "_value": "comment content"
       },
       {
-        "_listeners": null,
         "_name": "length",
         "_type": "number",
         "_value": "15"
       },
       {
-        "_listeners": null,
         "_name": "previousElementSibling",
         "_type": "object",
         "_subtype": "null",
         "_value": "null"
       },
       {
-        "_listeners": null,
         "_name": "nextElementSibling",
         "_type": "object",
         "_subtype": "null",
         "_value": "null"
       },
       {
-        "_listeners": null,
         "_name": "substringData",
         "_type": "function",
         "_value": ""
@@ -2048,7 +1860,6 @@ EXPRESSION: svgElement = document.createElementNS('http://www.w3.org/2000/svg', 
   "_objectId": "<filtered>",
   "_description": "rect.test",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "node",
     "_description": "rect.test",
@@ -2056,31 +1867,26 @@ EXPRESSION: svgElement = document.createElementNS('http://www.w3.org/2000/svg', 
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "x",
         "_type": "object",
         "_value": "SVGAnimatedLength"
       },
       {
-        "_listeners": null,
         "_name": "y",
         "_type": "object",
         "_value": "SVGAnimatedLength"
       },
       {
-        "_listeners": null,
         "_name": "width",
         "_type": "object",
         "_value": "SVGAnimatedLength"
       },
       {
-        "_listeners": null,
         "_name": "height",
         "_type": "object",
         "_value": "SVGAnimatedLength"
       },
       {
-        "_listeners": null,
         "_name": "rx",
         "_type": "object",
         "_value": "SVGAnimatedLength"
@@ -2099,7 +1905,6 @@ EXPRESSION: [document.body, div, span, input, text, comment, svgElement]
   "_description": "Array",
   "_size": 7,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -2108,49 +1913,42 @@ EXPRESSION: [document.body, div, span, input, text, comment, svgElement]
     "_size": 7,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
         "_value": "<body>"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
         "_value": "<div class=\"foo bar\">"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
         "_value": "<span id=\"foo\">"
       },
       {
-        "_listeners": null,
         "_name": "3",
         "_type": "object",
         "_subtype": "node",
         "_value": "<input type=\"password\">"
       },
       {
-        "_listeners": null,
         "_name": "4",
         "_type": "object",
         "_subtype": "node",
         "_value": "#text \"text content\""
       },
       {
-        "_listeners": null,
         "_name": "5",
         "_type": "object",
         "_subtype": "node",
         "_value": "<!--comment content-->"
       },
       {
-        "_listeners": null,
         "_name": "6",
         "_type": "object",
         "_subtype": "node",
@@ -2170,7 +1968,6 @@ EXPRESSION: document.head.children
   "_description": "HTMLCollection",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "HTMLCollection",
@@ -2179,21 +1976,18 @@ EXPRESSION: document.head.children
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
         "_value": "<meta>"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
         "_value": "<script>"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
@@ -2213,7 +2007,6 @@ EXPRESSION: document.getElementsByClassName('my-test')
   "_description": "HTMLCollection",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "HTMLCollection",
@@ -2222,21 +2015,18 @@ EXPRESSION: document.getElementsByClassName('my-test')
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
         "_value": "<p class=\"my-test\">"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
         "_value": "<p class=\"my-test\">"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
@@ -2256,7 +2046,6 @@ EXPRESSION: document.querySelectorAll('.my-test')
   "_description": "NodeList",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "NodeList",
@@ -2265,21 +2054,18 @@ EXPRESSION: document.querySelectorAll('.my-test')
     "_size": 3,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "object",
         "_subtype": "node",
         "_value": "<p class=\"my-test\">"
       },
       {
-        "_listeners": null,
         "_name": "1",
         "_type": "object",
         "_subtype": "node",
         "_value": "<p class=\"my-test\">"
       },
       {
-        "_listeners": null,
         "_name": "2",
         "_type": "object",
         "_subtype": "node",
@@ -2298,7 +2084,6 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "error",
     "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
@@ -2306,25 +2091,21 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "message",
         "_type": "string",
         "_value": "undefined is not an object (evaluating '[].x.x')"
       },
       {
-        "_listeners": null,
         "_name": "line",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "column",
         "_type": "number",
         "_value": "25"
       },
       {
-        "_listeners": null,
         "_name": "stack",
         "_type": "string",
         "_value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
@@ -2342,7 +2123,6 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
   "_objectId": "<filtered>",
   "_description": "SyntaxError: Unexpected token ')'",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "error",
     "_description": "SyntaxError: Unexpected token ')'",
@@ -2350,25 +2130,21 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "message",
         "_type": "string",
         "_value": "Unexpected token ')'"
       },
       {
-        "_listeners": null,
         "_name": "line",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "column",
         "_type": "number",
         "_value": "25"
       },
       {
-        "_listeners": null,
         "_name": "stack",
         "_type": "string",
         "_value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
@@ -2386,7 +2162,6 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
   "_objectId": "<filtered>",
   "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "error",
     "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
@@ -2394,31 +2169,26 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "code",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "name",
         "_type": "string",
         "_value": "IndexSizeError"
       },
       {
-        "_listeners": null,
         "_name": "message",
         "_type": "string",
         "_value": "IndexSizeError: DOM Exception 1"
       },
       {
-        "_listeners": null,
         "_name": "line",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "column",
         "_type": "number",
         "_value": "58"
@@ -2437,7 +2207,6 @@ EXPRESSION: new Map
   "_description": "Map",
   "_size": 0,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
@@ -2458,7 +2227,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
   "_description": "Map",
   "_size": 2,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
@@ -2468,9 +2236,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -2479,7 +2245,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -2489,9 +2254,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "string",
           "_description": "key",
           "_lossless": true,
@@ -2500,7 +2263,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "value",
           "_lossless": true,
@@ -2522,7 +2284,6 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
   "_description": "Map",
   "_size": 2,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
@@ -2532,16 +2293,13 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "a",
               "_type": "number",
               "_value": "1"
@@ -2550,14 +2308,12 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "b",
               "_type": "number",
               "_value": "2"
@@ -2567,9 +2323,7 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "node",
           "_description": "body",
@@ -2577,31 +2331,26 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
           "_overflow": true,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "aLink",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "background",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "bgColor",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "link",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "text",
               "_type": "string",
               "_value": ""
@@ -2610,7 +2359,6 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -2619,13 +2367,11 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "2"
@@ -2647,7 +2393,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
   "_description": "Map",
   "_size": 101,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
@@ -2657,9 +2402,7 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "0",
           "_lossless": true,
@@ -2668,7 +2411,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "0",
           "_lossless": true,
@@ -2678,9 +2420,7 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -2689,7 +2429,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -2699,9 +2438,7 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -2710,7 +2447,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -2720,9 +2456,7 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -2731,7 +2465,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -2741,9 +2474,7 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
         }
       },
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "number",
           "_description": "4",
           "_lossless": true,
@@ -2752,7 +2483,6 @@ EXPRESSION: map = new Map; for (var i = 0; i <= 100; i++) map.set(i, i); map
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "4",
           "_lossless": true,
@@ -2774,7 +2504,6 @@ EXPRESSION: map = new Map; map.set(map, map); map
   "_description": "Map",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "map",
     "_description": "Map",
@@ -2784,9 +2513,7 @@ EXPRESSION: map = new Map; map.set(map, map); map
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "map",
           "_description": "Map",
@@ -2797,7 +2524,6 @@ EXPRESSION: map = new Map; map.set(map, map); map
           "_entries": []
         },
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "map",
           "_description": "Map",
@@ -2821,7 +2547,6 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
   "_description": "WeakMap",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "weakmap",
     "_description": "WeakMap",
@@ -2831,16 +2556,13 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_key": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "id",
               "_type": "number",
               "_value": "1"
@@ -2849,7 +2571,6 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
           "_entries": null
         },
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -2858,13 +2579,11 @@ EXPRESSION: map = new WeakMap; strongKey = {id:1}; map.set(strongKey, [1,2]); ma
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "2"
@@ -2886,7 +2605,6 @@ EXPRESSION: new Set
   "_description": "Set",
   "_size": 0,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
@@ -2907,7 +2625,6 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
   "_description": "Set",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
@@ -2917,9 +2634,7 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -2929,9 +2644,7 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -2941,9 +2654,7 @@ EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "key",
           "_lossless": true,
@@ -2965,7 +2676,6 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
   "_description": "Set",
   "_size": 3,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
@@ -2975,16 +2685,13 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "a",
               "_type": "number",
               "_value": "1"
@@ -2994,9 +2701,7 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "node",
           "_description": "body",
@@ -3004,31 +2709,26 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
           "_overflow": true,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "aLink",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "background",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "bgColor",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "link",
               "_type": "string",
               "_value": ""
             },
             {
-              "_listeners": null,
               "_name": "text",
               "_type": "string",
               "_value": ""
@@ -3038,9 +2738,7 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3049,13 +2747,11 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "2"
@@ -3077,7 +2773,6 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
   "_description": "Set",
   "_size": 101,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
@@ -3087,9 +2782,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "0",
           "_lossless": true,
@@ -3099,9 +2792,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -3111,9 +2802,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -3123,9 +2812,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -3135,9 +2822,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "4",
           "_lossless": true,
@@ -3159,7 +2844,6 @@ EXPRESSION: set = new Set; set.add(set); set
   "_description": "Set",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "set",
     "_description": "Set",
@@ -3169,9 +2853,7 @@ EXPRESSION: set = new Set; set.add(set); set
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "set",
           "_description": "Set",
@@ -3195,7 +2877,6 @@ EXPRESSION: set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set
   "_description": "WeakSet",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "weakset",
     "_description": "WeakSet",
@@ -3205,16 +2886,13 @@ EXPRESSION: set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set
     "_properties": [],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "id",
               "_type": "number",
               "_value": "1"
@@ -3235,7 +2913,6 @@ EXPRESSION: 'a'[Symbol.iterator]()
   "_objectId": "<filtered>",
   "_description": "String Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "String Iterator",
@@ -3243,7 +2920,6 @@ EXPRESSION: 'a'[Symbol.iterator]()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "string",
         "_type": "string",
         "_value": "a",
@@ -3252,9 +2928,7 @@ EXPRESSION: 'a'[Symbol.iterator]()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "a",
           "_lossless": true,
@@ -3275,7 +2949,6 @@ EXPRESSION: 'long string'[Symbol.iterator]()
   "_objectId": "<filtered>",
   "_description": "String Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "String Iterator",
@@ -3283,7 +2956,6 @@ EXPRESSION: 'long string'[Symbol.iterator]()
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "string",
         "_type": "string",
         "_value": "long string",
@@ -3292,9 +2964,7 @@ EXPRESSION: 'long string'[Symbol.iterator]()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "l",
           "_lossless": true,
@@ -3304,9 +2974,7 @@ EXPRESSION: 'long string'[Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "o",
           "_lossless": true,
@@ -3316,9 +2984,7 @@ EXPRESSION: 'long string'[Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "n",
           "_lossless": true,
@@ -3328,9 +2994,7 @@ EXPRESSION: 'long string'[Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "g",
           "_lossless": true,
@@ -3340,9 +3004,7 @@ EXPRESSION: 'long string'[Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": " ",
           "_lossless": true,
@@ -3363,7 +3025,6 @@ EXPRESSION: [][Symbol.iterator]()
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -3371,12 +3032,10 @@ EXPRESSION: [][Symbol.iterator]()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3389,7 +3048,6 @@ EXPRESSION: [][Symbol.iterator]()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -3408,7 +3066,6 @@ EXPRESSION: [1][Symbol.iterator]()
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -3416,12 +3073,10 @@ EXPRESSION: [1][Symbol.iterator]()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3430,7 +3085,6 @@ EXPRESSION: [1][Symbol.iterator]()
           "_size": 1,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
@@ -3441,7 +3095,6 @@ EXPRESSION: [1][Symbol.iterator]()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -3450,9 +3103,7 @@ EXPRESSION: [1][Symbol.iterator]()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -3473,7 +3124,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -3481,7 +3131,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
@@ -3489,7 +3138,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -3498,9 +3146,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -3510,9 +3156,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "two",
           "_lossless": true,
@@ -3522,9 +3166,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -3534,9 +3176,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "four",
           "_lossless": true,
@@ -3546,9 +3186,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "5",
           "_lossless": true,
@@ -3569,7 +3207,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -3577,7 +3214,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
@@ -3585,7 +3221,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "key",
@@ -3594,9 +3229,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "0",
           "_lossless": true,
@@ -3606,9 +3239,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -3618,9 +3249,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -3630,9 +3259,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -3642,9 +3269,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "4",
           "_lossless": true,
@@ -3665,7 +3290,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -3673,7 +3297,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
@@ -3681,7 +3304,6 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "key+value",
@@ -3690,9 +3312,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3701,13 +3321,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "0"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "1"
@@ -3717,9 +3335,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3728,13 +3344,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "string",
               "_value": "two"
@@ -3744,9 +3358,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3755,13 +3367,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "2"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "3"
@@ -3771,9 +3381,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3782,13 +3390,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "3"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "string",
               "_value": "four"
@@ -3798,9 +3404,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3809,13 +3413,11 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "4"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "5"
@@ -3836,7 +3438,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
   "_objectId": "<filtered>",
   "_description": "Map Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Map Iterator",
@@ -3844,7 +3445,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "map",
         "_type": "object",
         "_subtype": "map",
@@ -3852,7 +3452,6 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -3861,9 +3460,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -3873,9 +3470,7 @@ EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "value",
           "_lossless": true,
@@ -3896,7 +3491,6 @@ EXPRESSION: map.keys()
   "_objectId": "<filtered>",
   "_description": "Map Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Map Iterator",
@@ -3904,7 +3498,6 @@ EXPRESSION: map.keys()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "map",
         "_type": "object",
         "_subtype": "map",
@@ -3912,7 +3505,6 @@ EXPRESSION: map.keys()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "key",
@@ -3921,9 +3513,7 @@ EXPRESSION: map.keys()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -3933,9 +3523,7 @@ EXPRESSION: map.keys()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "key",
           "_lossless": true,
@@ -3956,7 +3544,6 @@ EXPRESSION: map.entries()
   "_objectId": "<filtered>",
   "_description": "Map Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Map Iterator",
@@ -3964,7 +3551,6 @@ EXPRESSION: map.entries()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "map",
         "_type": "object",
         "_subtype": "map",
@@ -3972,7 +3558,6 @@ EXPRESSION: map.entries()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "key+value",
@@ -3981,9 +3566,7 @@ EXPRESSION: map.entries()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -3992,13 +3575,11 @@ EXPRESSION: map.entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "2"
@@ -4008,9 +3589,7 @@ EXPRESSION: map.entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -4019,13 +3598,11 @@ EXPRESSION: map.entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "string",
               "_value": "key"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "string",
               "_value": "value"
@@ -4046,7 +3623,6 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
   "_objectId": "<filtered>",
   "_description": "Set Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Set Iterator",
@@ -4054,7 +3630,6 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "set",
         "_type": "object",
         "_subtype": "set",
@@ -4062,7 +3637,6 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -4071,9 +3645,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "0",
           "_lossless": true,
@@ -4083,9 +3655,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -4095,9 +3665,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "2",
           "_lossless": true,
@@ -4107,9 +3675,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "3",
           "_lossless": true,
@@ -4119,9 +3685,7 @@ EXPRESSION: set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "4",
           "_lossless": true,
@@ -4142,7 +3706,6 @@ EXPRESSION: map.entries()
   "_objectId": "<filtered>",
   "_description": "Map Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Map Iterator",
@@ -4150,7 +3713,6 @@ EXPRESSION: map.entries()
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "map",
         "_type": "object",
         "_subtype": "map",
@@ -4158,7 +3720,6 @@ EXPRESSION: map.entries()
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "key+value",
@@ -4167,9 +3728,7 @@ EXPRESSION: map.entries()
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -4178,13 +3737,11 @@ EXPRESSION: map.entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "number",
               "_value": "2"
@@ -4194,9 +3751,7 @@ EXPRESSION: map.entries()
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Array",
@@ -4205,13 +3760,11 @@ EXPRESSION: map.entries()
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "string",
               "_value": "key"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "string",
               "_value": "value"
@@ -4232,7 +3785,6 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
   "_objectId": "<filtered>",
   "_description": "Array Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
@@ -4240,12 +3792,10 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "array",
         "_type": "object",
         "_subtype": "array",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_subtype": "array",
           "_description": "Arguments",
@@ -4254,13 +3804,11 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
           "_size": 2,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "0",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "1",
               "_type": "string",
               "_value": "two"
@@ -4271,7 +3819,6 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "kind",
         "_type": "string",
         "_value": "value",
@@ -4280,9 +3827,7 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "number",
           "_description": "1",
           "_lossless": true,
@@ -4292,9 +3837,7 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "two",
           "_lossless": true,
@@ -4315,7 +3858,6 @@ EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
   "_objectId": "<filtered>",
   "_description": "PropertyName Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "PropertyName Iterator",
@@ -4323,30 +3865,25 @@ EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "object",
         "_type": "object",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "a",
               "_type": "number",
               "_value": "1"
             },
             {
-              "_listeners": null,
               "_name": "b",
               "_type": "number",
               "_value": "2"
             },
             {
-              "_listeners": null,
               "_name": "c",
               "_type": "number",
               "_value": "3"
@@ -4359,9 +3896,7 @@ EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "a",
           "_lossless": true,
@@ -4371,9 +3906,7 @@ EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "b",
           "_lossless": true,
@@ -4383,9 +3916,7 @@ EXPRESSION: Reflect.enumerate({a:1, b:2, c:3})
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "c",
           "_lossless": true,
@@ -4406,7 +3937,6 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
   "_objectId": "<filtered>",
   "_description": "PropertyName Iterator",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "iterator",
     "_description": "PropertyName Iterator",
@@ -4414,7 +3944,6 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
     "_overflow": true,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "object",
         "_type": "object",
         "_subtype": "array",
@@ -4424,9 +3953,7 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
     ],
     "_entries": [
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "0",
           "_lossless": true,
@@ -4436,9 +3963,7 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "1",
           "_lossless": true,
@@ -4448,9 +3973,7 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "2",
           "_lossless": true,
@@ -4460,9 +3983,7 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "3",
           "_lossless": true,
@@ -4472,9 +3993,7 @@ EXPRESSION: Reflect.enumerate([1, 2, 3, 4, 5, 6, 7])
         }
       },
       {
-        "_listeners": null,
         "_value": {
-          "_listeners": null,
           "_type": "string",
           "_description": "4",
           "_lossless": true,
@@ -4494,14 +4013,12 @@ EXPRESSION: new Promise(function(){})
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Promise",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "status",
         "_type": "string",
         "_value": "pending",
@@ -4519,21 +4036,18 @@ EXPRESSION: Promise.reject()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Promise",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "status",
         "_type": "string",
         "_value": "rejected",
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "result",
         "_type": "undefined",
         "_value": "undefined",
@@ -4551,21 +4065,18 @@ EXPRESSION: Promise.reject('result')
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Promise",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "status",
         "_type": "string",
         "_value": "rejected",
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "result",
         "_type": "string",
         "_value": "result",
@@ -4583,21 +4094,18 @@ EXPRESSION: Promise.resolve()
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Promise",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "status",
         "_type": "string",
         "_value": "resolved",
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "result",
         "_type": "undefined",
         "_value": "undefined",
@@ -4615,32 +4123,27 @@ EXPRESSION: Promise.resolve({result:1})
   "_objectId": "<filtered>",
   "_description": "Promise",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Promise",
     "_lossless": true,
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "status",
         "_type": "string",
         "_value": "resolved",
         "_internal": true
       },
       {
-        "_listeners": null,
         "_name": "result",
         "_type": "object",
         "_valuePreview": {
-          "_listeners": null,
           "_type": "object",
           "_description": "Object",
           "_lossless": true,
           "_overflow": false,
           "_properties": [
             {
-              "_listeners": null,
               "_name": "result",
               "_type": "number",
               "_value": "1"
@@ -4663,7 +4166,6 @@ EXPRESSION: new Proxy({x:1, y:1}, {handler: true})
   "_objectId": "<filtered>",
   "_description": "Proxy",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "proxy",
     "_description": "Proxy",
@@ -4671,13 +4173,11 @@ EXPRESSION: new Proxy({x:1, y:1}, {handler: true})
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "x",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "y",
         "_type": "number",
         "_value": "1"
@@ -4695,7 +4195,6 @@ EXPRESSION: new Proxy(new Proxy({foo:1, bar:1}, {}), {})
   "_objectId": "<filtered>",
   "_description": "Proxy",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "proxy",
     "_description": "Proxy",
@@ -4703,13 +4202,11 @@ EXPRESSION: new Proxy(new Proxy({foo:1, bar:1}, {}), {})
     "_overflow": false,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "foo",
         "_type": "number",
         "_value": "1"
       },
       {
-        "_listeners": null,
         "_name": "bar",
         "_type": "number",
         "_value": "1"
@@ -4766,7 +4263,6 @@ EXPRESSION: [Beta]
   "_description": "Array",
   "_size": 1,
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_subtype": "array",
     "_description": "Array",
@@ -4775,7 +4271,6 @@ EXPRESSION: [Beta]
     "_size": 1,
     "_properties": [
       {
-        "_listeners": null,
         "_name": "0",
         "_type": "function",
         "_subtype": "class",
@@ -4793,7 +4288,6 @@ EXPRESSION: Object.seal({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,
@@ -4810,7 +4304,6 @@ EXPRESSION: Object.freeze({})
   "_objectId": "<filtered>",
   "_description": "Object",
   "_preview": {
-    "_listeners": null,
     "_type": "object",
     "_description": "Object",
     "_lossless": true,

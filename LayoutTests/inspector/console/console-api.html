@@ -50,6 +50,8 @@ function test()
 
     function remoteObjectJSONFilter(key, value)
     {
+        if (key === "_target" || key === "_listeners")
+            return undefined;
         if (key === "_objectId" || key === "_stackTrace")
             return "<filtered>";
         return value;

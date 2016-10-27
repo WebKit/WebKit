@@ -50,6 +50,8 @@ WebInspector.loaded = function()
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
 
+    WebInspector.mainTarget = new WebInspector.MainTarget;
+
     // Instantiate controllers used by tests.
     this.frameResourceManager = new WebInspector.FrameResourceManager;
     this.storageManager = new WebInspector.StorageManager;
@@ -63,6 +65,7 @@ WebInspector.loaded = function()
     this.timelineManager = new WebInspector.TimelineManager;
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
+    this.targetManager = new WebInspector.TargetManager;
     this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
 
@@ -88,6 +91,11 @@ WebInspector.contentLoaded = function()
     // and pending InspectorFrontendAPI commands to be sent.
     InspectorFrontendHost.loaded();
 };
+
+Object.defineProperty(WebInspector, "targets",
+{
+    get() { return this.targetManager.targets; }
+});
 
 WebInspector.isDebugUIEnabled = () => false;
 

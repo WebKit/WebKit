@@ -10,6 +10,14 @@ function test()
 {
     let scriptObject;
 
+    function remoteObjectJSONFilter(key, value) {
+        if (key === "_target" || key === "_listeners")
+            return undefined;
+        if (key === "_objectId" || key === "_stackTrace")
+            return "<filtered>";
+        return value;
+    }
+
     function startTest() {
         InspectorTest.log("Starting Test");
         // 0 based indices.
@@ -57,7 +65,7 @@ function test()
                     if (propertyDescriptor.name === variableName) {
                         found = true;
                         InspectorTest.log("Looking at frame number: " + i);
-                        InspectorTest.log(`    variable '${variableName}': ${JSON.stringify(propertyDescriptor.value)}`);
+                        InspectorTest.log(`    variable '${variableName}': ${JSON.stringify(propertyDescriptor.value, remoteObjectJSONFilter)}`);
                         InspectorTest.expectThat(propertyDescriptor.value.type === 'number', "Variable is a number.");
                         InspectorTest.expectThat(propertyDescriptor.value.value === variableValue, `Found scope value: ${variableValue}`);
                     }

@@ -3,29 +3,41 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-
 var passphrase = "coldwater";
 
 function test()
 {
-    let suite = InspectorTest.createAsyncSuite("RuntimeManager.defaultExecutionContextIdentifier");
+    let suite = InspectorTest.createAsyncSuite("RuntimeManager.activeExecutionContext");
 
     suite.addTestCase({
         name: "InitialScriptExecutionContext",
-        description: "Test that the initial value of defaultExecutionContextIdentifier is the top-level context.",
-        test: (resolve, reject) => {
-            InspectorTest.expectThat(WebInspector.runtimeManager.defaultExecutionContextIdentifier === WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier, "The default execution context should be the top level execution context initially.");
+        description: "Test that the initial value of activeExecutionContext is the main context.",
+        test(resolve, reject) {
+            InspectorTest.expectThat(WebInspector.runtimeManager.activeExecutionContext === WebInspector.mainTarget.executionContext, "The initial active execution context should be the main execution context.");
             resolve();
         }
     });
 
     suite.addTestCase({
-        name: "ScriptExecutionContextMainFrame",
-        description: "Test that evaluateInInspectedWindow works when defaultExecutionContextIdentifier is the top level context.",
-        test: (resolve, reject) => {
+        name: "ScriptExecutionContextMainContext",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is the main execution context.",
+        test(resolve, reject) {
             WebInspector.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
                 InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
-                InspectorTest.expectThat(remoteObject.value === "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "ScriptExecutionContextMainFrameContext",
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is the main frame execution context. This is equivalent to the main context.",
+        test(resolve, reject) {
+            WebInspector.runtimeManager.activeExecutionContext = WebInspector.frameResourceManager.mainFrame.pageExecutionContext;
+            WebInspector.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
+                InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
                 resolve();
             });
         }
@@ -33,16 +45,16 @@ function test()
 
     suite.addTestCase({
         name: "ScriptExecutionContextSubFrame",
-        description: "Test that evaluateInInspectedWindow works when defaultExecutionContextIdentifier is a subframe context.",
-        test: (resolve, reject) => {
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext is a subframe context.",
+        test(resolve, reject) {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
             let subframes = WebInspector.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
-            InspectorTest.expectThat(subframes.length === 1, "The test page should only have one sub-frame.");
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
 
-            WebInspector.runtimeManager.defaultExecutionContextIdentifier = subframes[0].pageExecutionContext.id;
+            WebInspector.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
             WebInspector.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
                 InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
-                InspectorTest.expectThat(remoteObject.value === "rosewater", "The passphrase should match the phrase defined in the subframe.");
+                InspectorTest.expectEqual(remoteObject.value, "rosewater", "The passphrase should match the phrase defined in the subframe.");
                 resolve();
             });
         }
@@ -50,14 +62,14 @@ function test()
 
     suite.addTestCase({
         name: "ScriptExecutionContextMainFrameAgain",
-        description: "Test that evaluateInInspectedWindow works when defaultExecutionContextIdentifier switches back to the main frame execution context.",
-        test: (resolve, reject) => {
+        description: "Test that evaluateInInspectedWindow works when activeExecutionContext switches back to the main frame execution context.",
+        test(resolve, reject) {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
 
-            WebInspector.runtimeManager.defaultExecutionContextIdentifier = mainFrame.pageExecutionContext.id;
+            WebInspector.runtimeManager.activeExecutionContext = mainFrame.pageExecutionContext;
             WebInspector.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown, savedResultIndex) => {
                 InspectorTest.log("Passphrase in selected frame: " + remoteObject.value);
-                InspectorTest.expectThat(remoteObject.value === "coldwater", "The passphrase should match the phrase defined in the main frame.");
+                InspectorTest.expectEqual(remoteObject.value, "coldwater", "The passphrase should match the phrase defined in the main frame.");
                 resolve();
             });
         }
@@ -65,22 +77,22 @@ function test()
 
     suite.addTestCase({
         name: "ScriptExecutionContextRemoveSubframe",
-        description: "Test that evaluateInInspectedWindow works when the defaultExecutionContextIdentifier is destroyed and reverts to the top-level context.",
-        test: (resolve, reject) => {
+        description: "Test that evaluateInInspectedWindow works when the activeExecutionContext is destroyed and reverts to the top-level context.",
+        test(resolve, reject) {
             let mainFrame = WebInspector.frameResourceManager.mainFrame;
             let subframes = WebInspector.frameResourceManager.frames.filter((frame) => frame !== mainFrame);
-            InspectorTest.expectThat(subframes.length === 1, "The test page should only have one sub-frame.");
+            InspectorTest.expectEqual(subframes.length, 1, "The test page should only have one sub-frame.");
 
             // Set the execution context to the subframe so we can switch away from it when the frame is detached.
-            WebInspector.runtimeManager.defaultExecutionContextIdentifier = subframes[0].pageExecutionContext.id;
+            WebInspector.runtimeManager.activeExecutionContext = subframes[0].pageExecutionContext;
 
             // Force-override the contextId, otherwise we won't be able to access the iframe's DOM element when evaluating in the iframe execution context.
             let expression = `document.getElementById("subframe").remove();`;
             let objectGroup = "test";
             let contextId = WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier;
             RuntimeAgent.evaluate.invoke({expression, objectGroup, contextId}, () => {
-                InspectorTest.expectThat(WebInspector.frameResourceManager.frames.length === 1, "The test page should now have no sub-frames.");
-                InspectorTest.expectThat(WebInspector.runtimeManager.defaultExecutionContextIdentifier === WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier, "When a selected non-top-level execution context is removed, the default execution context should revert to the top-level context.");
+                InspectorTest.expectEqual(WebInspector.frameResourceManager.frames.length, 1, "The test page should now have no sub-frames.");
+                InspectorTest.expectEqual(WebInspector.runtimeManager.activeExecutionContext.id, WebInspector.RuntimeManager.TopLevelExecutionContextIdentifier, "When a selected non-top-level execution context is removed, the active execution context should revert to the main frame context.");
                 resolve();
             });
         }

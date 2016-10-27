@@ -1908,6 +1908,7 @@ set(WebCore_SOURCES
     inspector/WebInjectedScriptHost.cpp
     inspector/WebInjectedScriptManager.cpp
     inspector/WorkerInspectorController.cpp
+    inspector/WorkerRuntimeAgent.cpp
     inspector/WorkerScriptDebugServer.cpp
 
     loader/ContentFilter.cpp
