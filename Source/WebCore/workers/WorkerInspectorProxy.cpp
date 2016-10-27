@@ -119,6 +119,10 @@ void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
 
     m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
+
+        // In case the worker is paused running debugger tasks, ensure we break out of
+        // the pause since this will be the last debugger task we send to the worker.
+        downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
     }, WorkerRunLoop::debuggerMode());
 }
 

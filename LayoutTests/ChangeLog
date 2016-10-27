@@ -1,5 +1,17 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Worker should recover if Inspector is closed and never sent Worker.initialized command
+        https://bugs.webkit.org/show_bug.cgi?id=164073
+
+        Reviewed by Brian Burg.
+
+        * inspector/worker/worker-recover-if-inspector-close-expected.txt: Added.
+        * inspector/worker/worker-recover-if-inspector-close.html: Added.
+        Test to ensure a Worker recovers when it is paused on opening waiting for
+        Inspector messages and the Inspector disconnects.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include ConsoleAgent in Workers - real console.log support
         https://bugs.webkit.org/show_bug.cgi?id=163844
         <rdar://problem/28903328>
