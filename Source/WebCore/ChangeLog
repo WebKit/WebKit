@@ -1,3 +1,15 @@
+2016-10-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Direct2D] Implement GraphicsContext::releaseWindowsContext.
+        https://bugs.webkit.org/show_bug.cgi?id=163988
+
+        Reviewed by Brent Fulgham.
+
+        This method is needed to draw native controls.
+
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker should recover if Inspector is closed and never sent Worker.initialized command
