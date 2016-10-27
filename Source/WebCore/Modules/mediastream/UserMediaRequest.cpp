@@ -99,6 +99,11 @@ SecurityOrigin* UserMediaRequest::topLevelDocumentOrigin() const
     return m_scriptExecutionContext->topOrigin();
 }
 
+Document* UserMediaRequest::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
 void UserMediaRequest::start()
 {
     if (m_controller)

@@ -79,7 +79,7 @@ public:
 
     WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
     WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
-    WEBCORE_EXPORT Document* document() const { return downcast<Document>(scriptExecutionContext()); }
+    WEBCORE_EXPORT Document* document() const;
 
 private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, Ref<MediaConstraintsImpl>&& audioConstraints, Ref<MediaConstraintsImpl>&& videoConstraints, MediaDevices::Promise&&);

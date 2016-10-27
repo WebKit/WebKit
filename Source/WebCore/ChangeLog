@@ -1,3 +1,13 @@
+2016-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the WebKit2 build.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::document): Moved the definition of this function to here from…
+        * Modules/mediastream/UserMediaRequest.h:
+        (WebCore::UserMediaRequest::document): …here, so that the WebKit2 build doesn’t encounter an
+          exported inline function.
+
 2016-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Node::ownerDocument
