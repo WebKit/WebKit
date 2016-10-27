@@ -37,6 +37,9 @@ namespace WebCore { namespace DOMJIT {
 using JSC::CCallHelpers;
 using JSC::GPRReg;
 using JSC::JSValueRegs;
+using JSC::MacroAssembler;
+
+static_assert(std::is_same<GPRReg, MacroAssembler::RegisterID>::value, "GPRReg is the alias to the MacroAssembler::RegisterID");
 
 inline CCallHelpers::Jump branchIfNotWorldIsNormal(CCallHelpers& jit, GPRReg globalObject)
 {
@@ -135,6 +138,12 @@ inline CCallHelpers::Jump branchIfDocumentWrapper(CCallHelpers& jit, GPRReg targ
 inline CCallHelpers::Jump branchIfNotDocumentWrapper(CCallHelpers& jit, GPRReg target)
 {
     return jit.branchIfNotType(target, JSC::JSType(JSDocumentWrapperType));
+}
+
+inline void loadDocument(MacroAssembler& jit, GPRReg node, GPRReg output)
+{
+    jit.loadPtr(CCallHelpers::Address(node, Node::treeScopeMemoryOffset()), output);
+    jit.loadPtr(CCallHelpers::Address(output, TreeScope::documentScopeMemoryOffset()), output);
 }
 
 } }

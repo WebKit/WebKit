@@ -206,9 +206,7 @@ Ref<JSC::DOMJIT::CallDOMPatchpoint> NodeOwnerDocumentDOMJIT::callDOM()
 
         notDocument.link(&jit);
         jit.loadPtr(CCallHelpers::Address(node, JSNode::offsetOfWrapped()), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, Node::treeScopeMemoryOffset()), scratch);
-        jit.loadPtr(CCallHelpers::Address(scratch, TreeScope::documentScopeMemoryOffset()), scratch);
-
+        DOMJIT::loadDocument(jit, scratch, scratch);
         DOMJIT::toWrapper<Document>(jit, params, scratch, globalObject, result, toWrapperSlow<Document>, globalObjectValue);
         done.link(&jit);
         return CCallHelpers::JumpList();

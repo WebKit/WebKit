@@ -1,3 +1,28 @@
+2016-10-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT][CSSJIT] Share code with DOMJIT
+        https://bugs.webkit.org/show_bug.cgi?id=164006
+
+        Reviewed by Mark Lam.
+
+        Move CSSJIT's getDocument function to DOMJIT and share it with DOMJIT.
+        And rename it to "loadDocument", it is closer name to the JSC's convention.
+
+        No behavior change.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSpecialFailureInQuirksModeForActiveAndHoverIfNeeded):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeValueExactMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsRoot):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsScopeRoot):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsTarget):
+        (WebCore::SelectorCompiler::getDocument): Deleted.
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::loadDocument):
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOM):
+
 2016-10-27  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r207753-207755): ASSERTION FAILED: m_parsedStyleSheetCache->isInMemoryCache()
