@@ -65,6 +65,7 @@ function test()
 
     InspectorProtocol.eventHandler["Worker.workerCreated"] = (messageObject) => {
         addWorker(messageObject.params.workerId, messageObject.params.url);
+        InspectorProtocol.sendCommand("Worker.initialized", {workerId: messageObject.params.workerId});
         if (triggerNextCreate)
             triggerNextCreate();
     };

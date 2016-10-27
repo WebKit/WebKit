@@ -23,47 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
-{
-    constructor()
-    {
-        super();
+#pragma once
 
-        this._connections = new Map;
+#include "InspectorWebAgentBase.h"
+#include "WebConsoleAgent.h"
 
-        if (window.WorkerAgent)
-            WorkerAgent.enable();
-    }
+namespace WebCore {
 
-    // Public
+class WorkerConsoleAgent final : public WebConsoleAgent {
+    WTF_MAKE_NONCOPYABLE(WorkerConsoleAgent);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    WorkerConsoleAgent(WorkerAgentContext&, Inspector::InspectorHeapAgent*);
+    ~WorkerConsoleAgent() { }
 
-    workerCreated(workerId, url)
-    {
-        let connection = new InspectorBackend.WorkerConnection(workerId);
-        let workerTarget = new WebInspector.WorkerTarget(url, connection);
-        WebInspector.targetManager.addTarget(workerTarget);
-
-        this._connections.set(workerId, connection);
-
-        // Unpause the worker now that we have sent all initialization messages.
-        WorkerAgent.initialized(workerId);
-    }
-
-    workerTerminated(workerId)
-    {
-        let connection = this._connections.take(workerId);
-
-        WebInspector.targetManager.removeTarget(connection.target);
-    }
-
-    dispatchMessageFromWorker(workerId, message)
-    {
-        let connection = this._connections.get(workerId);
-
-        console.assert(connection);
-        if (!connection)
-            return;
-
-        connection.dispatch(message);
-    }
+private:
+    void addInspectedNode(ErrorString&, int nodeId) override;
 };
+
+} // namespace WebCore

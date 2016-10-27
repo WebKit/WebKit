@@ -1,5 +1,111 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include ConsoleAgent in Workers - real console.log support
+        https://bugs.webkit.org/show_bug.cgi?id=163844
+        <rdar://problem/28903328>
+
+        Reviewed by Brian Burg.
+
+        Test: inspector/worker/console-basic.html
+
+        This introduces a real ConsoleAgent in the Worker InspectorController.
+        We no longer need to pass partial ConsoleMessage objects to be logged
+        through the Page, we can just send the full ConsoleMessages to a
+        frontend once it connects to the Worker.
+
+        In order to guarantee that the Worker InspectorController is properly
+        all Workers will start paused if there is an Inspector attached to
+        the Page. The frontend _must_ call the new Worker.initialized method
+        after sending its setup commands to the Worker. This ensures we get
+        handle all initialization commands (like Agent.enable(), and
+        setting state like breakpoints) before any script executes in the
+        Worker. This mirrors the Inspector.initialized method that does the
+        same thing for JSContext auto-attach of the Main target.
+
+        In the backend, the wait until initialized state is just running
+        the WorkerThread's RunLoop in a special debugger mode to only process
+        debugger commands until we are ready. This will effectively be
+        the same as pausing so it is generalized into WorkerThread.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        New files.
+
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::initialized):
+        (WebCore::InspectorWorkerAgent::shouldWaitForDebuggerOnStart):
+        * inspector/InspectorWorkerAgent.h:
+        Add the new initialized method. This just uses the proxy to send
+        a message to be handled on the Worker Thread and unpause.
+
+        * inspector/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::WorkerConsoleAgent):
+        (WebCore::WorkerConsoleAgent::addInspectedNode):
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        Add a ConsoleAgent to WorkerInspectorController.
+
+        * workers/WorkerInspectorProxy.h:
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::workerStartMode):
+        (WebCore::WorkerInspectorProxy::resumeWorkerIfPaused):
+        (WebCore::WorkerInspectorProxy::connectToWorkerInspector):
+        (WebCore::WorkerInspectorProxy::disconnectFromWorkerInspector):
+        (WebCore::WorkerInspectorProxy::sendMessageToWorkerInspector):
+        Use the debugger mode when sending messages to the WorkerThread.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        (WebCore::WorkerMessagingProxy::postConsoleMessageToWorkerObject): Deleted.
+        * workers/WorkerMessagingProxy.h:
+        * workers/WorkerReportingProxy.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::addConsoleMessage):
+        (WebCore::WorkerGlobalScope::addMessage):
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        Remove legacy partial console support.
+
+        * workers/WorkerRunLoop.h:
+        * workers/WorkerRunLoop.cpp:
+        (WebCore::WorkerRunLoop::debuggerMode):
+        * workers/WorkerThread.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::startRunningDebuggerTasks):
+        (WebCore::WorkerThread::stopRunningDebuggerTasks):
+        General code for spinning the WorkerThread and only processing debugger
+        (Inspector) commands. Use this when starting the thread to ensure the
+        frontend initializes the Worker's Agents before any JavaScript executes.
+
+        * page/PageConsoleClient.cpp:
+        * workers/WorkerConsoleClient.cpp:
+        (WebCore::WorkerConsoleClient::count):
+        (WebCore::WorkerConsoleClient::time):
+        (WebCore::WorkerConsoleClient::timeEnd):
+        * inspector/InspectorConsoleInstrumentation.h: Removed.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::shouldWaitForDebuggerOnStartImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::shouldWaitForDebuggerOnStart):
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::takeHeapSnapshot):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleTimeStamp):
+        (WebCore::InspectorInstrumentation::startProfiling):
+        (WebCore::InspectorInstrumentation::stopProfiling):
+        Implement a few more basic console APIs that required ConsoleAgent.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
         https://bugs.webkit.org/show_bug.cgi?id=163835
         <rdar://problem/28901465>

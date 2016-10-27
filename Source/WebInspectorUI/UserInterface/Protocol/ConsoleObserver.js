@@ -35,7 +35,7 @@ WebInspector.ConsoleObserver = class ConsoleObserver
         if (message.type === "assert" && !message.text)
             message.text = WebInspector.UIString("Assertion");
 
-        WebInspector.logManager.messageWasAdded(message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
+        WebInspector.logManager.messageWasAdded(this.target, message.source, message.level, message.text, message.type, message.url, message.line, message.column || 0, message.repeatCount, message.parameters, message.stackTrace, message.networkRequestId);
     }
 
     messageRepeatCountUpdated(count)

@@ -199,28 +199,29 @@ public:
     static void willDestroyCachedResource(CachedResource&);
 
     static void addMessageToConsole(Page&, std::unique_ptr<Inspector::ConsoleMessage>);
-
-    // FIXME: Convert to ScriptArguments to match non-worker context.
     static void addMessageToConsole(WorkerGlobalScope*, std::unique_ptr<Inspector::ConsoleMessage>);
 
     static void consoleCount(Page&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
+    static void consoleCount(WorkerGlobalScope&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void takeHeapSnapshot(Frame&, const String& title);
     static void startConsoleTiming(Frame&, const String& title);
+    static void startConsoleTiming(WorkerGlobalScope&, const String& title);
     static void stopConsoleTiming(Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
+    static void stopConsoleTiming(WorkerGlobalScope&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
     static void consoleTimeStamp(Frame&, RefPtr<Inspector::ScriptArguments>&&);
+    static void startProfiling(Page&, JSC::ExecState*, const String& title);
+    static void stopProfiling(Page&, JSC::ExecState*, const String& title);
 
     static void didRequestAnimationFrame(Document*, int callbackId);
     static void didCancelAnimationFrame(Document*, int callbackId);
     static InspectorInstrumentationCookie willFireAnimationFrame(Document*, int callbackId);
     static void didFireAnimationFrame(const InspectorInstrumentationCookie&);
 
-    static void startProfiling(Page&, JSC::ExecState*, const String& title);
-    static void stopProfiling(Page&, JSC::ExecState*, const String& title);
-
     static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
+    static bool shouldWaitForDebuggerOnStart(ScriptExecutionContext*);
     static void workerStarted(ScriptExecutionContext*, WorkerInspectorProxy*, const URL&);
     static void workerTerminated(ScriptExecutionContext*, WorkerInspectorProxy*);
 
@@ -378,7 +379,9 @@ private:
     static void consoleCountImpl(InstrumentingAgents&, JSC::ExecState*, RefPtr<Inspector::ScriptArguments>&&);
     static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
     static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title);
+    static void startConsoleTimingImpl(InstrumentingAgents&, const String& title);
     static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
+    static void stopConsoleTimingImpl(InstrumentingAgents&, const String& title, RefPtr<Inspector::ScriptCallStack>&&);
     static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, RefPtr<Inspector::ScriptArguments>&&);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Frame*);
@@ -393,6 +396,7 @@ private:
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
+    static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy*, const URL&);
     static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy*);
 
@@ -1059,6 +1063,14 @@ inline void InspectorInstrumentation::didDispatchDOMStorageEvent(const String& k
         didDispatchDOMStorageEventImpl(*instrumentingAgents, key, oldValue, newValue, storageType, securityOrigin, page);
 }
 
+inline bool InspectorInstrumentation::shouldWaitForDebuggerOnStart(ScriptExecutionContext* context)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        return shouldWaitForDebuggerOnStartImpl(*instrumentingAgents);
+    return false;
+}
+
 inline void InspectorInstrumentation::workerStarted(ScriptExecutionContext* context, WorkerInspectorProxy* proxy, const URL& url)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1225,6 +1237,76 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         updateApplicationCacheStatusImpl(*instrumentingAgents, frame);
+}
+
+inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::unique_ptr<Inspector::ConsoleMessage> message)
+{
+    addMessageToConsoleImpl(instrumentingAgentsForPage(page), WTFMove(message));
+}
+
+inline void InspectorInstrumentation::addMessageToConsole(WorkerGlobalScope* workerGlobalScope, std::unique_ptr<Inspector::ConsoleMessage> message)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(workerGlobalScope))
+        addMessageToConsoleImpl(*instrumentingAgents, WTFMove(message));
+}
+
+inline void InspectorInstrumentation::consoleCount(Page& page, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments)
+{
+    consoleCountImpl(instrumentingAgentsForPage(page), state, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::consoleCount(WorkerGlobalScope& workerGlobalScope, JSC::ExecState* state, RefPtr<Inspector::ScriptArguments>&& arguments)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(&workerGlobalScope))
+        consoleCountImpl(*instrumentingAgents, state, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::takeHeapSnapshot(Frame& frame, const String& title)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        takeHeapSnapshotImpl(*instrumentingAgents, title);
+}
+
+inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, const String& title)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        startConsoleTimingImpl(*instrumentingAgents, frame, title);
+}
+
+inline void InspectorInstrumentation::startConsoleTiming(WorkerGlobalScope& workerGlobalScope, const String& title)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(&workerGlobalScope))
+        startConsoleTimingImpl(*instrumentingAgents, title);
+}
+
+inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, const String& title, RefPtr<Inspector::ScriptCallStack>&& stack)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        stopConsoleTimingImpl(*instrumentingAgents, frame, title, WTFMove(stack));
+}
+
+inline void InspectorInstrumentation::stopConsoleTiming(WorkerGlobalScope& workerGlobalScope, const String& title, RefPtr<Inspector::ScriptCallStack>&& stack)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerGlobalScope(&workerGlobalScope))
+        stopConsoleTimingImpl(*instrumentingAgents, title, WTFMove(stack));
+}
+
+inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, RefPtr<Inspector::ScriptArguments>&& arguments)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        consoleTimeStampImpl(*instrumentingAgents, frame, WTFMove(arguments));
+}
+
+inline void InspectorInstrumentation::startProfiling(Page& page, JSC::ExecState* exec, const String &title)
+{
+    startProfilingImpl(instrumentingAgentsForPage(page), exec, title);
+}
+
+inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* exec, const String &title)
+{
+    stopProfilingImpl(instrumentingAgentsForPage(page), exec, title);
 }
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document* document, int callbackId)

@@ -23,47 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.WorkerManager = class WorkerManager extends WebInspector.Object
+#include "config.h"
+#include "WorkerConsoleAgent.h"
+
+using namespace Inspector;
+
+namespace WebCore {
+
+WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context, InspectorHeapAgent* heapAgent)
+    : WebConsoleAgent(context, heapAgent)
 {
-    constructor()
-    {
-        super();
+}
 
-        this._connections = new Map;
+void WorkerConsoleAgent::addInspectedNode(ErrorString& errorString, int)
+{
+    errorString = ASCIILiteral("Unsupported for Workers.");
+}
 
-        if (window.WorkerAgent)
-            WorkerAgent.enable();
-    }
-
-    // Public
-
-    workerCreated(workerId, url)
-    {
-        let connection = new InspectorBackend.WorkerConnection(workerId);
-        let workerTarget = new WebInspector.WorkerTarget(url, connection);
-        WebInspector.targetManager.addTarget(workerTarget);
-
-        this._connections.set(workerId, connection);
-
-        // Unpause the worker now that we have sent all initialization messages.
-        WorkerAgent.initialized(workerId);
-    }
-
-    workerTerminated(workerId)
-    {
-        let connection = this._connections.take(workerId);
-
-        WebInspector.targetManager.removeTarget(connection.target);
-    }
-
-    dispatchMessageFromWorker(workerId, message)
-    {
-        let connection = this._connections.get(workerId);
-
-        console.assert(connection);
-        if (!connection)
-            return;
-
-        connection.dispatch(message);
-    }
-};
+} // namespace WebCore

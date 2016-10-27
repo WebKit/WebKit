@@ -32,11 +32,8 @@
 #include "URL.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"
+#include <inspector/ConsoleMessage.h>
 #include <memory>
-
-namespace Inspector {
-class ConsoleMessage;
-}
 
 namespace WebCore {
 

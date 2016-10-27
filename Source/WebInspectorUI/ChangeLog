@@ -1,5 +1,42 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include ConsoleAgent in Workers - real console.log support
+        https://bugs.webkit.org/show_bug.cgi?id=163844
+        <rdar://problem/28903328>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/Target.js:
+        (WebInspector.Target.prototype.get ConsoleAgent):
+        (WebInspector.Target.prototype._initializeNonMainTarget):
+        * UserInterface/Protocol/Connection.js:
+        (InspectorBackend.WorkerConnection):
+        Add ConsoleAgent.
+
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager.prototype.messageWasAdded):
+        (WebInspector.LogManager.prototype.requestClearMessages):
+        Handle ConsoleAgent calls with multiple targets.
+
+        * UserInterface/Protocol/ConsoleObserver.js:
+        (WebInspector.ConsoleObserver.prototype.messageAdded):
+        Dispatch with the target in case we create Model objects.
+
+        * UserInterface/Controllers/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype.workerCreated):
+        The frontend must now call "initialized" on Workers after
+        sending our setup messages (enable, set breakpoints, etc).
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.get target):
+        Expose an accessor for tests.
+
+        * UserInterface/Protocol/LoggingProtocolTracer.js:
+        (WebInspector.LoggingProtocolTracer.prototype._processEntry):
+        Actually output the Exception, useful when debugging failures in tests.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
         https://bugs.webkit.org/show_bug.cgi?id=163835
         <rdar://problem/28901465>

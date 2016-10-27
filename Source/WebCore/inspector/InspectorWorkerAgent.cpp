@@ -74,6 +74,17 @@ void InspectorWorkerAgent::disable(ErrorString&)
     disconnectFromAllWorkerInspectorProxies();
 }
 
+void InspectorWorkerAgent::initialized(ErrorString& errorString, const String& workerId)
+{
+    WorkerInspectorProxy* proxy = m_connectedProxies.get(workerId);
+    if (!proxy) {
+        errorString = ASCIILiteral("Worker not found.");
+        return;
+    }
+
+    proxy->resumeWorkerIfPaused();
+}
+
 void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const String& workerId, const String& message)
 {
     if (!m_enabled) {
@@ -93,6 +104,11 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString& errorString, const S
 void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy* proxy, const String& message)
 {
     m_frontendDispatcher->dispatchMessageFromWorker(proxy->identifier(), message);
+}
+
+bool InspectorWorkerAgent::shouldWaitForDebuggerOnStart() const
+{
+    return m_enabled;
 }
 
 void InspectorWorkerAgent::workerStarted(WorkerInspectorProxy* proxy, const URL&)

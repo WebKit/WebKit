@@ -25,15 +25,17 @@
 
 WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
 {
-    constructor(source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
+    constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, stackTrace, request)
     {
         super();
 
         console.assert(typeof source === "string");
         console.assert(typeof level === "string");
         console.assert(typeof message === "string");
+        console.assert(target instanceof WebInspector.Target);
         console.assert(!parameters || parameters.every((x) => x instanceof WebInspector.RemoteObject));
 
+        this._target = target;
         this._source = source;
         this._level = level;
         this._messageText = message;
@@ -54,6 +56,7 @@ WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
 
     // Public
 
+    get target() { return this._target; }
     get source() { return this._source; }
     get level() { return this._level; }
     get messageText() { return this._messageText; }

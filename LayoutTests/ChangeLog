@@ -1,5 +1,40 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include ConsoleAgent in Workers - real console.log support
+        https://bugs.webkit.org/show_bug.cgi?id=163844
+        <rdar://problem/28903328>
+
+        Reviewed by Brian Burg.
+
+        * inspector/console/messageAdded-from-worker-expected.txt: Removed.
+        * inspector/console/messageAdded-from-worker.html: Removed.
+        * inspector/console/resources/worker-console-log.js: Removed.
+        Remove the old partial console in Worker test.
+
+        * inspector/worker/console-basic-expected.txt: Added.
+        * inspector/worker/console-basic.html: Added.
+        * inspector/worker/resources/worker-console.js: Added.
+        New console in Worker test.
+
+        * inspector/worker/worker-create-and-terminate.html:
+        The frontend must call initialize on Workers, otherwise they
+        are paused forever.
+
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-importScripts-block-aborts-all-subsequent-imports-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-csp-blocks-xhr-redirect-cross-origin-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-importscripts-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-multiple-csp-headers-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/close-expected.txt:
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt:
+        * security/contentSecurityPolicy/worker-inherits-blocks-xhr-expected.txt:
+        Rebaseline. We no longer send Worker console messages through the Page, and likewise
+        we don't send them to the WebKit client, so they will no longer appear in test output.
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include RuntimeAgent in Workers - evaluate in Worker context
         https://bugs.webkit.org/show_bug.cgi?id=163835
         <rdar://problem/28901465>

@@ -42,7 +42,10 @@ class WorkerGlobalScope;
 class WorkerLoaderProxy;
 class WorkerReportingProxy;
 
-enum WorkerThreadStartMode { DontPauseWorkerGlobalScopeOnStart, PauseWorkerGlobalScopeOnStart };
+enum class WorkerThreadStartMode {
+    Normal,
+    WaitForInspector,
+};
 
 namespace IDBClient {
 class IDBConnectionProxy;
@@ -71,6 +74,9 @@ public:
     void setNotificationClient(NotificationClient* client) { m_notificationClient = client; }
 #endif
 
+    void startRunningDebuggerTasks();
+    void stopRunningDebuggerTasks();
+
 protected:
     WorkerThread(const URL&, const String& userAgent, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, const SecurityOrigin* topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
@@ -94,6 +100,7 @@ private:
     WorkerRunLoop m_runLoop;
     WorkerLoaderProxy& m_workerLoaderProxy;
     WorkerReportingProxy& m_workerReportingProxy;
+    bool m_pausedForDebugger { false };
 
     RefPtr<WorkerGlobalScope> m_workerGlobalScope;
     Lock m_threadCreationMutex;

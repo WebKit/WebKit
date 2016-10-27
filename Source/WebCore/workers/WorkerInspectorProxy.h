@@ -26,6 +26,7 @@
 #pragma once
 
 #include "URL.h"
+#include "WorkerThread.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -57,9 +58,11 @@ public:
     const String& identifier() const { return m_identifier; }
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
 
+    WorkerThreadStartMode workerStartMode(ScriptExecutionContext*);
     void workerStarted(ScriptExecutionContext*, WorkerThread*, const URL&);
     void workerTerminated();
 
+    void resumeWorkerIfPaused();
     void connectToWorkerInspectorController(PageChannel*);
     void disconnectFromWorkerInspectorController();
     void sendMessageToWorkerInspectorController(const String&);

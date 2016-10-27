@@ -26,8 +26,11 @@
 #include "config.h"
 #include "WorkerConsoleClient.h"
 
+#include "InspectorInstrumentation.h"
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 
 using namespace Inspector;
 
@@ -50,15 +53,28 @@ void WorkerConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel
     m_workerGlobalScope.addConsoleMessage(WTFMove(message));
 }
 
+void WorkerConsoleClient::count(JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
+{
+    InspectorInstrumentation::consoleCount(m_workerGlobalScope, exec, WTFMove(arguments));
+}
+
+void WorkerConsoleClient::time(JSC::ExecState*, const String& title)
+{
+    InspectorInstrumentation::startConsoleTiming(m_workerGlobalScope, title);
+}
+
+void WorkerConsoleClient::timeEnd(JSC::ExecState* exec, const String& title)
+{
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, 1));
+    InspectorInstrumentation::stopConsoleTiming(m_workerGlobalScope, title, WTFMove(callStack));
+}
+
 // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
 void WorkerConsoleClient::profile(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::profileEnd(JSC::ExecState*, const String&) { }
 
 // FIXME: <https://webkit.org/b/127634> Web Inspector: support debugging web workers
-void WorkerConsoleClient::count(JSC::ExecState*, RefPtr<ScriptArguments>&&) { }
 void WorkerConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String&) { }
-void WorkerConsoleClient::time(JSC::ExecState*, const String&) { }
-void WorkerConsoleClient::timeEnd(JSC::ExecState*, const String&) { }
 void WorkerConsoleClient::timeStamp(JSC::ExecState*, RefPtr<ScriptArguments>&&) { }
 
 } // namespace WebCore

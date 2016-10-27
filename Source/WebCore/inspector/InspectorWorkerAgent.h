@@ -51,12 +51,14 @@ public:
     // WorkerBackendDispatcherHandler
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
+    void initialized(ErrorString&, const String& workerId) override;
     void sendMessageToWorker(ErrorString&, const String& workerId, const String& message) override;
 
     // PageChannel
     void sendMessageFromWorkerToFrontend(WorkerInspectorProxy*, const String& message) override;
 
     // InspectorInstrumentation
+    bool shouldWaitForDebuggerOnStart() const;
     void workerStarted(WorkerInspectorProxy*, const URL&);
     void workerTerminated(WorkerInspectorProxy*);
 

@@ -101,6 +101,11 @@ String WorkerRunLoop::defaultMode()
     return String();
 }
 
+String WorkerRunLoop::debuggerMode()
+{
+    return ASCIILiteral("debugger");
+}
+
 class RunLoopSetup {
     WTF_MAKE_NONCOPYABLE(RunLoopSetup);
 public:

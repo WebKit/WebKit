@@ -152,6 +152,11 @@ WebInspector.RemoteObject = class RemoteObject
 
     // Public
 
+    get target()
+    {
+        return this._target;
+    }
+
     get objectId()
     {
         return this._objectId;

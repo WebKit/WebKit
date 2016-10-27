@@ -12,6 +12,13 @@
             "description": "Disable Worker domain events."
         },
         {
+            "name": "initialized",
+            "description": "Sent after the frontend has sent all initialization messages and can resume this worker. This command is required to allow execution in the worker.",
+            "parameters": [
+                { "name": "workerId", "type": "string" }
+            ]            
+        },
+        {
             "name": "sendMessageToWorker",
             "description": "Send an Inspector Protocol message to be dispatched to a Worker's agents.",
             "parameters": [

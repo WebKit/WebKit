@@ -108,7 +108,13 @@ WebInspector.LoggingProtocolTracer = class LoggingProtocolTracer extends WebInsp
                 this._logToConsole(`time-stats: Handling: ${entry.timings.dispatch || NaN}ms; RTT: ${entry.timings.rtt}ms`);
             else if (entry.timings.dispatch)
                 this._logToConsole(`time-stats: Handling: ${entry.timings.dispatch || NaN}ms`);
-        } else if (this._dumpMessagesToConsole && !entry.timings)
+        } else if (this._dumpMessagesToConsole && !entry.timings) {
             this._logToConsole(`${entry.type}: ${JSON.stringify(entry.message)}`);
+            if (entry.exception) {
+                this._logToConsole(entry.exception);
+                if (entry.exception.stack)
+                    this._logToConsole(entry.exception.stack);
+            }
+        }
     }
 };

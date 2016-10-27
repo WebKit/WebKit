@@ -63,6 +63,7 @@ namespace WebCore {
         unsigned long createUniqueId() { return ++m_uniqueId; }
 
         static String defaultMode();
+        static String debuggerMode();
 
         class Task {
             WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;

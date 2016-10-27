@@ -167,6 +167,14 @@ void WorkerThread::workerThread()
         }
     }
 
+    if (m_startupData->m_startMode == WorkerThreadStartMode::WaitForInspector) {
+        startRunningDebuggerTasks();
+
+        // If the worker was somehow terminated while processing debugger commands.
+        if (m_runLoop.terminated())
+            m_workerGlobalScope->script()->forbidExecution();
+    }
+
     WorkerScriptController* script = m_workerGlobalScope->script();
     script->evaluate(ScriptSourceCode(m_startupData->m_sourceCode, m_startupData->m_scriptURL));
     // Free the startup data to cause its member variable deref's happen on the worker's thread (since
@@ -193,6 +201,22 @@ void WorkerThread::workerThread()
 
     // The thread object may be already destroyed from notification now, don't try to access "this".
     detachThread(threadID);
+}
+
+void WorkerThread::startRunningDebuggerTasks()
+{
+    ASSERT(!m_pausedForDebugger);
+    m_pausedForDebugger = true;
+
+    MessageQueueWaitResult result;
+    do {
+        result = m_runLoop.runInMode(m_workerGlobalScope.get(), WorkerRunLoop::debuggerMode());
+    } while (result != MessageQueueTerminated && m_pausedForDebugger);
+}
+
+void WorkerThread::stopRunningDebuggerTasks()
+{
+    m_pausedForDebugger = false;
 }
 
 void WorkerThread::runEventLoop()

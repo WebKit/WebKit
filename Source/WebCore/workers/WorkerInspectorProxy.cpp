@@ -30,7 +30,7 @@
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerInspectorController.h"
-#include "WorkerThread.h"
+#include "WorkerRunLoop.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
@@ -54,6 +54,12 @@ WorkerInspectorProxy::~WorkerInspectorProxy()
 {
     ASSERT(!m_workerThread);
     ASSERT(!m_pageChannel);
+}
+
+WorkerThreadStartMode WorkerInspectorProxy::workerStartMode(ScriptExecutionContext* scriptExecutionContext)
+{
+    bool pauseOnStart = InspectorInstrumentation::shouldWaitForDebuggerOnStart(scriptExecutionContext);
+    return pauseOnStart ? WorkerThreadStartMode::WaitForInspector : WorkerThreadStartMode::Normal;
 }
 
 void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecutionContext, WorkerThread* thread, const URL& url)
@@ -83,6 +89,13 @@ void WorkerInspectorProxy::workerTerminated()
     m_pageChannel = nullptr;
 }
 
+void WorkerInspectorProxy::resumeWorkerIfPaused()
+{
+    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
+        downcast<WorkerGlobalScope>(context).thread().stopRunningDebuggerTasks();
+    }, WorkerRunLoop::debuggerMode());
+}
+
 void WorkerInspectorProxy::connectToWorkerInspectorController(PageChannel* channel)
 {
     ASSERT(m_workerThread);
@@ -91,9 +104,9 @@ void WorkerInspectorProxy::connectToWorkerInspectorController(PageChannel* chann
 
     m_pageChannel = channel;
 
-    m_workerThread->runLoop().postTask([] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().connectFrontend();
-    });
+    }, WorkerRunLoop::debuggerMode());
 }
 
 void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
@@ -104,9 +117,9 @@ void WorkerInspectorProxy::disconnectFromWorkerInspectorController()
 
     m_pageChannel = nullptr;
 
-    m_workerThread->runLoop().postTask([] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postTaskForMode([] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().disconnectFrontend(DisconnectReason::InspectorDestroyed);
-    });
+    }, WorkerRunLoop::debuggerMode());
 }
 
 void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& message)
@@ -115,9 +128,9 @@ void WorkerInspectorProxy::sendMessageToWorkerInspectorController(const String& 
     if (!m_workerThread)
         return;
 
-    m_workerThread->runLoop().postTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
+    m_workerThread->runLoop().postTaskForMode([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
-    });
+    }, WorkerRunLoop::debuggerMode());
 }
 
 void WorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)

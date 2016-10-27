@@ -26,10 +26,12 @@
 #include "config.h"
 #include "WorkerInspectorController.h"
 
+#include "CommandLineAPIHost.h"
 #include "InstrumentingAgents.h"
 #include "JSMainThreadExecState.h"
 #include "WebInjectedScriptHost.h"
 #include "WebInjectedScriptManager.h"
+#include "WorkerConsoleAgent.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
@@ -74,8 +76,22 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     auto runtimeAgent = std::make_unique<WorkerRuntimeAgent>(workerContext);
     m_agents.append(WTFMove(runtimeAgent));
 
-    // FIXME: ConsoleAgent
+    auto consoleAgent = std::make_unique<WorkerConsoleAgent>(workerContext, nullptr);
+    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
+    m_agents.append(WTFMove(consoleAgent));
+
     // FIXME: DebuggerAgent
+    // FIXME: HeapAgent
+
+    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {
+        commandLineAPIHost->init(
+              nullptr // InspectorAgent
+            , m_instrumentingAgents->webConsoleAgent()
+            , nullptr // InspectorDOMAgent
+            , nullptr // InspectorDOMStorageAgent
+            , nullptr // InspectorDatabaseAgent
+        );
+    }
 }
 
 WorkerInspectorController::~WorkerInspectorController()

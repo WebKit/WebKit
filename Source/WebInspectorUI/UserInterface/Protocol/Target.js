@@ -42,6 +42,7 @@ WebInspector.Target = class Target extends WebInspector.Object
     // Agents
 
     get RuntimeAgent() { return this._connection._agents.Runtime; }
+    get ConsoleAgent() { return this._connection._agents.Console; }
 
     // Public
 
@@ -98,5 +99,8 @@ WebInspector.WorkerTarget = class WorkerTarget extends WebInspector.Target
             this.RuntimeAgent.enable();
             this._executionContext = new WebInspector.ExecutionContext(this, WebInspector.RuntimeManager.TopLevelContextExecutionIdentifier, this.displayName, false, null);
         }
+
+        if (this.ConsoleAgent)
+            this.ConsoleAgent.enable();
     }
 }

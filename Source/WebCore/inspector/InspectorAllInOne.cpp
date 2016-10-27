@@ -63,6 +63,7 @@
 #include "WebDebuggerAgent.cpp"
 #include "WebInjectedScriptHost.cpp"
 #include "WebInjectedScriptManager.cpp"
+#include "WorkerConsoleAgent.cpp"
 #include "WorkerInspectorController.cpp"
 #include "WorkerRuntimeAgent.cpp"
 #include "WorkerScriptDebugServer.cpp"

@@ -1,3 +1,14 @@
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include ConsoleAgent in Workers - real console.log support
+        https://bugs.webkit.org/show_bug.cgi?id=163844
+        <rdar://problem/28903328>
+
+        Reviewed by Brian Burg.
+
+        * web-platform-tests/fetch/api/policies/csp-blocked-worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/garbage-collection.https-expected.txt:
+
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
         testharnessreport.js should sanitize the results before printing them

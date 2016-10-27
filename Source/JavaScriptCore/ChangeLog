@@ -1,5 +1,15 @@
 2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include ConsoleAgent in Workers - real console.log support
+        https://bugs.webkit.org/show_bug.cgi?id=163844
+        <rdar://problem/28903328>
+
+        Reviewed by Brian Burg.
+
+        * inspector/protocol/Worker.json:
+
+2016-10-27  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Introduce Page WorkerAgent and Worker InspectorController
         https://bugs.webkit.org/show_bug.cgi?id=163817
         <rdar://problem/28899063>

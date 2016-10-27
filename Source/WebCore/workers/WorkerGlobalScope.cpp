@@ -32,7 +32,7 @@
 #include "Crypto.h"
 #include "ExceptionCode.h"
 #include "IDBConnectionProxy.h"
-#include "InspectorConsoleInstrumentation.h"
+#include "InspectorInstrumentation.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -45,7 +45,8 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
-#include <inspector/ConsoleMessage.h>
+#include <inspector/ScriptArguments.h>
+#include <inspector/ScriptCallStack.h>
 
 using namespace Inspector;
 
@@ -257,7 +258,6 @@ void WorkerGlobalScope::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMess
         return;
     }
 
-    thread().workerReportingProxy().postConsoleMessageToWorkerObject(message->source(), message->level(), message->message(), message->line(), message->column(), message->url());
     InspectorInstrumentation::addMessageToConsole(this, WTFMove(message));
 }
 
@@ -272,8 +272,6 @@ void WorkerGlobalScope::addMessage(MessageSource source, MessageLevel level, con
         postTask(AddConsoleMessageTask(source, level, messageText));
         return;
     }
-
-    thread().workerReportingProxy().postConsoleMessageToWorkerObject(source, level, messageText, lineNumber, columnNumber, sourceURL);
 
     std::unique_ptr<Inspector::ConsoleMessage> message;
     if (callStack)

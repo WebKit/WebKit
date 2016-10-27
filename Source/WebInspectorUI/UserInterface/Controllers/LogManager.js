@@ -40,16 +40,16 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
 
     // Public
 
-    messageWasAdded(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
+    messageWasAdded(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, requestId)
     {
         // Called from WebInspector.ConsoleObserver.
 
         // FIXME: Get a request from request ID.
 
         if (parameters)
-            parameters = parameters.map(WebInspector.RemoteObject.fromPayload);
+            parameters = parameters.map((x) => WebInspector.RemoteObject.fromPayload(x, target));
 
-        let message = new WebInspector.ConsoleMessage(source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
+        let message = new WebInspector.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, null);
 
         this.dispatchEventToListeners(WebInspector.LogManager.Event.MessageAdded, {message});
 
@@ -100,7 +100,8 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
     {
         this._clearMessagesRequested = true;
 
-        ConsoleAgent.clearMessages();
+        for (let target of WebInspector.targets)
+            target.ConsoleAgent.clearMessages();
     }
 
     // Private

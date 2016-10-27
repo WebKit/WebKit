@@ -416,7 +416,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return parameter;
 
         if (typeof parameter === "object")
-            return WebInspector.RemoteObject.fromPayload(parameter);
+            return WebInspector.RemoteObject.fromPayload(parameter, this._message.target);
 
         return WebInspector.RemoteObject.fromPrimitiveValue(parameter);
     }
