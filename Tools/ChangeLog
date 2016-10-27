@@ -1,3 +1,10 @@
+2016-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed fix of GTK and EFL test bots.
+
+        * Scripts/webkitperl/FeatureList.pm: Deactivated media-source and
+        legacy-encrypted-media by default for GTK and EFL.
+
 2016-10-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK] JSC test wasm.yaml/wasm/js-api/test_basic_api.js.default-wasm and wasm.yaml/wasm/js-api/test_Module.js.default-wasm fail with Exception: ReferenceError: Can't find variable: WebAssembly

@@ -2816,3 +2816,5 @@ webkit.org/b/163320 fast/css/getComputedStyle/getComputedStyle-list-style-shorth
 
 webkit.org/b/163503 fast/dom/HTMLMeterElement/meter-clone.html [ Failure ]
 webkit.org/b/163503 fast/dom/HTMLMeterElement/meter-element-markup.html [ Failure ]
+
+webkit.org/b/164022 media/media-source [ Skip ]

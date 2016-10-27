@@ -1,3 +1,10 @@
+2016-10-27  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed fix of GTK and EFL test bots.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations: Skip media-source tests
+
 2016-10-27  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r207753-207755): ASSERTION FAILED: m_parsedStyleSheetCache->isInMemoryCache()

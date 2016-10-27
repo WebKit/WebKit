@@ -321,7 +321,7 @@ my @features = (
       define => "ENABLE_JIT", default => 1, value => \$jitSupport },
 
     { option => "legacy-encrypted-media", desc => "Toggle Legacy EME V2 support",
-      define => "ENABLE_LEGACY_ENCRYPTED_MEDIA", default => isGtk(), value => \$legacyEncryptedMediaSupport },
+      define => "ENABLE_LEGACY_ENCRYPTED_MEDIA", default => 0, value => \$legacyEncryptedMediaSupport },
 
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => 0, value => \$legacyNotificationsSupport },
@@ -342,7 +342,7 @@ my @features = (
       define => "ENABLE_MEDIA_CAPTURE", default => isEfl(), value => \$mediaCaptureSupport },
 
     { option => "media-source", desc => "Toggle Media Source support",
-      define => "ENABLE_MEDIA_SOURCE", default => (isGtk() || isEfl()), value => \$mediaSourceSupport },
+      define => "ENABLE_MEDIA_SOURCE", default => 0, value => \$mediaSourceSupport },
 
     { option => "media-statistics", desc => "Toggle Media Statistics support",
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },

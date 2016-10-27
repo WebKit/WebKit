@@ -233,26 +233,6 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 # Tests for MediaSource API. Feature is not totally functional.
 webkit.org/b/99065 imported/w3c/web-platform-tests/media-source/ [ Skip ]
 
-webkit.org/b/99065 media/media-source/media-source-append-failed.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-multiple-initialization-segments.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-append-nonsync-sample-after-abort.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-duplicate-seeked.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-canplaythrough.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-duration-after-append.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-end-of-stream-buffered.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-end-of-stream.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-fudge-factor.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-monitor-source-buffers.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-overlapping-append.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-overlapping-decodetime.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-play.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-remove.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-seek-complete.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-track-enabled.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-tracks.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-video-playback-quality.html [ Skip ]
-webkit.org/b/99065 media/media-source/media-source-seek-detach-crash.html [ Skip ]
-
 # Encrypted Media Extensions are not enabled.
 webkit.org/b/99024 media/encrypted-media [ Skip ]
 webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Timeout ]
@@ -540,8 +520,6 @@ webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
-
-webkit.org/b/143233 media/media-source/media-source-append-buffer-with-append-window.html [ Pass Failure ]
 
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
@@ -1229,7 +1207,6 @@ webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
 webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
 
 webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Crash ]
-webkit.org/b/143704 media/media-source/media-source-append-media-segment-without-init.html [ Failure Pass ]
 
 webkit.org/b/139364 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass Timeout ]
 webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure Pass ]
@@ -1578,14 +1555,12 @@ webkit.org/b/142292 fast/images/animated-gif-zooming.html [ Timeout Pass ]
 webkit.org/b/142488 http/tests/appcache/404-resource-with-slow-main-resource.php [ Timeout ]
 webkit.org/b/141959 [ Release ] http/tests/media/clearkey/clear-key-hls-aes128.html [ Crash Timeout ]
 webkit.org/b/142489 http/tests/media/video-play-waiting.html [ Timeout ]
-webkit.org/b/142491 media/media-source/media-source-stalled-holds-sleep-assertion.html [ Timeout ]
 
 webkit.org/b/142820 fast/images/animated-gif-body-outside-viewport.html [ Timeout Pass ]
 webkit.org/b/143473 editing/pasteboard/drag-and-drop-attachment-contenteditable.html [ Timeout ]
 
 webkit.org/b/143477 fast/writing-mode/broken-ideograph-small-caps.html [ Timeout Pass ]
 
-webkit.org/b/143706 media/media-source/media-source-end-of-stream-readyState.html [ Failure ]
 webkit.org/b/143707 media/track/track-cue-rendering-on-resize.html [ Timeout Pass ]
 webkit.org/b/143708 media/track/track-cue-container-rendering-position.html [ Timeout Pass ]
 
@@ -1657,11 +1632,7 @@ webkit.org/b/158923 media/airplay-autoplay.html [ Timeout ]
 
 webkit.org/b/158924 media/media-fullscreen-return-to-inline.html [ Timeout ]
 
-webkit.org/b/158925 media/media-source/media-source-loadedmetada-with-two-sourcebuffers.html [ Timeout ]
-
 webkit.org/b/158926 media/video-load-preload-none.html [ Timeout ]
-
-webkit.org/b/160019 media/media-source/media-source-small-gap.html [ Timeout ]
 
 webkit.org/b/160126 fast/forms/input-image-submit.html [ Timeout ]
 
@@ -2677,10 +2648,6 @@ webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 webkit.org/b/163383 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/163383 accessibility/roles-exposed.html [ Failure ]
 
-webkit.org/b/163514 media/media-source/media-source-sequence-timestamps.html [ Failure ]
-webkit.org/b/163515 media/media-source/media-source-stpp-crash.html [ Failure ]
-webkit.org/b/163516 media/media-source/media-source-timeoffset.html [ Failure ]
-
 webkit.org/b/163518 media/modern-media-controls/airplay-button/airplay-button-on.html [ Failure ]
 webkit.org/b/163519 media/modern-media-controls/icon-button/icon-button-active-state.html [ Failure ]
 webkit.org/b/163520 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html [ Failure ]
@@ -2702,8 +2669,6 @@ webkit.org/b/163823 media/audio-playback-restriction-play.html [ Failure ]
 webkit.org/b/163823 media/context-menu-actions.html [ Failure ]
 webkit.org/b/163823 media/video-defaultmuted.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
-
-webkit.org/b/163824 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
 webkit.org/b/163825 media/modern-media-controls/media-controller/media-controller-resize.html [ Failure ]
 
@@ -2957,6 +2922,8 @@ webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outsid
 webkit.org/b/160119 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
 
 webkit.org/b/160119 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ ImageOnlyFailure ]
+
+webkit.org/b/164022 media/media-source [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
