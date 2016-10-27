@@ -44,6 +44,7 @@ private:
 
     virtual void doApply();
     virtual EditAction editingAction() const;
+    bool shouldDispatchInputEvents() const final { return false; }
     
     RefPtr<DocumentFragment> m_fragment;
     Position m_position;

@@ -343,12 +343,13 @@ void CompositeEditCommand::apply()
         case EditActionTypingInsertPendingComposition:
         case EditActionTypingInsertFinalComposition:
         case EditActionPaste:
-        case EditActionDrag:
+        case EditActionDeleteByDrag:
         case EditActionSetWritingDirection:
         case EditActionCut:
         case EditActionUnspecified:
         case EditActionInsert:
         case EditActionInsertReplacement:
+        case EditActionInsertFromDrop:
         case EditActionDelete:
         case EditActionDictation:
             break;
@@ -402,6 +403,17 @@ Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRangesForBindings() cons
 
 RefPtr<DataTransfer> CompositeEditCommand::inputEventDataTransfer() const
 {
+    return nullptr;
+}
+
+EditCommandComposition* CompositeEditCommand::composition() const
+{
+    for (auto* command = this; command; command = command->parent()) {
+        if (auto composition = command->m_composition) {
+            ASSERT(!command->parent());
+            return composition.get();
+        }
+    }
     return nullptr;
 }
 

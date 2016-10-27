@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <style>
+    #source, #destination, #copy {
+        width: 100vw;
+        height: 20vh;
+        border: blue dashed 1px;
+        font-size: 18vh;
+        position: absolute;
+        opacity: 0.5;
+        text-align: center;
+    }
+    #source {
+        top: 0vh;
+    }
+    #destination {
+        top: 20vh;
+    }
+    </style>
+    <p>To manually test this, drag the text in the first editing area into the second. The first area should retain the
+    text, the second area should be blank, and the third area should show an HTML representation of the first area with
+    style information.</p>
+    <p>Source:</p>
+    <div id="source" contenteditable onbeforeinput=handleBeforeInput(event)><code>input events</code></div>
+    <p>Destination:</p>
+    <div id="destination" contenteditable onbeforeinput=handleBeforeInput(event)></div>
+    <p>HTML content:</p>
+    <div id="result"></div>
+    <script type="text/javascript">
+        if (window.internals && window.testRunner) {
+            internals.settings.setInputEventsEnabled(true);
+            testRunner.dumpAsText();
+        }
+
+        source.focus();
+        document.execCommand("selectAll");
+
+        if (window.eventSender) {
+            moveToCenter(source);
+            eventSender.leapForward(500);
+            eventSender.mouseDown();
+            eventSender.leapForward(1000);
+            moveToCenter(destination);
+            eventSender.leapForward(500);
+            eventSender.mouseUp();
+        }
+
+        function handleBeforeInput(event)
+        {
+            if (event.inputType === "insertFromDrop") {
+                result.textContent = event.dataTransfer.getData("text/html");
+                event.preventDefault();
+                return;
+            }
+
+            if (event.inputType === "deleteByDrag")
+                event.preventDefault();
+        }
+
+        function moveToCenter(element)
+        {
+            let x = element.offsetParent.offsetLeft + element.offsetLeft + element.offsetWidth / 2;
+            let y = element.offsetParent.offsetTop + element.offsetTop + element.offsetHeight / 2;
+            eventSender.mouseMoveTo(x, y);
+        }
+    </script>
+</body>
+</html>

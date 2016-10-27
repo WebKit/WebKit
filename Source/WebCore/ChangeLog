@@ -1,3 +1,80 @@
+2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163948
+        <rdar://problem/28921433>
+
+        Reviewed by Darin Adler.
+
+        Implements support for "insertFromDrop" and "deleteByDrag" inputTypes. These are fired when dragging and
+        dropping text in editable areas. To do this, we introduce EditActionInsertFromDrop and EditActionDeleteByDrag
+        (renamed from EditActionDrag, which is no longer necessary after this patch).
+
+        When moving text from an editable element to another, we will use a DeleteSelectionCommand to delete the text
+        from the source element and a ReplaceSelectionCommand to insert the text into the destination element. This
+        means that we currently fire two input events on the source and destination elements (i.e. given by the start
+        and end selections) after both child editing commands of the MoveSelectionCommand have been applied. Instead, we
+        need to fire events in this order:
+
+        1. beforeinput ("deleteByDrag") on the source
+        2. Update DOM
+        3. input ("deleteByDrag") on the source
+
+        4. beforeinput ("insertFromDrop") on the destination
+        5. Update DOM
+        6. input ("insertFromDrop") on the destination
+
+        To accomplish this, we allow an edit command to defer dispatching input events to its child commands via
+        CompositeEditCommand::shouldDispatchInputEvents, which the MoveSelectionCommand overrides. Additionally,
+        when applying the MoveSelectionCommand, we now apply() the child DeleteSelectionCommand and
+        ReplaceSelectionCommand instead of using doApply(). This allows these children to separately dispatch input
+        events, and also handle preventDefault() separately.
+
+        Tests: fast/events/before-input-events-prevent-drag-and-drop.html
+               fast/events/input-events-drag-and-drop.html
+               fast/events/input-events-insert-by-drop.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::apply):
+        (WebCore::CompositeEditCommand::composition):
+
+        Searches for the top-level command and returns its composition. Also ASSERTs that the m_command of all child
+        commands along the way is null. In places where we used to ASSERT that command.composition() should be null, we
+        now perform the assertion here instead.
+
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand::shouldDispatchInputEvents):
+
+        This is true by default, which means that if apply() is called for a composite edit command that does not
+        override this to return false, it will try to dispatch input events. In most cases, the parent command will call
+        on the child command to doApply(), bypassing this check.
+
+        (WebCore::CompositeEditCommand::composition): Deleted.
+        * editing/EditAction.h:
+        * editing/EditCommand.cpp:
+        (WebCore::inputTypeNameForEditingAction):
+        (WebCore::EditCommand::isEditingTextAreaOrTextInput):
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        (WebCore::EditCommand::setParent):
+        * editing/Editor.cpp:
+        (WebCore::Editor::willApplyEditing):
+        (WebCore::Editor::appliedEditing):
+
+        After applying editing, only adjust the current selection and notify clients of selection change if the applied
+        command was a top-level command; otherwise, these actions should wait until all child commands of the top-level
+        command have been applied. In particular, we should not register the applied command as an undo step.
+
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        (WebCore::MoveSelectionCommand::editingAction):
+        * editing/MoveSelectionCommand.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag):
+
+        For the cases where we're not deleting text from the drag source (i.e. we're just applying a
+        ReplaceSelectionCommand) pass in EditActionInsertFromDrop as the EditAction when creating the command.
+
 2016-10-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Direct2D] Implement GraphicsContext::releaseWindowsContext.

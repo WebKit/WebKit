@@ -1,3 +1,16 @@
+2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163948
+        <rdar://problem/28921433>
+
+        Reviewed by Darin Adler.
+
+        Add support for new drag and drop-related EditAction enum values.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (undoNameForEditAction):
+
 2016-10-27  Dan Bernstein  <mitz@apple.com>
 
         Reapplied the configuration changes from r207934 without breaking iOS builds.

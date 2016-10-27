@@ -1,3 +1,26 @@
+2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec
+        https://bugs.webkit.org/show_bug.cgi?id=163948
+        <rdar://problem/28921433>
+
+        Reviewed by Darin Adler.
+
+        Adds 3 new layout tests verifying that when dragging and dropping (both from a contenteditable to another
+        contenteditable and from non-editable content into a contenteditable) beforeinput and input events are fired in
+        the right order with the right data and inputTypes, and that undoing/redoing still considers the drag and drop
+        command as a single unit. Also tests that both deleting text by dragging and inserting text by dropping are
+        preventable.
+
+        * fast/events/before-input-events-prevent-drag-and-drop-expected.txt: Added.
+        * fast/events/before-input-events-prevent-drag-and-drop.html: Added.
+        * fast/events/input-events-drag-and-drop-expected.txt: Added.
+        * fast/events/input-events-drag-and-drop.html: Added.
+        * fast/events/input-events-insert-by-drop-expected.txt: Added.
+        * fast/events/input-events-insert-by-drop.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2016-10-27  Devin Rousso  <dcrousso+webkit@gmail.com>
 
         Web Inspector: Create general model object Collection class
