@@ -429,24 +429,26 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
     if (thisObject->isHostOrBuiltinFunction()) {
-        thisObject->reifyBoundNameIfNeeded(vm, exec, propertyName);
+        LazyPropertyType propType = thisObject->reifyBoundNameIfNeeded(vm, exec, propertyName);
+        if (propType == LazyPropertyType::IsLazyProperty)
+            slot.disableCaching();
         return Base::put(thisObject, exec, propertyName, value, slot);
     }
 
     if (propertyName == vm.propertyNames->prototype) {
+        slot.disableCaching();
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+        thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, exec, propertyName, getSlot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
-        // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
-        PutPropertySlot dontCache(thisObject);
         scope.release();
-        return Base::put(thisObject, exec, propertyName, value, dontCache);
+        return Base::put(thisObject, exec, propertyName, value, slot);
     }
 
-    if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller) {
+    if (propertyName == vm.propertyNames->arguments || propertyName == vm.propertyNames->caller) {
+        slot.disableCaching();
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties()) {
             // This will trigger the property to be reified, if this is not already the case!
             // FIXME: Investigate if the `hasProperty()` call is even needed, as in the `!hasCallerAndArgumentsProperties()` case,
@@ -458,7 +460,9 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         }
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
-    thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
+    LazyPropertyType propType = thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
+    if (propType == LazyPropertyType::IsLazyProperty)
+        slot.disableCaching();
     scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
@@ -661,25 +665,28 @@ void JSFunction::reifyName(VM& vm, ExecState* exec, String name)
     rareData->setHasReifiedName();
 }
 
-void JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
     if (propertyName == vm.propertyNames->length) {
         if (!hasReifiedLength())
             reifyLength(vm);
+        return LazyPropertyType::IsLazyProperty;
     } else if (propertyName == vm.propertyNames->name) {
         if (!hasReifiedName())
             reifyName(vm, exec);
+        return LazyPropertyType::IsLazyProperty;
     }
+    return LazyPropertyType::NotLazyProperty;
 }
 
-void JSFunction::reifyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
+JSFunction::LazyPropertyType JSFunction::reifyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName propertyName)
 {
     const Identifier& nameIdent = vm.propertyNames->name;
     if (propertyName != nameIdent)
-        return;
+        return LazyPropertyType::NotLazyProperty;
 
     if (hasReifiedName())
-        return;
+        return LazyPropertyType::IsLazyProperty;
 
     if (this->inherits(JSBoundFunction::info())) {
         FunctionRareData* rareData = this->rareData(vm);
@@ -688,6 +695,7 @@ void JSFunction::reifyBoundNameIfNeeded(VM& vm, ExecState* exec, PropertyName pr
         putDirect(vm, nameIdent, jsString(exec, name), initialAttributes);
         rareData->setHasReifiedName();
     }
+    return LazyPropertyType::IsLazyProperty;
 }
 
 } // namespace JSC
