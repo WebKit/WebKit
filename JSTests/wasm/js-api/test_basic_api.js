@@ -2,7 +2,9 @@ import * as assert from '../assert.js';
 import * as utilities from '../utilities.js';
 
 const version = 0xC;
-const emptyModule = Uint8Array.of(0x0, 0x61, 0x73, 0x6d, version, 0x00, 0x00, 0x00);
+const emptyModuleArray = Uint8Array.of(0x0, 0x61, 0x73, 0x6d, version, 0x00, 0x00, 0x00);
+const invalidConstructorInputs = [undefined, null, "", 1, {}, []];
+const invalidInstanceImports = [null, "", 1];
 
 const checkOwnPropertyDescriptor = (obj, prop, expect) => {
     const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
@@ -49,17 +51,27 @@ for (const c in constructorProperties) {
     assert.throws(() => WebAssembly[c](), TypeError, `calling WebAssembly.${c} constructor without new is invalid`);
     switch (c) {
     case "Module":
-        for (const invalid of [undefined, "", 1, {}, []])
+        for (const invalid of invalidConstructorInputs)
             assert.throws(() => new WebAssembly[c](invalid), TypeError, `first argument to WebAssembly.Module must be an ArrayBufferView or an ArrayBuffer (evaluating 'new WebAssembly[c](invalid)')`);
         for (const buffer of [new ArrayBuffer(), new DataView(new ArrayBuffer()), new Int8Array(), new Uint8Array(), new Uint8ClampedArray(), new Int16Array(), new Uint16Array(), new Int32Array(), new Uint32Array(), new Float32Array(), new Float64Array()])
             // FIXME the following should be WebAssembly.CompileError. https://bugs.webkit.org/show_bug.cgi?id=163768
             assert.throws(() => new WebAssembly[c](buffer), Error, `Module is 0 bytes, expected at least 8 bytes (evaluating 'new WebAssembly[c](buffer)')`);
-        assert.instanceof(new WebAssembly[c](emptyModule), WebAssembly.Module);
+        assert.instanceof(new WebAssembly[c](emptyModuleArray), WebAssembly.Module);
         // FIXME test neutered TypedArray and TypedArrayView. https://bugs.webkit.org/show_bug.cgi?id=163899
         break;
     case "Instance":
-        // FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775
-        assert.throws(() => new WebAssembly[c](), Error, `WebAssembly doesn't yet implement the ${c} constructor property`);
+        for (const invalid of invalidConstructorInputs)
+            assert.throws(() => new WebAssembly[c](invalid), TypeError, `first argument to WebAssembly.Instance must be a WebAssembly.Module (evaluating 'new WebAssembly[c](invalid)')`);
+        const instance = new WebAssembly[c](new WebAssembly.Module(emptyModuleArray));
+        assert.instanceof(instance, WebAssembly.Instance);
+        for (const invalid of invalidInstanceImports)
+            assert.throws(() => new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid), TypeError, `second argument to WebAssembly.Instance must be undefined or an Object (evaluating 'new WebAssembly[c](new WebAssembly.Module(emptyModuleArray), invalid)')`);
+        assert.notUndef(instance.exports);
+        checkOwnPropertyDescriptor(instance, "exports", { typeofvalue: "object", writable: true, configurable: true, enumerable: true });
+        assert.isUndef(instance.exports.__proto__);
+        assert.eq(Reflect.isExtensible(instance.exports), false);
+        assert.eq(Symbol.iterator in instance.exports, true);
+        assert.eq(Symbol.toStringTag in instance.exports, true);
         break;
     case "Memory":
         // FIXME Implement and test these APIs further. For now they just throw. https://bugs.webkit.org/show_bug.cgi?id=159775

@@ -29,13 +29,14 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "JSModuleNamespaceObject.h"
 
 namespace JSC {
 
-JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure)
+JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, Structure* structure, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyInstance>(vm.heap)) JSWebAssemblyInstance(vm, structure);
-    instance->finishCreation(vm);
+    instance->finishCreation(vm, moduleNamespaceObject);
     return instance;
 }
 
@@ -49,9 +50,11 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure)
 {
 }
 
-void JSWebAssemblyInstance::finishCreation(VM& vm)
+void JSWebAssemblyInstance::finishCreation(VM& vm, JSModuleNamespaceObject* moduleNamespaceObject)
 {
     Base::finishCreation(vm);
+    m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "exports"), m_moduleNamespaceObject.get(), None);
     ASSERT(inherits(info()));
 }
 
@@ -66,6 +69,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_moduleNamespaceObject);
 }
 
 const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance", &Base::s_info, 0, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };

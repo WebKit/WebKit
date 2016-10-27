@@ -31,21 +31,26 @@
 #include "JSObject.h"
 
 namespace JSC {
+    
+class JSModuleNamespaceObject;
 
 class JSWebAssemblyInstance : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyInstance* create(VM&, Structure*);
+    static JSWebAssemblyInstance* create(VM&, Structure*, JSModuleNamespaceObject*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
     JSWebAssemblyInstance(VM&, Structure*);
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSModuleNamespaceObject*);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+private:
+    WriteBarrier<JSModuleNamespaceObject> m_moduleNamespaceObject;
 };
 
 } // namespace JSC

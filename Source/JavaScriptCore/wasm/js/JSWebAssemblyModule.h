@@ -32,20 +32,29 @@
 
 namespace JSC {
 
+namespace Wasm {
+struct FunctionCompilation;
+class Memory;
+}
+
 class JSWebAssemblyModule : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
 
-    static JSWebAssemblyModule* create(VM&, Structure*);
+    static JSWebAssemblyModule* create(VM&, Structure*, Vector<std::unique_ptr<Wasm::FunctionCompilation>>*, std::unique_ptr<Wasm::Memory>*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
-    JSWebAssemblyModule(VM&, Structure*);
+    JSWebAssemblyModule(VM&, Structure*, Vector<std::unique_ptr<Wasm::FunctionCompilation>>*, std::unique_ptr<Wasm::Memory>*);
     void finishCreation(VM&);
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+private:
+    Vector<std::unique_ptr<Wasm::FunctionCompilation>> m_compiledFunctions;
+    std::unique_ptr<Wasm::Memory> m_memory;
 };
 
 } // namespace JSC

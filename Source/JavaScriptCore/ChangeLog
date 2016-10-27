@@ -1,3 +1,39 @@
+2016-10-26  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly API: implement Instance
+
+        As described in: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-objects
+
+         - Take ownership of Wasm::Plan's compilation result when successfully creating a JSWebAssemblyModule object.
+         - Construct a basic Instance with a Module.
+         - Handle second argument (importObject) of WebAssembly.Instance.
+         - Add reference text from the spec to WebAssembly.Module's code.
+         - Expose and test an empty 'exports' ModuleNamespaceObject on WebAssembly.Instance.
+
+        The implementation isn't complete yet: it relies on further work for which I've filed bugs.
+
+        WebAssembly API: implement Instance
+        https://bugs.webkit.org/show_bug.cgi?id=163998
+
+        Reviewed by Keith Miller.
+
+        * wasm/WasmPlan.h:
+        (JSC::Wasm::Plan::getFunctions): allow transfering state out
+        (JSC::Wasm::Plan::getMemory): allow transfering state out
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        (JSC::JSWebAssemblyInstance::finishCreation): set the ModuleNamespaceObject, and expose it as "exports"
+        (JSC::JSWebAssemblyInstance::visitChildren): visit the ModuleNamespaceObject child
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::create):
+        (JSC::JSWebAssemblyModule::JSWebAssemblyModule): move in the compiled functions and the memory
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance): take the Module, extract the Plan's results, and create the (empty for now) ModuleNamespaceObject
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::constructJSWebAssemblyModule): add a few comments from the spec, and pass out the Plan's results
+
 2016-10-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend

@@ -29,12 +29,15 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
+#include "WasmFormat.h"
+#include "WasmMemory.h"
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
-JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure)
+JSWebAssemblyModule* JSWebAssemblyModule::create(VM& vm, Structure* structure, Vector<std::unique_ptr<Wasm::FunctionCompilation>>* compiledFunctions, std::unique_ptr<Wasm::Memory>* memory)
 {
-    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure);
+    auto* instance = new (NotNull, allocateCell<JSWebAssemblyModule>(vm.heap)) JSWebAssemblyModule(vm, structure, compiledFunctions, memory);
     instance->finishCreation(vm);
     return instance;
 }
@@ -44,8 +47,10 @@ Structure* JSWebAssemblyModule::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure)
+JSWebAssemblyModule::JSWebAssemblyModule(VM& vm, Structure* structure, Vector<std::unique_ptr<Wasm::FunctionCompilation>>* compiledFunctions, std::unique_ptr<Wasm::Memory>* memory)
     : Base(vm, structure)
+    , m_compiledFunctions(WTFMove(*compiledFunctions))
+    , m_memory(WTFMove(*memory))
 {
 }
 

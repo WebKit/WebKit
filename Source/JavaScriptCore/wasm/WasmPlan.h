@@ -38,6 +38,8 @@ class Memory;
 
 class Plan {
 public:
+    typedef Vector<std::unique_ptr<FunctionCompilation>> CompiledFunctions;
+
     JS_EXPORT_PRIVATE Plan(VM&, Vector<uint8_t>);
     JS_EXPORT_PRIVATE Plan(VM&, const uint8_t*, size_t);
     JS_EXPORT_PRIVATE ~Plan();
@@ -63,9 +65,20 @@ public:
         RELEASE_ASSERT(!failed());
         return m_memory.get();
     }
+    
+    CompiledFunctions* getFunctions()
+    {
+        RELEASE_ASSERT(!failed());
+        return &m_result;
+    }
+    std::unique_ptr<Memory>* getMemory()
+    {
+        RELEASE_ASSERT(!failed());
+        return &m_memory;
+    }
 
 private:
-    Vector<std::unique_ptr<FunctionCompilation>> m_result;
+    CompiledFunctions m_result;
     std::unique_ptr<Memory> m_memory;
     bool m_failed { true };
     String m_errorMessage;

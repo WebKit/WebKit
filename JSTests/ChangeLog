@@ -1,3 +1,27 @@
+2016-10-26  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly API: implement Instance
+
+        As described in: https://github.com/WebAssembly/design/blob/master/JS.md#webassemblyinstance-objects
+
+         - Take ownership of Wasm::Plan's compilation result when successfully creating a JSWebAssemblyModule object.
+         - Construct a basic Instance with a Module.
+         - Handle second argument (importObject) of WebAssembly.Instance.
+         - Add reference text from the spec to WebAssembly.Module's code.
+         - Expose and test an empty 'exports' ModuleNamespaceObject on WebAssembly.Instance.
+
+        The implementation isn't complete yet: it relies on further work for which I've filed bugs.
+
+        WebAssembly API: implement Instance
+        https://bugs.webkit.org/show_bug.cgi?id=163998
+
+        Reviewed by Keith Miller.
+
+        * wasm/js-api/test_Instance.js: Added.
+        (EmptyModule): use the Builder, create the simplest Module possible, and create an Instance from it
+        * wasm/js-api/test_basic_api.js:
+        (const.c.in.constructorProperties.switch): basic tests of the API
+
 2016-10-26  Mark Lam  <mark.lam@apple.com>
 
         JSGenericTypedArrayView::set() should check for exceptions.
