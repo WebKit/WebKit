@@ -1,3 +1,17 @@
+2016-10-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Expose WebKitDOMHTMLInputElement APIs for form autofill
+        https://bugs.webkit.org/show_bug.cgi?id=163082
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_get_auto_filled): Added.
+        (webkit_dom_html_input_element_set_auto_filled): Added.
+        (webkit_dom_html_input_element_set_editing_value): Added.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/docs/webkitdomgtk-4.0-sections.txt:
+
 2016-10-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.14.1 release.

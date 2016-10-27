@@ -61,6 +61,40 @@ webkit_dom_user_message_handlers_namespace_get_handler(WebKitDOMUserMessageHandl
 WEBKIT_API void
 webkit_dom_html_link_element_set_sizes(WebKitDOMHTMLLinkElement* self, const gchar* value);
 
+/**
+ * webkit_dom_html_input_element_get_auto_filled:
+ * @self: A #WebKitDOMHTMLInputElement
+ *
+ * Returns: A #gboolean
+ *
+ * Stability: Unstable
+ * Since: 2.14.2
+ */
+WEBKIT_API gboolean
+webkit_dom_html_input_element_get_auto_filled(WebKitDOMHTMLInputElement* self);
+
+/**
+ * webkit_dom_html_input_element_set_auto_filled:
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gboolean
+ *
+ * Stability: Unstable
+ * Since: 2.14.2
+ */
+WEBKIT_API void
+webkit_dom_html_input_element_set_auto_filled(WebKitDOMHTMLInputElement* self, gboolean value);
+
+/**
+ * webkit_dom_html_input_element_set_editing_value:
+ * @self: A #WebKitDOMHTMLInputElement
+ * @value: A #gchar
+ *
+ * Stability: Unstable
+ * Since: 2.14.2
+ */
+WEBKIT_API void
+webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* self, const gchar* value);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DOM_USE_UNSTABLE_API */
