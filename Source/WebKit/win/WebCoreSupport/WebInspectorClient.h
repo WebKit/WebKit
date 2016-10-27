@@ -63,7 +63,7 @@ public:
 
     // FrontendChannel API.
     ConnectionType connectionType() const override { return ConnectionType::Local; }
-    bool sendMessageToFrontend(const WTF::String&) override;
+    void sendMessageToFrontend(const WTF::String&) override;
 
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);

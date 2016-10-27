@@ -63,7 +63,7 @@ public:
 
     // FrontendChannel overrides.
     ConnectionType connectionType() const override { return ConnectionType::Remote; }
-    bool sendMessageToFrontend(const String&) override;
+    void sendMessageToFrontend(const String&) override;
 
 private:
     void dispatchAsyncOnTarget(void (^block)());

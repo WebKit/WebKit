@@ -279,7 +279,7 @@ void WebInspector::sendMessageToBackend(const String& message)
     m_page->corePage()->inspectorController().dispatchMessageFromFrontend(message);
 }
 
-bool WebInspector::sendMessageToFrontend(const String& message)
+void WebInspector::sendMessageToFrontend(const String& message)
 {
 #if ENABLE(INSPECTOR_SERVER)
     if (m_remoteFrontendConnected)
@@ -287,7 +287,6 @@ bool WebInspector::sendMessageToFrontend(const String& message)
     else
 #endif
         m_frontendConnection->send(Messages::WebInspectorUI::SendMessageToFrontend(message), 0);
-    return true;
 }
 
 #if ENABLE(INSPECTOR_SERVER)

@@ -1,3 +1,15 @@
+2016-10-26  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend
+        https://bugs.webkit.org/show_bug.cgi?id=164046
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorFrontendChannel.h:
+        * inspector/remote/RemoteConnectionToTarget.h:
+        * inspector/remote/RemoteConnectionToTarget.mm:
+        (Inspector::RemoteConnectionToTarget::sendMessageToFrontend):
+
 2016-10-26  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: remove now-dead JSWasmModule

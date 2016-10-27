@@ -228,13 +228,12 @@ void RemoteConnectionToTarget::sendMessageToTarget(NSString *message)
     });
 }
 
-bool RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
+void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)
 {
-    if (!m_target)
-        return false;
+    if (!targetIdentifier())
+        return;
 
     RemoteInspector::singleton().sendMessageToRemote(targetIdentifier().value(), message);
-    return true;
 }
 
 void RemoteConnectionToTarget::setupRunLoop()

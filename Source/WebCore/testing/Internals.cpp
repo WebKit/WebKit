@@ -250,7 +250,7 @@ private:
     void setAttachedWindowHeight(unsigned) final { }
     void setAttachedWindowWidth(unsigned) final { }
 
-    bool sendMessageToFrontend(const String& message) final;
+    void sendMessageToFrontend(const String& message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
     Page* frontendPage() const
@@ -293,11 +293,11 @@ void InspectorStubFrontend::closeWindow()
     m_frontendWindow = nullptr;
 }
 
-bool InspectorStubFrontend::sendMessageToFrontend(const String& message)
+void InspectorStubFrontend::sendMessageToFrontend(const String& message)
 {
     ASSERT_ARG(message, !message.isEmpty());
 
-    return InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
+    InspectorClient::doDispatchMessageOnFrontendPage(frontendPage(), message);
 }
 
 static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType& result)

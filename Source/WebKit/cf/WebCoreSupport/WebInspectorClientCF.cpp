@@ -89,9 +89,9 @@ static void storeSetting(const String& key, const String& setting)
     CFPreferencesSetAppValue(createKeyForPreferences(key).get(), setting.createCFString().get(), kCFPreferencesCurrentApplication);
 }
 
-bool WebInspectorClient::sendMessageToFrontend(const String& message)
+void WebInspectorClient::sendMessageToFrontend(const String& message)
 {
-    return doDispatchMessageOnFrontendPage(m_frontendPage, message);
+    doDispatchMessageOnFrontendPage(m_frontendPage, message);
 }
 
 bool WebInspectorClient::inspectorAttachDisabled()

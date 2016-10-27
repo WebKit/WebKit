@@ -44,7 +44,7 @@ public:
 
     void updateDockingAvailability();
 
-    bool sendMessageToFrontend(const String& message) override;
+    void sendMessageToFrontend(const String& message) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     // Implemented in generated WebInspectorMessageReceiver.cpp

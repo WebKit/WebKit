@@ -73,7 +73,7 @@ public:
 
     void didSetSearchingForNode(bool) override;
 
-    bool sendMessageToFrontend(const String&) override;
+    void sendMessageToFrontend(const String&) override;
     ConnectionType connectionType() const override { return ConnectionType::Local; }
 
     bool inspectorStartsAttached();

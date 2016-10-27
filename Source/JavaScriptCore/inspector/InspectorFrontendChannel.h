@@ -42,7 +42,7 @@ public:
 
     virtual ~FrontendChannel() { }
     virtual ConnectionType connectionType() const = 0;
-    virtual bool sendMessageToFrontend(const String& message) = 0;
+    virtual void sendMessageToFrontend(const String& message) = 0;
 };
 
 } // namespace Inspector

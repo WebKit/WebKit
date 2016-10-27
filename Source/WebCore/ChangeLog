@@ -1,3 +1,16 @@
+2016-10-26  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: remove unused bool return value from FrontendChannel::sendMessageToFrontend
+        https://bugs.webkit.org/show_bug.cgi?id=164046
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorClient.cpp:
+        (WebCore::InspectorClient::doDispatchMessageOnFrontendPage):
+        * inspector/InspectorClient.h:
+        * testing/Internals.cpp:
+        (WebCore::InspectorStubFrontend::sendMessageToFrontend):
+
 2016-10-26  Chris Dumez  <cdumez@apple.com>
 
         The URLSearchParams constructor should take a union in parameter
