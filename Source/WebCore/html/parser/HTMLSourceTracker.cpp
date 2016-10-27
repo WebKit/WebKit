@@ -49,6 +49,7 @@ void HTMLSourceTracker::startToken(SegmentedString& currentInput, HTMLTokenizer&
 
     m_currentSource = currentInput;
     m_tokenStart = m_currentSource.numberOfCharactersConsumed() - m_previousSource.length();
+    tokenizer.setTokenAttributeBaseOffset(m_tokenStart);
 }
 
 void HTMLSourceTracker::endToken(SegmentedString& currentInput, HTMLTokenizer& tokenizer)
@@ -92,7 +93,7 @@ String HTMLSourceTracker::source(const HTMLToken& token)
 
 String HTMLSourceTracker::source(const HTMLToken& token, unsigned attributeStart, unsigned attributeEnd)
 {
-    return source(token).substring(attributeStart - m_tokenStart, attributeEnd - attributeStart);
+    return source(token).substring(attributeStart, attributeEnd - attributeStart);
 }
 
 }
