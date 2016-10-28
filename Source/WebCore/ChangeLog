@@ -1,3 +1,29 @@
+2016-10-28  Antti Koivisto  <antti@apple.com>
+
+        Always use iOS preload behavior
+        https://bugs.webkit.org/show_bug.cgi?id=164127
+
+        Reviewed by Andreas Kling.
+
+        On non-iOS platforms we were delaying issuing lower priority preload (images mostly) until document has body.
+        This should be unnecessary as networking layer prioritization should ensure higher priority resources are
+        loaded earlier. Testing on iOS has showed that more aggressive behavior is a win.
+
+        This patch switches to iOS behavior on all platforms (and simplified the logic).
+
+        * html/parser/HTMLResourcePreloader.cpp:
+        (WebCore::HTMLResourcePreloader::preload):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::preloadIfNeeded):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::performPostLoadActions):
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::isPreloaded):
+        (WebCore::CachedResourceLoader::checkForPendingPreloads): Deleted.
+        (WebCore::CachedResourceLoader::requestPreload): Deleted.
+        (WebCore::CachedResourceLoader::clearPendingPreloads): Deleted.
+        * loader/cache/CachedResourceLoader.h:
+
 2016-10-28  Youenn Fablet  <youenn@apple.com>
 
         [Fetch] Ensure redirection count is no more than 20 in case of cross origin requests

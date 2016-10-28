@@ -1189,8 +1189,6 @@ void CachedResourceLoader::garbageCollectDocumentResources()
 
 void CachedResourceLoader::performPostLoadActions()
 {
-    checkForPendingPreloads();
-
     platformStrategies()->loaderStrategy()->servePendingRequests();
 }
 
@@ -1211,50 +1209,7 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
     ASSERT(m_requestCount > -1);
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request, PreloadType preloadType)
-{
-    // We always preload resources on iOS. See <https://bugs.webkit.org/show_bug.cgi?id=91276>.
-    // FIXME: We should consider adding a setting to toggle aggressive preloading behavior as opposed
-    // to making this behavior specific to iOS.
-#if !PLATFORM(IOS)
-    bool hasRendering = m_document->bodyOrFrameset() && m_document->renderView();
-    bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;
-    if (!hasRendering && !canBlockParser && preloadType == ImplicitPreload) {
-        // Don't preload subresources that can't block the parser before we have something to draw.
-        // This helps prevent preloads from delaying first display when bandwidth is limited.
-        PendingPreload pendingPreload = { type, WTFMove(request) };
-        m_pendingPreloads.append(pendingPreload);
-        return nullptr;
-    }
-#else
-    UNUSED_PARAM(preloadType);
-#endif
-    return requestPreload(type, WTFMove(request));
-}
-
-void CachedResourceLoader::checkForPendingPreloads()
-{
-    if (m_pendingPreloads.isEmpty())
-        return;
-    auto* body = m_document->bodyOrFrameset();
-    if (!body || !body->renderer())
-        return;
-#if PLATFORM(IOS)
-    // We always preload resources on iOS. See <https://bugs.webkit.org/show_bug.cgi?id=91276>.
-    // So, we should never have any pending preloads.
-    // FIXME: We should look to avoid compiling this code entirely when building for iOS.
-    ASSERT_NOT_REACHED();
-#endif
-    while (!m_pendingPreloads.isEmpty()) {
-        PendingPreload preload = m_pendingPreloads.takeFirst();
-        // Don't request preload if the resource already loaded normally (this will result in double load if the page is being reloaded with cached results ignored).
-        if (!cachedResource(preload.m_request.resourceRequest().url()))
-            requestPreload(preload.m_type, WTFMove(preload.m_request));
-    }
-    m_pendingPreloads.clear();
-}
-
-CachedResourceHandle<CachedResource> CachedResourceLoader::requestPreload(CachedResource::Type type, CachedResourceRequest&& request)
+CachedResourceHandle<CachedResource> CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest&& request)
 {
     if (request.charset().isEmpty() && (type == CachedResource::Script || type == CachedResource::CSSStyleSheet))
         request.setCharset(m_document->charset());
@@ -1287,11 +1242,6 @@ bool CachedResourceLoader::isPreloaded(const String& urlString) const
                 return true;
         }
     }
-
-    for (auto& pendingPreload : m_pendingPreloads) {
-        if (pendingPreload.m_request.resourceRequest().url() == url)
-            return true;
-    }
     return false;
 }
 
@@ -1310,11 +1260,6 @@ void CachedResourceLoader::clearPreloads()
             MemoryCache::singleton().remove(*resource);
     }
     m_preloads = nullptr;
-}
-
-void CachedResourceLoader::clearPendingPreloads()
-{
-    m_pendingPreloads.clear();
 }
 
 #if PRELOAD_DEBUG

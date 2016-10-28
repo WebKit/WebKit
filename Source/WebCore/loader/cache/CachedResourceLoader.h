@@ -130,10 +130,7 @@ public:
 
     WEBCORE_EXPORT bool isPreloaded(const String& urlString) const;
     void clearPreloads();
-    void clearPendingPreloads();
-    enum PreloadType { ImplicitPreload, ExplicitPreload };
-    CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&&, PreloadType);
-    void checkForPendingPreloads();
+    CachedResourceHandle<CachedResource> preload(CachedResource::Type, CachedResourceRequest&&);
     void printPreloadStats();
 
     bool updateRequestAfterRedirection(CachedResource::Type, ResourceRequest&, const ResourceLoaderOptions&);
@@ -157,7 +154,6 @@ private:
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, DeferOption = DeferOption::NoDefer);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
     CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&&);
-    CachedResourceHandle<CachedResource> requestPreload(CachedResource::Type, CachedResourceRequest&&);
 
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     void updateHTTPRequestHeaders(CachedResource::Type, CachedResourceRequest&);
@@ -191,11 +187,6 @@ private:
     int m_requestCount;
     
     std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
-    struct PendingPreload {
-        CachedResource::Type m_type;
-        CachedResourceRequest m_request;
-    };
-    Deque<PendingPreload> m_pendingPreloads;
 
     Timer m_garbageCollectDocumentResourcesTimer;
 
