@@ -177,7 +177,6 @@
 		1A24B5F211F531E800C38269 /* MachUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24B5F011F531E800C38269 /* MachUtilities.cpp */; };
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
-		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
 		1A256E3718A1A788006FB922 /* WKNavigationAction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A256E3518A1A788006FB922 /* WKNavigationAction.mm */; };
 		1A256E3818A1A788006FB922 /* WKNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A256E3618A1A788006FB922 /* WKNavigationAction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A256E3A18A1A7DF006FB922 /* WKNavigationActionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A256E3918A1A7DF006FB922 /* WKNavigationActionInternal.h */; };
@@ -859,6 +858,7 @@
 		3F87B9BD158940120090FF62 /* WebColorChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */; };
 		3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BB15893F630090FF62 /* WebColorChooser.h */; };
 		3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F87B9BF158940D80090FF62 /* WebColorPicker.h */; };
+		4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */; };
 		4A3CC18A19B063E700D14AEF /* UserMediaPermissionRequestManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */; };
 		4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */; };
 		4A3CC18C19B0641500D14AEF /* UserMediaPermissionRequestProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3B19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.cpp */; };
@@ -2181,7 +2181,6 @@
 		1A24B5F011F531E800C38269 /* MachUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachUtilities.cpp; sourceTree = "<group>"; };
 		1A24B5F111F531E800C38269 /* MachUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachUtilities.h; sourceTree = "<group>"; };
 		1A24BED3120894D100FBB059 /* SharedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedMemory.h; sourceTree = "<group>"; };
-		1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryMac.cpp; sourceTree = "<group>"; };
 		1A256E3518A1A788006FB922 /* WKNavigationAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationAction.mm; sourceTree = "<group>"; };
 		1A256E3618A1A788006FB922 /* WKNavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationAction.h; sourceTree = "<group>"; };
 		1A256E3918A1A7DF006FB922 /* WKNavigationActionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationActionInternal.h; sourceTree = "<group>"; };
@@ -2919,6 +2918,7 @@
 		3F87B9BA15893F630090FF62 /* WebColorChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorChooser.cpp; sourceTree = "<group>"; };
 		3F87B9BB15893F630090FF62 /* WebColorChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorChooser.h; sourceTree = "<group>"; };
 		3F87B9BF158940D80090FF62 /* WebColorPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPicker.h; sourceTree = "<group>"; };
+		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedMemoryCocoa.cpp; path = cocoa/SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
 		4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserMediaPermissionRequest.h; sourceTree = "<group>"; };
 		4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMediaPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
@@ -4481,7 +4481,6 @@
 				1A24B5F111F531E800C38269 /* MachUtilities.h */,
 				51933DEB1965EB24008AC3EA /* MenuUtilities.h */,
 				51933DEC1965EB24008AC3EA /* MenuUtilities.mm */,
-				1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */,
 				296BD85B15019BC30071F424 /* StringUtilities.h */,
 				296BD85C15019BC30071F424 /* StringUtilities.mm */,
 			);
@@ -5412,6 +5411,14 @@
 			);
 			name = mac;
 			path = Resources/mac;
+			sourceTree = "<group>";
+		};
+		4450AEBE1DC3FAAC009943F2 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
+			);
+			name = cocoa;
 			sourceTree = "<group>";
 		};
 		4A410F4119AF7B27002EBAB5 /* MediaStream */ = {
@@ -6686,6 +6693,7 @@
 		BC2E6E74114196F000A63B1E /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				4450AEBE1DC3FAAC009943F2 /* cocoa */,
 				3709504118A88BA40087AE5D /* cf */,
 				1AA2E51A12E4C05600BC4966 /* cg */,
 				3709504218A88CDE0087AE5D /* foundation */,
@@ -9367,7 +9375,6 @@
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* ShareableBitmapCG.cpp in Sources */,
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
-				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				2DAF06D718BD1A470081CEB1 /* SmartMagnificationController.mm in Sources */,
 				2DE6943D18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
@@ -9503,6 +9510,7 @@
 				510523791C73DA77007993CB /* WebIDBConnectionToClientMessageReceiver.cpp in Sources */,
 				514129951C6428C20059E714 /* WebIDBConnectionToServer.cpp in Sources */,
 				510523751C73D38F007993CB /* WebIDBConnectionToServerMessageReceiver.cpp in Sources */,
+				4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */,
 				51A587801D1C5081004BA9AF /* WebIDBResult.cpp in Sources */,
 				BCCF6ABC12C91EF9008F9C35 /* WebImage.cpp in Sources */,
 				1C8E28211275D15400BC7BD0 /* WebInspector.cpp in Sources */,

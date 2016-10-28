@@ -1,3 +1,18 @@
+2016-10-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename SharedMemoryMac to SharedMemoryCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=164156
+
+        Reviewed by Alex Christensen.
+
+        Renamed SharedMemoryMac to SharedMemoryCocoa, as it runs on all cocoa platforms, not exclusively just mac, and
+        thus should be named to reflect that reality.
+
+        * Platform/cocoa: Added.
+        * Platform/cocoa/SharedMemoryCocoa.cpp: Copied from Source/WebKit2/Platform/mac/SharedMemoryMac.cpp.
+        * Platform/mac/SharedMemoryMac.cpp: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2016-10-28  Antti Koivisto  <antti@apple.com>
 
         Enable CFNetwork connection cache fast lane for WebKit2
