@@ -838,7 +838,7 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueAuto || valueID == CSSValueBalance)
             return true;
         break;
-    case CSSPropertyColumnProgression:
+    case CSSPropertyWebkitColumnProgression:
         if (valueID == CSSValueNormal || valueID == CSSValueReverse)
             return true;
         break;

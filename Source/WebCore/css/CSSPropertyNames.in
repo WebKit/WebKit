@@ -443,8 +443,7 @@ column-fill
 -webkit-column-fill = column-fill
 column-gap [Custom=All]
 -webkit-column-gap = column-gap
-column-progression
--webkit-column-progression = column-progression
+-webkit-column-progression
 column-rule [Longhands=column-rule-width|column-rule-style|column-rule-color]
 -webkit-column-rule = column-rule
 column-rule-color [VisitedLinkColorSupport, Initial=invalidColor]

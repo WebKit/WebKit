@@ -158,7 +158,7 @@ private:
 #endif
 
     static Length convertTo100PercentMinusLength(const Length&);
-    static Length convertPositionComponent(StyleResolver&, const CSSPrimitiveValue&);
+    template<CSSValueID, CSSValueID> static Length convertPositionComponent(StyleResolver&, const CSSPrimitiveValue&);
 
 #if ENABLE(CSS_GRID_LAYOUT)
     static GridLength createGridTrackBreadth(const CSSPrimitiveValue&, StyleResolver&);
@@ -323,6 +323,7 @@ inline Length StyleBuilderConverter::convertTo100PercentMinusLength(const Length
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 
+template <CSSValueID cssValueFor0, CSSValueID cssValueFor100>
 inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& styleResolver, const CSSPrimitiveValue& value)
 {
     Length length;
@@ -337,7 +338,20 @@ inline Length StyleBuilderConverter::convertPositionComponent(StyleResolver& sty
 
         lengthValue = value.pairValue()->second();
     }
-
+    
+    if (value.isValueID()) {
+        switch (value.valueID()) {
+            case cssValueFor0:
+                return Length(0, Percent);
+            case cssValueFor100:
+                return Length(100, Percent);
+            case CSSValueCenter:
+                return Length(50, Percent);
+            default:
+                ASSERT_NOT_REACHED();
+        }
+    }
+        
     length = convertLength(styleResolver, *lengthValue);
 
     if (relativeToTrailingEdge)
@@ -353,8 +367,8 @@ inline LengthPoint StyleBuilderConverter::convertObjectPosition(StyleResolver& s
     if (!pair || !pair->first() || !pair->second())
         return RenderStyle::initialObjectPosition();
 
-    Length lengthX = convertPositionComponent(styleResolver, *pair->first());
-    Length lengthY = convertPositionComponent(styleResolver, *pair->second());
+    Length lengthX = convertPositionComponent<CSSValueLeft, CSSValueRight>(styleResolver, *pair->first());
+    Length lengthY = convertPositionComponent<CSSValueTop, CSSValueBottom>(styleResolver, *pair->second());
 
     return LengthPoint(lengthX, lengthY);
 }

@@ -660,8 +660,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyUnicodeBidi:
         return valueID == CSSValueNormal || valueID == CSSValueEmbed
             || valueID == CSSValueBidiOverride || valueID == CSSValueWebkitIsolate
-            || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext
-            || valueID == CSSValueIsolate || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext;
+            || valueID == CSSValueWebkitIsolateOverride || valueID == CSSValueWebkitPlaintext;
     case CSSPropertyVectorEffect:
         return valueID == CSSValueNone || valueID == CSSValueNonScalingStroke;
     case CSSPropertyVisibility: // visible | hidden | collapse
@@ -691,6 +690,10 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueStart || valueID == CSSValueEnd || valueID == CSSValueCenter || valueID == CSSValueJustify;
     case CSSPropertyColumnFill:
         return valueID == CSSValueAuto || valueID == CSSValueBalance;
+    case CSSPropertyWebkitColumnAxis:
+        return valueID == CSSValueHorizontal || valueID == CSSValueVertical || valueID == CSSValueAuto;
+    case CSSPropertyWebkitColumnProgression:
+        return valueID == CSSValueNormal || valueID == CSSValueReverse;
     case CSSPropertyAlignContent:
         // FIXME: Per CSS alignment, this property should accept an optional <overflow-position>. We should share this parsing code with 'justify-self'.
         return valueID == CSSValueFlexStart || valueID == CSSValueFlexEnd || valueID == CSSValueCenter || valueID == CSSValueSpaceBetween || valueID == CSSValueSpaceAround || valueID == CSSValueStretch;
@@ -713,8 +716,12 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueNormal || valueID == CSSValueNone;
     case CSSPropertyWebkitFontSmoothing:
         return valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueAntialiased || valueID == CSSValueSubpixelAntialiased;
+    case CSSPropertyWebkitLineAlign:
+        return valueID == CSSValueNone || valueID == CSSValueEdges;
     case CSSPropertyWebkitLineBreak: // auto | loose | normal | strict | after-white-space
         return valueID == CSSValueAuto || valueID == CSSValueLoose || valueID == CSSValueNormal || valueID == CSSValueStrict || valueID == CSSValueAfterWhiteSpace;
+    case CSSPropertyWebkitLineSnap:
+        return valueID == CSSValueNone || valueID == CSSValueBaseline || valueID == CSSValueContain;
     case CSSPropertyWebkitMarginAfterCollapse:
     case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginBottomCollapse:
@@ -775,6 +782,16 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyApplePayButtonType: // plain | buy | set-up
         return valueID == CSSValuePlain || valueID == CSSValueBuy || valueID == CSSValueSetUp;
 #endif
+    case CSSPropertyWebkitNbspMode: // normal | space
+        return valueID == CSSValueNormal || valueID == CSSValueSpace;
+    case CSSPropertyWebkitTextZoom:
+        return valueID == CSSValueNormal || valueID == CSSValueReset;
+#if PLATFORM(IOS)
+    // Apple specific property. These will never be standardized and is purely to
+    // support custom WebKit-based Apple applications.
+    case CSSPropertyWebkitTouchCallout:
+        return valueID == CSSValueDefault || valueID == CSSValueNone;
+#endif
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -796,7 +813,7 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyCaptionSide:
     case CSSPropertyClear:
     case CSSPropertyColumnFill:
-    case CSSPropertyColumnProgression:
+    case CSSPropertyWebkitColumnProgression:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyDirection:
     case CSSPropertyDisplay:

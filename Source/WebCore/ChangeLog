@@ -1,3 +1,47 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Miscellaneous bug fixes
+        https://bugs.webkit.org/show_bug.cgi?id=164131
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPropertyNames.in:
+        The prefix was incorrectly dropped from -webkit-column-progression.
+        Put it back.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertPositionComponent):
+        (WebCore::StyleBuilderConverter::convertObjectPosition):
+        Fix object-position parsing so that the position components can
+        be ids.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        The new parser doesn't make a list for content:none, since none can't be
+        a component of a list anyway. Add code to handle this case in the
+        apply function.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        Put the prefix back on -webkit-column-progression.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        Same.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parsePageSelector):
+        Make sure match type is checked, since our code asserts if it isn't.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::validWidthOrHeightKeyword):
+        (WebCore::consumeLineGrid):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        Add support for the line-grid properties and for -webkit-nbsp-mode.
+
 2016-10-28  Antti Koivisto  <antti@apple.com>
 
         Always use iOS preload behavior

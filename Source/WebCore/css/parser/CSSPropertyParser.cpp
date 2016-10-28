@@ -917,8 +917,7 @@ static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserM
 // FIXME-NEWPARSER: Drop the prefix on min-content, max-content and fit-content.
 static bool validWidthOrHeightKeyword(CSSValueID id, const CSSParserContext& /*context*/)
 {
-    if (id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent
-        || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFitContent) {
+    if (id == CSSValueIntrinsic || id == CSSValueMinIntrinsic || id == CSSValueWebkitMinContent || id == CSSValueWebkitMaxContent || id == CSSValueWebkitFillAvailable || id == CSSValueWebkitFitContent) {
         return true;
     }
     return false;
@@ -3119,6 +3118,13 @@ static RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
     return CSSLineBoxContainValue::create(lineBoxContain);
 }
 
+static RefPtr<CSSValue> consumeLineGrid(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    return consumeCustomIdent(range);
+}
+
 RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSSPropertyID currentShorthand)
 {
     if (CSSParserFastPaths::isKeywordPropertyID(property)) {
@@ -3487,6 +3493,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitFlowFrom:
         return consumeFlowProperty(m_range);
 #endif
+    case CSSPropertyWebkitLineGrid:
+        return consumeLineGrid(m_range);
     default:
         return nullptr;
     }

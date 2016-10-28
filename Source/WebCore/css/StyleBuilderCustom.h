@@ -1378,6 +1378,13 @@ inline void StyleBuilderCustom::applyInheritContent(StyleResolver&)
 
 inline void StyleBuilderCustom::applyValueContent(StyleResolver& styleResolver, CSSValue& value)
 {
+    if (is<CSSPrimitiveValue>(value)) {
+        const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+        ASSERT_UNUSED(primitiveValue, primitiveValue.valueID() == CSSValueNormal || primitiveValue.valueID() == CSSValueNone);
+        styleResolver.style()->clearContent();
+        return;
+    }
+    
     bool didSet = false;
     for (auto& item : downcast<CSSValueList>(value)) {
         if (is<CSSImageGeneratorValue>(item.get())) {
