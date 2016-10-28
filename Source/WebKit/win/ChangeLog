@@ -1,3 +1,10 @@
+2016-10-27  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * WebView.cpp:
+        (WebView::paintWithDirect2D): Correct merge error.
+
 2016-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Create a RAII Helper Class for the Render Target

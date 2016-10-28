@@ -1222,6 +1222,7 @@ void WebView::performLayeredWindowUpdate()
 
 void WebView::paintWithDirect2D()
 {
+#if USE(DIRECT2D)
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
         return;
