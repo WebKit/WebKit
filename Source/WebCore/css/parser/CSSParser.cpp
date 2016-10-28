@@ -394,6 +394,8 @@ void CSSParser::parseSheet(StyleSheetContents* sheet, const String& string, cons
 
 RefPtr<StyleRuleBase> CSSParser::parseRule(StyleSheetContents* sheet, const String& string)
 {
+    if (m_context.useNewParser && m_context.mode != UASheetMode)
+        return CSSParserImpl::parseRule(string, m_context, sheet, CSSParserImpl::AllowImportRules);
     setStyleSheet(sheet);
     m_allowNamespaceDeclarations = false;
     setupParser("@-webkit-rule{", string, "} ");
