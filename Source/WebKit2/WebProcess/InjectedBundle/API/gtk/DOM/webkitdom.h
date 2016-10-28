@@ -33,6 +33,8 @@
 #include <webkitdom/WebKitDOMComment.h>
 #include <webkitdom/WebKitDOMCustom.h>
 #include <webkitdom/WebKitDOMDOMImplementation.h>
+#include <webkitdom/WebKitDOMDOMSelection.h>
+#include <webkitdom/WebKitDOMDOMTokenList.h>
 #include <webkitdom/WebKitDOMDOMWindow.h>
 #include <webkitdom/WebKitDOMDeprecated.h>
 #include <webkitdom/WebKitDOMDocument.h>

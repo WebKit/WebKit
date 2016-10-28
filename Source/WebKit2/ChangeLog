@@ -1,3 +1,12 @@
+2016-10-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] New stable DOM API headers should be included from webkitdom.h
+        https://bugs.webkit.org/show_bug.cgi?id=164069
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/webkitdom.h:
+
 2016-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         Fix when building against the MacOSX10.12.sdk where "macos" is not recognized
