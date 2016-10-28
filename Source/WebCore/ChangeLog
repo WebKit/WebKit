@@ -1,3 +1,14 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support hanging-punctuation
+        https://bugs.webkit.org/show_bug.cgi?id=164153
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeHangingPunctuation):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Document::documentElement

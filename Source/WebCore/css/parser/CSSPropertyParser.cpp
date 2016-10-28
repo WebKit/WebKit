@@ -70,6 +70,7 @@
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "WebKitCSSTransformValue.h"
+#include <bitset>
 #include <memory>
 #include <wtf/text/StringBuilder.h>
 
@@ -3146,6 +3147,51 @@ static RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range)
     return createPrimitiveValuePair(position.releaseNonNull(), WTFMove(height));
 }
 
+static RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    std::bitset<numCSSValueKeywords> seenValues;
+
+    bool seenForceEnd = false;
+    bool seenAllowEnd = false;
+    bool seenFirst = false;
+    bool seenLast = false;
+
+    while (!range.atEnd()) {
+        CSSValueID valueID = range.peek().id();
+        if ((valueID == CSSValueFirst && seenFirst)
+            || (valueID == CSSValueLast && seenLast)
+            || (valueID == CSSValueAllowEnd && (seenAllowEnd || seenForceEnd))
+            || (valueID == CSSValueForceEnd && (seenAllowEnd || seenForceEnd)))
+            return nullptr;
+        RefPtr<CSSValue> ident = consumeIdent<CSSValueAllowEnd, CSSValueForceEnd, CSSValueFirst, CSSValueLast>(range);
+        if (!ident)
+            return nullptr;
+        switch (valueID) {
+        case CSSValueAllowEnd:
+            seenAllowEnd = true;
+            break;
+        case CSSValueForceEnd:
+            seenForceEnd = true;
+            break;
+        case CSSValueFirst:
+            seenFirst = true;
+            break;
+        case CSSValueLast:
+            seenLast = true;
+            break;
+        default:
+            break;
+        }
+        list->append(ident.releaseNonNull());
+    }
+    
+    return list->length() ? list : nullptr;
+}
+
 static RefPtr<CSSValue> consumeWebkitMarqueeIncrement(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().type() == IdentToken)
@@ -3539,6 +3585,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeLineGrid(m_range);
     case CSSPropertyWebkitInitialLetter:
         return consumeInitialLetter(m_range);
+    case CSSPropertyHangingPunctuation:
+        return consumeHangingPunctuation(m_range);
     case CSSPropertyWebkitMarqueeIncrement:
         return consumeWebkitMarqueeIncrement(m_range, m_context.mode);
     case CSSPropertyWebkitMarqueeRepetition:
