@@ -753,11 +753,11 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
     RefPtr<CSSPrimitiveValue> point = consumeDeprecatedGradientPoint(args, true);
     if (!point)
         return nullptr;
-    result->setFirstX(WTFMove(point));
+    result->setFirstX(point.copyRef());
     point = consumeDeprecatedGradientPoint(args, false);
     if (!point)
         return nullptr;
-    result->setFirstY(WTFMove(point));
+    result->setFirstY(point.copyRef());
 
     if (!consumeCommaIncludingWhitespace(args))
         return nullptr;
@@ -767,17 +767,17 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
         RefPtr<CSSPrimitiveValue> radius = consumeNumber(args, ValueRangeAll);
         if (!radius || !consumeCommaIncludingWhitespace(args))
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(WTFMove(radius));
+        downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(radius.copyRef());
     }
 
     point = consumeDeprecatedGradientPoint(args, true);
     if (!point)
         return nullptr;
-    result->setSecondX(WTFMove(point));
+    result->setSecondX(point.copyRef());
     point = consumeDeprecatedGradientPoint(args, false);
     if (!point)
         return nullptr;
-    result->setSecondY(WTFMove(point));
+    result->setSecondY(point.copyRef());
 
     // For radial gradients only, we now expect the second radius.
     if (isDeprecatedRadialGradient) {
@@ -786,7 +786,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, CSS
         RefPtr<CSSPrimitiveValue> radius = consumeNumber(args, ValueRangeAll);
         if (!radius)
             return nullptr;
-        downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(WTFMove(radius));
+        downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(radius.copyRef());
     }
 
     CSSGradientColorStop stop;
@@ -811,7 +811,12 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, CSSParserMode 
         // Two hints in a row are not allowed.
         if (!stop.m_color && (!supportsColorHints || previousStopWasColorHint))
             return false;
+        
         previousStopWasColorHint = !stop.m_color;
+        
+        // FIXME-NEWPARSER: This boolean could be removed. Null checking color would be sufficient.
+        stop.isMidpoint = !stop.m_color;
+
         stop.m_position = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll);
         if (!stop.m_color && !stop.m_position)
             return false;
@@ -835,17 +840,17 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
     if ((centerX || centerY) && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
-    result->setFirstX(WTFMove(centerX));
-    result->setFirstY(WTFMove(centerY));
-    result->setSecondX(WTFMove(centerX));
-    result->setSecondY(WTFMove(centerY));
+    result->setFirstX(centerX.copyRef());
+    result->setFirstY(centerY.copyRef());
+    result->setSecondX(centerX.copyRef());
+    result->setSecondY(centerY.copyRef());
 
     RefPtr<CSSPrimitiveValue> shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
     RefPtr<CSSPrimitiveValue> sizeKeyword = consumeIdent<CSSValueClosestSide, CSSValueClosestCorner, CSSValueFarthestSide, CSSValueFarthestCorner, CSSValueContain, CSSValueCover>(args);
     if (!shape)
         shape = consumeIdent<CSSValueCircle, CSSValueEllipse>(args);
-    result->setShape(WTFMove(shape));
-    result->setSizingBehavior(WTFMove(sizeKeyword));
+    result->setShape(shape.copyRef());
+    result->setSizingBehavior(sizeKeyword.copyRef());
 
     // Or, two lengths or percentages
     if (!shape && !sizeKeyword) {
@@ -856,8 +861,8 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
-            result->setEndHorizontalSize(WTFMove(horizontalSize));
-            result->setEndVerticalSize(WTFMove(verticalSize));
+            result->setEndHorizontalSize(horizontalSize.copyRef());
+            result->setEndVerticalSize(verticalSize.copyRef());
         }
     } else {
         consumeCommaIncludingWhitespace(args);
@@ -926,10 +931,10 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
         || (verticalSize && verticalSize->isCalculatedPercentageWithLength()))
         return nullptr;
 
-    result->setShape(WTFMove(shape));
-    result->setSizingBehavior(WTFMove(sizeKeyword));
-    result->setEndHorizontalSize(WTFMove(horizontalSize));
-    result->setEndVerticalSize(WTFMove(verticalSize));
+    result->setShape(shape.copyRef());
+    result->setSizingBehavior(sizeKeyword.copyRef());
+    result->setEndHorizontalSize(horizontalSize.copyRef());
+    result->setEndVerticalSize(verticalSize.copyRef());
 
     RefPtr<CSSPrimitiveValue> centerX;
     RefPtr<CSSPrimitiveValue> centerY;
@@ -939,12 +944,12 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, CSSPars
         if (!(centerX && centerY))
             return nullptr;
         
-        result->setFirstX(WTFMove(centerX));
-        result->setFirstY(WTFMove(centerY));
+        result->setFirstX(centerX.copyRef());
+        result->setFirstY(centerY.copyRef());
         
         // Right now, CSS radial gradients have the same start and end centers.
-        result->setSecondX(WTFMove(centerX));
-        result->setSecondY(WTFMove(centerY));
+        result->setSecondX(centerX.copyRef());
+        result->setSecondY(centerY.copyRef());
     }
 
     if ((shape || sizeKeyword || horizontalSize || centerX || centerY) && !consumeCommaIncludingWhitespace(args))
@@ -974,8 +979,8 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& args, CSSPars
             endX = consumeIdent<CSSValueLeft, CSSValueRight>(args);
         }
 
-        result->setFirstX(WTFMove(endX));
-        result->setFirstY(WTFMove(endY));
+        result->setFirstX(endX.copyRef());
+        result->setFirstY(endY.copyRef());
     } else {
         expectComma = false;
     }

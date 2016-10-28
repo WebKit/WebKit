@@ -1,3 +1,20 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Clean up gradient parsing
+        https://bugs.webkit.org/show_bug.cgi?id=164139
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::positionFromValue):
+        (WebCore::CSSGradientValue::computeEndPoint):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedRadialGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeRadialGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeLinearGradient):
+
 2016-10-28  Dean Jackson  <dino@apple.com>
 
         New CSS Parser should use Colors not RGBA32s
