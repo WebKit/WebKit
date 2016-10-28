@@ -732,7 +732,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyWebkitRtlOrdering:
         return valueID == CSSValueLogical || valueID == CSSValueVisual;
     case CSSPropertyWebkitRubyPosition:
-        return valueID == CSSValueBefore || valueID == CSSValueAfter;
+        return valueID == CSSValueBefore || valueID == CSSValueAfter || valueID == CSSValueInterCharacter;
     case CSSPropertyWebkitTextCombine:
         return valueID == CSSValueNone || valueID == CSSValueHorizontal;
     case CSSPropertyWebkitTextEmphasisPosition:
