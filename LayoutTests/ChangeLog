@@ -1,3 +1,43 @@
+2016-10-28  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Media Controller: volume control support
+        https://bugs.webkit.org/show_bug.cgi?id=163727
+
+        Reviewed by Dean Jackson.
+
+        Adding new tests for VolumeSupport and adding the new resource to other MediaController tests.
+
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * media/modern-media-controls/elapsed-time-support/elapsed-time-support.html:
+        * media/modern-media-controls/media-controller/media-controller-constructor.html:
+        * media/modern-media-controls/media-controller/media-controller-resize.html:
+        * media/modern-media-controls/mute-support/mute-support-button-click.html:
+        * media/modern-media-controls/mute-support/mute-support-media-api.html:
+        * media/modern-media-controls/mute-support/mute-support-muted.html:
+        * media/modern-media-controls/playback-support/playback-support-autoplay.html:
+        * media/modern-media-controls/playback-support/playback-support-button-click.html:
+        * media/modern-media-controls/playback-support/playback-support-media-api.html:
+        * media/modern-media-controls/remaining-time-support/remaining-time-support.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-click.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html:
+        * media/modern-media-controls/scrubber-support/scrubber-support-media-api.html:
+        * media/modern-media-controls/start-support/start-support-audio.html:
+        * media/modern-media-controls/start-support/start-support-autoplay.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/start-support/start-support-error.html:
+        * media/modern-media-controls/start-support/start-support-fullscreen.html:
+        * media/modern-media-controls/start-support/start-support-manual-play.html:
+        * media/modern-media-controls/start-support/start-support-no-source.html:
+        * media/modern-media-controls/volume-support/volume-support-click-expected.txt: Added.
+        * media/modern-media-controls/volume-support/volume-support-click.html: Added.
+        * media/modern-media-controls/volume-support/volume-support-drag-expected.txt: Added.
+        * media/modern-media-controls/volume-support/volume-support-drag.html: Added.
+        * media/modern-media-controls/volume-support/volume-support-media-api-expected.txt: Added.
+        * media/modern-media-controls/volume-support/volume-support-media-api-mute-expected.txt: Added.
+        * media/modern-media-controls/volume-support/volume-support-media-api-mute.html: Added.
+        * media/modern-media-controls/volume-support/volume-support-media-api.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
 2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DOMJIT] Implement Document::documentElement

@@ -35,5 +35,6 @@ media/remaining-time-support.js
 media/scrubbing-support.js
 media/skip-back-support.js
 media/start-support.js
+media/volume-support.js
 media/media-controller.js
 main.js

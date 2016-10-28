@@ -23,58 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class MediaController
+class VolumeSupport extends MediaControllerSupport
 {
-
-    constructor(shadowRoot, media, host)
-    {
-        this.shadowRoot = shadowRoot;
-        this.media = media;
-        this.host = host;
-
-        // FIXME: This should get set dynamically based on the current environment.
-        this.layoutTraits = LayoutTraits.macOS;
-
-        this.controls = new MacOSInlineMediaControls
-        shadowRoot.appendChild(this.controls.element);        
-
-        new ElapsedTimeSupport(this);
-        new MuteSupport(this);
-        new PlaybackSupport(this);
-        new RemainingTimeSupport(this);
-        new ScrubbingSupport(this);
-        new SkipBackSupport(this);
-        new StartSupport(this);
-        new VolumeSupport(this);
-
-        this._updateControlsSize();
-        media.addEventListener("resize", this);
-    }
 
     // Protected
 
-    set pageScaleFactor(pageScaleFactor)
+    get control()
     {
-        // FIXME: To be implemented.
+        return this.mediaController.controls.volumeSlider;
     }
 
-    set usesLTRUserInterfaceLayoutDirection(flag)
+    get mediaEvents()
     {
-        // FIXME: To be implemented.
+        return ["volumechange"];
     }
 
-    handleEvent(event)
+    controlValueWillStartChanging(control)
     {
-        if (event.type === "resize" && event.currentTarget === this.media)
-            this._updateControlsSize();
+        this.mediaController.media.muted = false;
     }
 
-    // Private
-
-    _updateControlsSize()
+    controlValueDidChange(control)
     {
-        this.controls.width = this.media.offsetWidth;
-        this.controls.height = this.media.offsetHeight;
+        this.mediaController.media.volume = control.value;
+    }
+
+    syncControl()
+    {
+        const media = this.mediaController.media;
+        this.control.value = media.muted ? 0 : media.volume;
     }
 
 }
