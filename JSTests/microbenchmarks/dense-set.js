@@ -1,3 +1,4 @@
+//@ largeHeap
 (function() {
     
     function bench(name, f, arg) {
