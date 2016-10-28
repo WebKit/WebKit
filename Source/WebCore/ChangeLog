@@ -1,3 +1,17 @@
+2016-10-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Add support for wide gamut for ShareableBitmap for image popovers
+        https://bugs.webkit.org/show_bug.cgi?id=164001
+
+        Reviewed by Simon Fraser.
+
+        Add a function to return a CGColorSpaceRef for extended sRGB.
+
+        This is currently untestable, so no tests added.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::extendedSRGBColorSpaceRef):
+
 2016-10-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win][Direct2D] Create a RAII Helper Class for the Render Target

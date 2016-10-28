@@ -51,6 +51,7 @@ public:
     enum Flag {
         NoFlags = 0,
         SupportsAlpha = 1 << 0,
+        SupportsExtendedColor = 1 << 1,
     };
     typedef unsigned Flags;
 
@@ -72,6 +73,7 @@ public:
         mutable SharedMemory::Handle m_handle;
         WebCore::IntSize m_size;
         Flags m_flags;
+        unsigned m_bytesPerPixel;
     };
 
     // Create a shareable bitmap that uses malloced memory.
@@ -126,8 +128,9 @@ private:
 
 #if USE(CAIRO)
     static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize&);
+    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize& size, unsigned bytesPerPixel) { return numBytesForSize(size); }
 #else
-    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize& size) { return size.area<RecordOverflow>() * 4; }
+    static Checked<unsigned, RecordOverflow> numBytesForSize(const WebCore::IntSize& size, unsigned bytesPerPixel) { return size.area<RecordOverflow>() * bytesPerPixel; }
 #endif
 
 #if USE(CG)
@@ -141,10 +144,15 @@ private:
 #endif
 
     void* data() const;
+#if USE(CAIRO)
     size_t sizeInBytes() const { return numBytesForSize(m_size).unsafeGet(); }
-
+#else
+    size_t sizeInBytes() const { return numBytesForSize(m_size, m_bytesPerPixel).unsafeGet(); }
+#endif
+    
     WebCore::IntSize m_size;
     Flags m_flags;
+    unsigned m_bytesPerPixel;
 
     // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
     RefPtr<SharedMemory> m_sharedMemory;

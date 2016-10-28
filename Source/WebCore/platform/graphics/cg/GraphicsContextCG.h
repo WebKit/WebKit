@@ -34,6 +34,7 @@ namespace WebCore {
 
 CGColorSpaceRef deviceRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef sRGBColorSpaceRef();
+WEBCORE_EXPORT CGColorSpaceRef extendedSRGBColorSpaceRef();
 WEBCORE_EXPORT CGColorSpaceRef displayP3ColorSpaceRef();
 CGColorSpaceRef linearRGBColorSpaceRef();
 

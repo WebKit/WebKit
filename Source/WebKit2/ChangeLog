@@ -1,3 +1,42 @@
+2016-10-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Add support for wide gamut for ShareableBitmap for image popovers
+        https://bugs.webkit.org/show_bug.cgi?id=164001
+
+        Reviewed by Simon Fraser.
+
+        Added suppport for wide gamut in ShareableBitmap. SharableBitmaps now know the size of their pixels,
+        and that data is passed back and forth between the processes. The callers of SharedBitmap will determine
+        if their image should support wide gamut, but ShareableBitmap will override a set flag on a device that
+        is incapbable of supporting a wide gamut image.
+        This makes it possible to show wide gamut images in image popovers on iOS.
+        This is currently untestable, so no tests added.
+
+        * Platform/IPC/Decoder.cpp:
+        (IPC::Decoder::decode):
+        * Platform/IPC/Decoder.h:
+        * Platform/IPC/Encoder.cpp:
+        (IPC::Encoder::encode):
+        * Platform/IPC/Encoder.h:
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::bytesPerPixel):
+        (WebKit::ShareableBitmap::Handle::encode):
+        (WebKit::ShareableBitmap::Handle::decode):
+        (WebKit::ShareableBitmap::Handle::clear):
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        (WebKit::ShareableBitmap::createHandle):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::numBytesForSize):
+        (WebKit::ShareableBitmap::sizeInBytes):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::bitmapInfo):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2016-10-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Support "insertFromDrop" and "deleteByDrag" for the InputEvent spec
