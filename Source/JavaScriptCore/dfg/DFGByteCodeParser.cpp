@@ -219,7 +219,7 @@ private:
     bool handleConstantInternalFunction(Node* callTargetNode, int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, const InferredType::Descriptor&, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, const InferredType::Descriptor&, NodeType = GetByOffset);
-    bool handleDOMJITGetter(int resultOperand, const GetByIdVariant&, Node* thisNode, SpeculatedType prediction);
+    bool handleDOMJITGetter(int resultOperand, const GetByIdVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
 
     // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
     // check the validity of the condition, but it may return a null one if it encounters a contradiction.
@@ -2680,7 +2680,7 @@ static void blessCallDOMGetter(Node* node)
         node->clearFlags(NodeMustGenerate);
 }
 
-bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant& variant, Node* thisNode, SpeculatedType prediction)
+bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant& variant, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction)
 {
     if (!variant.domJIT())
         return false;
@@ -2704,6 +2704,7 @@ bool ByteCodeParser::handleDOMJITGetter(int resultOperand, const GetByIdVariant&
 
     callDOMGetterData->domJIT = domJIT;
     callDOMGetterData->patchpoint = callDOMGetterPatchpoint.ptr();
+    callDOMGetterData->identifierNumber = identifierNumber;
 
     Node* callDOMGetterNode = nullptr;
     // GlobalObject of thisNode is always used to create a DOMWrapper.
@@ -3318,7 +3319,7 @@ void ByteCodeParser::handleGetById(
         ASSERT(!getByIdStatus.makesCalls());
         GetByIdVariant variant = getByIdStatus[0];
         ASSERT(variant.domJIT());
-        if (handleDOMJITGetter(destinationOperand, variant, base, prediction)) {
+        if (handleDOMJITGetter(destinationOperand, variant, base, identifierNumber, prediction)) {
             if (m_graph.compilation())
                 m_graph.compilation()->noticeInlinedGetById();
             return;

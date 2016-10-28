@@ -235,6 +235,7 @@ struct StackAccessData {
 struct CallDOMGetterData {
     DOMJIT::GetterSetter* domJIT { nullptr };
     DOMJIT::CallDOMGetterPatchpoint* patchpoint { nullptr };
+    unsigned identifierNumber { 0 };
 };
 
 // === Node ===

@@ -1,5 +1,26 @@
 2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DOMJIT] Include identifier name in CallDOMGetter to dump it
+        https://bugs.webkit.org/show_bug.cgi?id=164161
+
+        Reviewed by Mark Lam.
+
+        This patch adds an identifier number to CallDOMGetterData and use it when dumping the data.
+        CallDOMGetter did not include identifier. It made CallDOMGetter super hard to debug when dumping DFG graph.
+
+        The dump becomes like this.
+
+            CallDOMGetter(Cell:@21, JS|MustGen|UseAsOther, Nonboolint32, id0{customGetter}, domJIT = 0x42f8a0, R:World, W:Heap, Exits, ClobbersExit, bc#15)  predicting Nonboolint32
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+
+2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DOMJIT] Rename CallDOM to CallDOMGetter
         https://bugs.webkit.org/show_bug.cgi?id=164157
 
