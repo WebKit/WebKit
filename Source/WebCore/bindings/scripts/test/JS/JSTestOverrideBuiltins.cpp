@@ -26,7 +26,6 @@
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 #include "JSNode.h"
-#include "Node.h"
 #include "wtf/text/AtomicString.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>

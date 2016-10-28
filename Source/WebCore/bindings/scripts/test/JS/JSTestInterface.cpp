@@ -28,7 +28,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
-#include "TestObj.h"
+#include "JSTestObj.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
@@ -40,7 +40,6 @@
 
 #if ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition22) || ENABLE(Condition23)
 #include "JSNode.h"
-#include "JSTestObj.h"
 #endif
 
 using namespace JSC;

@@ -41,6 +41,6 @@ interface HTMLIFrameElement : HTMLElement {
     // Extensions
     readonly attribute DOMWindow contentWindow;
 
-    [CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
 };
 

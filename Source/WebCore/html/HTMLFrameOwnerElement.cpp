@@ -112,7 +112,7 @@ bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent& event) const
     return m_contentFrame && HTMLElement::isKeyboardFocusable(event);
 }
 
-SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
+Document* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 {
     Document* document = contentDocument();
     if (is<SVGDocument>(document))

@@ -28,6 +28,19 @@ use File::Spec;
 
 package CodeGeneratorTestRunner;
 
+use Carp qw<longmess>;
+use Data::Dumper;
+
+sub assert
+{
+    my $message = shift;
+    
+    my $mess = longmess();
+    print Dumper($mess);
+
+    die $message;
+}
+
 sub new
 {
     my ($class, $codeGenerator, $writeDependencies, $verbose, $idlFilePath) = @_;
@@ -57,6 +70,8 @@ sub WriteData
 sub _className
 {
     my ($idlType) = @_;
+
+    assert("Not a type") if ref($idlType) ne "domType";
 
     return "JS" . _implementationClassName($idlType);
 }
@@ -142,7 +157,7 @@ sub _generateHeaderFile
 
     my @contents = ();
 
-    my $idlType = $interface->name;
+    my $idlType = $interface->type;
     my $className = _className($idlType);
     my $implementationClassName = _implementationClassName($idlType);
     my $filename = $className . ".h";
@@ -209,7 +224,7 @@ sub _generateImplementationFile
     my %contentsIncludes = ();
     my @contents = ();
 
-    my $idlType = $interface->name;
+    my $idlType = $interface->type;
     my $className = _className($idlType);
     my $implementationClassName = _implementationClassName($idlType);
     my $filename = $className . ".cpp";
@@ -244,7 +259,7 @@ JSClassRef ${className}::${classRefGetter}()
     static JSClassRef jsClass;
     if (!jsClass) {
         JSClassDefinition definition = kJSClassDefinitionEmpty;
-        definition.className = "${idlType}";
+        definition.className = "@{[$idlType->name]}";
         definition.parentClass = @{[$self->_parentClassRefGetterExpression($interface)]};
         definition.staticValues = staticValues();
         definition.staticFunctions = staticFunctions();
@@ -284,7 +299,7 @@ EOF
                 my @parameters = ();
                 my @specifiedParameters = @{$function->parameters};
 
-                $self->_includeHeaders(\%contentsIncludes, $function->signature->type, $function->signature);
+                $self->_includeHeaders(\%contentsIncludes, $function->signature->idlType, $function->signature);
 
                 if ($function->signature->extendedAttributes->{"PassContext"}) {
                     push(@parameters, "context");
@@ -303,7 +318,7 @@ EOF
                 $functionCall = "impl->" . $function->signature->name . "(" . join(", ", @parameters) . ")";
             }
             
-            push(@contents, "    ${functionCall};\n\n") if $function->signature->type eq "void";
+            push(@contents, "    ${functionCall};\n\n") if $function->signature->idlType->name eq "void";
             push(@contents, "    return " . $self->_returnExpression($function->signature, $functionCall) . ";\n}\n");
         }
     }
@@ -311,7 +326,7 @@ EOF
     if (my @attributes = @{$interface->attributes}) {
         push(@contents, "\n// Attributes\n");
         foreach my $attribute (@attributes) {
-            $self->_includeHeaders(\%contentsIncludes, $attribute->signature->type, $attribute->signature);
+            $self->_includeHeaders(\%contentsIncludes, $attribute->signature->idlType, $attribute->signature);
 
             my $getterName = $self->_getterName($attribute);
             my $getterExpression = "impl->${getterName}()";
@@ -368,10 +383,7 @@ sub _getterName
 {
     my ($self, $attribute) = @_;
 
-    my $signature = $attribute->signature;
-    my $name = $signature->name;
-
-    return $name;
+    return $attribute->signature->name;
 }
 
 sub _includeHeaders
@@ -379,8 +391,8 @@ sub _includeHeaders
     my ($self, $headers, $idlType, $signature) = @_;
 
     return unless defined $idlType;
-    return if $idlType eq "boolean";
-    return if $idlType eq "object";
+    return if $idlType->name eq "boolean";
+    return if $idlType->name eq "object";
     return if $$self{codeGenerator}->IsNonPointerType($idlType);
     return if $$self{codeGenerator}->IsStringType($idlType);
 
@@ -392,7 +404,7 @@ sub _implementationClassName
 {
     my ($idlType) = @_;
 
-    return $idlType;
+    return $idlType->name;
 }
 
 sub _parentClassName
@@ -414,7 +426,7 @@ sub _parentClassRefGetterExpression
 sub _parentInterface
 {
     my ($interface) = @_;
-    return $interface->parent;
+    return $interface->parentType;
 }
 
 sub _platformType
@@ -423,8 +435,8 @@ sub _platformType
 
     return undef unless defined $idlType;
 
-    return "bool" if $idlType eq "boolean";
-    return "JSValueRef" if $idlType eq "object";
+    return "bool" if $idlType->name eq "boolean";
+    return "JSValueRef" if $idlType->name eq "object";
     return "JSRetainPtr<JSStringRef>" if $$self{codeGenerator}->IsStringType($idlType);
     return "double" if $$self{codeGenerator}->IsNonPointerType($idlType);
     return _implementationClassName($idlType);
@@ -434,10 +446,10 @@ sub _platformTypeConstructor
 {
     my ($self, $signature, $argumentName) = @_;
 
-    my $idlType = $signature->type;
+    my $idlType = $signature->idlType;
 
-    return "JSValueToBoolean(context, $argumentName)" if $idlType eq "boolean";
-    return "$argumentName" if $idlType eq "object";
+    return "JSValueToBoolean(context, $argumentName)" if $idlType->name eq "boolean";
+    return "$argumentName" if $idlType->name eq "object";
     return "JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, $argumentName, 0))" if $$self{codeGenerator}->IsStringType($idlType);
     return "JSValueToNumber(context, $argumentName, 0)" if $$self{codeGenerator}->IsNonPointerType($idlType);
     return "to" . _implementationClassName($idlType) . "(context, $argumentName)";
@@ -447,7 +459,7 @@ sub _platformTypeVariableDeclaration
 {
     my ($self, $signature, $variableName, $argumentName, $condition) = @_;
 
-    my $platformType = $self->_platformType($signature->type, $signature);
+    my $platformType = $self->_platformType($signature->idlType, $signature);
     my $constructor = $self->_platformTypeConstructor($signature, $argumentName);
 
     my %nonPointerTypes = (
@@ -475,11 +487,11 @@ sub _returnExpression
 {
     my ($self, $signature, $expression) = @_;
 
-    my $returnIDLType = $signature->type;
+    my $returnIDLType = $signature->idlType;
 
-    return "JSValueMakeUndefined(context)" if $returnIDLType eq "void";
-    return "JSValueMakeBoolean(context, ${expression})" if $returnIDLType eq "boolean";
-    return "${expression}" if $returnIDLType eq "object";
+    return "JSValueMakeUndefined(context)" if $returnIDLType->name eq "void";
+    return "JSValueMakeBoolean(context, ${expression})" if $returnIDLType->name eq "boolean";
+    return "${expression}" if $returnIDLType->name eq "object";
     return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsNonPointerType($returnIDLType);
     return "JSValueMakeStringOrNull(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnIDLType);
     return "toJS(context, WTF::getPtr(${expression}))";
@@ -489,7 +501,7 @@ sub _parameterExpression
 {
     my ($self, $parameter) = @_;
 
-    my $idlType = $parameter->type;
+    my $idlType = $parameter->idlType;
     my $name = $parameter->name;
 
     return "${name}.get()" if $$self{codeGenerator}->IsStringType($idlType);
@@ -524,7 +536,7 @@ sub _staticFunctionsOrValuesGetterImplementation
 {
     my ($self, $interface, $functionOrValue, $arrayTerminator, $mapFunction, $functionsOrAttributes) = @_;
 
-    my $className = _className($interface->name);
+    my $className = _className($interface->type);
     my $uppercaseFunctionOrValue = $$self{codeGenerator}->WK_ucfirst($functionOrValue);
 
     my $result = <<EOF;

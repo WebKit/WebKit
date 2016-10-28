@@ -29,7 +29,6 @@
 #include "JSTestCallback.h"
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
-#include "SVGPoint.h"
 #include "SerializedScriptValue.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>

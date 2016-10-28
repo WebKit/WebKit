@@ -1,3 +1,56 @@
+2016-10-27  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move code generators off of domSignature::type and onto domSignature::idlType
+        https://bugs.webkit.org/show_bug.cgi?id=164089
+
+        Reviewed by Alex Christensen.
+
+        Make more IDLParser structures contain domTypes for type descriptions, rather than strings:
+        - domInterface gains type and parentType.
+        - domConstant gains type.
+        - domEnum gains type.
+        - domDictionary gains type and parentType.
+
+        With these structs now containing domTypes, we can update the CodeGenerators to operate on
+        domTypes exclusively, rather than types as strings. This allows us to consistently have access
+        to information such as subtypes and nullability.
+
+        * bindings/scripts/CodeGenerator.pm:
+        Update helpers to operate of domTypes. The one exception is SkipIncludeHeader, which
+        still operates on a type name, since it is called late in code generation on the textual
+        form of type names in the include list. 
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Update to use domTypes.
+
+        * bindings/scripts/IDLParser.pm:
+        - Add domType accessors to domInterface, domConstant, domEnum, and domDictionary
+          and populate them.
+        - Remove type accessors from domSignature (domType is accessible from idlType).
+        - Remove special cases for sequence and FrozenArray, now that they are always
+          accessed as domTypes.
+
+        * html/HTMLEmbedElement.idl:
+        * html/HTMLFrameElement.idl:
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::getSVGDocument):
+        * html/HTMLFrameOwnerElement.h:
+        * html/HTMLIFrameElement.idl:
+        * html/HTMLObjectElement.idl:
+        Fix interfaces declaring getSVGDocument() to correctly have it return
+        a Document, rather than an SVGDocument, which does exist anymore. To
+        make the bindings happy, also change the signature of HTMLFrameOwnerElement::getSVGDocument
+        to return a Document.
+
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        Update test results to remove some redundant headers (Already included JSFoo.h, so no need for Foo.h).
+
 2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [WebGL2] Temporarily upgrade WebGL 2's internal OpenGL context from version 2.1 to 3.2

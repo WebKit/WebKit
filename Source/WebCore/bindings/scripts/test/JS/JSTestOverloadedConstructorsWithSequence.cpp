@@ -27,6 +27,7 @@
 #include "JSDOMConvert.h"
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSArray.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

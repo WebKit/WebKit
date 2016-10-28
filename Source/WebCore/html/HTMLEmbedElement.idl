@@ -23,13 +23,13 @@
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall,
 ] interface HTMLEmbedElement : HTMLElement {
-[Reflect] attribute DOMString align;
-[Reflect] attribute DOMString height;
-[Reflect] attribute DOMString name;
-[Reflect, URL] attribute USVString src;
-[Reflect] attribute DOMString type;
-[Reflect] attribute DOMString width;
+    [Reflect] attribute DOMString align;
+    [Reflect] attribute DOMString height;
+    [Reflect] attribute DOMString name;
+    [Reflect, URL] attribute USVString src;
+    [Reflect] attribute DOMString type;
+    [Reflect] attribute DOMString width;
 
-[CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
 };
 

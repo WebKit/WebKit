@@ -50,6 +50,6 @@
     // Introduced in DOM Level 2:
     [CheckSecurityForNode] readonly attribute Document contentDocument;
 
-    [CheckSecurityForNode, MayThrowLegacyException] SVGDocument getSVGDocument();
+    [CheckSecurityForNode, MayThrowLegacyException] Document getSVGDocument();
 };
 
