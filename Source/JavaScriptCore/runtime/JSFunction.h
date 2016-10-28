@@ -192,7 +192,9 @@ private:
     void reifyLength(ExecState*);
     void reifyName(ExecState*);
     void reifyName(ExecState*, String name);
-    void reifyLazyPropertyIfNeeded(ExecState*, PropertyName propertyName);
+
+    enum class LazyPropertyType { NotLazyProperty, IsLazyProperty };
+    LazyPropertyType reifyLazyPropertyIfNeeded(ExecState*, PropertyName);
 
     friend class LLIntOffsetsExtractor;
 

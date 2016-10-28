@@ -193,6 +193,9 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(ExecState* exec, Struct
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
 
     baseValue.getPropertySlot(exec, ident, slot);
+    if (UNLIKELY(vm->exception()))
+        return encodedJSValue();
+
     if (stubInfo->considerCaching(baseValue.structureOrNull()) && !slot.isTaintedByProxy() && (slot.isCacheableValue() || slot.isCacheableGetter() || slot.isUnset()))
         repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Pure);
 
@@ -388,7 +391,9 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
 
     Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;
     baseValue.putInline(exec, ident, value, slot);
-    
+    if (UNLIKELY(vm->exception()))
+        return;
+
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     
@@ -413,7 +418,9 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
 
     Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;    
     baseValue.putInline(exec, ident, value, slot);
-    
+    if (UNLIKELY(vm->exception()))
+        return;
+
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
     

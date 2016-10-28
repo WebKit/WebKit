@@ -424,28 +424,31 @@ bool JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         return Base::put(thisObject, exec, propertyName, value, slot);
 
     if (propertyName == exec->propertyNames().prototype) {
+        slot.disableCaching();
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, slot);
+        PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+        thisObject->methodTable(exec->vm())->getOwnPropertySlot(thisObject, exec, propertyName, getSlot);
         if (thisObject->m_rareData)
             thisObject->m_rareData->clear("Store to prototype property of a function");
-        // Don't allow this to be cached, since a [[Put]] must clear m_rareData.
-        PutPropertySlot dontCache(thisObject);
-        return Base::put(thisObject, exec, propertyName, value, dontCache);
+        return Base::put(thisObject, exec, propertyName, value, slot);
     }
     if (thisObject->jsExecutable()->isStrictMode() && (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller)) {
+        slot.disableCaching();
         // This will trigger the property to be reified, if this is not already the case!
         bool okay = thisObject->hasProperty(exec, propertyName);
         ASSERT_UNUSED(okay, okay);
         return Base::put(thisObject, exec, propertyName, value, slot);
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().caller) {
+        slot.disableCaching();
         if (slot.isStrictMode())
             throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return false;
     }
-    thisObject->reifyLazyPropertyIfNeeded(exec, propertyName);
+    LazyPropertyType propType = thisObject->reifyLazyPropertyIfNeeded(exec, propertyName);
+    if (propType == LazyPropertyType::IsLazyProperty)
+        slot.disableCaching();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -636,15 +639,18 @@ void JSFunction::reifyName(ExecState* exec, String name)
     rareData->setHasReifiedName();
 }
 
-void JSFunction::reifyLazyPropertyIfNeeded(ExecState* exec, PropertyName propertyName)
+JSFunction::LazyPropertyType JSFunction::reifyLazyPropertyIfNeeded(ExecState* exec, PropertyName propertyName)
 {
     if (propertyName == exec->propertyNames().length) {
         if (!hasReifiedLength())
             reifyLength(exec);
+        return LazyPropertyType::IsLazyProperty;
     } else if (propertyName == exec->propertyNames().name) {
         if (!hasReifiedName())
             reifyName(exec);
+        return LazyPropertyType::IsLazyProperty;
     }
+    return LazyPropertyType::NotLazyProperty;
 }
 
 } // namespace JSC
