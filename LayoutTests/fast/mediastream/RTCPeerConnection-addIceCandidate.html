@@ -25,8 +25,8 @@
                 finishJSTest();
             }
 
-            const pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            const remotePc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const remotePc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             debug("<br>*** A remote description is needed before a candidate can be added");
             shouldBe("pc.remoteDescription", "null");

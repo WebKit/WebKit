@@ -2824,3 +2824,6 @@ webkit.org/b/164022 media/media-source [ Skip ]
 
 # Skip media test for a while because EFL layout test has been blocked.
 media [ Skip ]
+
+# webrtc not supported
+imported/w3c/web-platform-tests/webrtc [ Skip ]

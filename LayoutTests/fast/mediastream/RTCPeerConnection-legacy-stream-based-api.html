@@ -22,8 +22,8 @@
                 finishJSTest();
             }
 
-            const pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            const remotePc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const remotePc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             debug("Stream sets should be empty initially")
             shouldBe("pc.getLocalStreams().length", "0");

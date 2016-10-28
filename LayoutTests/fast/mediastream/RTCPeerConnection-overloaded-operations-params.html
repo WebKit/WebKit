@@ -15,7 +15,7 @@
 
             description("Test various arguments to RTCPeerConnection overloaded functions");
 
-            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
 
             function testCreateOfferOrAnswer(functionName) {
                 return new Promise(function (resolve) {

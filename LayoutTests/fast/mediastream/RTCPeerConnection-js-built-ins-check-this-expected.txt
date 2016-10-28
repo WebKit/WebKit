@@ -3,12 +3,12 @@ Verify that the RTCPeerConnection JS built-in methods check calling 'this'
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS promise webkitRTCPeerConnection.prototype.createOffer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise webkitRTCPeerConnection.prototype.createAnswer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise webkitRTCPeerConnection.prototype.setLocalDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise webkitRTCPeerConnection.prototype.setRemoteDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise webkitRTCPeerConnection.prototype.addIceCandidate.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
-PASS promise webkitRTCPeerConnection.prototype.getStats.call({}, null) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.createOffer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.createAnswer.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.setLocalDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.setRemoteDescription.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.addIceCandidate.call({}) rejected with TypeError: Function should be called on an RTCPeerConnection
+PASS promise RTCPeerConnection.prototype.getStats.call({}, null) rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.createOffer() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.createAnswer() rejected with TypeError: Function should be called on an RTCPeerConnection
 PASS promise objectWithPcPrototype.setLocalDescription() rejected with TypeError: Function should be called on an RTCPeerConnection

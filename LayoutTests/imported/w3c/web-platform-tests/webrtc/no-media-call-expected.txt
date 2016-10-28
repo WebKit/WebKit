@@ -1,0 +1,5 @@
+
+FAIL Can set up a basic WebRTC call with no data. RTCPeerConnection argument must be a valid Dictionary
+iceConnectionState info
+
+

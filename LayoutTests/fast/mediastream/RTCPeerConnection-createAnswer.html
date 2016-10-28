@@ -84,7 +84,7 @@
                 shouldThrow('pc.createAnswer(requestSucceeded2, requestFailed2, {});');
             }
 
-            pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
             shouldNotThrow('pc.createAnswer(requestSucceeded1, requestFailed1);');
 
             window.jsTestIsAsync = true;

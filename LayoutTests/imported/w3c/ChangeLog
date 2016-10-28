@@ -1,5 +1,19 @@
 2016-10-28  Youenn Fablet  <youenn@apple.com>
 
+        Expose RTCPeerConnection unprefixed
+        https://bugs.webkit.org/show_bug.cgi?id=164060
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt: Added.
+        * web-platform-tests/webrtc/no-media-call-expected.txt: Added.
+        * web-platform-tests/webrtc/promises-call-expected.txt: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-constructor-expected.txt: Added.
+        * web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl-expected.txt: Added.
+        * web-platform-tests/webrtc/simplecall-expected.txt: Added.
+
+2016-10-28  Youenn Fablet  <youenn@apple.com>
+
         [Fetch] Ensure redirection count is no more than 20 in case of cross origin requests
         https://bugs.webkit.org/show_bug.cgi?id=164117
 

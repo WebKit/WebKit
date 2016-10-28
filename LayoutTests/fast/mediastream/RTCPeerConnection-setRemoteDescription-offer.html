@@ -27,8 +27,8 @@
                 finishJSTest();
             }
 
-            var pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            var remotePc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var remotePc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             function testRemoteTrack(evt, mediaType) {
                 trackEvent = evt;

@@ -977,7 +977,5 @@ webkit.org/b/163636 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/163887 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass Crash ]
 
-imported/w3c/web-platform-tests/webrtc [ Skip ]
-
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]

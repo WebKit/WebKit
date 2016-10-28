@@ -11,15 +11,15 @@
             const reason = "TypeError: Function should be called on an RTCPeerConnection";
 
             function Foo() {}
-            Foo.prototype = webkitRTCPeerConnection.prototype;
+            Foo.prototype = RTCPeerConnection.prototype;
             let objectWithPcPrototype = new Foo();
 
-            promiseShouldReject("webkitRTCPeerConnection.prototype.createOffer.call({})", "reason")
-            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.createAnswer.call({})", "reason"))
-            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.setLocalDescription.call({})", "reason"))
-            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.setRemoteDescription.call({})", "reason"))
-            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.addIceCandidate.call({})", "reason"))
-            .then(() => promiseShouldReject("webkitRTCPeerConnection.prototype.getStats.call({}, null)", "reason"))
+            promiseShouldReject("RTCPeerConnection.prototype.createOffer.call({})", "reason")
+            .then(() => promiseShouldReject("RTCPeerConnection.prototype.createAnswer.call({})", "reason"))
+            .then(() => promiseShouldReject("RTCPeerConnection.prototype.setLocalDescription.call({})", "reason"))
+            .then(() => promiseShouldReject("RTCPeerConnection.prototype.setRemoteDescription.call({})", "reason"))
+            .then(() => promiseShouldReject("RTCPeerConnection.prototype.addIceCandidate.call({})", "reason"))
+            .then(() => promiseShouldReject("RTCPeerConnection.prototype.getStats.call({}, null)", "reason"))
 
             .then(() => promiseShouldReject("objectWithPcPrototype.createOffer()", "reason"))
             .then(() => promiseShouldReject("objectWithPcPrototype.createAnswer()", "reason"))

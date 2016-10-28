@@ -3,7 +3,7 @@ Test calling RTCPeerConnection functions/attributes in closed state
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
+PASS pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]}); did not throw exception.
 PASS pc.signalingState is "stable"
 Get a sender before closing (to test removeTrack later)
 PASS sender = pc.addTrack(stream.getTracks()[0], stream) did not throw exception.

@@ -19,8 +19,8 @@
                 finishJSTest();
             }
 
-            const pcA = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
-            const pcB = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pcA = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pcB = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             pcA.ontrack = function (evt) {
                 testPassed("A: got remote track event");

@@ -68,7 +68,7 @@
                 shouldBe('stream.getAudioTracks().length', '1');
                 shouldBe('stream.getVideoTracks().length', '0');
 
-                pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+                pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 pc.oniceconnectionstatechange = pc_onicechange;
             }
 

@@ -19,7 +19,7 @@
             }
 
             debug("Create RTCPeerConnection A");
-            const pcA = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pcA = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             shouldBe("pcA.signalingState", "'stable'");
             shouldBeNull("pcA.pendingLocalDescription");
@@ -28,7 +28,7 @@
             shouldBeNull("pcA.currentRemoteDescription");
 
             debug("<br>Create RTCPeerConnection B");
-            const pcB = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            const pcB = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             shouldBe("pcB.signalingState", "'stable'");
             shouldBeNull("pcB.pendingLocalDescription");

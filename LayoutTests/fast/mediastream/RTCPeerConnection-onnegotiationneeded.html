@@ -40,7 +40,7 @@
                 testPassed('Got a stream.');
                 stream = s;
 
-                pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+                pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
                 pc.onnegotiationneeded = onNegotiationNeeded;
 
                 audioSender = pc.addTrack(stream.getAudioTracks()[0], stream);

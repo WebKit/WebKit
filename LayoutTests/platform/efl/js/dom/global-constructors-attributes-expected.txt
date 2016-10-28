@@ -1043,6 +1043,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCIceCandidate').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').value is RTCPeerConnection
+PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'RTCPeerConnection').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'RTCRtpReceiver').value is RTCRtpReceiver
 PASS Object.getOwnPropertyDescriptor(global, 'RTCRtpReceiver').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'RTCRtpReceiver').hasOwnProperty('set') is false
@@ -2213,11 +2218,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').hasOwn
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'webkitRTCPeerConnection').value is webkitRTCPeerConnection
-PASS Object.getOwnPropertyDescriptor(global, 'webkitRTCPeerConnection').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitRTCPeerConnection').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitRTCPeerConnection').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitRTCPeerConnection').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'webkitURL').value is webkitURL
 PASS Object.getOwnPropertyDescriptor(global, 'webkitURL').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitURL').hasOwnProperty('set') is false

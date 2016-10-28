@@ -22,7 +22,7 @@
                 finishJSTest();
             }
 
-            var pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
+            var pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});
 
             navigator.mediaDevices.getUserMedia({ "audio": true, "video": true })
             .then(function (s) {

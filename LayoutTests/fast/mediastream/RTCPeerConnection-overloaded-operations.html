@@ -12,7 +12,7 @@
 
             description("Test which overloaded RTCPeerConnection function that gets invoked (by return value)");
 
-            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
 
             // Test createOffer/Answer()
             testCreateOfferOrAnswer("createOffer");

@@ -18,7 +18,7 @@
             var stream;
             var sender;
 
-            shouldNotThrow("pc = new webkitRTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
+            shouldNotThrow("pc = new RTCPeerConnection({iceServers:[{urls:'stun:foo.com'}]});");
             shouldBeEqualToString('pc.signalingState', 'stable');
 
             var desc = new RTCSessionDescription({ "type": "offer" });

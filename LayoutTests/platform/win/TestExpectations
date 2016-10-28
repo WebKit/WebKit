@@ -3625,3 +3625,6 @@ webkit.org/b/162415 imported/w3c/web-platform-tests/html/syntax [ Skip ]
 
 # Only Mac has implemented DictionaryLookup
 fast/layers/prevent-hit-test-during-layout.html [ Skip ]
+
+# webrtc not supported
+imported/w3c/web-platform-tests/webrtc [ Skip ]

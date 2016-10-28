@@ -1,3 +1,14 @@
+2016-10-28  Youenn Fablet  <youenn@apple.com>
+
+        Expose RTCPeerConnection unprefixed
+        https://bugs.webkit.org/show_bug.cgi?id=164060
+
+        Reviewed by Darin Adler.
+
+        Covered by rebased and activated tests.
+
+        * Modules/mediastream/RTCPeerConnection.idl:
+
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support the marquee properties
