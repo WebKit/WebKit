@@ -720,6 +720,13 @@ WebInspector.NativePrototypeFunctionParameters = {
         __proto__: null,
     },
 
+    CustomElementRegistry: {
+        define: "name, constructor",
+        get: "name",
+        whenDefined: "name",
+        __proto__: null,
+    },
+
     CustomEvent: {
         initCustomEvent: "[typeArg], [canBubbleArg], [cancelableArg], [detailArg]",
         __proto__: null,

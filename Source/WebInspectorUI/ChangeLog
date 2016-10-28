@@ -1,3 +1,12 @@
+2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include parameter strings for native CustomElementRegistry methods in the console
+        https://bugs.webkit.org/show_bug.cgi?id=164147
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+
 2016-10-28  Matt Baker  <mattbaker@apple.com>
 
         Unreviewed, worker document images added
