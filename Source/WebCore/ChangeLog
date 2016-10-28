@@ -1,3 +1,14 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Support initial-letter
+        https://bugs.webkit.org/show_bug.cgi?id=164150
+
+        Reviewed by Simon Fraser.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeInitialLetter):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+
 2016-10-28  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some unused code in RenderLayerCompositor::computeExtent()

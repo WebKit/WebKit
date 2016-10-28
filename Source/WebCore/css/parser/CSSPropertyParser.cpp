@@ -3125,6 +3125,27 @@ static RefPtr<CSSValue> consumeLineGrid(CSSParserTokenRange& range)
     return consumeCustomIdent(range);
 }
 
+static RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range)
+{
+    RefPtr<CSSValue> ident = consumeIdent<CSSValueNormal>(range);
+    if (ident)
+        return ident;
+    
+    RefPtr<CSSPrimitiveValue> height = consumeNumber(range, ValueRangeNonNegative);
+    if (!height)
+        return nullptr;
+    
+    RefPtr<CSSPrimitiveValue> position;
+    if (!range.atEnd()) {
+        position = consumeNumber(range, ValueRangeNonNegative);
+        if (!position || !range.atEnd())
+            return nullptr;
+    } else
+        position = height.copyRef();
+    
+    return createPrimitiveValuePair(position.releaseNonNull(), WTFMove(height));
+}
+
 static RefPtr<CSSValue> consumeWebkitMarqueeIncrement(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().type() == IdentToken)
@@ -3516,6 +3537,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
 #endif
     case CSSPropertyWebkitLineGrid:
         return consumeLineGrid(m_range);
+    case CSSPropertyWebkitInitialLetter:
+        return consumeInitialLetter(m_range);
     case CSSPropertyWebkitMarqueeIncrement:
         return consumeWebkitMarqueeIncrement(m_range, m_context.mode);
     case CSSPropertyWebkitMarqueeRepetition:
