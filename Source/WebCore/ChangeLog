@@ -1,3 +1,23 @@
+2016-10-28  Chris Dumez  <cdumez@apple.com>
+
+        DOMStringMap reports properties as non-enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=164114
+
+        Reviewed by Sam Weinig.
+
+        DOMStringMap's named properties should be configurable, enumerable
+        and writable as per:
+        - https://heycam.github.io/webidl/#getownproperty-guts (2.7-9)
+        - https://html.spec.whatwg.org/multipage/dom.html#domstringmap
+
+        Firefox and Chrome agree with the specification. However, WebKit
+        was doing the complete opposite.
+
+        No new tests, updated existing test.
+
+        * bindings/js/JSDOMStringMapCustom.cpp:
+        (WebCore::JSDOMStringMap::getOwnPropertySlotDelegate):
+
 2016-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CEReactions to the remaining HTML DOM APIs

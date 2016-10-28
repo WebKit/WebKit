@@ -44,7 +44,7 @@ bool JSDOMStringMap::getOwnPropertySlotDelegate(ExecState* exec, PropertyName pr
     bool nameIsValid;
     const AtomicString& item = wrapped().item(propertyNameToString(propertyName), nameIsValid);
     if (nameIsValid) {
-        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS<IDLDOMString>(*exec, item));
+        slot.setValue(this, 0, toJS<IDLDOMString>(*exec, item));
         return true;
     }
     return false;

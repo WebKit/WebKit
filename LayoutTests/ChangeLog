@@ -1,3 +1,15 @@
+2016-10-28  Chris Dumez  <cdumez@apple.com>
+
+        DOMStringMap reports properties as non-enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=164114
+
+        Reviewed by Sam Weinig.
+
+        Update existing test to reflect behavior change.
+
+        * fast/dom/dataset-name-getter-properties-expected.txt:
+        * fast/dom/dataset-name-getter-properties.html:
+
 2016-10-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CEReactions to the remaining HTML DOM APIs

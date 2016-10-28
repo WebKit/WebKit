@@ -7,9 +7,9 @@
 <script>
 description('Test the JavaScript property descriptor of the name getter.');
 
-shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').configurable", 'false');
-shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').enumerable", 'false');
-shouldBe("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').writable", 'false');
+shouldBeTrue("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').configurable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').enumerable");
+shouldBeTrue("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').writable");
 shouldBeEqualToString("Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').value", 'yes');
 
 </script>
