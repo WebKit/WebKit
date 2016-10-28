@@ -1,3 +1,22 @@
+2016-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        generate-bindings-all.pl should recompile supplemented IDL if its supplemental IDL are added or removed
+        https://bugs.webkit.org/show_bug.cgi?id=164054
+
+        Reviewed by Michael Catanzaro.
+
+        generate-bindings-all.pl determines which IDL to recompile by
+        comparing timestamps of generated files, source IDL and its
+        dependencies.  But this is not enough. If a new supplemental IDL
+        is added, its supplemented IDL needs to be recompiled even though
+        the timestamp of the supplemental IDL is older than the
+        generated files.
+
+        * bindings/scripts/generate-bindings-all.pl: Read supplemental
+        dependency file both before and after invoking preprocess-idls.pl.
+        Recompile IDL files if its supplemental dependencies are added or
+        removed.
+
 2016-10-28  Youenn Fablet  <youenn@apple.com>
 
         PeerMediaDescription does not need to be refcounted

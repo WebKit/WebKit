@@ -70,11 +70,13 @@ open(my $fh, '<', $idlFilesList) or die "Cannot open $idlFilesList";
 @idlFiles = map { CygwinPathIfNeeded(s/\r?\n?$//r) } <$fh>;
 close($fh) or die;
 
-my %supplementedIdlFiles;
+my %oldSupplements;
+my %newSupplements;
 if ($supplementalDependencyFile) {
     my @output = ($supplementalDependencyFile, @ppExtraOutput);
-    my @deps = (@idlFiles, @generatorDependency);
+    my @deps = ($idlFilesList, @idlFiles, @generatorDependency);
     if (needsUpdate(\@output, \@deps)) {
+        readSupplementalDependencyFile($supplementalDependencyFile, \%oldSupplements) if -e $supplementalDependencyFile;
         my @args = (File::Spec->catfile($scriptDir, 'preprocess-idls.pl'),
                     '--defines', $defines,
                     '--idlFilesList', $idlFilesList,
@@ -83,12 +85,7 @@ if ($supplementalDependencyFile) {
         print("Preprocess IDL\n");
         executeCommand($perl, @args) == 0 or die;
     }
-    open(my $fh, '<', $supplementalDependencyFile) or die "Cannot open $supplementalDependencyFile";
-    while (<$fh>) {
-        my ($idlFile, @followingIdlFiles) = split(/\s+/);
-        $supplementedIdlFiles{$idlFile} = \@followingIdlFiles;
-    }
-    close($fh) or die;
+    readSupplementalDependencyFile($supplementalDependencyFile, \%newSupplements);
 }
 
 my @args = (File::Spec->catfile($scriptDir, 'generate-bindings.pl'),
@@ -104,7 +101,12 @@ push @args, '--supplementalDependencyFile', $supplementalDependencyFile if $supp
 my %directoryCache;
 buildDirectoryCache();
 
-my @idlFilesToUpdate = grep {
+my @idlFilesToUpdate = grep &{sub {
+    if (defined($oldSupplements{$_})
+        && @{$oldSupplements{$_}} ne @{$newSupplements{$_} or []}) {
+        # Re-process the IDL file if its supplemental dependencies were added or removed
+        return 1;
+    }
     my ($filename, $dirs, $suffix) = fileparse($_, '.idl');
     my $sourceFile = File::Spec->catfile($outputDirectory, "JS$filename.cpp");
     my $headerFile = File::Spec->catfile($outputDirectory, "JS$filename.h");
@@ -113,10 +115,10 @@ my @idlFilesToUpdate = grep {
     my @deps = ($_,
                 $idlAttributesFile,
                 @generatorDependency,
-                @{$supplementedIdlFiles{$_} or []},
+                @{$newSupplements{$_} or []},
                 implicitDependencies($depFile));
     needsUpdate(\@output, \@deps);
-} @idlFiles;
+}}, @idlFiles;
 my $queue = Thread::Queue->new(@idlFilesToUpdate);
 my $abort :shared = 0;
 my $terminalWidth = getTerminalWidth();
@@ -233,4 +235,16 @@ sub getTerminalWidth
     return 0 unless -t STDOUT;
     return 80 if $^O eq 'MSWin32';
     return `stty size` =~ /\d+\s+(\d+)/ ? $1 : 80;
+}
+
+sub readSupplementalDependencyFile
+{
+    my $filename = shift;
+    my $supplements = shift;
+    open(my $fh, '<', $filename) or die "Cannot open $filename";
+    while (<$fh>) {
+        my ($idlFile, @followingIdlFiles) = split(/\s+/);
+        $supplements->{$idlFile} = [sort @followingIdlFiles];
+    }
+    close($fh) or die;
 }
