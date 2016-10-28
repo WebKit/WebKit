@@ -1,3 +1,121 @@
+2016-10-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] implement runtime for async functions
+        https://bugs.webkit.org/show_bug.cgi?id=163760
+
+        Reviewed by Yusuke Suzuki.
+
+        Async functions generate bytecode equivalent to the following, which is
+        highly dependent on the Generator implementation:
+        
+        ```
+        // Before translation:
+        async function asyncfn() {}
+
+        // After translation:
+        function asyncfn() {
+            let generator = {
+                @generatorNext: function(@generator, @generatorState, @generatorValue, @generatorResumeMode, @generatorFrameState) {
+                    // Body of async function
+                },
+                @generatorState: 0,
+                @generatorThis: this,
+                @generatorFrameState: <frame state>,
+            };
+            return @asyncFunctionResume(generator, undefined, GeneratorResumeMode::NormalMode);
+        }
+        ```
+
+        Await Expressions are equivalent to non-delegating Yield expressions, and emit identical bytecode.
+
+        There are some caveats to be addressed later:
+        
+        1) the `op_to_this` is always performed, whether it's used or not, like normal generators. (https://bugs.webkit.org/show_bug.cgi?id=151586)
+        
+        2) for async arrow functions, the home object is always stored on the "body" function, regardless of whether it's needed or
+        not, for the same reason as #1 (and should also be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=151586)
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/AsyncFunctionPrototype.js: Added.
+        (asyncFunctionResume):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::isArrowFunction):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionExpressionCommon):
+        (JSC::BytecodeGenerator::emitNewArrowFunctionExpression):
+        (JSC::BytecodeGenerator::emitNewFunction):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitNewFuncCommon):
+        (JSC::JIT::emit_op_new_async_func):
+        (JSC::JIT::emitNewFuncExprCommon):
+        (JSC::JIT::emit_op_new_async_func_exp):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::setSourceParseMode):
+        * parser/ParserModes.h:
+        (JSC::isGeneratorOrAsyncFunctionBodyParseMode):
+        (JSC::isGeneratorOrAsyncFunctionWrapperParseMode):
+        * runtime/AsyncFunctionConstructor.cpp: Added.
+        (JSC::AsyncFunctionConstructor::AsyncFunctionConstructor):
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        (JSC::callAsyncFunctionConstructor):
+        (JSC::constructAsyncFunctionConstructor):
+        (JSC::AsyncFunctionConstructor::getCallData):
+        (JSC::AsyncFunctionConstructor::getConstructData):
+        * runtime/AsyncFunctionConstructor.h: Added.
+        (JSC::AsyncFunctionConstructor::create):
+        (JSC::AsyncFunctionConstructor::createStructure):
+        * runtime/AsyncFunctionPrototype.cpp: Added.
+        (JSC::AsyncFunctionPrototype::AsyncFunctionPrototype):
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncFunctionPrototype.h: Added.
+        (JSC::AsyncFunctionPrototype::create):
+        (JSC::AsyncFunctionPrototype::createStructure):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSAsyncFunction.cpp: Added.
+        (JSC::JSAsyncFunction::JSAsyncFunction):
+        (JSC::JSAsyncFunction::createImpl):
+        (JSC::JSAsyncFunction::create):
+        (JSC::JSAsyncFunction::createWithInvalidatedReallocationWatchpoint):
+        * runtime/JSAsyncFunction.h: Added.
+        (JSC::JSAsyncFunction::allocationSize):
+        (JSC::JSAsyncFunction::createStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::lazyAsyncFunctionStructure):
+        (JSC::JSGlobalObject::asyncFunctionPrototype):
+        (JSC::JSGlobalObject::asyncFunctionPrototypeConcurrently):
+        (JSC::JSGlobalObject::asyncFunctionStructure):
+        (JSC::JSGlobalObject::asyncFunctionStructureConcurrently):
+
 2016-10-27  Mark Lam  <mark.lam@apple.com>
 
         JSFunction::put() should not allow caching of lazily reified properties.

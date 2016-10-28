@@ -245,7 +245,7 @@ public:
             break;
 
         case SourceParseMode::AsyncFunctionBodyMode:
-            setIsAsyncArrowFunctionBody();
+            setIsAsyncFunctionBody();
             break;
 
         case SourceParseMode::GeneratorBodyMode:
@@ -1098,7 +1098,7 @@ private:
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size() && m_scopeStack.size());
-        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isGeneratorBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
+        while (i && (!m_scopeStack[i].isFunctionBoundary() || m_scopeStack[i].isGeneratorBoundary() || m_scopeStack[i].isAsyncFunctionBoundary() || m_scopeStack[i].isArrowFunctionBoundary()))
             i--;
         // When reaching the top level scope (it can be non ordinary function scope), we return it.
         return ScopeRef(&m_scopeStack, i);

@@ -148,6 +148,32 @@ ALWAYS_INLINE bool isMethodParseMode(SourceParseMode parseMode)
         SourceParseMode::AsyncMethodMode).contains(parseMode);
 }
 
+ALWAYS_INLINE bool isGeneratorOrAsyncFunctionBodyParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::GeneratorBodyMode,
+        SourceParseMode::AsyncFunctionBodyMode,
+        SourceParseMode::AsyncArrowFunctionBodyMode).contains(parseMode);
+}
+
+ALWAYS_INLINE bool isGeneratorOrAsyncFunctionWrapperParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::GeneratorWrapperFunctionMode,
+        SourceParseMode::AsyncFunctionMode,
+        SourceParseMode::AsyncArrowFunctionMode,
+        SourceParseMode::AsyncMethodMode).contains(parseMode);
+}
+
+ALWAYS_INLINE bool isArrowFunctionParseMode(SourceParseMode parseMode)
+{
+    return SourceParseModeSet(
+        SourceParseMode::ArrowFunctionMode,
+        SourceParseMode::AsyncArrowFunctionMode,
+        SourceParseMode::AsyncArrowFunctionBodyMode).contains(parseMode);
+}
+
+
 ALWAYS_INLINE bool isModuleParseMode(SourceParseMode parseMode) 
 { 
     return SourceParseModeSet( 

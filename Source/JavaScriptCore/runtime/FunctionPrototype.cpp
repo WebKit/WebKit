@@ -26,6 +26,7 @@
 #include "Error.h"
 #include "GetterSetter.h"
 #include "JSArray.h"
+#include "JSAsyncFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSString.h"
@@ -103,6 +104,15 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState* exec)
         if (executable->isClass()) {
             StringView classSource = executable->classSource().view();
             return JSValue::encode(jsString(exec, classSource.toStringWithoutCopying()));
+        }
+
+        if (thisValue.inherits(JSAsyncFunction::info())) {
+            String functionHeader = executable->isArrowFunction() ? "async " : "async function ";
+
+            StringView source = executable->source().provider()->getRange(
+                executable->parametersStartOffset(),
+                executable->parametersStartOffset() + executable->source().length());
+            return JSValue::encode(jsMakeNontrivialString(exec, functionHeader, function->name(vm), source));
         }
 
         String functionHeader = executable->isArrowFunction() ? "" : "function ";

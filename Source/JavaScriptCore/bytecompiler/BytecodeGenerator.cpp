@@ -158,7 +158,7 @@ ParserError BytecodeGenerator::generate()
     }
     
 
-    if (m_codeBlock->parseMode() == SourceParseMode::GeneratorBodyMode)
+    if (isGeneratorOrAsyncFunctionBodyParseMode(m_codeBlock->parseMode()))
         performGeneratorification(m_codeBlock.get(), m_instructions, m_generatorFrameSymbolTable.get(), m_generatorFrameSymbolTableIndex);
 
     m_codeBlock->setInstructions(std::make_unique<UnlinkedInstructionStream>(m_instructions));
@@ -268,15 +268,15 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     bool shouldCaptureAllOfTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
     bool needsArguments = (functionNode->usesArguments() || codeBlock->usesEval() || (functionNode->usesArrowFunction() && !codeBlock->isArrowFunction() && isArgumentsUsedInInnerArrowFunction()));
 
-    if (parseMode == SourceParseMode::GeneratorBodyMode) {
-        // Generator never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
+        // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
         needsArguments = false;
 
-        // Generator uses the var scope to save and resume its variables. So the lexical scope is always instantiated.
+        // Generator and AsyncFunction uses the var scope to save and resume its variables. So the lexical scope is always instantiated.
         shouldCaptureSomeOfTheThings = true;
     }
 
-    if (parseMode == SourceParseMode::GeneratorWrapperFunctionMode && needsArguments) {
+    if (isGeneratorOrAsyncFunctionWrapperParseMode(parseMode) && needsArguments) {
         // Generator does not provide "arguments". Instead, wrapping GeneratorFunction provides "arguments".
         // This is because arguments of a generator should be evaluated before starting it.
         // To workaround it, we evaluate these arguments as arguments of a wrapping generator function, and reference it from a generator.
@@ -320,13 +320,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     emitEnter();
 
-    if (parseMode == SourceParseMode::GeneratorBodyMode)
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
         m_generatorRegister = &m_parameters[1];
 
     allocateAndEmitScope();
 
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())) {
         ASSERT(parseMode != SourceParseMode::GeneratorBodyMode);
+        ASSERT(!isAsyncFunctionBodyParseMode(parseMode));
         bool isDynamicScope = functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode());
         bool isFunctionNameCaptured = captures(functionNode->ident().impl());
         bool markAsCaptured = isDynamicScope || isFunctionNameCaptured;
@@ -505,7 +506,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             }
         }
 
-        bool shouldCreateArgumensVariable = !haveParameterNamedArguments && !m_codeBlock->isArrowFunction();
+        bool shouldCreateArgumensVariable = !haveParameterNamedArguments
+            && !SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(m_codeBlock->parseMode());
         shouldCreateArgumentsVariableInParameterScope = shouldCreateArgumensVariable && !isSimpleParameterList;
         // Do not create arguments variable in case of Arrow function. Value will be loaded from parent scope
         if (shouldCreateArgumensVariable && !shouldCreateArgumentsVariableInParameterScope) {
@@ -549,6 +551,29 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         break;
     }
 
+    case SourceParseMode::AsyncArrowFunctionMode:
+    case SourceParseMode::AsyncMethodMode:
+    case SourceParseMode::AsyncFunctionMode: {
+        ASSERT(!isConstructor());
+        ASSERT(constructorKind() == ConstructorKind::None);
+        m_generatorRegister = addVar();
+
+        if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
+            // FIXME: Emit to_this only when AsyncFunctionBody uses it.
+            // https://bugs.webkit.org/show_bug.cgi?id=151586
+            m_codeBlock->addPropertyAccessInstruction(instructions().size());
+            emitOpcode(op_to_this);
+            instructions().append(kill(&m_thisRegister));
+            instructions().append(0);
+            instructions().append(0);
+        }
+
+        emitNewObject(m_generatorRegister);
+        break;
+    }
+
+    case SourceParseMode::AsyncFunctionBodyMode:
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
     case SourceParseMode::GeneratorBodyMode: {
         // |this| is already filled correctly before here.
         emitLoad(m_newTargetRegister, jsUndefined());
@@ -608,7 +633,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     // We need load |super| & |this| for arrow function before initializeDefaultParameterValuesAndSetupFunctionScopeStack
     // if we have default parameter expression. Because |super| & |this| values can be used there
-    if (SourceParseMode::ArrowFunctionMode == parseMode && !isSimpleParameterList) {
+    if ((SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && !isSimpleParameterList) || parseMode == SourceParseMode::AsyncArrowFunctionBodyMode) {
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
 
@@ -627,12 +652,46 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // All "addVar()"s needs to happen before "initializeDefaultParameterValuesAndSetupFunctionScopeStack()" is called
     // because a function's default parameter ExpressionNodes will use temporary registers.
     pushTDZVariables(*parentScopeTDZVariables, TDZCheckOptimization::DoNotOptimize, TDZRequirement::UnderTDZ);
+
+    TryData* tryFormalParametersData = nullptr;
+    if (isAsyncFunctionWrapperParseMode(parseMode) && !isSimpleParameterList) {
+        RefPtr<Label> tryFormalParametersStart = emitLabel(newLabel().get());
+        tryFormalParametersData = pushTry(tryFormalParametersStart.get());
+    }
+
     initializeDefaultParameterValuesAndSetupFunctionScopeStack(parameters, isSimpleParameterList, functionNode, functionSymbolTable, symbolTableConstantIndex, captures, shouldCreateArgumentsVariableInParameterScope);
-    
+
+    if (isAsyncFunctionWrapperParseMode(parseMode) && !isSimpleParameterList) {
+        RefPtr<Label> didNotThrow = newLabel();
+        emitJump(didNotThrow.get());
+        RefPtr<RegisterID> exception = newTemporary();
+        RefPtr<RegisterID> thrownValue = newTemporary();
+        RefPtr<Label> catchHere = emitLabel(newLabel().get());
+        popTryAndEmitCatch(tryFormalParametersData, exception.get(), thrownValue.get(), catchHere.get(), HandlerType::Catch);
+
+        // return @Promise.@reject(thrownValue);
+        Variable promiseVar = variable(m_vm->propertyNames->builtinNames().PromisePrivateName());
+        RefPtr<RegisterID> scope = emitResolveScope(newTemporary(), promiseVar);
+        RefPtr<RegisterID> promiseConstructor = emitGetFromScope(newTemporary(), scope.get(), promiseVar, ResolveMode::ThrowIfNotFound);
+        RefPtr<RegisterID> promiseReject = emitGetById(newTemporary(), promiseConstructor.get(), m_vm->propertyNames->builtinNames().rejectPrivateName());
+
+        CallArguments args(*this, nullptr, 1);
+
+        emitMove(args.thisRegister(), promiseConstructor.get());
+        emitMove(args.argumentRegister(0), thrownValue.get());
+
+        JSTextPosition divot(functionNode->firstLine(), functionNode->startOffset(), functionNode->lineStartOffset());
+
+        RefPtr<RegisterID> result = emitCall(newTemporary(), promiseReject.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+        emitReturn(result.get());
+
+        emitLabel(didNotThrow.get());
+    }
+
     // If we don't have  default parameter expression, then loading |this| inside an arrow function must be done
     // after initializeDefaultParameterValuesAndSetupFunctionScopeStack() because that function sets up the
     // SymbolTable stack and emitLoadThisFromArrowFunctionLexicalEnvironment() consults the SymbolTable stack
-    if (SourceParseMode::ArrowFunctionMode == parseMode && isSimpleParameterList) {
+    if (SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(parseMode) && isSimpleParameterList) {
         if (functionNode->usesThis() || functionNode->usesSuperProperty())
             emitLoadThisFromArrowFunctionLexicalEnvironment();
     
@@ -642,7 +701,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     // Set up the lexical environment scope as the generator frame. We store the saved and resumed generator registers into this scope with the symbol keys.
     // Since they are symbol keyed, these variables cannot be reached from the usual code.
-    if (SourceParseMode::GeneratorBodyMode == parseMode) {
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         ASSERT(m_lexicalEnvironmentRegister);
         m_generatorFrameSymbolTable.set(*m_vm, functionSymbolTable);
         m_generatorFrameSymbolTableIndex = symbolTableConstantIndex;
@@ -2644,6 +2703,21 @@ void BytecodeGenerator::emitPutSetterByVal(RegisterID* base, RegisterID* propert
     instructions().append(setter->index());
 }
 
+void BytecodeGenerator::emitPutGeneratorFields(RegisterID* nextFunction)
+{
+    // FIXME: Currently, we just create an object and store generator related fields as its properties for ease.
+    // But to make it efficient, we will introduce JSGenerator class, add opcode new_generator and use its C++ fields instead of these private properties.
+    // https://bugs.webkit.org/show_bug.cgi?id=151545
+
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorNextPrivateName(), nextFunction, PropertyNode::KnownDirect);
+
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorThisPrivateName(), &m_thisRegister, PropertyNode::KnownDirect);
+
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorStatePrivateName(), emitLoad(nullptr, jsNumber(0)), PropertyNode::KnownDirect);
+
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorFramePrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
+}
+
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
     emitOpcode(op_del_by_id);
@@ -2986,6 +3060,11 @@ void BytecodeGenerator::emitNewFunctionExpressionCommon(RegisterID* dst, Functio
     case SourceParseMode::GeneratorWrapperFunctionMode:
         opcodeID = op_new_generator_func_exp;
         break;
+    case SourceParseMode::AsyncFunctionMode:
+    case SourceParseMode::AsyncMethodMode:
+    case SourceParseMode::AsyncArrowFunctionMode:
+        opcodeID = op_new_async_func_exp;
+        break;
     default:
         break;
     }
@@ -3004,7 +3083,7 @@ RegisterID* BytecodeGenerator::emitNewFunctionExpression(RegisterID* dst, FuncEx
 
 RegisterID* BytecodeGenerator::emitNewArrowFunctionExpression(RegisterID* dst, ArrowFuncExprNode* func)
 {
-    ASSERT(func->metadata()->parseMode() == SourceParseMode::ArrowFunctionMode || func->metadata()->parseMode() == SourceParseMode::AsyncArrowFunctionMode);
+    ASSERT(SourceParseModeSet(SourceParseMode::ArrowFunctionMode, SourceParseMode::AsyncArrowFunctionMode).contains(func->metadata()->parseMode()));
     emitNewFunctionExpressionCommon(dst, func->metadata());
     return dst;
 }
@@ -3038,6 +3117,8 @@ RegisterID* BytecodeGenerator::emitNewFunction(RegisterID* dst, FunctionMetadata
     unsigned index = m_codeBlock->addFunctionDecl(makeFunction(function));
     if (function->parseMode() == SourceParseMode::GeneratorWrapperFunctionMode)
         emitOpcode(op_new_generator_func);
+    else if (function->parseMode() == SourceParseMode::AsyncFunctionMode)
+        emitOpcode(op_new_async_func);
     else
         emitOpcode(op_new_func);
     instructions().append(dst->index());

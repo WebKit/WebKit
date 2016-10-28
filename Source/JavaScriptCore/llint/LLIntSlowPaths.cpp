@@ -41,6 +41,7 @@
 #include "JIT.h"
 #include "JITExceptions.h"
 #include "JITWorklist.h"
+#include "JSAsyncFunction.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"
 #include "JSGeneratorFunction.h"
@@ -1149,6 +1150,17 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
     LLINT_RETURN(JSGeneratorFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
+{
+    LLINT_BEGIN();
+    CodeBlock* codeBlock = exec->codeBlock();
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+#if LLINT_SLOW_PATH_TRACING
+    dataLogF("Creating async function!\n");
+#endif
+    LLINT_RETURN(JSAsyncFunction::create(vm, codeBlock->functionDecl(pc[3].u.operand), scope));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
 {
     LLINT_BEGIN();
@@ -1169,6 +1181,17 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func_exp)
     FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
 
     LLINT_RETURN(JSGeneratorFunction::create(vm, executable, scope));
+}
+
+LLINT_SLOW_PATH_DECL(slow_path_new_async_func_exp)
+{
+    LLINT_BEGIN();
+    
+    CodeBlock* codeBlock = exec->codeBlock();
+    JSScope* scope = exec->uncheckedR(pc[2].u.operand).Register::scope();
+    FunctionExecutable* executable = codeBlock->functionExpr(pc[3].u.operand);
+    
+    LLINT_RETURN(JSAsyncFunction::create(vm, executable, scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_set_function_name)

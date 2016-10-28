@@ -261,7 +261,7 @@ String Parser<LexerType>::parseInner(const Identifier& calleeName, SourceParseMo
     bool isArrowFunctionBodyExpression = parseMode == SourceParseMode::AsyncArrowFunctionBodyMode && !match(OPENBRACE);
     if (m_lexer->isReparsingFunction()) {
         ParserFunctionInfo<ASTBuilder> functionInfo;
-        if (SourceParseModeSet(SourceParseMode::GeneratorBodyMode).contains(parseMode) || isAsyncFunctionBodyParseMode(parseMode))
+        if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
             m_parameters = createGeneratorParameters(context, functionInfo.parameterCount);
         else
             m_parameters = parseFunctionParameters(context, parseMode, functionInfo);
@@ -568,11 +568,18 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseAsyncFun
     {
         AutoPopScopeRef asyncFunctionBodyScope(this, pushScope());
         asyncFunctionBodyScope->setSourceParseMode(innerParseMode);
-        SyntaxChecker asyncFunctionContext(const_cast<VM*>(m_vm), m_lexer.get());
-        if (isArrowFunctionBodyExpression)
-            failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(asyncFunctionContext), "Cannot parse the body of async arrow function");
-        else
-            failIfFalse(parseSourceElements(asyncFunctionContext, mode), "Cannot parse the body of async function");
+        SyntaxChecker syntaxChecker(const_cast<VM*>(m_vm), m_lexer.get());
+        if (isArrowFunctionBodyExpression) {
+            if (m_debuggerParseData)
+                failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(context), "Cannot parse the body of async arrow function");
+            else
+                failIfFalse(parseArrowFunctionSingleExpressionBodySourceElements(syntaxChecker), "Cannot parse the body of async arrow function");
+        } else {
+            if (m_debuggerParseData)
+                failIfFalse(parseSourceElements(context, mode), "Cannot parse the body of async function");
+            else
+                failIfFalse(parseSourceElements(syntaxChecker, mode), "Cannot parse the body of async function");
+        }
         popScope(asyncFunctionBodyScope, TreeBuilder::NeedsFreeVariableInfo);
     }
     info.body = context.createFunctionMetadata(startLocation, tokenLocation(), startColumn, tokenColumn(), functionKeywordStart, functionNameStart, parametersStart, strictMode(), ConstructorKind::None, m_superBinding, info.parameterCount, info.functionLength, innerParseMode, isArrowFunctionBodyExpression);
@@ -2341,7 +2348,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         return parseFunctionBody(context, syntaxChecker, startLocation, startColumn, functionKeywordStart, functionNameStart, parametersStart, constructorKind, expectedSuperBinding, functionBodyType, functionInfo.parameterCount, functionInfo.functionLength, mode);
     };
 
-    if (mode == SourceParseMode::GeneratorWrapperFunctionMode || isAsyncFunctionWrapperParseMode(mode)) {
+    if (isGeneratorOrAsyncFunctionWrapperParseMode(mode)) {
         AutoPopScopeRef generatorBodyScope(this, pushScope());
         SourceParseMode innerParseMode = SourceParseMode::GeneratorBodyMode;
         if (isAsyncFunctionWrapperParseMode(mode)) {

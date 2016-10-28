@@ -1,3 +1,120 @@
+2016-10-20  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] implement runtime for async functions
+        https://bugs.webkit.org/show_bug.cgi?id=163760
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-await-basic.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrow):
+        (shouldThrowAsync):
+        (shouldThrowSyntaxError):
+        (let.AsyncFunction.async):
+        (async.asyncFunctionForProto):
+        (Object.getPrototypeOf.async):
+        (Object.getPrototypeOf.async.method):
+        (async):
+        (async.method):
+        (async.asyncNonConstructorDecl):
+        (shouldThrow.new.async):
+        (shouldThrow.new.async.nonConstructor):
+        (async.asyncDecl):
+        (async.f):
+        (MyError):
+        (async.asyncDeclThrower):
+        (shouldThrowAsync.async):
+        (resolveLater):
+        (rejectLater):
+        (async.resumeAfterNormal):
+        (O.async.resumeAfterNormal):
+        (resumeAfterNormalArrow.async):
+        (async.resumeAfterThrow):
+        (O.async.resumeAfterThrow):
+        (resumeAfterThrowArrow.async):
+        (catch):
+        * stress/async-await-module-reserved-word.js: Added.
+        (shouldThrow):
+        (SyntaxError.Canstring_appeared_hereawait.checkModuleSyntaxError.String.raw.await):
+        (checkModuleSyntaxError.String.raw.await):
+        (checkModuleSyntaxError.String.raw.async.await):
+        (SyntaxError.Cannot.declare.named):
+        * stress/async-await-mozilla.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrow):
+        (shouldThrowAsync):
+        (assert):
+        (shouldThrowSyntaxError):
+        (mozSemantics.async.empty):
+        (mozSemantics.async.simpleReturn):
+        (mozSemantics.async.simpleAwait):
+        (mozSemantics.async.simpleAwaitAsync):
+        (mozSemantics.async.returnOtherAsync):
+        (mozSemantics.async.simpleThrower):
+        (mozSemantics.async.delegatedThrower):
+        (mozSemantics.async.tryCatch):
+        (mozSemantics.async.tryCatchThrow):
+        (mozSemantics.async.wellFinally):
+        (mozSemantics.async.finallyMayFail):
+        (mozSemantics.async.embedded.async.inner):
+        (mozSemantics.async.embedded):
+        (mozSemantics.async.fib):
+        (mozSemantics.async.isOdd.async.isEven):
+        (mozSemantics.async.isOdd):
+        (mozSemantics.hardcoreFib.async.fib2):
+        (mozSemantics.namedAsyncExpr.async.simple):
+        (mozSemantics.async.executionOrder.async.first):
+        (mozSemantics.async.executionOrder.async.second):
+        (mozSemantics.async.executionOrder.async.third):
+        (mozSemantics.async.executionOrder):
+        (mozSemantics.async.miscellaneous):
+        (mozSemantics.thrower):
+        (mozSemantics.async.defaultArgs):
+        (mozSemantics.shouldThrow):
+        (mozSemantics):
+        (mozMethods.X):
+        (mozMethods.X.prototype.async.getValue):
+        (mozMethods.X.prototype.setValue):
+        (mozMethods.X.prototype.async.increment):
+        (mozMethods.X.prototype.async.getBaseClassName):
+        (mozMethods.X.async.getStaticValue):
+        (mozMethods.Y.prototype.async.getBaseClassName):
+        (mozMethods.Y):
+        (mozFunctionNameInferrence.async.test):
+        (mozSyntaxErrors):
+        * stress/async-await-reserved-word.js: Added.
+        (assert):
+        (shouldThrowSyntaxError):
+        (AsyncFunction.async):
+        * stress/async_arrow_functions_lexical_arguments_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrowAsync):
+        (noArgumentsArrow2.async):
+        * stress/async_arrow_functions_lexical_new.target_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (shouldThrowAsync):
+        (C1):
+        (C2):
+        (shouldThrowAsync.async):
+        * stress/async_arrow_functions_lexical_super_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (BaseClass.prototype.baseClassValue):
+        (BaseClass.prototype.get property):
+        (BaseClass):
+        (ChildClass.prototype.asyncSuperProp):
+        (ChildClass.prototype.asyncSuperProp2):
+        (ChildClass):
+        (ChildClass2):
+        * stress/async_arrow_functions_lexical_this_binding.js: Added.
+        (shouldBe):
+        (shouldBeAsync):
+        (d.y):
+
 2016-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Skip 2 JS stress tests on memory limited devices

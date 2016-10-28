@@ -1321,6 +1321,12 @@ _llint_op_new_generator_func:
     dispatch(4)
 
 
+_llint_op_new_async_func:
+    traceExecution()
+    callSlowPath(_llint_slow_path_new_async_func)
+    dispatch(4)
+
+
 _llint_op_new_array:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_array)
@@ -1598,6 +1604,12 @@ _llint_op_new_generator_func_exp:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_new_generator_func_exp)
     dispatch(4)
+
+_llint_op_new_async_func_exp:
+    traceExecution()
+    callSlowPath(_llint_slow_path_new_async_func_exp)
+    dispatch(4)
+
 
 _llint_op_set_function_name:
     traceExecution()

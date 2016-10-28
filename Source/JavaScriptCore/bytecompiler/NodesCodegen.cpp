@@ -3402,18 +3402,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             emitPutHomeObject(generator, next.get(), homeObject.get());
         }
 
-        // FIXME: Currently, we just create an object and store generator related fields as its properties for ease.
-        // But to make it efficient, we will introduce JSGenerator class, add opcode new_generator and use its C++ fields instead of these private properties.
-        // https://bugs.webkit.org/show_bug.cgi?id=151545
-
-        generator.emitDirectPutById(generator.generatorRegister(), generator.propertyNames().builtinNames().generatorNextPrivateName(), next.get(), PropertyNode::KnownDirect);
-
-        generator.emitDirectPutById(generator.generatorRegister(), generator.propertyNames().builtinNames().generatorThisPrivateName(), generator.thisRegister(), PropertyNode::KnownDirect);
-
-        RegisterID* initialState = generator.emitLoad(nullptr, jsNumber(0));
-        generator.emitDirectPutById(generator.generatorRegister(), generator.propertyNames().builtinNames().generatorStatePrivateName(), initialState, PropertyNode::KnownDirect);
-
-        generator.emitDirectPutById(generator.generatorRegister(), generator.propertyNames().builtinNames().generatorFramePrivateName(), generator.emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
+        generator.emitPutGeneratorFields(next.get());
 
         ASSERT(startOffset() >= lineStartOffset());
         generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
@@ -3421,6 +3410,56 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         break;
     }
 
+    case SourceParseMode::AsyncFunctionMode:
+    case SourceParseMode::AsyncMethodMode:
+    case SourceParseMode::AsyncArrowFunctionMode: {
+        StatementNode* singleStatement = this->singleStatement();
+        ASSERT(singleStatement->isExprStatement());
+        ExprStatementNode* exprStatement = static_cast<ExprStatementNode*>(singleStatement);
+        ExpressionNode* expr = exprStatement->expr();
+        ASSERT(expr->isFuncExprNode());
+        FuncExprNode* funcExpr = static_cast<FuncExprNode*>(expr);
+
+        RefPtr<RegisterID> next = generator.newTemporary();
+        generator.emitNode(next.get(), funcExpr);
+
+        if (generator.superBinding() == SuperBinding::Needed || generator.parseMode() == SourceParseMode::AsyncArrowFunctionMode) {
+            // FIXME: Don't always load home object for async arrows
+            RefPtr<RegisterID> homeObject = emitHomeObjectForCallee(generator);
+            emitPutHomeObject(generator, next.get(), homeObject.get());
+        }
+
+        generator.emitPutGeneratorFields(next.get());
+
+        ASSERT(startOffset() >= lineStartOffset());
+        generator.emitDebugHook(WillLeaveCallFrame, lastLine(), startOffset(), lineStartOffset());
+
+        // load @asyncFunctionResume, and call.
+        RefPtr<RegisterID> startAsyncFunction = generator.newTemporary();
+        auto var = generator.variable(generator.propertyNames().builtinNames().asyncFunctionResumePrivateName());
+
+        RefPtr<RegisterID> scope = generator.newTemporary();
+        generator.moveToDestinationIfNeeded(scope.get(), generator.emitResolveScope(scope.get(), var));
+        generator.emitGetFromScope(startAsyncFunction.get(), scope.get(), var, ThrowIfNotFound);
+
+        // return @asyncFunctionResume.@call(this, @generator, @undefined, GeneratorResumeMode::NormalMode)
+        CallArguments args(generator, nullptr, 3);
+        unsigned argumentCount = 0;
+        generator.emitLoad(args.thisRegister(), jsUndefined());
+        generator.emitMove(args.argumentRegister(argumentCount++), generator.generatorRegister());
+        generator.emitLoad(args.argumentRegister(argumentCount++), jsUndefined());
+        generator.emitLoad(args.argumentRegister(argumentCount++), jsNumber(static_cast<int32_t>(JSGeneratorFunction::GeneratorResumeMode::NormalMode)));
+        // JSTextPosition(int _line, int _offset, int _lineStartOffset)
+        JSTextPosition divot(firstLine(), startOffset(), lineStartOffset());
+
+        RefPtr<RegisterID> result = generator.newTemporary();
+        generator.emitCallInTailPosition(result.get(), startAsyncFunction.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
+        generator.emitReturn(result.get());
+        break;
+    }
+
+    case SourceParseMode::AsyncArrowFunctionBodyMode:
+    case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::GeneratorBodyMode: {
         RefPtr<Label> generatorBodyLabel = generator.newLabel();
         {
