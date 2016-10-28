@@ -1,3 +1,13 @@
+2016-10-27  Dave Hyatt  <hyatt@apple.com>
+
+        [CSS Parser] Enhance grid-auto-flow parsing to allow dense first.
+        https://bugs.webkit.org/show_bug.cgi?id=164110
+
+        Reviewed by Simon Fraser.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertGridAutoFlow):
+
 2016-10-27  Simon Fraser  <simon.fraser@apple.com>
 
         constify the CSSValue arguments to StyleBuilderConverter functions

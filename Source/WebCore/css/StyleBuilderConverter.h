@@ -1044,6 +1044,10 @@ inline GridAutoFlow StyleBuilderConverter::convertGridAutoFlow(StyleResolver&, c
         else
             autoFlow = AutoFlowColumn;
         break;
+    case CSSValueDense:
+        if (second && second->valueID() == CSSValueColumn)
+            return AutoFlowColumnDense;
+        return AutoFlowRowDense;
     default:
         ASSERT_NOT_REACHED();
         break;
