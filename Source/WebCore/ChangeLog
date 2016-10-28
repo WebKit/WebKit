@@ -1,3 +1,15 @@
+2016-10-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows WebGL build after r208022
+        https://bugs.webkit.org/show_bug.cgi?id=164091
+
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::Extensions3DOpenGLES):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::getExtensions):
+
 2016-10-27  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Fetch ReadableStream should only clone the second branch

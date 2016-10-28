@@ -244,7 +244,7 @@ void GraphicsContext3D::clearDepth(GC3Dclampf depth)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = std::make_unique<Extensions3DOpenGLES>(this);
+        m_extensions = std::make_unique<Extensions3DOpenGLES>(this, isGLES2Compliant());
     return m_extensions.get();
 }
 
