@@ -1,3 +1,9 @@
+2016-10-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix merge r207229. rdar://problem/29007278
+
+        * inspector/console/console-log-proxy.html:
+
 2016-10-27  Mark Lam  <mark.lam@apple.com>
 
         Merge r207518. rdar://problem/28216050, rdar://problem/28216232

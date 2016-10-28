@@ -43,7 +43,7 @@ function test()
             InspectorTest.evaluateInPage("triggerProxyConsoleLog()", () => {
                 InspectorTest.evaluateInPage("window.accessedHandlerGet", (error, result) => {
                     let value = WebInspector.RemoteObject.fromPayload(result).value;
-                    InspectorTest.expectEqual(value, false, "Logging Proxy objects should not have triggered get trap.");
+                    InspectorTest.expectThat(value === false, "Logging Proxy objects should not have triggered get trap.");
                     resolve();
                 });
             });
@@ -57,7 +57,7 @@ function test()
             InspectorTest.evaluateInPage("triggerProxyAndPrimitiveConsoleLog()", () => {
                 InspectorTest.evaluateInPage("window.accessedHandlerGet", (error, result) => {
                     let value = WebInspector.RemoteObject.fromPayload(result).value;
-                    InspectorTest.expectEqual(value, false, "Logging Proxy objects and primitives should not have triggered get trap.");
+                    InspectorTest.expectThat(value === false, "Logging Proxy objects and primitives should not have triggered get trap.");
                     resolve();
                 });
             });
