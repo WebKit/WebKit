@@ -1,3 +1,11 @@
+2016-10-27  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Skip media test for a while
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
 2016-10-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Teach WebGL code about new buffer targets in WebGL2
