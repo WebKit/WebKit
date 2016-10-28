@@ -78,7 +78,7 @@ void FEDropShadow::platformApplySoftware()
         return;
 
     Filter& filter = this->filter();
-    FloatSize blurRadius(filter.applyHorizontalScale(m_stdX), filter.applyVerticalScale(m_stdY));
+    FloatSize blurRadius(2 * filter.applyHorizontalScale(m_stdX), 2 * filter.applyVerticalScale(m_stdY));
     blurRadius.scale(filter.filterScale());
     FloatSize offset(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
 

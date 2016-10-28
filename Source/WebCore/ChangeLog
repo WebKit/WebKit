@@ -1,3 +1,28 @@
+2016-10-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Wrong blur radius for filter: drop-shadow()
+        https://bugs.webkit.org/show_bug.cgi?id=163667
+
+        Reviewed by Darin Adler.
+        
+        The "stdDev" parameter to <feDropShadow> and <feGaussianBlur> represents the standard
+        deviation (σ) of the Gaussian blur function. CSS filters drop-shadow() and blur() follow
+        this with their radius parameter.
+        
+        However, CSS box-shadow and text-shadow use 2σ to describe the blur radius, since this
+        is conveniently close to the number of pixels the effect of the blur extends out.
+        
+        feDropShadow, which is used by non-accelerated filter: drop-shadow(), was using
+        the wrong blur radius because it passed its stdDev directly to ShadowBlur. ShadowBlur
+        was written for CSS box-shadow, so expected its input "blur radius" to be twice the
+        stdDev.
+        
+        Tests: css3/filters/drop-shadow-blur-radius.html
+               svg/filters/feDropShadow-blur-radius.html
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::platformApplySoftware):
+
 2016-10-28  Youenn Fablet  <youenn@apple.com>
 
         Expose RTCPeerConnection unprefixed
