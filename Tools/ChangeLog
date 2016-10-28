@@ -1,3 +1,18 @@
+2016-10-27  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r203601): Caused crashes in iBooks
+        https://bugs.webkit.org/show_bug.cgi?id=164093
+        <rdar://problem/28745634>
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/DOMNode.mm: Added.
+        (-[DOMNodeTest webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2016-10-27  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move code generators off of domSignature::type and onto domSignature::idlType

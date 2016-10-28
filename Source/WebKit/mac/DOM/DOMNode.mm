@@ -336,7 +336,7 @@ DOMNode *kit(Node* value)
 {
     JSMainThreadNullState state;
     if (!other)
-        raiseTypeErrorException();
+        return Node::DOCUMENT_POSITION_DISCONNECTED;
     return unwrap(*self).compareDocumentPosition(*core(other));
 }
 
