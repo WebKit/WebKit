@@ -131,12 +131,12 @@
     <dependencies>
       <dep package="icu"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-0.9.35.tar.bz2"
-            version="0.9.35"
-            checkoutdir="harfbuzz-0.9.35"
+    <branch module="software/harfbuzz/release/harfbuzz-1.3.3.tar.bz2"
+            version="1.3.3"
+            checkoutdir="harfbuzz-1.3.3"
             repo="freedesktop.org"
-            hash="sha256:0aa1a8aba6f502321cf6fef3c9d2c73dde48389c5ed1d3615a7691944c2a06ed"
-            md5sum="531ee8650626ecddcd90b2a4637e31d4">
+            hash="sha256:2620987115a4122b47321610dccbcc18f7f121115fd7b88dc8a695c8b66cb3c9"
+            md5sum="97ae15a72a93f1f27324a2b8d9bd3b1d">
     </branch>
   </autotools>
 

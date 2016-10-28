@@ -1,3 +1,12 @@
+2016-10-28  Frederic Wang  <fwang@igalia.com>
+
+        [GTK] Upgrade HarfBuzz to version 1.3.3
+        https://bugs.webkit.org/show_bug.cgi?id=162719
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/jhbuild.modules:
+
 2016-10-27  Chris Dumez  <cdumez@apple.com>
 
         Regression(r203601): Caused crashes in iBooks
