@@ -1,3 +1,15 @@
+2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add wasm/js directory to JSC include directories in CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=164145
+
+        Reviewed by Michael Catanzaro.
+
+        Attempt to fix CMake ports. We include a file under wasm/js.
+        But we didn't add it to JSC include directories.
+
+        * CMakeLists.txt:
+
 2016-10-27  Geoffrey Garen  <ggaren@apple.com>
 
         One file per class for Executable.h/.cpp
