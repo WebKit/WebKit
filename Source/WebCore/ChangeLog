@@ -1,3 +1,45 @@
+2016-10-28  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Update parser and code generators to only access type information through the type property
+        https://bugs.webkit.org/show_bug.cgi?id=164141
+
+        Reviewed by Anders Carlsson.
+
+        Update IDLParser structs:
+        - domSignature: Rename idlType to type. Specify that type is a domType.
+        - domInterface: Remove name and parent. Specify that type and parentType are a domTypes.
+        - domFunction: Specify that signature is a domSignature.
+        - domAttribute: Remove unused type. Specify that signature is a domSignature.
+        - domIterable: Remove idlKeyType and valueKeyType. Specify that keyType and valueType are a domTypes
+        - domConstant: Specify that type is a domType.
+        - domEnum: Specify that type is a domType.
+        - domDictionary: Remove name and parent. Specify that type and parentType are a domTypes.
+        - Typedef: Rename idlType to type and specify that it is a domType.
+
+        * bindings/scripts/IDLParser.pm:
+        Remove redundant properties and specify type info in structs where possible.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsSVGTypeNeedingTearOffForType): Renamed to remove ForType suffix.
+        (IsSVGTypeWithWritablePropertiesNeedingTearOffForType): Renamed to remove ForType suffix.
+        (GetSVGTypeNeedingTearOffForType): Renamed to remove ForType suffix.
+        (GetSVGWrappedTypeNeedingTearOffForType): Renamed to remove ForType suffix.
+
+        Update to always access type information through type accessors. Remove use of removed
+        properties.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsNullableType): Deleted.
+        (StripNullable): Deleted.
+        Remove unused functions.
+
+        Update to always access type information through type accessors. Remove use of removed
+        properties.
+
+        * bindings/scripts/generate-bindings.pl:
+        Update to always access type information through type accessors. Remove use of removed
+        properties.
+
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support bopomofo Ruby

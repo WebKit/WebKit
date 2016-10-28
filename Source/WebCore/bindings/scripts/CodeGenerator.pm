@@ -180,13 +180,13 @@ sub ProcessDocument
 
     foreach my $dictionary (@{$useDocument->dictionaries}) {
         if ($dictionary->extendedAttributes->{"ImplementedAs"}) {
-            $dictionaryTypeImplementationNameOverrides{$dictionary->name} = $dictionary->extendedAttributes->{"ImplementedAs"};
+            $dictionaryTypeImplementationNameOverrides{$dictionary->type->name} = $dictionary->extendedAttributes->{"ImplementedAs"};
         }
     }
 
     foreach my $enumeration (@{$useDocument->enumerations}) {
         if ($enumeration->extendedAttributes->{"ImplementedAs"}) {
-            $enumTypeImplementationNameOverrides{$enumeration->name} = $enumeration->extendedAttributes->{"ImplementedAs"};
+            $enumTypeImplementationNameOverrides{$enumeration->type->name} = $enumeration->extendedAttributes->{"ImplementedAs"};
         }
     }
 
@@ -195,7 +195,7 @@ sub ProcessDocument
     unless (defined($codeGenerator)) {
         my $interfaces = $useDocument->interfaces;
         foreach my $interface (@$interfaces) {
-            print "Skipping $useGenerator code generation for IDL interface \"" . $interface->name . "\".\n" if $verbose;
+            print "Skipping $useGenerator code generation for IDL interface \"" . $interface->type->name . "\".\n" if $verbose;
         }
         return;
     }
@@ -205,7 +205,7 @@ sub ProcessDocument
         die "Multiple interfaces per document are not supported" if @$interfaces > 1;
 
         my $interface = @$interfaces[0];
-        print "Generating $useGenerator bindings code for IDL interface \"" . $interface->name . "\"...\n" if $verbose;
+        print "Generating $useGenerator bindings code for IDL interface \"" . $interface->type->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateInterface($interface, $defines, $useDocument->enumerations, $useDocument->dictionaries);
         $codeGenerator->WriteData($interface, $useOutputDir, $useOutputHeadersDir);
         return;
@@ -216,7 +216,7 @@ sub ProcessDocument
         die "Multiple standalone dictionaries per document are not supported" if @$dictionaries > 1;
 
         my $dictionary = @$dictionaries[0];
-        print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->name . "\"...\n" if $verbose;
+        print "Generating $useGenerator bindings code for IDL dictionary \"" . $dictionary->type->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateDictionary($dictionary, $useDocument->enumerations);
         $codeGenerator->WriteData($dictionary, $useOutputDir, $useOutputHeadersDir);
         return;
@@ -227,7 +227,7 @@ sub ProcessDocument
         die "Multiple standalone enumerations per document are not supported" if @$enumerations > 1;
 
         my $enumeration = @$enumerations[0];
-        print "Generating $useGenerator bindings code for IDL enumeration \"" . $enumeration->name . "\"...\n" if $verbose;
+        print "Generating $useGenerator bindings code for IDL enumeration \"" . $enumeration->type->name . "\"...\n" if $verbose;
         $codeGenerator->GenerateEnumeration($enumeration);
         $codeGenerator->WriteData($enumeration, $useOutputDir, $useOutputHeadersDir);
         return;
@@ -352,7 +352,7 @@ sub ParseInterface
 
     # Step #1: Find the IDL file associated with 'interface'
     my $filename = $object->IDLFileForInterface($interfaceName)
-        or assert("Could NOT find IDL file for interface \"$interfaceName\", reachable from \"" . $outerInterface->name . "\"!\n");
+        or assert("Could NOT find IDL file for interface \"$interfaceName\", reachable from \"" . $outerInterface->type->name . "\"!\n");
 
     print "  |  |>  Parsing parent IDL \"$filename\" for interface \"$interfaceName\"\n" if $verbose;
 
@@ -361,7 +361,7 @@ sub ParseInterface
     my $document = $parser->Parse($filename, $defines, $preprocessor);
 
     foreach my $interface (@{$document->interfaces}) {
-        if ($interface->name eq $interfaceName) {
+        if ($interface->type->name eq $interfaceName) {
             $cachedInterfaces->{$interfaceName} = $interface;
             return $interface;
         }
@@ -476,7 +476,7 @@ sub GetEnumByType
     die "GetEnumByName() was called with an undefined enumeration name" unless defined($name);
 
     for my $enumeration (@{$useDocument->enumerations}) {
-        return $enumeration if $enumeration->name eq $name;
+        return $enumeration if $enumeration->type->name eq $name;
     }
 
     return $cachedExternalEnumerations->{$name} if exists($cachedExternalEnumerations->{$name});
@@ -493,11 +493,11 @@ sub GetEnumByType
         my $document = $parser->Parse($filename, $defines, $preprocessor);
 
         foreach my $enumeration (@{$document->enumerations}) {
-            next unless $enumeration->name eq $name;
+            next unless $enumeration->type->name eq $name;
 
             $cachedExternalEnumerations->{$name} = $enumeration;
             my $implementedAs = $enumeration->extendedAttributes->{ImplementedAs};
-            $enumTypeImplementationNameOverrides{$enumeration->name} = $implementedAs if $implementedAs;
+            $enumTypeImplementationNameOverrides{$enumeration->type->name} = $implementedAs if $implementedAs;
             return $enumeration;
         }
     }
@@ -544,7 +544,7 @@ sub GetDictionaryByType
     die "GetDictionaryByType() was called with an undefined dictionary name" unless defined($name);
 
     for my $dictionary (@{$useDocument->dictionaries}) {
-        return $dictionary if $dictionary->name eq $name;
+        return $dictionary if $dictionary->type->name eq $name;
     }
 
     return $cachedExternalDictionaries->{$name} if exists($cachedExternalDictionaries->{$name});
@@ -561,11 +561,11 @@ sub GetDictionaryByType
         my $document = $parser->Parse($filename, $defines, $preprocessor);
 
         foreach my $dictionary (@{$document->dictionaries}) {
-            next unless $dictionary->name eq $name;
+            next unless $dictionary->type->name eq $name;
 
             $cachedExternalDictionaries->{$name} = $dictionary;
             my $implementedAs = $dictionary->extendedAttributes->{ImplementedAs};
-            $dictionaryTypeImplementationNameOverrides{$dictionary->name} = $implementedAs if $implementedAs;
+            $dictionaryTypeImplementationNameOverrides{$dictionary->type->name} = $implementedAs if $implementedAs;
             return $dictionary;
         }
     }
@@ -621,7 +621,7 @@ sub IsNonPointerType
     return 0;
 }
 
-sub IsSVGTypeNeedingTearOffForType
+sub IsSVGTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
@@ -631,7 +631,7 @@ sub IsSVGTypeNeedingTearOffForType
     return 0;
 }
 
-sub IsSVGTypeWithWritablePropertiesNeedingTearOffForType
+sub IsSVGTypeWithWritablePropertiesNeedingTearOff
 {
     my ($object, $type) = @_;
 
@@ -667,7 +667,7 @@ sub IsRefPtrType
     return 1;
 }
 
-sub GetSVGTypeNeedingTearOffForType
+sub GetSVGTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
@@ -677,13 +677,13 @@ sub GetSVGTypeNeedingTearOffForType
     return undef;
 }
 
-sub GetSVGWrappedTypeNeedingTearOffForType
+sub GetSVGWrappedTypeNeedingTearOff
 {
     my ($object, $type) = @_;
 
     assert("Not a type") if ref($type) ne "domType";
 
-    my $svgTypeNeedingTearOff = $object->GetSVGTypeNeedingTearOffForType($type);
+    my $svgTypeNeedingTearOff = $object->GetSVGTypeNeedingTearOff($type);
     return $svgTypeNeedingTearOff if not $svgTypeNeedingTearOff;
 
     if ($svgTypeNeedingTearOff =~ /SVGPropertyTearOff/) {
@@ -749,7 +749,6 @@ sub IsFrozenArrayType
 
     assert("Not a type") if ref($type) ne "domType";
 
-    # FIXME: Update parser to make this just 'FrozenArray'
     return $type->name eq "FrozenArray";
 }
 
@@ -877,7 +876,7 @@ sub AttributeNameForGetterAndSetter
     if ($attribute->signature->extendedAttributes->{"ImplementedAs"}) {
         $attributeName = $attribute->signature->extendedAttributes->{"ImplementedAs"};
     }
-    my $attributeType = $attribute->signature->idlType;
+    my $attributeType = $attribute->signature->type;
 
     # SVG animated types need to use a special attribute name.
     # The rest of the special casing for SVG animated types is handled in the language-specific code generators.
@@ -911,7 +910,7 @@ sub GetterExpression
         return ($generator->WK_lcfirst($generator->AttributeNameForGetterAndSetter($attribute)));
     }
 
-    my $attributeType = $attribute->signature->idlType;
+    my $attributeType = $attribute->signature->type;
 
     my $functionName;
     if ($attribute->signature->extendedAttributes->{"URL"}) {
@@ -949,7 +948,7 @@ sub SetterExpression
         return ("set" . $generator->WK_ucfirst($generator->AttributeNameForGetterAndSetter($attribute)));
     }
 
-    my $attributeType = $attribute->signature->idlType;
+    my $attributeType = $attribute->signature->type;
 
     my $functionName;
     if ($attributeType->name eq "boolean") {
@@ -1150,7 +1149,7 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
 
     my @checks = ();
     foreach my $constant (@{$interface->constants}) {
-        my $className = $constant->extendedAttributes->{"ImplementedBy"} || $interface->name;
+        my $className = $constant->extendedAttributes->{"ImplementedBy"} || $interface->type->name;
         my $name = $constant->extendedAttributes->{"Reflect"} || $constant->name;
         my $value = $constant->value;
         my $conditional = $constant->extendedAttributes->{"Conditional"};
@@ -1180,19 +1179,19 @@ sub GetVisibleInterfaceName
     my ($object, $interface) = @_;
 
     my $interfaceName = $interface->extendedAttributes->{"InterfaceName"};
-    return $interfaceName ? $interfaceName : $interface->name;
+    return $interfaceName ? $interfaceName : $interface->type->name;
 }
 
 sub InheritsInterface
 {
     my ($object, $interface, $interfaceName) = @_;
 
-    return 1 if $interfaceName eq $interface->name;
+    return 1 if $interfaceName eq $interface->type->name;
 
     my $found = 0;
     $object->ForAllParents($interface, sub {
         my $currentInterface = shift;
-        if ($currentInterface->name eq $interfaceName) {
+        if ($currentInterface->type->name eq $interfaceName) {
             $found = 1;
         }
         return 1 if $found;
@@ -1224,9 +1223,9 @@ sub ShouldPassWrapperByReference
     my ($object, $parameter, $interface) = @_;
 
     return 0 if $parameter->isVariadic;
-    return 0 if $parameter->isNullable;
-    return 0 if !$object->IsWrapperType($parameter->idlType) && !$object->IsTypedArrayType($parameter->idlType);
-    return 0 if $object->IsSVGTypeNeedingTearOffForType($parameter->idlType);
+    return 0 if $parameter->type->isNullable;
+    return 0 if !$object->IsWrapperType($parameter->type) && !$object->IsTypedArrayType($parameter->type);
+    return 0 if $object->IsSVGTypeNeedingTearOff($parameter->type);
 
     return 1;
 }

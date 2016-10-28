@@ -141,11 +141,11 @@ foreach my $idlFile (@supplementedIdlFiles) {
     my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
     foreach my $interface (@{$document->interfaces}) {
-        if (!$interface->isPartial || $interface->name eq $targetInterfaceName) {
+        if (!$interface->isPartial || $interface->type->name eq $targetInterfaceName) {
             my $targetDataNode;
             my @targetGlobalContexts;
             foreach my $interface (@{$targetDocument->interfaces}) {
-                if ($interface->name eq $targetInterfaceName) {
+                if ($interface->type->name eq $targetInterfaceName) {
                     $targetDataNode = $interface;
                     my $exposedAttribute = $targetDataNode->extendedAttributes->{"Exposed"} || "Window";
                     $exposedAttribute = substr($exposedAttribute, 1, -1) if substr($exposedAttribute, 0, 1) eq "(";
