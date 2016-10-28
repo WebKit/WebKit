@@ -27,8 +27,10 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
+#include "ScriptWrappable.h"
 #include <domjit/DOMJITPatchpoint.h>
 #include <domjit/DOMJITPatchpointParams.h>
+#include <interpreter/FrameTracers.h>
 
 #if ENABLE(JIT)
 
@@ -49,6 +51,16 @@ inline CCallHelpers::Jump branchIfNotWorldIsNormal(CCallHelpers& jit, GPRReg glo
 inline CCallHelpers::Jump branchIfNotWeakIsLive(CCallHelpers& jit, GPRReg weakImpl)
 {
     return jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::Address(weakImpl, JSC::WeakImpl::offsetOfWeakHandleOwner()), CCallHelpers::TrustedImm32(JSC::WeakImpl::StateMask));
+}
+
+template<typename WrappedNode>
+JSC::EncodedJSValue JIT_OPERATION toWrapperSlow(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, void* result)
+{
+    ASSERT(exec);
+    ASSERT(result);
+    ASSERT(globalObject);
+    JSC::NativeCallFrameTracer tracer(&exec->vm(), exec);
+    return JSC::JSValue::encode(toJS(exec, static_cast<JSDOMGlobalObject*>(globalObject), *static_cast<WrappedNode*>(result)));
 }
 
 template<typename WrappedType>
@@ -150,11 +162,8 @@ inline CCallHelpers::Jump branchIfNotDocumentWrapper(CCallHelpers& jit, GPRReg t
     return jit.branchIfNotType(target, JSC::JSType(JSDocumentWrapperType));
 }
 
-inline void loadDocument(MacroAssembler& jit, GPRReg node, GPRReg output)
-{
-    jit.loadPtr(CCallHelpers::Address(node, Node::treeScopeMemoryOffset()), output);
-    jit.loadPtr(CCallHelpers::Address(output, TreeScope::documentScopeMemoryOffset()), output);
-}
+void loadDocument(MacroAssembler&, GPRReg node, GPRReg output);
+void loadDocumentElement(MacroAssembler&, GPRReg document, GPRReg output);
 
 } }
 

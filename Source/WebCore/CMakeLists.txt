@@ -1545,6 +1545,8 @@ set(WebCore_SOURCES
     dom/default/PlatformMessagePortChannel.cpp
 
     domjit/DOMJITAbstractHeapRepository.cpp
+    domjit/DOMJITHelpers.cpp
+    domjit/JSDocumentDOMJIT.cpp
     domjit/JSNodeDOMJIT.cpp
 
     editing/AlternativeTextController.cpp

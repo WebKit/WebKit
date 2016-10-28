@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,45 +21,67 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
 #pragma once
 
-#include <domjit/DOMJITHeapRange.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/Noncopyable.h>
+#include "DOMJITHelpers.h"
 
 #if ENABLE(JIT)
 
+#include "Document.h"
+#include "Element.h"
+#include "Event.h"
+#include "Node.h"
+
 namespace WebCore { namespace DOMJIT {
 
-// Describe your abstract heap hierarchy here.
-// V(AbstractHeapName, Parent)
-#define DOMJIT_ABSTRACT_HEAP_LIST(V) \
-    V(Node, DOM) \
-    V(Node_firstChild, Node) \
-    V(Node_lastChild, Node) \
-    V(Node_parentNode, Node) \
-    V(Node_nextSibling, Node) \
-    V(Node_previousSibling, Node) \
-    V(Node_ownerDocument, Node) \
-    V(Document, DOM) \
-    V(Document_documentElement, Document) \
-
-
-class AbstractHeapRepository {
-    WTF_MAKE_NONCOPYABLE(AbstractHeapRepository);
-public:
-    static const AbstractHeapRepository& shared();
-
-    JSC::DOMJIT::HeapRange DOM;
-
-#define DOMJIT_DEFINE_MEMBER(name, parent) JSC::DOMJIT::HeapRange name;
-    DOMJIT_ABSTRACT_HEAP_LIST(DOMJIT_DEFINE_MEMBER)
-#undef DOMJIT_DEFINE_MEMBER
-
-    AbstractHeapRepository();
+template<typename DOMInterface>
+struct TypeChecker {
 };
+
+template<>
+struct TypeChecker<Node> {
+    static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
+    {
+        return DOMJIT::branchIfNotNode(jit, dom);
+    }
+};
+
+template<>
+struct TypeChecker<Document> {
+    static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
+    {
+        return DOMJIT::branchIfNotDocumentWrapper(jit, dom);
+    }
+};
+
+template<>
+struct TypeChecker<Event> {
+    static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
+    {
+        return DOMJIT::branchIfNotEvent(jit, dom);
+    }
+};
+
+template<>
+struct TypeChecker<Element> {
+    static CCallHelpers::Jump branchIfFail(CCallHelpers& jit, GPRReg dom)
+    {
+        return DOMJIT::branchIfNotElement(jit, dom);
+    }
+};
+
+template<typename DOMInterface>
+Ref<JSC::DOMJIT::Patchpoint> checkDOM()
+{
+    Ref<JSC::DOMJIT::Patchpoint> patchpoint = JSC::DOMJIT::Patchpoint::create();
+    patchpoint->setGenerator([=](CCallHelpers& jit, JSC::DOMJIT::PatchpointParams& params) {
+        return TypeChecker<DOMInterface>::branchIfFail(jit, params[0].gpr());
+    });
+    return patchpoint;
+}
 
 } }
 

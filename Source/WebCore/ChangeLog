@@ -1,3 +1,61 @@
+2016-10-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DOMJIT] Implement Document::documentElement
+        https://bugs.webkit.org/show_bug.cgi?id=164113
+
+        Reviewed by Sam Weinig.
+
+        Test: js/dom/domjit-accessor-document-element.html
+
+        This patch implements document.documentElement DOMJIT accessor.
+        Similar to ownerDocument accessor, the way to access to document.documentElement
+        from JIT code is already prepared for CSSJIT. DOMJIT just utilizes the existing
+        functionality: using documentElementMemoryOffset().
+
+        document.documentElement is frequently called in jQuery. Especially, every time
+        we call jQuery.attr(), this is called.
+
+        To implement Document accessor, we clean up some code in DOMJITHelpers.
+        We create the cpp file for DOMJITHelpers and move some helpers to it.
+        And we also implement DOMJIT::checkDOM<DOMInterface> for convenience.
+        It returns appropriate CheckDOM patchpoint implementation.
+
+        This patch improves Dromaeo jslib-attr-jquery.html 10% (481.64 v.s. 532.54).
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementIsScopeRoot):
+        * dom/Document.idl:
+        * domjit/DOMJITAbstractHeapRepository.h:
+        * domjit/DOMJITCheckDOM.h: Copied from Source/WebCore/domjit/DOMJITAbstractHeapRepository.h.
+        (WebCore::DOMJIT::TypeChecker<Node>::branchIfFail):
+        (WebCore::DOMJIT::TypeChecker<Document>::branchIfFail):
+        (WebCore::DOMJIT::TypeChecker<Event>::branchIfFail):
+        (WebCore::DOMJIT::TypeChecker<Element>::branchIfFail):
+        (WebCore::DOMJIT::checkDOM):
+        * domjit/DOMJITHelpers.cpp: Copied from Source/WebCore/domjit/DOMJITAbstractHeapRepository.h.
+        (WebCore::DOMJIT::loadDocument):
+        (WebCore::DOMJIT::loadDocumentElement):
+        * domjit/DOMJITHelpers.h:
+        (WebCore::DOMJIT::toWrapperSlow):
+        (WebCore::DOMJIT::loadDocument): Deleted.
+        * domjit/JSDocumentDOMJIT.cpp: Added.
+        (WebCore::DocumentDocumentElementDOMJIT::checkDOM):
+        (WebCore::DocumentDocumentElementDOMJIT::callDOM):
+        * domjit/JSNodeDOMJIT.cpp:
+        (WebCore::createCallDOMForOffsetAccess):
+        (WebCore::NodeFirstChildDOMJIT::checkDOM):
+        (WebCore::NodeLastChildDOMJIT::checkDOM):
+        (WebCore::NodeNextSiblingDOMJIT::checkDOM):
+        (WebCore::NodePreviousSiblingDOMJIT::checkDOM):
+        (WebCore::NodeParentNodeDOMJIT::checkDOM):
+        (WebCore::NodeNodeTypeDOMJIT::checkDOM):
+        (WebCore::NodeOwnerDocumentDOMJIT::checkDOM):
+        (WebCore::NodeOwnerDocumentDOMJIT::callDOM):
+        (WebCore::toWrapperSlow): Deleted.
+        (WebCore::checkNode): Deleted.
+
 2016-10-28  Dave Hyatt  <hyatt@apple.com>
 
         [CSS Parser] Support initial-letter

@@ -29,7 +29,7 @@
 ] interface Document : Node {
     readonly attribute DocumentType? doctype;
     readonly attribute DOMImplementation implementation;
-    readonly attribute Element? documentElement;
+    [DOMJIT] readonly attribute Element? documentElement;
 
     [NewObject, MayThrowLegacyException, ImplementedAs=createElementForBindings] Element createElement(DOMString tagName);
     [NewObject] DocumentFragment createDocumentFragment();
