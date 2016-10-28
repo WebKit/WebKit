@@ -1,3 +1,9 @@
+2016-10-28  Dave Hyatt  <hyatt@apple.com>
+
+        Fix busted layout test from previous check-in.
+
+        * fast/multicol/column-box-alignment-rtl-expected.html:
+
 2016-10-28  Antti Koivisto  <antti@apple.com>
 
         Always use iOS preload behavior
