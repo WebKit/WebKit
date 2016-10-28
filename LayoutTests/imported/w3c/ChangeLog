@@ -1,3 +1,38 @@
+2016-10-28  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch] Ensure redirection count is no more than 20 in case of cross origin requests
+        https://bugs.webkit.org/show_bug.cgi?id=164117
+
+        Reviewed by Sam Weinig.
+
+        Adding new tests.
+        Split redirect.py in two different scripts.
+        redirect.py is to be used when simple redirections are needed.
+        redirect-count.py is to be used when the number of redirections is tested.
+
+        redirect.py no longer needs the count parameter.
+        This explains rebasing of the existing tests.
+
+        * web-platform-tests/fetch/api/basic/mode-same-origin-expected.txt:
+        * web-platform-tests/fetch/api/basic/mode-same-origin-worker-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-expected.txt:
+        * web-platform-tests/fetch/api/cors/cors-redirect-credentials-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker-expected.txt: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html: Added.
+        * web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.js: Added.
+        (redirectCount):
+        * web-platform-tests/fetch/api/redirect/redirect-count-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count-worker-expected.txt:
+        * web-platform-tests/fetch/api/redirect/redirect-count.js:
+        (redirectCount):
+        * web-platform-tests/fetch/api/request/request-cache-only-if-cached-expected.txt:
+        * web-platform-tests/fetch/api/resources/redirect-count.py: Copied from LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/redirect.py.
+        (main):
+        * web-platform-tests/fetch/api/resources/redirect.py:
+        (main):
+
 2016-10-27  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Fetch ReadableStream should only clone the second branch

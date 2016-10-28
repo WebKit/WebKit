@@ -1,3 +1,27 @@
+2016-10-28  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch] Ensure redirection count is no more than 20 in case of cross origin requests
+        https://bugs.webkit.org/show_bug.cgi?id=164117
+
+        Reviewed by Sam Weinig.
+
+        Tests: imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html
+               imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html
+
+        Introducing a ResourceLoaderOptions that defines the maximum redirection count.
+        By default, it is set to 20 as per fetch specification.
+
+        This option is used by SubresourceLoader to cancel load if its redirection count is above that maximum.
+        DocumentThreadableLoader stopping redirections to make preflight if needed, it now uses the maxRedirectCount loader option to ensure
+        that the total number of redirections is 20.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        * loader/ResourceLoaderOptions.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * loader/SubresourceLoader.h:
+
 2016-10-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         generate-bindings-all.pl should recompile supplemented IDL if its supplemental IDL are added or removed

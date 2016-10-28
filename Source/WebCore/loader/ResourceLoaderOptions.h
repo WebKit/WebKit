@@ -118,6 +118,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     SameOriginDataURLFlag sameOriginDataURLFlag { SameOriginDataURLFlag::Unset };
 
     ClientCredentialPolicy clientCredentialPolicy { ClientCredentialPolicy::CannotAskClientForCredentials };
+    unsigned maxRedirectCount { 20 };
 };
 
 } // namespace WebCore

@@ -190,6 +190,9 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
             m_resource->responseReceived(opaqueRedirectedResponse);
             didFinishLoading(currentTime());
             return;
+        } else if (m_redirectCount++ >= options().maxRedirectCount) {
+            cancel(ResourceError(String(), 0, request().url(), ASCIILiteral("Too many redirections"), ResourceError::Type::General));
+            return;
         }
 
         // CachedResources are keyed off their original request URL.

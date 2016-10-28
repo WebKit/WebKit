@@ -264,6 +264,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
         return;
 
     m_options.allowCredentials = DoNotAllowStoredCredentials;
+    m_options.maxRedirectCount -= m_resource->loader()->redirectCount();
 
     clearResource();
 

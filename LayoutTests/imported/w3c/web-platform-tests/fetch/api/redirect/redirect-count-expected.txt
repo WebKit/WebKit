@@ -1,12 +1,12 @@
 
 FAIL Redirect 301 20 times promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Redirect 301 21 times assert_equals: Redirected 21times expected (string) "21" but got (undefined) undefined
+PASS Redirect 301 21 times 
 FAIL Redirect 302 20 times promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Redirect 302 21 times assert_equals: Redirected 21times expected (string) "21" but got (undefined) undefined
+PASS Redirect 302 21 times 
 FAIL Redirect 303 20 times promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Redirect 303 21 times assert_equals: Redirected 21times expected (string) "21" but got (undefined) undefined
+PASS Redirect 303 21 times 
 FAIL Redirect 307 20 times promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Redirect 307 21 times assert_equals: Redirected 21times expected (string) "21" but got (undefined) undefined
+PASS Redirect 307 21 times 
 FAIL Redirect 308 20 times promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL Redirect 308 21 times assert_equals: Redirected 21times expected (string) "21" but got (undefined) undefined
+PASS Redirect 308 21 times 
 

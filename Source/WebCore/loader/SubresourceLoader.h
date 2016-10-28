@@ -59,6 +59,8 @@ public:
     const ResourceRequest& iOSOriginalRequest() const override { return m_iOSOriginalRequest; }
 #endif
 
+    unsigned redirectCount() const { return m_redirectCount; }
+
 private:
     SubresourceLoader(Frame&, CachedResource&, const ResourceLoaderOptions&);
 
@@ -128,6 +130,7 @@ private:
     SubresourceLoaderState m_state;
     Optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;
+    unsigned m_redirectCount { 0 };
 };
 
 }
